@@ -1,0 +1,332 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+/* Theme */
+:root {
+  --bgColor: #f7f7f7;
+  --primaryColor: #34ab7d;
+  --lowOpacityPrimaryColor: rgba(52, 171, 125, 0.16);
+  --textColor: #344054;
+  --secondaryTextColor: #858c9a;
+  --detailColor: #e2e3e4;
+  --hoverColor: #f0f0f0;
+  --thumbnailSelectedColor: #2f3032;
+  --documentBackgroundColor: #c7c7c7;
+  --labelsBackgroundColor: #fff;
+  --green: #12b76a;
+  --red: #f13131;
+  --yellow: #ffd600;
+  --headerSize: 1px;
+}
+
+body {
+  margin: 0;
+}
+
+.dashboard-viewer {
+  display: flex;
+  border-top: 1px solid var(--detailColor);
+}
+
+.dashboard-document {
+  overflow: auto;
+  height: calc(100vh - var(--headerSize));
+  flex: 1;
+  background: var(--documentBackgroundColor);
+}
+
+.scrolling-page {
+  margin-bottom: 1em;
+}
+
+@media print {
+  .dashboard-document {
+    position: static;
+  }
+}
+
+.pdf-page {
+  display: block;
+  margin: 0 auto;
+}
+
+.pdf-page--hidden {
+  visibility: hidden;
+}
+
+.pdf-page-container {
+  position: relative;
+}
+
+.path {
+  stroke: #fff;
+  stroke-dasharray: 187;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+.document-pages {
+  background: var(--bgColor);
+  min-width: 120px;
+  overflow-y: auto;
+  font-family: "Inter", sans-serif;
+  height: calc(100vh - var(--headerSize));
+}
+
+.document-pages .document-thumbnail {
+  text-align: center;
+  padding: 16px 0;
+  margin: 0 8px 16px 8px;
+  cursor: pointer;
+}
+
+.document-pages .document-thumbnail .img-thumbnail.selected {
+  outline: 2px solid var(--thumbnailSelectedColor);
+}
+
+.document-pages .document-thumbnail .img-thumbnail {
+  width: 50px;
+  text-align: center;
+}
+
+.document-pages .document-thumbnail .number-thumbnail {
+  color: var(--textColor);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.labels {
+  width: 40%;
+  background-color: var(--labelsBackgroundColor);
+  overflow: auto;
+  height: calc(100vh - var(--headerSize));
+}
+
+.labels .labels-container {
+  padding: 16px;
+}
+
+.labels-tabs {
+  -webkit-overflow-scrolling: touch;
+  align-items: stretch;
+  display: flex;
+  font-size: 1rem;
+  justify-content: space-between;
+  overflow: hidden;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.labels-tabs ul {
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  border-bottom: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.labels-tabs li {
+  flex-grow: 1;
+  flex-shrink: 0;
+  list-style-type: none;
+}
+
+.labels-tabs .label-tab a {
+  color: var(--secondaryTextColor);
+  border-bottom: 1px solid var(--detailColor);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 20px;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  font-family: "Inter", sans-serif;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: -1px;
+  padding: 0.5em 1em;
+  vertical-align: top;
+}
+
+.labels-tabs .label-tab.is-active a {
+  color: var(--primaryColor);
+  border-width: 2px;
+  border-bottom-color: var(--primaryColor);
+  font-family: "Inter", sans-serif;
+}
+
+.labels-tabs .label-tab:not(.is-active) a:hover {
+  border-bottom-color: var(--secondaryTextColor);
+  color: var(--secondaryTextColor);
+}
+
+.labels-tabs .label-tab a .label-counter {
+  color: var(--secondaryTextColor);
+  margin-left: 4px;
+  padding: 0 8px;
+  background: var(--bgColor);
+  border-radius: 500px;
+  font-size: 12px;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.labels-tabs .label-tab.is-active a .label-counter {
+  color: var(--primaryColor);
+  background: var(--lowOpacityPrimaryColor);
+}
+
+.labels .empty-annotations,
+.labels .empty-labelsets {
+  width: 100%;
+  margin-top: 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-family: "Inter", sans-serif;
+}
+
+.labels .empty-annotations svg,
+.labels .empty-labelsets svg {
+  align-self: center;
+}
+
+.labels .empty-annotations .empty-text {
+  align-self: center;
+}
+
+.labels .empty-text .title {
+  font-size: 16px;
+  color: var(--textColor);
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+}
+
+.labels .empty-text .description {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--secondaryTextColor);
+  font-weight: 400;
+  text-align: center;
+}
+
+.label-info {
+  font-family: "Inter", sans-serif;
+}
+
+.label-info .label-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--textColor);
+  margin-top: 24px;
+}
+
+.label-info .label-description {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--secondaryTextColor);
+}
+
+.label-group .label-group-name {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--textColor);
+}
+
+.label-info .label-properties {
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  border-bottom: 1px solid var(--bgColor);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.label-info .label-properties:hover {
+  background-color: var(--hoverColor);
+}
+
+.label-info .label-property-top {
+  display: flex;
+  align-items: flex-start;
+}
+
+.label-info .label-property-top.clickable {
+  cursor: pointer;
+}
+
+.label-info .label-property-top .label-property-left {
+  flex: 1;
+  padding-left: 8px;
+}
+
+.label-info .label-property-top .icon-caret {
+  transition: transform 0.2s ease-in-out;
+}
+
+.label-info .label-property-top .icon-caret.rotated {
+  transform: rotate(-90deg);
+}
+
+.label-info .label-property-top .label-property-name {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.label-info .label-property-top .label-property-text {
+  color: var(--secondaryTextColor);
+  margin-left: 4px;
+  width: 100%;
+  border-right: 4px solid var(--yellow);
+}
+
+.label-info .label-property-top .label-property-text.green {
+  border-color: var(--green);
+}
+
+.label-info .label-property-top .label-property-text.red {
+  border-color: var(--red);
+}
+
+.label-info .label-property-right {
+  flex: 1;
+}
+
+.label-info .label-property-right .label-property-annotation {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.label-info .label-property-value {
+  color: var(--textColor);
+  margin-left: 8px;
+}
+
+.label-info .label-property-description {
+  padding: 0 20px;
+  height: 0px;
+  opacity: 0;
+  color: var(--textColor);
+  display: flex;
+  align-items: center;
+  background-color: var(--bgColor);
+  transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.label-info .label-property-description.open {
+  height: 40px;
+  opacity: 1;
+}
