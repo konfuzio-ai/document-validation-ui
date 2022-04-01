@@ -6,10 +6,10 @@ require("dotenv").config({ path: "./.env" });
 module.exports = {
   mode: "production",
   entry: {
-    document_dashboard: "./document_dashboard/index.js",
+    document_dashboard: "./app/index.js",
   },
   output: {
-    path: __dirname + "/public",
+    path: __dirname + "/public/data",
     publicPath: "/public",
     filename: "[name].js",
     sourceMapFilename: "[name].js.map",
