@@ -2,6 +2,8 @@
 
 White Label widget, that let's you upload your documents to Konfuzio and preview the results. Chrome, Firefox, Edge and Safari supported.
 
+![Screenshot](screenshot.png)
+
 # **Requirements**
 
 Software Required:
