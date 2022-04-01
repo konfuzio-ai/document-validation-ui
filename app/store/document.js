@@ -1,11 +1,10 @@
 import myImports from "../api";
 
 const HTTP = myImports.HTTP;
-const docId = myImports.docId;
 
 const state = {
   loading: true,
-  docId,
+  docId: process.env.DOCUMENT_ID,
   pages: [],
   annotations: null,
   focusedAnnotation: {
@@ -105,8 +104,9 @@ const actions = {
                 if (response.data) {
                   response.data.pageNumber = response.data.number;
                   delete response.data.number;
-                  response.data.image = `${process.env.DOCUMENT_IMAGES_URL}${response.data.image}`;
-
+                  if (process.env.DOCUMENT_IMAGES_URL) {
+                    response.data.image = `${process.env.DOCUMENT_IMAGES_URL}${response.data.image}`;
+                  }
                   commit("ADD_PAGE", response.data);
                 }
               })

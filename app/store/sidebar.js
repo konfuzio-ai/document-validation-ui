@@ -1,12 +1,11 @@
 import myImports from "../api";
 
 const HTTP = myImports.HTTP;
-const docId = myImports.docId;
 
 const state = {
   activeLabelSet: null,
   annotationSets: null,
-  documentId: docId
+  documentId: process.env.DOCUMENT_ID
 };
 
 const getters = {
