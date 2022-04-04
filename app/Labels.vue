@@ -35,7 +35,7 @@
                   <CaretDown
                     :class="[
                       'icon-caret',
-                      checkIfLabelIsOpen(annotation) && 'rotated'
+                      !checkIfLabelIsOpen(annotation) && 'rotated'
                     ]"
                     v-if="annotation.label_description"
                   />
