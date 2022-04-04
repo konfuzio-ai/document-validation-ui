@@ -19,6 +19,7 @@
                 bbox => bbox.page_index + 1 == pageNumber
               )"
               :key="'ann' + annotation.id + '-' + index"
+              v-on:click="alert(annotation.id)"
               :config="
                 annotationRect(bbox, annotation.id === focusedAnnotation.id)
               "
@@ -32,7 +33,7 @@
 
 <script>
 import BigNumber from "bignumber.js";
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 import { PIXEL_RATIO } from "./constants";
 
@@ -79,10 +80,8 @@ export default {
     },
 
     scaledViewport() {
-      const {
-        width: actualSizeWidth,
-        height: actualSizeHeight
-      } = this.actualSizeViewport;
+      const { width: actualSizeWidth, height: actualSizeHeight } =
+        this.actualSizeViewport;
       const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(
         dim => dim / PIXEL_RATIO
       );

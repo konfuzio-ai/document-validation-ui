@@ -5,7 +5,7 @@ const HTTP = myImports.HTTP;
 const state = {
   activeLabelSet: null,
   annotationSets: null,
-  documentId: process.env.DOCUMENT_ID
+  documentId: process.env.VUE_APP_DOCUMENT_ID
 };
 
 const getters = {

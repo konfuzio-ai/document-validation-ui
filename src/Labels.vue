@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="label-info" v-if="activeLabelSet">
-      <h3 class="label-title">{{ activeLabelSet.label_set.name }}</h3>
       <p class="label-description">
         {{ activeLabelSet.label_set.description }}
       </p>

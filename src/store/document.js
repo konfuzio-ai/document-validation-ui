@@ -4,7 +4,7 @@ const HTTP = myImports.HTTP;
 
 const state = {
   loading: true,
-  docId: process.env.DOCUMENT_ID,
+  docId: process.env.VUE_APP_DOCUMENT_ID,
   pages: [],
   annotations: null,
   focusedAnnotation: {
@@ -104,8 +104,8 @@ const actions = {
                 if (response.data) {
                   response.data.pageNumber = response.data.number;
                   delete response.data.number;
-                  if (process.env.DOCUMENT_IMAGES_URL) {
-                    response.data.image = `${process.env.DOCUMENT_IMAGES_URL}${response.data.image}`;
+                  if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
+                    response.data.image = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${response.data.image}`;
                   }
                   commit("ADD_PAGE", response.data);
                 }
