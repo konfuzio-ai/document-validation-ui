@@ -29,7 +29,7 @@ This sample app is built around Vue.JS and all the required components are insid
 
 ## Vue Components
 
-The entry point of the app is the `index.js` where the `DashboardData.vue` component is loaded. Basically it has the responsiblity to tell the store to fetch API data and save it on a local store.
+The entry point of the app is the `index.js` where the `DashboardData.vue` component is loaded. Basically it has the responsibility to tell the store to fetch API data and save it on a local store.
 The other component loaded is the `DashboardDocument.vue` and is where the app starts to be drawn. It's the main container of the document thumbnail list (`DocumentPages.vue`), the Document itself (`PDFPage.vue`) and the sidebar for the labels information (`LabelSets.vue`).
 
 ### DocumentPages
