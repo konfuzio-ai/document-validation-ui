@@ -1,20 +1,24 @@
 <template>
-  <DashboardData>
-    <template v-slot:document>
-      <DashboardDocument class="dashboard-component" />
-    </template>
-  </DashboardData>
+  <DashboardDocument class="dashboard-component" />
 </template>
 
 <script>
-import DashboardData from "./DashboardData.vue";
 import DashboardDocument from "./DashboardDocument.vue";
 
 export default {
   name: "App",
   components: {
-    DashboardData,
     DashboardDocument
+  },
+  created() {
+    // fetch info from API and save it on store
+    this.$store.dispatch("document/startLoading");
+    Promise.all([
+      this.$store.dispatch("document/fetchDocument"),
+      this.$store.dispatch("sidebar/fetchLabels")
+    ]).finally(() => {
+      this.$store.dispatch("document/endLoading");
+    });
   }
 };
 </script>

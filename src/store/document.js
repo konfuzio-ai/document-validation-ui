@@ -96,6 +96,7 @@ const actions = {
             });
           });
           commit("SET_ANNOTATIONS", annotations);
+          commit("SET_PAGES", []);
 
           // fetch pages
           for (let i = 1; i <= response.data.number_of_pages; i++) {
@@ -131,6 +132,9 @@ const mutations = {
   },
   ADD_PAGE: (state, page) => {
     state.pages.push(page);
+  },
+  SET_PAGES: (state, pages) => {
+    state.pages = pages;
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;

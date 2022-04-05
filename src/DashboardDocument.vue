@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-viewer">
-    <DocumentPages ref="documentPages"></DocumentPages>
+    <DocumentPages ref="documentPages" />
     <ScrollingDocument
       class="dashboard-document"
       v-bind="{ pages, pageCount }"
