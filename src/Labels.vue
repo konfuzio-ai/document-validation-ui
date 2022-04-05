@@ -13,7 +13,12 @@
             {{ `${annotationSet.label_set.name} ${indexGroup + 1}` }}
           </div>
           <div
-            class="label-properties"
+            :class="[
+              'label-properties',
+              annotation.id &&
+                annotation.id === annotationSelectedId &&
+                'selected'
+            ]"
             v-for="(annotation, index) in annotationsInLabelSet(annotationSet)"
             v-bind:key="index"
             @mouseenter="onLabelHover(annotation)"
@@ -106,7 +111,7 @@ export default {
     ...mapGetters("sidebar", {
       annotationsInLabelSet: "annotationsInLabelSet"
     }),
-    ...mapState("sidebar", ["activeLabelSet"])
+    ...mapState("sidebar", ["activeLabelSet", "annotationSelectedId"])
   },
   methods: {
     /* Clicking a label opens the description */

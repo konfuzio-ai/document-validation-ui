@@ -19,7 +19,7 @@
                 bbox => bbox.page_index + 1 == pageNumber
               )"
               :key="'ann' + annotation.id + '-' + index"
-              v-on:click="alert(annotation.id)"
+              v-on:click="selectLabelAnnotation(annotation.id)"
               :config="
                 annotationRect(bbox, annotation.id === focusedAnnotation.id)
               "
@@ -190,6 +190,9 @@ export default {
         x: (bbox.x0 * this.scale * this.imageScale) / PIXEL_RATIO - 1,
         offsetX: hasOffset ? -30 : 0
       };
+    },
+    selectLabelAnnotation(annotationId) {
+      this.$store.dispatch("sidebar/setAnnotationSelectedId", annotationId);
     }
   },
 

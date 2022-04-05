@@ -257,6 +257,10 @@ body {
   background-color: var(--hoverColor);
 }
 
+.label-info .label-properties.selected {
+  background-color: var(--lowOpacityPrimaryColor);
+}
+
 .label-info .label-property-top {
   display: flex;
   align-items: flex-start;

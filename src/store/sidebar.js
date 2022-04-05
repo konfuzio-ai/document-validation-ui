@@ -5,6 +5,7 @@ const HTTP = myImports.HTTP;
 const state = {
   activeLabelSet: null,
   annotationSets: null,
+  annotationSelectedId: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID
 };
 
@@ -122,6 +123,9 @@ const actions = {
   setDocId: ({ commit }, id) => {
     commit("SET_DOC_ID", id);
   },
+  setAnnotationSelectedId: ({ commit }, id) => {
+    commit("SET_ANNOTATION_SELECTED_ID", id);
+  },
   setActiveLabelSet: ({ commit }, labelSet) => {
     commit("SET_ACTIVE_LABEL_SET", labelSet);
   },
@@ -150,6 +154,9 @@ const mutations = {
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
+  },
+  SET_ANNOTATION_SELECTED_ID: (state, id) => {
+    state.annotationSelectedId = id;
   }
 };
 
