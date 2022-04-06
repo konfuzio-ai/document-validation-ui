@@ -38,7 +38,7 @@ export default {
     changePage(pageNumber) {
       if (pageNumber != this.currentPage) {
         this.$store.dispatch(
-          "display/debounceUpdateCurrentPage",
+          "display/updateCurrentPage",
           parseInt(pageNumber, 10)
         );
       }
