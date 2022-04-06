@@ -107,7 +107,8 @@ export default {
   },
   data() {
     return {
-      labelOpen: null
+      labelOpen: null,
+      annotationAnimationTimeout: null
     };
   },
   computed: {
@@ -143,8 +144,8 @@ export default {
     },
     annotationSelected() {
       // if an annotation is selected, scroll to it
-      // (add a timeout for waiting if a tab is going to be changed)
       if (this.annotationSelected) {
+        clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
           document
             .getElementById(`${this.annotationSelected.id}`)
@@ -153,11 +154,12 @@ export default {
               block: "start"
             });
 
-          // remove annotation selected after some time
-          setTimeout(() => {
+          // remove annotation selection after some time
+          this.annotationAnimationTimeout = setTimeout(() => {
             this.$store.dispatch("sidebar/setAnnotationSelected", null);
           }, 1500);
         }, 100);
+        // add a timeout in case we need to wait if a tab is going to be changed
       }
     }
   }

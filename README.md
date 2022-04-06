@@ -21,7 +21,7 @@ Follow the steps below to get the app running.
 2. Run `npm install` in the project root.
 3. Create a `.env` file in the project root with the properties from the `.env.example` file.
 4. Run `npm run serve` to serve a local development app to run on a browser (default localhost:3000).
-5. Run `npm run build` to build the app for production and then export the `dist` folder to a web server.
+5. Optional: Run `npm run build` to build the app for production if you want to put it on a web server. After building, export the `dist` folder to the desired location.
 
 # **Documentation**
 
