@@ -9,7 +9,6 @@
       v-bind:key="page.id"
       v-on:click="changePage(page.pageNumber)"
     >
-      <!-- TODO: load smaller image -->
       <img
         :class="['img-thumbnail', currentPage == page.pageNumber && 'selected']"
         :src="page.image"

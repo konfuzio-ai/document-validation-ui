@@ -91,6 +91,7 @@ const actions = {
           response.data.annotation_sets.map(annotationSet => {
             annotationSet.labels.map(label => {
               label.annotations.map(annotation => {
+                annotation.annotation_set = annotationSet;
                 annotations.push(annotation);
               });
             });

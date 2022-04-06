@@ -247,6 +247,7 @@ body {
   line-height: 20px;
   font-weight: 400;
   border-bottom: 1px solid var(--bgColor);
+  transition: background-color 0.2s ease-out;
 
   &:last-child {
     border-bottom: none;

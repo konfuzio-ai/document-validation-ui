@@ -3,9 +3,9 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  activeLabelSet: null,
+  activeAnnotationSet: null,
   annotationSets: null,
-  annotationSelectedId: null,
+  annotationSelected: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID
 };
 
@@ -123,11 +123,11 @@ const actions = {
   setDocId: ({ commit }, id) => {
     commit("SET_DOC_ID", id);
   },
-  setAnnotationSelectedId: ({ commit }, id) => {
-    commit("SET_ANNOTATION_SELECTED_ID", id);
+  setAnnotationSelected: ({ commit }, annotation) => {
+    commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setActiveLabelSet: ({ commit }, labelSet) => {
-    commit("SET_ACTIVE_LABEL_SET", labelSet);
+  setActiveAnnotationSet: ({ commit }, annotationSet) => {
+    commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
   },
 
   /**
@@ -149,14 +149,14 @@ const mutations = {
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
   },
-  SET_ACTIVE_LABEL_SET: (state, labelSet) => {
-    state.activeLabelSet = labelSet;
+  SET_ACTIVE_ANNOTATION_SET: (state, annotationSet) => {
+    state.activeAnnotationSet = annotationSet;
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
   },
-  SET_ANNOTATION_SELECTED_ID: (state, id) => {
-    state.annotationSelectedId = id;
+  SET_ANNOTATION_SELECTED: (state, annotation) => {
+    state.annotationSelected = annotation;
   }
 };
 

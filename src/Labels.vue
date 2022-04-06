@@ -1,24 +1,29 @@
 <template>
   <div>
-    <div class="label-info" v-if="activeLabelSet">
+    <div class="label-info" v-if="activeAnnotationSet">
       <p class="label-description">
-        {{ activeLabelSet.label_set.description }}
+        {{ activeAnnotationSet.label_set.description }}
       </p>
       <div class="label-group">
         <div
-          v-for="(annotationSet, indexGroup) in activeLabelSet.group"
+          v-for="(annotationSet, indexGroup) in activeAnnotationSet.group"
           v-bind:key="indexGroup"
         >
-          <div class="label-group-name" v-if="activeLabelSet.group.length > 1">
+          <div
+            class="label-group-name"
+            v-if="activeAnnotationSet.group.length > 1"
+          >
             {{ `${annotationSet.label_set.name} ${indexGroup + 1}` }}
           </div>
           <div
             :class="[
               'label-properties',
               annotation.id &&
-                annotation.id === annotationSelectedId &&
+                annotationSelected &&
+                annotation.id === annotationSelected.id &&
                 'selected'
             ]"
+            :id="annotation && annotation.id"
             v-for="(annotation, index) in annotationsInLabelSet(annotationSet)"
             v-bind:key="index"
             @mouseenter="onLabelHover(annotation)"
@@ -76,15 +81,13 @@
     </div>
     <!-- When there's no annotations in the label -->
     <div
-      v-if="!activeLabelSet || activeLabelSet.labels.length == 0"
+      v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0"
       class="empty-annotations"
     >
       <EmptyStateImg />
       <div class="empty-text">
-        <p class="title" v-translate>No labels found</p>
-        <p class="description" v-translate>
-          There are no labels in this label set.
-        </p>
+        <p class="title">No labels found</p>
+        <p class="description">There are no labels in this label set.</p>
       </div>
     </div>
   </div>
@@ -111,7 +114,8 @@ export default {
     ...mapGetters("sidebar", {
       annotationsInLabelSet: "annotationsInLabelSet"
     }),
-    ...mapState("sidebar", ["activeLabelSet", "annotationSelectedId"])
+    ...mapState("sidebar", ["activeAnnotationSet", "annotationSelected"]),
+    ...mapState("document", ["focusedAnnotation"])
   },
   methods: {
     /* Clicking a label opens the description */
@@ -128,17 +132,33 @@ export default {
       return JSON.stringify(this.labelOpen) === JSON.stringify(annotation);
     },
     onLabelHover(annotation) {
-      if (!this.annotationEditing) {
-        this.$store.dispatch("document/setFocusedAnnotation", {
-          id: annotation && annotation.id ? annotation.id : null
-        });
-      }
+      this.$store.dispatch("document/setFocusedAnnotation", {
+        id: annotation && annotation.id ? annotation.id : null
+      });
     }
   },
-
   watch: {
-    activeLabelSet() {
+    activeAnnotationSet() {
       this.labelOpen = null;
+    },
+    annotationSelected() {
+      // if an annotation is selected, scroll to it
+      // (add a timeout for waiting if a tab is going to be changed)
+      if (this.annotationSelected) {
+        setTimeout(() => {
+          document
+            .getElementById(`${this.annotationSelected.id}`)
+            .scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+          // remove annotation selected after some time
+          setTimeout(() => {
+            this.$store.dispatch("sidebar/setAnnotationSelected", null);
+          }, 1500);
+        }, 100);
+      }
     }
   }
 };

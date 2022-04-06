@@ -19,7 +19,9 @@
                 bbox => bbox.page_index + 1 == pageNumber
               )"
               :key="'ann' + annotation.id + '-' + index"
-              v-on:click="selectLabelAnnotation(annotation.id)"
+              v-on:click="selectLabelAnnotation(annotation)"
+              @mouseenter="onAnnotationHover(annotation)"
+              @mouseleave="onAnnotationHover(null)"
               :config="
                 annotationRect(bbox, annotation.id === focusedAnnotation.id)
               "
@@ -191,8 +193,19 @@ export default {
         offsetX: hasOffset ? -30 : 0
       };
     },
-    selectLabelAnnotation(annotationId) {
-      this.$store.dispatch("sidebar/setAnnotationSelectedId", annotationId);
+    selectLabelAnnotation(annotation) {
+      this.$store.dispatch("document/setFocusedAnnotation", {
+        id: annotation.id
+      });
+      this.$store.dispatch("sidebar/setAnnotationSelected", annotation);
+    },
+    onAnnotationHover(annotation) {
+      // hack to change the cursor when hovering an annotation
+      if (annotation) {
+        this.$refs.stage.$el.style.cursor = "pointer";
+      } else {
+        this.$refs.stage.$el.style.cursor = "default";
+      }
     }
   },
 

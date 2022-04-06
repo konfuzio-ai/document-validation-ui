@@ -8,15 +8,15 @@
         <ul>
           <li
             :class="[
-              activeLabelSet &&
-                activeLabelSet.id == annotationSet.id &&
+              activeAnnotationSet &&
+                activeAnnotationSet.id == annotationSet.id &&
                 'is-active',
               'label-tab'
             ]"
             v-for="annotationSet in groupedAnnotationSets"
             v-bind:key="annotationSet.id"
           >
-            <a v-on:click="onLabelSetClick(annotationSet)"
+            <a v-on:click="onAnnotationSetClick(annotationSet)"
               >{{ annotationSet.label_set.name }}
               <span class="label-counter"
                 >{{ perfectConfidenceTotalInAnnotationSet(annotationSet) }}/{{
@@ -63,23 +63,41 @@ export default {
       groupedAnnotationSets: "groupedAnnotationSets"
     }),
     ...mapState("sidebar", {
-      activeLabelSet: "activeLabelSet"
+      activeAnnotationSet: "activeAnnotationSet",
+      annotationSelected: "annotationSelected"
     })
   },
   methods: {
-    onLabelSetClick(labelSet) {
-      this.$store.dispatch("sidebar/setActiveLabelSet", labelSet);
+    onAnnotationSetClick(annotationSet) {
+      this.$store.dispatch("sidebar/setActiveAnnotationSet", annotationSet);
     }
   },
   watch: {
     groupedAnnotationSets() {
       // Select first tab if none is selected
       if (
-        !this.activeLabelSet &&
+        !this.activeAnnotationSet &&
         this.groupedAnnotationSets &&
         this.groupedAnnotationSets.length > 0
       ) {
-        this.onLabelSetClick(this.groupedAnnotationSets[0]);
+        this.onAnnotationSetClick(this.groupedAnnotationSets[0]);
+      }
+    },
+    annotationSelected() {
+      if (
+        this.annotationSelected &&
+        this.annotationSelected.annotation_set &&
+        this.annotationSelected.annotation_set.label_set.id !=
+          this.activeAnnotationSet.label_set.id
+      ) {
+        // check if the label set is on the same group of annotations set and
+        // if so, no need to change the active annotation set
+        const annotationSet = this.groupedAnnotationSets.find(
+          el =>
+            el.label_set.id ===
+            this.annotationSelected.annotation_set.label_set.id
+        );
+        this.onAnnotationSetClick(annotationSet);
       }
     }
   }

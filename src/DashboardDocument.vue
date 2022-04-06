@@ -22,13 +22,10 @@
             isPageFocused,
             isElementFocused
           }"
-          @page-rendered="onPageRendered"
-          @page-errored="onPageErrored"
-          @page-focus="onPageFocused"
         />
       </keep-alive>
     </ScrollingDocument>
-    <LabelSets ref="labelSets"></LabelSets>
+    <LabelSets ref="labelSets" />
   </div>
 </template>
 <script>
@@ -133,18 +130,6 @@ export default {
     onPageJump(scrollTop) {
       const actualScroll = scrollTop;
       this.$refs.scrollingDocument.$el.scrollTop = actualScroll;
-    },
-
-    onPageFocused(pageNumber) {
-      this.$parent.$emit("page-focus", pageNumber);
-    },
-
-    onPageRendered(payload) {
-      this.$parent.$emit("page-rendered", payload);
-    },
-
-    onPageErrored(payload) {
-      this.$parent.$emit("page-errored", payload);
     }
   },
 
