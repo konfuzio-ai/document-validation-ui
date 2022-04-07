@@ -29,7 +29,7 @@ This sample app is built around Vue.JS and all the required components are insid
 
 ## Vue Components
 
-The entry point of the app is the `main.js` where the `App.vue` component is loaded. It has the responsibility to tell the store to fetch API data and save it while load the main UI component of the app, the `DocumentDashboard.vue`. This component loads the main 3 components of the app: `DocumentThumbnails`, `DocumentPage` and `DocumentAnnotations`.
+The entry point of the app is the `main.js` where the `App.vue` component is loaded. This component has the responsibility to tell the store to fetch API data and save it. While fetching the data, the main UI of the app is drawn on the `DocumentDashboard` component and is divided into: `DocumentThumbnails`, `DocumentPage` and `DocumentAnnotations`.
 
 ### DocumentThumbnails
 
