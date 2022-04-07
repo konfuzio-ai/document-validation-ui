@@ -34,19 +34,16 @@ The entry point of the app is the `main.js` where the `App.vue` component is loa
 ### DocumentThumbnails
 
 ![DocumentThumbnails](document_thumbnails.svg)
-
 This is a simple component to just load the document images and display them in a vertical list to act as a thumbnail selector. Is fully clickable and updates it state automatically.
 
 ### DocumentPage
 
 ![DocumentPage](document_page.svg)
-
 This component is responsible for drawing the document and handling any interaction with it like scrolling (`ScrollingDocument.vue`) and render a loading dummy page (`DummyPage.vue`). It also draws the bounding boxes for the existing annotations.
 
 ### DocumentAnnotations
 
 ![DocumentAnnotations](document_annotations.svg)
-
 This component is responsible for creating a tab bar container to interact with each label set on the project. For each label set selected, a list of labels and annotations are shown alongside with their information.
 
 ## Store
