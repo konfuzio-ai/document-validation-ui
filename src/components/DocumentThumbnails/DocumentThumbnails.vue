@@ -27,7 +27,7 @@ import { mapState } from "vuex";
  * with thumbnail pictures of it which are also clickable.
  */
 export default {
-  name: "DocumentPages",
+  name: "DocumentThumbnails",
   props: {},
   computed: {
     ...mapState("document", ["pages"]),

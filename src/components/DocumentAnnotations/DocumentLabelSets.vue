@@ -27,7 +27,7 @@
           </li>
         </ul>
       </div>
-      <Labels></Labels>
+      <DocumentLabels />
     </div>
     <!-- When there's no label sets -->
     <div
@@ -47,14 +47,14 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Labels from "./Labels";
-import EmptyStateImg from "./assets/EmptyStateImg";
+import DocumentLabels from "./DocumentLabels";
+import EmptyStateImg from "../../assets/EmptyStateImg";
 /**
  * This component creates a tab list filter of the label sets
  * with a confidence counter next to it. It also loads the properties for each label set.
  */
 export default {
-  components: { Labels, EmptyStateImg },
+  components: { DocumentLabels, EmptyStateImg },
   computed: {
     ...mapGetters("sidebar", {
       totalAnnotationsInAnnotationSet: "totalAnnotationsInAnnotationSet",

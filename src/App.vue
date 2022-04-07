@@ -1,14 +1,14 @@
 <template>
-  <DashboardDocument class="dashboard-component" />
+  <DocumentDashboard class="dashboard-component" />
 </template>
 
 <script>
-import DashboardDocument from "./DashboardDocument.vue";
+import DocumentDashboard from "./components/DocumentDashboard";
 
 export default {
   name: "App",
   components: {
-    DashboardDocument
+    DocumentDashboard
   },
   created() {
     // fetch info from API and save it on store

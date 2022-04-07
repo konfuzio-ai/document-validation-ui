@@ -22,7 +22,7 @@
 
 <script>
 import { mapState } from "vuex";
-import scroll from "./directives/scroll";
+import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 
 export default {

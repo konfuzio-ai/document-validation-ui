@@ -10,7 +10,7 @@
  */
 
 import { mapState } from "vuex";
-import { PIXEL_RATIO } from "./constants";
+import { PIXEL_RATIO } from "../../constants";
 
 export default {
   props: {

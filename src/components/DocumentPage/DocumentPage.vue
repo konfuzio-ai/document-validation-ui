@@ -37,10 +37,10 @@
 import BigNumber from "bignumber.js";
 import { mapState, mapGetters } from "vuex";
 
-import { PIXEL_RATIO } from "./constants";
+import { PIXEL_RATIO } from "../../constants";
 
 export default {
-  name: "PDFPage",
+  name: "DocumentPage",
 
   props: {
     page: {

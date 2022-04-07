@@ -1,13 +1,13 @@
 <script>
 import { mapState } from "vuex";
-import { PIXEL_RATIO } from "./constants";
+import { PIXEL_RATIO } from "../../constants";
 
 export default {
   name: "ScrollingPage",
 
   props: {
     page: {
-      type: Object, // instance of PDFPageProxy returned from pdf.getPage
+      type: Object,
       required: true
     },
     focusedPage: {
@@ -41,13 +41,8 @@ export default {
     },
 
     isElementFocused() {
-      const {
-        elementTop,
-        bottom,
-        elementHeight,
-        scrollTop,
-        clientHeight
-      } = this;
+      const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =
+        this;
       if (!elementHeight) return;
 
       const halfHeight = elementHeight / 2;

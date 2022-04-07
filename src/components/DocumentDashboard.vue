@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-viewer">
-    <DocumentPages ref="documentPages" />
+    <DocumentThumbnails ref="documentPages" />
     <ScrollingDocument
       class="dashboard-document"
       v-bind="{ pages, pageCount }"
@@ -15,7 +15,7 @@
           v-if="!pageInVisibleRange(page.pageNumber)"
           v-bind="{ page, isPageFocused, isElementFocused }"
         />
-        <PDFPage
+        <DocumentPage
           v-else
           v-bind="{
             page,
@@ -25,30 +25,28 @@
         />
       </keep-alive>
     </ScrollingDocument>
-    <LabelSets ref="labelSets" />
+    <DocumentLabelSets ref="labelSets" />
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import { PIXEL_RATIO, VIEWPORT_RATIO } from "./constants";
-import DummyPage from "./DummyPage";
-import ScrollingDocument from "./ScrollingDocument";
-import PDFPage from "./PDFPage";
-import DocumentPages from "./DocumentPages";
-import LabelSets from "./LabelSets";
+import { PIXEL_RATIO, VIEWPORT_RATIO } from "../constants";
+import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
+import { DocumentThumbnails } from "./DocumentThumbnails";
+import { DocumentLabelSets } from "./DocumentAnnotations";
 
 /**
  * This component shows the PDF pages in a scrolling component and
  * the annotations on the side.
  */
 export default {
-  name: "DashboardDocument",
+  name: "DocumentDashboard",
   components: {
     DummyPage,
     ScrollingDocument,
-    PDFPage,
-    DocumentPages,
-    LabelSets
+    DocumentPage,
+    DocumentThumbnails,
+    DocumentLabelSets
   },
   computed: {
     defaultViewport() {

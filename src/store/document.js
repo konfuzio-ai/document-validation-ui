@@ -27,7 +27,7 @@ const getters = {
   /**
    * A filtered version of `annotations` for the chosen page.
    * Include annotations that have *at least* one bbox in the page.
-   * If the annotation's bboxes span multiple pages, each PDFPage receives
+   * If the annotation's bboxes span multiple pages, each DocumentPage receives
    * it and only shows the ones that match the pageNumber.
    */
   annotationsForPage: state => pageNumber => {
