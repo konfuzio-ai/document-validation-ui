@@ -39,13 +39,13 @@ This is a simple component to just load the document images and display them in 
 
 ### DocumentPage
 
-![DocumentPage](document_page.jpg)
+![DocumentPage](document_page.svg)
 
 This component is responsible for drawing the document and handling any interaction with it like scrolling (`ScrollingDocument.vue`) and render a loading dummy page (`DummyPage.vue`). It also draws the bounding boxes for the existing annotations.
 
 ### DocumentAnnotations
 
-![DocumentAnnotations](document_annotations.jpg)
+![DocumentAnnotations](document_annotations.svg)
 
 This component is responsible for creating a tab bar container to interact with each label set on the project. For each label set selected, a list of labels and annotations are shown alongside with their information.
 
