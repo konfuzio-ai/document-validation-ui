@@ -33,7 +33,7 @@ The entry point of the app is the `main.js` where the `App.vue` component is loa
 
 ### DocumentThumbnails
 
-![DocumentThumbnails](document_thumbnails.jpg)
+![DocumentThumbnails](document_thumbnails.svg)
 
 This is a simple component to just load the document images and display them in a vertical list to act as a thumbnail selector. Is fully clickable and updates it state automatically.
 
