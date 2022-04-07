@@ -18,26 +18,29 @@ const getters = {
     if (state.annotationSets) {
       const tempAnnotationSets = [];
       state.annotationSets.map(annotationSet => {
-        // check if the same label set already exists in the array
-        const existingAnnotationSet = tempAnnotationSets.find(
-          el => el.label_set.id === annotationSet.label_set.id
-        );
-        if (existingAnnotationSet && existingAnnotationSet.group) {
-          existingAnnotationSet.group.push({
-            id: annotationSet.id,
-            label_set: annotationSet.label_set,
-            labels: annotationSet.labels
-          });
-        } else {
-          // add it to the annotation set array
-          annotationSet.group = [
-            {
+        // don't add empty label sets
+        if (annotationSet.labels.length > 0) {
+          // check if the same label set already exists in the array
+          const existingAnnotationSet = tempAnnotationSets.find(
+            el => el.label_set.id === annotationSet.label_set.id
+          );
+          if (existingAnnotationSet && existingAnnotationSet.group) {
+            existingAnnotationSet.group.push({
               id: annotationSet.id,
               label_set: annotationSet.label_set,
               labels: annotationSet.labels
-            }
-          ];
-          tempAnnotationSets.push(annotationSet);
+            });
+          } else {
+            // add it to the annotation set array
+            annotationSet.group = [
+              {
+                id: annotationSet.id,
+                label_set: annotationSet.label_set,
+                labels: annotationSet.labels
+              }
+            ];
+            tempAnnotationSets.push(annotationSet);
+          }
         }
       });
       return tempAnnotationSets;
