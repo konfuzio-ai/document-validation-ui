@@ -68,6 +68,7 @@ import { PIXEL_RATIO, VIEWPORT_RATIO, MINIMUM_APP_WIDTH } from "../constants";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
+import { DocumentsList } from "./DocumentsList";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -80,7 +81,8 @@ export default {
     ScrollingDocument,
     DocumentPage,
     DocumentThumbnails,
-    DocumentLabelSets
+    DocumentLabelSets,
+    DocumentsList
   },
   computed: {
     defaultViewport() {

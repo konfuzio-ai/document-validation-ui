@@ -6,6 +6,7 @@
   --bgColor: #f7f7f7;
   --primaryColor: #34ab7d;
   --lowOpacityPrimaryColor: rgba(52, 171, 125, 0.16);
+  --hoverPrimaryColor: #3a9c76;
   --textColor: #344054;
   --secondaryTextColor: #858c9a;
   --detailColor: #e2e3e4;
