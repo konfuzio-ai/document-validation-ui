@@ -36,9 +36,9 @@
     >
       <EmptyStateImg />
       <div class="empty-text">
-        <p class="title" v-translate>No label sets found</p>
-        <p class="description" v-translate>
-          There are no label sets in this document.
+        <p class="title">{{ $t("no_label_sets_found") }}</p>
+        <p class="description">
+          {{ $t("no_label_sets_found_description") }}
         </p>
       </div>
     </div>

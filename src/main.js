@@ -6,6 +6,7 @@ import VueKonva from "vue-konva";
 import store from "./store";
 import App from "./App.vue";
 import * as Sentry from "@sentry/vue";
+import i18n from './i18n'
 
 Vue.use(VueKonva);
 
@@ -35,5 +36,6 @@ if (process.env.NODE_ENV != "development") {
  */
 new Vue({
   store,
+  i18n,
   render: h => h(App)
 }).$mount("#app");

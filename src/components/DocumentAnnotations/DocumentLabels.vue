@@ -86,8 +86,8 @@
     >
       <EmptyStateImg />
       <div class="empty-text">
-        <p class="title">No labels found</p>
-        <p class="description">There are no labels in this label set.</p>
+        <p class="title">{{ $t("no_labels_found") }}</p>
+        <p class="description">{{ $t("no_labels_description") }}</p>
       </div>
     </div>
   </div>
