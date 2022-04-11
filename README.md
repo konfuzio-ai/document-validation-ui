@@ -59,4 +59,4 @@ There is a `styles.scss` file in the `styles` folder that contains all the style
 
 # **Tests**
 
-You can test them by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment and so there's no requirement to connect to an API. They are grouped by the three main components and are focused on testing the components behavior.
+You can test the app by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment and so there's no requirement to connect to an API. They are grouped by the three main components and are focused on testing the components behavior.
