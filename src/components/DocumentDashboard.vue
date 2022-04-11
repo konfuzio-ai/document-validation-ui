@@ -30,35 +30,37 @@
 </style>
 
 <template>
-  <div class="dashboard-viewer">
-    <DocumentThumbnails ref="documentPages" />
-    <ScrollingDocument
-      class="dashboard-document"
-      v-bind="{ pages, pageCount }"
-      v-slot="{ page, isPageFocused, isElementFocused }"
-      ref="scrollingDocument"
-      :enable-page-jump="true"
-      @page-jump="onPageJump"
-      @pages-reset="fitWidth"
-    >
-      <keep-alive>
-        <DummyPage
-          v-if="!pageInVisibleRange(page.pageNumber)"
-          v-bind="{ page, isPageFocused, isElementFocused }"
-        />
-        <DocumentPage
-          v-else
-          v-bind="{
-            page,
-            isPageFocused,
-            isElementFocused
-          }"
-        />
-      </keep-alive>
-    </ScrollingDocument>
-    <DocumentLabelSets ref="labelSets" />
-    <div class="not-supported" v-if="!isMinimunWidth">
-      <div class="text">{{ $t("resolution_not_supported") }}</div>
+  <div>
+    <DocumentsList />
+    <div class="dashboard-viewer">
+      <DocumentThumbnails ref="documentPages" />
+      <ScrollingDocument
+        class="dashboard-document"
+        v-bind="{ pages, pageCount }"
+        v-slot="{ page, isPageFocused, isElementFocused }"
+        ref="scrollingDocument"
+        :enable-page-jump="true"
+        @page-jump="onPageJump"
+        @pages-reset="fitWidth"
+      >
+        <keep-alive>
+          <DummyPage
+            v-if="!pageInVisibleRange(page.pageNumber)"
+            v-bind="{ page, isPageFocused, isElementFocused }"
+          />
+          <DocumentPage
+            v-else
+            v-bind="{
+              page,
+              isPageFocused,
+              isElementFocused
+            }"
+          />
+        </keep-alive>
+      </ScrollingDocument>
+      <DocumentLabelSets ref="labelSets" />
+      <div class="not-supported" v-if="!isMinimunWidth">
+        <div class="text">{{ $t("resolution_not_supported") }}</div>
     </div>
   </div>
 </template>
@@ -68,6 +70,7 @@ import { PIXEL_RATIO, VIEWPORT_RATIO, MINIMUM_APP_WIDTH } from "../constants";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
+import { DocumentsList } from "./DocumentsList";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -80,7 +83,8 @@ export default {
     ScrollingDocument,
     DocumentPage,
     DocumentThumbnails,
-    DocumentLabelSets
+    DocumentLabelSets,
+    DocumentsList
   },
   computed: {
     defaultViewport() {
