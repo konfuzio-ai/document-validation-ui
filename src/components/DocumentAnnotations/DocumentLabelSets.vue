@@ -84,6 +84,7 @@ export default {
       }
     },
     annotationSelected() {
+      // change programmatically the selected annotation set
       if (
         this.annotationSelected &&
         this.annotationSelected.annotation_set &&

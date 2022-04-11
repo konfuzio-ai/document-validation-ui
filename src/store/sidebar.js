@@ -132,6 +132,9 @@ const actions = {
   setActiveAnnotationSet: ({ commit }, annotationSet) => {
     commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
   },
+  setAnnotationSets: ({ commit }, annotationSets) => {
+    commit("SET_ANNOTATION_SETS", annotationSets);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,

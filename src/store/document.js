@@ -25,6 +25,34 @@ const getters = {
   },
 
   /**
+   * Annotations list with required information
+   */
+  annotationsInAnnotationSets: state => annotationSets => {
+    const annotations = [];
+    annotationSets.map(annotationSet => {
+      annotationSet.labels.map(label => {
+        label.annotations.map(annotation => {
+          // save annotation set info in annotation
+          annotation.annotation_set = annotationSet;
+          annotations.push(annotation);
+        });
+      });
+    });
+    return annotations;
+  },
+  /**
+   * Page with processed information
+   */
+  page: state => page => {
+    page.pageNumber = page.number;
+    delete page.number;
+    if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
+      page.image = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image}`;
+    }
+    return page;
+  },
+
+  /**
    * A filtered version of `annotations` for the chosen page.
    * Include annotations that have *at least* one bbox in the page.
    * If the annotation's bboxes span multiple pages, each DocumentPage receives
@@ -56,6 +84,14 @@ const actions = {
     commit("SET_DOC_ID", id);
   },
 
+  setAnnotations: ({ commit }, annotations) => {
+    commit("SET_ANNOTATIONS", annotations);
+  },
+
+  setPages: ({ commit }, pages) => {
+    commit("SET_PAGES", pages);
+  },
+
   setFocusedAnnotation: ({ commit, state }, annotation) => {
     if (state.focusedAnnotation.id !== annotation.id) {
       if (!annotation.span && !annotation.pageNumber && state.annotations) {
@@ -83,20 +119,14 @@ const actions = {
    * so they can be `await`ed (useful to set the `loading` status).
    */
 
-  fetchDocument: async ({ commit, state }) => {
+  fetchDocument: async ({ commit, state, getters }) => {
     return HTTP.get(`documents/${state.docId}`)
       .then(async response => {
         if (response.data.annotation_sets) {
-          const annotations = [];
-          response.data.annotation_sets.map(annotationSet => {
-            annotationSet.labels.map(label => {
-              label.annotations.map(annotation => {
-                annotation.annotation_set = annotationSet;
-                annotations.push(annotation);
-              });
-            });
-          });
-          commit("SET_ANNOTATIONS", annotations);
+          commit(
+            "SET_ANNOTATIONS",
+            getters.annotationsInAnnotationSets(response.data.annotation_sets)
+          );
           commit("SET_PAGES", []);
 
           // fetch pages
@@ -104,12 +134,7 @@ const actions = {
             await HTTP.get(`documents/${state.docId}/pages/${i}`)
               .then(response => {
                 if (response.data) {
-                  response.data.pageNumber = response.data.number;
-                  delete response.data.number;
-                  if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-                    response.data.image = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${response.data.image}`;
-                  }
-                  commit("ADD_PAGE", response.data);
+                  commit("ADD_PAGE", getters.page(response.data));
                 }
               })
               .catch(error => {
