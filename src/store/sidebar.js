@@ -66,13 +66,18 @@ const getters = {
           });
         } else {
           label.annotations.map(annotation => {
-            annotations.push({
-              ...annotation,
-              label_name: label.name,
-              label_description: label.description,
-              label_id: label.id,
-              isOpen: false
-            });
+            // check if annotation is not in deleted state
+            if (
+              !(annotation.revised === true && annotation.is_correct === false)
+            ) {
+              annotations.push({
+                ...annotation,
+                label_name: label.name,
+                label_description: label.description,
+                label_id: label.id,
+                isOpen: false
+              });
+            }
           });
         }
       });
@@ -93,7 +98,16 @@ const getters = {
             // check empty labels
             counter = counter + 1;
           } else {
-            counter = counter + label.annotations.length;
+            label.annotations.map(annotation => {
+              // check if annotation is not in deleted state
+              if (
+                !(
+                  annotation.revised === true && annotation.is_correct === false
+                )
+              ) {
+                counter = counter + 1;
+              }
+            });
           }
         });
       });

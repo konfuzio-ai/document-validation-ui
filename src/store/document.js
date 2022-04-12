@@ -32,9 +32,14 @@ const getters = {
     annotationSets.map(annotationSet => {
       annotationSet.labels.map(label => {
         label.annotations.map(annotation => {
-          // save annotation set info in annotation
-          annotation.annotation_set = annotationSet;
-          annotations.push(annotation);
+          // check if annotation is not in deleted state
+          if (
+            !(annotation.revised === true && annotation.is_correct === false)
+          ) {
+            // save annotation set info in annotation
+            annotation.annotation_set = annotationSet;
+            annotations.push(annotation);
+          }
         });
       });
     });
