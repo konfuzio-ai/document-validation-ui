@@ -147,12 +147,18 @@ export default {
       if (this.annotationSelected) {
         clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
-          document
-            .getElementById(`${this.annotationSelected.id}`)
-            .scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
+          // document
+          //   .getElementById(`${this.annotationSelected.id}`)
+          //   .scrollIntoView({
+          //     behavior: "smooth",
+          //     block: "start"
+          //   });
+
+          document.getElementById(`sidebar-container`).scrollTo({
+            top: document.getElementById(`${this.annotationSelected.id}`)
+              .offsetTop,
+            behavior: "smooth"
+          });
 
           // remove annotation selection after some time
           this.annotationAnimationTimeout = setTimeout(() => {

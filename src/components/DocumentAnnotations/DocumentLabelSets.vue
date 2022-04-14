@@ -1,5 +1,5 @@
 <template>
-  <div class="labels">
+  <div id="sidebar-container" class="labels">
     <div
       class="labels-container"
       v-if="groupedAnnotationSets && groupedAnnotationSets.length > 0"
