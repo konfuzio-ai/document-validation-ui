@@ -155,7 +155,7 @@ const actions = {
    * so they can be `await`ed (useful to set the `loading` status).
    */
   fetchLabels: ({ commit, state }) => {
-    return HTTP.get(`documents/${state.documentId}`)
+    return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
       })

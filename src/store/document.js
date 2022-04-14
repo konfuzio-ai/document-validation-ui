@@ -125,7 +125,7 @@ const actions = {
    */
 
   fetchDocument: async ({ commit, state, getters }) => {
-    return HTTP.get(`documents/${state.docId}`)
+    return HTTP.get(`documents/${state.docId}/`)
       .then(async response => {
         if (response.data.annotation_sets) {
           commit(
@@ -136,7 +136,7 @@ const actions = {
 
           // fetch pages
           for (let i = 1; i <= response.data.number_of_pages; i++) {
-            await HTTP.get(`documents/${state.docId}/pages/${i}`)
+            await HTTP.get(`documents/${state.docId}/pages/${i}/`)
               .then(response => {
                 if (response.data) {
                   commit("ADD_PAGE", getters.page(response.data));
