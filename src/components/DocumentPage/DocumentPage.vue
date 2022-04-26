@@ -23,7 +23,7 @@
               @mouseenter="onAnnotationHover(annotation)"
               @mouseleave="onAnnotationHover(null)"
               :config="
-                annotationRect(bbox, annotation.id === focusedAnnotation.id)
+                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
               "
             ></v-rect>
           </template>
@@ -113,7 +113,11 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", ["focusedAnnotation"]),
     ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("document", ["annotationsForPage", "pageCount"])
+    ...mapGetters("document", ["annotationsForPage", "pageCount"]),
+    ...mapGetters("sidebar", {
+      annotationsInLabelSet: "annotationsInLabelSet"
+    }),
+    ...mapState("sidebar", ["activeAnnotationSet"])
   },
 
   methods: {
@@ -121,6 +125,8 @@ export default {
       if (this.isPageFocused) return;
 
       this.$store.dispatch("display/updateCurrentPage", this.pageNumber);
+
+      this.annotationsInLabelSet(this.activeAnnotations);
     },
 
     /**
@@ -173,9 +179,17 @@ export default {
     /**
      * Builds the konva config object for the annotation.
      */
-    annotationRect(bbox, selected = false) {
+
+    setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
+      const annotationName = annotation.annotation_set.label_set.name;
+      const activeSetName = activeAnnotationSet.group[0].label_set.name;
+
+      // Highlight with green the annotations from the active label set
       return {
-        fill: selected ? "#80ED99" : window.annotationColor || "yellow",
+        fill:
+          annotationName === activeSetName
+            ? "#67E9B7"
+            : window.annotationColor || "yellow",
         globalCompositeOperation: "multiply",
         hitStrokeWidth: 0,
         name: "annotation",
@@ -199,6 +213,7 @@ export default {
       });
       this.$store.dispatch("sidebar/setAnnotationSelected", annotation);
     },
+
     onAnnotationHover(annotation) {
       // hack to change the cursor when hovering an annotation
       if (annotation) {
