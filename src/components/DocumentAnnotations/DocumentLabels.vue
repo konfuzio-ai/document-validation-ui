@@ -1,3 +1,127 @@
+<style scoped lang="scss">
+.label-info {
+  font-family: "Inter", sans-serif;
+
+  .label-title {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--textColor);
+    margin-top: 24px;
+  }
+
+  .label-description {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--secondaryTextColor);
+  }
+
+  .label-group {
+    .label-group-name {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--textColor);
+    }
+  }
+
+  .label-properties {
+    width: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    border-bottom: 1px solid var(--bgColor);
+    transition: background-color 0.2s ease-out;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: var(--hoverColor);
+    }
+    &.selected {
+      background-color: var(--lowOpacityPrimaryColor);
+    }
+
+    .label-property-top {
+      display: flex;
+      align-items: flex-start;
+
+      &.clickable {
+        cursor: pointer;
+      }
+
+      .label-property-left {
+        flex: 1;
+        padding-left: 8px;
+
+        .label-property-name {
+          padding: 10px 0;
+          display: flex;
+          align-items: center;
+
+          .icon-caret {
+            transition: transform 0.2s ease-in-out;
+
+            &.rotated {
+              transform: rotate(-90deg);
+            }
+          }
+        }
+
+        .label-property-text {
+          color: var(--secondaryTextColor);
+          margin-left: 4px;
+          width: 100%;
+          border-right: 4px solid var(--yellow);
+
+          &.green {
+            border-color: var(--green);
+          }
+
+          &.red {
+            border-color: var(--red);
+          }
+        }
+      }
+
+      .label-property-right {
+        flex: 1;
+
+        .label-property-annotation {
+          display: flex;
+          align-items: center;
+          padding: 10px 0;
+        }
+
+        .label-property-value {
+          color: var(--textColor);
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .label-property-description {
+      padding: 0 20px;
+      height: 0px;
+      opacity: 0;
+      color: var(--textColor);
+      display: flex;
+      align-items: center;
+      background-color: var(--bgColor);
+      transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
+
+      &.open {
+        height: 40px;
+        opacity: 1;
+      }
+    }
+  }
+}
+</style>
 <template>
   <div>
     <div class="label-info" v-if="activeAnnotationSet">
@@ -80,29 +204,22 @@
       </div>
     </div>
     <!-- When there's no annotations in the label -->
-    <div
-      v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0"
-      class="empty-annotations"
-    >
-      <EmptyStateImg />
-      <div class="empty-text">
-        <p class="title">{{ $t("no_labels_found") }}</p>
-        <p class="description">{{ $t("no_labels_description") }}</p>
-      </div>
+    <div v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0">
+      <EmptyState />
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import EmptyStateImg from "../../assets/EmptyStateImg";
+import EmptyState from "./EmptyState";
 import CaretDown from "../../assets/CaretDownImg";
 /**
  * This component loads all annotations in a label set
  */
 export default {
   components: {
-    EmptyStateImg,
+    EmptyState,
     CaretDown
   },
   data() {

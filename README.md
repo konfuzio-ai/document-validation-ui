@@ -55,7 +55,7 @@ The store is implemented using `Vuex` and is located under `store/index.js`. Is 
 
 ## Styles
 
-There is a `styles.scss` file in the `styles` folder that contains all the styles needed for the app. You can customise it by changing the `:root` class in the top of the file to match the theme you want.
+The styles for each component are located under the `style` tag in each component file. If you want to edit the app theme there's a `theme` style in the `App.vue` component with all the colors of the app that can be edited to match the desired design.
 
 # **Tests**
 

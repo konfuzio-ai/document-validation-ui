@@ -1,12 +1,10 @@
-require("./styles/styles.scss");
-
 import Vue from "vue";
 
 import VueKonva from "vue-konva";
 import store from "./store";
 import App from "./App.vue";
 import * as Sentry from "@sentry/vue";
-import i18n from './i18n'
+import i18n from "./i18n";
 
 Vue.use(VueKonva);
 

@@ -1,3 +1,22 @@
+<style scoped lang="scss">
+.dashboard-viewer {
+  display: flex;
+  background: var(--documentBackgroundColor);
+  .dashboard-document {
+    overflow: auto;
+    height: calc(100vh - var(--headerSize));
+    flex: 1;
+    background-image: radial-gradient(#bfc1c9 0.8px, #93989f 0.1px);
+    background-size: 9px 9px;
+  }
+  @media print {
+    .dashboard-document {
+      position: static;
+    }
+  }
+}
+</style>
+
 <template>
   <div class="dashboard-viewer">
     <DocumentThumbnails ref="documentPages" />

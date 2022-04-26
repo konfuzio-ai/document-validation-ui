@@ -1,3 +1,33 @@
+<style scoped lang="scss">
+.document-pages {
+  background: var(--bgColor);
+  min-width: 80px;
+  overflow-y: auto;
+  font-family: "Inter", sans-serif;
+  height: calc(100vh - var(--headerSize));
+
+  .document-thumbnail {
+    text-align: center;
+    padding: 16px 0;
+    margin: 0 8px 16px 8px;
+    cursor: pointer;
+
+    .img-thumbnail.selected {
+      outline: 2px solid var(--thumbnailSelectedColor);
+    }
+    .img-thumbnail {
+      width: 40px;
+      text-align: center;
+    }
+
+    .number-thumbnail {
+      color: var(--textColor);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+}
+</style>
 <template>
   <div class="document-pages">
     <div

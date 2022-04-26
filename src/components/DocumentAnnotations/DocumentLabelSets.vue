@@ -1,3 +1,93 @@
+<style scoped lang="scss">
+.labels {
+  width: 40%;
+  background-color: var(--labelsBackgroundColor);
+  overflow: auto;
+  height: calc(100vh - var(--headerSize));
+
+  .labels-container {
+    padding: 16px;
+  }
+  .labels-tabs {
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    display: flex;
+    font-size: 1rem;
+    justify-content: space-between;
+    overflow: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    ul {
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-grow: 1;
+      flex-shrink: 0;
+      border-bottom: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    li {
+      flex-grow: 1;
+      flex-shrink: 0;
+      list-style-type: none;
+    }
+
+    .label-tab {
+      a {
+        color: var(--secondaryTextColor);
+        border-bottom: 1px solid var(--detailColor);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        font-family: "Inter", sans-serif;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        margin-bottom: -1px;
+        padding: 0.5em 1em;
+        vertical-align: top;
+
+        .label-counter {
+          color: var(--secondaryTextColor);
+          margin-left: 4px;
+          padding: 0 8px;
+          background: var(--bgColor);
+          border-radius: 500px;
+          font-size: 12px;
+          transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+      }
+
+      &.is-active {
+        a {
+          color: var(--primaryColor);
+          border-width: 2px;
+          border-bottom-color: var(--primaryColor);
+          font-family: "Inter", sans-serif;
+
+          .label-counter {
+            color: var(--primaryColor);
+            background: var(--lowOpacityPrimaryColor);
+          }
+        }
+      }
+      &:not(.is-active) {
+        a:hover {
+          border-bottom-color: var(--secondaryTextColor);
+          color: var(--secondaryTextColor);
+        }
+      }
+    }
+  }
+}
+</style>
+
 <template>
   <div id="sidebar-container" class="labels">
     <div
@@ -30,17 +120,8 @@
       <DocumentLabels />
     </div>
     <!-- When there's no label sets -->
-    <div
-      v-if="groupedAnnotationSets && groupedAnnotationSets.length == 0"
-      class="empty-labelsets"
-    >
-      <EmptyStateImg />
-      <div class="empty-text">
-        <p class="title">{{ $t("no_label_sets_found") }}</p>
-        <p class="description">
-          {{ $t("no_label_sets_found_description") }}
-        </p>
-      </div>
+    <div v-if="groupedAnnotationSets && groupedAnnotationSets.length == 0">
+      <EmptyState />
     </div>
   </div>
 </template>
@@ -48,13 +129,14 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import DocumentLabels from "./DocumentLabels";
-import EmptyStateImg from "../../assets/EmptyStateImg";
+import EmptyState from "./EmptyState";
+
 /**
  * This component creates a tab list filter of the label sets
  * with a confidence counter next to it. It also loads the properties for each label set.
  */
 export default {
-  components: { DocumentLabels, EmptyStateImg },
+  components: { DocumentLabels, EmptyState },
   computed: {
     ...mapGetters("sidebar", {
       totalAnnotationsInAnnotationSet: "totalAnnotationsInAnnotationSet",

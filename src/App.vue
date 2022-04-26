@@ -1,3 +1,29 @@
+<style lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+/* Theme */
+:root {
+  --bgColor: #f7f7f7;
+  --primaryColor: #34ab7d;
+  --lowOpacityPrimaryColor: rgba(52, 171, 125, 0.16);
+  --textColor: #344054;
+  --secondaryTextColor: #858c9a;
+  --detailColor: #e2e3e4;
+  --hoverColor: #f0f0f0;
+  --thumbnailSelectedColor: #2f3032;
+  --documentBackgroundColor: #c7c7c7;
+  --labelsBackgroundColor: #fff;
+  --green: #12b76a;
+  --red: #f13131;
+  --yellow: #ffd600;
+  --headerSize: 2px;
+}
+
+body {
+  margin: 0;
+  border: 1px solid var(--detailColor);
+}
+</style>
 <template>
   <DocumentDashboard class="dashboard-component" />
 </template>
