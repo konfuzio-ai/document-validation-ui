@@ -2,11 +2,13 @@
 .labels {
   width: 40%;
   background-color: var(--labelsBackgroundColor);
-  overflow: auto;
+
   height: calc(100vh - var(--headerSize));
 
   .labels-container {
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   .labels-tabs {
     -webkit-overflow-scrolling: touch;
@@ -17,6 +19,7 @@
     overflow: hidden;
     overflow-x: auto;
     white-space: nowrap;
+    padding: 16px 16px 0 16px;
 
     ul {
       flex-wrap: wrap;
@@ -89,7 +92,7 @@
 </style>
 
 <template>
-  <div id="sidebar-container" class="labels">
+  <div class="labels">
     <div
       class="labels-container"
       v-if="groupedAnnotationSets && groupedAnnotationSets.length > 0"

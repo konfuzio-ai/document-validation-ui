@@ -1,7 +1,9 @@
 <style scoped lang="scss">
 .label-info {
   font-family: "Inter", sans-serif;
-
+  overflow: auto;
+  flex: 1;
+  padding: 0 16px;
   .label-title {
     font-weight: 600;
     font-size: 18px;
@@ -123,8 +125,8 @@
 }
 </style>
 <template>
-  <div>
-    <div class="label-info" v-if="activeAnnotationSet">
+  <div ref="labelsList" class="label-info">
+    <div v-if="activeAnnotationSet">
       <p class="label-description">
         {{ activeAnnotationSet.label_set.description }}
       </p>
@@ -147,7 +149,7 @@
                 annotation.id === annotationSelected.id &&
                 'selected'
             ]"
-            :id="annotation && annotation.id"
+            :ref="`annotation${annotation && annotation.id}`"
             v-for="(annotation, index) in annotationsInLabelSet(annotationSet)"
             v-bind:key="index"
             @mouseenter="onLabelHover(annotation)"
@@ -264,15 +266,8 @@ export default {
       if (this.annotationSelected) {
         clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
-          // document
-          //   .getElementById(`${this.annotationSelected.id}`)
-          //   .scrollIntoView({
-          //     behavior: "smooth",
-          //     block: "start"
-          //   });
-
-          document.getElementById(`sidebar-container`).scrollTo({
-            top: document.getElementById(`${this.annotationSelected.id}`)
+          this.$refs.labelsList.scrollTo({
+            top: this.$refs[`annotation${this.annotationSelected.id}`][0]
               .offsetTop,
             behavior: "smooth"
           });

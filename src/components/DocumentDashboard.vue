@@ -1,5 +1,6 @@
 <style scoped lang="scss">
 .dashboard-viewer {
+  overflow: hidden;
   display: flex;
   background: var(--documentBackgroundColor);
   .dashboard-document {
