@@ -41,7 +41,6 @@
 <script>
 import BigNumber from "bignumber.js";
 import { mapState, mapGetters } from "vuex";
-
 import { PIXEL_RATIO } from "../../constants";
 
 export default {
@@ -135,7 +134,7 @@ export default {
       if (this.image) {
         return;
       }
-      const image = new window.Image();
+      const image = new Image();
       image.src = this.page.image;
       image.onload = () => {
         // set image only when it is loaded
