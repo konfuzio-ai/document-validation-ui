@@ -30,8 +30,9 @@ body {
 
 <script>
 import DocumentDashboard from "./components/DocumentDashboard";
-
+import store from "./store";
 export default {
+  store,
   name: "App",
   components: {
     DocumentDashboard
