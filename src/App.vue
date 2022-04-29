@@ -22,6 +22,7 @@
 body {
   margin: 0;
   border: 1px solid var(--detailColor);
+  font-family: "Inter", sans-serif;
 }
 </style>
 <template>

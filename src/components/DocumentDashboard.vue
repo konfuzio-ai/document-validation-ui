@@ -15,6 +15,17 @@
       position: static;
     }
   }
+  .not-supported {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>
 
@@ -46,11 +57,14 @@
       </keep-alive>
     </ScrollingDocument>
     <DocumentLabelSets ref="labelSets" />
+    <div class="not-supported" v-if="!isMinimunWidth">
+      <div class="text">{{ $t("resolution_not_supported") }}</div>
+    </div>
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import { PIXEL_RATIO, VIEWPORT_RATIO } from "../constants";
+import { PIXEL_RATIO, VIEWPORT_RATIO, MINIMUM_APP_WIDTH } from "../constants";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
@@ -95,6 +109,14 @@ export default {
   destroyed() {
     window.removeEventListener("resize", this.fitWidth);
   },
+  data() {
+    return {
+      isMinimunWidth: true
+    };
+  },
+  mounted() {
+    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+  },
   methods: {
     pageWidthScale() {
       const { defaultViewport, $el } = this;
@@ -130,6 +152,8 @@ export default {
      * from the browser and a subjective scale factor based on the screen size.
      */
     fitWidth() {
+      this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+
       const scale = this.pageWidthScale();
       this.updateScale(scale, {
         isOptimal: !this.optimalScale

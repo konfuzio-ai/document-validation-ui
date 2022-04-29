@@ -51,7 +51,7 @@ This component is responsible for creating a tab bar container to interact with 
 
 ## Store
 
-The store is implemented using `Vuex` and is located under `store/index.js`. Is responsible for the behaviour of the app, is where most of the information is obtained, filtered, grouped and processed and is divided in concepts like, for example, document and sidebar.
+The store is implemented using `Vuex` and is located under `store/index.js`. Is responsible for the behaviour of the app, is where most of the information is obtained, filtered, grouped and processed.
 
 ## Styles
 

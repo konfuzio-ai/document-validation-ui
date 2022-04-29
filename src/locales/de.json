@@ -2,5 +2,6 @@
   "no_label_sets_found": "Keine Label Sets vorhanden",
   "no_label_sets_found_description": "In diesem Dokument sind keine Label Sets vorhanden.",
   "no_labels_found": "Keine Labels vorhanden",
-  "no_labels_description": "In diesem Label Set sind keine Labels vorhanden."
+  "no_labels_description": "In diesem Label Set sind keine Labels vorhanden.",
+  "resolution_not_supported": "App not supported on this resolution"
 }
