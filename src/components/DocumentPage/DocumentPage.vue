@@ -194,7 +194,7 @@ export default {
 
       // if hovered
       if (annotation.id === this.hoveredId) {
-        fillColor = "white";
+        fillColor = "";
       }
 
       // Highlight with green the annotations from the active label set
@@ -271,6 +271,9 @@ export default {
                 this.hoveredAnnotation = true;
                 this.hoveredId = activeAnnotationSetArray[i].annotations[j].id;
                 found = true;
+
+                // Highlight the active annotation on the sidebar on hover
+                this.selectLabelAnnotation(annotation);
               }
             }
           }
