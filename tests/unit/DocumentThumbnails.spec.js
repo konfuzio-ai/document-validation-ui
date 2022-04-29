@@ -2,12 +2,15 @@ import { shallowMount } from "@vue/test-utils";
 import { DocumentThumbnails } from "@/components/DocumentThumbnails";
 import store from "@/store";
 
+// mock i18n so we don't need to load the library
+const $t = () => {};
+
 describe("Document Thumbnails Component", () => {
   beforeEach(() => {
     Promise.all([
       store.dispatch(
         "document/setAnnotations",
-        store.getters["document/annotationsInAnnotationSets"](
+        store.getters["document/annotations"](
           require("../mock/document.json").annotation_sets
         )
       ),
@@ -20,6 +23,7 @@ describe("Document Thumbnails Component", () => {
   it("check number of thumbnails", () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
+      mocks: { $t },
     });
     expect(wrapper.findAll(".document-thumbnail").length).toEqual(2);
   });
@@ -27,6 +31,7 @@ describe("Document Thumbnails Component", () => {
   it("check if first thumbnail is selected", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
+      mocks: { $t },
     });
     expect(wrapper.findAll(".img-thumbnail").at(0).classes()).toContain(
       "selected"
@@ -36,6 +41,7 @@ describe("Document Thumbnails Component", () => {
   it("check if second thumbnail is not selected", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
+      mocks: { $t },
     });
     expect(wrapper.findAll(".img-thumbnail").at(1).classes()).not.toContain(
       "selected"
@@ -45,6 +51,7 @@ describe("Document Thumbnails Component", () => {
   it("check if second thumbnail has text 2", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
+      mocks: { $t },
     });
     expect(wrapper.findAll(".number-thumbnail").at(1).text()).toBe("2");
   });

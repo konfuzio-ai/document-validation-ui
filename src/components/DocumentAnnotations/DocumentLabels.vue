@@ -229,11 +229,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("sidebar", {
+    ...mapGetters("document", {
       annotationsInLabelSet: "annotationsInLabelSet"
     }),
-    ...mapState("sidebar", ["activeAnnotationSet", "annotationSelected"]),
-    ...mapState("document", ["focusedAnnotation"])
+    ...mapState("document", [
+      "activeAnnotationSet",
+      "annotationSelected",
+      "focusedAnnotation"
+    ])
   },
   methods: {
     /* Clicking a label opens the description */
@@ -272,7 +275,7 @@ export default {
 
           // remove annotation selection after some time
           this.annotationAnimationTimeout = setTimeout(() => {
-            this.$store.dispatch("sidebar/setAnnotationSelected", null);
+            this.$store.dispatch("document/setAnnotationSelected", null);
           }, 1500);
         }, 100);
         // add a timeout in case we need to wait if a tab is going to be changed

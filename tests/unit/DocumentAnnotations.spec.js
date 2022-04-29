@@ -5,11 +5,14 @@ import {
 } from "@/components/DocumentAnnotations";
 import store from "@/store";
 
+// mock i18n so we don't need to load the library
+const $t = () => {};
+
 describe("Document Annotations Component", () => {
   beforeEach(() => {
     Promise.all([
       store.dispatch(
-        "sidebar/setAnnotationSets",
+        "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
     ]);
@@ -17,6 +20,7 @@ describe("Document Annotations Component", () => {
   it("sidebar has tabs for label sets", () => {
     const wrapper = mount(DocumentLabelSets, {
       store,
+      mocks: { $t },
     });
     expect(wrapper.findAll(".label-tab").length).toBeGreaterThan(0);
   });
@@ -24,10 +28,11 @@ describe("Document Annotations Component", () => {
   it("sidebar has first tab active", async () => {
     const wrapper = mount(DocumentLabelSets, {
       store,
+      mocks: { $t },
     });
     await store.dispatch(
-      "sidebar/setActiveAnnotationSet",
-      store.state.sidebar.annotationSets[0]
+      "document/setActiveAnnotationSet",
+      store.state.document.annotationSets[0]
     );
     expect(wrapper.findAll(".label-tab").at(0).classes()).toContain(
       "is-active"
@@ -37,25 +42,27 @@ describe("Document Annotations Component", () => {
   it("sidebar has label list from the second label set", async () => {
     const wrapper = mount(DocumentLabels, {
       store,
+      mocks: { $t },
     });
 
-    const annotationSet = store.state.sidebar.annotationSets[1];
+    const annotationSet = store.state.document.annotationSets[1];
 
-    await store.dispatch("sidebar/setActiveAnnotationSet", annotationSet);
+    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
 
     expect(wrapper.findAll(".label-properties").length).toBe(
-      store.getters["sidebar/totalAnnotationsInAnnotationSet"](annotationSet)
+      store.getters["document/totalAnnotationsInAnnotationSet"](annotationSet)
     );
   });
 
   it("check if description is hidden when no click on label", async () => {
     const wrapper = mount(DocumentLabels, {
       store,
+      mocks: { $t },
     });
 
-    const annotationSet = store.state.sidebar.annotationSets[0];
+    const annotationSet = store.state.document.annotationSets[0];
 
-    await store.dispatch("sidebar/setActiveAnnotationSet", annotationSet);
+    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
     expect(
       wrapper.findAll(".label-property-description").at(0).classes()
     ).not.toContain("open");
@@ -64,11 +71,12 @@ describe("Document Annotations Component", () => {
   it("check if description appears when clicking a label", async () => {
     const wrapper = mount(DocumentLabels, {
       store,
+      mocks: { $t },
     });
 
-    const annotationSet = store.state.sidebar.annotationSets[0];
+    const annotationSet = store.state.document.annotationSets[0];
 
-    await store.dispatch("sidebar/setActiveAnnotationSet", annotationSet);
+    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
     await wrapper.findAll(".label-property-top").at(0).trigger("click");
     expect(
       wrapper.findAll(".label-property-description").at(0).classes()

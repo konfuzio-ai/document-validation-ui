@@ -117,13 +117,13 @@ export default {
     },
 
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
-    ...mapState("document", ["focusedAnnotation"]),
+    ...mapState("document", ["focusedAnnotation", "activeAnnotationSet"]),
     ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("document", ["annotationsForPage", "pageCount"]),
-    ...mapGetters("sidebar", {
-      annotationsInLabelSet: "annotationsInLabelSet"
-    }),
-    ...mapState("sidebar", ["activeAnnotationSet"])
+    ...mapGetters("document", [
+      "annotationsForPage",
+      "pageCount",
+      "annotationsInLabelSet"
+    ])
   },
 
   methods: {
@@ -239,7 +239,7 @@ export default {
       this.$store.dispatch("document/setFocusedAnnotation", {
         id: annotation.id
       });
-      this.$store.dispatch("sidebar/setAnnotationSelected", annotation);
+      this.$store.dispatch("document/setAnnotationSelected", annotation);
     },
 
     onAnnotationHover(annotation, activeAnnotationSet) {

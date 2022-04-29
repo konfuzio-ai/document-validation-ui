@@ -40,12 +40,11 @@ export default {
   created() {
     // fetch info from API and save it on store
     this.$store.dispatch("document/startLoading");
-    Promise.all([
-      this.$store.dispatch("document/fetchDocument"),
-      this.$store.dispatch("sidebar/fetchLabels")
-    ]).finally(() => {
-      this.$store.dispatch("document/endLoading");
-    });
+    Promise.all([this.$store.dispatch("document/fetchAnnotations")]).finally(
+      () => {
+        this.$store.dispatch("document/endLoading");
+      }
+    );
   }
 };
 </script>

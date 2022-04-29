@@ -141,20 +141,20 @@ import EmptyState from "./EmptyState";
 export default {
   components: { DocumentLabels, EmptyState },
   computed: {
-    ...mapGetters("sidebar", {
+    ...mapGetters("document", {
       totalAnnotationsInAnnotationSet: "totalAnnotationsInAnnotationSet",
       perfectConfidenceTotalInAnnotationSet:
         "perfectConfidenceTotalInAnnotationSet",
       groupedAnnotationSets: "groupedAnnotationSets"
     }),
-    ...mapState("sidebar", {
+    ...mapState("document", {
       activeAnnotationSet: "activeAnnotationSet",
       annotationSelected: "annotationSelected"
     })
   },
   methods: {
     onAnnotationSetClick(annotationSet) {
-      this.$store.dispatch("sidebar/setActiveAnnotationSet", annotationSet);
+      this.$store.dispatch("document/setActiveAnnotationSet", annotationSet);
     }
   },
   watch: {

@@ -2,12 +2,15 @@ import { mount } from "@vue/test-utils";
 import { ScrollingDocument, ScrollingPage } from "@/components/DocumentPage";
 import store from "@/store";
 
+// mock i18n so we don't need to load the library
+const $t = () => {};
+
 describe("Document Page Component", () => {
   beforeEach(() => {
     Promise.all([
       store.dispatch(
         "document/setAnnotations",
-        store.getters["document/annotationsInAnnotationSets"](
+        store.getters["document/annotations"](
           require("../mock/document.json").annotation_sets
         )
       ),
@@ -23,6 +26,7 @@ describe("Document Page Component", () => {
       propsData: {
         pages: store.state.document.pages,
       },
+      mocks: { $t },
     });
     expect(wrapper.findAllComponents(ScrollingPage).length).toBe(2);
   });
@@ -32,6 +36,7 @@ describe("Document Page Component", () => {
       propsData: {
         pages: store.state.document.pages,
       },
+      mocks: { $t },
     });
 
     expect(store.getters["display/visiblePageRange"]).toContain(1);
