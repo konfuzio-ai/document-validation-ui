@@ -25,10 +25,10 @@
               )"
               :key="'ann' + annotation.id + '-' + index"
               v-on:click="selectLabelAnnotation(annotation)"
-              @mouseenter="onAnnotationHover(annotation)"
+              @mouseenter="onAnnotationHover(annotation, activeAnnotationSet)"
               @mouseleave="onAnnotationHover(null)"
               :config="
-                annotationRect(bbox, annotation.id === focusedAnnotation.id)
+                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
               "
             ></v-rect>
           </template>
@@ -63,7 +63,9 @@ export default {
 
   data() {
     return {
-      image: null
+      image: null,
+      hoveredAnnotation: false,
+      hoveredId: null
     };
   },
 
@@ -117,7 +119,11 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", ["focusedAnnotation"]),
     ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("document", ["annotationsForPage", "pageCount"])
+    ...mapGetters("document", ["annotationsForPage", "pageCount"]),
+    ...mapGetters("sidebar", {
+      annotationsInLabelSet: "annotationsInLabelSet"
+    }),
+    ...mapState("sidebar", ["activeAnnotationSet"])
   },
 
   methods: {
@@ -125,6 +131,8 @@ export default {
       if (this.isPageFocused) return;
 
       this.$store.dispatch("display/updateCurrentPage", this.pageNumber);
+
+      this.annotationsInLabelSet(this.activeAnnotations);
     },
 
     /**
@@ -177,14 +185,44 @@ export default {
     /**
      * Builds the konva config object for the annotation.
      */
-    annotationRect(bbox, selected = false) {
-      return {
-        fill: selected ? "#80ED99" : window.annotationColor || "yellow",
-        globalCompositeOperation: "multiply",
-        hitStrokeWidth: 0,
-        name: "annotation",
-        ...this.bboxToRect(bbox)
-      };
+
+    setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
+      const annotationName = annotation.annotation_set.label_set.name;
+      const activeSetName = activeAnnotationSet.group[0].label_set.name;
+      let fillColor = window.annotationColor || "yellow";
+
+      // if activeSet
+      if (annotationName === activeSetName) {
+        fillColor = "#67E9B7";
+      }
+
+      // if hovered
+      if (annotation.id === this.hoveredId) {
+        fillColor = "";
+      }
+
+      // Highlight with green the annotations from the active label set
+      if (this.hoveredAnnotation) {
+        /** If we are hovering over an annotation from the active label set,
+         * we change the style
+         */
+        return {
+          fill: fillColor,
+          globalCompositeOperation: "multiply",
+          hitStrokeWidth: annotation.id === this.hoveredId ? 2 : 0,
+          stroke: annotation.id === this.hoveredId ? "#67E9B7" : "",
+          name: "annotation",
+          ...this.bboxToRect(bbox)
+        };
+      } else {
+        return {
+          fill: fillColor,
+          globalCompositeOperation: "multiply",
+          hitStrokeWidth: 0,
+          name: "annotation",
+          ...this.bboxToRect(bbox)
+        };
+      }
     },
 
     /**
@@ -203,12 +241,51 @@ export default {
       });
       this.$store.dispatch("sidebar/setAnnotationSelected", annotation);
     },
-    onAnnotationHover(annotation) {
+
+    onAnnotationHover(annotation, activeAnnotationSet) {
       // hack to change the cursor when hovering an annotation
       if (annotation) {
         this.$refs.stage.$el.style.cursor = "pointer";
+
+        // Check if the current annotation belongs to the active set
+        // Get all the labels from all groups in one array
+        const activeAnnotationSetArray = activeAnnotationSet.group.flatMap(
+          group => group.labels
+        );
+
+        let found = false;
+
+        for (let i = 0; i < activeAnnotationSetArray.length; i++) {
+          if (found) {
+            break;
+          }
+
+          if (activeAnnotationSetArray[i].annotations.length === 0) {
+            continue;
+          } else {
+            // We loop over the existing annotations:
+            for (
+              let j = 0;
+              j < activeAnnotationSetArray[i].annotations.length;
+              j++
+            ) {
+              if (
+                annotation.id === activeAnnotationSetArray[i].annotations[j].id
+              ) {
+                this.hoveredAnnotation = true;
+                this.hoveredId = activeAnnotationSetArray[i].annotations[j].id;
+                found = true;
+
+                // Highlight the active annotation on the sidebar on hover
+                this.selectLabelAnnotation(annotation);
+              }
+            }
+          }
+        }
       } else {
         this.$refs.stage.$el.style.cursor = "default";
+        this.hoveredAnnotation = false;
+        this.hoveredId = null;
       }
     }
   },

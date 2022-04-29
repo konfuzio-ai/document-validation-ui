@@ -41,11 +41,9 @@
       border-bottom: none;
     }
 
-    &:hover {
-      background-color: var(--hoverColor);
-    }
+    &:hover,
     &.selected {
-      background-color: var(--lowOpacityPrimaryColor);
+      background-color: var(--hoverColor);
     }
 
     .label-property-top {
