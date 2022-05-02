@@ -17,6 +17,10 @@ const state = {
 };
 
 const getters = {
+  isAnnotationInDeletedState: state => annotation => {
+    return annotation.revised === true && annotation.is_correct === false;
+  },
+
   /**
    * Get annotation sets grouped if there's one with the multiple
    * annotations property enabled.
@@ -96,17 +100,14 @@ const getters = {
   /**
    * All annotations with required information
    */
-  annotations: state => annotationSets => {
+  annotations: (state, getters) => annotationSets => {
     const annotations = [];
     annotationSets.map(annotationSet => {
       annotationSet.labels.map(label => {
         label.annotations.map(annotation => {
-          // check if annotation is not in deleted state
-          if (
-            !(annotation.revised === true && annotation.is_correct === false)
-          ) {
+          if (!getters.isAnnotationInDeletedState(annotation)) {
             const cloneAnnotation = Object.assign({}, annotation);
-            // save annotation set info in annotation
+            // save annotation set info in the annotation
             cloneAnnotation.annotation_set = annotationSet;
             annotations.push(cloneAnnotation);
           }
@@ -119,23 +120,19 @@ const getters = {
   /**
    * Get total annotations number in an annotation set
    */
-  totalAnnotationsInAnnotationSet: state => annotationSet => {
+  totalAnnotationsInAnnotationSet: (state, getters) => annotationSet => {
     let counter = 0;
     if (annotationSet && annotationSet.group) {
       // search in every annotation group for how many annotations exist
       annotationSet.group.map(tempAnnotationSet => {
         tempAnnotationSet.labels.map(label => {
           if (label.annotations.length === 0) {
-            // check empty labels
+            // count label as an empty annotation
             counter = counter + 1;
           } else {
             label.annotations.map(annotation => {
               // check if annotation is not in deleted state
-              if (
-                !(
-                  annotation.revised === true && annotation.is_correct === false
-                )
-              ) {
+              if (!getters.isAnnotationInDeletedState(annotation)) {
                 counter = counter + 1;
               }
             });
@@ -161,8 +158,6 @@ const getters = {
         });
       });
     }
-
-    annotationSet.labels.map(label => {});
     return counter;
   },
   /**
