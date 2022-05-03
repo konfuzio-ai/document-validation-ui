@@ -8,26 +8,32 @@ body {
 }
 </style>
 <template>
-  <DocumentDashboard class="dashboard-component" />
+  <div>
+    <DocumentsList />
+    <DocumentDashboard class="dashboard-component" />
+  </div>
 </template>
 
 <script>
 import DocumentDashboard from "./components/DocumentDashboard";
+import { DocumentsList } from "./components/DocumentsList";
 import store from "./store";
 export default {
   store,
   name: "App",
   components: {
+    DocumentsList,
     DocumentDashboard
   },
   created() {
     // fetch info from API and save it on store
     this.$store.dispatch("document/startLoading");
-    Promise.all([this.$store.dispatch("document/fetchAnnotations")]).finally(
-      () => {
-        this.$store.dispatch("document/endLoading");
-      }
-    );
+    Promise.all([
+      this.$store.dispatch("document/fetchDocumentList"),
+      this.$store.dispatch("document/fetchAnnotations")
+    ]).finally(() => {
+      this.$store.dispatch("document/endLoading");
+    });
   }
 };
 </script>
