@@ -190,6 +190,8 @@ export default {
       const annotationName = annotation.annotation_set.label_set.name;
       const activeSetName = activeAnnotationSet.group[0].label_set.name;
       let fillColor = window.annotationColor || "yellow";
+      let strokeWidth = 0;
+      let strokeColor = "";
 
       // if activeSet
       if (annotationName === activeSetName) {
@@ -197,20 +199,25 @@ export default {
       }
 
       // if hovered
-      if (annotation.id === this.hoveredId) {
+      if (
+        annotation.id === this.hoveredId ||
+        annotation.id === this.focusedAnnotation.id
+      ) {
         fillColor = "";
+        strokeWidth = 2;
+        strokeColor = "#67E9B7";
       }
 
       // Highlight with green the annotations from the active label set
-      if (this.hoveredAnnotation) {
+      if (this.hoveredAnnotation || this.focusedAnnotation) {
         /** If we are hovering over an annotation from the active label set,
          * we change the style
          */
         return {
           fill: fillColor,
           globalCompositeOperation: "multiply",
-          hitStrokeWidth: annotation.id === this.hoveredId ? 2 : 0,
-          stroke: annotation.id === this.hoveredId ? "#67E9B7" : "",
+          hitStrokeWidth: strokeWidth,
+          stroke: strokeColor,
           name: "annotation",
           ...this.bboxToRect(bbox)
         };
@@ -218,7 +225,7 @@ export default {
         return {
           fill: fillColor,
           globalCompositeOperation: "multiply",
-          hitStrokeWidth: 0,
+          hitStrokeWidth: strokeWidth,
           name: "annotation",
           ...this.bboxToRect(bbox)
         };
@@ -286,6 +293,10 @@ export default {
         this.$refs.stage.$el.style.cursor = "default";
         this.hoveredAnnotation = false;
         this.hoveredId = null;
+        // Set the id back to null so that the annotation doesn't stay selected
+        this.$store.dispatch("document/setFocusedAnnotation", {
+          id: null
+        });
       }
     }
   },
