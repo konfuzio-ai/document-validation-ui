@@ -19,7 +19,7 @@
     overflow: hidden;
     overflow-x: auto;
     white-space: nowrap;
-    padding: 16px 16px 0 16px;
+    padding: 16px 16px 1px 16px;
 
     ul {
       flex-wrap: wrap;
@@ -70,9 +70,8 @@
       &.is-active {
         a {
           color: var(--primaryColor);
-          border-width: 2px;
+          border-width: 1px;
           border-bottom-color: var(--primaryColor);
-          font-family: "Inter", sans-serif;
 
           .label-counter {
             color: var(--primaryColor);
