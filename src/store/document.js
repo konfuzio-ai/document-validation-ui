@@ -13,7 +13,8 @@ const state = {
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  annotationSelected: null
+  annotationSelected: null,
+  documents: null
 };
 
 const getters = {
@@ -211,9 +212,6 @@ const actions = {
   setDocId: ({ commit }, id) => {
     commit("SET_DOC_ID", id);
   },
-  setDocId: ({ commit }, id) => {
-    commit("SET_DOC_ID", id);
-  },
   setAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
@@ -234,7 +232,31 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchAnnotations: async ({ commit, state, getters }) => {
+  fetchDocumentList: ({ commit, state, getters }) => {
+    // TODO: add this token to .env
+    let config = {
+      headers: {
+        token: "47090b82323255b2f0b4e75c41243f67a3aee7ec"
+      }
+    };
+
+    return HTTP.get(`documents/`, config)
+      .then(response => {
+        console.log("response:", response);
+        if (response.data.results) {
+          commit("SET_DOCUMENTS", response.data.results);
+        }
+      })
+      .catch(error => {
+        console.log(error, "Could not fetch document list from the backend");
+      });
+  },
+
+  /**
+   * Actions that use HTTP requests always return the axios promise,
+   * so they can be `await`ed (useful to set the `loading` status).
+   */
+  fetchAnnotations: ({ commit, state, getters }) => {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
         if (response.data.annotation_sets) {
@@ -292,6 +314,9 @@ const mutations = {
   },
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
+  },
+  SET_DOCUMENTS: (state, documents) => {
+    state.documents = documents;
   },
   SET_ACTIVE_ANNOTATION_SET: (state, annotationSet) => {
     state.activeAnnotationSet = annotationSet;

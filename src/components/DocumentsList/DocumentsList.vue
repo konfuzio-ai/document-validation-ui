@@ -124,32 +124,54 @@
       <div
         :class="[
           'documents-list-thumbnail',
-          currentPage == page.pageNumber && 'selected'
+          currentPage == document.id && 'selected'
         ]"
-        v-for="page in pages"
-        v-bind:key="page.id"
-        v-on:click="changePage(page.pageNumber)"
+        v-for="document in documents"
+        v-bind:key="document.id"
+        v-on:click="changeDocument(document.id)"
       >
         <img
-          :class="[
-            'img-thumbnail',
-            currentPage == page.pageNumber && 'selected'
-          ]"
-          :src="page.image"
+          :class="['img-thumbnail', documentId == document.id && 'selected']"
+          :src="document.image"
           alt
         />
         <div
-          :class="[
-            'document-name',
-            currentPage == page.pageNumber && 'selected'
-          ]"
+          :class="['document-name', documentId == document.id && 'selected']"
         >
-          {{ page.pageNumber }}.pdf
+          {{ document.name }}
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+/*
+  results: Array(5)
+0:
+annotation_sets: Array(1)
+assignee: null
+categorization_time: null
+category: 26
+category_confidence: 1
+dataset_status: 0
+extraction_time: 0.616085529327393
+extraction_url: "https://testing.konfuzio.com/api/v1/docs/2222/"
+file_url: "/doc/show/2222/"
+id: 2222
+number_of_pages: 1
+ocr_time: 2.85809087753296
+project: 5
+status_data: 2
+text: null
+
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
+
+  */
+export default {};
+</script>
+
+<style></style>
 
 <script>
 import { mapState } from "vuex";
@@ -163,9 +185,14 @@ export default {
   name: "DocumentsList",
   props: {},
   computed: {
-    ...mapState("document", ["pages"]),
-    ...mapState("display", ["currentPage"])
+    ...mapState("document", ["documents", "documentId"])
   },
-  methods: {}
+  methods: {
+    changeDocument(documentId) {
+      this.$store.dispatch("document/setDocId", {
+        id: documentId
+      });
+    }
+  }
 };
 </script>
