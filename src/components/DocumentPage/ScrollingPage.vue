@@ -31,7 +31,8 @@ export default {
   data() {
     return {
       elementTop: 0,
-      elementHeight: 0
+      elementHeight: 0,
+      previousFocusedAnnotation: null
     };
   },
 
@@ -98,7 +99,16 @@ export default {
      * the page's element top and a padding margin.
      */
     scrollTo(y) {
-      this.$emit("page-jump", this.elementTop + y - 80);
+      /**
+       * Do not scroll if the annotations are within a similar "y" coordinate
+       * to void some unnecessary scrolling
+       */
+      if (
+        this.previousFocusedAnnotation - y > 30 ||
+        y - this.previousFocusedAnnotation > 30
+      ) {
+        this.$emit("page-jump", this.elementTop + y - 80);
+      }
     }
   },
 
@@ -111,14 +121,13 @@ export default {
      * Scroll to the focused annotation if it changes and it's on this page.
      */
     focusedAnnotation(focused) {
-      if (
-        (focused.scroll === "page" || focused.scroll === "both") &&
-        focused.pageNumber === this.page.pageNumber
-      ) {
+      if (focused.pageNumber === this.page.pageNumber) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {
-          this.scrollTo(this.getYForBbox(focused.bboxes[0]));
+          const focusedCoordinates = this.getYForBbox(focused.span[0]);
+          this.scrollTo(focusedCoordinates);
+          this.previousFocusedAnnotation = focusedCoordinates;
         });
       }
     }

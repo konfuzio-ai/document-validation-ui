@@ -2,6 +2,10 @@
 .scrolling-page {
   margin: 8px 0;
 }
+
+.scrolling-document {
+  scroll-behavior: smooth;
+}
 </style>
 <template>
   <div class="scrolling-document" v-scroll.immediate="updateScrollBounds">
