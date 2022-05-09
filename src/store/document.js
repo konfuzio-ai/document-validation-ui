@@ -13,8 +13,7 @@ const state = {
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  annotationSelected: null,
-  documents: null
+  annotationSelected: null
 };
 
 const getters = {
@@ -290,9 +289,6 @@ const mutations = {
   },
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
-  },
-  SET_DOCUMENTS: (state, documents) => {
-    state.documents = documents;
   },
   SET_ACTIVE_ANNOTATION_SET: (state, annotationSet) => {
     state.activeAnnotationSet = annotationSet;
