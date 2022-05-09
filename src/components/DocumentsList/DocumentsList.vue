@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: row;
     padding: 40px;
+    min-height: 80px;
 
     .documents-list-top-left {
       flex: 1;
@@ -72,8 +73,8 @@
     flex-direction: row;
     margin-top: 14px;
     min-height: 124px;
-    cursor: pointer;
     .documents-list-thumbnail {
+      cursor: pointer;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -103,20 +104,20 @@
 }
 </style>
 <template>
-  <div class="documents-list">
+  <div class="documents-list" v-if="selectedCategory">
     <div class="documents-list-top">
       <div class="documents-list-top-left">
-        <h2>Title</h2>
+        <h2>{{ selectedCategory.name }}</h2>
         <p>
-          Unter Rechnung wird jedes Dokument verstanden, das die Abrechnung über
-          eine Lieferung oder sonstige Leistung zum Inhalt hat, gleichgültig,
-          wie dieses Dokument im Geschäftsverkehr bezeichnet wird.
+          {{ selectedCategory.description }}
         </p>
       </div>
       <div class="documents-list-top-right">
         <div class="action-box">
-          <span>Demozugang kostenfrei anfragen</span>
-          <button type="button">Testzugang erhalten</button>
+          <span>{{ $t("upload_documents") }}</span>
+          <button type="button">
+            {{ $t("request_trial") }}
+          </button>
         </div>
       </div>
     </div>
@@ -124,7 +125,7 @@
       <div
         :class="[
           'documents-list-thumbnail',
-          currentPage == document.id && 'selected'
+          documentId == document.id && 'selected'
         ]"
         v-for="document in documents"
         v-bind:key="document.id"
@@ -185,7 +186,8 @@ export default {
   name: "DocumentsList",
   props: {},
   computed: {
-    ...mapState("document", ["documents", "documentId"])
+    ...mapState("document", ["documentId"]),
+    ...mapState("category", ["documents", "selectedCategory"])
   },
   methods: {
     changeDocument(documentId) {
