@@ -30,37 +30,35 @@
 </style>
 
 <template>
-  <div>
-    <DocumentsList />
-    <div class="dashboard-viewer">
-      <DocumentThumbnails ref="documentPages" />
-      <ScrollingDocument
-        class="dashboard-document"
-        v-bind="{ pages, pageCount }"
-        v-slot="{ page, isPageFocused, isElementFocused }"
-        ref="scrollingDocument"
-        :enable-page-jump="true"
-        @page-jump="onPageJump"
-        @pages-reset="fitWidth"
-      >
-        <keep-alive>
-          <DummyPage
-            v-if="!pageInVisibleRange(page.pageNumber)"
-            v-bind="{ page, isPageFocused, isElementFocused }"
-          />
-          <DocumentPage
-            v-else
-            v-bind="{
-              page,
-              isPageFocused,
-              isElementFocused
-            }"
-          />
-        </keep-alive>
-      </ScrollingDocument>
-      <DocumentLabelSets ref="labelSets" />
-      <div class="not-supported" v-if="!isMinimunWidth">
-        <div class="text">{{ $t("resolution_not_supported") }}</div>
+  <div class="dashboard-viewer">
+    <DocumentThumbnails ref="documentPages" />
+    <ScrollingDocument
+      class="dashboard-document"
+      v-bind="{ pages, pageCount }"
+      v-slot="{ page, isPageFocused, isElementFocused }"
+      ref="scrollingDocument"
+      :enable-page-jump="true"
+      @page-jump="onPageJump"
+      @pages-reset="fitWidth"
+    >
+      <keep-alive>
+        <DummyPage
+          v-if="!pageInVisibleRange(page.pageNumber)"
+          v-bind="{ page, isPageFocused, isElementFocused }"
+        />
+        <DocumentPage
+          v-else
+          v-bind="{
+            page,
+            isPageFocused,
+            isElementFocused
+          }"
+        />
+      </keep-alive>
+    </ScrollingDocument>
+    <DocumentLabelSets ref="labelSets" />
+    <div class="not-supported" v-if="!isMinimunWidth">
+      <div class="text">{{ $t("resolution_not_supported") }}</div>
     </div>
   </div>
 </template>
