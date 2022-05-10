@@ -12,6 +12,7 @@
     "@sentry/vue": "^6.2.0",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
+    "buefy": "^0.9.20",
     "konva": "^8.3.6",
     "sass": "^1.49.11",
     "sass-loader": "^12.6.0",
