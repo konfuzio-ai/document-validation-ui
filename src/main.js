@@ -5,7 +5,6 @@ import store from "./store";
 import App from "./App.vue";
 import * as Sentry from "@sentry/vue";
 import i18n from "./i18n";
-import "buefy/dist/buefy.css";
 
 Vue.use(VueKonva);
 Vue.use(Buefy, { defaultIconPack: "fas" });

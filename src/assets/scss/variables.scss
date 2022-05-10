@@ -1,0 +1,37 @@
+/* Theme */
+$green: #12b76a;
+$red: #f13131;
+
+$dark: #2f3032;
+
+$grey-dark: #344054;
+$grey: #858c9a;
+$grey-lighter: #c7c7c7;
+$grey-lightest: #f0f0f0;
+
+$yellow: #ffd600;
+$blue: #2f80ed;
+$white: #fff;
+
+$primary: #34ab7d;
+$primary-dark: #0c4b33;
+$primary-low-opacity: rgba(52, 171, 125, 0.16);
+
+$link: $primary;
+$info: $blue;
+$danger: $red;
+$warning: $yellow;
+$success: $green;
+$text: $grey-dark;
+$text-strong: $dark;
+$text-lighter: $grey;
+$black: $dark;
+
+$background: #f7f7f7;
+$detail: #e2e3e4;
+
+$input-shadow: none;
+$header-size: 2px;
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

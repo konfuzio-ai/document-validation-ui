@@ -7,7 +7,7 @@
   .label-title {
     font-weight: 600;
     font-size: 18px;
-    color: var(--textColor);
+    color: $text;
     margin-top: 24px;
   }
 
@@ -15,7 +15,7 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: var(--secondaryTextColor);
+    color: $text-lighter;
   }
 
   .label-group {
@@ -25,7 +25,7 @@
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
-      color: var(--textColor);
+      color: $text;
     }
   }
 
@@ -34,7 +34,7 @@
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
-    border-bottom: 1px solid var(--bgColor);
+    border-bottom: 1px solid $background;
     transition: background-color 0.2s ease-out;
 
     &:last-child {
@@ -43,7 +43,7 @@
 
     &:hover,
     &.selected {
-      background-color: var(--hoverColor);
+      background-color: $grey-lightest;
     }
 
     .label-property-top {
@@ -73,17 +73,17 @@
         }
 
         .label-property-text {
-          color: var(--secondaryTextColor);
+          color: $text-lighter;
           margin-left: 4px;
           width: 100%;
-          border-right: 4px solid var(--yellow);
+          border-right: 4px solid $yellow;
 
           &.green {
-            border-color: var(--green);
+            border-color: $green;
           }
 
           &.red {
-            border-color: var(--red);
+            border-color: $red;
           }
         }
       }
@@ -98,7 +98,7 @@
         }
 
         .label-property-value {
-          color: var(--textColor);
+          color: $text;
           margin-left: 8px;
         }
       }
@@ -108,10 +108,10 @@
       padding: 0 20px;
       height: 0px;
       opacity: 0;
-      color: var(--textColor);
+      color: $text;
       display: flex;
       align-items: center;
-      background-color: var(--bgColor);
+      background-color: $background;
       transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
       &.open {

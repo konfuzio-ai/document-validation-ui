@@ -1,10 +1,10 @@
 <style scoped lang="scss">
 .document-pages {
-  background: var(--bgColor);
+  background: $background;
   min-width: 80px;
   overflow-y: auto;
   font-family: "Inter", sans-serif;
-  height: calc(100vh - var(--headerSize));
+  height: calc(100vh - $header-size);
 
   .document-thumbnail {
     text-align: center;
@@ -13,7 +13,7 @@
     cursor: pointer;
 
     .img-thumbnail.selected {
-      outline: 2px solid var(--thumbnailSelectedColor);
+      outline: 2px solid $dark;
     }
     .img-thumbnail {
       width: 40px;
@@ -21,7 +21,7 @@
     }
 
     .number-thumbnail {
-      color: var(--textColor);
+      color: $text;
       font-size: 12px;
       margin-top: 4px;
     }

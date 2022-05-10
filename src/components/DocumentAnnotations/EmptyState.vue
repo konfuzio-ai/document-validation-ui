@@ -16,7 +16,7 @@
 
     .title {
       font-size: 16px;
-      color: var(--textColor);
+      color: $text;
       font-weight: 500;
       text-align: center;
       margin: 0;
@@ -25,7 +25,7 @@
     .description {
       font-size: 14px;
       line-height: 20px;
-      color: var(--secondaryTextColor);
+      color: $text-lighter;
       font-weight: 400;
       text-align: center;
     }

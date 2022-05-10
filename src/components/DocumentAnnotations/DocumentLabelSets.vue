@@ -1,9 +1,9 @@
 <style scoped lang="scss">
 .labels {
   width: 40%;
-  background-color: var(--labelsBackgroundColor);
+  background-color: $white;
 
-  height: calc(100vh - var(--headerSize));
+  height: calc(100vh - $header-size);
 
   .labels-container {
     display: flex;
@@ -42,8 +42,8 @@
 
     .label-tab {
       a {
-        color: var(--secondaryTextColor);
-        border-bottom: 1px solid var(--detailColor);
+        color: $text-lighter;
+        border-bottom: 1px solid $detail;
         cursor: pointer;
         font-size: 14px;
         line-height: 20px;
@@ -57,10 +57,10 @@
         vertical-align: top;
 
         .label-counter {
-          color: var(--secondaryTextColor);
+          color: $grey;
           margin-left: 4px;
           padding: 0 8px;
-          background: var(--bgColor);
+          background: $background;
           border-radius: 500px;
           font-size: 12px;
           transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
@@ -69,20 +69,20 @@
 
       &.is-active {
         a {
-          color: var(--primaryColor);
+          color: $primary;
           border-width: 1px;
-          border-bottom-color: var(--primaryColor);
+          border-bottom-color: $primary;
 
           .label-counter {
-            color: var(--primaryColor);
-            background: var(--lowOpacityPrimaryColor);
+            color: $primary;
+            background: $primary-low-opacity;
           }
         }
       }
       &:not(.is-active) {
         a:hover {
-          border-bottom-color: var(--secondaryTextColor);
-          color: var(--secondaryTextColor);
+          border-bottom-color: $grey;
+          color: $grey;
         }
       }
     }

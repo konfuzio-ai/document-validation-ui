@@ -2,10 +2,10 @@
 .dashboard-viewer {
   overflow: hidden;
   display: flex;
-  background: var(--documentBackgroundColor);
+  background: $grey-lighter;
   .dashboard-document {
     overflow: auto;
-    height: calc(100vh - var(--headerSize));
+    height: calc(100vh - $header-size);
     flex: 1;
     background-image: radial-gradient(#bfc1c9 0.8px, #93989f 0.1px);
     background-size: 9px 9px;
