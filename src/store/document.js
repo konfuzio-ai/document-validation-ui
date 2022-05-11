@@ -281,6 +281,13 @@ const actions = {
 
   resetFocusedAnnotation: ({ commit }) => {
     commit("SET_FOCUSED_ANNOTATION", { id: null });
+  },
+
+  updateAnnotation: ({ commit, state }, annotation, updatedValue) => {
+    // TODO: http request to update annotation
+    // await http.patch('/documents/${state.documentId}/${state.annotations}/${annotation.id}', updatedValue))
+    // .then(function((response) { console.log(response)})
+    // .catch(function(error) {console.log(error)});
   }
 };
 

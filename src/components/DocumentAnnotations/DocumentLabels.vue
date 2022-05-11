@@ -19,6 +19,8 @@
   }
 
   .label-group {
+    cursor: default;
+
     .label-group-name {
       margin-top: 24px;
       margin-bottom: 8px;
@@ -100,12 +102,29 @@
         .label-property-value {
           color: $text;
           margin-left: 8px;
+          border: none;
+          background-color: transparent;
+        }
+
+        .label-property-value:focus {
+          outline: none;
+        }
+
+        [contenteditable].label-property-value {
+          overflow: hidden;
+        }
+      }
+
+      @media (max-width: 1100px) {
+        [contenteditable].label-property-value {
+          word-break: break-all;
         }
       }
     }
 
     .label-property-description {
       padding: 0 20px;
+      overflow: hidden;
       height: 0px;
       opacity: 0;
       color: $text;
@@ -185,9 +204,22 @@
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
-                  <span class="label-property-value">{{
-                    annotation.offset_string
-                  }}</span>
+                  <span
+                    v-if="annotation.offset_string"
+                    class="label-property-value"
+                    role="textbox"
+                    contenteditable
+                    @blur="event => handleBlur(event, annotation)"
+                    @keypress.enter="event => event.preventDefault()"
+                    @click="
+                      annotation.label_description && onLabelClick(annotation)
+                    "
+                  >
+                    {{ annotation.offset_string }}
+                  </span>
+                  <span v-else class="label-property-value">
+                    {{ annotation.offset_string }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -256,6 +288,47 @@ export default {
       this.$store.dispatch("document/setFocusedAnnotation", {
         id: annotation && annotation.id ? annotation.id : null
       });
+    },
+    handleBlur(event, annotation) {
+      const span = annotation.span[0];
+      const id = annotation.id;
+      const oldValue = span.offset_string;
+      const newValue = event.target.textContent.trim();
+      const newValueIsInOldValue = oldValue.includes(newValue);
+      const bottom = span.bottom;
+      const top = span.top;
+      const pageIndex = span.page_index;
+      const x0 = span.x0;
+      const x1 = span.x1;
+      const y0 = span.y0;
+      const y1 = span.y1;
+
+      // If the user didn't change the value, we don't want to do anything
+      if (newValue === oldValue) {
+        return;
+      } else if (newValue.length === 0 || !newValueIsInOldValue) {
+        // Show warning to the user
+        console.log("AI cannot be trained!");
+        // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
+      }
+
+      const updatedString = {
+        span: [
+          {
+            offset_string: newValue,
+            bottom: bottom,
+            top: top,
+            page_index: pageIndex,
+            x0: x0,
+            x1: x1,
+            y0: y0,
+            y1: y1
+          }
+        ]
+      };
+      console.log(updatedString);
+      // TODO: update in store:
+      // this.$store.dispatch("document/updateAnnotation", {annotationId: id, updatedString: updatedString})
     }
   },
   watch: {
