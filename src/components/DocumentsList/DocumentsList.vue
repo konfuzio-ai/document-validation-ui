@@ -1,6 +1,6 @@
 <style scoped lang="scss">
 .documents-list {
-  background-color: var(--bgColor);
+  background-color: $background;
   font-family: "Inter", sans-serif;
   .documents-list-top {
     display: flex;
@@ -13,14 +13,14 @@
 
       h2 {
         font-size: 26px;
-        color: var(--textColor);
+        color: $text;
         font-weight: 600;
         line-height: 33px;
         margin: 0;
       }
       p {
         font-size: 14px;
-        color: var(--secondaryTextColor);
+        color: $text-lighter;
         font-weight: 400;
         line-height: 20px;
         margin: 0;
@@ -36,7 +36,7 @@
         align-self: center;
         width: 75%;
         height: 100%;
-        background-color: var(--lowOpacityPrimaryColor);
+        background-color: $primary-low-opacity;
         display: flex;
         justify-content: center;
         align-items: flex-start;
@@ -46,13 +46,13 @@
           font-weight: 600;
           font-size: 16px;
           line-height: 24px;
-          color: var(--textColor);
+          color: $text;
         }
         button {
           position: absolute;
           bottom: -20px;
           height: 40px;
-          background-color: var(--primaryColor);
+          background-color: $primary;
           color: white;
           border: none;
           border-radius: 4px;
@@ -62,7 +62,8 @@
           line-height: 20px;
           cursor: pointer;
           &:hover {
-            background-color: var(--hoverPrimaryColor);
+            // TODO: remove styles and use buefy
+            //background-color: var(--hoverPrimaryColor);
           }
         }
       }
@@ -82,12 +83,12 @@
       align-items: center;
       &.selected {
         background-color: white;
-        border-bottom: 3px solid var(--primaryColor);
+        border-bottom: 3px solid $primary;
       }
       img {
         max-height: 60px;
         &.selected {
-          outline: 1px solid var(--thumbnailSelectedColor);
+          outline: 1px solid $dark;
         }
       }
       .document-name {
