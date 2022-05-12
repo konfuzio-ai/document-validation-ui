@@ -177,7 +177,8 @@ const getters = {
     page.pageNumber = page.number;
     delete page.number;
     if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-      page.image = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image}`;
+      page.image_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image_url}`;
+      page.thumbnail_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.thumbnail_url}`;
     }
     return page;
   },
@@ -211,9 +212,6 @@ const actions = {
   setDocId: ({ commit }, id) => {
     commit("SET_DOC_ID", id);
   },
-  setDocId: ({ commit }, id) => {
-    commit("SET_DOC_ID", id);
-  },
   setAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
@@ -234,7 +232,7 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchAnnotations: async ({ commit, state, getters }) => {
+  fetchAnnotations: ({ commit, state, getters }) => {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
         if (response.data.annotation_sets) {

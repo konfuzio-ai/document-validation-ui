@@ -143,7 +143,7 @@ export default {
         return;
       }
       const image = new Image();
-      image.src = this.page.image;
+      image.src = this.page.image_url;
       image.onload = () => {
         // set image only when it is loaded
         this.image = image;
