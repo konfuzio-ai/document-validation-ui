@@ -9,9 +9,12 @@ $grey: #858c9a;
 $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 
-$yellow: #ffd600;
+$yellow: rgba(254, 200, 75, 0.5);
 $blue: #2f80ed;
 $white: #fff;
+
+$light-yellow: #fffcf5;
+$dark-yellow: #c17a00;
 
 $primary: #34ab7d;
 $primary-dark: #0c4b33;
@@ -29,6 +32,11 @@ $black: $dark;
 
 $background: #f7f7f7;
 $detail: #e2e3e4;
+
+$message-body-border-color: $yellow;
+$message-body-border-width: 1px;
+$message-body-padding: 8px 16px;
+$message-body-color: $dark-yellow;
 
 $input-shadow: none;
 $header-size: 2px;

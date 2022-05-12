@@ -139,6 +139,35 @@
       }
     }
   }
+
+  .warning {
+    .warning-msg {
+      font-size: 14px !important;
+      background-color: $light-yellow;
+
+      .message-container {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+      }
+    }
+
+    .close-btn:hover {
+      cursor: pointer;
+    }
+
+    @media (max-width: 1064px) {
+      .btn-container {
+        align-self: flex-start;
+      }
+    }
+  }
+
+  .hidden {
+    display: none;
+  }
 }
 </style>
 <template>
@@ -210,6 +239,7 @@
                     role="textbox"
                     contenteditable
                     @blur="event => handleBlur(event, annotation)"
+                    @input="event => handleInput(event, annotation)"
                     @keypress.enter="event => event.preventDefault()"
                     @click="
                       annotation.label_description && onLabelClick(annotation)
@@ -231,6 +261,24 @@
             >
               {{ annotation.label_description }}
             </div>
+            <div
+              v-if="showWarning"
+              :class="[
+                'warning',
+                !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
+              ]"
+            >
+              <b-message
+                class="warning-msg message-body-border-color message-body-padding message-body-color"
+              >
+                <div class="message-container">
+                  {{ warningMessage }}
+                  <div @click="handleClose" class="btn-container">
+                    <CloseBtnImg class="close-btn" />
+                  </div>
+                </div>
+              </b-message>
+            </div>
           </div>
         </div>
       </div>
@@ -246,18 +294,26 @@
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import CaretDown from "../../assets/CaretDownImg";
+import CloseBtnImg from "../../assets/CloseBtnImg";
 /**
  * This component loads all annotations in a label set
  */
 export default {
   components: {
     EmptyState,
-    CaretDown
+    CaretDown,
+    CloseBtnImg
   },
   data() {
     return {
       labelOpen: null,
-      annotationAnimationTimeout: null
+      annotationAnimationTimeout: null,
+      oldValue: null,
+      newValue: null,
+      warningMessage: "AI can’t be trained if you change the text manually.",
+      showWarning: false,
+      notEditing: true,
+      annBeingEdited: null
     };
   },
   computed: {
@@ -289,46 +345,59 @@ export default {
         id: annotation && annotation.id ? annotation.id : null
       });
     },
+    // Check if the user deleted or added text to the annotation
+    isNewValueInOld(event, annotation) {
+      this.oldValue = annotation.span[0].offset_string;
+      this.newValue = event.target.textContent.trim();
+      return this.oldValue.includes(this.newValue);
+    },
+
+    handleInput(event, annotation) {
+      const newInOldValue = this.isNewValueInOld(event, annotation);
+      this.annBeingEdited = annotation;
+      this.notEditing = false;
+      // If the user changes the input by adding to the existing annotation
+      // we show a warning
+      if (!newInOldValue || this.newValue.length === 0) {
+        this.showWarning = true;
+      }
+    },
     handleBlur(event, annotation) {
+      const newInOldValue = this.isNewValueInOld(event, annotation);
       const span = annotation.span[0];
       const id = annotation.id;
-      const oldValue = span.offset_string;
-      const newValue = event.target.textContent.trim();
-      const newValueIsInOldValue = oldValue.includes(newValue);
-      const bottom = span.bottom;
-      const top = span.top;
-      const pageIndex = span.page_index;
-      const x0 = span.x0;
-      const x1 = span.x1;
-      const y0 = span.y0;
-      const y1 = span.y1;
 
       // If the user didn't change the value, we don't want to do anything
-      if (newValue === oldValue) {
+      if (this.newValue === this.oldValue) {
         return;
-      } else if (newValue.length === 0 || !newValueIsInOldValue) {
-        // Show warning to the user
-        console.log("AI cannot be trained!");
-        // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
       }
+      // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
 
       const updatedString = {
         span: [
           {
-            offset_string: newValue,
-            bottom: bottom,
-            top: top,
-            page_index: pageIndex,
-            x0: x0,
-            x1: x1,
-            y0: y0,
-            y1: y1
+            offset_string: this.newValue,
+            bottom: span.bottom,
+            top: span.top,
+            page_index: span.page_index,
+            x0: span.x0,
+            x1: span.x1,
+            y0: span.y0,
+            y1: span.y1
           }
         ]
       };
+
       console.log(updatedString);
+
       // TODO: update in store:
-      // this.$store.dispatch("document/updateAnnotation", {annotationId: id, updatedString: updatedString})
+      // this.$store.dispatch("document/updateAnnotation", {
+      //   annotationId: id,
+      //   updatedValues: updatedString
+      // });
+    },
+    handleClose() {
+      this.showWarning = false;
     }
   },
   watch: {
