@@ -41,7 +41,7 @@
     >
       <img
         :class="['img-thumbnail', currentPage == page.pageNumber && 'selected']"
-        :src="page.image"
+        :src="page.thumbnail_url"
         alt
       />
       <div class="number-thumbnail">{{ page.pageNumber }}</div>

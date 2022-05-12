@@ -48,23 +48,16 @@
           line-height: 24px;
           color: $text;
         }
-        button {
+        .action-button {
           position: absolute;
           bottom: -20px;
           height: 40px;
-          background-color: $primary;
-          color: white;
-          border: none;
           border-radius: 4px;
           padding: 0 16px;
           font-weight: 500;
           font-size: 14px;
           line-height: 20px;
           cursor: pointer;
-          &:hover {
-            // TODO: remove styles and use buefy
-            //background-color: var(--hoverPrimaryColor);
-          }
         }
       }
     }
@@ -116,9 +109,9 @@
       <div class="documents-list-top-right">
         <div class="action-box">
           <span>{{ $t("upload_documents") }}</span>
-          <button type="button">
-            {{ $t("request_trial") }}
-          </button>
+          <b-button class="action-button" type="is-primary">{{
+            $t("request_trial")
+          }}</b-button>
         </div>
       </div>
     </div>
@@ -134,13 +127,13 @@
       >
         <img
           :class="['img-thumbnail', documentId == document.id && 'selected']"
-          :src="document.image"
+          :src="document.thumbnail_url"
           alt
         />
         <div
           :class="['document-name', documentId == document.id && 'selected']"
         >
-          {{ document.name }}
+          {{ document.data_file_name }}
         </div>
       </div>
     </div>
@@ -149,23 +142,6 @@
 
 <script>
 /*
-  results: Array(5)
-0:
-annotation_sets: Array(1)
-assignee: null
-categorization_time: null
-category: 26
-category_confidence: 1
-dataset_status: 0
-extraction_time: 0.616085529327393
-extraction_url: "https://testing.konfuzio.com/api/v1/docs/2222/"
-file_url: "/doc/show/2222/"
-id: 2222
-number_of_pages: 1
-ocr_time: 2.85809087753296
-project: 5
-status_data: 2
-text: null
 
 open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
 

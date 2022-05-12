@@ -177,7 +177,8 @@ const getters = {
     page.pageNumber = page.number;
     delete page.number;
     if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-      page.image = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image}`;
+      page.image_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image_url}`;
+      page.thumbnail_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.thumbnail_url}`;
     }
     return page;
   },
