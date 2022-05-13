@@ -13,6 +13,7 @@ const state = {
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
+  token: process.env.VUE_APP_GUEST_USER_TOKEN,
   annotationSelected: null
 };
 
@@ -283,15 +284,23 @@ const actions = {
     commit("SET_FOCUSED_ANNOTATION", { id: null });
   },
 
-  updateAnnotation: async ({ state }, annotationId, updatedValues) => {
-    // TODO: http request to update annotation
-    //   await http
-    //     .patch(
-    //       `/documents/${state.documentId}/${state.annotations}/${annotationId}`,
-    //       updatedValues
-    //     )
-    //     .then(response => console.log(response))
-    //     .catch(error => console.log(error));
+  updateAnnotation: async ({ state }, { updatedValues, annotationId }) => {
+    const updatedSpan = JSON.stringify(updatedValues);
+
+    await HTTP.patch(
+      `/documents/${state.documentId}/annotations/${annotationId}`,
+      updatedSpan
+      // { headers: { Authorization: `Token ${token}` } }
+    )
+      .then(response => {
+        console.log(response);
+        // check if response is ok
+        // resolve(true); // or false
+      })
+      .catch(error => {
+        // resolve(false);
+        console.log(error);
+      });
   }
 };
 

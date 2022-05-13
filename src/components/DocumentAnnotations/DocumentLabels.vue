@@ -140,18 +140,14 @@
     }
   }
 
-  .warning {
-    .warning-msg {
+  .message {
+    .message-container {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
       font-size: 14px !important;
-      background-color: $light-yellow;
-
-      .message-container {
-        display: flex;
-        flex: 1;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-      }
     }
 
     .close-btn:hover {
@@ -196,9 +192,9 @@
                 'selected'
             ]"
             :ref="`annotation${annotation && annotation.id}`"
-            v-for="(annotation, index) in annotationsInLabelSet(annotationSet)"
-            v-bind:key="index"
-            @mouseenter="onLabelHover(annotation)"
+            v-for="annotation in annotationsInLabelSet(annotationSet)"
+            v-bind:key="annotation.id"
+            @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
           >
             <div
@@ -264,15 +260,33 @@
             <div
               v-if="showWarning"
               :class="[
-                'warning',
+                'message',
                 !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
               ]"
             >
               <b-message
-                class="warning-msg message-body-border-color message-body-padding message-body-color"
+                class="is-warning warning-msg message-body-border-color message-body-padding"
               >
                 <div class="message-container">
                   {{ warningMessage }}
+                  <div @click="handleClose" class="btn-container">
+                    <CloseBtnImg class="close-btn" />
+                  </div>
+                </div>
+              </b-message>
+            </div>
+            <div
+              v-if="showError"
+              :class="[
+                'message',
+                !edited && annotation.id !== annBeingEdited.id && 'hidden'
+              ]"
+            >
+              <b-message
+                class="is-danger danger-msg message-body-border-color message-body-padding"
+              >
+                <div class="message-container">
+                  {{ errorMessage }}
                   <div @click="handleClose" class="btn-container">
                     <CloseBtnImg class="close-btn" />
                   </div>
@@ -313,7 +327,10 @@ export default {
       warningMessage: "AI can’t be trained if you change the text manually.",
       showWarning: false,
       notEditing: true,
-      annBeingEdited: null
+      annBeingEdited: null,
+      errorMessage: "Editing was not possible. Please try again later",
+      showError: false,
+      edited: false
     };
   },
   computed: {
@@ -351,11 +368,11 @@ export default {
       this.newValue = event.target.textContent.trim();
       return this.oldValue.includes(this.newValue);
     },
-
     handleInput(event, annotation) {
       const newInOldValue = this.isNewValueInOld(event, annotation);
       this.annBeingEdited = annotation;
       this.notEditing = false;
+
       // If the user changes the input by adding to the existing annotation
       // we show a warning
       if (!newInOldValue || this.newValue.length === 0) {
@@ -363,8 +380,7 @@ export default {
       }
     },
     handleBlur(event, annotation) {
-      const newInOldValue = this.isNewValueInOld(event, annotation);
-      const span = annotation.span[0];
+      const spanArray = annotation.span[0];
       const id = annotation.id;
 
       // If the user didn't change the value, we don't want to do anything
@@ -372,32 +388,46 @@ export default {
         return;
       }
       // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
-
       const updatedString = {
         span: [
           {
             offset_string: this.newValue,
-            bottom: span.bottom,
-            top: span.top,
-            page_index: span.page_index,
-            x0: span.x0,
-            x1: span.x1,
-            y0: span.y0,
-            y1: span.y1
+            bottom: spanArray.bottom,
+            top: spanArray.top,
+            page_index: spanArray.page_index,
+            x0: spanArray.x0,
+            x1: spanArray.x1,
+            y0: spanArray.y0,
+            y1: spanArray.y1
           }
         ]
       };
 
-      console.log(updatedString);
-
-      // TODO: update in store:
-      // this.$store.dispatch("document/updateAnnotation", {
-      //   annotationId: id,
-      //   updatedValues: updatedString
-      // });
+      // Send to the store for the http patch request
+      this.$store
+        .dispatch("document/updateAnnotation", {
+          updatedValues: updatedString,
+          annotationId: id
+        })
+        .then(response => {
+          // Check if the response is successfull or not
+          if (response) {
+            this.oldValue = this.newValue;
+            this.edited = true;
+          } else {
+            event.target.textContent = this.oldValue;
+            this.newValue = this.oldValue;
+            this.showError = true;
+            this.edited = false;
+          }
+        });
     },
     handleClose() {
-      this.showWarning = false;
+      if (this.showWarning) {
+        this.showWarning = false;
+      } else if (this.showError) {
+        this.showError = false;
+      }
     }
   },
   watch: {
