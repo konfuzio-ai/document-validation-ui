@@ -9,6 +9,7 @@ const config = {
 };
 
 const state = {
+  loading: true,
   selectedCategory: null,
   categoryId: process.env.VUE_APP_CATEGORY_ID,
   documents: null
@@ -27,12 +28,19 @@ const getters = {
 };
 
 const actions = {
+  startLoading: ({ commit }) => {
+    commit("SET_LOADING", true);
+  },
+  endLoading: ({ commit }) => {
+    commit("SET_LOADING", false);
+  },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
   fetchDocumentList: ({ commit, state, getters }) => {
-    return HTTP.get(`documents/?category=${state.categoryId}`, config)
+    // TODO: add lazy loading
+    return HTTP.get(`documents/?category=${state.categoryId}&limit=100`, config)
       .then(response => {
         if (response.data.results) {
           const documents = response.data.results.map(document => {
@@ -63,6 +71,9 @@ const actions = {
 };
 
 const mutations = {
+  SET_LOADING: (state, loading) => {
+    state.loading = loading;
+  },
   SET_SELECTED_CATEGORY: (state, category) => {
     state.selectedCategory = category;
   },

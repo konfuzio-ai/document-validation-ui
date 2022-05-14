@@ -95,6 +95,10 @@
         font-size: 14px;
         line-height: 20px;
         text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
         &.selected {
           font-weight: 600;
         }
@@ -115,14 +119,17 @@
       <div class="documents-list-top-right">
         <div class="action-box">
           <span>{{ $t("upload_documents") }}</span>
-          <b-button class="action-button" type="is-primary">{{
-            $t("request_trial")
-          }}</b-button>
+          <b-button
+            class="action-button"
+            type="is-primary"
+            v-on:click="requestTrialAccess()"
+            >{{ $t("request_trial") }}</b-button
+          >
         </div>
       </div>
     </div>
     <div class="documents-list-bottom" v-if="documents">
-      <b-carousel-list :data="documents" :items-to-show="4" :icon-pack="fas">
+      <b-carousel-list :data="documents" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
@@ -150,26 +157,6 @@
           </div>
         </template>
       </b-carousel-list>
-      <!-- <div
-        :class="[
-          'documents-list-thumbnail',
-          documentId == document.id && 'selected'
-        ]"
-        v-for="document in documents"
-        v-bind:key="document.id"
-        v-on:click="changeDocument(document.id)"
-      >
-        <img
-          :class="['img-thumbnail', documentId == document.id && 'selected']"
-          :src="document.thumbnail_url"
-          alt
-        />
-        <div
-          :class="['document-name', documentId == document.id && 'selected']"
-        >
-          {{ document.data_file_name }}
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -191,6 +178,11 @@ export default {
   methods: {
     changeDocument(documentId) {
       this.$store.dispatch("document/setDocId", documentId);
+    },
+    requestTrialAccess() {
+      if (process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK) {
+        window.open(process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK, "_blank");
+      }
     }
   }
 };

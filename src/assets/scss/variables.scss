@@ -42,6 +42,14 @@ $carousel-overlay-background: none;
   .carousel-slides .carousel-slide {
     border: none !important;
   }
+
+  .carousel-arrow {
+    .icon {
+      svg {
+        height: 100%;
+      }
+    }
+  }
 }
 
 @import "~bulma";

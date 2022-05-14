@@ -6,8 +6,24 @@ import App from "./App.vue";
 import * as Sentry from "@sentry/vue";
 import i18n from "./i18n";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+// internal icons
+import {
+  faArrowUp,
+  faAngleRight,
+  faAngleLeft,
+  faAngleDown
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+library.add(faArrowUp, faAngleRight, faAngleLeft, faAngleDown);
+Vue.component("vue-fontawesome", FontAwesomeIcon);
+
 Vue.use(VueKonva);
-Vue.use(Buefy, { defaultIconPack: "fas" });
+Vue.use(Buefy, {
+  defaultIconPack: "fas",
+  defaultIconComponent: "vue-fontawesome"
+});
 
 // Sentry config
 if (process.env.NODE_ENV != "development") {
