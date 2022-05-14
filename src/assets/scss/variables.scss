@@ -33,5 +33,16 @@ $detail: #e2e3e4;
 $input-shadow: none;
 $header-size: 2px;
 
+$carousel-overlay-background: none;
+
+.carousel-list {
+  &.has-shadow {
+    box-shadow: none !important;
+  }
+  .carousel-slides .carousel-slide {
+    border: none !important;
+  }
+}
+
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
