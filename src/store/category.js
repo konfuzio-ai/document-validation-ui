@@ -34,6 +34,12 @@ const actions = {
   endLoading: ({ commit }) => {
     commit("SET_LOADING", false);
   },
+  setDocuments: ({ commit }, documents) => {
+    commit("SET_DOCUMENTS", documents);
+  },
+  setSelectedCategory: ({ commit }, category) => {
+    commit("SET_SELECTED_CATEGORY", category);
+  },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
