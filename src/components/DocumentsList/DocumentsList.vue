@@ -143,7 +143,7 @@
                 'img-thumbnail',
                 documentId == document.id && 'selected'
               ]"
-              src="https://testing.konfuzio.com/page/show-thumbnail/107/"
+              :src="document.thumbnail_url"
               alt
             />
             <div
