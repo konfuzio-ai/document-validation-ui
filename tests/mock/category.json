@@ -1,0 +1,125 @@
+{
+  "id": 27,
+  "name": "Zugticket",
+  "api_name": "Zugticket",
+  "project": 5,
+  "description": "",
+  "active_ai_model": 190,
+  "ai_model_type": "extraction",
+  "extraction_ai_model_parameters": {},
+  "schema": [
+    {
+      "id": 29,
+      "name": "Fahrgast",
+      "api_name": "Fahrgast",
+      "labels": [
+        {
+          "id": 82,
+          "name": "Anrede",
+          "api_name": "Anrede",
+          "data_type": "Text"
+        },
+        {
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "data_type": "Text"
+        },
+        {
+          "id": 79,
+          "name": "Nachname",
+          "api_name": "Nachname",
+          "data_type": "Text"
+        },
+        {
+          "id": 78,
+          "name": "Vorname",
+          "api_name": "Vorname",
+          "data_type": "Text"
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "name": "Person",
+      "api_name": "person",
+      "labels": [
+        { "id": 110, "name": "Name", "api_name": "name", "data_type": "Text" }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Reiseverbindung",
+      "api_name": "Reiseverbindung",
+      "labels": [
+        {
+          "id": 91,
+          "name": "Abfahrt/Ankunft",
+          "api_name": "Abfahrt/Ankunft",
+          "data_type": "Text"
+        },
+        {
+          "id": 87,
+          "name": "Bahnhof",
+          "api_name": "Bahnhof",
+          "data_type": "Text"
+        },
+        { "id": 88, "name": "Datum", "api_name": "Datum", "data_type": "Date" },
+        { "id": 90, "name": "Gleis", "api_name": "Gleis", "data_type": "Text" },
+        {
+          "id": 98,
+          "name": "Produkt",
+          "api_name": "Produkt",
+          "data_type": "Text"
+        },
+        { "id": 89, "name": "Zeit", "api_name": "Zeit", "data_type": "Text" }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Zahlungsmethode",
+      "api_name": "Zahlungsmethode",
+      "labels": [
+        { "id": 88, "name": "Datum", "api_name": "Datum", "data_type": "Date" },
+        {
+          "id": 96,
+          "name": "Transaktions-Nr",
+          "api_name": "Transaktions-Nr",
+          "data_type": "Text"
+        },
+        {
+          "id": 97,
+          "name": "Zahlungsbetrag",
+          "api_name": "Zahlungsbetrag",
+          "data_type": "Number"
+        },
+        {
+          "id": 95,
+          "name": "Zahlungsmethode",
+          "api_name": "Zahlungsmethode",
+          "data_type": "Text"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Zahlungsposition",
+      "api_name": "Zahlungsposition",
+      "labels": [
+        {
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "data_type": "Text"
+        },
+        {
+          "id": 92,
+          "name": "Position",
+          "api_name": "Position",
+          "data_type": "Text"
+        },
+        { "id": 94, "name": "Preis", "api_name": "Preis", "data_type": "Text" }
+      ]
+    }
+  ]
+}

@@ -55,7 +55,8 @@ The store is implemented using `Vuex` and is located under `store/index.js`. Is 
 
 ## Styles
 
-The styles for each component are located under the `style` tag in each component file. The app is configured with Buefy library so if you want to edit the app theme you can go to the file `assets/scss/variables.scss` and edit all the colors to match the desired design.
+The styles for each component are located under the `style` tag in each component file. The app is configured with Buefy library so if you want to edit the app theme you can go to the file `assets/scss/variables.scss` and edit all the colors and variables to match the desired design. You can also add new ones following the guidelines from the Bulma documentation: https://bulma.io/documentation/overview/variables/.
+Regarding the icons, the app is using FontAwesome so if you need to add any new icon, you can do it on the `main.js` file on the icon library.
 
 # **Tests**
 

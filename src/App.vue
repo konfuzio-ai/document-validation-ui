@@ -18,6 +18,8 @@ body {
 import DocumentDashboard from "./components/DocumentDashboard";
 import { DocumentsList } from "./components/DocumentsList";
 import store from "./store";
+import { mapState } from "vuex";
+
 export default {
   store,
   name: "App",
@@ -32,10 +34,19 @@ export default {
       this.categoryLoading();
     }
   },
+  computed: {
+    ...mapState("document", ["documentId"])
+  },
   data() {
     return {
       showDocumentsList: process.env.VUE_APP_CATEGORY_ID
     };
+  },
+  watch: {
+    documentId(value) {
+      console.log("change ", value);
+      this.documentLoading();
+    }
   },
   methods: {
     documentLoading() {
