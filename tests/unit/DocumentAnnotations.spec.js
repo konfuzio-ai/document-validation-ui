@@ -2,8 +2,8 @@ import { mount } from "@vue/test-utils";
 import {
   DocumentLabelSets,
   DocumentLabels,
-} from "@/components/DocumentAnnotations";
-import store from "@/store";
+} from "../../src/components/DocumentAnnotations";
+import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
 const $t = () => {};

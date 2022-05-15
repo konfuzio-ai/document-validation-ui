@@ -1,4 +1,4 @@
-<style lang="scss" src="@/assets/scss/main.scss"></style>
+<style lang="scss" src="./assets/scss/main.scss"></style>
 <template>
   <div>
     <DocumentsList v-if="showDocumentsList" />

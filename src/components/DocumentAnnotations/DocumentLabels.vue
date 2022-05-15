@@ -1,4 +1,4 @@
-<style scoped lang="scss" src="@/assets/scss/document_labels.scss"></style>
+<style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
 <template>
   <div ref="labelsList" class="label-info">
     <div v-if="activeAnnotationSet">

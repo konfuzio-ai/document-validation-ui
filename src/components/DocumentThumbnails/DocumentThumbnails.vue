@@ -1,4 +1,8 @@
-<style scoped lang="scss" src="@/assets/scss/document_thumbnails.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_thumbnails.scss"
+></style>
 <template>
   <div class="document-pages">
     <div

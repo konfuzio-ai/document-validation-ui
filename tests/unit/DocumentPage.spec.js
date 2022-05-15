@@ -1,6 +1,9 @@
 import { mount } from "@vue/test-utils";
-import { ScrollingDocument, ScrollingPage } from "@/components/DocumentPage";
-import store from "@/store";
+import {
+  ScrollingDocument,
+  ScrollingPage,
+} from "../../src/components/DocumentPage";
+import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
 const $t = () => {};

@@ -1,4 +1,4 @@
-<style scoped lang="scss" src="@/assets/scss/documents_list.scss"></style>
+<style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>
 <template>
   <div class="documents-list" v-if="selectedCategory">
     <div class="documents-list-top">

@@ -1,4 +1,8 @@
-<style scoped lang="scss" src="@/assets/scss/scrolling_document.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/scrolling_document.scss"
+></style>
 <template>
   <div class="scrolling-document" v-scroll.immediate="updateScrollBounds">
     <ScrollingPage

@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
-import { DocumentThumbnails } from "@/components/DocumentThumbnails";
-import store from "@/store";
+import { DocumentThumbnails } from "../../src/components/DocumentThumbnails";
+import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
 const $t = () => {};

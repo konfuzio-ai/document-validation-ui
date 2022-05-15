@@ -1,4 +1,4 @@
-<style scoped lang="scss" src="@/assets/scss/empty_state.scss"></style>
+<style scoped lang="scss" src="../../assets/scss/empty_state.scss"></style>
 <template>
   <div class="empty-container">
     <EmptyStateImg />

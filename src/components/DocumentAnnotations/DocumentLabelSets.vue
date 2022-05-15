@@ -1,4 +1,8 @@
-<style scoped lang="scss" src="@/assets/scss/document_label_sets.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_label_sets.scss"
+></style>
 
 <template>
   <div class="labels">

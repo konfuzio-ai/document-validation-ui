@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
-import { DocumentsList } from "@/components/DocumentsList";
-import store from "@/store";
+import { DocumentsList } from "../../src/components/DocumentsList";
+import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
 const $t = () => {};

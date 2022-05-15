@@ -1,4 +1,4 @@
-<style scoped lang="scss" src="@/assets/scss/document_dashboard.scss"></style>
+<style scoped lang="scss" src="../assets/scss/document_dashboard.scss"></style>
 
 <template>
   <div class="dashboard-viewer">
