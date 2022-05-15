@@ -29,7 +29,17 @@ This sample app is built around Vue.JS and all the required components are insid
 
 ## Vue Components
 
-The entry point of the app is the `main.js` where the `App.vue` component is loaded. This component has the responsibility to tell the store to fetch API data and save it. While fetching the data, the main UI of the app is drawn on the `DocumentDashboard` component and is divided into: `DocumentThumbnails`, `DocumentPage` and `DocumentAnnotations`.
+The entry point of the app is the `main.js` where the `App.vue` component is loaded. This component has the responsibility to tell the store to fetch API data and save it. While fetching the data, the main UI of the app is drawn on the `DocumentsList` and `DocumentDashboard` components.
+
+## DocumentsList
+
+![DocumentsList](documents_list.png)
+
+This main component is responsible of loading the documents list for a given category. You can then select which document will appear on the dashboard. By default, this feature is disabled and in order to use it, you will need to add an authentication token to the `.env` file alongside the category ID that you want to load.
+
+## DocumentDashboard
+
+This main component is divided into three components: `DocumentThumbnails`, `DocumentPage` and `DocumentAnnotations`.
 
 ### DocumentThumbnails
 
@@ -60,4 +70,4 @@ Regarding the icons, the app is using FontAwesome so if you need to add any new 
 
 # **Tests**
 
-You can test the app by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment and so there's no requirement to connect to an API. They are grouped by the three main components and are focused on testing the components behavior.
+You can test the app by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment and so there's no requirement to connect to an API. They are grouped by the four main components and are focused on testing the components behavior.

@@ -30,8 +30,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 80px;
-
+      height: 80px;
+      align-self: center;
       .action-box {
         align-self: center;
         width: 75%;
