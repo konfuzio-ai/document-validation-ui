@@ -1,12 +1,4 @@
-<style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
-
-body {
-  margin: 0;
-  border: 1px solid $detail;
-  font-family: "Inter", sans-serif;
-}
-</style>
+<style lang="scss" src="@/assets/scss/main.scss"></style>
 <template>
   <div>
     <DocumentsList v-if="showDocumentsList" />

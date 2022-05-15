@@ -1,8 +1,4 @@
-<style scoped lang="scss">
-.pdf-page-container {
-  position: relative;
-}
-</style>
+<style scoped lang="scss" src="@/assets/scss/document_page.scss"></style>
 <template>
   <div class="pdf-page-container">
     <v-stage ref="stage" :config="scaledViewport" :style="canvasStyle">

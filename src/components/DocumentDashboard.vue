@@ -1,33 +1,4 @@
-<style scoped lang="scss">
-.dashboard-viewer {
-  overflow: hidden;
-  display: flex;
-  background: $grey-lighter;
-  .dashboard-document {
-    overflow: auto;
-    height: calc(100vh - $header-size);
-    flex: 1;
-    background-image: radial-gradient(#bfc1c9 0.8px, #93989f 0.1px);
-    background-size: 9px 9px;
-  }
-  @media print {
-    .dashboard-document {
-      position: static;
-    }
-  }
-  .not-supported {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-</style>
+<style scoped lang="scss" src="@/assets/scss/document_dashboard.scss"></style>
 
 <template>
   <div class="dashboard-viewer">

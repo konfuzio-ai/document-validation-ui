@@ -10,14 +10,4 @@ module.exports = defineConfig({
       enableBridge: true,
     },
   },
-  // Make variables available in SASS for every components
-  css: {
-    loaderOptions: {
-      sass: {
-        additionalData: `
-          @import '@/assets/scss/variables.scss';
-        `,
-      },
-    },
-  },
 });
