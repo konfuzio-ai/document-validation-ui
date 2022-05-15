@@ -2,10 +2,15 @@ import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
-const config = {
-  headers: {
-    Authorization: `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`
+const config = () => {
+  if (process.env.VUE_APP_GUEST_USER_TOKEN) {
+    return {
+      headers: {
+        Authorization: `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`
+      }
+    };
   }
+  return {};
 };
 
 const state = {
@@ -46,7 +51,10 @@ const actions = {
    */
   fetchDocumentList: ({ commit, state, getters }) => {
     // TODO: add lazy loading
-    return HTTP.get(`documents/?category=${state.categoryId}&limit=100`, config)
+    return HTTP.get(
+      `documents/?category=${state.categoryId}&limit=100`,
+      config()
+    )
       .then(response => {
         if (response.data.results) {
           const documents = response.data.results.map(document => {
@@ -64,7 +72,7 @@ const actions = {
    * so they can be `await`ed (useful to set the `loading` status).
    */
   fetchCategory: ({ commit }) => {
-    return HTTP.get(`categories/${state.categoryId}/`, config)
+    return HTTP.get(`categories/${state.categoryId}/`, config())
       .then(async response => {
         if (response.data) {
           commit("SET_SELECTED_CATEGORY", response.data);
