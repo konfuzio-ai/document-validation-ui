@@ -83,8 +83,8 @@
         -webkit-box-sizing: border-box;
         border-bottom: 3px solid $primary;
       }
-      img {
-        max-height: 60px;
+      .img-thumbnail {
+        max-height: 48px;
         &.selected {
           outline: 1px solid $dark;
         }
@@ -138,14 +138,16 @@
             ]"
             v-on:click="changeDocument(document.id)"
           >
-            <img
+            <object
+              :data="document.thumbnail_url"
+              type="image/jpg"
               :class="[
                 'img-thumbnail',
                 documentId == document.id && 'selected'
               ]"
-              :src="document.thumbnail_url"
-              alt
-            />
+            >
+              <b-icon pack="fas" icon="file" size="is-medium" />
+            </object>
             <div
               :class="[
                 'document-name',
