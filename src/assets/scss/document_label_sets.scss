@@ -3,8 +3,7 @@
 .labels {
   width: 40%;
   background-color: $white;
-
-  height: calc(100vh - $header-size);
+  height: 100%;
 
   .labels-container {
     display: flex;
