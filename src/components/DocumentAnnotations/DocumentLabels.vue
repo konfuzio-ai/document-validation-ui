@@ -262,7 +262,6 @@ export default {
         return;
       }
 
-      console.log(this.newValue);
       this.isLoading = true;
 
       // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
@@ -290,7 +289,6 @@ export default {
           annotationId: id
         })
         .then(response => {
-          console.log(response);
           // Check if the response is successfull or not
           if (response) {
             this.oldValue = this.newValue;

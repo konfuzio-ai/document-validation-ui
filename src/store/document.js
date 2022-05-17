@@ -2,17 +2,6 @@ import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
-const config = () => {
-  if (process.env.VUE_APP_GUEST_USER_TOKEN) {
-    return {
-      headers: {
-        Authorization: `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`
-      }
-    };
-  }
-  return {};
-};
-
 const state = {
   focusedAnnotation: {
     id: null,
@@ -24,7 +13,6 @@ const state = {
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  token: process.env.VUE_APP_GUEST_USER_TOKEN,
   annotationSelected: null
 };
 
@@ -296,18 +284,12 @@ const actions = {
   },
 
   updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
-    const updatedSpan = JSON.stringify(updatedValues);
-    console.log(updatedSpan);
-
     return new Promise(resolve => {
       HTTP.patch(
         `/documents/${state.documentId}/annotations/${annotationId}`,
-        updatedSpan,
-        config()
+        updatedValues
       )
         .then(response => {
-          console.log(response);
-
           if (response.status === 200) {
             resolve(true);
           }
