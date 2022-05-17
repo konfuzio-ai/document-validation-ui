@@ -119,42 +119,46 @@
             >
               {{ annotation.label_description }}
             </div>
-            <div
-              v-if="showWarning"
-              :class="[
-                'message',
-                !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
-              ]"
-            >
-              <b-message
-                class="is-warning warning-msg message-body-border-color message-body-padding"
+            <transition name="slide-fade">
+              <div
+                v-if="showWarning"
+                :class="[
+                  'message',
+                  !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
+                ]"
               >
-                <div class="message-container">
-                  {{ warningMessage }}
-                  <div @click="handleWarningClose" class="btn-container">
-                    <CloseBtnImg class="close-btn" />
+                <b-message
+                  class="is-warning warning-msg message-body-border-color message-body-padding"
+                >
+                  <div class="message-container">
+                    {{ warningMessage }}
+                    <div @click="handleWarningClose" class="btn-container">
+                      <CloseBtnImg class="close-btn" />
+                    </div>
                   </div>
-                </div>
-              </b-message>
-            </div>
-            <div
-              v-if="showError"
-              :class="[
-                'message',
-                !edited && annotation.id !== annBeingEdited.id && 'hidden'
-              ]"
-            >
-              <b-message
-                class="is-danger danger-msg message-body-border-color message-body-padding"
+                </b-message>
+              </div>
+            </transition>
+            <transition name="slide-fade">
+              <div
+                v-if="showError"
+                :class="[
+                  'message',
+                  !edited && annotation.id !== annBeingEdited.id && 'hidden'
+                ]"
               >
-                <div class="message-container">
-                  {{ errorMessage }}
-                  <div @click="handleErrorClose" class="btn-container">
-                    <CloseBtnImg class="close-btn" />
+                <b-message
+                  class="is-danger danger-msg message-body-border-color message-body-padding"
+                >
+                  <div class="message-container">
+                    {{ errorMessage }}
+                    <div @click="handleErrorClose" class="btn-container">
+                      <CloseBtnImg class="close-btn" />
+                    </div>
                   </div>
-                </div>
-              </b-message>
-            </div>
+                </b-message>
+              </div>
+            </transition>
           </div>
         </div>
       </div>
