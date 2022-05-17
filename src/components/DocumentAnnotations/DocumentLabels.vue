@@ -63,8 +63,17 @@
               <div class="label-property-right">
                 <div class="label-property-annotation">
                   <span
-                    v-if="annotation.offset_string"
-                    class="label-property-value"
+                    v-if="
+                      annotation.span !== undefined &&
+                      annotation.span[0].offset_string
+                    "
+                    :class="[
+                      'label-property-value',
+                      !notEditing &&
+                        isLoading &&
+                        isAnnotationBeingEditedNull() === annotation.id &&
+                        'saving-changes'
+                    ]"
                     role="textbox"
                     contenteditable
                     @blur="event => handleBlur(event, annotation)"
@@ -74,11 +83,31 @@
                       annotation.label_description && onLabelClick(annotation)
                     "
                   >
-                    {{ annotation.offset_string }}
+                    {{ annotation.span[0].offset_string }}
                   </span>
                   <span v-else class="label-property-value">
-                    {{ annotation.offset_string }}
+                    {{ "" }}
                   </span>
+                  <div
+                    v-if="isLoading"
+                    :class="[
+                      'loading-container',
+                      annotation.id !== annBeingEdited.id && 'hidden'
+                    ]"
+                  >
+                    <b-notification
+                      :closable="false"
+                      class="loading-background"
+                    >
+                      <b-loading :is-full-page="isFullPage" v-model="isLoading">
+                        <b-icon
+                          icon="spinner"
+                          class="fa-spin loading-icon-size spinner"
+                        >
+                        </b-icon>
+                      </b-loading>
+                    </b-notification>
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,42 +119,46 @@
             >
               {{ annotation.label_description }}
             </div>
-            <div
-              v-if="showWarning"
-              :class="[
-                'message',
-                !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
-              ]"
-            >
-              <b-message
-                class="is-warning warning-msg message-body-border-color message-body-padding"
+            <transition name="slide-fade">
+              <div
+                v-if="showWarning"
+                :class="[
+                  'message',
+                  !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
+                ]"
               >
-                <div class="message-container">
-                  {{ warningMessage }}
-                  <div @click="handleClose" class="btn-container">
-                    <CloseBtnImg class="close-btn" />
+                <b-message
+                  class="is-warning warning-msg message-body-border-color message-body-padding"
+                >
+                  <div class="message-container">
+                    {{ warningMessage }}
+                    <div @click="handleWarningClose" class="btn-container">
+                      <CloseBtnImg class="close-btn" />
+                    </div>
                   </div>
-                </div>
-              </b-message>
-            </div>
-            <div
-              v-if="showError"
-              :class="[
-                'message',
-                !edited && annotation.id !== annBeingEdited.id && 'hidden'
-              ]"
-            >
-              <b-message
-                class="is-danger danger-msg message-body-border-color message-body-padding"
+                </b-message>
+              </div>
+            </transition>
+            <transition name="slide-fade">
+              <div
+                v-if="showError"
+                :class="[
+                  'message',
+                  !edited && annotation.id !== annBeingEdited.id && 'hidden'
+                ]"
               >
-                <div class="message-container">
-                  {{ errorMessage }}
-                  <div @click="handleClose" class="btn-container">
-                    <CloseBtnImg class="close-btn" />
+                <b-message
+                  class="is-danger danger-msg message-body-border-color message-body-padding"
+                >
+                  <div class="message-container">
+                    {{ errorMessage }}
+                    <div @click="handleErrorClose" class="btn-container">
+                      <CloseBtnImg class="close-btn" />
+                    </div>
                   </div>
-                </div>
-              </b-message>
-            </div>
+                </b-message>
+              </div>
+            </transition>
           </div>
         </div>
       </div>
@@ -163,7 +196,9 @@ export default {
       annBeingEdited: null,
       errorMessage: "Editing was not possible. Please try again later",
       showError: false,
-      edited: false
+      edited: false,
+      isFullPage: false,
+      isLoading: false
     };
   },
   computed: {
@@ -173,7 +208,8 @@ export default {
     ...mapState("document", [
       "activeAnnotationSet",
       "annotationSelected",
-      "focusedAnnotation"
+      "focusedAnnotation",
+      "loading"
     ])
   },
   methods: {
@@ -195,6 +231,13 @@ export default {
         id: annotation && annotation.id ? annotation.id : null
       });
     },
+    isAnnotationBeingEditedNull() {
+      if (this.annBeingEdited.id === null) {
+        return false;
+      } else {
+        return this.annBeingEdited.id;
+      }
+    },
     // Check if the user deleted or added text to the annotation
     isNewValueInOld(event, annotation) {
       this.oldValue = annotation.span[0].offset_string;
@@ -205,6 +248,8 @@ export default {
       const newInOldValue = this.isNewValueInOld(event, annotation);
       this.annBeingEdited = annotation;
       this.notEditing = false;
+      this.showWarning = false;
+      this.showError = false;
 
       // If the user changes the input by adding to the existing annotation
       // we show a warning
@@ -220,6 +265,9 @@ export default {
       if (this.newValue === this.oldValue) {
         return;
       }
+
+      this.isLoading = true;
+
       // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
       const updatedString = {
         span: [
@@ -235,6 +283,8 @@ export default {
           }
         ]
       };
+
+      this.$store.dispatch("document/startLoading");
 
       // Send to the store for the http patch request
       this.$store
@@ -253,14 +303,17 @@ export default {
             this.showError = true;
             this.edited = false;
           }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/endLoading");
+          this.isLoading = false;
         });
     },
-    handleClose() {
-      if (this.showWarning) {
-        this.showWarning = false;
-      } else if (this.showError) {
-        this.showError = false;
-      }
+    handleWarningClose() {
+      this.showWarning = false;
+    },
+    handleErrorClose() {
+      this.showError = false;
     }
   },
   watch: {

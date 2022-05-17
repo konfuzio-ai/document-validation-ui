@@ -9,12 +9,11 @@ $grey: #858c9a;
 $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 
-$yellow: rgba(254, 200, 75, 0.5);
+$yellow: #ffd600;
 $blue: #2f80ed;
 $white: #fff;
 
-$light-yellow: #fffcf5;
-$dark-yellow: #c17a00;
+$warning-yellow: #fec84b;
 
 $primary: #34ab7d;
 $primary-dark: #0c4b33;
@@ -23,7 +22,7 @@ $primary-low-opacity: rgba(52, 171, 125, 0.16);
 $link: $primary;
 $info: $blue;
 $danger: $red;
-$warning: $yellow;
+$warning: $warning-yellow;
 $success: $green;
 $text: $grey-dark;
 $text-strong: $dark;
@@ -35,6 +34,8 @@ $detail: #e2e3e4;
 
 $message-body-border-width: 1px;
 $message-body-padding: 8px 16px;
+
+$loading-background: transparent;
 
 $input-shadow: none;
 $header-size: 2px;

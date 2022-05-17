@@ -13,11 +13,19 @@ import {
   faAngleRight,
   faAngleLeft,
   faAngleDown,
-  faFile
+  faFile,
+  faSpinner
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faArrowUp, faAngleRight, faAngleLeft, faAngleDown, faFile);
+library.add(
+  faArrowUp,
+  faAngleRight,
+  faAngleLeft,
+  faAngleDown,
+  faFile,
+  faSpinner
+);
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 
 Vue.use(VueKonva);
