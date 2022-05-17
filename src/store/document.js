@@ -2,6 +2,17 @@ import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
+const config = () => {
+  if (process.env.VUE_APP_GUEST_USER_TOKEN) {
+    return {
+      headers: {
+        Authorization: `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`
+      }
+    };
+  }
+  return {};
+};
+
 const state = {
   focusedAnnotation: {
     id: null,
@@ -284,23 +295,28 @@ const actions = {
     commit("SET_FOCUSED_ANNOTATION", { id: null });
   },
 
-  updateAnnotation: async ({ state }, { updatedValues, annotationId }) => {
+  updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
     const updatedSpan = JSON.stringify(updatedValues);
+    console.log(updatedSpan);
 
-    await HTTP.patch(
-      `/documents/${state.documentId}/annotations/${annotationId}`,
-      updatedSpan
-      // { headers: { Authorization: `Token ${token}` } }
-    )
-      .then(response => {
-        console.log(response);
-        // check if response is ok
-        // resolve(true); // or false
-      })
-      .catch(error => {
-        // resolve(false);
-        console.log(error);
-      });
+    return new Promise(resolve => {
+      HTTP.patch(
+        `/documents/${state.documentId}/annotations/${annotationId}`,
+        updatedSpan,
+        config()
+      )
+        .then(response => {
+          console.log(response);
+
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
   }
 };
 
