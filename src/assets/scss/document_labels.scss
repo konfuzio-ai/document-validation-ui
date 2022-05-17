@@ -94,10 +94,29 @@
       .label-property-right {
         flex: 1;
 
+        .notification {
+          background-color: transparent;
+        }
+
         .label-property-annotation {
           display: flex;
           align-items: center;
           padding: 10px 0;
+
+          .loading-container {
+            height: 20px;
+            display: flex;
+            align-items: center;
+
+            .loading-icon-size {
+              width: 13px;
+              height: 13px;
+            }
+
+            .spinner {
+              color: $grey;
+            }
+          }
         }
 
         .label-property-value {
@@ -113,6 +132,10 @@
 
         [contenteditable].label-property-value {
           overflow: hidden;
+        }
+
+        .saving-changes {
+          color: $grey;
         }
       }
 
@@ -142,6 +165,8 @@
   }
 
   .message {
+    margin-bottom: 8px;
+
     .message-container {
       display: flex;
       flex: 1;
@@ -163,6 +188,6 @@
   }
 
   .hidden {
-    display: none;
+    display: none !important;
   }
 }
