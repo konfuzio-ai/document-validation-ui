@@ -9,18 +9,6 @@ const state = {
   documents: null
 };
 
-const getters = {
-  /**
-   * Document with processed information
-   */
-  document: state => document => {
-    if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-      document.thumbnail_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${document.thumbnail_url}`;
-    }
-    return document;
-  }
-};
-
 const actions = {
   startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
@@ -43,10 +31,7 @@ const actions = {
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
         if (response.data.results) {
-          const documents = response.data.results.map(document => {
-            return getters.document(document);
-          });
-          commit("SET_DOCUMENTS", documents);
+          commit("SET_DOCUMENTS", response.data.results);
         }
       })
       .catch(error => {
@@ -85,7 +70,6 @@ const mutations = {
 export default {
   namespaced: true,
   state,
-  getters,
   actions,
   mutations
 };

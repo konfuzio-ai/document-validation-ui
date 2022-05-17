@@ -14,7 +14,7 @@
     >
       <keep-alive>
         <DummyPage
-          v-if="!pageInVisibleRange(page.pageNumber)"
+          v-if="!pageInVisibleRange(page.number)"
           v-bind="{ page, isPageFocused, isElementFocused }"
         />
         <DocumentPage

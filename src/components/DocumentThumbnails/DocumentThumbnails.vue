@@ -6,27 +6,23 @@
 <template>
   <div class="document-pages">
     <div
-      :class="[
-        'document-thumbnail',
-        currentPage == page.pageNumber && 'selected'
-      ]"
+      :class="['document-thumbnail', currentPage == page.number && 'selected']"
       v-for="page in pages"
       v-bind:key="page.id"
-      v-on:click="changePage(page.pageNumber)"
+      v-on:click="changePage(page.number)"
     >
-      <img
-        :class="['img-thumbnail', currentPage == page.pageNumber && 'selected']"
-        :src="page.thumbnail_url"
-        alt
+      <ServerImage
+        :class="['img-thumbnail', currentPage == page.number && 'selected']"
+        :imageUrl="page.thumbnail_url"
       />
-      <div class="number-thumbnail">{{ page.pageNumber }}</div>
+      <div class="number-thumbnail">{{ page.number }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-
+import ServerImage from "../../assets/ServerImage";
 /**
  * This component creates a vertical list of the document pages
  * with thumbnail pictures of it which are also clickable.
@@ -34,6 +30,9 @@ import { mapState } from "vuex";
 export default {
   name: "DocumentThumbnails",
   props: {},
+  components: {
+    ServerImage
+  },
   computed: {
     ...mapState("document", ["pages"]),
     ...mapState("display", ["currentPage"])

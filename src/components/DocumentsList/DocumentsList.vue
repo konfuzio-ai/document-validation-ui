@@ -30,16 +30,13 @@
             ]"
             v-on:click="changeDocument(document.id)"
           >
-            <object
-              :data="document.thumbnail_url"
-              type="image/jpg"
+            <ServerImage
               :class="[
                 'img-thumbnail',
                 documentId == document.id && 'selected'
               ]"
-            >
-              <b-icon pack="fas" icon="file" size="is-medium" />
-            </object>
+              :imageUrl="document.thumbnail_url"
+            />
             <div
               :class="[
                 'document-name',
@@ -56,6 +53,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import ServerImage from "../../assets/ServerImage";
 
 /**
  * This component creates a horizontal list of documents
@@ -65,6 +63,9 @@ import { mapState } from "vuex";
 export default {
   name: "DocumentsList",
   props: {},
+  components: {
+    ServerImage
+  },
   computed: {
     ...mapState("document", ["documentId"]),
     ...mapState("category", ["documents", "selectedCategory"])

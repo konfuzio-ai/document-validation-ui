@@ -172,19 +172,6 @@ const getters = {
   },
 
   /**
-   * Page with processed information
-   */
-  page: state => page => {
-    page.pageNumber = page.number;
-    delete page.number;
-    if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-      page.image_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.image_url}`;
-      page.thumbnail_url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${page.thumbnail_url}`;
-    }
-    return page;
-  },
-
-  /**
    * A filtered version of `annotations` for the chosen page.
    * Include annotations that have *at least* one bbox in the page.
    * If the annotation's bboxes span multiple pages, each DocumentPage receives
@@ -249,7 +236,7 @@ const actions = {
             await HTTP.get(`documents/${state.documentId}/pages/${i}/`)
               .then(response => {
                 if (response.data) {
-                  commit("ADD_PAGE", getters.page(response.data));
+                  commit("ADD_PAGE", response.data);
                 }
               })
               .catch(error => {

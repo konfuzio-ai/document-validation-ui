@@ -38,6 +38,7 @@
 import BigNumber from "bignumber.js";
 import { mapState, mapGetters } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
+import api from "../../api";
 
 export default {
   name: "DocumentPage",
@@ -109,7 +110,7 @@ export default {
     },
 
     pageNumber() {
-      return this.page.pageNumber;
+      return this.page.number;
     },
 
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
@@ -139,11 +140,23 @@ export default {
         return;
       }
       const image = new Image();
-      image.src = this.page.image_url;
-      image.onload = () => {
-        // set image only when it is loaded
-        this.image = image;
-      };
+      const config = { responseType: "blob" };
+      let url = this.page.image_url;
+      if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
+        url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${url}`;
+      }
+
+      api.HTTP.get(url, config)
+        .then(response => {
+          return response.data;
+        })
+        .then(myBlob => {
+          image.src = URL.createObjectURL(myBlob);
+          image.onload = () => {
+            // set image only when it is loaded
+            this.image = image;
+          };
+        });
     },
 
     bboxToRect(bbox) {

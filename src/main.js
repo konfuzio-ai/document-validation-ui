@@ -2,7 +2,7 @@ import Vue from "vue";
 import Buefy from "buefy";
 import VueKonva from "vue-konva";
 import store from "./store";
-import App from "./App.vue";
+import App from "./App";
 import * as Sentry from "@sentry/vue";
 import i18n from "./i18n";
 

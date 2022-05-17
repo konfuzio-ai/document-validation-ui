@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { DocumentsList } from "../../src/components/DocumentsList";
+import { ServerImage } from "../../src/assets/ServerImage";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -14,9 +15,7 @@ describe("Documents List Component", () => {
       ),
       store.dispatch(
         "category/setDocuments",
-        require("../mock/documents_list.json").results.map((document) => {
-          return store.getters["category/document"](document);
-        })
+        require("../mock/documents_list.json")
       ),
     ]);
   });
@@ -60,6 +59,7 @@ describe("Documents List Component", () => {
     const wrapper = mount(DocumentsList, {
       store,
       mocks: { $t },
+      components: { ServerImage },
     });
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")

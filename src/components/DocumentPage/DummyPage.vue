@@ -57,7 +57,7 @@ export default {
     focusPage() {
       if (this.isPageFocused) return;
 
-      this.$store.dispatch("display/updateCurrentPage", this.page.pageNumber);
+      this.$store.dispatch("display/updateCurrentPage", this.page.number);
     }
   },
 

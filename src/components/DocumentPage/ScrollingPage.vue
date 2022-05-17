@@ -38,7 +38,7 @@ export default {
 
   computed: {
     isPageFocused() {
-      return this.page.pageNumber === this.focusedPage;
+      return this.page.number === this.focusedPage;
     },
 
     isElementFocused() {
@@ -121,7 +121,7 @@ export default {
      * Scroll to the focused annotation if it changes and it's on this page.
      */
     focusedAnnotation(focused) {
-      if (focused.pageNumber === this.page.pageNumber) {
+      if (focused.pageNumber === this.page.number) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {
