@@ -1,22 +1,18 @@
 import { mount } from "@vue/test-utils";
 import { DocumentsList } from "../../src/components/DocumentsList";
-import { ServerImage } from "../../src/assets/ServerImage";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
 const $t = () => {};
 
 describe("Documents List Component", () => {
+  const category = require("../mock/category.json");
+  const documents = require("../mock/documents_list.json").results;
+
   beforeEach(() => {
     Promise.all([
-      store.dispatch(
-        "category/setSelectedCategory",
-        require("../mock/category.json")
-      ),
-      store.dispatch(
-        "category/setDocuments",
-        require("../mock/documents_list.json")
-      ),
+      store.dispatch("category/setSelectedCategory", category),
+      store.dispatch("category/setDocuments", documents),
     ]);
   });
   it("document list renders with selected category", () => {
@@ -35,7 +31,7 @@ describe("Documents List Component", () => {
     });
     expect(
       wrapper.findAll(".documents-list-bottom .documents-list-thumbnail").length
-    ).toBe(require("../mock/documents_list.json").results.length);
+    ).toBe(require("../mock/documents_list.json").count);
   });
 
   it("document list click adds selected class", async () => {
@@ -59,7 +55,6 @@ describe("Documents List Component", () => {
     const wrapper = mount(DocumentsList, {
       store,
       mocks: { $t },
-      components: { ServerImage },
     });
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")
