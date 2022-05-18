@@ -13,13 +13,7 @@ export default {
     }
   },
   mounted() {
-    const config = { responseType: "blob" };
-    let url = this.imageUrl;
-    if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-      url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${url}`;
-    }
-
-    return api.HTTP.get(url, config)
+    return api.IMG_REQUEST.get(this.imageUrl)
       .then(response => {
         return response.data;
       })

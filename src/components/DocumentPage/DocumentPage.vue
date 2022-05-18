@@ -140,13 +140,7 @@ export default {
         return;
       }
       const image = new Image();
-      const config = { responseType: "blob" };
-      let url = this.page.image_url;
-      if (process.env.VUE_APP_DOCUMENT_IMAGES_URL) {
-        url = `${process.env.VUE_APP_DOCUMENT_IMAGES_URL}${url}`;
-      }
-
-      api.HTTP.get(url, config)
+      api.IMG_REQUEST.get(this.page.image_url)
         .then(response => {
           return response.data;
         })
