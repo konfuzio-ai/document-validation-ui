@@ -4,6 +4,7 @@ import VueKonva from "vue-konva";
 import store from "./store";
 import App from "./App";
 import * as Sentry from "@sentry/vue";
+import { Integrations } from "@sentry/tracing";
 import i18n from "./i18n";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
