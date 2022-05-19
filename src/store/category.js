@@ -26,12 +26,21 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit, state }) => {
+  fetchDocumentList: ({ commit, state, rootState }) => {
     // TODO: add lazy loading
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
         if (response.data.results) {
-          commit("SET_DOCUMENTS", response.data.results);
+          const documents = response.data.results;
+          // set selected document in first position
+          documents.forEach((document, i) => {
+            if (document.id == rootState.document.documentId) {
+              documents.splice(i, 1);
+              documents.unshift(document);
+              return;
+            }
+          });
+          commit("SET_DOCUMENTS", documents);
         }
       })
       .catch(error => {
