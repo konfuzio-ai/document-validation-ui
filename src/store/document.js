@@ -125,9 +125,7 @@ const getters = {
             // count label as an empty annotation
             counter = counter + 1;
           } else {
-            label.annotations.map(annotation => {
-              counter = counter + 1;
-            });
+            counter = counter + label.annotations.length;
           }
         });
       });
