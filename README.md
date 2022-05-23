@@ -33,7 +33,7 @@ The entry point of the app is the `main.js` where the `App.vue` component is loa
 
 ## DocumentsList
 
-![DocumentsList](documents_list.png)
+![DocumentsList](documents_list.gif)
 
 This main component is responsible of loading the documents list for a given category. You can then select which document will appear on the dashboard. By default, this feature is disabled and in order to use it, you will need to add an authentication token to the `.env` file alongside the category ID that you want to load.
 
