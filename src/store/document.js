@@ -224,17 +224,23 @@ const actions = {
           );
           commit("SET_PAGES", []);
 
+          const documentId = state.documentId;
           // fetch pages
           for (let i = 1; i <= response.data.number_of_pages; i++) {
-            await HTTP.get(`documents/${state.documentId}/pages/${i}/`)
-              .then(response => {
-                if (response.data) {
-                  commit("ADD_PAGE", response.data);
-                }
-              })
-              .catch(error => {
-                console.log(error, "Could not fetch pages from the backend");
-              });
+            if (documentId === state.documentId) {
+              // check if the document was not changed
+              await HTTP.get(`documents/${documentId}/pages/${i}/`)
+                .then(response => {
+                  if (response.data && documentId === state.documentId) {
+                    commit("ADD_PAGE", response.data);
+                  }
+                })
+                .catch(error => {
+                  console.log(error, "Could not fetch pages from the backend");
+                });
+            } else {
+              break;
+            }
           }
         }
       })
