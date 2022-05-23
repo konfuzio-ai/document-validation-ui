@@ -13,14 +13,11 @@ const state = {
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  annotationSelected: null
+  annotationSelected: null,
+  showDeletedAnnotations: false
 };
 
 const getters = {
-  isAnnotationInDeletedState: state => annotation => {
-    return annotation.revised === true && annotation.is_correct === false;
-  },
-
   /**
    * Get annotation sets grouped if there's one with the multiple
    * annotations property enabled.
@@ -100,17 +97,15 @@ const getters = {
   /**
    * All annotations with required information
    */
-  annotations: (state, getters) => annotationSets => {
+  annotations: state => annotationSets => {
     const annotations = [];
     annotationSets.map(annotationSet => {
       annotationSet.labels.map(label => {
         label.annotations.map(annotation => {
-          if (!getters.isAnnotationInDeletedState(annotation)) {
-            const cloneAnnotation = Object.assign({}, annotation);
-            // save annotation set info in the annotation
-            cloneAnnotation.annotation_set = annotationSet;
-            annotations.push(cloneAnnotation);
-          }
+          const cloneAnnotation = Object.assign({}, annotation);
+          // save annotation set info in the annotation
+          cloneAnnotation.annotation_set = annotationSet;
+          annotations.push(cloneAnnotation);
         });
       });
     });
@@ -131,10 +126,7 @@ const getters = {
             counter = counter + 1;
           } else {
             label.annotations.map(annotation => {
-              // check if annotation is not in deleted state
-              if (!getters.isAnnotationInDeletedState(annotation)) {
-                counter = counter + 1;
-              }
+              counter = counter + 1;
             });
           }
         });
@@ -220,7 +212,11 @@ const actions = {
    * so they can be `await`ed (useful to set the `loading` status).
    */
   fetchAnnotations: ({ commit, state, getters }) => {
-    return HTTP.get(`documents/${state.documentId}/`)
+    return HTTP.get(
+      `documents/${state.documentId}/${
+        !state.showDeletedAnnotations ? "?revised=true&is_correct=false" : ""
+      }`
+    )
       .then(async response => {
         if (response.data.annotation_sets) {
           commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
