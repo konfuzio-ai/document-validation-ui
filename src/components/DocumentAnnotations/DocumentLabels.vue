@@ -173,8 +173,8 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
-import CaretDown from "../../assets/CaretDownImg";
-import CloseBtnImg from "../../assets/CloseBtnImg";
+import CaretDown from "../../assets/images/CaretDownImg";
+import CloseBtnImg from "../../assets/images/CloseBtnImg";
 /**
  * This component loads all annotations in a label set
  */

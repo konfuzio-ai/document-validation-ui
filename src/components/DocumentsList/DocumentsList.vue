@@ -53,7 +53,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import ServerImage from "../../assets/ServerImage";
+import ServerImage from "../../assets/images/ServerImage";
 
 /**
  * This component creates a horizontal list of documents
