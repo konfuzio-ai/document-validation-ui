@@ -43,11 +43,12 @@ export default {
   methods: {
     documentLoading() {
       this.$store.dispatch("document/startLoading");
-      Promise.all([this.$store.dispatch("document/fetchAnnotations")]).finally(
-        () => {
-          this.$store.dispatch("document/endLoading");
-        }
-      );
+      Promise.all([
+        this.$store.dispatch("document/fetchAnnotations"),
+        this.$store.dispatch("document/fetchDocumentData")
+      ]).finally(() => {
+        this.$store.dispatch("document/endLoading");
+      });
     },
     categoryLoading() {
       Promise.all([
