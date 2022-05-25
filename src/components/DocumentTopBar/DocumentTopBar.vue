@@ -86,9 +86,7 @@ export default {
       isFullPage: false,
       messageToUser: null,
       changed: false,
-      saved: false,
-      originalFileName: null,
-      newFileName: null
+      saved: false
     };
   },
   components: {
@@ -125,49 +123,50 @@ export default {
       }
     },
     handleInput(event) {
+      const input = event.target.textContent;
+
       // Set the new file name to the new input value
-      this.fileNameWithoutExtension = event.target.textContent.trim();
+      if (input === "") {
+        // If the user deletes the name:
+        this.fileNameWithoutExtension = "untitled";
+      } else {
+        this.fileNameWithoutExtension = input.trim();
+      }
     },
     handleSave(event) {
       this.isEditable = false;
 
-      this.newFileName = `${this.fileNameWithoutExtension}.${this.fileExtension}`;
+      event.target.textContent = this.fileNameWithoutExtension;
 
-      if (this.fileNameWithoutExtension.length === 0) {
-        console.log("Name cannot be empty");
-        event.target.textContent = this.oldFileNameWithoutExtension;
-      } else {
-        this.showSaveBtn = false;
+      const updatedFileName = {
+        data_file_name: `${this.fileNameWithoutExtension}.${this.fileExtension}`
+      };
 
-        const updatedFileName = {
-          data_file_name: this.newFileName
-        };
+      this.showSaveBtn = false;
+      this.$store.dispatch("document/startLoading");
+      this.saving = true;
 
-        this.$store.dispatch("document/startLoading");
-        this.saving = true;
-
-        this.$store
-          .dispatch("document/updateFileName", updatedFileName)
-          .then(response => {
-            // Check if the response is successfull or not
-            if (response) {
-              // if successful, set the old name to be the new name
-              this.changed = true;
-              this.oldFileNameWithoutExtension = this.fileNameWithoutExtension;
-              this.saved = true;
-              this.messageToUser = "Saved";
-            } else {
-              this.changed = true;
-              event.target.textContent = this.oldFileNameWithoutExtension;
-              this.fileNameWithoutExtension = this.oldFileNameWithoutExtension;
-              this.messageToUser = "Could not save. Try again";
-            }
-          })
-          .finally(() => {
-            this.$store.dispatch("document/endLoading");
-            this.saving = false;
-          });
-      }
+      this.$store
+        .dispatch("document/updateFileName", updatedFileName)
+        .then(response => {
+          // Check if the response is successfull or not
+          if (response) {
+            // if successful, set the old name to be the new name
+            this.changed = true;
+            this.oldFileNameWithoutExtension = this.fileNameWithoutExtension;
+            this.saved = true;
+            this.messageToUser = "Saved";
+          } else {
+            this.changed = true;
+            event.target.textContent = this.oldFileNameWithoutExtension;
+            this.fileNameWithoutExtension = this.oldFileNameWithoutExtension;
+            this.messageToUser = "Could not save. Try again";
+          }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/endLoading");
+          this.saving = false;
+        });
 
       // Remove focus from contenteditable
       document.querySelector(".document-name").blur();
@@ -175,13 +174,14 @@ export default {
   },
   watch: {
     fileName(newName) {
+      // Save the file name and the extension in different variables
       this.fileNameWithoutExtension = newName.split(".").slice(0, -1).join(".");
       this.fileExtension = newName.split(".").at(-1);
     }
   },
   updated() {
-    if (this.isEditable) {
-      const contentEditable = document.querySelector(".document-name");
+    const contentEditable = document.querySelector(".document-name");
+    if (this.isEditable && contentEditable) {
       contentEditable.focus();
       this.handleCaretPlacing(contentEditable);
     }
