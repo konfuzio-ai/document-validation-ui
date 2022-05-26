@@ -6,14 +6,14 @@ White Label widget, that let's you upload your documents to Konfuzio and preview
 
 ![Screenshot](screenshot.png)
 
-# **Requirements**
+# Requirements
 
 Software Required:
 
 - node
 - npm
 
-# **Installation**
+# Installation
 
 Follow the steps below to get the app running.
 
@@ -23,7 +23,7 @@ Follow the steps below to get the app running.
 4. Run `npm run serve` to serve a local development app to run on a browser (default localhost:3000).
 5. Optional: Run `npm run build` to build the app for production if you want to put it on a web server. After building, export the `dist` folder to the desired location.
 
-# **Documentation**
+# Documentation
 
 This sample app is built around Vue.JS and all the required components are inside the `app` folder.
 
@@ -68,6 +68,6 @@ The store is implemented using `Vuex` and is located under `store/index.js`. Is 
 The styles for each component are located under the `assets/scss` folder with the same name as the component file. The app is configured with Buefy library so if you want to edit the app theme you can go to the file `assets/scss/variables.scss` and edit all the colors and variables to match the desired design. You can also add new ones following the guidelines from the Bulma documentation: https://bulma.io/documentation/overview/variables/.
 Regarding the icons, the app is using FontAwesome so if you need to add any new icon, you can do it on the `main.js` file on the icon library.
 
-# **Tests**
+# Tests
 
 You can test the app by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment and so there's no requirement to connect to an API. They are grouped by the four main components and are focused on testing the components behavior.
