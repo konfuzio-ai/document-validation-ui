@@ -1,4 +1,4 @@
-# konfuzio-capture-vue
+# Konfuzio Document View
 
 (Under active development)
 
