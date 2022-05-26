@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import EmptyStateImg from "../../assets/EmptyStateImg";
+import EmptyStateImg from "../../assets/images/EmptyStateImg";
 export default {
   name: "EmptyState",
   components: { EmptyStateImg }

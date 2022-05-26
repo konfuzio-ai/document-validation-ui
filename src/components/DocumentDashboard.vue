@@ -1,33 +1,38 @@
 <style scoped lang="scss" src="../assets/scss/document_dashboard.scss"></style>
 
 <template>
-  <div class="dashboard-viewer">
-    <DocumentThumbnails ref="documentPages" />
-    <ScrollingDocument
-      class="dashboard-document"
-      v-bind="{ pages, pageCount }"
-      v-slot="{ page, isPageFocused, isElementFocused }"
-      ref="scrollingDocument"
-      :enable-page-jump="true"
-      @page-jump="onPageJump"
-      @pages-reset="fitWidth"
-    >
-      <keep-alive>
-        <DummyPage
-          v-if="!pageInVisibleRange(page.number)"
-          v-bind="{ page, isPageFocused, isElementFocused }"
-        />
-        <DocumentPage
-          v-else
-          v-bind="{
-            page,
-            isPageFocused,
-            isElementFocused
-          }"
-        />
-      </keep-alive>
-    </ScrollingDocument>
-    <DocumentLabelSets ref="labelSets" />
+  <div class="dashboard">
+    <div class="dashboard-top-bar">
+      <DocumentTopBar />
+    </div>
+    <div class="dashboard-viewer">
+      <DocumentThumbnails ref="documentPages" />
+      <ScrollingDocument
+        class="dashboard-document"
+        v-bind="{ pages, pageCount }"
+        v-slot="{ page, isPageFocused, isElementFocused }"
+        ref="scrollingDocument"
+        :enable-page-jump="true"
+        @page-jump="onPageJump"
+        @pages-reset="fitWidth"
+      >
+        <keep-alive>
+          <DummyPage
+            v-if="!pageInVisibleRange(page.number)"
+            v-bind="{ page, isPageFocused, isElementFocused }"
+          />
+          <DocumentPage
+            v-else
+            v-bind="{
+              page,
+              isPageFocused,
+              isElementFocused
+            }"
+          />
+        </keep-alive>
+      </ScrollingDocument>
+      <DocumentLabelSets ref="labelSets" />
+    </div>
     <div class="not-supported" v-if="!isMinimunWidth">
       <div class="text">{{ $t("resolution_not_supported") }}</div>
     </div>
@@ -36,6 +41,7 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import { PIXEL_RATIO, VIEWPORT_RATIO, MINIMUM_APP_WIDTH } from "../constants";
+import { DocumentTopBar } from "./DocumentTopBar";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
@@ -48,6 +54,7 @@ import { DocumentsList } from "./DocumentsList";
 export default {
   name: "DocumentDashboard",
   components: {
+    DocumentTopBar,
     DummyPage,
     ScrollingDocument,
     DocumentPage,

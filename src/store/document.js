@@ -14,7 +14,8 @@ const state = {
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   annotationSelected: null,
-  showDeletedAnnotations: false
+  showDeletedAnnotations: false,
+  fileName: null
 };
 
 const getters = {
@@ -204,6 +205,9 @@ const actions = {
   setPages: ({ commit }, pages) => {
     commit("SET_PAGES", pages);
   },
+  setFileName: ({ commit }, fileName) => {
+    commit("SET_FILE_NAME", fileName);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -286,6 +290,31 @@ const actions = {
           console.log(error);
         });
     });
+  },
+  updateFileName: ({ state }, updatedFileName) => {
+    return new Promise(resolve => {
+      HTTP.patch(`/documents/${state.documentId}/`, updatedFileName)
+        .then(response => {
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
+  },
+
+  // Get document data to set file name
+  fetchDocumentData: ({ commit, state }) => {
+    return HTTP.get(`documents/${state.documentId}`)
+      .then(response => {
+        commit("SET_FILE_NAME", response.data.data_file_name);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 };
 
@@ -316,6 +345,9 @@ const mutations = {
   },
   SET_FOCUSED_ANNOTATION: (state, focusedAnnotation) => {
     state.focusedAnnotation = focusedAnnotation;
+  },
+  SET_FILE_NAME: (state, fileName) => {
+    state.fileName = fileName;
   }
 };
 

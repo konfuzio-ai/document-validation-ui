@@ -22,7 +22,7 @@
 
 <script>
 import { mapState } from "vuex";
-import ServerImage from "../../assets/ServerImage";
+import ServerImage from "../../assets/images/ServerImage";
 /**
  * This component creates a vertical list of the document pages
  * with thumbnail pictures of it which are also clickable.
