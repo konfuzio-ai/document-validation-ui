@@ -260,6 +260,7 @@ export default {
     handleBlur(event, annotation) {
       const spanArray = annotation.span[0];
       const id = annotation.id;
+      let updatedString;
 
       // If the user didn't change the value, we don't want to do anything
       if (this.newValue === this.oldValue) {
@@ -268,21 +269,27 @@ export default {
 
       this.isLoading = true;
 
-      // TODO: check what happens when the new value is empty since it defaults to the original one in the backend
-      const updatedString = {
-        span: [
-          {
-            offset_string: this.newValue,
-            bottom: spanArray.bottom,
-            top: spanArray.top,
-            page_index: spanArray.page_index,
-            x0: spanArray.x0,
-            x1: spanArray.x1,
-            y0: spanArray.y0,
-            y1: spanArray.y1
-          }
-        ]
-      };
+      if (this.newValue.length === 0) {
+        updatedString = {
+          is_correct: false,
+          revised: true
+        };
+      } else {
+        updatedString = {
+          span: [
+            {
+              offset_string: this.newValue,
+              bottom: spanArray.bottom,
+              top: spanArray.top,
+              page_index: spanArray.page_index,
+              x0: spanArray.x0,
+              x1: spanArray.x1,
+              y0: spanArray.y0,
+              y1: spanArray.y1
+            }
+          ]
+        };
+      }
 
       this.$store.dispatch("document/startLoading");
 
