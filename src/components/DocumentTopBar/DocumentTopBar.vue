@@ -169,7 +169,10 @@ export default {
         });
 
       // Remove focus from contenteditable
-      document.querySelector(".document-name").blur();
+      const contentNotEditable = document.querySelector(".document-name");
+      if (contentNotEditable) {
+        contentNotEditable.blur();
+      }
     }
   },
   watch: {
