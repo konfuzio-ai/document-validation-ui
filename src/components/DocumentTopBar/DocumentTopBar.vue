@@ -2,18 +2,39 @@
 
 <template>
   <div class="document-top-bar">
-    <div class="category-drop-down">
-      <div class="icon">
-        <CategoryIcon />
-      </div>
-      <div class="category-info">
-        <p>Category</p>
-        <div class="category-name">Zugticket</div>
-      </div>
-      <div class="caret">
-        <CaretDown />
-      </div>
-    </div>
+    <b-dropdown
+      class="category-chooser"
+      v-model="selectedOptions"
+      aria-role="list"
+    >
+      <template #trigger>
+        <div class="category-drop-down">
+          <div class="icon">
+            <CategoryIcon />
+          </div>
+          <div class="category-info">
+            <p>Category</p>
+            <div class="category-name">Zugticket</div>
+          </div>
+          <div class="caret">
+            <CaretDown />
+          </div>
+        </div>
+      </template>
+
+      <b-dropdown-item value="option1" aria-role="listitem">
+        <span>Option 1</span>
+      </b-dropdown-item>
+
+      <b-dropdown-item value="option2" aria-role="listitem">
+        <span>Option 2</span>
+      </b-dropdown-item>
+
+      <b-dropdown-item value="option3" aria-role="listitem">
+        <span>Option 3</span>
+      </b-dropdown-item>
+    </b-dropdown>
+
     <div class="document-name-container">
       <div class="document-icon">
         <EmptyDoc />
@@ -86,7 +107,8 @@ export default {
       isFullPage: false,
       messageToUser: null,
       changed: false,
-      saved: false
+      saved: false,
+      selectedOptions: []
     };
   },
   components: {

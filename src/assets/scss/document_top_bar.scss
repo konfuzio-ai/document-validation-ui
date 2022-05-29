@@ -15,17 +15,21 @@
   color: $top-bar-text-color;
   font-weight: 400px;
 
-  .category-drop-down {
-    width: 155px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    border-right: 1px solid $detail;
+  .category-chooser {
+    cursor: pointer;
+    .category-drop-down {
+      display: flex;
+      height: 100%;
+      width: 155px;
+      align-items: center;
+      justify-content: space-around;
+      border-right: 1px solid $detail;
 
-    .category-info {
-      p {
-        font-size: 12px;
-        color: $top-bar-color-subte;
+      .category-info {
+        p {
+          font-size: 12px;
+          color: $top-bar-color-subte;
+        }
       }
     }
   }

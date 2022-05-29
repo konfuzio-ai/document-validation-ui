@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: row;
     padding: 40px;
-
+    margin-bottom: 14px;
     .documents-list-top-left {
       flex: 1;
 
@@ -66,7 +66,6 @@
   .documents-list-bottom {
     display: flex;
     flex-direction: row;
-    margin-top: 14px;
     border-bottom: 1px solid $detail;
 
     .documents-list-thumbnail {
