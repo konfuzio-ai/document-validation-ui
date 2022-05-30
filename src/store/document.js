@@ -315,6 +315,21 @@ const actions = {
       .catch(error => {
         console.log(error);
       });
+  },
+
+  updateDocumentCategory: ({ state }, updatedCategory) => {
+    return new Promise(resolve => {
+      HTTP.patch(`/documents/${state.documentId}/`, updatedCategory)
+        .then(response => {
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
   }
 };
 

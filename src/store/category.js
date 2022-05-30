@@ -6,7 +6,8 @@ const state = {
   loading: true,
   selectedCategory: null,
   categoryId: process.env.VUE_APP_CATEGORY_ID,
-  documents: null
+  documents: null,
+  categories: null
 };
 
 const actions = {
@@ -18,6 +19,9 @@ const actions = {
   },
   setDocuments: ({ commit }, documents) => {
     commit("SET_DOCUMENTS", documents);
+  },
+  setCategories: ({ commit }, categories) => {
+    commit("SET_CATEGORIES", categories);
   },
   setSelectedCategory: ({ commit }, category) => {
     commit("SET_SELECTED_CATEGORY", category);
@@ -47,19 +51,19 @@ const actions = {
         console.log(error, "Could not fetch document list from the backend");
       });
   },
-  /**
-   * Actions that use HTTP requests always return the axios promise,
-   * so they can be `await`ed (useful to set the `loading` status).
-   */
-  fetchCategory: ({ commit }) => {
-    return HTTP.get(`categories/${state.categoryId}/`)
+  fetchCategories: ({ commit, state }) => {
+    return HTTP.get(`categories/?limit=100`)
       .then(async response => {
-        if (response.data) {
-          commit("SET_SELECTED_CATEGORY", response.data);
+        if (response.data && response.data.results) {
+          commit("SET_CATEGORIES", response.data.results);
+          const selectedCategory = response.data.results.find(
+            category => category.id == state.categoryId
+          );
+          commit("SET_SELECTED_CATEGORY", selectedCategory);
         }
       })
       .catch(error => {
-        console.log(error, "Could not fetch category details from the backend");
+        console.log(error, "Could not fetch categories from the backend");
       });
   }
 };
@@ -73,6 +77,9 @@ const mutations = {
   },
   SET_DOCUMENTS: (state, documents) => {
     state.documents = documents;
+  },
+  SET_CATEGORIES: (state, categories) => {
+    state.categories = categories;
   }
 };
 

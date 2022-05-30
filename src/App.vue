@@ -52,7 +52,7 @@ export default {
     },
     categoryLoading() {
       Promise.all([
-        this.$store.dispatch("category/fetchCategory"),
+        this.$store.dispatch("category/fetchCategories"),
         this.$store.dispatch("category/fetchDocumentList")
       ]);
     }

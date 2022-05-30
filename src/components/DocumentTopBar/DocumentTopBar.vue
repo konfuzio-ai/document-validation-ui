@@ -4,8 +4,8 @@
   <div class="document-top-bar">
     <b-dropdown
       class="category-chooser"
-      v-model="selectedOptions"
       aria-role="list"
+      v-if="selectedCategory"
     >
       <template #trigger>
         <div class="category-drop-down">
@@ -13,8 +13,8 @@
             <CategoryIcon />
           </div>
           <div class="category-info">
-            <p>Category</p>
-            <div class="category-name">Zugticket</div>
+            <p>{{ $t("category") }}</p>
+            <div class="category-name">{{ selectedCategory.name }}</div>
           </div>
           <div class="caret">
             <CaretDown />
@@ -22,16 +22,14 @@
         </div>
       </template>
 
-      <b-dropdown-item value="option1" aria-role="listitem">
-        <span>Option 1</span>
-      </b-dropdown-item>
-
-      <b-dropdown-item value="option2" aria-role="listitem">
-        <span>Option 2</span>
-      </b-dropdown-item>
-
-      <b-dropdown-item value="option3" aria-role="listitem">
-        <span>Option 3</span>
+      <b-dropdown-item
+        v-for="category in categories"
+        v-bind:key="category.id"
+        aria-role="listitem"
+        v-on:click="handleChangeCategory(category)"
+        :disabled="category.id === selectedCategory.id"
+      >
+        <span>{{ category.name }}</span>
       </b-dropdown-item>
     </b-dropdown>
 
@@ -119,7 +117,8 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", { fileName: "fileName" })
+    ...mapState("document", { fileName: "fileName" }),
+    ...mapState("category", ["categories", "selectedCategory"])
   },
   methods: {
     handleEdit() {
@@ -195,6 +194,12 @@ export default {
       if (contentNotEditable) {
         contentNotEditable.blur();
       }
+    },
+    handleChangeCategory(category) {
+      const updatedCategory = {
+        category: category.id
+      };
+      this.$store.dispatch("document/updateDocumentCategory", updatedCategory);
     }
   },
   watch: {
