@@ -19,6 +19,12 @@
     display: flex;
   }
 
+  @media (max-width: 750px) {
+    .document-name-container {
+      display: none;
+    }
+  }
+
   .handover {
     display: flex;
     align-items: center;
