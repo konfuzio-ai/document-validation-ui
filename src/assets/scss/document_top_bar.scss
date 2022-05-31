@@ -22,7 +22,11 @@
       height: 100%;
       align-items: center;
       border-right: 1px solid $detail;
-      margin: 0 4px;
+      padding: 0 8px 0 16px;
+
+      &:hover {
+        background-color: $background;
+      }
 
       .caret,
       .icon {
@@ -31,8 +35,8 @@
       }
 
       .category-info {
-        min-width: 155px;
-        width: 155px;
+        min-width: 100px;
+        width: 100px;
         .category-title {
           font-size: 12px;
           color: $top-bar-color-subte;
