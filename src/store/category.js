@@ -10,6 +10,20 @@ const state = {
   categories: null
 };
 
+const getters = {
+  /**
+   * Get the category name for a given category ID
+   */
+  categoryName: state => categoryId => {
+    if (categoryId) {
+      return state.categories.find(
+        tempCategory => tempCategory.id == categoryId
+      ).name;
+    }
+    return "";
+  }
+};
+
 const actions = {
   startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
@@ -87,5 +101,6 @@ export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
+  getters
 };

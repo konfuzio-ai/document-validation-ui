@@ -15,7 +15,7 @@ const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   annotationSelected: null,
   showDeletedAnnotations: false,
-  fileName: null
+  selectedDocument: null
 };
 
 const getters = {
@@ -205,8 +205,8 @@ const actions = {
   setPages: ({ commit }, pages) => {
     commit("SET_PAGES", pages);
   },
-  setFileName: ({ commit }, fileName) => {
-    commit("SET_FILE_NAME", fileName);
+  setSelectedDocument: ({ commit }, document) => {
+    commit("SET_SELECTED_DOCUMENT", document);
   },
 
   /**
@@ -291,11 +291,12 @@ const actions = {
         });
     });
   },
-  updateFileName: ({ state }, updatedFileName) => {
+  updateDocument: ({ commit, state }, updatedDocument) => {
     return new Promise(resolve => {
-      HTTP.patch(`/documents/${state.documentId}/`, updatedFileName)
+      HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
           if (response.status === 200) {
+            commit("SET_SELECTED_DOCUMENT", response.data);
             resolve(true);
           }
         })
@@ -306,30 +307,15 @@ const actions = {
     });
   },
 
-  // Get document data to set file name
+  // Get document data
   fetchDocumentData: ({ commit, state }) => {
     return HTTP.get(`documents/${state.documentId}`)
       .then(response => {
-        commit("SET_FILE_NAME", response.data.data_file_name);
+        commit("SET_SELECTED_DOCUMENT", response.data);
       })
       .catch(error => {
         console.log(error);
       });
-  },
-
-  updateDocumentCategory: ({ state }, updatedCategory) => {
-    return new Promise(resolve => {
-      HTTP.patch(`/documents/${state.documentId}/`, updatedCategory)
-        .then(response => {
-          if (response.status === 200) {
-            resolve(true);
-          }
-        })
-        .catch(error => {
-          resolve(false);
-          console.log(error);
-        });
-    });
   }
 };
 
@@ -361,8 +347,8 @@ const mutations = {
   SET_FOCUSED_ANNOTATION: (state, focusedAnnotation) => {
     state.focusedAnnotation = focusedAnnotation;
   },
-  SET_FILE_NAME: (state, fileName) => {
-    state.fileName = fileName;
+  SET_SELECTED_DOCUMENT: (state, document) => {
+    state.selectedDocument = document;
   }
 };
 

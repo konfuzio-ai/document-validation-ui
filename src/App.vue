@@ -35,8 +35,7 @@ export default {
     };
   },
   watch: {
-    documentId(value) {
-      console.log("change ", value);
+    documentId() {
       this.documentLoading();
     }
   },
