@@ -35,8 +35,7 @@ export default {
     };
   },
   watch: {
-    documentId(value) {
-      console.log("change ", value);
+    documentId() {
       this.documentLoading();
     }
   },
@@ -52,7 +51,7 @@ export default {
     },
     categoryLoading() {
       Promise.all([
-        this.$store.dispatch("category/fetchCategory"),
+        this.$store.dispatch("category/fetchCategories"),
         this.$store.dispatch("category/fetchDocumentList")
       ]);
     }

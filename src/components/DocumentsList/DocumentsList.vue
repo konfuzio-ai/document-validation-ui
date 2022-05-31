@@ -1,7 +1,7 @@
 <style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>
 <template>
   <div class="documents-list" v-if="selectedCategory">
-    <div class="documents-list-top">
+    <div class="documents-list-top" v-if="showCategoryInfo">
       <div class="documents-list-top-left">
         <h2>{{ selectedCategory.name }}</h2>
         <p>
@@ -65,6 +65,13 @@ export default {
   props: {},
   components: {
     ServerImage
+  },
+  data() {
+    return {
+      showCategoryInfo:
+        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP &&
+        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP == "true"
+    };
   },
   computed: {
     ...mapState("document", ["documentId"]),

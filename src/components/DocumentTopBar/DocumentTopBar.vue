@@ -1,19 +1,36 @@
 <style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
 
 <template>
-  <div class="document-top-bar">
-    <div class="category-drop-down">
-      <div class="icon">
-        <CategoryIcon />
-      </div>
-      <div class="category-info">
-        <p>Category</p>
-        <div class="category-name">Zugticket</div>
-      </div>
-      <div class="caret">
-        <CaretDown />
-      </div>
-    </div>
+  <div class="document-top-bar" v-if="selectedDocument">
+    <b-dropdown class="category-chooser" aria-role="list">
+      <template #trigger>
+        <div class="category-drop-down">
+          <div class="icon">
+            <CategoryIcon />
+          </div>
+          <div class="category-info">
+            <p class="category-title">{{ $t("category") }}</p>
+            <div class="category-name">
+              {{ categoryName(selectedDocument.category) }}
+            </div>
+          </div>
+          <div class="caret">
+            <CaretDown />
+          </div>
+        </div>
+      </template>
+
+      <b-dropdown-item
+        v-for="category in categories"
+        v-bind:key="category.id"
+        aria-role="listitem"
+        v-on:click="handleChangeCategory(category)"
+        :disabled="category.id === selectedDocument.category"
+      >
+        <span>{{ category.name }}</span>
+      </b-dropdown-item>
+    </b-dropdown>
+
     <div class="document-name-container">
       <div class="document-icon">
         <EmptyDoc />
@@ -29,7 +46,9 @@
           >{{ oldFileNameWithoutExtension }}</span
         >
         <span v-else class="document-name" contenteditable="false">{{
-          fileNameWithoutExtension ? fileNameWithoutExtension : fileName
+          fileNameWithoutExtension
+            ? fileNameWithoutExtension
+            : selectedDocument.data_file_name
         }}</span>
         <span v-if="fileExtension && !isEditable" class="file-extension"
           >.{{ fileExtension }}</span
@@ -70,7 +89,7 @@ import CategoryIcon from "../../assets/images/CategoryIconImg.vue";
 import EmptyDoc from "../../assets/images/EmptyDocImg.vue";
 import FileNameSaved from "../../assets/images/FileNameSavedImage.vue";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage.vue";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "DocumentTopBar",
@@ -86,7 +105,8 @@ export default {
       isFullPage: false,
       messageToUser: null,
       changed: false,
-      saved: false
+      saved: false,
+      selectedOptions: []
     };
   },
   components: {
@@ -97,7 +117,11 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", { fileName: "fileName" })
+    ...mapGetters("category", {
+      categoryName: "categoryName"
+    }),
+    ...mapState("document", ["selectedDocument"]),
+    ...mapState("category", ["categories"])
   },
   methods: {
     handleEdit() {
@@ -147,7 +171,7 @@ export default {
       this.saving = true;
 
       this.$store
-        .dispatch("document/updateFileName", updatedFileName)
+        .dispatch("document/updateDocument", updatedFileName)
         .then(response => {
           // Check if the response is successfull or not
           if (response) {
@@ -173,6 +197,17 @@ export default {
       if (contentNotEditable) {
         contentNotEditable.blur();
       }
+    },
+    handleChangeCategory(category) {
+      const updatedCategory = {
+        category: category.id
+      };
+      this.$store
+        .dispatch("document/updateDocument", updatedCategory)
+        .then(() => {
+          // update document list
+          this.$store.dispatch("category/fetchDocumentList");
+        });
     }
   },
   watch: {
