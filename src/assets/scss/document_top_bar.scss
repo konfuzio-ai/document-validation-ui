@@ -46,6 +46,21 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
+  .left-bar-options {
+    display: flex;
+  }
+
+  .category-drop-down {
+    width: 155px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-right: 1px solid $detail;
+
+    .category-info {
+      p {
+        font-size: 12px;
+        color: $grey;
       }
     }
   }

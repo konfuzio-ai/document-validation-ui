@@ -35,7 +35,6 @@ $detail: #e2e3e4;
 
 $top-bar-green: #44b78b;
 $top-bar-text-color: #2b3545;
-$top-bar-color-subte: #858c9a;
 
 $message-body-border-width: 1px;
 $message-body-padding: 8px 16px;
@@ -67,7 +66,10 @@ $carousel-overlay-background: none;
 .dropdown {
   .dropdown-menu {
     padding-top: 0px;
-  }
+  border-right: 1px solid $detail;
+  // left: 27px !important;
+  // top: 45px !important;
+
 }
 
 @import "~bulma";

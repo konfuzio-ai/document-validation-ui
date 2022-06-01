@@ -90,6 +90,8 @@ import EmptyDoc from "../../assets/images/EmptyDocImg.vue";
 import FileNameSaved from "../../assets/images/FileNameSavedImage.vue";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage.vue";
 import { mapGetters, mapState } from "vuex";
+import DatasetStatus from "./DatasetStatus.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "DocumentTopBar",
@@ -114,7 +116,8 @@ export default {
     CategoryIcon,
     EmptyDoc,
     FileNameSaved,
-    FileNameNotSaved
+    FileNameNotSaved,
+    DatasetStatus
   },
   computed: {
     ...mapGetters("category", {
