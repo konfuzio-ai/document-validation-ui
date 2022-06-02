@@ -22,8 +22,9 @@ export default {
   created() {
     // fetch info from API and save it on store
     this.documentLoading();
+    this.categoryLoading();
     if (process.env.VUE_APP_CATEGORY_ID) {
-      this.categoryLoading();
+      this.documentsListLoading();
     }
   },
   computed: {
@@ -50,10 +51,10 @@ export default {
       });
     },
     categoryLoading() {
-      Promise.all([
-        this.$store.dispatch("category/fetchCategories"),
-        this.$store.dispatch("category/fetchDocumentList")
-      ]);
+      Promise.all([this.$store.dispatch("category/fetchCategories")]);
+    },
+    documentsListLoading() {
+      Promise.all([this.$store.dispatch("category/fetchDocumentList")]);
     }
   }
 };

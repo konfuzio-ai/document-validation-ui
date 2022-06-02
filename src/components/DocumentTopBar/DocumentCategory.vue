@@ -65,8 +65,10 @@ export default {
       this.$store
         .dispatch("document/updateDocument", updatedCategory)
         .then(() => {
-          // update document list
-          this.$store.dispatch("category/fetchDocumentList");
+          // update document list if visible
+          if (process.env.VUE_APP_CATEGORY_ID) {
+            this.$store.dispatch("category/fetchDocumentList");
+          }
         });
     }
   }
