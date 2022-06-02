@@ -1,0 +1,12 @@
+@import "./imports.scss";
+
+.handover-btn {
+  border-radius: 8px;
+  background-color: $top-bar-green;
+  color: $white;
+  font-weight: 500;
+  height: 40px;
+  width: 97px;
+  border: none;
+  font-family: "Inter", sans-serif;
+}

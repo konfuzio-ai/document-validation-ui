@@ -64,12 +64,13 @@ $carousel-overlay-background: none;
 }
 
 .dropdown {
+  height: 100%;
+  border-right: 1px solid $detail;
   .dropdown-menu {
     padding-top: 0px;
-  border-right: 1px solid $detail;
-  // left: 27px !important;
-  // top: 45px !important;
-
+    left: 27px !important;
+    top: 45px !important;
+  }
 }
 
 @import "~bulma";
