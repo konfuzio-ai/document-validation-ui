@@ -285,7 +285,9 @@ export default {
               x0: spanArray.x0,
               x1: spanArray.x1,
               y0: spanArray.y0,
-              y1: spanArray.y1
+              y1: spanArray.y1,
+              start_offset: spanArray.start_offset,
+              end_offset: spanArray.end_offset
             }
           ]
         };
