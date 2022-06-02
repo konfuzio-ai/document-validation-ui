@@ -1,0 +1,38 @@
+@import "./imports.scss";
+
+.dataset-status-chooser {
+  display: flex;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+
+  .dropdown-list {
+    display: flex;
+    align-items: center;
+    width: 163px;
+    gap: 10px;
+
+    .icon {
+      margin-left: 17px;
+    }
+
+    .dataset-status-dropdown {
+      width: 100px;
+    }
+
+    .caret {
+      margin-right: 17px;
+    }
+  }
+
+  .dropdown-menu-title {
+    padding-left: 16px;
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  p {
+    font-size: 12px;
+    color: $grey;
+  }
+}

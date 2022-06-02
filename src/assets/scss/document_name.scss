@@ -1,0 +1,60 @@
+@import "./imports.scss";
+
+.document-name-component {
+  display: flex;
+  align-items: center;
+  width: auto;
+  gap: 11px;
+  line-height: 20px;
+
+  .document-icon {
+    padding-top: 4px;
+  }
+
+  .document-name {
+    margin-right: 0;
+  }
+
+  .document-name:focus {
+    border-radius: 8px;
+  }
+
+  [contenteditable].document-name:focus {
+    padding: 6px 14px 6px 14px;
+    outline: 1px solid $grey-outline;
+  }
+
+  .btn {
+    color: $top-bar-green;
+    font-weight: 400;
+  }
+
+  .btn:hover {
+    cursor: pointer;
+  }
+
+  .message-container {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: $grey;
+
+    .notification {
+      background-color: transparent;
+      padding: 6px;
+    }
+
+    .loading-icon-size {
+      width: 13px;
+      height: 13px;
+    }
+
+    .spinner {
+      color: $grey;
+    }
+
+    .cloud-icon {
+      display: flex;
+    }
+  }
+}

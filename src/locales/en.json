@@ -6,5 +6,13 @@
   "resolution_not_supported": "App not supported on this resolution",
   "upload_documents": "Upload your own documents",
   "request_trial": "Request  trial access",
-  "category": "Category"
+  "category": "Category",
+  "status": "Status",
+  "set_status": "Set a status",
+  "edit": "Edit",
+  "save": "Save",
+  "autosaving": "Auto saving...",
+  "saved": "Saved",
+  "not_saved": "Could not save. Try again",
+  "handover": "Handover"
 }
