@@ -15,7 +15,8 @@ const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   annotationSelected: null,
   showDeletedAnnotations: false,
-  selectedDocument: null
+  selectedDocument: null,
+  editingAnnotation: true
 };
 
 const getters = {
@@ -41,13 +42,11 @@ const getters = {
             });
           } else {
             // add it to the annotation set array
-            annotationSet.group = [
-              {
-                id: annotationSet.id,
-                label_set: annotationSet.label_set,
-                labels: annotationSet.labels
-              }
-            ];
+            annotationSet.group = [{
+              id: annotationSet.id,
+              label_set: annotationSet.label_set,
+              labels: annotationSet.labels
+            }];
             tempAnnotationSets.push(annotationSet);
           }
         }
@@ -181,31 +180,49 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({ commit }) => {
+  startLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({ commit }) => {
+  endLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", false);
   },
-  setDocId: ({ commit }, id) => {
+  setDocId: ({
+    commit
+  }, id) => {
     commit("SET_DOC_ID", id);
   },
-  setAnnotationSelected: ({ commit }, annotation) => {
+  setAnnotationSelected: ({
+    commit
+  }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setActiveAnnotationSet: ({ commit }, annotationSet) => {
+  setActiveAnnotationSet: ({
+    commit
+  }, annotationSet) => {
     commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
   },
-  setAnnotationSets: ({ commit }, annotationSets) => {
+  setAnnotationSets: ({
+    commit
+  }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
-  setAnnotations: ({ commit }, annotations) => {
+  setAnnotations: ({
+    commit
+  }, annotations) => {
     commit("SET_ANNOTATIONS", annotations);
   },
-  setPages: ({ commit }, pages) => {
+  setPages: ({
+    commit
+  }, pages) => {
     commit("SET_PAGES", pages);
   },
-  setSelectedDocument: ({ commit }, document) => {
+  setSelectedDocument: ({
+    commit
+  }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
 
@@ -213,12 +230,16 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchAnnotations: ({ commit, state, getters }) => {
+  fetchAnnotations: ({
+    commit,
+    state,
+    getters
+  }) => {
     return HTTP.get(
-      `documents/${state.documentId}/${
+        `documents/${state.documentId}/${
         !state.showDeletedAnnotations ? "?revised=true&is_correct=false" : ""
       }`
-    )
+      )
       .then(async response => {
         if (response.data.annotation_sets) {
           commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
@@ -252,7 +273,10 @@ const actions = {
         console.log(error, "Could not fetch document details from the backend");
       });
   },
-  setFocusedAnnotation: ({ commit, state }, annotation) => {
+  setFocusedAnnotation: ({
+    commit,
+    state
+  }, annotation) => {
     if (state.focusedAnnotation.id !== annotation.id) {
       if (!annotation.span && !annotation.pageNumber && state.annotations) {
         const ann = state.annotations.find(a => a.id === annotation.id);
@@ -260,26 +284,39 @@ const actions = {
           annotation.span = ann.span;
           annotation.pageNumber = annotation.span[0].page_index + 1;
         } else {
-          commit("SET_FOCUSED_ANNOTATION", { id: null });
+          commit("SET_FOCUSED_ANNOTATION", {
+            id: null
+          });
           return;
         }
       }
       commit("SET_FOCUSED_ANNOTATION", annotation);
     } else {
-      commit("SET_FOCUSED_ANNOTATION", { id: null });
+      commit("SET_FOCUSED_ANNOTATION", {
+        id: null
+      });
     }
   },
 
-  resetFocusedAnnotation: ({ commit }) => {
-    commit("SET_FOCUSED_ANNOTATION", { id: null });
+  resetFocusedAnnotation: ({
+    commit
+  }) => {
+    commit("SET_FOCUSED_ANNOTATION", {
+      id: null
+    });
   },
 
-  updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
+  updateAnnotation: ({
+    state
+  }, {
+    updatedValues,
+    annotationId
+  }) => {
     return new Promise(resolve => {
       HTTP.patch(
-        `/documents/${state.documentId}/annotations/${annotationId}`,
-        updatedValues
-      )
+          `/documents/${state.documentId}/annotations/${annotationId}`,
+          updatedValues
+        )
         .then(response => {
           if (response.status === 200) {
             resolve(true);
@@ -291,7 +328,10 @@ const actions = {
         });
     });
   },
-  updateDocument: ({ commit, state }, updatedDocument) => {
+  updateDocument: ({
+    commit,
+    state
+  }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
@@ -308,7 +348,10 @@ const actions = {
   },
 
   // Get document data
-  fetchDocumentData: ({ commit, state }) => {
+  fetchDocumentData: ({
+    commit,
+    state
+  }) => {
     return HTTP.get(`documents/${state.documentId}`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);

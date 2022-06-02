@@ -19,16 +19,32 @@
               v-for="(bbox, index) in annotation.span.filter(
                 bbox => bbox.page_index + 1 == pageNumber
               )"
+              :config="
+                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
+              "
               :key="'ann' + annotation.id + '-' + index"
               v-on:click="selectLabelAnnotation(annotation)"
               @mouseenter="onAnnotationHover(annotation, activeAnnotationSet)"
               @mouseleave="onAnnotationHover(null)"
-              :config="
-                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
-              "
             ></v-rect>
           </template>
         </template>
+      </v-layer>
+      <v-layer v-if="editingAnnotation">
+        <box-selection
+          @changed="getBoxSelectionContent"
+          @mouseenter="cursor = 'grab'"
+          @mouseleave="cursor = 'crosshair'"
+        ></box-selection>
+        <v-transformer
+          ref="transformer"
+          :anchorSize="6"
+          anchorStroke="red"
+          :borderEnabled="false"
+          :rotateEnabled="false"
+          :ignoreStroke="true"
+          :keepRatio="false"
+        />
       </v-layer>
     </v-stage>
   </div>
@@ -39,9 +55,13 @@ import BigNumber from "bignumber.js";
 import { mapState, mapGetters } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
+import BoxSelection from "./BoxSelection";
 
 export default {
   name: "DocumentPage",
+  components: {
+    BoxSelection
+  },
 
   props: {
     page: {
@@ -113,8 +133,24 @@ export default {
       return this.page.number;
     },
 
+    selection() {
+      return this.$store.getters["selection/getSelectionForPage"](
+        this.pageNumber
+      );
+    },
+
+    selectionFromBbox() {
+      return this.$store.getters["selection/getSelectionFromBboxForPage"](
+        this.pageNumber
+      );
+    },
+
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
-    ...mapState("document", ["focusedAnnotation", "activeAnnotationSet"]),
+    ...mapState("document", [
+      "focusedAnnotation",
+      "activeAnnotationSet",
+      "editingAnnotation"
+    ]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
       "annotationsForPage",
@@ -301,6 +337,17 @@ export default {
           id: null
         });
       }
+    },
+    async getBoxSelectionContent() {
+      const rectBbox = this.clientToBbox(
+        this.selection.start,
+        this.selection.end
+      );
+      this.$store.dispatch("document/startLoading");
+      await this.$store.dispatch("selection/getTextFromBboxes", {
+        bboxes: [rectBbox]
+      });
+      this.$store.dispatch("document/endLoading");
     }
   },
 
