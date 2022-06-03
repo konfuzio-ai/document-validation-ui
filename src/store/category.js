@@ -15,7 +15,7 @@ const getters = {
    * Get the category name for a given category ID
    */
   categoryName: state => categoryId => {
-    if (categoryId) {
+    if (categoryId && state.categories) {
       return state.categories.find(
         tempCategory => tempCategory.id == categoryId
       ).name;
@@ -25,26 +25,40 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({ commit }) => {
+  startLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({ commit }) => {
+  endLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", false);
   },
-  setDocuments: ({ commit }, documents) => {
+  setDocuments: ({
+    commit
+  }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
-  setCategories: ({ commit }, categories) => {
+  setCategories: ({
+    commit
+  }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
-  setSelectedCategory: ({ commit }, category) => {
+  setSelectedCategory: ({
+    commit
+  }, category) => {
     commit("SET_SELECTED_CATEGORY", category);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit, state, rootState }) => {
+  fetchDocumentList: ({
+    commit,
+    state,
+    rootState
+  }) => {
     // TODO: add lazy loading
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
@@ -65,15 +79,20 @@ const actions = {
         console.log(error, "Could not fetch document list from the backend");
       });
   },
-  fetchCategories: ({ commit, state }) => {
+  fetchCategories: ({
+    commit,
+    state
+  }) => {
     return HTTP.get(`categories/?limit=100`)
       .then(async response => {
         if (response.data && response.data.results) {
           commit("SET_CATEGORIES", response.data.results);
-          const selectedCategory = response.data.results.find(
-            category => category.id == state.categoryId
-          );
-          commit("SET_SELECTED_CATEGORY", selectedCategory);
+          if (state.categoryId) {
+            const selectedCategory = response.data.results.find(
+              category => category.id == state.categoryId
+            );
+            commit("SET_SELECTED_CATEGORY", selectedCategory);
+          }
         }
       })
       .catch(error => {

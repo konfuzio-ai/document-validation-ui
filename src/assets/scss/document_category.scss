@@ -1,0 +1,54 @@
+@import "./imports.scss";
+
+.category-chooser {
+  cursor: pointer;
+  .category-drop-down {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    border-right: 1px solid $detail;
+    padding: 0 8px 0 16px;
+
+    &:hover {
+      background-color: $background;
+    }
+
+    .caret,
+    .icon {
+      text-align: center;
+      margin-right: 8px;
+    }
+
+    .category-info {
+      min-width: 100px;
+      width: 100px;
+      .category-title {
+        font-size: 12px;
+        color: $grey;
+      }
+      .category-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .left-bar-options {
+        display: flex;
+      }
+
+      .category-drop-down {
+        width: 155px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        border-right: 1px solid $detail;
+
+        .category-info {
+          p {
+            font-size: 12px;
+            color: $grey;
+          }
+        }
+      }
+    }
+  }
+}
