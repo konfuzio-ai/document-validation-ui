@@ -8,14 +8,14 @@
     <span class="file-name-section">
       <span
         v-if="isEditable"
-        class="document-name"
+        class="document-name is-editable"
         contenteditable
         @input="event => handleInput(event)"
         @keydown.enter="event => handleSave(event)"
         @blur="handleSave"
         >{{ oldFileName }}</span
       >
-      <span v-else class="document-name" contenteditable="false">{{
+      <span v-else class="document-name not-editable" contenteditable="false">{{
         fileName ? `${fileName}.${fileExtension}` : dataFileName
       }}</span>
     </span>

@@ -57,4 +57,23 @@
       display: flex;
     }
   }
+
+  @media (max-width: 1200px) {
+    .document-name.not-editable {
+      display: inline-block;
+      position: relative;
+      top: 2px;
+      max-width: 400px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .document-name.is-editable {
+      display: inline-block;
+      max-width: 400px;
+      overflow: auto;
+      white-space: nowrap;
+    }
+  }
 }
