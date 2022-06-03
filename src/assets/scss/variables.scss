@@ -73,5 +73,70 @@ $carousel-overlay-background: none;
   }
 }
 
+.modal-content {
+  height: auto;
+  width: 500px;
+  max-width: 500px !important;
+  margin-left: auto;
+  margin-right: auto;
+  background: $white;
+  border-radius: 16px;
+}
+
+.modal-card {
+  display: flex;
+  align-items: center;
+}
+
+.modal.is-active {
+  z-index: 999;
+}
+
+.modal-background {
+  background-color: $black;
+  opacity: 0.5;
+}
+
+.modal-close.is-large {
+  display: none !important;
+}
+
+.image,
+.content {
+  width: 400px;
+  text-align: center;
+}
+
+.image {
+  padding-top: 55px;
+  padding-bottom: 15px;
+}
+
+.content {
+  h3 {
+    font-weight: 600 !important;
+    font-size: 20px !important;
+    line-height: 26px !important;
+    color: $top-bar-text-color !important;
+    padding-bottom: 5px;
+  }
+  p {
+    color: $grey;
+  }
+
+  p,
+  button {
+    line-height: 20px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 769px) {
+  .modal-content,
+  .modal-card {
+    width: 500px !important;
+  }
+}
+
 @import "~bulma";
 @import "~buefy/src/scss/buefy";

@@ -14,5 +14,8 @@
   "autosaving": "Auto saving...",
   "saved": "Saved",
   "not_saved": "Could not save. Try again",
-  "handover": "Handover"
+  "handover": "Handover",
+  "small_viewport_title": "Small viewport size",
+  "small_viewport_info": "We’re sorry, but Konfuzio is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
+  "ok": "Ok, got it"
 }
