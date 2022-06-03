@@ -11,6 +11,7 @@
         class="document-name is-editable"
         contenteditable
         @input="event => handleInput(event)"
+        @paste="event => handlePaste(event)"
         @keydown.enter="event => handleSave(event)"
         @blur="handleSave"
         >{{ oldFileName }}</span
@@ -110,6 +111,9 @@ export default {
         range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
         range.select(); //Select the range (make it the visible selection
       }
+    },
+    handlePaste(event) {
+      event.preventDefault();
     },
     handleInput(event) {
       const input = event.target.textContent;
