@@ -13,4 +13,8 @@ button.ok-btn {
   margin-bottom: 32px;
   margin-top: 15px;
   font-family: "Inter", sans-serif;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
