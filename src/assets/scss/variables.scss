@@ -35,6 +35,7 @@ $detail: #e2e3e4;
 
 $top-bar-green: #44b78b;
 $top-bar-text-color: #2b3545;
+$error-red: #d4453d;
 
 $message-body-border-width: 1px;
 $message-body-padding: 8px 16px;
@@ -63,13 +64,36 @@ $carousel-overlay-background: none;
   }
 }
 
+.error-message {
+  .message-body {
+    background-color: $error-red !important;
+    color: $white;
+    font-size: 14px;
+    border: 0;
+    border-radius: 0% !important;
+    line-height: 20px;
+    padding: 7px 0 7px 0;
+  }
+  .media-content {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0px 20px 0px 20px;
+  }
+
+  .message-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .dropdown {
   height: 100%;
   border-right: 1px solid $detail;
   .dropdown-menu {
     padding-top: 0px;
     left: 27px !important;
-    top: 45px !important;
+    top: 50px !important;
   }
 }
 

@@ -16,5 +16,7 @@
   "autosaving": "Auto saving...",
   "saved": "Saved",
   "not_saved": "Could not save. Try again",
+  "category_error": "We couldn’t change the category. Please try again later.",
+  "status_error": "We couldn’t change the status. Please try again later.",
   "handover": "Handover"
 }
