@@ -192,6 +192,7 @@ export default {
     setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
       const annotationName = annotation.annotation_set.label_set.name;
       const activeSetName = activeAnnotationSet.group[0].label_set.name;
+
       let fillColor = window.annotationColor || "yellow";
       let strokeWidth = 0;
       let strokeColor = "";
@@ -303,7 +304,16 @@ export default {
       }
     }
   },
-
+  watch: {
+    pageAnnotations(newAnnotations, oldAnnotations) {
+      for (let i = 0; i < newAnnotations.length; i++) {
+        if (newAnnotations[i] !== oldAnnotations[i]) {
+          bboxToRect(newAnnotations[i].span[0]);
+        }
+        return;
+      }
+    }
+  },
   mounted() {
     this.drawPage();
   }
