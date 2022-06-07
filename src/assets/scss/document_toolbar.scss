@@ -1,0 +1,36 @@
+@import "./imports.scss";
+
+.toolbar-container {
+  position: absolute;
+  z-index: 999;
+  width: calc(100% - 40% - 80px);
+  bottom: 0;
+  margin-bottom: 20px;
+
+  .toolbar {
+    background-color: $top-bar-text-color;
+    height: 40px;
+    width: 225px;
+    border-radius: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+
+      &.icons-left {
+        border-right: 1px solid $grey-detail;
+        padding-right: 18px;
+      }
+
+      .percentage {
+        color: $white;
+      }
+    }
+  }
+}
