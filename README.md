@@ -8,10 +8,7 @@ White Label widget, that let's you upload your documents to Konfuzio and preview
 
 # **Requirements**
 
-Software Required:
-
-- node
-- npm
+The widget requires `node` and `npm`.
 
 # **Installation**
 
