@@ -6,6 +6,8 @@
   "resolution_not_supported": "App not supported on this resolution",
   "upload_documents": "Upload your own documents",
   "request_trial": "Request  trial access",
+  "warning_message": "AI can’t be trained if you change the text manually.",
+  "error_message": "Editing was not possible. Please try again later",
   "category": "Category",
   "status": "Status",
   "set_status": "Set a status",
@@ -14,5 +16,7 @@
   "autosaving": "Auto saving...",
   "saved": "Saved",
   "not_saved": "Could not save. Try again",
+  "category_error": "We couldn’t change the category. Please try again later.",
+  "status_error": "We couldn’t change the status. Please try again later.",
   "handover": "Handover"
 }

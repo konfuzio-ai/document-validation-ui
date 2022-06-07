@@ -45,6 +45,12 @@ export default {
   props: {
     selectedDocument: {
       type: Object
+    },
+    handleShowError: {
+      type: Function
+    },
+    handleMessage: {
+      type: Function
     }
   },
   components: {
@@ -64,7 +70,11 @@ export default {
       };
       this.$store
         .dispatch("document/updateDocument", updatedCategory)
-        .then(() => {
+        .then(response => {
+          if (!response) {
+            this.handleShowError();
+            this.handleMessage();
+          }
           // update document list if visible
           if (process.env.VUE_APP_CATEGORY_ID) {
             this.$store.dispatch("category/fetchDocumentList");

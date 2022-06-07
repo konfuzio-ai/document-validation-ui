@@ -48,6 +48,9 @@ export default {
   props: {
     datasetStatus: {
       type: Number
+    },
+    handleShowError: {
+      type: Function
     }
   },
   components: {
@@ -67,7 +70,7 @@ export default {
           if (response) {
             this.currentStatus = this.statusList[index];
           } else {
-            console.log("Something went wrong");
+            this.handleShowError();
           }
         });
     },
