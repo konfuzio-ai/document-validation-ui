@@ -2,6 +2,7 @@ import { mount } from "@vue/test-utils";
 import {
   ScrollingDocument,
   ScrollingPage,
+  Toolbar,
 } from "../../src/components/DocumentPage";
 import store from "../../src/store";
 
@@ -43,5 +44,15 @@ describe("Document Page Component", () => {
     });
 
     expect(store.getters["display/visiblePageRange"]).toContain(1);
+  });
+
+  it("toolbar should be visible", async () => {
+    const wrapper = mount(ScrollingDocument, {
+      store,
+      mocks: { $t },
+    });
+
+    const toolbar = await wrapper.findComponent(".toolbar-container");
+    expect(toolbar.exists()).toBe(true);
   });
 });
