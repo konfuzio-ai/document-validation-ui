@@ -33,6 +33,9 @@
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" />
     </div>
+    <div class="not-optimized" v-if="!optimized">
+      <NotOptimizedViewportModal />
+    </div>
     <div class="not-supported" v-if="!isMinimunWidth">
       <div class="text">{{ $t("resolution_not_supported") }}</div>
     </div>
@@ -40,12 +43,18 @@
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import { PIXEL_RATIO, VIEWPORT_RATIO, MINIMUM_APP_WIDTH } from "../constants";
+import {
+  PIXEL_RATIO,
+  VIEWPORT_RATIO,
+  MINIMUM_APP_WIDTH,
+  MINIMUM_OPTIMIZED_APP_WIDTH
+} from "../constants";
 import { DocumentTopBar } from "./DocumentTopBar";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
+import NotOptimizedViewportModal from "./NotOptimizedViewportModal.vue";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -60,7 +69,8 @@ export default {
     DocumentPage,
     DocumentThumbnails,
     DocumentLabelSets,
-    DocumentsList
+    DocumentsList,
+    NotOptimizedViewportModal
   },
   computed: {
     defaultViewport() {
@@ -91,11 +101,13 @@ export default {
   },
   data() {
     return {
-      isMinimunWidth: true
+      isMinimunWidth: true,
+      optimized: true
     };
   },
   mounted() {
     this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
   },
   methods: {
     pageWidthScale() {
@@ -133,6 +145,7 @@ export default {
      */
     fitWidth() {
       this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+      this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
 
       const scale = this.pageWidthScale();
       this.updateScale(scale, {

@@ -8,14 +8,15 @@
     <span class="file-name-section">
       <span
         v-if="isEditable"
-        class="document-name"
+        class="document-name is-editable"
         contenteditable
         @input="event => handleInput(event)"
+        @paste="event => handlePaste(event)"
         @keydown.enter="event => handleSave(event)"
         @blur="handleSave"
         >{{ oldFileName }}</span
       >
-      <span v-else class="document-name" contenteditable="false">{{
+      <span v-else class="document-name not-editable" contenteditable="false">{{
         fileName ? `${fileName}.${fileExtension}` : dataFileName
       }}</span>
     </span>
@@ -110,6 +111,9 @@ export default {
         range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
         range.select(); //Select the range (make it the visible selection
       }
+    },
+    handlePaste(event) {
+      event.preventDefault();
     },
     handleInput(event) {
       const input = event.target.textContent;

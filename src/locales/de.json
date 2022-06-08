@@ -11,12 +11,15 @@
   "category": "Category",
   "status": "Status",
   "set_status": "Set a status",
+  "category_error": "We couldn’t change the category. Please try again later.",
+  "status_error": "We couldn’t change the status. Please try again later.",
   "edit": "Edit",
   "save": "Save",
   "autosaving": "Auto saving...",
   "saved": "Saved",
   "not_saved": "Could not save. Try again",
-  "category_error": "We couldn’t change the category. Please try again later.",
-  "status_error": "We couldn’t change the status. Please try again later.",
-  "handover": "Handover"
+  "handover": "Handover",
+  "small_viewport_title": "Small viewport size",
+  "small_viewport_info": "We’re sorry, but Konfuzio is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
+  "ok": "Ok, got it"
 }
