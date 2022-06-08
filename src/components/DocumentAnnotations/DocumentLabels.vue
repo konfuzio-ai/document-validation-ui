@@ -131,7 +131,7 @@
                   class="is-warning warning-msg message-body-border-color message-body-padding"
                 >
                   <div class="message-container">
-                    {{ warningMessage }}
+                    {{ $t("warning_message") }}
                     <div @click="handleWarningClose" class="btn-container">
                       <CloseBtnImg class="close-btn" />
                     </div>
@@ -151,7 +151,7 @@
                   class="is-danger danger-msg message-body-border-color message-body-padding"
                 >
                   <div class="message-container">
-                    {{ errorMessage }}
+                    {{ $t("error_message") }}
                     <div @click="handleErrorClose" class="btn-container">
                       <CloseBtnImg class="close-btn" />
                     </div>
@@ -190,11 +190,9 @@ export default {
       annotationAnimationTimeout: null,
       oldValue: null,
       newValue: null,
-      warningMessage: "AI can’t be trained if you change the text manually.",
       showWarning: false,
       notEditing: true,
       annBeingEdited: null,
-      errorMessage: "Editing was not possible. Please try again later",
       showError: false,
       edited: false,
       isFullPage: false,
@@ -285,7 +283,9 @@ export default {
               x0: spanArray.x0,
               x1: spanArray.x1,
               y0: spanArray.y0,
-              y1: spanArray.y1
+              y1: spanArray.y1,
+              start_offset: spanArray.start_offset,
+              end_offset: spanArray.end_offset
             }
           ]
         };

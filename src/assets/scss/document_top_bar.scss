@@ -26,3 +26,20 @@
     padding: 11px 22px 11px 0;
   }
 }
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.btn-container {
+  cursor: pointer;
+}

@@ -273,7 +273,6 @@ const actions = {
   resetFocusedAnnotation: ({ commit }) => {
     commit("SET_FOCUSED_ANNOTATION", { id: null });
   },
-
   updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
     return new Promise(resolve => {
       HTTP.patch(
@@ -282,6 +281,11 @@ const actions = {
       )
         .then(response => {
           if (response.status === 200) {
+            const annotation = state.annotations.find(
+              annotation => annotation.id === response.data.id
+            );
+            annotation.span = response.data.span;
+
             resolve(true);
           }
         })
