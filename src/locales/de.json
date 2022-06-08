@@ -14,5 +14,6 @@
   "autosaving": "Auto saving...",
   "saved": "Saved",
   "not_saved": "Could not save. Try again",
-  "handover": "Handover"
+  "handover": "Handover",
+  "no_data_found": "No data found. Click to edit..."
 }

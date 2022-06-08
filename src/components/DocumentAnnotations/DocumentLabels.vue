@@ -85,8 +85,17 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <span v-else class="label-property-value">
-                    {{ "" }}
+                  <span
+                    v-else
+                    class="label-property-value label-empty"
+                    :contenteditable="isSelectionEnabled"
+                    @click="event => handleEditEmptyAnnotation(event)"
+                    @keypress.enter="event => saveEmptyAnnotation(event)"
+                    @keypress.esc="event => handleCancelEmptyAnnotation(event)"
+                  >
+                    {{
+                      isSelectionEnabled ? textSelection : $t("no_data_found")
+                    }}
                   </span>
                   <div
                     v-if="isLoading"
@@ -185,6 +194,7 @@ export default {
     CloseBtnImg
   },
   data() {
+    // TODO: messages should be translated
     return {
       labelOpen: null,
       annotationAnimationTimeout: null,
@@ -210,7 +220,8 @@ export default {
       "annotationSelected",
       "focusedAnnotation",
       "loading"
-    ])
+    ]),
+    ...mapState("selection", ["textSelection", "isSelectionEnabled"])
   },
   methods: {
     /* Clicking a label opens the description */
@@ -321,6 +332,25 @@ export default {
     },
     handleErrorClose() {
       this.showError = false;
+    },
+    handleEditEmptyAnnotation(event) {
+      console.log("handleEditEmptyAnnotation");
+      if (!this.isSelectionEnabled) {
+        //focus element
+        setTimeout(function () {
+          event.target.focus();
+        }, 0);
+        this.$store.dispatch("selection/enableSelection");
+      }
+    },
+    handleCancelEmptyAnnotation(event) {
+      console.log("handleBlurEmptyAnnotation");
+      this.$store.dispatch("selection/disableSelection");
+    },
+    saveEmptyAnnotation(event) {
+      console.log("saveEmptyAnnotation");
+      console.log("saving", event.target.textContent.trim());
+      this.$store.dispatch("selection/disableSelection");
     }
   },
   watch: {

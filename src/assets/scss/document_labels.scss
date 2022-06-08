@@ -5,6 +5,7 @@
   overflow: auto;
   flex: 1;
   padding: 0 16px;
+
   .label-title {
     font-weight: 600;
     font-size: 18px;
@@ -125,6 +126,12 @@
           margin-left: 8px;
           border: none;
           background-color: transparent;
+
+          &.label-empty {
+            font-weight: 400;
+            font-size: 14px;
+            color: $text-lighter;
+          }
         }
 
         .label-property-value:focus {
@@ -168,6 +175,7 @@
   .slide-fade-enter-active {
     transition: all 0.3s ease;
   }
+
   .slide-fade-leave-active {
     transition: all 0.3s ease;
   }

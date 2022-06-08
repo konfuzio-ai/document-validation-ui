@@ -15,8 +15,7 @@ const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   annotationSelected: null,
   showDeletedAnnotations: false,
-  selectedDocument: null,
-  editingAnnotation: true
+  selectedDocument: null
 };
 
 const getters = {

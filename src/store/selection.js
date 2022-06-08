@@ -1,12 +1,17 @@
-import myImports from "../../http";
+import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
 const state = {
-  selection: { pageNumber: null, start: null, end: null },
+  selection: {
+    pageNumber: null,
+    start: null,
+    end: null
+  },
   selectionFromBbox: null,
   isSelecting: false,
-  textSelection: null
+  textSelection: null,
+  isSelectionEnabled: false
 };
 
 const getters = {
@@ -31,11 +36,34 @@ const getters = {
 };
 
 const actions = {
-  startSelection: ({ commit }, { pageNumber, start }) => {
-    commit("START_SELECTION", { pageNumber, start });
+  enableSelection: ({
+    commit
+  }) => {
+    commit("SELECTION_ENABLED", true);
+    commit("RESET_SELECTION");
+  },
+  disableSelection: ({
+    commit
+  }) => {
+    commit("SELECTION_ENABLED", false);
+    commit("RESET_SELECTION");
+  },
+  startSelection: ({
+    commit
+  }, {
+    pageNumber,
+    start
+  }) => {
+    commit("START_SELECTION", {
+      pageNumber,
+      start
+    });
   },
 
-  moveSelection: ({ commit, state }, points) => {
+  moveSelection: ({
+    commit,
+    state
+  }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
     const xDiff = Math.abs(state.selection.start.x - points.end.x);
     const yDiff = Math.abs(state.selection.start.y - points.end.y);
@@ -44,7 +72,10 @@ const actions = {
     }
   },
 
-  endSelection: ({ commit, state }, end) => {
+  endSelection: ({
+    commit,
+    state
+  }, end) => {
     const xDiff = Math.abs(state.selection.start.x - end.x);
     const yDiff = Math.abs(state.selection.start.y - end.y);
     // if start and end points are the same, or if we have a selection smaller than 5x5,
@@ -59,38 +90,52 @@ const actions = {
     }
   },
 
-  setSelection: ({ commit }, selection) => {
+  setSelection: ({
+    commit
+  }, selection) => {
     commit("SET_SELECTION", selection);
   },
 
-  resetSelection: ({ commit }) => {
+  resetSelection: ({
+    commit
+  }) => {
     commit("RESET_SELECTION");
     // also reset selectionFromBbox because it is tied to selection
     commit("SET_SELECTION_FROM_BBOX", null);
   },
 
-  setSelectionFromBbox: ({ commit }, bbox) => {
+  setSelectionFromBbox: ({
+    commit
+  }, bbox) => {
     commit("SET_SELECTION_FROM_BBOX", bbox);
   },
 
-  resetTextSelection: ({ commit }) => {
+  resetTextSelection: ({
+    commit
+  }) => {
     commit("SET_TEXT_SELECTION", null);
   },
 
-  getTextFromBboxes: ({ commit, rootState }, selection) => {
+  getTextFromBboxes: ({
+    commit,
+    rootState
+  }, selection) => {
     /**
      * `entities` is `true` only when passing click-selected entities (NOT an
      * area selection).
      */
-    const { bboxes, entities } = selection;
+    const {
+      bboxes,
+      entities
+    } = selection;
     if (bboxes.length === 0) {
       commit("SET_TEXT_SELECTION", null);
       return;
     }
     const data = Object.assign({}, bboxes);
     return HTTP.post(`docs/${rootState.document.docId}/bbox/`, {
-      bbox: data
-    })
+        bbox: data
+      })
       .then(response => {
         if (response.data.bboxes.length) {
           /**
@@ -123,9 +168,14 @@ const actions = {
       });
   },
 
-  getTextFromEntities: ({ commit, dispatch }, selectedEntities) => {
+  getTextFromEntities: ({
+    commit,
+    dispatch
+  }, selectedEntities) => {
     if (selectedEntities.length === 1) {
-      commit("SET_TEXT_SELECTION", { bboxes: selectedEntities });
+      commit("SET_TEXT_SELECTION", {
+        bboxes: selectedEntities
+      });
       return;
     }
     return dispatch("getTextFromBboxes", {
@@ -136,14 +186,23 @@ const actions = {
 };
 
 const mutations = {
-  START_SELECTION: (state, { pageNumber, start }) => {
+  SELECTION_ENABLED: (state, value) => {
+    state.isSelectionEnabled = value;
+  },
+  START_SELECTION: (state, {
+    pageNumber,
+    start
+  }) => {
     state.selection.end = null;
     state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
     state.selection.start = start;
   },
   MOVE_SELECTION: (state, points) => {
-    const { start, end } = points;
+    const {
+      start,
+      end
+    } = points;
     if (start) {
       state.selection.start = start;
     }
