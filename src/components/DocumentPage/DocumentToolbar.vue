@@ -26,10 +26,10 @@
 
 <script>
 import { mapState } from "vuex";
-import RotateIcon from "../../assets/images/RotateIcon.vue";
-import FitZoomIcon from "../../assets/images/FitZoomIcon.vue";
-import PlusIcon from "../../assets/images/PlusIcon.vue";
-import MinusIcon from "../../assets/images/MinusIcon.vue";
+import RotateIcon from "../../assets/images/RotateIcon";
+import FitZoomIcon from "../../assets/images/FitZoomIcon";
+import PlusIcon from "../../assets/images/PlusIcon";
+import MinusIcon from "../../assets/images/MinusIcon";
 
 export default {
   name: "Toolbar",

@@ -30,7 +30,7 @@
 import { mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
-import Toolbar from "../DocumentPage/DocumentToolbar.vue";
+import Toolbar from "../DocumentPage/DocumentToolbar";
 
 export default {
   components: {
