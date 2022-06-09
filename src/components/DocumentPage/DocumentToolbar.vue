@@ -63,11 +63,8 @@ export default {
       this.$store.dispatch("display/updateFit", "undefined");
     },
     fitAuto() {
-      if (this.currentPercentage === 100) {
-        return;
-      }
       this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 90;
+      this.currentPercentage = 15;
     }
   }
 };
