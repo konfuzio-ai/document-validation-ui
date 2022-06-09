@@ -22,6 +22,7 @@
         <slot v-bind="{ page, isPageFocused, isElementFocused }"></slot>
       </div>
     </ScrollingPage>
+    <Toolbar />
   </div>
 </template>
 
@@ -29,10 +30,12 @@
 import { mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
+import Toolbar from "../DocumentPage/DocumentToolbar";
 
 export default {
   components: {
-    ScrollingPage
+    ScrollingPage,
+    Toolbar
   },
 
   directives: {

@@ -1,0 +1,60 @@
+@import "./imports.scss";
+
+.toolbar-container {
+  position: absolute;
+  z-index: 999;
+  width: calc(100% - 40% - 80px);
+  bottom: 0;
+  margin-bottom: 20px;
+
+  .toolbar {
+    background-color: $top-bar-text-color;
+    height: 40px;
+    width: 225px;
+    border-radius: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icons {
+      display: flex;
+      align-items: center;
+
+      &.icons-left {
+        margin-right: 10px;
+        padding-right: 10px;
+
+        &:after {
+          content: "";
+          position: relative;
+          left: 10px;
+          height: 20px;
+          width: 50%;
+          border-right: 1px solid $grey-detail;
+          opacity: 30%;
+        }
+      }
+
+      .percentage {
+        color: $white;
+        width: 32px;
+        padding: 7px;
+        margin-right: 20px;
+      }
+
+      .icon {
+        width: 32px;
+        height: 32px;
+        padding: 7px;
+
+        &:hover {
+          cursor: pointer;
+          background: $low-opacity-white;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}

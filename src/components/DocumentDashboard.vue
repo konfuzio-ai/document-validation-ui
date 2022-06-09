@@ -153,6 +153,11 @@ export default {
       });
     },
 
+    fitAuto() {
+      const scale = Math.min(this.pageWidthScale(), this.pageHeightScale());
+      this.updateScale(scale);
+    },
+
     updateScale(scale, { isOptimal = false } = {}) {
       if (!scale) return;
       this.$store.dispatch("display/updateScale", { scale, isOptimal });
@@ -169,8 +174,19 @@ export default {
   },
 
   watch: {
-    fit() {
-      this.fitWidth();
+    fit(fit) {
+      switch (fit) {
+        case "width":
+          this.fitWidth();
+          break;
+
+        case "auto":
+          this.fitAuto();
+          break;
+
+        default:
+          break;
+      }
     }
   }
 };
