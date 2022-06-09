@@ -16,20 +16,44 @@
     margin-right: auto;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
 
     .icons {
       display: flex;
       align-items: center;
-      gap: 18px;
 
       &.icons-left {
-        border-right: 1px solid $grey-detail;
-        padding-right: 18px;
+        margin-right: 10px;
+        padding-right: 10px;
+
+        &:after {
+          content: "";
+          position: relative;
+          left: 10px;
+          height: 20px;
+          width: 50%;
+          border-right: 1px solid $grey-detail;
+          opacity: 30%;
+        }
       }
 
       .percentage {
         color: $white;
+        width: 32px;
+        padding: 7px;
+        margin-right: 20px;
+      }
+
+      .icon {
+        width: 32px;
+        height: 32px;
+        padding: 7px;
+
+        &:hover {
+          cursor: pointer;
+          background: $low-opacity-white;
+          border-radius: 4px;
+        }
       }
     }
   }
