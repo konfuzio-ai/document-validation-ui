@@ -62,7 +62,7 @@ export default {
     }),
     ...mapState("document", {
       activeAnnotationSet: "activeAnnotationSet",
-      annotationSelected: "annotationSelected"
+      sidebarAnnotationSelected: "sidebarAnnotationSelected"
     })
   },
   methods: {
@@ -81,12 +81,12 @@ export default {
         this.onAnnotationSetClick(this.groupedAnnotationSets[0]);
       }
     },
-    annotationSelected() {
+    sidebarAnnotationSelected() {
       // change programmatically the selected annotation set
       if (
-        this.annotationSelected &&
-        this.annotationSelected.annotation_set &&
-        this.annotationSelected.annotation_set.label_set.id !=
+        this.sidebarAnnotationSelected &&
+        this.sidebarAnnotationSelected.annotation_set &&
+        this.sidebarAnnotationSelected.annotation_set.label_set.id !=
           this.activeAnnotationSet.label_set.id
       ) {
         // check if the label set is on the same group of annotations set and
@@ -94,7 +94,7 @@ export default {
         const annotationSet = this.groupedAnnotationSets.find(
           el =>
             el.label_set.id ===
-            this.annotationSelected.annotation_set.label_set.id
+            this.sidebarAnnotationSelected.annotation_set.label_set.id
         );
         this.onAnnotationSetClick(annotationSet);
       }

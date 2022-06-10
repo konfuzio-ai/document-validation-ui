@@ -63,7 +63,7 @@ export default {
     },
 
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["focusedAnnotation"])
+    ...mapState("document", ["documentFocusedAnnotation"])
   },
 
   methods: {
@@ -120,8 +120,8 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    focusedAnnotation(focused) {
-      if (focused.pageNumber === this.page.number) {
+    documentFocusedAnnotation(focused) {
+      if (focused && focused.span) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {

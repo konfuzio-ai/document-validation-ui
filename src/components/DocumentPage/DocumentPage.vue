@@ -30,6 +30,40 @@
           </template>
         </template>
       </v-layer>
+      <v-layer
+        v-if="documentFocusedAnnotation && documentFocusedAnnotation.span"
+      >
+        <template>
+          <v-label
+            :key="`label${documentFocusedAnnotation.id}`"
+            :config="{
+              listening: false,
+              ...annotationLabelRect(
+                documentFocusedAnnotation.span[0],
+                !documentFocusedAnnotation.revised &&
+                  !documentFocusedAnnotation.is_correct
+              )
+            }"
+          >
+            <v-tag
+              :config="{
+                fill: '#2B3545',
+                lineJoin: 'round',
+                hitStrokeWidth: 0,
+                listening: false
+              }"
+            ></v-tag>
+            <v-text
+              :config="{
+                padding: 2,
+                text: documentFocusedAnnotation.label_name,
+                fill: 'white',
+                listening: false
+              }"
+            ></v-text>
+          </v-label>
+        </template>
+      </v-layer>
     </v-stage>
   </div>
 </template>
@@ -114,7 +148,10 @@ export default {
     },
 
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
-    ...mapState("document", ["focusedAnnotation", "activeAnnotationSet"]),
+    ...mapState("document", [
+      "documentFocusedAnnotation",
+      "activeAnnotationSet"
+    ]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
       "annotationsForPage",
@@ -205,22 +242,23 @@ export default {
       // if hovered
       if (
         annotation.id === this.hoveredId ||
-        annotation.id === this.focusedAnnotation.id
+        (this.documentFocusedAnnotation &&
+          annotation.id === this.documentFocusedAnnotation.id)
       ) {
-        fillColor = "";
-        strokeWidth = 2;
-        strokeColor = "#67E9B7";
+        fillColor = "#67E9B7";
+        strokeWidth = 1;
+        strokeColor = "black";
       }
 
       // Highlight with green the annotations from the active label set
-      if (this.hoveredAnnotation || this.focusedAnnotation) {
+      if (this.hoveredAnnotation || this.documentFocusedAnnotation) {
         /** If we are hovering over an annotation from the active label set,
          * we change the style
          */
         return {
           fill: fillColor,
           globalCompositeOperation: "multiply",
-          hitStrokeWidth: strokeWidth,
+          strokeWidth: strokeWidth,
           stroke: strokeColor,
           name: "annotation",
           ...this.bboxToRect(bbox)
@@ -247,10 +285,8 @@ export default {
       };
     },
     selectLabelAnnotation(annotation) {
-      this.$store.dispatch("document/setFocusedAnnotation", {
-        id: annotation.id
-      });
-      this.$store.dispatch("document/setAnnotationSelected", annotation);
+      this.$store.dispatch("document/setDocumentFocusedAnnotation", annotation);
+      this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
     onAnnotationHover(annotation, activeAnnotationSet) {
@@ -298,9 +334,10 @@ export default {
         this.hoveredAnnotation = false;
         this.hoveredId = null;
         // Set the id back to null so that the annotation doesn't stay selected
-        this.$store.dispatch("document/setFocusedAnnotation", {
-          id: null
-        });
+        this.$store.dispatch(
+          "document/setDocumentFocusedAnnotation",
+          annotation
+        );
       }
     }
   },
