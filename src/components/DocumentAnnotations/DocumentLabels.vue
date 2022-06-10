@@ -77,6 +77,7 @@
                     role="textbox"
                     contenteditable
                     @blur="event => handleBlur(event, annotation)"
+                    @paste="event => handlePaste(event, annotation)"
                     @input="event => handleInput(event, annotation)"
                     @keypress.enter="event => event.preventDefault()"
                     @click="
@@ -241,6 +242,9 @@ export default {
       this.oldValue = annotation.span[0].offset_string;
       this.newValue = event.target.textContent.trim();
       return this.oldValue.includes(this.newValue);
+    },
+    handlePaste(event) {
+      event.preventDefault();
     },
     handleInput(event, annotation) {
       const newInOldValue = this.isNewValueInOld(event, annotation);
