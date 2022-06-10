@@ -152,11 +152,7 @@ export default {
         this.pageNumber
       );
     },
-    ...mapState("selection", [
-      "isSelecting",
-      "textSelection",
-      "isSelectionEnabled"
-    ]),
+    ...mapState("selection", ["isSelecting", "textSelection"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", ["focusedAnnotation", "activeAnnotationSet"]),
     ...mapGetters("display", ["visiblePageRange"]),
@@ -164,7 +160,8 @@ export default {
       "annotationsForPage",
       "pageCount",
       "annotationsInLabelSet"
-    ])
+    ]),
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {

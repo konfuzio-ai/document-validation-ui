@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 
@@ -75,7 +75,7 @@ export default {
       return this.$store.getters["document/pageCount"];
     },
     ...mapState("display", ["currentPage"]),
-    ...mapState("selection", ["isSelectionEnabled"])
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {

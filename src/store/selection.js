@@ -11,10 +11,13 @@ const state = {
   selectionFromBbox: null,
   isSelecting: false,
   textSelection: null,
-  isSelectionEnabled: false
+  selectionEnabledForId: null
 };
 
 const getters = {
+  isSelectionEnabled: state => {
+    return state.selectionEnabledForId != null
+  },
   hasValidTextSelection: state => {
     return !!state.textSelection;
   },
@@ -38,14 +41,14 @@ const getters = {
 const actions = {
   enableSelection: ({
     commit
-  }) => {
-    commit("SELECTION_ENABLED", true);
+  }, value) => {
+    commit("SELECTION_ENABLED", value);
     commit("RESET_SELECTION");
   },
   disableSelection: ({
     commit
   }) => {
-    commit("SELECTION_ENABLED", false);
+    commit("SELECTION_ENABLED", null);
     commit("RESET_SELECTION");
   },
   startSelection: ({
@@ -187,7 +190,7 @@ const actions = {
 
 const mutations = {
   SELECTION_ENABLED: (state, value) => {
-    state.isSelectionEnabled = value;
+    state.selectionEnabledForId = value;
   },
   START_SELECTION: (state, {
     pageNumber,

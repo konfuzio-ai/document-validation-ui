@@ -88,13 +88,28 @@
                   <span
                     v-else
                     class="label-property-value label-empty"
-                    :contenteditable="isSelectionEnabled"
-                    @click="event => handleEditEmptyAnnotation(event)"
-                    @keypress.enter="event => saveEmptyAnnotation(event)"
-                    @keypress.esc="event => handleCancelEmptyAnnotation(event)"
+                    :contenteditable="
+                      selectionEnabledForId ===
+                      getEmptyAnnotationIdentifier(annotation, annotationSet)
+                    "
+                    @click="
+                      event =>
+                        handleEditEmptyAnnotation(
+                          event,
+                          annotation,
+                          annotationSet
+                        )
+                    "
+                    @keypress.enter="
+                      event => saveEmptyAnnotation(event, annotation)
+                    "
+                    @keypress.esc="handleCancelEmptyAnnotation"
                   >
                     {{
-                      isSelectionEnabled ? textSelection : $t("no_data_found")
+                      selectionEnabledForId ===
+                      getEmptyAnnotationIdentifier(annotation, annotationSet)
+                        ? textSelection
+                        : $t("no_data_found")
                     }}
                   </span>
                   <div
@@ -215,13 +230,14 @@ export default {
     ...mapGetters("document", {
       annotationsInLabelSet: "annotationsInLabelSet"
     }),
+    ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapState("document", [
       "activeAnnotationSet",
       "annotationSelected",
       "focusedAnnotation",
       "loading"
     ]),
-    ...mapState("selection", ["textSelection", "isSelectionEnabled"])
+    ...mapState("selection", ["textSelection", "selectionEnabledForId"])
   },
   methods: {
     /* Clicking a label opens the description */
@@ -333,24 +349,44 @@ export default {
     handleErrorClose() {
       this.showError = false;
     },
-    handleEditEmptyAnnotation(event) {
+    getEmptyAnnotationIdentifier(annotation, annotationSet) {
+      return `${annotation.label_id}_${annotationSet.id}`;
+    },
+    handleEditEmptyAnnotation(event, annotation, annotationSet) {
       console.log("handleEditEmptyAnnotation");
-      if (!this.isSelectionEnabled) {
+      console.log(annotation.label_id);
+      console.log(annotationSet.id);
+      const selectionId = this.getEmptyAnnotationIdentifier(
+        annotation,
+        annotationSet
+      );
+      if (this.selectionEnabledForId !== selectionId) {
         //focus element
-        setTimeout(function () {
+        this.handleCancelEmptyAnnotation();
+        setTimeout(() => {
           event.target.focus();
         }, 0);
-        this.$store.dispatch("selection/enableSelection");
+        this.$store.dispatch("selection/enableSelection", selectionId);
       }
     },
-    handleCancelEmptyAnnotation(event) {
+    handleCancelEmptyAnnotation() {
       console.log("handleBlurEmptyAnnotation");
       this.$store.dispatch("selection/disableSelection");
     },
-    saveEmptyAnnotation(event) {
+    saveEmptyAnnotation(event, annotation) {
       console.log("saveEmptyAnnotation");
       console.log("saving", event.target.textContent.trim());
       this.$store.dispatch("selection/disableSelection");
+      console.log(this.activeAnnotationSet);
+      const annotationToCreate = {
+        span: [event.target.textContent.trim()],
+        label: annotation.label_id,
+        label_set: this.activeAnnotationSet.label_set.id,
+        is_correct: true,
+        revised: true
+      };
+      console.log(annotationToCreate);
+      this.$store.dispatch("document/createAnnotation", annotationToCreate);
     }
   },
   watch: {

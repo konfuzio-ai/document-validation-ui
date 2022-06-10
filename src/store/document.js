@@ -305,6 +305,30 @@ const actions = {
     });
   },
 
+  createAnnotation: ({
+      state
+    },
+    annotation
+  ) => {
+    console.log("request:", annotation)
+    return new Promise(resolve => {
+      HTTP.post(
+          `/documents/${state.documentId}/annotations/`,
+          annotation
+        )
+        .then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
+  },
+
   updateAnnotation: ({
     state
   }, {
