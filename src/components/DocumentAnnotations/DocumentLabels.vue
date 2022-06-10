@@ -20,8 +20,8 @@
             :class="[
               'label-properties',
               annotation.id &&
-                annotationSelected &&
-                annotation.id === annotationSelected.id &&
+                sidebarAnnotationSelected &&
+                annotation.id === sidebarAnnotationSelected.id &&
                 'selected'
             ]"
             :ref="`annotation${annotation && annotation.id}`"
@@ -206,8 +206,7 @@ export default {
     }),
     ...mapState("document", [
       "activeAnnotationSet",
-      "annotationSelected",
-      "focusedAnnotation",
+      "sidebarAnnotationSelected",
       "loading"
     ])
   },
@@ -226,9 +225,7 @@ export default {
       return JSON.stringify(this.labelOpen) === JSON.stringify(annotation);
     },
     onLabelHover(annotation) {
-      this.$store.dispatch("document/setFocusedAnnotation", {
-        id: annotation && annotation.id ? annotation.id : null
-      });
+      this.$store.dispatch("document/setDocumentFocusedAnnotation", annotation);
     },
     isAnnotationBeingEditedNull() {
       if (this.annBeingEdited.id === null) {
@@ -331,20 +328,20 @@ export default {
     activeAnnotationSet() {
       this.labelOpen = null;
     },
-    annotationSelected() {
+    sidebarAnnotationSelected() {
       // if an annotation is selected, scroll to it
-      if (this.annotationSelected) {
+      if (this.sidebarAnnotationSelected) {
         clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
           this.$refs.labelsList.scrollTo({
-            top: this.$refs[`annotation${this.annotationSelected.id}`][0]
+            top: this.$refs[`annotation${this.sidebarAnnotationSelected.id}`][0]
               .offsetTop,
             behavior: "smooth"
           });
 
           // remove annotation selection after some time
           this.annotationAnimationTimeout = setTimeout(() => {
-            this.$store.dispatch("document/setAnnotationSelected", null);
+            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
           }, 1500);
         }, 100);
         // add a timeout in case we need to wait if a tab is going to be changed
