@@ -85,11 +85,7 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <EmptyAnnotation
-                    v-else
-                    annotation="annotation"
-                    annotationSet="annotationSet"
-                  />
+                  <EmptyAnnotation v-else :annotation="annotation" />
                   <div
                     v-if="isLoading"
                     :class="[

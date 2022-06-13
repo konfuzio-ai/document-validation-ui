@@ -2,21 +2,16 @@
 <template>
   <span
     class="label-property-value label-empty"
-    :contenteditable="isEmptyAnnotationEditable(annotation, annotationSet)"
-    @click="
-      event => handleEditEmptyAnnotation(event, annotation, annotationSet)
-    "
-    @keypress.enter="event => saveEmptyAnnotation(event, annotation)"
-    :ref="`emptyAnnotation_${getEmptyAnnotationIdentifier(
-      annotation,
-      annotationSet
-    )}`"
+    :contenteditable="isEmptyAnnotationEditable(annotation)"
+    @click="event => handleEditEmptyAnnotation(event)"
+    @keypress.enter="event => saveEmptyAnnotation(event)"
+    ref="emptyAnnotation"
   >
-    {{ getEmptyAnnotationPlaceholder(annotation, annotationSet) }}
+    {{ getEmptyAnnotationPlaceholder() }}
   </span>
 </template>
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 /**
  * This component is responsible for managing empty annotations.
  */
@@ -26,35 +21,32 @@ export default {
   props: {
     annotation: {
       required: true
-    },
-    annotationSet: {
-      required: true
     }
   },
+  data() {
+    return {
+      isEditing: false
+    };
+  },
   computed: {
-    ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapState("selection", ["spanSelection", "selectionEnabledForId"])
+    ...mapState("selection", ["spanSelection"]),
+    ...mapState("document", ["activeAnnotationSet"])
   },
   methods: {
-    getEmptyAnnotationIdentifier(annotation, annotationSet) {
-      return `${annotation.label_id}_${annotationSet.id}`;
-    },
-    handleEditEmptyAnnotation(event, annotation, annotationSet) {
-      const selectionId = this.getEmptyAnnotationIdentifier(
-        annotation,
-        annotationSet
-      );
-      if (this.selectionEnabledForId !== selectionId) {
-        this.handleCancelEmptyAnnotation();
-        this.$store.dispatch("selection/enableSelection", selectionId);
+    handleEditEmptyAnnotation() {
+      console.log(this.activeAnnotationSet);
+      if (!this.isEditing) {
+        this.isEditing = true;
+        this.$store.dispatch("selection/enableSelection");
       }
     },
     handleCancelEmptyAnnotation() {
-      console.log("handleBlurEmptyAnnotation");
       this.$store.dispatch("selection/disableSelection");
     },
     saveEmptyAnnotation(event, annotation) {
       this.$store.dispatch("selection/disableSelection");
+      // TODO: label_set should be annotation_set
+
       const annotationToCreate = {
         span: [this.spanSelection],
         label: annotation.label_id,
@@ -65,29 +57,20 @@ export default {
       console.log(annotationToCreate);
       this.$store.dispatch("document/createAnnotation", annotationToCreate);
     },
-    isEmptyAnnotationEditable(annotation, annotationSet) {
+    isEmptyAnnotationEditable() {
       return (
-        this.selectionEnabledForId ===
-          this.getEmptyAnnotationIdentifier(annotation, annotationSet) &&
+        this.isEditing &&
         this.spanSelection &&
         !this.spanSelection.offset_string
       );
     },
-    getEmptyAnnotationPlaceholder(annotation, annotationSet) {
-      if (
-        this.selectionEnabledForId ===
-        this.getEmptyAnnotationIdentifier(annotation, annotationSet)
-      ) {
+    getEmptyAnnotationPlaceholder() {
+      if (this.isEditing) {
         if (this.spanSelection && !this.spanSelection.offset_string) {
           // the bounding box had no text result we enable the edit feature
           setTimeout(() => {
             //focus element
-            this.$refs[
-              `emptyAnnotation_${this.getEmptyAnnotationIdentifier(
-                annotation,
-                annotationSet
-              )}`
-            ].focus();
+            this.$refs.emptyAnnotation.focus();
           }, 200);
           return "";
         } else if (this.spanSelection && this.spanSelection.offset_string) {

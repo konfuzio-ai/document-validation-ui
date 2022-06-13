@@ -11,12 +11,12 @@ const state = {
   selectionFromBbox: null,
   isSelecting: false,
   spanSelection: null,
-  selectionEnabledForId: null
+  selectionEnabled: false
 };
 
 const getters = {
   isSelectionEnabled: state => {
-    return state.selectionEnabledForId != null
+    return state.selectionEnabled
   },
   hasValidSpanSelection: state => {
     return !!state.spanSelection;
@@ -42,14 +42,16 @@ const actions = {
   enableSelection: ({
     commit
   }, value) => {
-    commit("SELECTION_ENABLED", value);
+    commit("SELECTION_ENABLED", true);
     commit("RESET_SELECTION");
+    commit("SET_SPAN_SELECTION", null);
   },
   disableSelection: ({
     commit
   }) => {
-    commit("SELECTION_ENABLED", null);
+    commit("SELECTION_ENABLED", false);
     commit("RESET_SELECTION");
+    commit("SET_SPAN_SELECTION", null);
   },
   startSelection: ({
     commit
@@ -116,7 +118,7 @@ const actions = {
   resetSpanSelection: ({
     commit
   }) => {
-    commit("SET_TEXT_SELECTION", null);
+    commit("SET_SPAN_SELECTION", null);
   },
 
   getTextFromBboxes: ({
@@ -153,7 +155,7 @@ const actions = {
 
 const mutations = {
   SELECTION_ENABLED: (state, value) => {
-    state.selectionEnabledForId = value;
+    state.selectionEnabled = value;
   },
   START_SELECTION: (state, {
     pageNumber,
