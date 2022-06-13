@@ -8,6 +8,7 @@
       @mousedown="onMouseDown"
       @mouseup="onMouseUp"
       @mousemove="onMouseMove"
+      @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
       <v-layer>
@@ -152,7 +153,7 @@ export default {
         this.pageNumber
       );
     },
-    ...mapState("selection", ["isSelecting", "textSelection"]),
+    ...mapState("selection", ["isSelecting"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", ["focusedAnnotation", "activeAnnotationSet"]),
     ...mapGetters("display", ["visiblePageRange"]),
@@ -168,8 +169,7 @@ export default {
     ...mapActions("selection", [
       "startSelection",
       "endSelection",
-      "moveSelection",
-      "resetSelection"
+      "moveSelection"
     ]),
     /**
      * Create bounding boxes
@@ -209,24 +209,14 @@ export default {
 
       // show cursor lines
       if (!this.isSelecting) {
-        const scrollingDocumentEl =
-          document.getElementById("scrollingDocument");
-        const cursorEl = document.getElementById("cursor");
+        // const scrollingDocumentEl =
+        //   document.getElementById("scrollingDocument");
+        // const cursorEl = document.getElementById("cursor");
 
-        console.log(scrollingDocumentEl.getBoundingClientRect());
-        var rect = scrollingDocumentEl.getBoundingClientRect();
-        var x = event.clientX + scrollingDocumentEl.scrollLeft - rect.left;
-        var y = event.clientY + scrollingDocumentEl.scrollTop - rect.top;
-        cursorEl.setAttribute("style", "top: " + y + "px; left: " + x + "px;");
-
-        // const top = e.clientY * 2;
-        // const height = (this.$refs.scrollingDocument.clientHeight - top) * 2;
-        // console.log("top", "-" + top);
-        // console.log("height", height);
-        // this.$refs.vt.setAttribute(
-        //   "style",
-        //   "top: -" + top + "px; height: " + height + "px;"
-        // );
+        // var rect = scrollingDocumentEl.getBoundingClientRect();
+        // var x = event.clientX + scrollingDocumentEl.scrollLeft - rect.left;
+        // var y = event.clientY + scrollingDocumentEl.scrollTop - rect.top;
+        // cursorEl.setAttribute("style", "top: " + y + "px; left: " + x + "px;");
         return;
       }
 
@@ -239,7 +229,7 @@ export default {
       });
     },
 
-    async onMouseUp(event) {
+    onMouseUp(event) {
       // if we are not editing, do nothing
       if (!this.isSelectionEnabled) {
         return;
@@ -264,12 +254,20 @@ export default {
         this.getBoxSelectionContent();
       }
     },
+    onMouseEnter() {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+      this.$refs.stage.$el.style.cursor = "crosshair";
+    },
     onMouseLeave() {
       // if we are not editing, do nothing
       if (!this.isSelectionEnabled) {
         return;
       }
-      document.getElementById("cursor").removeAttribute("style");
+      this.$refs.stage.$el.style.cursor = "auto";
+      // document.getElementById("cursor").removeAttribute("style");
     },
 
     updateTransformer() {
@@ -382,7 +380,7 @@ export default {
         bottom,
         y0,
         y1,
-        page_index: this.page.pageNumber - 1
+        page_index: this.pageNumber - 1
       };
       return bbox;
     },
@@ -537,14 +535,9 @@ export default {
       }
     },
     async getBoxSelectionContent() {
-      const rectBbox = this.clientToBbox(
-        this.selection.start,
-        this.selection.end
-      );
+      const box = this.clientToBbox(this.selection.start, this.selection.end);
       this.$store.dispatch("document/startLoading");
-      // await this.$store.dispatch("selection/getTextFromBboxes", {
-      //   bboxes: [rectBbox]
-      // });
+      await this.$store.dispatch("selection/getTextFromBboxes", box);
       this.$store.dispatch("document/endLoading");
     }
   },

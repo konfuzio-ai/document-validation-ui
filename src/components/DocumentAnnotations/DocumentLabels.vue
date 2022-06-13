@@ -85,33 +85,11 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <span
+                  <EmptyAnnotation
                     v-else
-                    class="label-property-value label-empty"
-                    :contenteditable="
-                      selectionEnabledForId ===
-                      getEmptyAnnotationIdentifier(annotation, annotationSet)
-                    "
-                    @click="
-                      event =>
-                        handleEditEmptyAnnotation(
-                          event,
-                          annotation,
-                          annotationSet
-                        )
-                    "
-                    @keypress.enter="
-                      event => saveEmptyAnnotation(event, annotation)
-                    "
-                    @keypress.esc="handleCancelEmptyAnnotation"
-                  >
-                    {{
-                      selectionEnabledForId ===
-                      getEmptyAnnotationIdentifier(annotation, annotationSet)
-                        ? textSelection
-                        : $t("no_data_found")
-                    }}
-                  </span>
+                    annotation="annotation"
+                    annotationSet="annotationSet"
+                  />
                   <div
                     v-if="isLoading"
                     :class="[
@@ -197,6 +175,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
+import EmptyAnnotation from "./EmptyAnnotation";
 import CaretDown from "../../assets/images/CaretDownImg";
 import CloseBtnImg from "../../assets/images/CloseBtnImg";
 /**
@@ -205,6 +184,7 @@ import CloseBtnImg from "../../assets/images/CloseBtnImg";
 export default {
   components: {
     EmptyState,
+    EmptyAnnotation,
     CaretDown,
     CloseBtnImg
   },
@@ -230,14 +210,12 @@ export default {
     ...mapGetters("document", {
       annotationsInLabelSet: "annotationsInLabelSet"
     }),
-    ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapState("document", [
       "activeAnnotationSet",
       "annotationSelected",
       "focusedAnnotation",
       "loading"
-    ]),
-    ...mapState("selection", ["textSelection", "selectionEnabledForId"])
+    ])
   },
   methods: {
     /* Clicking a label opens the description */
@@ -348,45 +326,6 @@ export default {
     },
     handleErrorClose() {
       this.showError = false;
-    },
-    getEmptyAnnotationIdentifier(annotation, annotationSet) {
-      return `${annotation.label_id}_${annotationSet.id}`;
-    },
-    handleEditEmptyAnnotation(event, annotation, annotationSet) {
-      console.log("handleEditEmptyAnnotation");
-      console.log(annotation.label_id);
-      console.log(annotationSet.id);
-      const selectionId = this.getEmptyAnnotationIdentifier(
-        annotation,
-        annotationSet
-      );
-      if (this.selectionEnabledForId !== selectionId) {
-        //focus element
-        this.handleCancelEmptyAnnotation();
-        setTimeout(() => {
-          event.target.focus();
-        }, 0);
-        this.$store.dispatch("selection/enableSelection", selectionId);
-      }
-    },
-    handleCancelEmptyAnnotation() {
-      console.log("handleBlurEmptyAnnotation");
-      this.$store.dispatch("selection/disableSelection");
-    },
-    saveEmptyAnnotation(event, annotation) {
-      console.log("saveEmptyAnnotation");
-      console.log("saving", event.target.textContent.trim());
-      this.$store.dispatch("selection/disableSelection");
-      console.log(this.activeAnnotationSet);
-      const annotationToCreate = {
-        span: [event.target.textContent.trim()],
-        label: annotation.label_id,
-        label_set: this.activeAnnotationSet.label_set.id,
-        is_correct: true,
-        revised: true
-      };
-      console.log(annotationToCreate);
-      this.$store.dispatch("document/createAnnotation", annotationToCreate);
     }
   },
   watch: {

@@ -10,7 +10,7 @@ const state = {
   },
   selectionFromBbox: null,
   isSelecting: false,
-  textSelection: null,
+  spanSelection: null,
   selectionEnabledForId: null
 };
 
@@ -18,8 +18,8 @@ const getters = {
   isSelectionEnabled: state => {
     return state.selectionEnabledForId != null
   },
-  hasValidTextSelection: state => {
-    return !!state.textSelection;
+  hasValidSpanSelection: state => {
+    return !!state.spanSelection;
   },
   getSelectionForPage: state => pageNumber => {
     if (state.selection.pageNumber === pageNumber) {
@@ -113,7 +113,7 @@ const actions = {
     commit("SET_SELECTION_FROM_BBOX", bbox);
   },
 
-  resetTextSelection: ({
+  resetSpanSelection: ({
     commit
   }) => {
     commit("SET_TEXT_SELECTION", null);
@@ -122,70 +122,33 @@ const actions = {
   getTextFromBboxes: ({
     commit,
     rootState
-  }, selection) => {
-    /**
-     * `entities` is `true` only when passing click-selected entities (NOT an
-     * area selection).
-     */
-    const {
-      bboxes,
-      entities
-    } = selection;
-    if (bboxes.length === 0) {
-      commit("SET_TEXT_SELECTION", null);
-      return;
-    }
-    const data = Object.assign({}, bboxes);
-    return HTTP.post(`docs/${rootState.document.docId}/bbox/`, {
-        bbox: data
+  }, box) => {
+    return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
+        span: [box]
       })
       .then(response => {
-        if (response.data.bboxes.length) {
+        if (response.data.span.length && response.data.span.length > 0) {
           /**
            * If we have a non-empty bboxes list, we assume there
            * is text here on the backend, so we just set
-           * textSelection to the response.
+           * spanSelection to the response.
            */
-          commit("SET_TEXT_SELECTION", response.data);
+          commit("SET_SPAN_SELECTION", response.data.span[0]);
         } else {
           /**
            * Otherwise, we assume the backend can't identify text
-           * on this area, so we set our bbox into textSelection
+           * on this area, so we set our bbox into spanSelection
            * ready to be passed back to the backend when creating
            * an annotation on this empty area, adding the offset_string
            * attribute, ready to be filled.
            */
-          commit("SET_TEXT_SELECTION", {
-            bboxes: bboxes.map(bbox => {
-              bbox["offset_string"] = "";
-              return bbox;
-            })
-          });
-        }
-        if (!entities) {
-          commit("SET_SELECTION_FROM_BBOX", bboxes[0]);
+          commit("SET_SPAN_SELECTION", box);
         }
       })
       .catch(error => {
         alert("Could not fetch the selected text from the backend");
       });
   },
-
-  getTextFromEntities: ({
-    commit,
-    dispatch
-  }, selectedEntities) => {
-    if (selectedEntities.length === 1) {
-      commit("SET_TEXT_SELECTION", {
-        bboxes: selectedEntities
-      });
-      return;
-    }
-    return dispatch("getTextFromBboxes", {
-      bboxes: selectedEntities,
-      entities: true
-    });
-  }
 };
 
 const mutations = {
@@ -226,8 +189,8 @@ const mutations = {
     state.selection.start = null;
     state.selection.end = null;
   },
-  SET_TEXT_SELECTION: (state, text) => {
-    state.textSelection = text;
+  SET_SPAN_SELECTION: (state, span) => {
+    state.spanSelection = span;
   },
   SET_SELECTION_FROM_BBOX: (state, bbox) => {
     state.selectionFromBbox = bbox;
