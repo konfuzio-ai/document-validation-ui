@@ -68,6 +68,7 @@ export default {
   methods: {
     onAnnotationSetClick(annotationSet) {
       this.$store.dispatch("document/setActiveAnnotationSet", annotationSet);
+      this.$store.dispatch("selection/disableSelection");
     }
   },
   watch: {

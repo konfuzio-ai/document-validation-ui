@@ -86,9 +86,7 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <span v-else class="label-property-value">
-                    {{ "" }}
-                  </span>
+                  <EmptyAnnotation v-else :annotation="annotation" />
                   <div
                     v-if="isLoading"
                     :class="[
@@ -174,6 +172,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
+import EmptyAnnotation from "./EmptyAnnotation";
 import CaretDown from "../../assets/images/CaretDownImg";
 import CloseBtnImg from "../../assets/images/CloseBtnImg";
 /**
@@ -182,10 +181,12 @@ import CloseBtnImg from "../../assets/images/CloseBtnImg";
 export default {
   components: {
     EmptyState,
+    EmptyAnnotation,
     CaretDown,
     CloseBtnImg
   },
   data() {
+    // TODO: messages should be translated
     return {
       labelOpen: null,
       annotationAnimationTimeout: null,

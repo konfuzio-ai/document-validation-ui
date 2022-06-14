@@ -4,7 +4,11 @@
   src="../../assets/scss/scrolling_document.scss"
 ></style>
 <template>
-  <div class="scrolling-document" v-scroll.immediate="updateScrollBounds">
+  <div
+    class="scrolling-document"
+    v-scroll.immediate="updateScrollBounds"
+    id="scrollingDocument"
+  >
     <ScrollingPage
       v-for="page in pages"
       :key="page.pageNumber"
@@ -23,11 +27,17 @@
       </div>
     </ScrollingPage>
     <Toolbar />
+    <!-- <div class="cursor" id="cursor" v-if="isSelectionEnabled">
+      <div class="cursor-lines">
+        <div class="vt"></div>
+        <div class="hl"></div>
+      </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "../DocumentPage/DocumentToolbar";
@@ -67,7 +77,8 @@ export default {
     pagesLength() {
       return this.$store.getters["document/pageCount"];
     },
-    ...mapState("display", ["currentPage"])
+    ...mapState("display", ["currentPage"]),
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {

@@ -1,7 +1,16 @@
 <style scoped lang="scss" src="../../assets/scss/document_page.scss"></style>
 <template>
   <div class="pdf-page-container">
-    <v-stage ref="stage" :config="scaledViewport" :style="canvasStyle">
+    <v-stage
+      ref="stage"
+      :config="scaledViewport"
+      :style="canvasStyle"
+      @mousedown="onMouseDown"
+      @mouseup="onMouseUp"
+      @mousemove="onMouseMove"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+    >
       <v-layer>
         <v-image
           v-if="image"
@@ -19,13 +28,13 @@
               v-for="(bbox, index) in annotation.span.filter(
                 bbox => bbox.page_index + 1 == pageNumber
               )"
+              :config="
+                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
+              "
               :key="'ann' + annotation.id + '-' + index"
               v-on:click="selectLabelAnnotation(annotation)"
               @mouseenter="onAnnotationHover(annotation, activeAnnotationSet)"
               @mouseleave="onAnnotationHover(null)"
-              :config="
-                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
-              "
             ></v-rect>
           </template>
         </template>
@@ -63,6 +72,21 @@
             ></v-text>
           </v-label>
         </template>
+      <v-layer v-if="isSelectionEnabled && selection && selection.end">
+        <box-selection
+          @changed="getBoxSelectionContent"
+          @mouseenter="cursor = 'grab'"
+          @mouseleave="cursor = 'crosshair'"
+        ></box-selection>
+        <v-transformer
+          ref="transformer"
+          :anchorSize="6"
+          anchorStroke="#7B61FF"
+          :borderEnabled="false"
+          :rotateEnabled="false"
+          :ignoreStroke="true"
+          :keepRatio="false"
+        />
       </v-layer>
     </v-stage>
   </div>
@@ -70,12 +94,16 @@
 
 <script>
 import BigNumber from "bignumber.js";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
+import BoxSelection from "./BoxSelection";
 
 export default {
   name: "DocumentPage",
+  components: {
+    BoxSelection
+  },
 
   props: {
     page: {
@@ -147,6 +175,18 @@ export default {
       return this.page.number;
     },
 
+    selection() {
+      return this.$store.getters["selection/getSelectionForPage"](
+        this.pageNumber
+      );
+    },
+
+    selectionFromBbox() {
+      return this.$store.getters["selection/getSelectionFromBboxForPage"](
+        this.pageNumber
+      );
+    },
+    ...mapState("selection", ["isSelecting"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
@@ -157,10 +197,144 @@ export default {
       "annotationsForPage",
       "pageCount",
       "annotationsInLabelSet"
-    ])
+    ]),
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {
+    ...mapActions("selection", [
+      "startSelection",
+      "endSelection",
+      "moveSelection"
+    ]),
+    /**
+     * Create bounding boxes
+     */
+    onMouseDown(event) {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+
+      // if we click on the transformer, it should delegate to it
+      if (
+        event.target.getParent() &&
+        event.target.getParent().className === "Transformer"
+      ) {
+        return;
+      }
+      // if we click on a selection box, we should enable the transformer
+      if (event.target.name() === "boxSelection") {
+        this.updateTransformer();
+        return;
+      }
+      const position = this.$refs.stage.getStage().getPointerPosition();
+      this.startSelection({
+        pageNumber: this.pageNumber,
+        start: {
+          x: position.x,
+          y: position.y
+        }
+      });
+    },
+    onMouseMove(event) {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+
+      // show cursor lines
+      if (!this.isSelecting) {
+        // const scrollingDocumentEl =
+        //   document.getElementById("scrollingDocument");
+        // const cursorEl = document.getElementById("cursor");
+
+        // var rect = scrollingDocumentEl.getBoundingClientRect();
+        // var x = event.clientX + scrollingDocumentEl.scrollLeft - rect.left;
+        // var y = event.clientY + scrollingDocumentEl.scrollTop - rect.top;
+        // cursorEl.setAttribute("style", "top: " + y + "px; left: " + x + "px;");
+        return;
+      }
+
+      const position = this.$refs.stage.getStage().getPointerPosition();
+      this.moveSelection({
+        end: {
+          x: position.x,
+          y: position.y
+        }
+      });
+    },
+
+    onMouseUp(event) {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+      if (!this.isSelecting) {
+        return;
+      }
+
+      const position = this.$refs.stage.getStage().getPointerPosition();
+      this.endSelection({
+        x: position.x,
+        y: position.y
+      });
+
+      /**
+       * `endSelection` will reset everything in case of invalid selection.
+       * Check the existance of `selection.end` before requesting the
+       * content from the backend.
+       * */
+      if (this.selection && this.selection.end) {
+        this.updateTransformer();
+        this.getBoxSelectionContent();
+      }
+    },
+    onMouseEnter() {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+      this.$refs.stage.$el.style.cursor = "crosshair";
+    },
+    onMouseLeave() {
+      // if we are not editing, do nothing
+      if (!this.isSelectionEnabled) {
+        return;
+      }
+      this.$refs.stage.$el.style.cursor = "auto";
+      // document.getElementById("cursor").removeAttribute("style");
+    },
+
+    updateTransformer() {
+      // here we need to manually attach or detach Transformer node
+      const transformer = this.$refs.transformer;
+
+      // maybe we're out of sync and the transformer is not available, just return
+      if (!transformer) {
+        return;
+      }
+
+      const transformerNode = transformer.getNode();
+      const stage = transformerNode.getStage();
+      const selectedNode = stage.findOne(".boxSelection");
+
+      // do nothing if selected node is already attached
+      if (selectedNode === transformerNode.node()) {
+        return;
+      }
+
+      if (selectedNode) {
+        // attach to another node
+        transformerNode.nodes([selectedNode]);
+      } else {
+        // remove transformer
+        transformerNode.nodes([]);
+      }
+
+      transformerNode.getLayer().batchDraw();
+    },
+
     focusPage() {
       if (this.isPageFocused) return;
 
@@ -188,6 +362,63 @@ export default {
             this.image = image;
           };
         });
+    },
+
+    /**
+     * Transform the `position` coordinates into the bbox format accepted by
+     * the backend.
+     */
+    clientToBbox(start, end) {
+      /**
+       * The backend bbox's `y0` and `y1` attributes depend on knowing the
+       * page's height.
+       */
+      const pageHeight = new BigNumber(this.page.original_size[1]);
+
+      /**
+       * We use `Math.min` and `Math.max` because depending on how the area
+       * selection is made the `start` and `end` attributes might be reversed.
+       */
+      const x0 = new BigNumber(Math.min(start.x, end.x))
+        .div(this.scale)
+        .div(this.imageScale)
+        .times(PIXEL_RATIO)
+        .dp(3, BigNumber.ROUND_DOWN)
+        .toNumber();
+      const x1 = new BigNumber(Math.max(start.x, end.x))
+        .div(this.scale)
+        .div(this.imageScale)
+        .times(PIXEL_RATIO)
+        .dp(3, BigNumber.ROUND_UP)
+        .toNumber();
+      const top = new BigNumber(Math.min(start.y, end.y))
+        .div(this.scale)
+        .div(this.imageScale)
+        .times(PIXEL_RATIO)
+        .dp(3)
+        .toNumber();
+      const bottom = new BigNumber(Math.max(start.y, end.y))
+        .div(this.scale)
+        .div(this.imageScale)
+        .times(PIXEL_RATIO)
+        .dp(3)
+        .toNumber();
+      const y0 = pageHeight
+        .minus(bottom)
+        .dp(3, BigNumber.ROUND_DOWN)
+        .toNumber();
+      const y1 = pageHeight.minus(top).dp(3, BigNumber.ROUND_UP).toNumber();
+
+      const bbox = {
+        x0,
+        x1,
+        top,
+        bottom,
+        y0,
+        y1,
+        page_index: this.pageNumber - 1
+      };
+      return bbox;
     },
 
     bboxToRect(bbox) {
@@ -352,6 +583,12 @@ export default {
         }
         return;
       }
+    },
+    async getBoxSelectionContent() {
+      const box = this.clientToBbox(this.selection.start, this.selection.end);
+      this.$store.dispatch("document/startLoading");
+      await this.$store.dispatch("selection/getTextFromBboxes", box);
+      this.$store.dispatch("document/endLoading");
     }
   },
   mounted() {

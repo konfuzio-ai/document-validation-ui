@@ -21,5 +21,6 @@
   "handover": "Handover",
   "small_viewport_title": "Small viewport size",
   "small_viewport_info": "We’re sorry, but Konfuzio is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
-  "ok": "Ok, got it"
+  "ok": "Ok, got it",
+  "no_data_found": "No data found. Click to edit..."
 }
