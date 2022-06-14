@@ -25,7 +25,8 @@ export default {
   },
   data() {
     return {
-      isEditing: false
+      isEditing: false,
+      enableBboxes: false
     };
   },
   computed: {
@@ -34,16 +35,24 @@ export default {
   },
   methods: {
     handleEditEmptyAnnotation() {
-      console.log(this.activeAnnotationSet);
+      if (!this.enableBboxes) {
+        return;
+      }
       if (!this.isEditing) {
         this.isEditing = true;
         this.$store.dispatch("selection/enableSelection");
       }
     },
     handleCancelEmptyAnnotation() {
+      if (!this.enableBboxes) {
+        return;
+      }
       this.$store.dispatch("selection/disableSelection");
     },
     saveEmptyAnnotation(event, annotation) {
+      if (!this.enableBboxes) {
+        return;
+      }
       this.$store.dispatch("selection/disableSelection");
       // TODO: label_set should be annotation_set
 
@@ -58,6 +67,9 @@ export default {
       this.$store.dispatch("document/createAnnotation", annotationToCreate);
     },
     isEmptyAnnotationEditable() {
+      if (!this.enableBboxes) {
+        return false;
+      }
       return (
         this.isEditing &&
         this.spanSelection &&
@@ -65,6 +77,9 @@ export default {
       );
     },
     getEmptyAnnotationPlaceholder() {
+      if (!this.enableBboxes) {
+        return "";
+      }
       if (this.isEditing) {
         if (this.spanSelection && !this.spanSelection.offset_string) {
           // the bounding box had no text result we enable the edit feature
