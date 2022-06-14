@@ -72,6 +72,7 @@
             ></v-text>
           </v-label>
         </template>
+      </v-layer>
       <v-layer v-if="isSelectionEnabled && selection && selection.end">
         <box-selection
           @changed="getBoxSelectionContent"
