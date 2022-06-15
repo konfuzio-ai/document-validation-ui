@@ -1,5 +1,9 @@
-import { mount } from "@vue/test-utils";
-import { DocumentsList } from "../../src/components/DocumentsList";
+import {
+  mount
+} from "@vue/test-utils";
+import {
+  DocumentsList
+} from "../../src/components/DocumentsList";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -18,7 +22,15 @@ describe("Documents List Component", () => {
   it("document list renders with selected category", () => {
     const wrapper = mount(DocumentsList, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t,
+
+      },
+      data() {
+        return {
+          showCategoryInfo: true
+        }
+      }
     });
     expect(wrapper.find(".documents-list-top h2").text()).toBe(
       require("../mock/category.json").name
@@ -27,7 +39,9 @@ describe("Documents List Component", () => {
   it("document list renders with all the documents", async () => {
     const wrapper = mount(DocumentsList, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
     expect(
       wrapper.findAll(".documents-list-bottom .documents-list-thumbnail").length
@@ -37,7 +51,9 @@ describe("Documents List Component", () => {
   it("document list click adds selected class", async () => {
     const wrapper = mount(DocumentsList, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")
@@ -45,16 +61,18 @@ describe("Documents List Component", () => {
       .trigger("click");
     expect(
       wrapper
-        .findAll(".documents-list-bottom .documents-list-thumbnail")
-        .at(1)
-        .classes()
+      .findAll(".documents-list-bottom .documents-list-thumbnail")
+      .at(1)
+      .classes()
     ).toContain("selected");
   });
 
   it("document list click adds selected document to store", async () => {
     const wrapper = mount(DocumentsList, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")
