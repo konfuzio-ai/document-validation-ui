@@ -1,6 +1,7 @@
 {
-  "name": "sample-document-dashboard",
-  "version": "1.0.0",
+  "name": "@konfuzio-ai/capture-vue",
+  "version": "0.0.3",
+  "repository": "git://github.com:konfuzio-ai/konfuzio-capture-vue.git",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
