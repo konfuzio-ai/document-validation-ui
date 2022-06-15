@@ -266,7 +266,7 @@ export default {
       });
     },
 
-    onMouseUp(event) {
+    async onMouseUp(event) {
       // if we are not editing, do nothing
       if (!this.isSelectionEnabled) {
         return;
@@ -571,6 +571,12 @@ export default {
           annotation
         );
       }
+    },
+    async getBoxSelectionContent() {
+      const box = this.clientToBbox(this.selection.start, this.selection.end);
+      this.$store.dispatch("document/startLoading");
+      await this.$store.dispatch("selection/getTextFromBboxes", box);
+      this.$store.dispatch("document/endLoading");
     }
   },
   watch: {
@@ -584,12 +590,6 @@ export default {
         }
         return;
       }
-    },
-    async getBoxSelectionContent() {
-      const box = this.clientToBbox(this.selection.start, this.selection.end);
-      this.$store.dispatch("document/startLoading");
-      await this.$store.dispatch("selection/getTextFromBboxes", box);
-      this.$store.dispatch("document/endLoading");
     }
   },
   mounted() {

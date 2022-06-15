@@ -5,6 +5,7 @@
 ></style>
 
 <template>
+  <!-- TODO: this should be a b-button from buefy -->
   <button class="handover-btn">{{ $t("handover") }}</button>
 </template>
 

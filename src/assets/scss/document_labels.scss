@@ -139,6 +139,12 @@
           }
         }
 
+        .empty-anottation {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+        }
+
         .label-property-value:focus {
           outline: none;
         }

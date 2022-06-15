@@ -1,14 +1,22 @@
 <style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
 <template>
-  <span
-    class="label-property-value label-empty"
-    :contenteditable="isEmptyAnnotationEditable(annotation)"
-    @click="event => handleEditEmptyAnnotation(event)"
-    @keypress.enter="event => saveEmptyAnnotation(event)"
-    ref="emptyAnnotation"
-  >
-    {{ getEmptyAnnotationPlaceholder() }}
-  </span>
+  <div class="empty-annotation">
+    <span
+      class="label-property-value label-empty"
+      :contenteditable="isEmptyAnnotationEditable(annotation)"
+      @click="event => handleEditEmptyAnnotation(event)"
+      ref="emptyAnnotation"
+    >
+      {{ getEmptyAnnotationPlaceholder() }}
+    </span>
+    <b-button
+      v-if="enableBboxes"
+      class="action-button"
+      type="is-primary"
+      v-on:click="saveEmptyAnnotation()"
+      >Save</b-button
+    >
+  </div>
 </template>
 <script>
 import { mapState } from "vuex";
@@ -26,6 +34,7 @@ export default {
   data() {
     return {
       isEditing: false,
+      // TODO: under development
       enableBboxes: false
     };
   },
@@ -49,22 +58,21 @@ export default {
       }
       this.$store.dispatch("selection/disableSelection");
     },
-    saveEmptyAnnotation(event, annotation) {
+    saveEmptyAnnotation() {
       if (!this.enableBboxes) {
         return;
       }
-      this.$store.dispatch("selection/disableSelection");
-      // TODO: label_set should be annotation_set
+      // TODO: if has multiple label set groups then label set should be used, otherwise annotation set id should be used.
 
       const annotationToCreate = {
         span: [this.spanSelection],
-        label: annotation.label_id,
-        label_set: this.activeAnnotationSet.label_set.id,
+        label: this.annotation.label_id,
+        annotation_set: this.activeAnnotationSet.id,
         is_correct: true,
         revised: true
       };
-      console.log(annotationToCreate);
       this.$store.dispatch("document/createAnnotation", annotationToCreate);
+      this.$store.dispatch("selection/disableSelection");
     },
     isEmptyAnnotationEditable() {
       if (!this.enableBboxes) {
