@@ -4,7 +4,7 @@
 
 White Label widget, that let's you upload your documents to Konfuzio and preview the results. Chrome, Firefox, Edge and Safari supported.
 
-![Screenshot](screenshot.png)
+![Screenshot](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/screenshot.png)
 
 # **Requirements**
 
@@ -30,7 +30,7 @@ The entry point of the app is the `main.js` where the `App.vue` component is loa
 
 ## DocumentsList
 
-![DocumentsList](documents_list.gif)
+![DocumentsList](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/documents_list.gif)
 
 This main component is responsible of loading the documents list for a given category. You can then select which document will appear on the dashboard. By default, this feature is disabled and in order to use it, you will need to add an authentication token to the `.env` file alongside the category ID that you want to load.
 
@@ -40,19 +40,19 @@ This main component is divided into three components: `DocumentThumbnails`, `Doc
 
 ### DocumentThumbnails
 
-![DocumentThumbnails](document_thumbnails.svg)
+![DocumentThumbnails](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_thumbnails.svg)
 
 This is a simple component to just load the document images and display them in a vertical list to act as a thumbnail selector. Is fully clickable and updates it state automatically.
 
 ### DocumentPage
 
-![DocumentPage](document_page.svg)
+![DocumentPage](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_page.svg)
 
 This component is responsible for drawing the document and handling any interaction with it like scrolling (`ScrollingDocument.vue`) and render a loading dummy page (`DummyPage.vue`). It also draws the bounding boxes for the existing annotations.
 
 ### DocumentAnnotations
 
-![DocumentAnnotations](document_annotations.svg)
+![DocumentAnnotations](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_annotations.svg)
 
 This component is responsible for creating a tab bar container to interact with each label set on the project. For each label set selected, a list of labels and annotations are shown alongside with their information.
 
