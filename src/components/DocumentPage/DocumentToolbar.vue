@@ -77,7 +77,7 @@ export default {
     },
     fitAuto() {
       this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 15;
+      this.currentPercentage = 30;
     }
   }
 };
