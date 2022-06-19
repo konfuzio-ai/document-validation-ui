@@ -10,6 +10,7 @@
   "error_message": "Editing was not possible. Please try again later",
   "category": "Category",
   "status": "Status",
+  "dataset_status_array": "['Preparation', 'Training', 'Test', 'Excluded']",
   "set_status": "Set a status",
   "category_error": "We couldn’t change the category. Please try again later.",
   "status_error": "We couldn’t change the status. Please try again later.",
