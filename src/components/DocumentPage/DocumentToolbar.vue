@@ -25,6 +25,7 @@
       <RotatePagesModal
         @close-modal="handleModal"
         :isModalActive="isModalActive"
+        :setRotations="setRotations"
       />
     </div>
   </div>
@@ -52,7 +53,8 @@ export default {
       currentPercentage: 100,
       increment: 0.25,
       toolbarModalOpen: true,
-      isModalActive: false
+      isModalActive: false,
+      setRotations: false
     };
   },
   computed: {
@@ -61,6 +63,7 @@ export default {
   methods: {
     handleModal() {
       this.isModalActive = !this.isModalActive;
+      this.setRotations = !this.setRotations;
     },
     zoomIn() {
       this.updateScale(this.scale + this.increment);

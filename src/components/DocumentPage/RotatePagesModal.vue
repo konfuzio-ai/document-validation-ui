@@ -63,6 +63,9 @@ export default {
   props: {
     isModalActive: {
       type: Boolean
+    },
+    setRotations: {
+      type: Boolean
     }
   },
   computed: {
@@ -75,28 +78,35 @@ export default {
   },
   methods: {
     handleSinglePageRotation({ pageId, pageNumber }) {
+      console.log("handle single page");
       // If the item already exists in the array, update it to the new rotation
       if (this.rotations.find(rotation => rotation.id === pageId)) {
+        console.log("handle single page");
+
         this.rotations = this.rotations.map(rotation => {
           if (rotation.id === pageId) {
+            console.log("handle single page same ids");
+
             return {
               ...rotation,
               angle: rotation.angle - 90
             };
           }
+          console.log("handle single page else");
+
           return rotation;
         });
+      } else {
+        // If there is no existing item in the array, add it
+        this.rotations.push({
+          id: pageId,
+          page_number: pageNumber,
+          angle: -90
+        });
       }
-      // else {
-      //   // If there is no existing item in the array, add it
-      //   this.rotations.push({
-      //     id: pageId,
-      //     page_number: pageNumber,
-      //     angle: -90
-      //   });
-      // }
     },
     handleAntiClockwiseMultiPageRotation() {
+      console.log("rotations anticlockwise", this.rotations);
       this.rotations = this.rotations.map(rotation => {
         return { ...rotation, angle: rotation.angle - 90 };
       });
@@ -107,6 +117,7 @@ export default {
       });
     },
     closeModal() {
+      this.rotations = [];
       this.$emit("close-modal");
     },
     handleApplyBtn() {
@@ -130,15 +141,20 @@ export default {
             // show error msg
           }
         });
+
+      console.log("rotations from apply", this.rotations);
+
       this.closeModal();
     }
   },
   watch: {
-    pages(newValue) {
-      if (newValue.length) {
-        this.rotations = this.pages.map(page => {
-          return { id: page.id, angle: 0, page_number: page.number };
-        });
+    setRotations(newValue) {
+      if (newValue) {
+        if (this.pages.length) {
+          this.rotations = this.pages.map(page => {
+            return { id: page.id, angle: 0, page_number: page.number };
+          });
+        }
       }
     }
   }
