@@ -44,7 +44,12 @@ export default {
   name: "DatasetStatus",
   data() {
     return {
-      statusList: ["Preparation", "Training", "Test", "Excluded"],
+      statusList: [
+        this.$i18n.t("preparation"),
+        this.$i18n.t("training"),
+        this.$i18n.t("test"),
+        this.$i18n.t("excluded")
+      ],
       currentStatus: null
     };
   },
