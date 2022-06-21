@@ -24,6 +24,7 @@
     </template>
     <p class="dropdown-menu-title">{{ $t("status") }}</p>
     <b-dropdown-item
+      class="dropdown-item"
       v-for="(status, index) in statusList"
       :key="index"
       aria-role="listitem"

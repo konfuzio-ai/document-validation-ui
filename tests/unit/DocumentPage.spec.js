@@ -1,8 +1,8 @@
-import { mount } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import {
   ScrollingDocument,
   ScrollingPage,
-  Toolbar,
+  ToolBar,
 } from "../../src/components/DocumentPage";
 import store from "../../src/store";
 
@@ -32,6 +32,7 @@ describe("Document Page Component", () => {
       },
       mocks: { $t },
     });
+
     expect(wrapper.findAllComponents(ScrollingPage).length).toBe(2);
   });
   it("document should have page 1 visible", async () => {
@@ -46,13 +47,24 @@ describe("Document Page Component", () => {
     expect(store.getters["display/visiblePageRange"]).toContain(1);
   });
 
-  it("toolbar should be visible", async () => {
-    const wrapper = mount(ScrollingDocument, {
+  it("Toolbar should be visible", async () => {
+    const wrapper = shallowMount(ToolBar, {
       store,
       mocks: { $t },
     });
 
-    const toolbar = await wrapper.findComponent(".toolbar-container");
-    expect(toolbar.exists()).toBe(true);
+    expect(wrapper.findComponent(".toolbar-container"));
+  });
+
+  it("Toolbar should have icons visible", async () => {
+    const wrapper = shallowMount(ToolBar, {
+      store,
+      mocks: { $t },
+    });
+
+    expect(wrapper.findComponent(".rotate").exists()).toBe(true);
+    expect(wrapper.findComponent(".fit-zoom").exists()).toBe(true);
+    expect(wrapper.findComponent(".zoom-in").exists()).toBe(true);
+    expect(wrapper.findComponent(".zoom-out").exists()).toBe(true);
   });
 });

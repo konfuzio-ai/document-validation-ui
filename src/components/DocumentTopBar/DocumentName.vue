@@ -52,7 +52,7 @@ import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage.vue";
 import { mapState } from "vuex";
 
 export default {
-  name: "DocumentTopBar",
+  name: "DocumentName",
   data() {
     return {
       isEditable: false,

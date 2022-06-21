@@ -1,5 +1,11 @@
-import { mount } from "@vue/test-utils";
-import { DocumentTopBar } from "../../src/components/DocumentTopBar";
+import { mount, shallowMount } from "@vue/test-utils";
+import {
+  DocumentTopBar,
+  DocumentName,
+  DatasetStatus,
+  Category,
+  Handover,
+} from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -7,45 +13,58 @@ const $t = () => {};
 
 describe("Document Top Bar", () => {
   // Set file name
-  const fileName = require("../mock/document_data.json").data_file_name;
+  const documentData = require("../mock/document_data.json");
 
   // mock axios
   jest.mock("axios");
 
   beforeEach(() => {
-    Promise.resolve(store.dispatch("document/setFileName", fileName));
-  });
-
-  it("File name should be visible", () => {
-    const wrapper = mount(DocumentTopBar, {
-      store,
-      mocks: { $t },
-    });
-
-    expect(wrapper.findComponent(".file-name-section").text()).toBe(
-      require("../mock/document_data.json").data_file_name
+    Promise.resolve(
+      store.dispatch("document/setSelectedDocument", documentData)
     );
   });
 
-  it("Edit button should be visible when rendering the component", async () => {
-    const wrapper = mount(DocumentTopBar, {
+  it("Document Top Bar should be rendered", () => {
+    const wrapper = shallowMount(DocumentTopBar, {
       store,
       mocks: { $t },
     });
 
-    const button = wrapper.find(".btn");
-    expect(button.text()).toBe("Edit");
+    expect(wrapper.getComponent(".document-top-bar-component"));
   });
 
-  it("The visible button should be the Save button after clicking on the Edit button", async () => {
+  it("File name should be visible", () => {
+    const wrapper = shallowMount(DocumentName, {
+      store,
+      propsData: {
+        dataFileName: store.state.document.selectedDocument.data_file_name,
+      },
+      mocks: { $t },
+    });
+
+    expect(wrapper.getComponent(".document-name").text()).toBe(
+      documentData.data_file_name
+    );
+  });
+
+  it("Edit button should be visible when rendering the component", () => {
+    const wrapper = shallowMount(DocumentName, {
+      store,
+      mocks: { $t },
+    });
+
+    expect(wrapper.findComponent(".edit-btn").exists()).toBe(true);
+  });
+
+  it("Clicking on the edit button should make it not visible and make the save one visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: { $t },
     });
 
-    const button = wrapper.findComponent(".btn");
-    await button.trigger("click");
-    expect(button.text()).toBe("Save");
+    await wrapper.getComponent(".edit-btn").trigger("click");
+    expect(wrapper.findComponent(".edit-btn").exists()).toBe(false);
+    expect(wrapper.findComponent(".save-btn").exists()).toBe(true);
   });
 
   it("No buttons should be visible while saving", async () => {
@@ -54,23 +73,23 @@ describe("Document Top Bar", () => {
       mocks: { $t },
     });
 
-    await wrapper.findComponent(".edit-btn").trigger("click");
+    await wrapper.getComponent(".edit-btn").trigger("click");
     expect(wrapper.findComponent(".edit-btn").exists()).toBe(false);
 
-    await wrapper.findComponent(".save-btn").trigger("click");
+    await wrapper.getComponent(".save-btn").trigger("click");
     expect(wrapper.findComponent(".save-btn").exists()).toBe(false);
   });
 
-  it("The file name should become a content editable when clicking on the Edit button and the file extension should not be visible", async () => {
+  it("The file name should become a content editable when clicking on the Edit button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: { $t },
     });
 
-    await wrapper.findComponent(".edit-btn").trigger("click");
-    const contentEditable = wrapper.findComponent(".document-name");
-    expect(wrapper.findComponent(".file-extension").exists()).toBe(false);
-    expect(contentEditable.attributes("contenteditable")).toBe("true");
+    await wrapper.getComponent(".edit-btn").trigger("click");
+    expect(wrapper.getComponent(".document-name").classes()).toContain(
+      "is-editable"
+    );
   });
 
   it("The file name should not be content editable after clicking the Save button", async () => {
@@ -79,10 +98,11 @@ describe("Document Top Bar", () => {
       mocks: { $t },
     });
 
-    await wrapper.findComponent(".edit-btn").trigger("click");
-    const contentEditable = wrapper.findComponent(".document-name");
-    await wrapper.findComponent(".save-btn").trigger("click");
-    expect(contentEditable.attributes("contenteditable")).toBe("false");
+    await wrapper.getComponent(".edit-btn").trigger("click");
+    await wrapper.getComponent(".save-btn").trigger("click");
+    expect(wrapper.findComponent(".document-name").classes()).toContain(
+      "not-editable"
+    );
   });
 
   it("Clicking on the save button should show the autosaving message to the user", async () => {
@@ -91,8 +111,8 @@ describe("Document Top Bar", () => {
       mocks: { $t },
     });
 
-    await wrapper.findComponent(".edit-btn").trigger("click");
-    await wrapper.findComponent(".save-btn").trigger("click");
+    await wrapper.getComponent(".edit-btn").trigger("click");
+    await wrapper.getComponent(".save-btn").trigger("click");
     expect(wrapper.findComponent(".loading-container").exists()).toBe(true);
   });
 
@@ -104,10 +124,30 @@ describe("Document Top Bar", () => {
 
     const mockFn = jest.fn().mockName("saveFunction");
 
-    await wrapper.findComponent(".edit-btn").trigger("click");
-    await wrapper.findComponent(".save-btn").trigger("click");
+    await wrapper.getComponent(".edit-btn").trigger("click");
+    await wrapper.getComponent(".save-btn").trigger("click");
     await mockFn();
 
     expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("Should render Document Dataset Status component", () => {
+    const wrapper = mount(DatasetStatus, {
+      store,
+      mocks: { $t },
+    });
+
+    expect(wrapper.findComponent(".dataset-status-chooser").exists()).toBe(
+      true
+    );
+  });
+
+  it("Should render 4 status options", () => {
+    const wrapper = mount(DatasetStatus, {
+      store,
+      mocks: { $t },
+    });
+
+    expect(wrapper.findAll(".dropdown-item")).toHaveLength(4);
   });
 });
