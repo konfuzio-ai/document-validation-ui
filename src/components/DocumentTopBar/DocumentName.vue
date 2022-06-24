@@ -3,7 +3,7 @@
 <template>
   <div class="document-name-component">
     <div class="document-icon">
-      <EmptyDoc />
+      <ServerImage :imageUrl="selectedDocument.thumbnail_url" />
     </div>
     <span class="file-name-section">
       <span
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import EmptyDoc from "../../assets/images/EmptyDocImg.vue";
+import ServerImage from "../../assets/images/ServerImage.vue";
 import FileNameSaved from "../../assets/images/FileNameSavedImage.vue";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage.vue";
 import { mapState } from "vuex";
@@ -73,7 +73,7 @@ export default {
     }
   },
   components: {
-    EmptyDoc,
+    ServerImage,
     FileNameSaved,
     FileNameNotSaved
   },
