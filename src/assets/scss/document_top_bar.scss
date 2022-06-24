@@ -15,21 +15,30 @@
   color: $top-bar-text-color;
   font-weight: 400px;
 
+  .left-bar-components {
+    flex-direction: row;
+    display: flex;
+    flex: 1;
+  }
+
   .document-name-container {
     display: flex;
+    flex: 1;
+    justify-content: center;
   }
 
   .handover {
     display: flex;
+    flex: 1;
     align-items: center;
     justify-content: center;
-    padding: 11px 22px 11px 0;
   }
 }
 
 .slide-fade-enter-active {
   transition: all 0.3s ease;
 }
+
 .slide-fade-leave-active {
   transition: all 0.3s ease;
 }

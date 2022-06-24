@@ -10,6 +10,7 @@
           :handleMessage="handleMessage"
         />
         <DocumentDatasetStatus
+          v-if="showDatasetDropdown"
           :datasetStatus="selectedDocument.dataset_status"
           :handleShowError="handleShowError"
         />
@@ -18,7 +19,7 @@
       <div class="document-name-container">
         <DocumentName :dataFileName="selectedDocument.data_file_name" />
       </div>
-      <div class="handover"><DocumentHandover /></div>
+      <div class="handover"><DocumentHandover v-if="showHandoverButton" /></div>
     </div>
     <transition name="slide-fade">
       <div v-if="showError" class="error-message">
@@ -48,7 +49,13 @@ export default {
   data() {
     return {
       showError: false,
-      categoryError: false
+      categoryError: false,
+      showDatasetDropdown:
+        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN &&
+        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN == "true",
+      showHandoverButton:
+        process.env.VUE_APP_SHOW_HANDOVER_BUTTON &&
+        process.env.VUE_APP_SHOW_HANDOVER_BUTTON == "true"
     };
   },
   components: {

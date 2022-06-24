@@ -1,6 +1,7 @@
 /* Theme */
+
 $green: #12b76a;
-$red: #f13131;
+$red: #E7423A;
 
 $dark: #2f3032;
 
@@ -39,6 +40,7 @@ $top-bar-green: #44b78b;
 $top-bar-text-color: #2b3545;
 $error-red: #d4453d;
 
+// TODO: convert this variables to styles
 $message-body-border-width: 1px;
 $message-body-padding: 8px 16px;
 
@@ -48,6 +50,14 @@ $input-shadow: none;
 $header-size: 2px;
 
 $carousel-overlay-background: none;
+
+.is-primary {
+  background-color: $primary;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+}
 
 .carousel-list {
   &.has-shadow {
@@ -60,6 +70,12 @@ $carousel-overlay-background: none;
 
   .carousel-arrow {
     .icon {
+      color: $primary;
+
+      &:hover {
+        border: 1px solid $primary;
+      }
+
       svg {
         height: 100%;
       }
@@ -101,10 +117,10 @@ $carousel-overlay-background: none;
 
   .dropdown-menu {
     padding-top: 0px;
-    left: 27px !important;
-    top: 50px !important;
   }
 }
+
+// TODO: modal styles should be hierarchical to not mess with other styles with the same name 
 
 .modal-content {
   height: auto;
@@ -172,6 +188,3 @@ $carousel-overlay-background: none;
     width: 500px !important;
   }
 }
-
-@import "~bulma";
-@import "~buefy/src/scss/buefy";

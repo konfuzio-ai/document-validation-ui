@@ -1,5 +1,5 @@
 {
-  "name": "@konfuzio-ai/capture-vue",
+  "name": "@konfuzio/capture-vue",
   "version": "0.0.3",
   "repository": "git://github.com:konfuzio-ai/konfuzio-capture-vue.git",
   "scripts": {
