@@ -32,6 +32,7 @@ export default {
     return {
       elementTop: 0,
       elementHeight: 0,
+      scrollToAnnotation: false,
       previousFocusedAnnotation: null
     };
   },
@@ -121,7 +122,7 @@ export default {
      * Scroll to the focused annotation if it changes and it's on this page.
      */
     documentFocusedAnnotation(focused) {
-      if (focused && focused.span) {
+      if (this.scrollToAnnotation && focused && focused.span) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {

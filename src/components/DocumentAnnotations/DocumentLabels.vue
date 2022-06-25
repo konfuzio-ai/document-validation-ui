@@ -62,6 +62,7 @@
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
+                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one -->
                   <span
                     v-if="
                       annotation.span !== undefined &&

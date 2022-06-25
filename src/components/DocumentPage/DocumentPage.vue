@@ -244,16 +244,7 @@ export default {
         return;
       }
 
-      // show cursor lines
       if (!this.isSelecting) {
-        // const scrollingDocumentEl =
-        //   document.getElementById("scrollingDocument");
-        // const cursorEl = document.getElementById("cursor");
-
-        // var rect = scrollingDocumentEl.getBoundingClientRect();
-        // var x = event.clientX + scrollingDocumentEl.scrollLeft - rect.left;
-        // var y = event.clientY + scrollingDocumentEl.scrollTop - rect.top;
-        // cursorEl.setAttribute("style", "top: " + y + "px; left: " + x + "px;");
         return;
       }
 
@@ -517,7 +508,8 @@ export default {
       };
     },
     selectLabelAnnotation(annotation) {
-      this.$store.dispatch("document/setDocumentFocusedAnnotation", annotation);
+      // TODO: to implement in the future, label name should be on the annotation
+      //this.$store.dispatch("document/setDocumentFocusedAnnotation", annotation);
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
