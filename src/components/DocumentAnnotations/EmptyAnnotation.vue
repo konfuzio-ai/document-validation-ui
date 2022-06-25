@@ -2,7 +2,10 @@
 <template>
   <div class="empty-annotation">
     <span
-      class="label-property-value label-empty"
+      :class="[
+        'label-property-value',
+        isEmptyAnnotationEditable(annotation) ? '' : 'label-empty'
+      ]"
       :contenteditable="isEmptyAnnotationEditable(annotation)"
       @click="event => handleEditEmptyAnnotation(event)"
       ref="emptyAnnotation"
@@ -62,6 +65,11 @@ export default {
       if (!this.enableBboxes) {
         return;
       }
+      // update the bbox text with the one from the input
+      this.spanSelection.offset_string = this.$refs.emptyAnnotation.textContent;
+      this.spanSelection.offset_string_original =
+        this.$refs.emptyAnnotation.textContent;
+
       // TODO: if has multiple label set groups then label set should be used, otherwise annotation set id should be used.
 
       const annotationToCreate = {
@@ -79,9 +87,7 @@ export default {
         return false;
       }
       return (
-        this.isEditing &&
-        this.spanSelection &&
-        !this.spanSelection.offset_string
+        this.isEditing && this.spanSelection && this.spanSelection.offset_string
       );
     },
     getEmptyAnnotationPlaceholder() {
@@ -89,14 +95,11 @@ export default {
         return "";
       }
       if (this.isEditing) {
-        if (this.spanSelection && !this.spanSelection.offset_string) {
-          // the bounding box had no text result we enable the edit feature
+        if (this.spanSelection && this.spanSelection.offset_string) {
           setTimeout(() => {
             //focus element
             this.$refs.emptyAnnotation.focus();
           }, 200);
-          return "";
-        } else if (this.spanSelection && this.spanSelection.offset_string) {
           return this.spanSelection.offset_string;
         } else {
           return "Please create a box on the document";

@@ -27,12 +27,6 @@
       </div>
     </ScrollingPage>
     <Toolbar />
-    <!-- <div class="cursor" id="cursor" v-if="isSelectionEnabled">
-      <div class="cursor-lines">
-        <div class="vt"></div>
-        <div class="hl"></div>
-      </div>
-    </div> -->
   </div>
 </template>
 

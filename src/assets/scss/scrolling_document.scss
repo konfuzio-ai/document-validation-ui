@@ -6,29 +6,4 @@
 
 .scrolling-document {
   scroll-behavior: smooth;
-  position: relative;
-
-  .cursor {
-    position: absolute;
-
-    .cursor-lines {
-      position: relative;
-
-      .vt {
-        position: absolute;
-        height: 200vh;
-        top: -100vh;
-        width: 1px;
-        background: black;
-      }
-
-      .hl {
-        position: absolute;
-        left: -100vw;
-        height: 1px;
-        width: 200vw;
-        background: black;
-      }
-    }
-  }
 }
