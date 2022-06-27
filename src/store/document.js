@@ -53,10 +53,10 @@ const getters = {
   },
 
   /**
-   * Get annotations from the given label set, if there's none
+   * Get annotations from the given annotation set, if there's none
    * return null to show the empty state
    */
-  annotationsInLabelSet: state => annotationSet => {
+  annotationsInAnnotationSet: state => annotationSet => {
     if (annotationSet) {
       const annotations = [];
       annotationSet.labels.map(label => {
@@ -66,6 +66,7 @@ const getters = {
             label_name: label.name,
             label_description: label.description,
             label_id: label.id,
+            // TODO: to be removed on next version
             isOpen: false
           });
         } else {
@@ -79,6 +80,7 @@ const getters = {
                 label_name: label.name,
                 label_description: label.description,
                 label_id: label.id,
+                // TODO: to be removed on next version
                 isOpen: false
               });
             }
@@ -291,20 +293,16 @@ const actions = {
     },
     annotation
   ) => {
-    console.log("request:", annotation)
     return new Promise(resolve => {
       HTTP.post(
           `/documents/${state.documentId}/annotations/`,
           annotation
         )
         .then(response => {
-          console.log(response);
-          if (response.status === 200) {
-            resolve(true);
-          }
+          resolve(response.data);
         })
         .catch(error => {
-          resolve(false);
+          resolve(null);
           console.log(error);
         });
     });

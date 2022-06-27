@@ -197,7 +197,7 @@ export default {
     ...mapGetters("document", [
       "annotationsForPage",
       "pageCount",
-      "annotationsInLabelSet"
+      "annotationsInAnnotationSet"
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"])
   },
@@ -332,7 +332,7 @@ export default {
 
       this.$store.dispatch("display/updateCurrentPage", this.pageNumber);
 
-      this.annotationsInLabelSet(this.activeAnnotations);
+      this.annotationsInAnnotationSet(this.activeAnnotations);
     },
 
     /**
@@ -554,7 +554,9 @@ export default {
           }
         }
       } else {
-        this.$refs.stage.$el.style.cursor = "default";
+        this.$refs.stage.$el.style.cursor = this.isSelectionEnabled
+          ? "crosshair"
+          : "default";
         this.hoveredAnnotation = false;
         this.hoveredId = null;
         // Set the id back to null so that the annotation doesn't stay selected

@@ -25,7 +25,7 @@
                 'selected'
             ]"
             :ref="`annotation${annotation && annotation.id}`"
-            v-for="annotation in annotationsInLabelSet(annotationSet)"
+            v-for="annotation in annotationsInAnnotationSet(annotationSet)"
             v-bind:key="annotation.id"
             @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
@@ -181,7 +181,6 @@ export default {
     CaretDown
   },
   data() {
-    // TODO: messages should be translated
     return {
       labelOpen: null,
       annotationAnimationTimeout: null,
@@ -198,7 +197,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", {
-      annotationsInLabelSet: "annotationsInLabelSet"
+      annotationsInAnnotationSet: "annotationsInAnnotationSet"
     }),
     ...mapState("document", [
       "activeAnnotationSet",

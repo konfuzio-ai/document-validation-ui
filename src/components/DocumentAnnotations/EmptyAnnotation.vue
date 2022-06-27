@@ -12,23 +12,22 @@
     >
       {{ getEmptyAnnotationPlaceholder() }}
     </span>
-    <b-button
-      v-if="enableBboxes"
-      class="action-button"
-      type="is-primary"
-      v-on:click="saveEmptyAnnotation()"
-      >Save</b-button
-    >
+    <ActionButtons
+      v-if="isEditing && this.spanSelection && this.spanSelection.offset_string"
+      @save="saveEmptyAnnotation"
+      @cancel="cancelEmptyAnnotation"
+    />
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
+import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing empty annotations.
  */
 export default {
   name: "EmptyAnnotation",
-
+  components: { ActionButtons },
   props: {
     annotation: {
       required: true
@@ -38,7 +37,7 @@ export default {
     return {
       isEditing: false,
       // TODO: under development
-      enableBboxes: false
+      enableBboxes: true
     };
   },
   computed: {
@@ -54,12 +53,6 @@ export default {
         this.isEditing = true;
         this.$store.dispatch("selection/enableSelection");
       }
-    },
-    handleCancelEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
-      }
-      this.$store.dispatch("selection/disableSelection");
     },
     saveEmptyAnnotation() {
       if (!this.enableBboxes) {
@@ -79,7 +72,17 @@ export default {
         is_correct: true,
         revised: true
       };
-      this.$store.dispatch("document/createAnnotation", annotationToCreate);
+      this.$store
+        .dispatch("document/createAnnotation", annotationToCreate)
+        .then(annotationCreated => {
+          if (annotationCreated) {
+            this.$store.dispatch("document/fetchAnnotations");
+          }
+        });
+      this.cancelEmptyAnnotation();
+    },
+    cancelEmptyAnnotation() {
+      this.isEditing = false;
       this.$store.dispatch("selection/disableSelection");
     },
     isEmptyAnnotationEditable() {
@@ -102,7 +105,7 @@ export default {
           }, 200);
           return this.spanSelection.offset_string;
         } else {
-          return "Please create a box on the document";
+          return this.$t("draw_box_document");
         }
       } else {
         return this.$t("no_data_found");
