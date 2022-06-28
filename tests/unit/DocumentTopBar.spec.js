@@ -150,4 +150,34 @@ describe("Document Top Bar", () => {
 
     expect(wrapper.findAll(".dropdown-item")).toHaveLength(4);
   });
+
+  it("Should render the handover button", () => {
+    const wrapper = mount(Handover, {
+      store,
+      mocks: { $t },
+    });
+
+    expect(wrapper.findComponent(".handover-container").exists()).toBe(true);
+  });
+
+  it("Clicking the button should open modal", async () => {
+    const wrapper = mount(Handover, {
+      store,
+      mocks: { $t },
+    });
+
+    await wrapper.findComponent(".handover-btn").trigger("click");
+    expect(wrapper.findComponent(".notification").isVisible()).toBe(true);
+  });
+
+  it("Clicking the X button should close modal", async () => {
+    const wrapper = mount(Handover, {
+      store,
+      mocks: { $t },
+    });
+
+    await wrapper.findComponent(".handover-btn").trigger("click");
+    await wrapper.findComponent(".modal-btn").trigger("click");
+    expect(wrapper.findComponent(".notification").isVisible()).toBe(false);
+  });
 });
