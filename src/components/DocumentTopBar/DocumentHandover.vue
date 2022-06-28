@@ -112,26 +112,33 @@ export default {
       isLoading: false,
       showError: false,
       selected: null,
-      scroll: false
+      scroll: false,
+      regex:
+        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     };
   },
   methods: {
+    emailValidation(email) {
+      return email.toLowerCase().match(this.regex);
+    },
     handleSelect(id, email) {
       const inputField = document.getElementById("input");
 
       if (id) {
         inputField.value = email;
+        this.selected = email;
       }
     },
     handleHandover() {
-      const inputField = document.getElementById("input");
-
-      if (inputField.value.length === 0) {
-        console.log("Need to add an email to handover");
+      if (!this.selected) {
         return;
       }
 
-      this.selected = inputField.value;
+      // TODO: maybe have some msg if the email is not valid before handing over
+      if (!this.emailValidation(this.selected)) {
+        console.log("email not valid");
+        return;
+      }
       this.isLoading = true;
 
       // TODO: dispatch to store to set the new owner of the doc
