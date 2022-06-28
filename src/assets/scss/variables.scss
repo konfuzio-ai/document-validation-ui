@@ -51,8 +51,6 @@ $low-opacity-red: rgba(231, 66, 58, 0.3);
 $light-red: #fdf4f4;
 
 // TODO: convert this variables to styles
-$message-body-border-width: 1px;
-$message-body-padding: 8px 16px;
 
 $loading-background: transparent;
 
@@ -225,6 +223,10 @@ $carousel-overlay-background: none;
             border-color: $subtlest-grey !important;
             font-size: 14px;
             height: 40px;
+
+            &:focus {
+              box-shadow: none !important;
+            }
           }
         }
       }

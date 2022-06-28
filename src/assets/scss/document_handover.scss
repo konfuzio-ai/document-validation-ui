@@ -1,12 +1,16 @@
 @import "./imports.scss";
 
 .handover-container {
-  font-size: 14px;
-
   .handover-btn {
     font-size: 14px;
+    font-weight: 500;
+
     &:hover {
       background-color: $darker-green;
+    }
+
+    &:focus {
+      box-shadow: none;
     }
   }
 
@@ -45,6 +49,12 @@
       background-color: $dark-blue;
       color: $white;
       font-size: 14px;
+      border: 0;
+
+      &:focus {
+        box-shadow: none;
+        border: 0;
+      }
     }
   }
 
@@ -54,6 +64,7 @@
 
     .members-title {
       display: flex !important;
+      margin-bottom: 10px;
 
       .title {
         color: $grey !important;
@@ -64,9 +75,12 @@
     }
 
     .member-list {
-      overflow: scroll;
       max-height: 110px;
       padding-right: 15px;
+
+      &.scroll {
+        overflow: auto;
+      }
 
       .member {
         padding-bottom: 7px;

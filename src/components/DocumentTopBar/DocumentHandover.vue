@@ -73,7 +73,7 @@
             <div class="members-title">
               <h3 class="title">{{ $t("members") }}</h3>
             </div>
-            <div class="member-list">
+            <div :class="['member-list', scroll && 'scroll']">
               <div v-for="member in members" :key="member.id">
                 <div class="member container">
                   <p class="email">{{ member.email }}</p>
@@ -111,7 +111,8 @@ export default {
       isFullPage: false,
       isLoading: false,
       showError: false,
-      selected: null
+      selected: null,
+      scroll: false
     };
   },
   methods: {
@@ -149,6 +150,11 @@ export default {
         `,
         actionText: null
       });
+    }
+  },
+  updated() {
+    if (this.members.length > 3) {
+      this.scroll = true;
     }
   }
 };
