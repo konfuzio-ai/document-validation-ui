@@ -31,30 +31,37 @@
     }
   }
 
-  .input-section {
-    margin-top: 7px;
-    padding-left: 15px;
-    padding-right: 15px;
-    font-size: 14px;
-
-    ::placeholder {
+  .input-container {
+    .input-section {
+      margin-top: 7px;
+      padding-left: 15px;
+      padding-right: 15px;
       font-size: 14px;
-      font-weight: 400;
-      color: $grey;
+
+      ::placeholder {
+        font-size: 14px;
+        font-weight: 400;
+        color: $grey;
+      }
+
+      .handover-btn-menu {
+        height: 40px;
+        width: 97px;
+        background-color: $dark-blue;
+        color: $white;
+        font-size: 14px;
+        border: 0;
+
+        &:focus {
+          box-shadow: none;
+          border: 0;
+        }
+      }
     }
 
-    .handover-btn-menu {
-      height: 40px;
-      width: 97px;
-      background-color: $dark-blue;
-      color: $white;
-      font-size: 14px;
-      border: 0;
-
-      &:focus {
-        box-shadow: none;
-        border: 0;
-      }
+    .invalid-email-msg {
+      color: $lighter-red;
+      margin: 8px 15px 20px 15px;
     }
   }
 
