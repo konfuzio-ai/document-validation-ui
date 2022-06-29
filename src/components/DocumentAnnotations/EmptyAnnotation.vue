@@ -36,12 +36,6 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      // TODO: under development
-      enableBboxes: true
-    };
-  },
   computed: {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["activeAnnotationSet"])
@@ -51,9 +45,6 @@ export default {
       return `${this.annotationSet.id}_${this.annotation.label_id}`;
     },
     handleEditEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
-      }
       if (this.selectionEnabled !== this.emptyAnnotationId()) {
         this.$store.dispatch(
           "selection/enableSelection",
@@ -62,15 +53,10 @@ export default {
       }
     },
     saveEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
-      }
       // update the bbox text with the one from the input
       this.spanSelection.offset_string = this.$refs.emptyAnnotation.textContent;
       this.spanSelection.offset_string_original =
         this.$refs.emptyAnnotation.textContent;
-
-      // TODO: if has multiple label set groups then label set should be used, otherwise annotation set id should be used.
 
       const annotationToCreate = {
         span: [this.spanSelection],
@@ -92,9 +78,6 @@ export default {
       this.$store.dispatch("selection/disableSelection");
     },
     isEmptyAnnotationEditable() {
-      if (!this.enableBboxes) {
-        return false;
-      }
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
@@ -102,9 +85,6 @@ export default {
       );
     },
     getEmptyAnnotationPlaceholder() {
-      if (!this.enableBboxes) {
-        return "";
-      }
       if (this.selectionEnabled === this.emptyAnnotationId()) {
         if (this.spanSelection && this.spanSelection.offset_string) {
           setTimeout(() => {
