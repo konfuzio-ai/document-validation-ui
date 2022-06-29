@@ -1,9 +1,9 @@
 @import "./imports.scss";
 
 .toolbar-container {
-  position: absolute;
+  position: fixed;
   z-index: 999;
-  width: calc(100% - 40% - 80px);
+  width: calc(60% - 80px);
   bottom: 0;
   margin-bottom: 20px;
 
