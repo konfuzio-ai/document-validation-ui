@@ -13,7 +13,7 @@
       {{ getEmptyAnnotationPlaceholder() }}
     </span>
     <ActionButtons
-      v-if="isEditing && this.spanSelection && this.spanSelection.offset_string"
+      v-if="showActionButtons()"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
     />
@@ -31,27 +31,34 @@ export default {
   props: {
     annotation: {
       required: true
+    },
+    annotationSet: {
+      required: true
     }
   },
   data() {
     return {
-      isEditing: false,
       // TODO: under development
       enableBboxes: true
     };
   },
   computed: {
-    ...mapState("selection", ["spanSelection"]),
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["activeAnnotationSet"])
   },
   methods: {
+    emptyAnnotationId() {
+      return `${this.annotationSet.id}_${this.annotation.label_id}`;
+    },
     handleEditEmptyAnnotation() {
       if (!this.enableBboxes) {
         return;
       }
-      if (!this.isEditing) {
-        this.isEditing = true;
-        this.$store.dispatch("selection/enableSelection");
+      if (this.selectionEnabled !== this.emptyAnnotationId()) {
+        this.$store.dispatch(
+          "selection/enableSelection",
+          this.emptyAnnotationId()
+        );
       }
     },
     saveEmptyAnnotation() {
@@ -82,7 +89,6 @@ export default {
       this.cancelEmptyAnnotation();
     },
     cancelEmptyAnnotation() {
-      this.isEditing = false;
       this.$store.dispatch("selection/disableSelection");
     },
     isEmptyAnnotationEditable() {
@@ -90,14 +96,16 @@ export default {
         return false;
       }
       return (
-        this.isEditing && this.spanSelection && this.spanSelection.offset_string
+        this.selectionEnabled === this.emptyAnnotationId() &&
+        this.spanSelection &&
+        this.spanSelection.offset_string
       );
     },
     getEmptyAnnotationPlaceholder() {
       if (!this.enableBboxes) {
         return "";
       }
-      if (this.isEditing) {
+      if (this.selectionEnabled === this.emptyAnnotationId()) {
         if (this.spanSelection && this.spanSelection.offset_string) {
           setTimeout(() => {
             //focus element
@@ -110,6 +118,13 @@ export default {
       } else {
         return this.$t("no_data_found");
       }
+    },
+    showActionButtons() {
+      return (
+        this.selectionEnabled === this.emptyAnnotationId() &&
+        this.spanSelection &&
+        this.spanSelection.offset_string
+      );
     }
   }
 };

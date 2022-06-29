@@ -11,7 +11,7 @@ const state = {
   selectionFromBbox: null,
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: false
+  selectionEnabled: null
 };
 
 const getters = {
@@ -42,14 +42,14 @@ const actions = {
   enableSelection: ({
     commit
   }, value) => {
-    commit("SELECTION_ENABLED", true);
+    commit("SELECTION_ENABLED", value);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
   disableSelection: ({
     commit
   }) => {
-    commit("SELECTION_ENABLED", false);
+    commit("SELECTION_ENABLED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
