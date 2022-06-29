@@ -62,7 +62,8 @@
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
-                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one -->
+                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one 
+                  and use ActionButtons with loading -->
                   <span
                     v-if="
                       annotation.span !== undefined &&
@@ -87,7 +88,11 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <EmptyAnnotation v-else :annotation="annotation" />
+                  <EmptyAnnotation
+                    v-else
+                    :annotation="annotation"
+                    :annotationSet="annotationSet"
+                  />
                   <div
                     v-if="isLoading"
                     :class="[
