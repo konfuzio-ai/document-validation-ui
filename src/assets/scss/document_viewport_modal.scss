@@ -1,22 +1,37 @@
 @import "./imports.scss";
 
-// TODO: this could be included in the scss for parent component
+.viewport-modal {
+  text-align: center;
 
-button.ok-btn {
-  height: 40px;
-  width: auto;
-  background-color: $top-bar-green;
-  box-shadow: none;
-  border-radius: 4px;
-  border: none;
-  color: $white;
-  padding: 10px 16px 10px 16px;
-  font-weight: 500;
-  margin-bottom: 32px;
-  margin-top: 15px;
-  font-family: "Inter", sans-serif;
-
-  &:hover {
-    cursor: pointer;
+  .image {
+    margin-top: 55px;
+    margin-bottom: 15px;
   }
+
+  .content {
+
+    h3 {
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 26px;
+      color: $top-bar-text-color;
+      padding-bottom: 5px;
+    }
+
+    p {
+      color: $grey;
+    }
+
+    p,
+    button {
+      line-height: 20px;
+      font-size: 14px;
+    }
+  }
+
+  footer {
+    display: flex;
+    justify-content: center;
+  }
+
 }

@@ -52,10 +52,10 @@ $header-size: 2px;
 $carousel-overlay-background: none;
 
 .is-primary {
-  background-color: $primary;
+  background-color: $primary !important;
 
   &:hover {
-    background-color: $primary-dark;
+    background-color: $primary-dark !important;
   }
 }
 
@@ -120,71 +120,28 @@ $carousel-overlay-background: none;
   }
 }
 
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name 
-
-.modal-content {
-  height: auto;
-  width: 500px;
-  max-width: 500px !important;
-  margin-left: auto;
-  margin-right: auto;
-  background: $white;
-  border-radius: 16px;
-}
-
-.modal-card {
-  display: flex;
-  align-items: center;
-}
-
-.modal.is-active {
-  z-index: 999;
-}
-
-.modal-background {
-  background-color: $black;
-  opacity: 0.5;
-}
-
-.modal-close.is-large {
-  display: none !important;
-}
-
-.image,
-.content {
-  width: 400px;
-  text-align: center;
-}
-
-.image {
-  padding-top: 55px;
-  padding-bottom: 15px;
-}
-
-.content {
-  h3 {
-    font-weight: 600 !important;
-    font-size: 20px !important;
-    line-height: 26px !important;
-    color: $top-bar-text-color !important;
-    padding-bottom: 5px;
+.modal {
+  &.is-active {
+    z-index: 999;
   }
 
-  p {
-    color: $grey;
+  .modal-background {
+    background-color: $black;
+    opacity: 0.5;
   }
 
-  p,
-  button {
-    line-height: 20px;
-    font-size: 14px;
+  .modal-content {
+    height: auto;
+    background: $white;
+    border-radius: 16px;
   }
-}
 
-@media (min-width: 769px) {
+  .modal-close.is-large {
+    display: none !important;
+  }
 
-  .modal-content,
-  .modal-card {
-    width: 500px !important;
+  .modal-card-foot {
+    border: none;
+    background: none;
   }
 }
