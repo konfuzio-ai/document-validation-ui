@@ -25,6 +25,7 @@
   "handover": "Handover",
   "handover_document": "Handover document",
   "type_email": "Type an email",
+  "invalid_email": "Please enter a valid email address.",
   "members": "MEMBERS",
   "select": "Select",
   "document_successfully_handed": "Document successfully handed over to",
