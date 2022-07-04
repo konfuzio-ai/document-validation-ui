@@ -82,6 +82,8 @@
           margin-left: 4px;
           width: 100%;
           border-right: 4px solid $yellow;
+          word-break: break-word;
+          padding-right: 4px;
 
           &.green {
             border-color: $green;
