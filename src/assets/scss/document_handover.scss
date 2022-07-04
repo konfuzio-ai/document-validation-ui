@@ -1,9 +1,15 @@
 @import "./imports.scss";
 
 .handover-container {
-  .handover-btn:hover {
-    background-color: $darker-green;
+  font-size: 14px;
+
+  .handover-btn {
+    font-size: 14px;
+    &:hover {
+      background-color: $darker-green;
+    }
   }
+
   .container {
     display: flex;
     align-items: center;
@@ -17,6 +23,7 @@
     .title {
       margin: 0 !important;
       color: $dark-blue;
+      font-size: 14px;
     }
   }
 
@@ -37,6 +44,7 @@
       width: 97px;
       background-color: $dark-blue;
       color: $white;
+      font-size: 14px;
     }
   }
 
@@ -74,6 +82,11 @@
       height: 32px;
       color: $dark-blue;
       font-weight: 500;
+      font-size: 14px;
+
+      &:hover {
+        background-color: $hover-grey;
+      }
     }
   }
 
