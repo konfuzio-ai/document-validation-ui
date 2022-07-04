@@ -173,23 +173,7 @@
     }
   }
 
-  .slide-fade-enter-active {
-    transition: all 0.3s ease;
-  }
-
-  .slide-fade-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .slide-fade-enter,
-  .slide-fade-leave-to {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-
   .message {
-    margin-bottom: 8px;
-
     .message-container {
       display: flex;
       flex: 1;
@@ -199,13 +183,22 @@
       font-size: 14px !important;
     }
 
-    .close-btn:hover {
-      cursor: pointer;
+    .btn-container {
+      display: flex;
+
+      .close-btn {
+        color: $grey;
+      }
+
+      .close-btn:hover {
+        cursor: pointer;
+      }
     }
 
     @media (max-width: 1064px) {
       .btn-container {
         align-self: flex-start;
+        padding-top: 5px;
       }
     }
   }

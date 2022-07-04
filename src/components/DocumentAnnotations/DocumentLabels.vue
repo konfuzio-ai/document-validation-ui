@@ -127,13 +127,11 @@
                   !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
                 ]"
               >
-                <b-message
-                  class="is-warning warning-msg message-body-border-color message-body-padding"
-                >
+                <b-message class="is-warning">
                   <div class="message-container">
                     {{ $t("warning_message") }}
                     <div @click="handleWarningClose" class="btn-container">
-                      <CloseBtnImg class="close-btn" />
+                      <b-icon icon="xmark" class="close-btn" />
                     </div>
                   </div>
                 </b-message>
@@ -147,13 +145,11 @@
                   !edited && annotation.id !== annBeingEdited.id && 'hidden'
                 ]"
               >
-                <b-message
-                  class="is-danger danger-msg message-body-border-color message-body-padding"
-                >
+                <b-message class="is-danger">
                   <div class="message-container">
                     {{ $t("error_message") }}
                     <div @click="handleErrorClose" class="btn-container">
-                      <CloseBtnImg class="close-btn" />
+                      <b-icon icon="xmark" class="close-btn" />
                     </div>
                   </div>
                 </b-message>
@@ -175,7 +171,6 @@ import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import EmptyAnnotation from "./EmptyAnnotation";
 import CaretDown from "../../assets/images/CaretDownImg";
-import CloseBtnImg from "../../assets/images/CloseBtnImg";
 /**
  * This component loads all annotations in a label set
  */
@@ -183,8 +178,7 @@ export default {
   components: {
     EmptyState,
     EmptyAnnotation,
-    CaretDown,
-    CloseBtnImg
+    CaretDown
   },
   data() {
     // TODO: messages should be translated
@@ -311,6 +305,7 @@ export default {
             event.target.textContent = this.oldValue;
             this.newValue = this.oldValue;
             this.showError = true;
+            this.showWarning = false;
             this.edited = false;
           }
         })

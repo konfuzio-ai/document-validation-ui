@@ -1,6 +1,9 @@
 @import "./imports.scss";
 
 .handover-container {
+  .handover-btn:hover {
+    background-color: $darker-green;
+  }
   .container {
     display: flex;
     align-items: center;
@@ -13,7 +16,7 @@
 
     .title {
       margin: 0 !important;
-      color: $top-bar-text-color;
+      color: $dark-blue;
     }
   }
 
@@ -21,6 +24,7 @@
     margin-top: 7px;
     padding-left: 15px;
     padding-right: 15px;
+    font-size: 14px;
 
     ::placeholder {
       font-size: 14px;
@@ -30,6 +34,9 @@
 
     .handover-btn-menu {
       height: 40px;
+      width: 97px;
+      background-color: $dark-blue;
+      color: $white;
     }
   }
 
@@ -65,19 +72,36 @@
 
     .select-btn {
       height: 32px;
-      color: $top-bar-text-color;
+      color: $dark-blue;
       font-weight: 500;
     }
   }
 
-  .delete-btn {
+  .close-icon-container {
     cursor: pointer;
     display: flex;
     align-items: center;
 
-    .delete-icon {
-      width: 10px;
-      height: 10px;
+    .close-btn {
+      &.error-icon {
+        color: $grey;
+      }
+
+      &.snackbar-icon {
+        color: $white;
+      }
+    }
+  }
+
+  .error-message {
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: 7px;
+
+    .message-container {
+      display: flex;
+      width: 100%;
+      justify-content: center;
     }
   }
 }
