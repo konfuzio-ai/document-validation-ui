@@ -13,7 +13,7 @@
       font-weight: 600;
       font-size: 20px;
       line-height: 26px;
-      color: $top-bar-text-color;
+      color: $dark-blue;
       padding-bottom: 5px;
     }
 
@@ -31,26 +31,5 @@
   footer {
     display: flex;
     justify-content: center;
-  }
-}
-
-// TODO: this could be included in the scss for parent component
-
-button.ok-btn {
-  height: 40px;
-  width: auto;
-  background-color: $lighter-green;
-  box-shadow: none;
-  border-radius: 4px;
-  border: none;
-  color: $white;
-  padding: 10px 16px 10px 16px;
-  font-weight: 500;
-  margin-bottom: 32px;
-  margin-top: 15px;
-  font-family: "Inter", sans-serif;
-
-  &:hover {
-    cursor: pointer;
   }
 }

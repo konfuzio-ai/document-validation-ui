@@ -153,7 +153,6 @@ export default {
         return;
       }
 
-      // TODO: maybe have some msg if the email is not valid before handing over
       if (!this.emailValidation(this.selected)) {
         this.invalidEmail = true;
         return;
