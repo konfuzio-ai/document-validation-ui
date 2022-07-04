@@ -1,7 +1,7 @@
 /* Theme */
 
 $green: #12b76a;
-$red: #E7423A;
+$red: #e7423a;
 
 $dark: #2f3032;
 
@@ -11,6 +11,9 @@ $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
 $grey-detail: #dfe0e4;
+$sublte-grey: #f2f4f7;
+$subtlest-grey: #e3e4e5;
+$grey-darker: #101828;
 
 $yellow: #ffd600;
 $blue: #2f80ed;
@@ -119,6 +122,86 @@ $carousel-overlay-background: none;
     padding-top: 0px;
   }
 }
+
+.handover-container {
+  .collapse {
+    .collapse-content {
+      position: absolute;
+      right: 20px;
+      top: 50px;
+      max-width: 435px;
+      max-height: 264px;
+      margin: 0;
+
+      .notification {
+        background-color: $white;
+        border: 1px solid $sublte-grey;
+        box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
+          0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+        padding: 0;
+
+        .content {
+          width: 100%;
+        }
+
+        .field {
+          margin: 0 !important;
+          padding-right: 8px;
+        }
+
+        .control {
+          width: 298px;
+          height: 40px;
+
+          .input {
+            border-color: $subtlest-grey !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// TODO: modal styles should be hierarchical to not mess with other styles with the same name
+
+// .modal-content {
+//   height: auto;
+//   width: 500px;
+//   max-width: 500px !important;
+//   margin-left: auto;
+//   margin-right: auto;
+//   background: $white;
+//   border-radius: 16px;
+// }
+
+// .modal-card {
+//   display: flex;
+//   align-items: center;
+// }
+
+// .modal.is-active {
+//   z-index: 999;
+// }
+
+// .modal-background {
+//   background-color: $black;
+//   opacity: 0.5;
+// }
+
+// .modal-close.is-large {
+//   display: none !important;
+// }
+
+// .image,
+// .content {
+//   width: 400px;
+//   text-align: center;
+// }
+
+// .image {
+//   padding-top: 55px;
+//   padding-bottom: 15px;
+// }
 
 .modal {
   &.is-active {

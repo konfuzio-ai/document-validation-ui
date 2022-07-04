@@ -1,12 +1,83 @@
 @import "./imports.scss";
 
-.handover-btn {
-  border-radius: 8px;
-  background-color: $top-bar-green;
-  color: $white;
-  font-weight: 500;
-  height: 40px;
-  width: 97px;
-  border: none;
-  font-family: "Inter", sans-serif;
+.handover-container {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header {
+    border-bottom: 1px solid $sublte-grey;
+    padding: 15px;
+
+    .title {
+      margin: 0 !important;
+      color: $top-bar-text-color;
+    }
+  }
+
+  .input-section {
+    margin-top: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    ::placeholder {
+      font-size: 14px;
+      font-weight: 400;
+      color: $grey;
+    }
+
+    .handover-btn-menu {
+      height: 40px;
+    }
+  }
+
+  .members-section {
+    margin: 15px;
+    margin-right: 0;
+
+    .members-title {
+      display: flex !important;
+
+      .title {
+        color: $grey !important;
+        font-size: 12px !important;
+        font-weight: 400 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .member-list {
+      overflow: scroll;
+      max-height: 110px;
+      padding-right: 15px;
+
+      .member {
+        padding-bottom: 7px;
+      }
+    }
+
+    .email {
+      margin-bottom: 0 !important;
+      color: $grey-darker;
+    }
+
+    .select-btn {
+      height: 32px;
+      color: $top-bar-text-color;
+      font-weight: 500;
+    }
+  }
+
+  .delete-btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    .delete-icon {
+      width: 10px;
+      height: 10px;
+    }
+  }
 }
