@@ -12,7 +12,8 @@ const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   sidebarAnnotationSelected: null,
   showDeletedAnnotations: false,
-  selectedDocument: null
+  selectedDocument: null,
+  recalculatingAnnotations: false
 };
 
 const getters = {
@@ -207,6 +208,12 @@ const actions = {
   setSelectedDocument: ({ commit }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
+  startRecalculatingAnnotations: ({ commit }) => {
+    commit("SET_RECALCULATING_ANNOTATIONS", true);
+  },
+  endRecalculatingAnnotations: ({ commit }) => {
+    commit("SET_RECALCULATING_ANNOTATIONS", false);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -328,23 +335,19 @@ const actions = {
       });
   },
 
-  updatePageRotation: ({ state }, updatedRotations) => {
-    console.log("updating rotation", updatedRotations);
-
-    // return new Promise(resolve => {
-    //   HTTP.patch(`/documents/${state.documentId}/rotate`, updatedRotation)
-    //     .then(response => {
-    //       console.log("response", response)
-    //       if (response.status === 200) {
-    //         commit("SET_SELECTED_DOCUMENT", response.data);
-    //         resolve(true);
-    //       }
-    //     })
-    //     .catch(error => {
-    //       resolve(false);
-    //       console.log(error);
-    //     });
-    // });
+  updatePageRotation: ({ state, dispatch }, changedRotations) => {
+    return new Promise(resolve => {
+      HTTP.post(`/documents/${state.documentId}/rotate/`, changedRotations)
+        .then(response => {
+          if (response.status === 204) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
   }
 };
 
@@ -378,6 +381,9 @@ const mutations = {
   },
   SET_SELECTED_DOCUMENT: (state, document) => {
     state.selectedDocument = document;
+  },
+  SET_RECALCULATING_ANNOTATIONS: (state, recalculatingAnnotations) => {
+    state.recalculatingAnnotations = recalculatingAnnotations;
   }
 };
 

@@ -8,19 +8,20 @@
   <section>
     <b-modal v-model="isModalActive" :can-cancel="['x']">
       <div class="modal-card">
-        <div class="header">
+        <header class="modal-card-head">
           <h3>
             {{ $t("rotate_pages") }}
           </h3>
-        </div>
-        <div class="pages-container">
+        </header>
+        <section class="modal-card-body">
           <DocumentThumbnails
             :filter="filter"
+            :rotationModal="rotationModal"
             :rotations="rotations"
             @rotate-single-page="handleSinglePageRotation"
           />
-        </div>
-        <div class="footer">
+        </section>
+        <footer class="modal-card-foot">
           <div class="footer-left">
             <div>{{ $t("rotate_all") }}</div>
             <div class="rotate-icons">
@@ -40,7 +41,7 @@
               {{ $t("apply") }}
             </button>
           </div>
-        </div>
+        </footer>
       </div>
     </b-modal>
   </section>
@@ -57,7 +58,9 @@ export default {
   data() {
     return {
       filter: true,
-      rotations: []
+      rotationModal: true,
+      rotations: [],
+      rotationsToSave: []
     };
   },
   props: {
@@ -69,7 +72,8 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["pages"])
+    ...mapState("document", ["pages"]),
+    ...mapState("document", ["selectedDocument"])
   },
   components: {
     RotateLeftBlack,
@@ -78,72 +82,146 @@ export default {
   },
   methods: {
     handleSinglePageRotation({ pageId, pageNumber }) {
-      console.log("handle single page");
       // If the item already exists in the array, update it to the new rotation
-      if (this.rotations.find(rotation => rotation.id === pageId)) {
-        console.log("handle single page");
 
+      // Rotations for frontend purposes
+      if (this.rotations.find(rotation => rotation.id === pageId)) {
         this.rotations = this.rotations.map(rotation => {
           if (rotation.id === pageId) {
-            console.log("handle single page same ids");
-
             return {
               ...rotation,
-              angle: rotation.angle - 90
+              angle: rotation.angle - 90,
+              rotations: rotation.rotations + 1
             };
           }
-          console.log("handle single page else");
-
           return rotation;
         });
-      } else {
-        // If there is no existing item in the array, add it
-        this.rotations.push({
-          id: pageId,
-          page_number: pageNumber,
-          angle: -90
-        });
+
+        // Rotations to send in the POST request
+        if (this.rotationsToSave.find(rotation => rotation.id === pageId)) {
+          this.rotationsToSave = this.rotationsToSave.map(rotation => {
+            if (rotation.id === pageId) {
+              let rotatedAngle = rotation.angle - 90;
+
+              if (rotatedAngle === -270) {
+                rotatedAngle = 90;
+              }
+
+              return {
+                ...rotation,
+                angle: rotatedAngle
+              };
+            }
+            return rotation;
+          });
+        } else {
+          // If there is no existing item in the array, add it
+
+          // Rotations for frontend purposes
+          this.rotations.push({
+            id: pageId,
+            page_number: pageNumber,
+            angle: -90
+          });
+
+          // Rotations to send in the POST request
+          this.rotationsToSave.push({
+            id: pageId,
+            page_number: pageNumber,
+            angle: -90
+          });
+        }
       }
     },
     handleAntiClockwiseMultiPageRotation() {
-      console.log("rotations anticlockwise", this.rotations);
+      // Rotations for frontend purposes
       this.rotations = this.rotations.map(rotation => {
         return { ...rotation, angle: rotation.angle - 90 };
       });
+
+      // Rotations to send in the POST request
+      this.rotationsToSave = this.rotationsToSave.map(rotation => {
+        let rotatedAngle = rotation.angle - 90;
+        if (rotatedAngle === -270) {
+          rotatedAngle = 90;
+        }
+        return { ...rotation, angle: rotatedAngle };
+      });
     },
     handleClockwiseMultiPageRotation() {
+      // Rotations for frontend purposes
       this.rotations = this.rotations.map(rotation => {
         return { ...rotation, angle: rotation.angle + 90 };
       });
+
+      // Rotations to send in the POST request
+      this.rotationsToSave = this.rotationsToSave.map(rotation => {
+        let rotatedAngle = rotation.angle + 90;
+        if (rotatedAngle === 270) {
+          rotatedAngle = -90;
+        }
+        return { ...rotation, angle: rotatedAngle };
+      });
     },
     closeModal() {
-      this.rotations = [];
       this.$emit("close-modal");
+
+      setTimeout(() => {
+        this.rotations = this.rotations.map(rotation => {
+          return {
+            ...rotation,
+            angle: 0
+          };
+        });
+
+        this.rotationsToSave = [];
+      }, 1000);
     },
     handleApplyBtn() {
-      /**
-       * TODO: finish backend call + polling endpoint
-       * until its status_data is 2 (done) or 111 (error).
-       */
-
-      const updatedRotations = this.rotations.map(rotation => {
+      // Remove id from rotation object since the backend doesn't need it
+      const updatedRotations = this.rotationsToSave.map(rotation => {
         delete rotation.id;
         return rotation;
       });
 
+      // Only keep pages that were rotated, so angle not 0
+      const changedRotations = updatedRotations.filter(
+        rotation => rotation.angle != 0
+      );
+
+      // this.$store.dispatch("document/startLoading");
+      this.$store.dispatch("document/startRecalculatingAnnotations");
+
+      // Dispatch request to the store to rotate
       this.$store
-        .dispatch("document/updatePageRotation", updatedRotations)
+        .dispatch("document/updatePageRotation", changedRotations)
         .then(response => {
           // Check if the response is successfull or not
           if (response) {
-            // show loading in label section
+            // Poll document data until the status_data is 2 (done) or 111 (error)
+            const intId = setInterval(() => {
+              this.$store.dispatch("document/fetchDocumentData");
+
+              if (this.selectedDocument.status_data === 2) {
+                clearInterval(intId);
+                return;
+              }
+
+              if (this.selectedDocument.status_data === 111) {
+                clearInterval(intId);
+                return;
+              }
+            }, 3000);
           } else {
             // show error msg
           }
+        })
+        .finally(() => {
+          // this.$store.dispatch("document/endLoading");
+          this.$store.dispatch("document/endRecalculatingAnnotations");
         });
 
-      console.log("rotations from apply", this.rotations);
-
+      // Whether the rotation worked properly or not, end loading and close modal
       this.closeModal();
     }
   },
@@ -152,7 +230,11 @@ export default {
       if (newValue) {
         if (this.pages.length) {
           this.rotations = this.pages.map(page => {
-            return { id: page.id, angle: 0, page_number: page.number };
+            return {
+              id: page.id,
+              angle: 0,
+              page_number: page.number
+            };
           });
         }
       }

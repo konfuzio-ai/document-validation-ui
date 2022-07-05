@@ -36,8 +36,18 @@
       <DocumentLabels />
     </div>
     <!-- When there's no label sets -->
-    <div v-if="groupedAnnotationSets && groupedAnnotationSets.length == 0">
+    <div
+      v-if="
+        groupedAnnotationSets &&
+        groupedAnnotationSets.length == 0 &&
+        !recalculatingAnnotations
+      "
+    >
       <EmptyState />
+    </div>
+    <!-- When extracting annotations after rotating -->
+    <div v-if="recalculatingAnnotations">
+      <ExtractingData />
     </div>
   </div>
 </template>
@@ -46,13 +56,14 @@
 import { mapGetters, mapState } from "vuex";
 import DocumentLabels from "./DocumentLabels";
 import EmptyState from "./EmptyState";
+import ExtractingData from "./ExtractingData";
 
 /**
  * This component creates a tab list filter of the label sets
  * with a confidence counter next to it. It also loads the properties for each label set.
  */
 export default {
-  components: { DocumentLabels, EmptyState },
+  components: { DocumentLabels, EmptyState, ExtractingData },
   computed: {
     ...mapGetters("document", {
       totalAnnotationsInAnnotationSet: "totalAnnotationsInAnnotationSet",
@@ -62,7 +73,8 @@ export default {
     }),
     ...mapState("document", {
       activeAnnotationSet: "activeAnnotationSet",
-      sidebarAnnotationSelected: "sidebarAnnotationSelected"
+      sidebarAnnotationSelected: "sidebarAnnotationSelected",
+      recalculatingAnnotations: "recalculatingAnnotations"
     })
   },
   methods: {

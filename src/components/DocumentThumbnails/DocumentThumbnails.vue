@@ -11,27 +11,35 @@
       v-bind:key="page.id"
       v-on:click="changePage(page.number)"
     >
-      <div
-        :class="['image-container']"
-        :style="{
-          transform: 'rotate(' + getRotation(page.id) + 'deg)'
-        }"
-      >
-        <ServerImage
-          :class="['img-thumbnail', currentPage == page.number && 'selected']"
-          :imageUrl="page.thumbnail_url"
-        />
+      <!-- TODO: review the blur and rotation modal -->
+      <div :class="['image-section', rotationModal && 'rotation-modal']">
         <div
-          class="icon-container"
-          @click="rotateSinglePage(page.id, page.number)"
+          :class="['image-container']"
+          :style="{
+            transform: 'rotate(' + getRotation(page.id) + 'deg)'
+          }"
         >
+          <div :class="[recalculatingAnnotations && 'blur']">
+            <ServerImage
+              :class="[
+                'img-thumbnail',
+                currentPage == page.number && 'selected'
+              ]"
+              :imageUrl="page.thumbnail_url"
+            />
+          </div>
           <div
-            class="icon"
-            :style="{
-              transform: 'rotate(' + getIconRotation(page.id) + 'deg)'
-            }"
+            class="icon-container"
+            @click="rotateSinglePage(page.id, page.number)"
           >
-            <RotateIcon />
+            <div
+              class="icon"
+              :style="{
+                transform: 'rotate(' + getIconRotation(page.id) + 'deg)'
+              }"
+            >
+              <RotateIcon />
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +64,9 @@ export default {
     filter: {
       type: Boolean
     },
+    rotationModal: {
+      type: Boolean
+    },
     rotations: {
       type: Array
     }
@@ -65,7 +76,7 @@ export default {
     RotateIcon
   },
   computed: {
-    ...mapState("document", ["pages"]),
+    ...mapState("document", ["pages", "recalculatingAnnotations"]),
     ...mapState("display", ["currentPage"])
   },
   methods: {

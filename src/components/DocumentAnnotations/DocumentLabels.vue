@@ -1,7 +1,7 @@
 <style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
 <template>
   <div ref="labelsList" class="label-info">
-    <div v-if="activeAnnotationSet">
+    <div v-if="activeAnnotationSet && !recalculatingAnnotations">
       <p class="label-description">
         {{ activeAnnotationSet.label_set.description }}
       </p>
@@ -165,12 +165,14 @@
       </div>
     </div>
     <!-- When there's no annotations in the label -->
-    <div v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0">
+    <div
+      v-if="
+        !activeAnnotationSet ||
+        (activeAnnotationSet.labels.length == 0 && !recalculatingAnnotations)
+      "
+    >
       <EmptyState />
     </div>
-    <!-- <div>
-      <ExtractingData />
-    </div> -->
   </div>
 </template>
 
@@ -212,7 +214,8 @@ export default {
     ...mapState("document", [
       "activeAnnotationSet",
       "sidebarAnnotationSelected",
-      "loading"
+      "loading",
+      "recalculatingAnnotations"
     ])
   },
   methods: {

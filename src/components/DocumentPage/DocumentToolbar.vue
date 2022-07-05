@@ -28,6 +28,13 @@
         :setRotations="setRotations"
       />
     </div>
+    <!-- <div class="confirm-rotation" v-if="confirmationModalOpen">
+      <ConfirmationModal
+        @close-modal="handleModal"
+        :isModalActive="isModalActive"
+        :setRotations="setRotations"
+      />
+    </div> -->
   </div>
 </template>
 
@@ -38,6 +45,7 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import RotatePagesModal from "./RotatePagesModal";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default {
   name: "Toolbar",
@@ -46,7 +54,8 @@ export default {
     FitZoomIcon,
     PlusIcon,
     MinusIcon,
-    RotatePagesModal
+    RotatePagesModal,
+    ConfirmationModal
   },
   data() {
     return {
@@ -54,7 +63,8 @@ export default {
       increment: 0.25,
       toolbarModalOpen: true,
       isModalActive: false,
-      setRotations: false
+      setRotations: false,
+      confirmationModalOpen: true
     };
   },
   computed: {
