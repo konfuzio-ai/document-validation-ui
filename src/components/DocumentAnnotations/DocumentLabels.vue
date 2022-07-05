@@ -168,6 +168,9 @@
     <div v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0">
       <EmptyState />
     </div>
+    <!-- <div>
+      <ExtractingData />
+    </div> -->
   </div>
 </template>
 
@@ -175,6 +178,7 @@
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import EmptyAnnotation from "./EmptyAnnotation";
+import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 /**
  * This component loads all annotations in a label set
@@ -183,6 +187,7 @@ export default {
   components: {
     EmptyState,
     EmptyAnnotation,
+    ExtractingData,
     CaretDown
   },
   data() {

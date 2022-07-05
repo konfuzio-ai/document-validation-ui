@@ -38,5 +38,8 @@
   "rotate_pages": "Rotate pages",
   "rotate_all": "Rotate all",
   "cancel": "Cancel",
-  "apply": "Apply"
+  "apply": "Apply",
+  "data_being_extracted": "New data is being extracted",
+  "analysing_document": "We are analysing your document.",
+  "few_minutes": "This might take a few minutes."
 }
