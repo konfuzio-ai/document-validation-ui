@@ -11,7 +11,7 @@ const state = {
   selectionFromBbox: null,
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: false
+  selectionEnabled: null
 };
 
 const getters = {
@@ -42,17 +42,19 @@ const actions = {
   enableSelection: ({
     commit
   }, value) => {
-    commit("SELECTION_ENABLED", true);
+    commit("SELECTION_ENABLED", value);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
+
   disableSelection: ({
     commit
   }) => {
-    commit("SELECTION_ENABLED", false);
+    commit("SELECTION_ENABLED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
+
   startSelection: ({
     commit
   }, {
@@ -95,32 +97,6 @@ const actions = {
     }
   },
 
-  setSelection: ({
-    commit
-  }, selection) => {
-    commit("SET_SELECTION", selection);
-  },
-
-  resetSelection: ({
-    commit
-  }) => {
-    commit("RESET_SELECTION");
-    // also reset selectionFromBbox because it is tied to selection
-    commit("SET_SELECTION_FROM_BBOX", null);
-  },
-
-  setSelectionFromBbox: ({
-    commit
-  }, bbox) => {
-    commit("SET_SELECTION_FROM_BBOX", bbox);
-  },
-
-  resetSpanSelection: ({
-    commit
-  }) => {
-    commit("SET_SPAN_SELECTION", null);
-  },
-
   getTextFromBboxes: ({
     commit,
     rootState
@@ -150,6 +126,15 @@ const actions = {
       .catch(error => {
         alert("Could not fetch the selected text from the backend");
       });
+  },
+  setSpanSelection: ({
+      commit
+    },
+    span
+  ) => {
+    commit("SET_SPAN_SELECTION",
+      span
+    );
   },
 };
 
@@ -182,9 +167,6 @@ const mutations = {
     state.selection.end = end;
     state.isSelecting = false;
   },
-  SET_SELECTION: (state, selection) => {
-    state.selection = selection;
-  },
   RESET_SELECTION: state => {
     state.isSelecting = false;
     state.selection.pageNumber = null;
@@ -193,9 +175,6 @@ const mutations = {
   },
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
-  },
-  SET_SELECTION_FROM_BBOX: (state, bbox) => {
-    state.selectionFromBbox = bbox;
   }
 };
 

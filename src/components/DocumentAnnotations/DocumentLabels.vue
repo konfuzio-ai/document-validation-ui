@@ -25,7 +25,7 @@
                 'selected'
             ]"
             :ref="`annotation${annotation && annotation.id}`"
-            v-for="annotation in annotationsInLabelSet(annotationSet)"
+            v-for="annotation in annotationsInAnnotationSet(annotationSet)"
             v-bind:key="annotation.id"
             @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
@@ -62,7 +62,8 @@
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
-                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one -->
+                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one 
+                  and use ActionButtons with loading -->
                   <span
                     v-if="
                       annotation.span !== undefined &&
@@ -87,7 +88,11 @@
                   >
                     {{ annotation.span[0].offset_string }}
                   </span>
-                  <EmptyAnnotation v-else :annotation="annotation" />
+                  <EmptyAnnotation
+                    v-else
+                    :annotation="annotation"
+                    :annotationSet="annotationSet"
+                  />
                   <div
                     v-if="isLoading"
                     :class="[
@@ -181,7 +186,6 @@ export default {
     CaretDown
   },
   data() {
-    // TODO: messages should be translated
     return {
       labelOpen: null,
       annotationAnimationTimeout: null,
@@ -198,7 +202,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", {
-      annotationsInLabelSet: "annotationsInLabelSet"
+      annotationsInAnnotationSet: "annotationsInAnnotationSet"
     }),
     ...mapState("document", [
       "activeAnnotationSet",

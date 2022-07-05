@@ -141,10 +141,21 @@
           }
         }
 
-        .empty-anottation {
+        .empty-annotation {
           display: flex;
           width: 100%;
           justify-content: space-between;
+
+          .action-buttons {
+            display: flex;
+            gap: 6px;
+
+            button {
+              width: 32px;
+              height: 32px;
+            }
+
+          }
         }
 
         .label-property-value:focus {

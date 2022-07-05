@@ -21,6 +21,7 @@ import {
   faAngleDown,
   faFile,
   faSpinner,
+  faCheck,
   faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -32,6 +33,7 @@ library.add(
   faAngleRight,
   faAngleLeft,
   faAngleDown,
+  faCheck,
   faFile,
   faSpinner,
   faXmark

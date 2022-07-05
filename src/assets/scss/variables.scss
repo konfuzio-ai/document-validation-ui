@@ -63,8 +63,12 @@ $carousel-overlay-background: none;
 .is-primary {
   background-color: $primary !important;
 
-  &:hover {
+  &:hover:enabled {
     background-color: $primary-dark !important;
+  }
+
+  &:disabled {
+    background-color: $grey;
   }
 }
 

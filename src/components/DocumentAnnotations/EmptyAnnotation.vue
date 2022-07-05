@@ -12,65 +12,51 @@
     >
       {{ getEmptyAnnotationPlaceholder() }}
     </span>
-    <b-button
-      v-if="enableBboxes"
-      class="action-button"
-      type="is-primary"
-      v-on:click="saveEmptyAnnotation()"
-      >Save</b-button
-    >
+    <ActionButtons
+      v-if="showActionButtons()"
+      @save="saveEmptyAnnotation"
+      @cancel="cancelEmptyAnnotation"
+    />
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
+import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing empty annotations.
  */
 export default {
   name: "EmptyAnnotation",
-
+  components: { ActionButtons },
   props: {
     annotation: {
       required: true
+    },
+    annotationSet: {
+      required: true
     }
   },
-  data() {
-    return {
-      isEditing: false,
-      // TODO: under development
-      enableBboxes: false
-    };
-  },
   computed: {
-    ...mapState("selection", ["spanSelection"]),
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["activeAnnotationSet"])
   },
   methods: {
-    handleEditEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
-      }
-      if (!this.isEditing) {
-        this.isEditing = true;
-        this.$store.dispatch("selection/enableSelection");
-      }
+    emptyAnnotationId() {
+      return `${this.annotationSet.id}_${this.annotation.label_id}`;
     },
-    handleCancelEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
+    handleEditEmptyAnnotation() {
+      if (this.selectionEnabled !== this.emptyAnnotationId()) {
+        this.$store.dispatch(
+          "selection/enableSelection",
+          this.emptyAnnotationId()
+        );
       }
-      this.$store.dispatch("selection/disableSelection");
     },
     saveEmptyAnnotation() {
-      if (!this.enableBboxes) {
-        return;
-      }
       // update the bbox text with the one from the input
       this.spanSelection.offset_string = this.$refs.emptyAnnotation.textContent;
       this.spanSelection.offset_string_original =
         this.$refs.emptyAnnotation.textContent;
-
-      // TODO: if has multiple label set groups then label set should be used, otherwise annotation set id should be used.
 
       const annotationToCreate = {
         span: [this.spanSelection],
@@ -79,22 +65,27 @@ export default {
         is_correct: true,
         revised: true
       };
-      this.$store.dispatch("document/createAnnotation", annotationToCreate);
+      this.$store
+        .dispatch("document/createAnnotation", annotationToCreate)
+        .then(annotationCreated => {
+          if (annotationCreated) {
+            this.$store.dispatch("document/fetchAnnotations");
+          }
+        });
+      this.cancelEmptyAnnotation();
+    },
+    cancelEmptyAnnotation() {
       this.$store.dispatch("selection/disableSelection");
     },
     isEmptyAnnotationEditable() {
-      if (!this.enableBboxes) {
-        return false;
-      }
       return (
-        this.isEditing && this.spanSelection && this.spanSelection.offset_string
+        this.selectionEnabled === this.emptyAnnotationId() &&
+        this.spanSelection &&
+        this.spanSelection.offset_string
       );
     },
     getEmptyAnnotationPlaceholder() {
-      if (!this.enableBboxes) {
-        return "";
-      }
-      if (this.isEditing) {
+      if (this.selectionEnabled === this.emptyAnnotationId()) {
         if (this.spanSelection && this.spanSelection.offset_string) {
           setTimeout(() => {
             //focus element
@@ -102,11 +93,18 @@ export default {
           }, 200);
           return this.spanSelection.offset_string;
         } else {
-          return "Please create a box on the document";
+          return this.$t("draw_box_document");
         }
       } else {
         return this.$t("no_data_found");
       }
+    },
+    showActionButtons() {
+      return (
+        this.selectionEnabled === this.emptyAnnotationId() &&
+        this.spanSelection &&
+        this.spanSelection.offset_string
+      );
     }
   }
 };
