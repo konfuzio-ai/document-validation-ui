@@ -7,8 +7,9 @@ $red: #e7423a;
 $lighter-red: #f04438;
 
 $dark: #2f3032;
-
+$full-black: #000;
 $grey-dark: #344054;
+$grey-darkest: #2b3545;
 $grey: #858c9a;
 $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
@@ -17,7 +18,8 @@ $grey-detail: #dfe0e4;
 $sublte-grey: #f2f4f7;
 $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
-$hover-grey: #fafafa;
+$grey-hover: #fafafa;
+$green-hover: #3a9c76;
 
 $yellow: #ffd600;
 $blue: #2f80ed;
@@ -320,7 +322,7 @@ $carousel-overlay-background: none;
   }
 
   .modal-background {
-    background-color: $black;
+    background-color: $full-black;
     opacity: 0.5;
   }
 }
@@ -338,7 +340,7 @@ $carousel-overlay-background: none;
   }
 
   .modal-background {
-    background-color: $black;
+    background-color: $full-black;
     opacity: 0.5;
   }
 }

@@ -4,8 +4,8 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
-        <div class="rotate icon">
-          <RotateIcon @click="handleModal" />
+        <div class="rotate icon" @click="handleModal">
+          <RotateIcon />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
@@ -60,7 +60,6 @@ export default {
   },
   methods: {
     handleModal() {
-      console.log("click");
       this.isModalActive = !this.isModalActive;
     },
     zoomIn() {
@@ -80,9 +79,6 @@ export default {
       this.$store.dispatch("display/updateFit", "auto");
       this.currentPercentage = 15;
     }
-  },
-  updated() {
-    console.log("toolbar", this.isModalActive);
   }
 };
 </script>

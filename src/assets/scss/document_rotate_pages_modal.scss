@@ -17,10 +17,6 @@
 }
 
 .pages-container {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
-  justify-items: center;
   background-color: $background;
   width: 100%;
   height: 383px;
@@ -33,12 +29,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    .page {
-      width: 64px;
-      height: 94px;
-      background-color: black;
-    }
   }
 }
 
@@ -85,12 +75,20 @@
         background-color: $white;
         border: 1px solid $grey-outline;
         margin-right: 12px;
+
+        &:hover {
+          background-color: $grey-hover;
+        }
       }
 
       &.apply-btn {
         background-color: $top-bar-green;
         border: none;
         color: $white;
+
+        &:hover {
+          background-color: $green-hover;
+        }
       }
     }
   }

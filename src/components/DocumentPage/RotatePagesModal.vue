@@ -14,66 +14,11 @@
           </h3>
         </div>
         <div class="pages-container">
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">1</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">2</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">3</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">4</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">5</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">6</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">7</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">8</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">9</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">7</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">8</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">9</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">7</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">8</div>
-          </div>
-          <div class="page-container">
-            <div class="page"></div>
-            <div class="page-number">9</div>
-          </div>
+          <DocumentThumbnails
+            :filter="filter"
+            :rotations="rotations"
+            @rotate-single-page="handleSinglePageRotation"
+          />
         </div>
         <div class="footer">
           <div class="footer-left">
@@ -104,11 +49,15 @@
 <script>
 import RotateLeftBlack from "../../assets/images/RotateLeftBlack";
 import RotateRightBlack from "../../assets/images/RotateRightBlack";
+import DocumentThumbnails from "../DocumentThumbnails/DocumentThumbnails";
 
 export default {
   name: "RotatePagesModal",
   data() {
-    return {};
+    return {
+      filter: true,
+      rotations: []
+    };
   },
   props: {
     isModalActive: {
@@ -117,13 +66,51 @@ export default {
   },
   components: {
     RotateLeftBlack,
-    RotateRightBlack
+    RotateRightBlack,
+    DocumentThumbnails
   },
   methods: {
+    handleSinglePageRotation(pageId) {
+      // If the item already exists in the array, update it to the new rotation
+      if (this.rotations.find(rotation => rotation.id === pageId)) {
+        this.rotations = this.rotations.map(rotation => {
+          if (rotation.id === pageId) {
+            return { ...rotation, value: rotation.value - 90 };
+          }
+          return rotation;
+        });
+      } else {
+        // If there is no existing item in the array, add it
+        this.rotations.push({
+          id: pageId,
+          value: -90
+        });
+      }
+    },
     closeModal() {
       this.$emit("close-modal");
     },
     handleApplyBtn() {
+      /**
+       * TODO: finish backend call + polling endpoint
+       * until its status_data is 2 (done) or 111 (error).
+       */
+
+      // const updatedAngle = {
+      // page_number: this.page_number,
+      //angle: this.angle
+      // };
+
+      // this.$store
+      //   .dispatch("document/updatePageRotation", updatedAngle)
+      //   .then(response => {
+      //     // Check if the response is successfull or not
+      //     if (response) {
+      //       // show loading in label section
+      //     } else {
+      //       // show error msg
+      //     }
+      //   });
       this.closeModal();
     }
   }

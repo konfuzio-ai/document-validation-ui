@@ -366,6 +366,24 @@ const actions = {
       .catch(error => {
         console.log(error);
       });
+  },
+
+  updatePageRotation: ({ state }, updatedRotation) => {
+    console.log("updating rotation");
+
+    // return new Promise(resolve => {
+    //   HTTP.patch(`/documents/${state.documentId}/rotate`, updatedRotation)
+    //     .then(response => {
+    //       if (response.status === 200) {
+    //         commit("SET_SELECTED_DOCUMENT", response.data);
+    //         resolve(true);
+    //       }
+    //     })
+    //     .catch(error => {
+    //       resolve(false);
+    //       console.log(error);
+    //     });
+    // });
   }
 };
 
