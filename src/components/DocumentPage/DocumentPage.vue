@@ -339,8 +339,8 @@ export default {
     /**
      * Konva draws pages like this.
      */
-    drawPage() {
-      if (this.image) {
+    drawPage(force = false) {
+      if (this.image && !force) {
         return;
       }
       const image = new Image();
@@ -588,8 +588,7 @@ export default {
     },
     recalculatingAnnotations(newState) {
       if (!newState) {
-        this.image = null;
-        this.drawPage();
+        this.drawPage(true);
       }
     }
   },

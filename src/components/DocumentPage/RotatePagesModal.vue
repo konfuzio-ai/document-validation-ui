@@ -228,30 +228,41 @@ export default {
       this.$store
         .dispatch("document/updatePageRotation", changedRotations)
         .then(response => {
+          const sleep = duration =>
+            new Promise(resolve => setTimeout(resolve, duration));
+          // Poll document data until the status_data is 111 (error) or
+          // 2 and labeling is available (done)
+          const pollUntilLabelingAvailable = duration => {
+            return this.$store
+              .dispatch("document/fetchDocumentData")
+              .then(() => {
+                if (
+                  this.selectedDocument.status_data === 2 &&
+                  this.selectedDocument.labeling_available === 1
+                ) {
+                  this.$store.dispatch("document/fetchAnnotations").then(() => {
+                    this.$store.dispatch(
+                      "document/endRecalculatingAnnotations"
+                    );
+                  });
+                  return true;
+                } else if (this.selectedDocument.status_data === 111) {
+                  return false;
+                } else {
+                  return sleep(duration).then(() =>
+                    pollUntilLabelingAvailable(duration)
+                  );
+                }
+              });
+          };
+
           // Check if the response is successfull or not
           if (response) {
-            // Poll document data until the status_data is 2 (done) or 111 (error)
-            const intId = setInterval(() => {
-              this.$store.dispatch("document/fetchDocumentData");
-
-              if (this.selectedDocument.status_data === 2) {
-                this.$store.dispatch("document/fetchAnnotations");
-                clearInterval(intId);
-                return;
-              }
-
-              if (this.selectedDocument.status_data === 111) {
-                clearInterval(intId);
-                return;
-              }
-            }, 3000);
+            pollUntilLabelingAvailable(5000);
           } else {
             this.handleShowError();
             this.handleMessage(this.$i18n.t("rotation_failed"));
           }
-        })
-        .finally(() => {
-          this.$store.dispatch("document/endRecalculatingAnnotations");
         });
 
       // Whether the rotation worked properly or not, end loading and close both modals

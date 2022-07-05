@@ -3,9 +3,7 @@
 <template>
   <div class="document-name-component">
     <div class="document-icon">
-      <ServerImage
-        :imageUrl="`${selectedDocument.thumbnail_url}?${this.page.updated_at}`"
-      />
+      <ServerImage :imageUrl="selectedDocument.thumbnail_url" />
     </div>
     <span class="file-name-section">
       <span

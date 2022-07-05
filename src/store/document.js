@@ -232,7 +232,7 @@ const actions = {
             "SET_ANNOTATIONS",
             getters.annotations(response.data.annotation_sets)
           );
-          commit("SET_PAGES", []);
+          // commit("SET_PAGES", []);
 
           const documentId = state.documentId;
           // fetch pages
@@ -242,7 +242,18 @@ const actions = {
               await HTTP.get(`documents/${documentId}/pages/${i}/`)
                 .then(response => {
                   if (response.data && documentId === state.documentId) {
-                    commit("ADD_PAGE", response.data);
+                    // if we already have the page in the state, update it in
+                    // the pages array instead of creating a new one
+                    const existingPageIndex = state.pages.findIndex(
+                      p => p.number === i
+                    );
+                    if (existingPageIndex === -1) {
+                      commit("ADD_PAGE", response.data);
+                    } else {
+                      let newPages = state.pages.slice(0);
+                      newPages[i - 1] = response.data;
+                      commit("SET_PAGES", newPages);
+                    }
                   }
                 })
                 .catch(error => {
