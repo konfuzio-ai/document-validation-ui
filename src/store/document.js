@@ -335,7 +335,7 @@ const actions = {
       });
   },
 
-  updatePageRotation: ({ state, dispatch }, changedRotations) => {
+  updatePageRotation: ({ state }, changedRotations) => {
     return new Promise(resolve => {
       HTTP.post(`/documents/${state.documentId}/rotate/`, changedRotations)
         .then(response => {

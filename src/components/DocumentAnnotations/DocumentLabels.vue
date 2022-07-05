@@ -167,11 +167,16 @@
     <!-- When there's no annotations in the label -->
     <div
       v-if="
-        !activeAnnotationSet ||
-        (activeAnnotationSet.labels.length == 0 && !recalculatingAnnotations)
+        (!activeAnnotationSet || activeAnnotationSet.labels.length == 0) &&
+        !recalculatingAnnotations
       "
     >
       <EmptyState />
+    </div>
+
+    <!-- When extracting annotations after rotating -->
+    <div v-if="recalculatingAnnotations">
+      <ExtractingData />
     </div>
   </div>
 </template>

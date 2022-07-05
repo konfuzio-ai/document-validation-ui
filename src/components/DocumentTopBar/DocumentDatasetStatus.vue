@@ -60,6 +60,9 @@ export default {
     },
     handleShowError: {
       type: Function
+    },
+    handleMessage: {
+      type: Function
     }
   },
   components: {
@@ -80,6 +83,7 @@ export default {
             this.currentStatus = this.statusList[index];
           } else {
             this.handleShowError();
+            this.handleMessage(this.$i18n.t("status_error"));
           }
         });
     },

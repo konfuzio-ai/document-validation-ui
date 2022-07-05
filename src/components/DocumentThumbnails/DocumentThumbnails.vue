@@ -11,7 +11,6 @@
       v-bind:key="page.id"
       v-on:click="changePage(page.number)"
     >
-      <!-- TODO: review the blur and rotation modal -->
       <div :class="['image-section', rotationModal && 'rotation-modal']">
         <div
           :class="['image-container']"
@@ -19,15 +18,14 @@
             transform: 'rotate(' + getRotation(page.id) + 'deg)'
           }"
         >
-          <div :class="[recalculatingAnnotations && 'blur']">
-            <ServerImage
-              :class="[
-                'img-thumbnail',
-                currentPage == page.number && 'selected'
-              ]"
-              :imageUrl="page.thumbnail_url"
-            />
-          </div>
+          <ServerImage
+            :class="[
+              'img-thumbnail',
+              currentPage == page.number && 'selected',
+              recalculatingAnnotations && 'blur'
+            ]"
+            :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+          />
           <div
             class="icon-container"
             @click="rotateSinglePage(page.id, page.number)"
@@ -113,5 +111,15 @@ export default {
       return pageRotation - negativeToPositive * 2;
     }
   }
+  // TODO: fix watcher to get thumbnail image after rotating
+  // watch: {
+  //   recalculatingAnnotations(newValue) {
+  //     if (!newValue) {
+  //       this.$nextTick(() => {
+  //         this.getImage();
+  //       });
+  //     }
+  //   }
+  // }
 };
 </script>

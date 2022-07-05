@@ -19,6 +19,10 @@
     .img-thumbnail {
       width: 40px;
       text-align: center;
+
+      &.blur {
+        filter: blur(2px);
+      }
     }
 
     .number-thumbnail {
@@ -59,22 +63,30 @@
     .document-thumbnail {
       margin: 0 !important;
 
-      .image-container {
-        position: relative;
+      .image-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
 
-        .img-thumbnail {
-          outline: 1px solid $grey-detail !important;
-          width: 150%;
-        }
-        &:hover {
-          .icon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
+        .image-container {
+          position: relative;
 
           .img-thumbnail {
-            outline: none !important;
+            outline: 1px solid $grey-detail !important;
+            width: 150%;
+          }
+
+          &:hover {
+            .icon-container {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .img-thumbnail {
+              outline: none !important;
+            }
           }
         }
       }

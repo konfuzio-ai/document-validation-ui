@@ -13,6 +13,7 @@
           v-if="showDatasetDropdown"
           :datasetStatus="selectedDocument.dataset_status"
           :handleShowError="handleShowError"
+          :handleMessage="handleMessage"
         />
       </div>
 
@@ -21,18 +22,6 @@
       </div>
       <div class="handover"><DocumentHandover v-if="showHandoverButton" /></div>
     </div>
-    <transition name="slide-fade">
-      <div v-if="showError" class="error-message topbar">
-        <b-message>
-          <div class="message-container">
-            {{ categoryError ? $t("category_error") : $t("status_error") }}
-          </div>
-          <div @click="handleErrorClose" class="btn-container">
-            <b-icon icon="xmark" class="close-btn" />
-          </div>
-        </b-message>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -41,14 +30,12 @@ import DocumentDatasetStatus from "./DocumentDatasetStatus.vue";
 import DocumentCategory from "./DocumentCategory.vue";
 import DocumentName from "./DocumentName.vue";
 import DocumentHandover from "./DocumentHandover.vue";
-import CloseBtn from "../../assets/images/CloseBtnWhite.vue";
 import { mapState } from "vuex";
 
 export default {
   name: "DocumentTopBar",
   data() {
     return {
-      showError: false,
       categoryError: false,
       showDatasetDropdown:
         process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN &&
@@ -62,22 +49,22 @@ export default {
     DocumentCategory,
     DocumentDatasetStatus,
     DocumentName,
-    DocumentHandover,
-    CloseBtn
+    DocumentHandover
+  },
+  props: {
+    showError: {
+      type: Boolean
+    }
   },
   computed: {
     ...mapState("document", ["selectedDocument"])
   },
   methods: {
     handleShowError() {
-      this.showError = true;
+      this.$emit("handle-error", true);
     },
-    handleMessage() {
-      this.categoryError = true;
-    },
-    handleErrorClose() {
-      this.showError = false;
-      this.categoryError = false;
+    handleMessage(message) {
+      this.$emit("handle-message", message);
     }
   }
 };

@@ -5,6 +5,7 @@ $lighter-green: #44b78b;
 $darker-green: #3a9c76;
 $red: #e7423a;
 $lighter-red: #f04438;
+$lightest-red: rgba(254, 227, 226, 0.5);
 
 $dark: #2f3032;
 $full-black: #000;
@@ -20,6 +21,7 @@ $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
 $grey-hover: #fafafa;
 $green-hover: #3a9c76;
+$grey-blue: #667085;
 
 $yellow: #ffd600;
 $blue: #2f80ed;
@@ -97,6 +99,9 @@ $carousel-overlay-background: none;
 }
 
 .error-message {
+  position: fixed;
+  width: 100%;
+
   .message-body {
     background-color: $error-red;
     color: $white;
@@ -110,13 +115,30 @@ $carousel-overlay-background: none;
   .media-content {
     display: flex;
     justify-content: flex-end;
-    margin: 0px 20px 0px 20px;
+    // margin: 0px 20px 0px 20px;
   }
 
   .message-container {
     display: flex;
     width: 100%;
     justify-content: center;
+    align-items: center;
+  }
+
+  .btn-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    .close-btn {
+      color: $white;
+      padding-right: 20px;
+      padding-left: 20px;
+
+      svg {
+        height: 15px !important;
+      }
+    }
   }
 
   &.handover {
@@ -331,17 +353,50 @@ $carousel-overlay-background: none;
   .modal-content {
     width: 840px;
     max-width: 840px !important;
-    border-radius: 8px;
+    border-radius: 16px;
     background-color: $white;
   }
 
   .modal-card {
     width: 100%;
   }
+}
 
-  .modal-background {
-    background-color: $full-black;
-    opacity: 0.5;
+.confirm-rotation {
+  .modal-content {
+    max-width: 400px !important;
+    border-radius: 12px;
+  }
+
+  .modal-card-head,
+  .modal-card-body,
+  .modal-card-foot {
+    background-color: $white;
+    border: none;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-card-foot {
+    .btn {
+      border-radius: 8px;
+      padding: 10px 18px 10px 18px;
+      width: 170px;
+      height: 44px;
+    }
+
+    .cancel-btn {
+      &:hover {
+        background-color: $grey-hover;
+        border-color: $grey-outline;
+      }
+    }
+
+    .confirm-btn {
+      background-color: $red;
+      color: $white;
+      border: none;
+    }
   }
 }
 
@@ -383,4 +438,9 @@ $carousel-overlay-background: none;
 .close-btn {
   width: 10px;
   height: 10px;
+}
+
+.modal-background {
+  background-color: $full-black;
+  opacity: 0.5;
 }

@@ -191,7 +191,8 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
-      "activeAnnotationSet"
+      "activeAnnotationSet",
+      "recalculatingAnnotations"
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
@@ -343,7 +344,7 @@ export default {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(this.page.image_url)
+      api.IMG_REQUEST.get(`${this.page.image_url}?${this.page.updated_at}`)
         .then(response => {
           return response.data;
         })
@@ -583,6 +584,12 @@ export default {
           bboxToRect(newAnnotations[i].span[0]);
         }
         return;
+      }
+    },
+    recalculatingAnnotations(newState) {
+      if (!newState) {
+        this.image = null;
+        this.drawPage();
       }
     }
   },

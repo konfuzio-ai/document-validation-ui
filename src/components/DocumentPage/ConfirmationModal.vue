@@ -1,34 +1,56 @@
-<style scoped></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/confirm_rotation_modal.scss"
+></style>
 
 <template>
   <section>
-    <b-modal v-model="isModalActive" :can-cancel="['x']">
+    <b-modal v-model="isConfirmationModalActive" :can-cancel="['x']">
       <header class="modal-card-head">
         <div class="icon-container">
-          <b-icon icon="circleExclamation" class="icon" />
+          <AlertCircle />
         </div>
-      </header>
-      <section class="modal-card-body">
         <h3 class="modal-title">
           {{ $t("confirm_rotation") }}
         </h3>
+      </header>
+      <section class="modal-card-body">
         <p class="modal-description">{{ $t("rotation_warning") }}</p>
       </section>
       <footer class="modal-card-foot">
-        <button class="cancel-btn btn" @click="closeModal">
+        <b-button class="cancel-btn btn" @click="handleCloseModal">
           {{ $t("cancel") }}
-        </button>
+        </b-button>
 
-        <button class="confirm-btn btn" @click="handleConfirm">
+        <b-button class="confirm-btn btn" @click="handleConfirm">
           {{ $t("rotate") }}
-        </button>
+        </b-button>
       </footer>
     </b-modal>
   </section>
 </template>
 
 <script>
+import AlertCircle from "../../assets/images/AlertCircle";
+
 export default {
-  name: "ConfirmationModal"
+  name: "ConfirmationModal",
+  props: {
+    isConfirmationModalActive: {
+      type: Boolean
+    }
+  },
+  components: {
+    AlertCircle
+  },
+  methods: {
+    handleCloseModal() {
+      this.$emit("close-modal");
+    },
+    handleConfirm() {
+      this.$emit("handle-confirmation");
+    }
+  }
 };
 </script>

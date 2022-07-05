@@ -3,7 +3,10 @@
 <template>
   <div class="dashboard">
     <div class="dashboard-top-bar">
-      <DocumentTopBar />
+      <DocumentTopBar
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
     </div>
     <div class="dashboard-viewer">
       <DocumentThumbnails ref="documentPages" />
@@ -15,6 +18,8 @@
         :enable-page-jump="true"
         @page-jump="onPageJump"
         @pages-reset="fitWidth"
+        @handle-message="handleMessage"
+        @handle-error="handleError"
       >
         <keep-alive>
           <DummyPage
@@ -32,6 +37,14 @@
         </keep-alive>
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" />
+      <transition name="slide-fade">
+        <div v-if="showError" class="error-message">
+          <ErrorMessage
+            @close-error="showError = false"
+            :message="errorMessage"
+          />
+        </div>
+      </transition>
     </div>
     <div class="not-optimized" v-if="!optimized">
       <NotOptimizedViewportModal />
@@ -54,6 +67,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
+import ErrorMessage from "../components/CommonComponents/ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
 /**
@@ -70,6 +84,7 @@ export default {
     DocumentThumbnails,
     DocumentLabelSets,
     DocumentsList,
+    ErrorMessage,
     NotOptimizedViewportModal
   },
   computed: {
@@ -102,7 +117,9 @@ export default {
   data() {
     return {
       isMinimunWidth: true,
-      optimized: true
+      optimized: true,
+      showError: false,
+      errorMessage: null
     };
   },
   mounted() {
@@ -170,6 +187,15 @@ export default {
     onPageJump(scrollTop) {
       const actualScroll = scrollTop;
       this.$refs.scrollingDocument.$el.scrollTop = actualScroll;
+    },
+
+    handleError(error) {
+      this.showError = error;
+      console.log(this.showError);
+    },
+
+    handleMessage(message) {
+      this.errorMessage = message;
     }
   },
 

@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="footer-right">
-            <button class="cancel-btn btn" @click="closeModal">
+            <button class="cancel-btn btn" @click="closeRotationModal">
               {{ $t("cancel") }}
             </button>
             <button class="apply-btn btn" @click="handleApplyBtn">
@@ -44,6 +44,13 @@
         </footer>
       </div>
     </b-modal>
+    <div class="confirm-rotation" v-if="confirmationModalOpen">
+      <ConfirmationModal
+        @close-modal="closeConfirmationModal"
+        @handle-confirmation="handleRotationConfirmation"
+        :isConfirmationModalActive="isConfirmationModalActive"
+      />
+    </div>
   </section>
 </template>
 
@@ -52,6 +59,7 @@ import { mapState } from "vuex";
 import RotateLeftBlack from "../../assets/images/RotateLeftBlack";
 import RotateRightBlack from "../../assets/images/RotateRightBlack";
 import DocumentThumbnails from "../DocumentThumbnails/DocumentThumbnails";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default {
   name: "RotatePagesModal",
@@ -60,7 +68,9 @@ export default {
       filter: true,
       rotationModal: true,
       rotations: [],
-      rotationsToSave: []
+      rotationsToSave: [],
+      confirmationModalOpen: true,
+      isConfirmationModalActive: false
     };
   },
   props: {
@@ -69,6 +79,12 @@ export default {
     },
     setRotations: {
       type: Boolean
+    },
+    handleShowError: {
+      type: Function
+    },
+    handleMessage: {
+      type: Function
     }
   },
   computed: {
@@ -78,7 +94,8 @@ export default {
   components: {
     RotateLeftBlack,
     RotateRightBlack,
-    DocumentThumbnails
+    DocumentThumbnails,
+    ConfirmationModal
   },
   methods: {
     handleSinglePageRotation({ pageId, pageNumber }) {
@@ -163,9 +180,11 @@ export default {
         return { ...rotation, angle: rotatedAngle };
       });
     },
-    closeModal() {
+    closeRotationModal() {
       this.$emit("close-modal");
 
+      // Set rotation angles to default when canceling changes
+      // Timeout so that they rotate after the modal is closed
       setTimeout(() => {
         this.rotations = this.rotations.map(rotation => {
           return {
@@ -177,7 +196,14 @@ export default {
         this.rotationsToSave = [];
       }, 1000);
     },
+    closeConfirmationModal() {
+      this.isConfirmationModalActive = !this.isConfirmationModalActive;
+    },
     handleApplyBtn() {
+      // Open confirmation modal
+      this.isConfirmationModalActive = true;
+    },
+    handleRotationConfirmation() {
       // Remove id from rotation object since the backend doesn't need it
       const updatedRotations = this.rotationsToSave.map(rotation => {
         delete rotation.id;
@@ -188,6 +214,12 @@ export default {
       const changedRotations = updatedRotations.filter(
         rotation => rotation.angle != 0
       );
+
+      if (changedRotations.length === 0) {
+        this.closeConfirmationModal();
+        this.closeRotationModal();
+        return;
+      }
 
       // this.$store.dispatch("document/startLoading");
       this.$store.dispatch("document/startRecalculatingAnnotations");
@@ -203,6 +235,7 @@ export default {
               this.$store.dispatch("document/fetchDocumentData");
 
               if (this.selectedDocument.status_data === 2) {
+                this.$store.dispatch("document/fetchAnnotations");
                 clearInterval(intId);
                 return;
               }
@@ -213,16 +246,17 @@ export default {
               }
             }, 3000);
           } else {
-            // show error msg
+            this.handleShowError();
+            this.handleMessage(this.$i18n.t("rotation_failed"));
           }
         })
         .finally(() => {
-          // this.$store.dispatch("document/endLoading");
           this.$store.dispatch("document/endRecalculatingAnnotations");
         });
 
-      // Whether the rotation worked properly or not, end loading and close modal
-      this.closeModal();
+      // Whether the rotation worked properly or not, end loading and close both modals
+      this.closeConfirmationModal();
+      this.closeRotationModal();
     }
   },
   watch: {
