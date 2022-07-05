@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="footer-right">
-            <button class="cancel-btn btn" @click="handleCancelBtn">
+            <button class="cancel-btn btn" @click="closeModal">
               {{ $t("cancel") }}
             </button>
             <button class="apply-btn btn" @click="handleApplyBtn">
@@ -108,20 +108,23 @@ import RotateRightBlack from "../../assets/images/RotateRightBlack";
 export default {
   name: "RotatePagesModal",
   data() {
-    return {
-      isModalActive: true
-    };
+    return {};
+  },
+  props: {
+    isModalActive: {
+      type: Boolean
+    }
   },
   components: {
     RotateLeftBlack,
     RotateRightBlack
   },
   methods: {
-    handleCancelBtn() {
-      this.isModalActive = false;
+    closeModal() {
+      this.$emit("close-modal");
     },
     handleApplyBtn() {
-      this.isModalActive = false;
+      this.closeModal();
     }
   }
 };

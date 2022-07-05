@@ -5,7 +5,7 @@
     <div class="toolbar">
       <div class="icons icons-left">
         <div class="rotate icon">
-          <RotateIcon />
+          <RotateIcon @click="handleModal" />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
@@ -21,6 +21,12 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
+    <div class="rotate-pages" v-if="toolbarModalOpen">
+      <RotatePagesModal
+        @close-modal="handleModal"
+        :isModalActive="isModalActive"
+      />
+    </div>
   </div>
 </template>
 
@@ -30,6 +36,7 @@ import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
+import RotatePagesModal from "./RotatePagesModal";
 
 export default {
   name: "Toolbar",
@@ -37,18 +44,25 @@ export default {
     RotateIcon,
     FitZoomIcon,
     PlusIcon,
-    MinusIcon
+    MinusIcon,
+    RotatePagesModal
   },
   data() {
     return {
       currentPercentage: 100,
-      increment: 0.25
+      increment: 0.25,
+      toolbarModalOpen: true,
+      isModalActive: false
     };
   },
   computed: {
     ...mapState("display", ["scale"])
   },
   methods: {
+    handleModal() {
+      console.log("click");
+      this.isModalActive = !this.isModalActive;
+    },
     zoomIn() {
       this.updateScale(this.scale + this.increment);
       this.currentPercentage += this.increment * 100;
@@ -66,6 +80,9 @@ export default {
       this.$store.dispatch("display/updateFit", "auto");
       this.currentPercentage = 15;
     }
+  },
+  updated() {
+    console.log("toolbar", this.isModalActive);
   }
 };
 </script>
