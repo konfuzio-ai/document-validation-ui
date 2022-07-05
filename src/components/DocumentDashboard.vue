@@ -54,7 +54,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
-import NotOptimizedViewportModal from "./NotOptimizedViewportModal.vue";
+import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
