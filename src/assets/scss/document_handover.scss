@@ -1,12 +1,146 @@
 @import "./imports.scss";
 
-.handover-btn {
-  border-radius: 8px;
-  background-color: $top-bar-green;
-  color: $white;
-  font-weight: 500;
-  height: 40px;
-  width: 97px;
-  border: none;
-  font-family: "Inter", sans-serif;
+.handover-container {
+  .handover-btn {
+    font-size: 14px;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $darker-green;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header {
+    border-bottom: 1px solid $sublte-grey;
+    padding: 15px;
+
+    .title {
+      margin: 0 !important;
+      color: $dark-blue;
+      font-size: 14px;
+    }
+  }
+
+  .input-container {
+    .input-section {
+      margin-top: 7px;
+      padding-left: 15px;
+      padding-right: 15px;
+      font-size: 14px;
+
+      ::placeholder {
+        font-size: 14px;
+        font-weight: 400;
+        color: $grey;
+      }
+
+      .handover-btn-menu {
+        height: 40px;
+        width: 97px;
+        background-color: $dark-blue;
+        color: $white;
+        font-size: 14px;
+        border: 0;
+
+        &:focus {
+          box-shadow: none;
+          border: 0;
+        }
+      }
+    }
+
+    .invalid-email-msg {
+      color: $lighter-red;
+      margin: 8px 15px 20px 15px;
+    }
+  }
+
+  .members-section {
+    margin: 15px;
+    margin-right: 0;
+
+    .members-title {
+      display: flex !important;
+      margin-bottom: 10px;
+
+      .title {
+        color: $grey !important;
+        font-size: 12px !important;
+        font-weight: 400 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .member-list {
+      max-height: 110px;
+      padding-right: 15px;
+
+      &.scroll {
+        overflow: auto;
+      }
+
+      .member {
+        padding-bottom: 7px;
+      }
+    }
+
+    .email {
+      margin-bottom: 0 !important;
+      color: $grey-darker;
+    }
+
+    .select-btn {
+      height: 32px;
+      color: $dark-blue;
+      font-weight: 500;
+      font-size: 14px;
+
+      &:hover {
+        background-color: $hover-grey;
+      }
+
+      &:focus {
+        box-shadow: none;
+        border-color: $grey-outline;
+      }
+    }
+  }
+
+  .close-icon-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    .close-btn {
+      &.error-icon {
+        color: $grey;
+      }
+
+      &.snackbar-icon {
+        color: $white;
+      }
+    }
+  }
+
+  .error-message {
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: 7px;
+
+    .message-container {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
+  }
 }

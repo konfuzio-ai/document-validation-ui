@@ -1,7 +1,10 @@
 /* Theme */
 
 $green: #12b76a;
-$red: #E7423A;
+$lighter-green: #44b78b;
+$darker-green: #3a9c76;
+$red: #e7423a;
+$lighter-red: #f04438;
 
 $dark: #2f3032;
 
@@ -11,9 +14,14 @@ $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
 $grey-detail: #dfe0e4;
+$sublte-grey: #f2f4f7;
+$subtlest-grey: #e3e4e5;
+$grey-darker: #101828;
+$hover-grey: #fafafa;
 
 $yellow: #ffd600;
 $blue: #2f80ed;
+$dark-blue: #2b3545;
 $white: #fff;
 $low-opacity-white: rgba(255, 255, 255, 0.1);
 
@@ -36,13 +44,14 @@ $black: $dark;
 $background: #f7f7f7;
 $detail: #e2e3e4;
 
-$top-bar-green: #44b78b;
-$top-bar-text-color: #2b3545;
 $error-red: #d4453d;
+$error-background: #fdf4f6;
+$dark-error-red: #bb2b3b;
+$light-error-red: rgba(187, 43, 59, 0.3);
+$low-opacity-red: rgba(231, 66, 58, 0.3);
+$light-red: #fdf4f4;
 
 // TODO: convert this variables to styles
-$message-body-border-width: 1px;
-$message-body-padding: 8px 16px;
 
 $loading-background: transparent;
 
@@ -85,11 +94,11 @@ $carousel-overlay-background: none;
 
 .error-message {
   .message-body {
-    background-color: $error-red !important;
+    background-color: $error-red;
     color: $white;
     font-size: 14px;
     border: 0;
-    border-radius: 0% !important;
+    border-radius: 0%;
     line-height: 20px;
     padding: 7px 0 7px 0;
   }
@@ -104,6 +113,51 @@ $carousel-overlay-background: none;
     display: flex;
     width: 100%;
     justify-content: center;
+  }
+
+  &.handover {
+    .message {
+      display: flex;
+    }
+
+    .message-body {
+      border-radius: 4px;
+      border: 1px solid $light-error-red;
+      background-color: $error-background !important;
+      color: $dark-error-red;
+      width: 100%;
+    }
+
+    .media-content {
+      margin: 0px 10px 0px 10px !important;
+    }
+
+    .message-container {
+      justify-content: flex-start !important;
+      text-align: left;
+    }
+  }
+}
+
+.label-properties {
+  .message {
+    .message-body {
+      padding: 5px 15px 5px 15px !important;
+    }
+
+    &.is-warning {
+      .message-body {
+        border: 1px solid $yellow !important;
+      }
+    }
+
+    &.is-danger {
+      .message-body {
+        border: 1px solid $low-opacity-red !important;
+        color: $red;
+        background-color: $light-red;
+      }
+    }
   }
 }
 
@@ -120,28 +174,168 @@ $carousel-overlay-background: none;
   }
 }
 
+.handover-container {
+  .collapse {
+    .collapse-content {
+      position: absolute;
+      right: 20px;
+      top: 52px;
+      max-width: 435px;
+      max-height: 264px;
+      margin: 0;
+
+      .notification {
+        background-color: $white;
+        border: 1px solid $sublte-grey;
+        box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
+          0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+        padding: 0;
+
+        .content {
+          width: 100%;
+
+          .loading-overlay.is-active {
+            position: relative;
+            height: 40px;
+            width: 97px;
+            border-radius: 4px;
+            background-color: $dark-blue;
+
+            .spinner {
+              color: $white;
+            }
+          }
+        }
+
+        .input-section {
+          .field {
+            margin: 0 !important;
+            padding-right: 8px;
+
+            .validation-message {
+              display: none;
+            }
+
+            .control {
+              width: 298px;
+              height: 40px;
+
+              .input {
+                border-color: $subtlest-grey;
+                font-size: 14px;
+                height: 40px;
+
+                &:focus {
+                  box-shadow: none !important;
+                }
+              }
+            }
+          }
+
+          &.invalid {
+            .input {
+              border-color: $red !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// TODO: modal styles should be hierarchical to not mess with other styles with the same name
+
 .modal {
   &.is-active {
     z-index: 999;
+  }
+
+  .modal-content {
+    height: auto;
+    width: 500px;
+    max-width: 500px !important;
+    margin-left: auto;
+    margin-right: auto;
+    background: $white;
+    border-radius: 16px;
+
+    .modal-card {
+      display: flex;
+      align-items: center;
+    }
+
+    .modal-close.is-large {
+      display: none !important;
+    }
+
+    .modal-card-foot {
+      border: none;
+      background: none;
+    }
+
+    .content {
+      h3 {
+        font-weight: 600 !important;
+        font-size: 20px !important;
+        line-height: 26px !important;
+        color: $dark-blue !important;
+        padding-bottom: 5px;
+      }
+
+      p {
+        color: $grey;
+      }
+
+      p,
+      button {
+        line-height: 20px;
+        font-size: 14px;
+      }
+    }
   }
 
   .modal-background {
     background-color: $black;
     opacity: 0.5;
   }
+}
 
-  .modal-content {
-    height: auto;
-    background: $white;
-    border-radius: 16px;
-  }
+.loading-background {
+  background-color: transparent !important;
+}
 
-  .modal-close.is-large {
-    display: none !important;
-  }
+.loading-icon-size {
+  width: 13px;
+  height: 13px;
+}
 
-  .modal-card-foot {
-    border: none;
-    background: none;
+.notices {
+  .snackbar {
+    background-color: $dark-blue;
+    min-height: 40px;
+
+    .text {
+      display: flex;
+      font-size: 14px;
+    }
   }
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.close-btn {
+  width: 10px;
+  height: 10px;
 }

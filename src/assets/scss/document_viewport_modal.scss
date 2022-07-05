@@ -9,12 +9,11 @@
   }
 
   .content {
-
     h3 {
       font-weight: 600;
       font-size: 20px;
       line-height: 26px;
-      color: $top-bar-text-color;
+      color: $dark-blue;
       padding-bottom: 5px;
     }
 
@@ -33,5 +32,4 @@
     display: flex;
     justify-content: center;
   }
-
 }

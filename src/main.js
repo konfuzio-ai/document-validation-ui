@@ -20,7 +20,8 @@ import {
   faAngleLeft,
   faAngleDown,
   faFile,
-  faSpinner
+  faSpinner,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -32,7 +33,8 @@ library.add(
   faAngleLeft,
   faAngleDown,
   faFile,
-  faSpinner
+  faSpinner,
+  faXmark
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

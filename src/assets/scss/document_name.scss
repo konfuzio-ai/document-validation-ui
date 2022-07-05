@@ -32,7 +32,7 @@
   }
 
   .btn {
-    color: $top-bar-green;
+    color: $lighter-green;
     font-weight: 400;
   }
 
@@ -49,11 +49,6 @@
     .notification {
       background-color: transparent;
       padding: 6px;
-    }
-
-    .loading-icon-size {
-      width: 13px;
-      height: 13px;
     }
 
     .spinner {

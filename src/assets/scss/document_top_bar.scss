@@ -12,7 +12,7 @@
   flex: 1;
   top: 0;
   font-size: 14px;
-  color: $top-bar-text-color;
+  color: $dark-blue;
   font-weight: 400px;
 
   .left-bar-components {
@@ -31,24 +31,13 @@
     display: flex;
     flex: 1;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 16px;
   }
 }
 
-.slide-fade-enter-active {
-  transition: all 0.3s ease;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateY(-10px);
-  opacity: 0;
-}
-
 .btn-container {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }

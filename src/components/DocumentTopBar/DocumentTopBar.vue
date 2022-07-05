@@ -22,13 +22,13 @@
       <div class="handover"><DocumentHandover v-if="showHandoverButton" /></div>
     </div>
     <transition name="slide-fade">
-      <div v-if="showError" class="error-message">
-        <b-message class="">
+      <div v-if="showError" class="error-message topbar">
+        <b-message>
           <div class="message-container">
             {{ categoryError ? $t("category_error") : $t("status_error") }}
           </div>
           <div @click="handleErrorClose" class="btn-container">
-            <CloseBtn class="close-btn" />
+            <b-icon icon="xmark" class="close-btn" />
           </div>
         </b-message>
       </div>
