@@ -24,10 +24,10 @@
           <div class="footer-left">
             <div>{{ $t("rotate_all") }}</div>
             <div class="rotate-icons">
-              <div class="icon">
+              <div class="icon" @click="handleAntiClockwiseMultiPageRotation">
                 <RotateLeftBlack />
               </div>
-              <div class="icon">
+              <div class="icon" @click="handleClockwiseMultiPageRotation">
                 <RotateRightBlack />
               </div>
             </div>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import RotateLeftBlack from "../../assets/images/RotateLeftBlack";
 import RotateRightBlack from "../../assets/images/RotateRightBlack";
 import DocumentThumbnails from "../DocumentThumbnails/DocumentThumbnails";
@@ -64,28 +65,46 @@ export default {
       type: Boolean
     }
   },
+  computed: {
+    ...mapState("document", ["pages"])
+  },
   components: {
     RotateLeftBlack,
     RotateRightBlack,
     DocumentThumbnails
   },
   methods: {
-    handleSinglePageRotation(pageId) {
+    handleSinglePageRotation({ pageId, pageNumber }) {
       // If the item already exists in the array, update it to the new rotation
       if (this.rotations.find(rotation => rotation.id === pageId)) {
         this.rotations = this.rotations.map(rotation => {
           if (rotation.id === pageId) {
-            return { ...rotation, value: rotation.value - 90 };
+            return {
+              ...rotation,
+              angle: rotation.angle - 90
+            };
           }
           return rotation;
         });
-      } else {
-        // If there is no existing item in the array, add it
-        this.rotations.push({
-          id: pageId,
-          value: -90
-        });
       }
+      // else {
+      //   // If there is no existing item in the array, add it
+      //   this.rotations.push({
+      //     id: pageId,
+      //     page_number: pageNumber,
+      //     angle: -90
+      //   });
+      // }
+    },
+    handleAntiClockwiseMultiPageRotation() {
+      this.rotations = this.rotations.map(rotation => {
+        return { ...rotation, angle: rotation.angle - 90 };
+      });
+    },
+    handleClockwiseMultiPageRotation() {
+      this.rotations = this.rotations.map(rotation => {
+        return { ...rotation, angle: rotation.angle + 90 };
+      });
     },
     closeModal() {
       this.$emit("close-modal");
@@ -96,22 +115,31 @@ export default {
        * until its status_data is 2 (done) or 111 (error).
        */
 
-      // const updatedAngle = {
-      // page_number: this.page_number,
-      //angle: this.angle
-      // };
+      const updatedRotations = this.rotations.map(rotation => {
+        delete rotation.id;
+        return rotation;
+      });
 
-      // this.$store
-      //   .dispatch("document/updatePageRotation", updatedAngle)
-      //   .then(response => {
-      //     // Check if the response is successfull or not
-      //     if (response) {
-      //       // show loading in label section
-      //     } else {
-      //       // show error msg
-      //     }
-      //   });
+      this.$store
+        .dispatch("document/updatePageRotation", updatedRotations)
+        .then(response => {
+          // Check if the response is successfull or not
+          if (response) {
+            // show loading in label section
+          } else {
+            // show error msg
+          }
+        });
       this.closeModal();
+    }
+  },
+  watch: {
+    pages(newValue) {
+      if (newValue.length) {
+        this.rotations = this.pages.map(page => {
+          return { id: page.id, angle: 0, page_number: page.number };
+        });
+      }
     }
   }
 };

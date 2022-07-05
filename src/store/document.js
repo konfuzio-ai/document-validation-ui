@@ -38,11 +38,13 @@ const getters = {
             });
           } else {
             // add it to the annotation set array
-            annotationSet.group = [{
-              id: annotationSet.id,
-              label_set: annotationSet.label_set,
-              labels: annotationSet.labels
-            }];
+            annotationSet.group = [
+              {
+                id: annotationSet.id,
+                label_set: annotationSet.label_set,
+                labels: annotationSet.labels
+              }
+            ];
             tempAnnotationSets.push(annotationSet);
           }
         }
@@ -178,49 +180,31 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({
-    commit
-  }) => {
+  startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({
-    commit
-  }) => {
+  endLoading: ({ commit }) => {
     commit("SET_LOADING", false);
   },
-  setDocId: ({
-    commit
-  }, id) => {
+  setDocId: ({ commit }, id) => {
     commit("SET_DOC_ID", id);
   },
-  setSidebarAnnotationSelected: ({
-    commit
-  }, annotation) => {
+  setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setActiveAnnotationSet: ({
-    commit
-  }, annotationSet) => {
+  setActiveAnnotationSet: ({ commit }, annotationSet) => {
     commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
   },
-  setAnnotationSets: ({
-    commit
-  }, annotationSets) => {
+  setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
-  setAnnotations: ({
-    commit
-  }, annotations) => {
+  setAnnotations: ({ commit }, annotations) => {
     commit("SET_ANNOTATIONS", annotations);
   },
-  setPages: ({
-    commit
-  }, pages) => {
+  setPages: ({ commit }, pages) => {
     commit("SET_PAGES", pages);
   },
-  setSelectedDocument: ({
-    commit
-  }, document) => {
+  setSelectedDocument: ({ commit }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
 
@@ -228,16 +212,12 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchAnnotations: ({
-    commit,
-    state,
-    getters
-  }) => {
+  fetchAnnotations: ({ commit, state, getters }) => {
     return HTTP.get(
-        `documents/${state.documentId}/${
+      `documents/${state.documentId}/${
         !state.showDeletedAnnotations ? "?revised=true&is_correct=false" : ""
       }`
-      )
+    )
       .then(async response => {
         if (response.data.annotation_sets) {
           commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
@@ -271,33 +251,24 @@ const actions = {
         console.log(error, "Could not fetch document details from the backend");
       });
   },
-  setDocumentFocusedAnnotation: ({
-    commit,
-    state
-  }, annotation) => {
-    if (!state.documentFocusedAnnotation || (annotation && state.documentFocusedAnnotation.id !== annotation.id)) {
+  setDocumentFocusedAnnotation: ({ commit, state }, annotation) => {
+    if (
+      !state.documentFocusedAnnotation ||
+      (annotation && state.documentFocusedAnnotation.id !== annotation.id)
+    ) {
       commit("SET_DOCUMENT_FOCUSED_ANNOTATION", annotation);
     } else {
       commit("SET_DOCUMENT_FOCUSED_ANNOTATION", null);
     }
   },
 
-  resetDocumentFocusedAnnotation: ({
-    commit
-  }) => {
+  resetDocumentFocusedAnnotation: ({ commit }) => {
     commit("SET_DOCUMENT_FOCUSED_ANNOTATION", null);
   },
 
-  createAnnotation: ({
-      state
-    },
-    annotation
-  ) => {
+  createAnnotation: ({ state }, annotation) => {
     return new Promise(resolve => {
-      HTTP.post(
-          `/documents/${state.documentId}/annotations/`,
-          annotation
-        )
+      HTTP.post(`/documents/${state.documentId}/annotations/`, annotation)
         .then(response => {
           resolve(response.data);
         })
@@ -308,17 +279,12 @@ const actions = {
     });
   },
 
-  updateAnnotation: ({
-    state
-  }, {
-    updatedValues,
-    annotationId
-  }) => {
+  updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
     return new Promise(resolve => {
       HTTP.patch(
-          `/documents/${state.documentId}/annotations/${annotationId}`,
-          updatedValues
-        )
+        `/documents/${state.documentId}/annotations/${annotationId}`,
+        updatedValues
+      )
         .then(response => {
           if (response.status === 200) {
             const annotation = state.annotations.find(
@@ -335,10 +301,7 @@ const actions = {
         });
     });
   },
-  updateDocument: ({
-    commit,
-    state
-  }, updatedDocument) => {
+  updateDocument: ({ commit, state }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
@@ -355,10 +318,7 @@ const actions = {
   },
 
   // Get document data
-  fetchDocumentData: ({
-    commit,
-    state
-  }) => {
+  fetchDocumentData: ({ commit, state }) => {
     return HTTP.get(`documents/${state.documentId}`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
@@ -368,12 +328,13 @@ const actions = {
       });
   },
 
-  updatePageRotation: ({ state }, updatedRotation) => {
-    console.log("updating rotation");
+  updatePageRotation: ({ state }, updatedRotations) => {
+    console.log("updating rotation", updatedRotations);
 
     // return new Promise(resolve => {
     //   HTTP.patch(`/documents/${state.documentId}/rotate`, updatedRotation)
     //     .then(response => {
+    //       console.log("response", response)
     //       if (response.status === 200) {
     //         commit("SET_SELECTED_DOCUMENT", response.data);
     //         resolve(true);

@@ -21,7 +21,10 @@
           :class="['img-thumbnail', currentPage == page.number && 'selected']"
           :imageUrl="page.thumbnail_url"
         />
-        <div class="icon-container" @click="rotateSinglePage(page.id)">
+        <div
+          class="icon-container"
+          @click="rotateSinglePage(page.id, page.number)"
+        >
           <div
             class="icon"
             :style="{
@@ -75,12 +78,15 @@ export default {
         );
       }
     },
-    rotateSinglePage(pageId) {
-      this.$emit("rotate-single-page", pageId);
+    rotateSinglePage(id, number) {
+      this.$emit("rotate-single-page", {
+        pageId: id,
+        pageNumber: number
+      });
     },
     getRotation(pageId) {
       // rotate page
-      return this.rotations?.find(rotation => rotation.id === pageId)?.value;
+      return this.rotations?.find(rotation => rotation.id === pageId)?.angle;
     },
     getIconRotation(pageId) {
       // Keep rotation icon fixed when rotating page
