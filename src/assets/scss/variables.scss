@@ -53,8 +53,6 @@ $light-red: #fdf4f4;
 
 // TODO: convert this variables to styles
 
-$loading-background: transparent;
-
 $input-shadow: none;
 $header-size: 2px;
 
@@ -296,6 +294,47 @@ $carousel-overlay-background: none;
         font-size: 14px;
       }
     }
+  }
+}
+
+// TODO: modal styles should be hierarchical to not mess with other styles with the same name
+
+.not-optimized {
+  .modal-content {
+    height: auto;
+    width: 500px;
+    max-width: 500px !important;
+    margin-left: auto;
+    margin-right: auto;
+    background: $white;
+    border-radius: 16px;
+  }
+
+  .modal-card {
+    display: flex;
+    align-items: center;
+  }
+
+  .modal.is-active {
+    z-index: 999;
+  }
+
+  .modal-background {
+    background-color: $black;
+    opacity: 0.5;
+  }
+}
+
+.rotate-pages {
+  .modal-content {
+    width: 840px;
+    max-width: 840px !important;
+    border-radius: 8px;
+    background-color: $white;
+  }
+
+  .modal-card {
+    width: 100%;
   }
 
   .modal-background {

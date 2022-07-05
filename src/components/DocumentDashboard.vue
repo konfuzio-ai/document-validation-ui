@@ -33,6 +33,9 @@
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" />
     </div>
+    <div class="rotate-pages" v-if="toolbarModalOpen">
+      <RotatePagesModal />
+    </div>
     <div class="not-optimized" v-if="!optimized">
       <NotOptimizedViewportModal />
     </div>
@@ -55,6 +58,7 @@ import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
+import RotatePagesModal from "../components/DocumentPage/RotatePagesModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -70,7 +74,8 @@ export default {
     DocumentThumbnails,
     DocumentLabelSets,
     DocumentsList,
-    NotOptimizedViewportModal
+    NotOptimizedViewportModal,
+    RotatePagesModal
   },
   computed: {
     defaultViewport() {
@@ -102,7 +107,8 @@ export default {
   data() {
     return {
       isMinimunWidth: true,
-      optimized: true
+      optimized: true,
+      toolbarModalOpen: true
     };
   },
   mounted() {
