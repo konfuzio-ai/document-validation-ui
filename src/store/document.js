@@ -300,7 +300,7 @@ const actions = {
   updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
     return new Promise(resolve => {
       HTTP.patch(
-        `/documents/${state.documentId}/annotations/${annotationId}`,
+        `/documents/${state.documentId}/annotations/${annotationId}/`,
         updatedValues
       )
         .then(response => {
@@ -337,7 +337,7 @@ const actions = {
 
   // Get document data
   fetchDocumentData: ({ commit, state }) => {
-    return HTTP.get(`documents/${state.documentId}`)
+    return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
       })
