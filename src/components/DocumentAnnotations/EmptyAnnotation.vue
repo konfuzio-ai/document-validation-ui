@@ -69,7 +69,14 @@ export default {
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
-            this.$store.dispatch("document/fetchAnnotations");
+            // TODO: temp fix for reloading annotations
+            this.$store.dispatch("document/setActiveAnnotationSet", null);
+            this.$store.dispatch("document/fetchAnnotations").then(() => {
+              this.$store.dispatch(
+                "document/setActiveAnnotationSet",
+                annotationSet
+              );
+            });
           }
         });
       this.cancelEmptyAnnotation();
