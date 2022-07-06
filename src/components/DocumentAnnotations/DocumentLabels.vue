@@ -347,6 +347,12 @@ export default {
       if (this.sidebarAnnotationSelected) {
         clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
+          if (
+            this.$refs[`annotation${this.sidebarAnnotationSelected.id}`] ===
+            undefined
+          ) {
+            return;
+          }
           this.$refs.labelsList.scrollTo({
             top: this.$refs[`annotation${this.sidebarAnnotationSelected.id}`][0]
               .offsetTop,

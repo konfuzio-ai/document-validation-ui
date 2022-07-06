@@ -581,7 +581,7 @@ export default {
         // Check if some annotation changed
         if (newAnnotations[i] !== oldAnnotations[i]) {
           // If so we calculate the bbox again with the new data
-          bboxToRect(newAnnotations[i].span[0]);
+          this.bboxToRect(newAnnotations[i].span[0]);
         }
         return;
       }
