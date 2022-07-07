@@ -55,43 +55,24 @@
       display: flex;
       align-items: flex-start;
 
-      &.clickable {
-        cursor: pointer;
-      }
-
       .label-property-left {
         flex: 1;
         padding-left: 8px;
+        display: flex;
+        align-items: center;
 
         .label-property-name {
+          margin-left: 16px;
           padding: 10px 0;
-          display: flex;
-          align-items: center;
 
-          .icon-caret {
-            transition: transform 0.2s ease-in-out;
-
-            &.rotated {
-              transform: rotate(-90deg);
-            }
-          }
         }
 
         .label-property-text {
           color: $text-lighter;
           margin-left: 4px;
           width: 100%;
-          border-right: 4px solid $yellow;
           word-break: break-word;
           padding-right: 4px;
-
-          &.green {
-            border-color: $green;
-          }
-
-          &.red {
-            border-color: $red;
-          }
         }
       }
 

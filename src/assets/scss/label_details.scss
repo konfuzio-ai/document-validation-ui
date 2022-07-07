@@ -1,0 +1,32 @@
+@import "./imports.scss";
+
+.label-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .description {
+    opacity: 0.7;
+    color: $white;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 10px;
+  }
+
+  .accuracy {
+    color: $white;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .value {
+      color: $white;
+
+    }
+  }
+
+  .revision {}
+}

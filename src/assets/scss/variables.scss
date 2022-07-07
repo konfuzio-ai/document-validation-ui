@@ -63,7 +63,7 @@ $header-size: 2px;
 
 $carousel-overlay-background: none;
 
-.is-primary {
+button.is-primary {
   background-color: $primary !important;
 
   &:hover:enabled {

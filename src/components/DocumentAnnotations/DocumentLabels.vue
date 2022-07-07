@@ -30,32 +30,17 @@
             @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
           >
-            <div
-              :class="[
-                'label-property-top',
-                annotation.label_description && 'clickable'
-              ]"
-              v-on:click="
-                annotation.label_description && onLabelClick(annotation)
-              "
-              v-if="annotation"
-            >
+            <div class="label-property-top" v-if="annotation">
               <div class="label-property-left">
+                <LabelDetails
+                  :description="annotation.label_description"
+                  :accuracy="annotation.accuracy"
+                  revision=""
+                >
+                  <b-icon icon="check" size="is-small" />
+                </LabelDetails>
                 <div class="label-property-name">
-                  <CaretDown
-                    :class="[
-                      'icon-caret',
-                      !checkIfLabelIsOpen(annotation) && 'rotated'
-                    ]"
-                    v-if="annotation.label_description"
-                  />
-                  <span
-                    :class="[
-                      'label-property-text',
-                      !annotation.id && 'red',
-                      annotation.accuracy == 0 && 'red',
-                      annotation.accuracy == 1 && 'green'
-                    ]"
+                  <span class="label-property-text"
                     >{{ annotation.label_name }}
                   </span>
                 </div>
@@ -167,7 +152,7 @@ import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import RejectedLabels from "./RejectedLabels";
-
+import LabelDetails from "./LabelDetails";
 /**
  * This component loads all annotations in a label set
  */
@@ -179,7 +164,8 @@ export default {
     ExtractingData,
     CaretDown,
     ActionButtons,
-    RejectedLabels
+    RejectedLabels,
+    LabelDetails
   },
   data() {
     return {
