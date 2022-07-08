@@ -107,8 +107,7 @@ export default {
           if (rotation.id === pageId) {
             return {
               ...rotation,
-              angle: rotation.angle - 90,
-              rotations: rotation.rotations + 1
+              angle: rotation.angle - 90
             };
           }
           return rotation;
@@ -117,9 +116,8 @@ export default {
         // Rotations to send in the POST request
         if (this.rotationsToSave.find(rotation => rotation.id === pageId)) {
           this.rotationsToSave = this.rotationsToSave.map(rotation => {
+            let rotatedAngle = rotation.angle - 90;
             if (rotation.id === pageId) {
-              let rotatedAngle = rotation.angle - 90;
-
               if (rotatedAngle === -270) {
                 rotatedAngle = 90;
               }
@@ -197,7 +195,7 @@ export default {
       }, 1000);
     },
     closeConfirmationModal() {
-      this.isConfirmationModalActive = !this.isConfirmationModalActive;
+      this.isConfirmationModalActive = false;
     },
     handleApplyBtn() {
       // Open confirmation modal
@@ -275,6 +273,14 @@ export default {
       if (newValue) {
         if (this.pages.length) {
           this.rotations = this.pages.map(page => {
+            return {
+              id: page.id,
+              angle: 0,
+              page_number: page.number
+            };
+          });
+
+          this.rotationsToSave = this.pages.map(page => {
             return {
               id: page.id,
               angle: 0,

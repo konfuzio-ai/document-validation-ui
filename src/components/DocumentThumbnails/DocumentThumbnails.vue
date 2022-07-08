@@ -24,7 +24,7 @@
               currentPage == page.number && 'selected',
               recalculatingAnnotations && 'blur'
             ]"
-            :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+            :imageUrl="getThumbnailUrl(page)"
           />
           <div
             class="icon-container"
@@ -69,6 +69,11 @@ export default {
       type: Array
     }
   },
+  data() {
+    return {
+      thumbnailUrl: null
+    };
+  },
   components: {
     ServerImage,
     RotateIcon
@@ -86,6 +91,11 @@ export default {
           parseInt(pageNumber, 10)
         );
       }
+    },
+    getThumbnailUrl(page) {
+      this.thumbnailUrl = `${page.thumbnail_url}?${page.updated_at}`;
+
+      return this.thumbnailUrl;
     },
     rotateSinglePage(id, number) {
       this.$emit("rotate-single-page", {
@@ -110,16 +120,22 @@ export default {
       // "rotate" the exact opposite to keep icon fixed
       return pageRotation - negativeToPositive * 2;
     }
+  },
+  watch: {
+    pages(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      this.pages.map(page => {
+        this.getThumbnailUrl(page);
+      });
+    }
+  },
+  mounted() {
+    this.pages.map(page => {
+      this.getThumbnailUrl(page);
+    });
   }
-  // TODO: fix watcher to get thumbnail image after rotating
-  // watch: {
-  //   recalculatingAnnotations(newValue) {
-  //     if (!newValue) {
-  //       this.$nextTick(() => {
-  //         this.getImage();
-  //       });
-  //     }
-  //   }
-  // }
 };
 </script>
