@@ -191,7 +191,6 @@ export default {
 
     handleError(error) {
       this.showError = error;
-      console.log(this.showError);
     },
 
     handleMessage(message) {

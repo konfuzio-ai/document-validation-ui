@@ -21,7 +21,7 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
-    <div class="rotate-pages" v-if="toolbarModalOpen">
+    <!-- <div class="rotate-pages" v-if="toolbarModalOpen">
       <RotatePagesModal
         @close-modal="handleModal"
         :isModalActive="isModalActive"
@@ -29,7 +29,7 @@
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
