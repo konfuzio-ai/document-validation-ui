@@ -12,14 +12,24 @@ export default {
       required: true
     }
   },
+  methods: {
+    loadImage() {
+      return api.IMG_REQUEST.get(this.imageUrl)
+        .then(response => {
+          return response.data;
+        })
+        .then(myBlob => {
+          this.$refs.imgTag.src = URL.createObjectURL(myBlob);
+        });
+    }
+  },
   mounted() {
-    return api.IMG_REQUEST.get(this.imageUrl)
-      .then(response => {
-        return response.data;
-      })
-      .then(myBlob => {
-        this.$refs.imgTag.src = URL.createObjectURL(myBlob);
-      });
+    this.loadImage();
+  },
+  watch: {
+    imageUrl() {
+      this.loadImage();
+    }
   }
 };
 </script>

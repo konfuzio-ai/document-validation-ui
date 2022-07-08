@@ -1,7 +1,7 @@
 <style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
 <template>
   <div ref="labelsList" class="label-info">
-    <div v-if="activeAnnotationSet">
+    <div v-if="activeAnnotationSet && !recalculatingAnnotations">
       <p class="label-description">
         {{ activeAnnotationSet.label_set.description }}
       </p>
@@ -165,8 +165,18 @@
       </div>
     </div>
     <!-- When there's no annotations in the label -->
-    <div v-if="!activeAnnotationSet || activeAnnotationSet.labels.length == 0">
+    <div
+      v-if="
+        (!activeAnnotationSet || activeAnnotationSet.labels.length == 0) &&
+        !recalculatingAnnotations
+      "
+    >
       <EmptyState />
+    </div>
+
+    <!-- When extracting annotations after rotating -->
+    <div v-if="recalculatingAnnotations">
+      <ExtractingData />
     </div>
   </div>
 </template>
@@ -175,6 +185,7 @@
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import EmptyAnnotation from "./EmptyAnnotation";
+import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 /**
  * This component loads all annotations in a label set
@@ -183,6 +194,7 @@ export default {
   components: {
     EmptyState,
     EmptyAnnotation,
+    ExtractingData,
     CaretDown
   },
   data() {
@@ -207,7 +219,8 @@ export default {
     ...mapState("document", [
       "activeAnnotationSet",
       "sidebarAnnotationSelected",
-      "loading"
+      "loading",
+      "recalculatingAnnotations"
     ])
   },
   methods: {
@@ -334,6 +347,12 @@ export default {
       if (this.sidebarAnnotationSelected) {
         clearTimeout(this.annotationAnimationTimeout);
         setTimeout(() => {
+          if (
+            this.$refs[`annotation${this.sidebarAnnotationSelected.id}`] ===
+            undefined
+          ) {
+            return;
+          }
           this.$refs.labelsList.scrollTo({
             top: this.$refs[`annotation${this.sidebarAnnotationSelected.id}`][0]
               .offsetTop,

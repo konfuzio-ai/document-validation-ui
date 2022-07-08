@@ -4,7 +4,7 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
-        <div class="rotate icon">
+        <div class="rotate icon" @click="handleModal">
           <RotateIcon />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
@@ -21,6 +21,15 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
+    <!-- <div class="rotate-pages" v-if="toolbarModalOpen">
+      <RotatePagesModal
+        @close-modal="handleModal"
+        :isModalActive="isModalActive"
+        :setRotations="setRotations"
+        :handleShowError="handleShowError"
+        :handleMessage="handleMessage"
+      />
+    </div> -->
   </div>
 </template>
 
@@ -30,6 +39,7 @@ import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
+import RotatePagesModal from "./RotatePagesModal";
 
 export default {
   name: "Toolbar",
@@ -37,18 +47,26 @@ export default {
     RotateIcon,
     FitZoomIcon,
     PlusIcon,
-    MinusIcon
+    MinusIcon,
+    RotatePagesModal
   },
   data() {
     return {
       currentPercentage: 100,
-      increment: 0.25
+      increment: 0.25,
+      toolbarModalOpen: true,
+      isModalActive: false,
+      setRotations: false
     };
   },
   computed: {
     ...mapState("display", ["scale"])
   },
   methods: {
+    handleModal() {
+      this.isModalActive = !this.isModalActive;
+      this.setRotations = !this.setRotations;
+    },
     zoomIn() {
       this.updateScale(this.scale + this.increment);
       this.currentPercentage += this.increment * 100;
@@ -64,7 +82,13 @@ export default {
     },
     fitAuto() {
       this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 15;
+      this.currentPercentage = 30;
+    },
+    handleShowError() {
+      this.$parent.$emit("handle-error", true);
+    },
+    handleMessage(message) {
+      this.$parent.$emit("handle-message", message);
     }
   }
 };
