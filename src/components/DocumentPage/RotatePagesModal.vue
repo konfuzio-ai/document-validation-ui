@@ -88,8 +88,11 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["pages"]),
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", [
+      "pages",
+      "selectedDocument",
+      "groupedAnnotationSets"
+    ])
   },
   components: {
     RotateLeftBlack,
@@ -233,16 +236,21 @@ export default {
           const pollUntilLabelingAvailable = duration => {
             return this.$store
               .dispatch("document/fetchDocumentData")
-              .then(() => {
+              .then(async () => {
                 if (
                   this.selectedDocument.status_data === 2 &&
                   this.selectedDocument.labeling_available === 1
                 ) {
-                  this.$store.dispatch("document/fetchAnnotations").then(() => {
-                    this.$store.dispatch(
-                      "document/endRecalculatingAnnotations"
-                    );
-                  });
+                  // set to null so DocumentLabelSets can reset it when watching
+                  // the new groupedAnnotationSets
+                  await this.$store.dispatch(
+                    "document/setActiveAnnotationSet",
+                    null
+                  );
+                  await this.$store.dispatch("document/fetchAnnotations");
+                  await this.$store.dispatch(
+                    "document/endRecalculatingAnnotations"
+                  );
                   return true;
                 } else if (this.selectedDocument.status_data === 111) {
                   return false;

@@ -451,6 +451,10 @@ export default {
      */
 
     setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
+      // wait for activeAnnotationSet to be ready
+      if (!activeAnnotationSet) {
+        return;
+      }
       const annotationName = annotation.annotation_set.label_set.name;
       const activeSetName = activeAnnotationSet.group[0].label_set.name;
 
@@ -575,17 +579,6 @@ export default {
     }
   },
   watch: {
-    pageAnnotations(newAnnotations, oldAnnotations) {
-      // Loop over the new annotations array
-      for (let i = 0; i < newAnnotations.length; i++) {
-        // Check if some annotation changed
-        if (newAnnotations[i] !== oldAnnotations[i]) {
-          // If so we calculate the bbox again with the new data
-          this.bboxToRect(newAnnotations[i].span[0]);
-        }
-        return;
-      }
-    },
     recalculatingAnnotations(newState) {
       if (!newState) {
         this.drawPage(true);
