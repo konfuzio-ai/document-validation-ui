@@ -25,6 +25,11 @@ export default {
   },
   mounted() {
     this.loadImage();
+  },
+  watch: {
+    imageUrl() {
+      this.loadImage();
+    }
   }
 };
 </script>
