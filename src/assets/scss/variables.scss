@@ -441,6 +441,21 @@ $carousel-overlay-background: none;
       height: 13.37px;
     }
   }
+
+  .label-list {
+    .field {
+      .tags {
+        .tag {
+          background-color: $detail;
+          color: $dark-blue;
+
+          &.is-delete {
+            color: $grey;
+          }
+        }
+      }
+    }
+  }
 }
 
 .slide-fade-enter-active {

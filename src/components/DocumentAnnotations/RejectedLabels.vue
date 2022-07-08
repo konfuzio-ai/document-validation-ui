@@ -16,9 +16,9 @@
           </div>
         </template>
 
-        <div class="label-list" v-for="label in labels" :key="label.id">
-          <div class="card-content">
-            <div class="content">
+        <div class="card-content">
+          <div class="content">
+            <div class="label-list" v-for="label in labels" :key="label.id">
               <b-field>
                 <b-tag
                   v-if="isLabelRejected"
