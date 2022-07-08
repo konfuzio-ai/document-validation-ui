@@ -67,7 +67,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
-import ErrorMessage from "../components/CommonComponents/ErrorMessage";
+import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
 /**

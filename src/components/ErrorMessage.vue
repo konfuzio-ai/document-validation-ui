@@ -1,4 +1,4 @@
-<style scoped lang="scss" src="../../assets/scss/variables.scss"></style>
+<style scoped lang="scss" src="../assets/scss/variables.scss"></style>
 
 <template>
   <b-message>
