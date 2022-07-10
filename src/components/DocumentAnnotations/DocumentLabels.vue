@@ -35,7 +35,10 @@
                 <LabelDetails
                   :description="annotation.label_description"
                   :accuracy="annotation.accuracy"
-                  revision=""
+                  :revised="true"
+                  :notFound="true"
+                  :approved="true"
+                  :edited="true"
                 >
                   <b-icon icon="check" size="is-small" />
                 </LabelDetails>

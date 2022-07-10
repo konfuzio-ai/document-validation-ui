@@ -11,6 +11,8 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
   }
 
   .accuracy {
@@ -21,12 +23,54 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
 
     .value {
-      color: $white;
+      color: $green;
 
+      &.yellow {
+        color: $yellow;
+      }
+
+      &.red {
+        color: $red;
+      }
     }
   }
 
-  .revision {}
+  .revision {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    color: $white;
+
+    >div {
+      display: flex;
+      align-items: center;
+    }
+
+    .not-found {
+      .icon {
+        color: $error-red;
+      }
+    }
+
+    .not-found {
+      .icon {
+        color: $error-red;
+      }
+    }
+
+    .not-revised {
+      .icon {
+        color: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .icon {
+      margin-right: 6px;
+      color: $primary
+    }
+  }
 }

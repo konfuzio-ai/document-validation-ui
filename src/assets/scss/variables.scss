@@ -481,3 +481,16 @@ button.is-primary {
   background-color: $full-black;
   opacity: 0.5;
 }
+
+.b-tooltip {
+  .tooltip-content {
+    left: -10px !important;
+    transform: none !important;
+    padding: 8px 10px !important;
+
+    &::before {
+      left: 16px !important;
+      right: auto !important;
+    }
+  }
+}
