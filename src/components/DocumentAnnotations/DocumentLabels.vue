@@ -47,30 +47,30 @@
                   >{{ annotation.label_name }}
                 </span>
               </div>
-              <div class="label-property-right">
-                <div class="label-property-annotation">
-                  <Annotation
-                    v-if="
-                      annotation.span !== undefined &&
-                      annotation.span[0].offset_string
-                    "
-                    :annotation="annotation"
-                    :isLoading="isLoading"
-                    :edited="edited"
-                    :notEditing="notEditing"
-                    :annBeingEdited="annBeingEdited"
-                    :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
-                    :onLabelClick="onLabelClick"
-                    @handle-data-changes="handleDataChanges"
-                    @handle-show-warning="handleWarning"
-                    @handle-show-error="handleError"
-                  />
-                  <EmptyAnnotation
-                    v-else
-                    :annotation="annotation"
-                    :annotationSet="annotationSet"
-                  />
-                </div>
+            </div>
+            <div class="label-property-right">
+              <div class="label-property-annotation">
+                <Annotation
+                  v-if="
+                    annotation.span !== undefined &&
+                    annotation.span[0].offset_string
+                  "
+                  :annotation="annotation"
+                  :isLoading="isLoading"
+                  :edited="edited"
+                  :notEditing="notEditing"
+                  :annBeingEdited="annBeingEdited"
+                  :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
+                  :onLabelClick="onLabelClick"
+                  @handle-data-changes="handleDataChanges"
+                  @handle-show-warning="handleWarning"
+                  @handle-show-error="handleError"
+                />
+                <EmptyAnnotation
+                  v-else
+                  :annotation="annotation"
+                  :annotationSet="annotationSet"
+                />
               </div>
               <!-- <div class="label-action-btn">
                 <ActionButtons :menu="menu" />
