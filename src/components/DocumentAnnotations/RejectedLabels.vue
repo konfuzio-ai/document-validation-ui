@@ -39,12 +39,25 @@
 </template>
 
 <script>
+/**
+ * TODO when backend ready:
+ * Get an array of rejected labels, and be able to "toggle" the status (rejected or not)
+ * by sending a request to the backend
+ */
+
+/**
+ * To take into account:
+ * - might need to keep a state with all the labels indeces
+ * to be able to return them to their original place in the array, if "unrejected"
+ * - Need to try more solutions to have the menu open to the top but be fully visible
+ */
+
 export default {
   name: "RejectedLabels",
   data() {
     return {
       isLabelRejected: true,
-      number: 1
+      number: null
     };
   },
   props: {

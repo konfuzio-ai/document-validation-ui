@@ -139,7 +139,7 @@
     </div>
     <!-- When label is rejected -->
     <!-- <div v-if="rejected.length > 0" class="rejected-labels">
-      <RejectedLabels :labels="activeAnnotationSet.labels" />
+      <RejectedLabels />
     </div> -->
     <!-- When there's no annotations in the label -->
     <div
@@ -191,9 +191,7 @@ export default {
       edited: false,
       showError: false,
       isLoading: false,
-      menu: true,
-      // testing rejected ann:
-      rejected: [{ id: 1 }]
+      menu: true
     };
   },
   computed: {
