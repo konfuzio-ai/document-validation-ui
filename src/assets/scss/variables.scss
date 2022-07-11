@@ -114,7 +114,6 @@ button.is-primary {
   .media-content {
     display: flex;
     justify-content: flex-end;
-    // margin: 0px 20px 0px 20px;
   }
 
   .message-container {
@@ -317,8 +316,6 @@ button.is-primary {
     }
   }
 }
-
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name
 
 .not-optimized {
   .modal-content {
