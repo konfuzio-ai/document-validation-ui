@@ -254,6 +254,29 @@
     }
   }
 
+  .rejected-labels {
+    margin-top: 20px;
+
+    .collapse {
+      &.card {
+        box-shadow: none;
+      }
+
+      .card-header {
+        .card-header-title {
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 20px;
+          padding-left: 10px;
+        }
+
+        .card-header-icon {
+          padding-right: 5px;
+        }
+      }
+    }
+  }
+
   .hidden {
     display: none !important;
   }

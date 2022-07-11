@@ -138,7 +138,7 @@
       </div>
     </div>
     <!-- When label is rejected -->
-    <div v-if="rejected.length > 0">
+    <div v-if="rejected.length > 0" class="rejected-labels">
       <RejectedLabels :labels="activeAnnotationSet.labels" />
     </div>
     <!-- When there's no annotations in the label -->
