@@ -85,9 +85,9 @@
                   />
                 </div>
               </div>
-              <div class="label-action-btn">
+              <!-- <div class="label-action-btn">
                 <ActionButtons :menu="menu" />
-              </div>
+              </div> -->
             </div>
             <div
               :class="[
