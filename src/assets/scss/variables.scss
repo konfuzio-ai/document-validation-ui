@@ -56,8 +56,6 @@ $light-error-red: rgba(187, 43, 59, 0.3);
 $low-opacity-red: rgba(231, 66, 58, 0.3);
 $light-red: #fdf4f4;
 
-// TODO: convert this variables to styles
-
 $input-shadow: none;
 $header-size: 2px;
 
@@ -269,8 +267,6 @@ button.is-primary {
     }
   }
 }
-
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name
 
 .modal {
   &.is-active {
