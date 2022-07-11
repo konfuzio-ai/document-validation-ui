@@ -131,25 +131,29 @@ describe("Document Top Bar", () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it("Should render Document Dataset Status component", () => {
-    const wrapper = mount(DatasetStatus, {
-      store,
-      mocks: { $t },
-    });
+  /** The tests below are commented out due to
+   * the dataset status component not being used
+   */
 
-    expect(wrapper.findComponent(".dataset-status-chooser").exists()).toBe(
-      true
-    );
-  });
+  // it("Should render Document Dataset Status component", () => {
+  //   const wrapper = mount(DatasetStatus, {
+  //     store,
+  //     mocks: { $t },
+  //   });
 
-  it("Should render 4 status options", () => {
-    const wrapper = mount(DatasetStatus, {
-      store,
-      mocks: { $t },
-    });
+  //   expect(wrapper.findComponent(".dataset-status-chooser").exists()).toBe(
+  //     true
+  //   );
+  // });
 
-    expect(wrapper.findAll(".dropdown-item")).toHaveLength(4);
-  });
+  // it("Should render 4 status options", () => {
+  //   const wrapper = mount(DatasetStatus, {
+  //     store,
+  //     mocks: { $t },
+  //   });
+
+  //   expect(wrapper.findAll(".dropdown-item")).toHaveLength(4);
+  // });
 
   it("Should render the handover button", () => {
     const wrapper = mount(Handover, {
