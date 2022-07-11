@@ -1,7 +1,13 @@
 <style scoped lang="scss" src="../../assets/scss/label_details.scss"></style>
 <template>
   <b-tooltip type="is-dark" :animated="false">
-    <slot></slot>
+    <div class="label-icon">
+      <b-icon v-if="notFound" class="red" icon="xmark" size="is-small" />
+      <b-icon v-else-if="approved" class="green" icon="check" size="is-small" />
+      <b-icon v-else-if="edited" class="green" icon="user" size="is-small" />
+      <b-icon v-else icon="check" size="is-small" />
+    </div>
+
     <template v-slot:content>
       <div class="label-details">
         <div class="description" v-if="description">{{ description }}</div>
@@ -17,16 +23,18 @@
         </div>
         <div class="revision">
           <div class="not-found" v-if="notFound">
-            <b-icon icon="xmark" size="is-small" />Not found in the document
+            <b-icon icon="xmark" size="is-small" />{{
+              $t("not_found_in_document")
+            }}
           </div>
-          <div class="approved" v-if="approved">
-            <b-icon icon="check" size="is-small" />Approved by user
+          <div class="approved" v-else-if="approved">
+            <b-icon icon="check" size="is-small" />{{ $t("approved_by_user") }}
           </div>
-          <div class="edited" v-if="edited">
-            <b-icon icon="user" size="is-small" />Edited by user
+          <div class="edited" v-else-if="edited">
+            <b-icon icon="user" size="is-small" />{{ $t("edited_by_user") }}
           </div>
           <div class="not-revised" v-else>
-            <b-icon icon="check" size="is-small" />Not revised yed
+            <b-icon icon="check" size="is-small" />{{ $t("not_revised_yet") }}
           </div>
         </div>
       </div>

@@ -1,5 +1,23 @@
 @import "./imports.scss";
 
+.label-icon {
+  display: flex;
+  align-items: center;
+
+  .icon.red {
+    color: $error-red;
+  }
+
+  .icon.green {
+    color: $green;
+  }
+
+  .icon {
+    color: $grey-detail;
+  }
+}
+
+
 .label-details {
   display: flex;
   flex-direction: column;
@@ -48,12 +66,6 @@
     >div {
       display: flex;
       align-items: center;
-    }
-
-    .not-found {
-      .icon {
-        color: $error-red;
-      }
     }
 
     .not-found {

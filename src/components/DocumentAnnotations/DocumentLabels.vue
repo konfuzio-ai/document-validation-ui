@@ -30,23 +30,19 @@
             @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
           >
-            <div class="label-property-top" v-if="annotation">
-              <div class="label-property-left">
-                <LabelDetails
-                  :description="annotation.label_description"
-                  :accuracy="annotation.accuracy"
-                  :revised="true"
-                  :notFound="true"
-                  :approved="true"
-                  :edited="true"
-                >
-                  <b-icon icon="check" size="is-small" />
-                </LabelDetails>
-                <div class="label-property-name">
-                  <span class="label-property-text"
-                    >{{ annotation.label_name }}
-                  </span>
-                </div>
+            <div class="label-property-left" v-if="annotation">
+              <LabelDetails
+                :description="annotation.label_description"
+                :accuracy="annotation.accuracy"
+                :revised="true"
+                :notFound="true"
+                :approved="true"
+                :edited="true"
+              />
+              <div class="label-property-name">
+                <span class="label-property-text"
+                  >{{ annotation.label_name }}
+                </span>
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
@@ -76,14 +72,6 @@
               <!-- <div class="label-action-btn">
                 <ActionButtons :menu="menu" />
               </div> -->
-            </div>
-            <div
-              :class="[
-                'label-property-description',
-                checkIfLabelIsOpen(annotation) && 'open'
-              ]"
-            >
-              {{ annotation.label_description }}
             </div>
             <transition name="slide-fade">
               <div
