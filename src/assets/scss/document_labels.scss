@@ -104,9 +104,12 @@
         }
 
         .label-property-annotation {
-          display: flex;
-          align-items: center;
-          padding: 10px 0;
+          .annotation,
+          .empty-annotation {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+          }
 
           .loading-container {
             height: 20px;
@@ -154,7 +157,6 @@
               width: 32px;
               height: 32px;
             }
-
           }
         }
 
@@ -213,6 +215,42 @@
         align-self: flex-start;
         padding-top: 5px;
       }
+    }
+  }
+
+  .label-action-btn {
+    padding: 10px 8px 10px 0;
+
+    .menu {
+      width: 18px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .dropdown {
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      width: 100%;
+
+      &:hover {
+        background-color: $grey-lighter;
+      }
+
+      .dropdown-item {
+        &:hover {
+          background: none;
+        }
+      }
+    }
+
+    .menu-icon {
+      width: 2.5px;
+      color: $action-grey;
     }
   }
 

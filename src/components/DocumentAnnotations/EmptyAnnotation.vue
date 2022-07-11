@@ -14,6 +14,8 @@
     </span>
     <ActionButtons
       v-if="showActionButtons()"
+      :saveBtn="saveBtn"
+      :cancelBtn="cancelBtn"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
     />
@@ -27,6 +29,12 @@ import ActionButtons from "./ActionButtons";
  */
 export default {
   name: "EmptyAnnotation",
+  data() {
+    return {
+      saveBtn: true,
+      cancelBtn: true
+    };
+  },
   components: { ActionButtons },
   props: {
     annotation: {

@@ -62,58 +62,31 @@
               </div>
               <div class="label-property-right">
                 <div class="label-property-annotation">
-                  <!-- TODO: Convert annotation to separate component like the EmptyAnnotation one 
-                  and use ActionButtons with loading -->
-                  <span
+                  <Annotation
                     v-if="
                       annotation.span !== undefined &&
                       annotation.span[0].offset_string
                     "
-                    :class="[
-                      'label-property-value',
-                      !notEditing &&
-                        isLoading &&
-                        isAnnotationBeingEditedNull() === annotation.id &&
-                        'saving-changes'
-                    ]"
-                    role="textbox"
-                    contenteditable
-                    @blur="event => handleBlur(event, annotation)"
-                    @paste="event => handlePaste(event, annotation)"
-                    @input="event => handleInput(event, annotation)"
-                    @keypress.enter="event => event.preventDefault()"
-                    @click="
-                      annotation.label_description && onLabelClick(annotation)
-                    "
-                  >
-                    {{ annotation.span[0].offset_string }}
-                  </span>
+                    :annotation="annotation"
+                    :isLoading="isLoading"
+                    :edited="edited"
+                    :notEditing="notEditing"
+                    :annBeingEdited="annBeingEdited"
+                    :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
+                    :onLabelClick="onLabelClick"
+                    @handle-data-changes="handleDataChanges"
+                    @handle-show-warning="handleWarning"
+                    @handle-show-error="handleError"
+                  />
                   <EmptyAnnotation
                     v-else
                     :annotation="annotation"
                     :annotationSet="annotationSet"
                   />
-                  <div
-                    v-if="isLoading"
-                    :class="[
-                      'loading-container',
-                      annotation.id !== annBeingEdited.id && 'hidden'
-                    ]"
-                  >
-                    <b-notification
-                      :closable="false"
-                      class="loading-background"
-                    >
-                      <b-loading :is-full-page="isFullPage" v-model="isLoading">
-                        <b-icon
-                          icon="spinner"
-                          class="fa-spin loading-icon-size spinner"
-                        >
-                        </b-icon>
-                      </b-loading>
-                    </b-notification>
-                  </div>
                 </div>
+              </div>
+              <div class="label-action-btn">
+                <ActionButtons :menu="menu" />
               </div>
             </div>
             <div
@@ -164,6 +137,10 @@
         </div>
       </div>
     </div>
+    <!-- When label is rejected -->
+    <div v-if="rejected.length > 0">
+      <RejectedLabels :labels="activeAnnotationSet.labels" />
+    </div>
     <!-- When there's no annotations in the label -->
     <div
       v-if="
@@ -184,32 +161,39 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
+import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
 import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
+import ActionButtons from "./ActionButtons";
+import RejectedLabels from "./RejectedLabels";
+
 /**
  * This component loads all annotations in a label set
  */
 export default {
   components: {
     EmptyState,
+    Annotation,
     EmptyAnnotation,
     ExtractingData,
-    CaretDown
+    CaretDown,
+    ActionButtons,
+    RejectedLabels
   },
   data() {
     return {
       labelOpen: null,
       annotationAnimationTimeout: null,
-      oldValue: null,
-      newValue: null,
       showWarning: false,
       notEditing: true,
       annBeingEdited: null,
-      showError: false,
       edited: false,
-      isFullPage: false,
-      isLoading: false
+      showError: false,
+      isLoading: false,
+      menu: true,
+      // testing rejected ann:
+      rejected: [{ id: 1 }]
     };
   },
   computed: {
@@ -224,6 +208,23 @@ export default {
     ])
   },
   methods: {
+    handleDataChanges({ annotation, notEditing, edited, isLoading }) {
+      if (annotation !== null) {
+        this.annBeingEdited = annotation;
+      }
+
+      if (notEditing !== null) {
+        this.notEditing = notEditing;
+      }
+
+      if (edited !== null) {
+        this.edited = edited;
+      }
+
+      if (isLoading !== null) {
+        this.isLoading = isLoading;
+      }
+    },
     /* Clicking a label opens the description */
     onLabelClick(annotation) {
       if (this.checkIfLabelIsOpen(annotation)) {
@@ -247,89 +248,11 @@ export default {
         return this.annBeingEdited.id;
       }
     },
-    // Check if the user deleted or added text to the annotation
-    isNewValueInOld(event, annotation) {
-      this.oldValue = annotation.span[0].offset_string;
-      this.newValue = event.target.textContent.trim();
-      return this.oldValue.includes(this.newValue);
+    handleError(value) {
+      this.showError = value;
     },
-    handlePaste(event) {
-      event.preventDefault();
-    },
-    handleInput(event, annotation) {
-      const newInOldValue = this.isNewValueInOld(event, annotation);
-      this.annBeingEdited = annotation;
-      this.notEditing = false;
-      this.showWarning = false;
-      this.showError = false;
-
-      // If the user changes the input by adding to the existing annotation
-      // we show a warning
-      if (!newInOldValue || this.newValue.length === 0) {
-        this.showWarning = true;
-      }
-    },
-    handleBlur(event, annotation) {
-      const spanArray = annotation.span[0];
-      const id = annotation.id;
-      let updatedString;
-
-      // If the user didn't change the value, we don't want to do anything
-      if (this.newValue === this.oldValue) {
-        return;
-      }
-
-      this.isLoading = true;
-
-      if (this.newValue.length === 0) {
-        updatedString = {
-          is_correct: false,
-          revised: true
-        };
-      } else {
-        updatedString = {
-          span: [
-            {
-              offset_string: this.newValue,
-              bottom: spanArray.bottom,
-              top: spanArray.top,
-              page_index: spanArray.page_index,
-              x0: spanArray.x0,
-              x1: spanArray.x1,
-              y0: spanArray.y0,
-              y1: spanArray.y1,
-              start_offset: spanArray.start_offset,
-              end_offset: spanArray.end_offset
-            }
-          ]
-        };
-      }
-
-      this.$store.dispatch("document/startLoading");
-
-      // Send to the store for the http patch request
-      this.$store
-        .dispatch("document/updateAnnotation", {
-          updatedValues: updatedString,
-          annotationId: id
-        })
-        .then(response => {
-          // Check if the response is successfull or not
-          if (response) {
-            this.oldValue = this.newValue;
-            this.edited = true;
-          } else {
-            event.target.textContent = this.oldValue;
-            this.newValue = this.oldValue;
-            this.showError = true;
-            this.showWarning = false;
-            this.edited = false;
-          }
-        })
-        .finally(() => {
-          this.$store.dispatch("document/endLoading");
-          this.isLoading = false;
-        });
+    handleWarning(value) {
+      this.showWarning = value;
     },
     handleWarningClose() {
       this.showWarning = false;
