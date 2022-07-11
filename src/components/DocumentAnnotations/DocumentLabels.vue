@@ -33,11 +33,14 @@
             <div class="label-property-left" v-if="annotation">
               <LabelDetails
                 :description="annotation.label_description"
-                :accuracy="annotation.accuracy"
-                :revised="true"
-                :notFound="true"
-                :approved="true"
-                :edited="true"
+                :accuracy="annotation.confidence"
+                :notFound="!annotation.span"
+                :accepted="annotation.revised && annotation.is_correct"
+                :edited="
+                  (!annotation.revised && annotation.is_correct) ||
+                  annotation.created_by
+                "
+                :user="annotation.created_by || annotation.revised_by"
               />
               <div class="label-property-name">
                 <span class="label-property-text"
