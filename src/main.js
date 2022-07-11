@@ -18,7 +18,8 @@ import {
   faFile,
   faSpinner,
   faCheck,
-  faXmark
+  faXmark,
+  faEllipsisVertical
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -30,7 +31,8 @@ library.add(
   faCheck,
   faFile,
   faSpinner,
-  faXmark
+  faXmark,
+  faEllipsisVertical
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

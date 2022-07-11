@@ -22,6 +22,7 @@ $grey-darker: #101828;
 $grey-hover: #fafafa;
 $green-hover: #3a9c76;
 $grey-blue: #667085;
+$action-grey: #5f5d59;
 
 $yellow: #ffd600;
 $blue: #2f80ed;
@@ -417,6 +418,42 @@ $carousel-overlay-background: none;
     .text {
       display: flex;
       font-size: 14px;
+    }
+  }
+}
+
+.label-action-btn {
+  .dropdown-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.rejected-labels {
+  .card-header {
+    box-shadow: none !important;
+  }
+
+  .icon {
+    svg {
+      width: 13.37px;
+      height: 13.37px;
+    }
+  }
+
+  .label-list {
+    .field {
+      .tags {
+        .tag {
+          background-color: $detail;
+          color: $dark-blue;
+
+          &.is-delete {
+            color: $grey;
+          }
+        }
+      }
     }
   }
 }
