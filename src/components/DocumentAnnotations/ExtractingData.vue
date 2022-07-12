@@ -1,10 +1,10 @@
 <style scoped lang="scss" src="../../assets/scss/extracting_data.scss"></style>
 <template>
   <div class="data-extraction-container">
-    <img
+    <!-- <img
       src="../../assets/images/ExtractingDataGif.gif"
       alt="document-loading"
-    />
+    /> -->
     <div class="data-extraction-text">
       <p class="title">{{ $t("data_being_extracted") }}</p>
       <div class="description">
