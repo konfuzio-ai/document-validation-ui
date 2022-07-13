@@ -171,6 +171,7 @@ $carousel-overlay-background: none;
   }
 }
 
+// Styles are not applied when moved to document_labels.scss
 .label-properties {
   .message {
     .message-body {
@@ -205,8 +206,6 @@ $carousel-overlay-background: none;
     padding-top: 0px;
   }
 }
-
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name
 
 .modal {
   z-index: 999;

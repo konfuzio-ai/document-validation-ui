@@ -223,34 +223,43 @@
 
     .menu {
       width: 18px;
-    }
 
-    &:hover {
-      cursor: pointer;
-    }
+      .dropdown {
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        width: 100%;
 
-    .dropdown {
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      width: 100%;
-
-      &:hover {
-        background-color: $grey-lighter;
-      }
-
-      .dropdown-item {
         &:hover {
-          background: none;
+          background-color: $grey-lighter;
+        }
+
+        .dropdown-menu {
+          .dropdown-item {
+            &:hover {
+              background: none;
+            }
+          }
+        }
+
+        .dropdown-trigger {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+
+          .menu-icon {
+            width: 2.5px;
+            color: $action-grey;
+          }
         }
       }
     }
 
-    .menu-icon {
-      width: 2.5px;
-      color: $action-grey;
+    &:hover {
+      cursor: pointer;
     }
   }
 
