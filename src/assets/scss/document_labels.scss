@@ -262,26 +262,54 @@
         box-shadow: none;
       }
 
-      .card-header {
-        .card-header-title {
-          font-weight: 400;
-          font-size: 14px;
-          line-height: 20px;
-          padding-left: 10px;
-        }
+      .collapse-trigger {
+        .card-header {
+          box-shadow: none !important;
 
-        .card-header-icon {
-          padding-right: 5px;
+          .card-header-title {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            padding-left: 10px;
+          }
+
+          .card-header-icon {
+            padding-right: 5px;
+
+            .icon {
+              svg {
+                width: 13.37px !important;
+                height: 13.37px !important;
+              }
+            }
+          }
         }
       }
 
-      .card-content {
-        padding: 10px;
+      .collapse-content {
+        .card-content {
+          padding: 10px;
 
-        .content {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-          gap: 10px;
+          .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+
+            .label-list {
+              .field {
+                .tags {
+                  .tag {
+                    background-color: $detail;
+                    color: $dark-blue;
+
+                    &.is-delete {
+                      color: $grey;
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

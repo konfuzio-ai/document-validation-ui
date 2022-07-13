@@ -57,4 +57,23 @@
       }
     }
   }
+
+  .rotate-pages {
+    .rotation-modal-container {
+      .modal {
+        &.is-active {
+          .modal-content {
+            width: 840px !important;
+            max-width: 840px !important;
+            border-radius: 16px;
+            background-color: $white;
+          }
+
+          .modal-card {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
