@@ -56,14 +56,12 @@ $light-error-red: rgba(187, 43, 59, 0.3);
 $low-opacity-red: rgba(231, 66, 58, 0.3);
 $light-red: #fdf4f4;
 
-// TODO: convert this variables to styles
-
 $input-shadow: none;
 $header-size: 2px;
 
 $carousel-overlay-background: none;
 
-.is-primary {
+button.is-primary {
   background-color: $primary !important;
 
   &:hover:enabled {
@@ -116,7 +114,6 @@ $carousel-overlay-background: none;
   .media-content {
     display: flex;
     justify-content: flex-end;
-    // margin: 0px 20px 0px 20px;
   }
 
   .message-container {
@@ -270,8 +267,6 @@ $carousel-overlay-background: none;
   }
 }
 
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name
-
 .modal {
   &.is-active {
     z-index: 999;
@@ -321,8 +316,6 @@ $carousel-overlay-background: none;
     }
   }
 }
-
-// TODO: modal styles should be hierarchical to not mess with other styles with the same name
 
 .not-optimized {
   .modal-content {
@@ -480,4 +473,22 @@ $carousel-overlay-background: none;
 .modal-background {
   background-color: $full-black;
   opacity: 0.5;
+}
+
+.b-tooltip {
+  .tooltip-content {
+    left: -10px !important;
+    transform: none !important;
+    padding: 8px 10px !important;
+
+    &::before {
+      left: 16px !important;
+      right: auto !important;
+    }
+  }
+}
+
+.icon.is-small {
+  width: 14px;
+  height: 14px;
 }

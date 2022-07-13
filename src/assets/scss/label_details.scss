@@ -1,0 +1,92 @@
+@import "./imports.scss";
+
+.label-icon {
+  display: flex;
+  align-items: center;
+  height: 40px;
+
+  .icon.red {
+    color: $error-red;
+  }
+
+  .icon.green {
+    color: $green;
+  }
+
+  .icon {
+    color: $grey-detail;
+  }
+}
+
+.label-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 100px;
+
+  .description {
+    opacity: 0.7;
+    color: $white;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+    word-wrap: break-all;
+    white-space: normal;
+    width: 216px;
+  }
+
+  .accuracy {
+    color: $white;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+
+    .value {
+      color: $green;
+
+      &.yellow {
+        color: $yellow;
+      }
+
+      &.red {
+        color: $red;
+      }
+    }
+  }
+
+  .revision {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    color: $white;
+
+    >div {
+      display: flex;
+      align-items: center;
+    }
+
+    .not-found {
+      .icon {
+        color: $error-red;
+      }
+    }
+
+    .not-revised {
+      .icon {
+        color: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .icon {
+      margin-right: 6px;
+      color: $primary
+    }
+  }
+}

@@ -30,72 +30,51 @@
             @mouseenter="onLabelHover(annotation, annotationSet)"
             @mouseleave="onLabelHover(null)"
           >
-            <div
-              :class="[
-                'label-property-top',
-                annotation.label_description && 'clickable'
-              ]"
-              v-on:click="
-                annotation.label_description && onLabelClick(annotation)
-              "
-              v-if="annotation"
-            >
-              <div class="label-property-left">
-                <div class="label-property-name">
-                  <CaretDown
-                    :class="[
-                      'icon-caret',
-                      !checkIfLabelIsOpen(annotation) && 'rotated'
-                    ]"
-                    v-if="annotation.label_description"
-                  />
-                  <span
-                    :class="[
-                      'label-property-text',
-                      !annotation.id && 'red',
-                      annotation.accuracy == 0 && 'red',
-                      annotation.accuracy == 1 && 'green'
-                    ]"
-                    >{{ annotation.label_name }}
-                  </span>
-                </div>
+            <div class="label-property-left" v-if="annotation">
+              <LabelDetails
+                :description="annotation.label_description"
+                :accuracy="annotation.confidence"
+                :notFound="!annotation.span"
+                :accepted="annotation.revised && annotation.is_correct"
+                :edited="
+                  (!annotation.revised && annotation.is_correct) ||
+                  annotation.created_by
+                "
+                :user="annotation.created_by || annotation.revised_by"
+              />
+              <div class="label-property-name">
+                <span class="label-property-text"
+                  >{{ annotation.label_name }}
+                </span>
               </div>
-              <div class="label-property-right">
-                <div class="label-property-annotation">
-                  <Annotation
-                    v-if="
-                      annotation.span !== undefined &&
-                      annotation.span[0].offset_string
-                    "
-                    :annotation="annotation"
-                    :isLoading="isLoading"
-                    :edited="edited"
-                    :notEditing="notEditing"
-                    :annBeingEdited="annBeingEdited"
-                    :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
-                    :onLabelClick="onLabelClick"
-                    @handle-data-changes="handleDataChanges"
-                    @handle-show-warning="handleWarning"
-                    @handle-show-error="handleError"
-                  />
-                  <EmptyAnnotation
-                    v-else
-                    :annotation="annotation"
-                    :annotationSet="annotationSet"
-                  />
-                </div>
+            </div>
+            <div class="label-property-right">
+              <div class="label-property-annotation">
+                <Annotation
+                  v-if="
+                    annotation.span !== undefined &&
+                    annotation.span[0].offset_string
+                  "
+                  :annotation="annotation"
+                  :isLoading="isLoading"
+                  :edited="edited"
+                  :notEditing="notEditing"
+                  :annBeingEdited="annBeingEdited"
+                  :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
+                  :onLabelClick="onLabelClick"
+                  @handle-data-changes="handleDataChanges"
+                  @handle-show-warning="handleWarning"
+                  @handle-show-error="handleError"
+                />
+                <EmptyAnnotation
+                  v-else
+                  :annotation="annotation"
+                  :annotationSet="annotationSet"
+                />
               </div>
               <!-- <div class="label-action-btn">
                 <ActionButtons :menu="menu" />
               </div> -->
-            </div>
-            <div
-              :class="[
-                'label-property-description',
-                checkIfLabelIsOpen(annotation) && 'open'
-              ]"
-            >
-              {{ annotation.label_description }}
             </div>
             <transition name="slide-fade">
               <div
@@ -167,7 +146,7 @@ import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import RejectedLabels from "./RejectedLabels";
-
+import LabelDetails from "./LabelDetails";
 /**
  * This component loads all annotations in a label set
  */
@@ -179,7 +158,8 @@ export default {
     ExtractingData,
     CaretDown,
     ActionButtons,
-    RejectedLabels
+    RejectedLabels,
+    LabelDetails
   },
   data() {
     return {
