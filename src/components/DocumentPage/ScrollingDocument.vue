@@ -9,23 +9,25 @@
     v-scroll.immediate="updateScrollBounds"
     id="scrollingDocument"
   >
-    <ScrollingPage
-      v-for="page in pages"
-      :key="page.pageNumber"
-      v-bind="{
-        page,
-        clientHeight,
-        scrollTop,
-        focusedPage,
-        enablePageJump
-      }"
-      v-slot="{ isPageFocused, isElementFocused }"
-      @page-jump="onPageJump"
-    >
-      <div class="scrolling-page">
-        <slot v-bind="{ page, isPageFocused, isElementFocused }"></slot>
-      </div>
-    </ScrollingPage>
+    <div :class="[recalculatingAnnotations && 'blur']">
+      <ScrollingPage
+        v-for="page in pages"
+        :key="page.pageNumber"
+        v-bind="{
+          page,
+          clientHeight,
+          scrollTop,
+          focusedPage,
+          enablePageJump
+        }"
+        v-slot="{ isPageFocused, isElementFocused }"
+        @page-jump="onPageJump"
+      >
+        <div class="scrolling-page">
+          <slot v-bind="{ page, isPageFocused, isElementFocused }"></slot>
+        </div>
+      </ScrollingPage>
+    </div>
     <Toolbar />
   </div>
 </template>
@@ -72,7 +74,8 @@ export default {
       return this.$store.getters["document/pageCount"];
     },
     ...mapState("display", ["currentPage"]),
-    ...mapGetters("selection", ["isSelectionEnabled"])
+    ...mapGetters("selection", ["isSelectionEnabled"]),
+    ...mapState("document", ["recalculatingAnnotations"])
   },
 
   methods: {

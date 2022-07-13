@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Buefy from "buefy";
-import 'buefy/dist/buefy.css'
+import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
 import store from "./store";
 import App from "./App";
@@ -22,7 +22,9 @@ import {
   faFile,
   faSpinner,
   faCheck,
-  faXmark
+  faXmark,
+  faEllipsisVertical,
+  faUser
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -36,7 +38,9 @@ library.add(
   faCheck,
   faFile,
   faSpinner,
-  faXmark
+  faXmark,
+  faEllipsisVertical,
+  faUser
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

@@ -1,4 +1,6 @@
-import { mount } from "@vue/test-utils";
+import {
+  mount
+} from "@vue/test-utils";
 import {
   DocumentLabelSets,
   DocumentLabels,
@@ -20,7 +22,9 @@ describe("Document Annotations Component", () => {
   it("sidebar has tabs for label sets", () => {
     const wrapper = mount(DocumentLabelSets, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
     expect(wrapper.findAll(".label-tab").length).toBeGreaterThan(0);
   });
@@ -28,7 +32,9 @@ describe("Document Annotations Component", () => {
   it("sidebar has first tab active", async () => {
     const wrapper = mount(DocumentLabelSets, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
     await store.dispatch(
       "document/setActiveAnnotationSet",
@@ -42,7 +48,9 @@ describe("Document Annotations Component", () => {
   it("sidebar has label list from the second label set", async () => {
     const wrapper = mount(DocumentLabels, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     const annotationSet = store.state.document.annotationSets[1];
@@ -54,32 +62,19 @@ describe("Document Annotations Component", () => {
     );
   });
 
-  it("check if description is hidden when no click on label", async () => {
+  it("check if label info appears when hovering", async () => {
     const wrapper = mount(DocumentLabels, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
-
-    const annotationSet = store.state.document.annotationSets[0];
-
-    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
-    expect(
-      wrapper.findAll(".label-property-description").at(0).classes()
-    ).not.toContain("open");
-  });
-
-  it("check if description appears when clicking a label", async () => {
-    const wrapper = mount(DocumentLabels, {
-      store,
-      mocks: { $t },
-    });
-
-    const annotationSet = store.state.document.annotationSets[0];
-
-    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
-    await wrapper.findAll(".label-property-top").at(0).trigger("click");
-    expect(
-      wrapper.findAll(".label-property-description").at(0).classes()
-    ).toContain("open");
+    const element = wrapper.findAll(".label-property-left .b-tooltip").at(0);
+    await element.find(".tooltip-trigger").trigger("mouseenter");
+    requestAnimationFrame(() => {
+      expect(
+        element.find(".tooltip-content")
+        .isVisible()).toBe(true);
+    })
   });
 });

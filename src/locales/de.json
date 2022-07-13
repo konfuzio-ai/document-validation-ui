@@ -32,6 +32,20 @@
   "handover_not_possible": "Handover was not possible. Please try again later.",
   "small_viewport_title": "Small viewport size",
   "small_viewport_info": "We’re sorry, but Konfuzio is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
-  "ok_got_it": "Ok, got it",
-  "no_data_found": "No data found. Click to edit..."
+  "ok": "Ok, got it",
+  "no_data_found": "No data found. Click to edit...",
+  "draw_box_document": "Draw a box in the document",
+  "rotate_pages": "Rotate pages",
+  "rotate_all": "Rotate all",
+  "cancel": "Cancel",
+  "apply": "Apply",
+  "confirm_rotation": "Are you sure you want to rotate?",
+  "rotation_warning": "This action will overwrite any changes you might have made in the document.",
+  "rotate": "Yes, rotate",
+  "rotation_failed": "Rotation failed, the document has returned to its original state. Please try again later.",
+  "data_being_extracted": "New data is being extracted",
+  "analysing_document": "We are analysing your document.",
+  "few_minutes": "This might take a few minutes.",
+  "reject_label": "Reject label",
+  "rejected": "Rejected"
 }

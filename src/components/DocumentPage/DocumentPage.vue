@@ -191,7 +191,8 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
-      "activeAnnotationSet"
+      "activeAnnotationSet",
+      "recalculatingAnnotations"
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
@@ -338,12 +339,12 @@ export default {
     /**
      * Konva draws pages like this.
      */
-    drawPage() {
-      if (this.image) {
+    drawPage(force = false) {
+      if (this.image && !force) {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(this.page.image_url)
+      api.IMG_REQUEST.get(`${this.page.image_url}?${this.page.updated_at}`)
         .then(response => {
           return response.data;
         })
@@ -450,6 +451,10 @@ export default {
      */
 
     setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
+      // wait for activeAnnotationSet to be ready
+      if (!activeAnnotationSet) {
+        return;
+      }
       const annotationName = annotation.annotation_set.label_set.name;
       const activeSetName = activeAnnotationSet.group[0].label_set.name;
 
@@ -574,15 +579,9 @@ export default {
     }
   },
   watch: {
-    pageAnnotations(newAnnotations, oldAnnotations) {
-      // Loop over the new annotations array
-      for (let i = 0; i < newAnnotations.length; i++) {
-        // Check if some annotation changed
-        if (newAnnotations[i] !== oldAnnotations[i]) {
-          // If so we calculate the bbox again with the new data
-          bboxToRect(newAnnotations[i].span[0]);
-        }
-        return;
+    recalculatingAnnotations(newState) {
+      if (!newState) {
+        this.drawPage(true);
       }
     }
   },

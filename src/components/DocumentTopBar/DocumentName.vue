@@ -3,7 +3,9 @@
 <template>
   <div class="document-name-component">
     <div class="document-icon">
-      <ServerImage :imageUrl="selectedDocument.thumbnail_url" />
+      <ServerImage
+        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.updated_at}`"
+      />
     </div>
     <span class="file-name-section">
       <span
@@ -113,6 +115,7 @@ export default {
       }
     },
     handlePaste(event) {
+      // TODO: modify to only paste plain text
       event.preventDefault();
     },
     handleInput(event) {

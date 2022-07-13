@@ -41,6 +41,9 @@
     font-weight: 400;
     border-bottom: 1px solid $background;
     transition: background-color 0.2s ease-out;
+    display: flex;
+    align-items: flex-start;
+    z-index: 999999;
 
     &:last-child {
       border-bottom: none;
@@ -51,172 +54,203 @@
       background-color: $grey-lightest;
     }
 
-    .label-property-top {
+    .label-property-left {
+      flex: 1;
+      padding-left: 8px;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
 
-      &.clickable {
-        cursor: pointer;
+      .label-property-name {
+        margin-left: 16px;
+        padding: 10px 0;
+
       }
 
-      .label-property-left {
-        flex: 1;
-        padding-left: 8px;
+      .label-property-text {
+        color: $text-lighter;
+        margin-left: 4px;
+        width: 100%;
+        word-break: break-word;
+        padding-right: 4px;
+      }
+    }
 
-        .label-property-name {
-          padding: 10px 0;
-          display: flex;
-          align-items: center;
+    .label-property-right {
+      width: 60%;
 
-          .icon-caret {
-            transition: transform 0.2s ease-in-out;
-
-            &.rotated {
-              transform: rotate(-90deg);
-            }
-          }
-        }
-
-        .label-property-text {
-          color: $text-lighter;
-          margin-left: 4px;
-          width: 100%;
-          border-right: 4px solid $yellow;
-          word-break: break-word;
-          padding-right: 4px;
-
-          &.green {
-            border-color: $green;
-          }
-
-          &.red {
-            border-color: $red;
-          }
-        }
+      .notification {
+        background-color: transparent;
       }
 
-      .label-property-right {
-        flex: 1;
-        max-width: calc(50% - 4px);
+      .label-property-annotation {
 
-        .notification {
-          background-color: transparent;
-        }
-
-        .label-property-annotation {
-          display: flex;
-          align-items: center;
-          padding: 10px 0;
-
-          .loading-container {
-            height: 20px;
-            display: flex;
-            align-items: center;
-
-            .loading-icon-size {
-              width: 13px;
-              height: 13px;
-            }
-
-            .spinner {
-              color: $grey;
-            }
-          }
-        }
-
-        .label-property-value {
-          color: $text;
-          padding-left: 8px;
-          padding-right: 8px;
-          border: none;
-          background-color: transparent;
-          inline-size: 100%;
-          overflow-wrap: break-word;
-          display: inline-block;
-
-          &.label-empty {
-            font-weight: 400;
-            font-size: 14px;
-            color: $text-lighter;
-          }
-        }
-
+        .annotation,
         .empty-annotation {
           display: flex;
-          width: 100%;
-          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+        }
 
-          .action-buttons {
-            display: flex;
-            gap: 6px;
+        .loading-container {
+          height: 20px;
+          display: flex;
+          align-items: center;
 
-            button {
-              width: 32px;
-              height: 32px;
-            }
-
+          .loading-icon-size {
+            width: 13px;
+            height: 13px;
           }
         }
 
-        .label-property-value:focus {
-          outline: none;
-        }
-
-        .saving-changes {
+        .spinner {
           color: $grey;
         }
       }
     }
 
-    .label-property-description {
-      padding: 0 20px;
-      overflow: hidden;
-      height: 0px;
-      opacity: 0;
+    .label-property-value {
       color: $text;
-      display: flex;
-      align-items: center;
-      background-color: $background;
-      transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
+      padding-left: 8px;
+      padding-right: 8px;
+      border: none;
+      background-color: transparent;
+      inline-size: 100%;
+      overflow-wrap: break-word;
+      display: inline-block;
 
-      &.open {
-        height: 40px;
-        opacity: 1;
+      &.label-empty {
+        font-weight: 400;
+        font-size: 14px;
+        color: $text-lighter;
       }
     }
-  }
 
-  .message {
-    .message-container {
+    .action-buttons {
       display: flex;
-      flex: 1;
-      align-items: center;
+      gap: 6px;
+
+      button {
+        width: 32px;
+        height: 32px;
+      }
+
+    }
+
+    .empty-annotation {
+      display: flex;
+      width: 100%;
       justify-content: space-between;
-      gap: 15px;
-      font-size: 14px !important;
     }
 
+    .label-property-value:focus {
+      outline: none;
+    }
+
+    .saving-changes {
+      color: $grey;
+    }
+  }
+}
+
+.message {
+  .message-container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 14px !important;
+  }
+
+  .btn-container {
+    display: flex;
+
+    .close-btn {
+      color: $grey;
+    }
+
+    .close-btn:hover {
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 1064px) {
     .btn-container {
-      display: flex;
+      align-self: flex-start;
+      padding-top: 5px;
+    }
+  }
+}
 
-      .close-btn {
-        color: $grey;
-      }
+.label-action-btn {
+  padding: 10px 8px 10px 0;
 
-      .close-btn:hover {
-        cursor: pointer;
-      }
+  .menu {
+    width: 18px;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .dropdown {
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    width: 100%;
+
+    &:hover {
+      background-color: $grey-lighter;
     }
 
-    @media (max-width: 1064px) {
-      .btn-container {
-        align-self: flex-start;
-        padding-top: 5px;
+    .dropdown-item {
+      &:hover {
+        background: none;
       }
     }
   }
 
-  .hidden {
-    display: none !important;
+  .menu-icon {
+    width: 2.5px;
+    color: $action-grey;
   }
+}
+
+.rejected-labels {
+  margin-top: 20px;
+
+  .collapse {
+    &.card {
+      box-shadow: none;
+    }
+
+    .card-header {
+      .card-header-title {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        padding-left: 10px;
+      }
+
+      .card-header-icon {
+        padding-right: 5px;
+      }
+    }
+
+    .card-content {
+      padding: 10px;
+
+      .content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+      }
+    }
+  }
+}
+
+.hidden {
+  display: none !important;
 }

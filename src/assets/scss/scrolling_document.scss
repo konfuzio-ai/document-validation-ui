@@ -6,4 +6,8 @@
 
 .scrolling-document {
   scroll-behavior: smooth;
+
+  .blur {
+    filter: blur(2px);
+  }
 }

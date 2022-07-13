@@ -42,6 +42,11 @@ import CaretDown from "../../assets/images/TopBarCaretDownImg.vue";
 
 export default {
   name: "DocumentCategory",
+  data() {
+    return {
+      categoryError: false
+    };
+  },
   props: {
     selectedDocument: {
       type: Object
@@ -73,7 +78,7 @@ export default {
         .then(response => {
           if (!response) {
             this.handleShowError();
-            this.handleMessage();
+            this.handleMessage(this.$i18n.t("category_error"));
           }
           // update document list if visible
           if (process.env.VUE_APP_CATEGORY_ID) {
