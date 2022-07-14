@@ -1,17 +1,14 @@
 <style scoped lang="scss" src="../../assets/scss/edit_top_bar.scss"></style>
 <template>
   <div class="edit-top-bar">
-    <b-dropdown
-      append-to-body
-      aria-role="menu"
-      scrollable
-      max-height="200"
-      trap-focus
-    >
+    <b-dropdown>
       <template #trigger>
-        <a class="navbar-item" role="button">
+        <a class="navbar-item dropdown-option" role="button">
+          <b-icon :icon="optionIcon" class="option-icon" />
           <span>Categories</span>
-          <b-icon icon="menu-down"></b-icon>
+          <div class="caret">
+            <CaretDown />
+          </div>
         </a>
       </template>
       <b-dropdown-item
@@ -22,14 +19,24 @@
       >
     </b-dropdown>
     <div class="buttons">
-      <b-button label="Test" type="is-primary" />
+      <b-button label="Test" type="is-default" />
+      <b-button label="Test" type="is-primary" :disabled="true" />
     </div>
   </div>
 </template>
 
 <script>
+import CaretDown from "../../assets/images/TopBarCaretDownImg.vue";
 export default {
   name: "EditTopBar",
+  components: {
+    CaretDown
+  },
+  data() {
+    return {
+      optionIcon: "xmark"
+    };
+  },
   methods: {}
 };
 </script>

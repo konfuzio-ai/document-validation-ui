@@ -37,8 +37,8 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import CategoryIcon from "../../assets/images/CategoryIconImg.vue";
-import CaretDown from "../../assets/images/TopBarCaretDownImg.vue";
+import CategoryIcon from "../../assets/images/CategoryIconImg";
+import CaretDown from "../../assets/images/TopBarCaretDownImg";
 
 export default {
   name: "DocumentCategory",
