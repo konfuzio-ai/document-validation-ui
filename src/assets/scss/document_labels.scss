@@ -162,50 +162,45 @@
   .btn-container {
     display: flex;
 
-    .close-btn {
-      color: $grey;
+    .menu {
+      width: 18px;
+
+      .dropdown {
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        width: 100%;
+
+        &:hover {
+          background-color: $grey-lighter;
+        }
+
+        .dropdown-menu {
+          .dropdown-item {
+            &:hover {
+              background: none;
+            }
+          }
+        }
+
+        .dropdown-trigger {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+
+          .menu-icon {
+            width: 2.5px;
+            color: $action-grey;
+          }
+        }
+      }
     }
-
-    .close-btn:hover {
-      cursor: pointer;
-    }
-  }
-
-  @media (max-width: 1064px) {
-    .btn-container {
-      align-self: flex-start;
-      padding-top: 5px;
-    }
-  }
-}
-
-.label-action-btn {
-  padding: 10px 8px 10px 0;
-
-  .menu {
-    width: 18px;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  .dropdown {
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    width: 100%;
 
     &:hover {
-      background-color: $grey-lighter;
-    }
-
-    .dropdown-item {
-      &:hover {
-        background: none;
-      }
+      cursor: pointer;
     }
   }
 
