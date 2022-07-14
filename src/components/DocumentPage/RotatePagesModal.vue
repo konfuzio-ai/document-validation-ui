@@ -5,7 +5,7 @@
 ></style>
 
 <template>
-  <section>
+  <section class="rotation-modal-container">
     <b-modal v-model="isModalActive" :can-cancel="['x']">
       <div class="modal-card">
         <header class="modal-card-head">

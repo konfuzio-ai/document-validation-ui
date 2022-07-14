@@ -5,13 +5,8 @@
 ></style>
 
 <template>
-  <section>
-    <b-modal
-      class="viewport-modal"
-      :width="500"
-      v-model="isModalActive"
-      :can-cancel="['x']"
-    >
+  <section class="viewport-modal">
+    <b-modal :width="500" v-model="isModalActive" :can-cancel="['x']">
       <section class="modal-card-body">
         <div class="image">
           <Illustration />
@@ -23,7 +18,7 @@
       </section>
       <footer class="modal-card-foot">
         <b-button type="is-primary" @click="handleNotOptimizedModal">
-          {{ $t("ok_got_it") }}
+          {{ $t("ok") }}
         </b-button>
       </footer>
     </b-modal>

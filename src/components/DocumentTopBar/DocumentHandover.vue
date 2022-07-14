@@ -14,87 +14,92 @@
       @click="open = true"
     />
 
-    <b-collapse :open="open" aria-id="handover">
-      <div class="notification">
-        <div class="content">
-          <div class="header container">
-            <p class="title">{{ $t("handover_document") }}</p>
-            <div
-              type="button"
-              @click="open = false"
-              class="close-icon-container modal-btn"
-            >
-              <b-icon icon="xmark" class="close-btn" />
-            </div>
-          </div>
-          <div class="input-container">
-            <section
-              :class="['input-section container', invalidEmail && 'invalid']"
-            >
-              <b-field type="input">
-                <b-input
-                  :placeholder="$t('type_email')"
-                  id="input"
-                  autocomplete="off"
-                  v-model="selected"
-                  @input="invalidEmail = false"
-                />
-              </b-field>
-              <b-loading
-                :is-full-page="isFullPage"
-                v-model="isLoading"
-                v-if="isLoading"
+    <div class="handover-collapse">
+      <b-collapse :open="open" aria-id="handover" class="is-bottom">
+        <div class="notification">
+          <div class="content">
+            <div class="header container">
+              <p class="title">{{ $t("handover_document") }}</p>
+              <div
+                type="button"
+                @click="open = false"
+                class="close-icon-container modal-btn"
               >
-                <b-icon
-                  icon="spinner"
-                  class="fa-spin loading-icon-size spinner"
-                >
-                </b-icon>
-              </b-loading>
-              <b-button
-                v-else
-                :label="$t('handover')"
-                class="handover-btn-menu"
-                @click.prevent="handleHandover"
-              />
-            </section>
-            <div v-if="invalidEmail" class="invalid-email-msg">
-              <p>{{ $t("invalid_email") }}</p>
-            </div>
-
-            <transition name="slide-fade">
-              <div v-if="showError" class="error-message handover">
-                <b-message>
-                  <div class="message-container">
-                    {{ $t("handover_not_possible") }}
-                  </div>
-                  <div @click="showError = false" class="close-icon-container">
-                    <b-icon icon="xmark" class="close-btn error-icon" />
-                  </div>
-                </b-message>
+                <b-icon icon="xmark" class="close-btn" />
               </div>
-            </transition>
-          </div>
-          <div class="members-section">
-            <div class="members-title">
-              <h3 class="title">{{ $t("members") }}</h3>
             </div>
-            <div :class="['member-list', scroll && 'scroll']">
-              <div v-for="member in members" :key="member.id">
-                <div class="member container">
-                  <p class="email">{{ member.email }}</p>
-                  <b-button
-                    :label="$t('select')"
-                    class="select-btn"
-                    @click="handleSelect(member.id, member.email)"
+            <div class="input-container">
+              <section
+                :class="['input-section container', invalidEmail && 'invalid']"
+              >
+                <b-field type="input">
+                  <b-input
+                    :placeholder="$t('type_email')"
+                    id="input"
+                    autocomplete="off"
+                    v-model="selected"
+                    @input="invalidEmail = false"
                   />
+                </b-field>
+                <b-loading
+                  :is-full-page="isFullPage"
+                  v-model="isLoading"
+                  v-if="isLoading"
+                >
+                  <b-icon
+                    icon="spinner"
+                    class="fa-spin loading-icon-size spinner"
+                  >
+                  </b-icon>
+                </b-loading>
+                <b-button
+                  v-else
+                  :label="$t('handover')"
+                  class="handover-btn-menu"
+                  @click.prevent="handleHandover"
+                />
+              </section>
+              <div v-if="invalidEmail" class="invalid-email-msg">
+                <p>{{ $t("invalid_email") }}</p>
+              </div>
+
+              <transition name="slide-fade">
+                <div v-if="showError" class="error-message handover">
+                  <b-message>
+                    <div class="message-container">
+                      {{ $t("handover_not_possible") }}
+                    </div>
+                    <div
+                      @click="showError = false"
+                      class="close-icon-container"
+                    >
+                      <b-icon icon="xmark" class="close-btn error-icon" />
+                    </div>
+                  </b-message>
+                </div>
+              </transition>
+            </div>
+            <div class="members-section">
+              <div class="members-title">
+                <h3 class="title">{{ $t("members") }}</h3>
+              </div>
+              <div :class="['member-list', scroll && 'scroll']">
+                <div v-for="member in members" :key="member.id">
+                  <div class="member container">
+                    <p class="email">{{ member.email }}</p>
+                    <b-button
+                      :label="$t('select')"
+                      class="select-btn"
+                      @click="handleSelect(member.id, member.email)"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </b-collapse>
+      </b-collapse>
+    </div>
   </div>
 </template>
 
@@ -209,8 +214,8 @@ export default {
 
       setTimeout(() => {
         this.isLoading = false;
-        this.snackbar();
-        // this.showError = true;
+        // this.snackbar();
+        this.showError = true;
         this.selected = null;
       }, 2000);
     },
