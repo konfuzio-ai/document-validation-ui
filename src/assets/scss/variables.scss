@@ -268,129 +268,15 @@ button.is-primary {
 }
 
 .modal {
-  &.is-active {
-    z-index: 999;
-  }
-
-  .modal-content {
-    height: auto;
-    width: 500px;
-    max-width: 500px !important;
-    margin-left: auto;
-    margin-right: auto;
-    background: $white;
-    border-radius: 16px;
-
-    .modal-card {
-      display: flex;
-      align-items: center;
-    }
-
-    .modal-close.is-large {
-      display: none !important;
-    }
-
-    .modal-card-foot {
-      border: none;
-      background: none;
-    }
-
-    .content {
-      h3 {
-        font-weight: 600 !important;
-        font-size: 20px !important;
-        line-height: 26px !important;
-        color: $dark-blue !important;
-        padding-bottom: 5px;
-      }
-
-      p {
-        color: $grey;
-      }
-
-      p,
-      button {
-        line-height: 20px;
-        font-size: 14px;
-      }
-    }
-  }
-}
-
-.not-optimized {
-  .modal-content {
-    height: auto;
-    width: 500px;
-    max-width: 500px !important;
-    margin-left: auto;
-    margin-right: auto;
-    background: $white;
-    border-radius: 16px;
-  }
-
-  .modal-card {
-    display: flex;
-    align-items: center;
-  }
-
-  .modal.is-active {
-    z-index: 999;
-  }
+  z-index: 999;
 
   .modal-background {
     background-color: $full-black;
     opacity: 0.5;
   }
-}
 
-.rotate-pages {
-  .modal-content {
-    width: 840px;
-    max-width: 840px !important;
-    border-radius: 16px;
-    background-color: $white;
-  }
-
-  .modal-card {
-    width: 100%;
-  }
-}
-
-.confirm-rotation {
-  .modal-content {
-    max-width: 400px !important;
-    border-radius: 12px;
-  }
-
-  .modal-card-head,
-  .modal-card-body,
-  .modal-card-foot {
-    background-color: $white;
-    border: none;
-    display: flex;
-    justify-content: center;
-  }
-
-  .modal-card-foot {
-    .btn {
-      border-radius: 8px;
-      padding: 10px 18px 10px 18px;
-      width: 170px;
-      height: 44px;
-    }
-
-    .cancel-btn {
-      &:hover {
-        background-color: $grey-hover;
-        border-color: $grey-outline;
-      }
-    }
-
-    .confirm-btn {
-      background-color: $red;
-      color: $white;
-      border: none;
-    }
+  .modal-close {
+    display: none !important;
   }
 }
 
@@ -420,34 +306,6 @@ button.is-primary {
     width: 100%;
     display: flex;
     justify-content: center;
-  }
-}
-
-.rejected-labels {
-  .card-header {
-    box-shadow: none !important;
-  }
-
-  .icon {
-    svg {
-      width: 13.37px;
-      height: 13.37px;
-    }
-  }
-
-  .label-list {
-    .field {
-      .tags {
-        .tag {
-          background-color: $detail;
-          color: $dark-blue;
-
-          &.is-delete {
-            color: $grey;
-          }
-        }
-      }
-    }
   }
 }
 

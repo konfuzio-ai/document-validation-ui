@@ -63,7 +63,6 @@
       .label-property-name {
         margin-left: 16px;
         padding: 10px 0;
-
       }
 
       .label-property-text {
@@ -83,7 +82,6 @@
       }
 
       .label-property-annotation {
-
         .annotation,
         .empty-annotation {
           display: flex;
@@ -133,7 +131,6 @@
         width: 32px;
         height: 32px;
       }
-
     }
 
     .empty-annotation {
@@ -221,12 +218,10 @@
 .rejected-labels {
   margin-top: 20px;
 
-  .collapse {
-    &.card {
-      box-shadow: none;
-    }
-
+  .collapse-trigger {
     .card-header {
+      box-shadow: none !important;
+
       .card-header-title {
         font-weight: 400;
         font-size: 14px;
@@ -236,9 +231,18 @@
 
       .card-header-icon {
         padding-right: 5px;
+
+        .icon {
+          svg {
+            width: 13.37px !important;
+            height: 13.37px !important;
+          }
+        }
       }
     }
+  }
 
+  .collapse-content {
     .card-content {
       padding: 10px;
 
@@ -246,6 +250,21 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 10px;
+
+        .label-list {
+          .field {
+            .tags {
+              .tag {
+                background-color: $detail;
+                color: $dark-blue;
+
+                &.is-delete {
+                  color: $grey;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
