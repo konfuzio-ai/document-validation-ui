@@ -14,133 +14,187 @@
     }
   }
 
-  .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .handover-collapse {
+    position: absolute !important;
+    right: 20px;
+    top: 52px;
+    max-width: 435px;
+    max-height: 264px;
+    margin: 0;
 
-  .header {
-    border-bottom: 1px solid $sublte-grey;
-    padding: 15px;
+    .collapse-content {
+      .notification {
+        background-color: $white;
+        border: 1px solid $sublte-grey;
+        box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
+          0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+        padding: 0;
 
-    .title {
-      margin: 0 !important;
-      color: $dark-blue;
-      font-size: 14px;
-    }
-  }
+        .content {
+          .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
 
-  .input-container {
-    .input-section {
-      margin-top: 7px;
-      padding-left: 15px;
-      padding-right: 15px;
-      font-size: 14px;
+          .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid $sublte-grey;
+            padding: 15px;
 
-      ::placeholder {
-        font-size: 14px;
-        font-weight: 400;
-        color: $grey;
-      }
+            .title {
+              margin: 0 !important;
+              color: $dark-blue;
+              font-size: 14px;
+            }
+          }
 
-      .handover-btn-menu {
-        height: 40px;
-        width: 97px;
-        background-color: $dark-blue;
-        color: $white;
-        font-size: 14px;
-        border: 0;
+          .input-container {
+            .input-section {
+              margin-top: 7px;
+              padding-left: 15px;
+              padding-right: 15px;
+              font-size: 14px;
 
-        &:focus {
-          box-shadow: none;
-          border: 0;
+              ::placeholder {
+                font-size: 14px;
+                font-weight: 400;
+                color: $grey;
+              }
+
+              .handover-btn-menu {
+                height: 40px;
+                width: 97px;
+                background-color: $dark-blue;
+                color: $white;
+                font-size: 14px;
+                border: 0;
+
+                &:focus {
+                  box-shadow: none;
+                  border: 0;
+                }
+              }
+
+              .field {
+                margin: 0 !important;
+                padding-right: 8px;
+
+                .validation-message {
+                  display: none;
+                }
+
+                .control {
+                  width: 298px;
+                  height: 40px;
+
+                  .input {
+                    border-color: $subtlest-grey;
+                    font-size: 14px;
+                    height: 40px;
+
+                    &:focus {
+                      box-shadow: none !important;
+                    }
+                  }
+                }
+              }
+
+              .loading-overlay.is-active {
+                position: relative;
+                height: 40px;
+                width: 97px;
+                border-radius: 4px;
+                background-color: $dark-blue;
+
+                .spinner {
+                  color: $white;
+                }
+              }
+            }
+
+            &.invalid {
+              .input {
+                border-color: $red !important;
+              }
+            }
+
+            .invalid-email-msg {
+              color: $lighter-red;
+              margin: 8px 15px 20px 15px;
+            }
+          }
+
+          .members-section {
+            margin: 15px;
+            margin-right: 0;
+
+            .members-title {
+              display: flex !important;
+              margin-bottom: 10px;
+
+              .title {
+                color: $grey !important;
+                font-size: 12px !important;
+                font-weight: 400 !important;
+                margin-bottom: 0 !important;
+              }
+            }
+
+            .member-list {
+              max-height: 110px;
+              padding-right: 15px;
+
+              &.scroll {
+                overflow: auto;
+              }
+
+              .member {
+                padding-bottom: 7px;
+
+                .email {
+                  margin-bottom: 0 !important;
+                  color: $grey-darker;
+                }
+
+                .select-btn {
+                  height: 32px;
+                  color: $dark-blue;
+                  font-weight: 500;
+                  font-size: 14px;
+
+                  &:hover {
+                    background-color: $grey-hover;
+                  }
+
+                  &:focus {
+                    box-shadow: none;
+                    border-color: $grey-outline;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
 
-    .invalid-email-msg {
-      color: $lighter-red;
-      margin: 8px 15px 20px 15px;
-    }
-  }
-
-  .members-section {
-    margin: 15px;
-    margin-right: 0;
-
-    .members-title {
-      display: flex !important;
-      margin-bottom: 10px;
-
-      .title {
-        color: $grey !important;
-        font-size: 12px !important;
-        font-weight: 400 !important;
-        margin-bottom: 0 !important;
-      }
-    }
-
-    .member-list {
-      max-height: 110px;
-      padding-right: 15px;
-
-      &.scroll {
-        overflow: auto;
-      }
-
-      .member {
-        padding-bottom: 7px;
-      }
-    }
-
-    .email {
-      margin-bottom: 0 !important;
-      color: $grey-darker;
-    }
-
-    .select-btn {
-      height: 32px;
-      color: $dark-blue;
-      font-weight: 500;
-      font-size: 14px;
-
-      &:hover {
-        background-color: $grey-hover;
-      }
-
-      &:focus {
-        box-shadow: none;
-        border-color: $grey-outline;
-      }
-    }
-  }
-
-  .close-icon-container {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    .close-btn {
-      &.error-icon {
-        color: $grey;
-      }
-
-      &.snackbar-icon {
-        color: $white;
-      }
-    }
-  }
-
-  .error-message {
-    margin-right: 15px;
-    margin-left: 15px;
-    margin-top: 7px;
-
-    .message-container {
+    .close-icon-container {
+      cursor: pointer;
       display: flex;
-      width: 100%;
-      justify-content: center;
+      align-items: center;
+
+      .close-btn {
+        &.error-icon {
+          color: $grey;
+        }
+
+        &.snackbar-icon {
+          color: $white;
+        }
+      }
     }
   }
 }
