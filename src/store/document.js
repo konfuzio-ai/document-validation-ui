@@ -14,6 +14,7 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
+  editMode: false,
   editAnnotation: {
     id: null,
     index: 0
@@ -28,6 +29,84 @@ const state = {
 };
 
 const getters = {
+  /**
+   * Get annotation sets grouped if there's one with the multiple
+   * annotations property enabled.
+   */
+  groupedAnnotationSets: state => {
+    if (state.annotationSets) {
+      const tempAnnotationSets = [];
+      state.annotationSets.map(annotationSet => {
+        // don't add empty label sets
+        if (annotationSet.labels.length > 0) {
+          // check if the same label set already exists in the array
+          const existingAnnotationSet = tempAnnotationSets.find(
+            el => el.label_set.id === annotationSet.label_set.id
+          );
+          if (existingAnnotationSet && existingAnnotationSet.group) {
+            existingAnnotationSet.group.push({
+              id: annotationSet.id,
+              label_set: annotationSet.label_set,
+              labels: annotationSet.labels
+            });
+          } else {
+            // add it to the annotation set array
+            annotationSet.group = [
+              {
+                id: annotationSet.id,
+                label_set: annotationSet.label_set,
+                labels: annotationSet.labels
+              }
+            ];
+            tempAnnotationSets.push(annotationSet);
+          }
+        }
+      });
+      return tempAnnotationSets;
+    }
+    return null;
+  },
+
+  /**
+   * Get annotations from the given annotation set, if there's none
+   * return null to show the empty state
+   */
+  annotationsInAnnotationSet: state => annotationSet => {
+    if (annotationSet) {
+      const annotations = [];
+      annotationSet.labels.map(label => {
+        //add empty labels
+        if (label.annotations.length === 0) {
+          annotations.push({
+            label_name: label.name,
+            label_description: label.description,
+            label_id: label.id,
+            // TODO: to be removed on next version
+            isOpen: false
+          });
+        } else {
+          label.annotations.map(annotation => {
+            // check if annotation is not in deleted state
+            if (
+              !(annotation.revised === true && annotation.is_correct === false)
+            ) {
+              annotations.push({
+                ...annotation,
+                label_name: label.name,
+                label_description: label.description,
+                label_id: label.id,
+                // TODO: to be removed on next version
+                isOpen: false
+              });
+            }
+          });
+        }
+      });
+      return annotations;
+    }
+    return null;
+  },
+
   /**
    * All annotations with required information
    */
@@ -109,6 +188,9 @@ const actions = {
   setDocId: ({ commit }, id) => {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
+  },
+  setEditMode: ({ commit }, enabled) => {
+    commit("SET_EDIT_MODE", enabled);
   },
   setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
@@ -361,6 +443,9 @@ const mutations = {
   },
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
+  },
+  SET_EDIT_MODE: (state, enabled) => {
+    state.editMode = enabled;
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);

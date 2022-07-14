@@ -4,6 +4,9 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
+        <div class="edit icon" @click="handleEditMode">
+          <EditDocIcon />
+        </div>
         <div class="rotate icon" @click="handleModal">
           <RotateIcon />
         </div>
@@ -35,6 +38,7 @@
 
 <script>
 import { mapState } from "vuex";
+import EditDocIcon from "../../assets/images/EditDocIcon";
 import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
@@ -44,6 +48,7 @@ import RotatePagesModal from "./RotatePagesModal";
 export default {
   name: "Toolbar",
   components: {
+    EditDocIcon,
     RotateIcon,
     FitZoomIcon,
     PlusIcon,
@@ -108,6 +113,9 @@ export default {
     },
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
+    },
+    handleEditMode() {
+      this.$store.dispatch("document/setEditMode", true);
     }
   }
 };

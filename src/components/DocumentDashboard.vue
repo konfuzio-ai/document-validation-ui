@@ -4,12 +4,13 @@
   <div class="dashboard">
     <div class="dashboard-top-bar">
       <DocumentTopBar
+        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
     </div>
     <div class="dashboard-viewer">
-      <DocumentThumbnails ref="documentPages" />
+      <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
         ref="scrollingDocument"
@@ -42,6 +43,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapState } from "vuex";
 import {
@@ -55,6 +57,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
+import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
@@ -73,7 +76,8 @@ export default {
     DocumentAnnotations,
     DocumentsList,
     ErrorMessage,
-    NotOptimizedViewportModal
+    NotOptimizedViewportModal,
+    DocumentEdit
   },
   computed: {
     defaultViewport() {
@@ -92,7 +96,9 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"])
+    ...mapState("document", ["pages", "editMode"]),
+    ...mapGetters("document", ["pageCount"]),
+    ...mapGetters("display", ["visiblePageRange"])
   },
   created() {
     window.addEventListener("resize", this.fitWidth);
