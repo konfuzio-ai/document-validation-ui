@@ -189,11 +189,8 @@ const actions = {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setEditMode: ({ commit }, option) => {
-    commit("SET_EDIT_MODE", option);
-  },
-  disableEditMode: ({ commit }) => {
-    commit("SET_EDIT_MODE", null);
+  setEditMode: ({ commit }, enabled) => {
+    commit("SET_EDIT_MODE", enabled);
   },
   setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
@@ -447,8 +444,8 @@ const mutations = {
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
   },
-  SET_EDIT_MODE: (state, option) => {
-    state.editMode = option;
+  SET_EDIT_MODE: (state, enabled) => {
+    state.editMode = enabled;
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);

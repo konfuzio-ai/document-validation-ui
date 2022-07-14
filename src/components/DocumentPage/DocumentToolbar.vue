@@ -111,6 +111,18 @@ export default {
     },
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
+    },
+    handleEditMode() {
+      this.$store.dispatch("document/setEditMode", true);
+    }
+  },
+  watch: {
+    selectedDocument(newValue) {
+      // check if the document has a dataset status of 'Training' or 'Test'
+      // and if so disable the option to edit the document
+      if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
+        this.disabled = true;
+      }
     }
   },
   watch: {
