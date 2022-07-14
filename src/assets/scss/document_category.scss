@@ -2,6 +2,7 @@
 
 .category-chooser {
   cursor: pointer;
+  border-right: 1px solid $detail;
 
   .category-drop-down {
     display: flex;

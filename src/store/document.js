@@ -14,7 +14,7 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
-  editMode: false,
+  editMode: true,
 };
 
 const getters = {

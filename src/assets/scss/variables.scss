@@ -194,7 +194,6 @@ button.is-primary {
 
 .dropdown {
   height: 100%;
-  border-right: 1px solid $detail;
 
   &:hover {
     background-color: $background;
@@ -202,6 +201,20 @@ button.is-primary {
 
   .dropdown-menu {
     padding-top: 0px;
+  }
+
+  &.dropdown-menu-animation {
+    a.navbar-item {
+      color: $grey-darkest;
+      font-size: 16px;
+      line-height: 24px;
+
+      &:hover {
+        color: $primary;
+        background: none;
+        border: none;
+      }
+    }
   }
 }
 

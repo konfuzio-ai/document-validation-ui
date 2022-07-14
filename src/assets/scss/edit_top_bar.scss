@@ -5,4 +5,22 @@
     justify-content: space-between;
     flex-direction: row;
     padding: 16px;
+
+    .dropdown-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .option-icon {
+            color: $primary;
+            margin-right: 8px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .caret {
+            display: flex;
+            margin-left: 8px;
+        }
+    }
 }
