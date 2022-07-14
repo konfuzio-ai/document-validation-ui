@@ -4,12 +4,13 @@
   <div class="dashboard">
     <div class="dashboard-top-bar">
       <DocumentTopBar
+        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
     </div>
     <div class="dashboard-viewer">
-      <DocumentThumbnails ref="documentPages" />
+      <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
         v-bind="{ pages, pageCount }"
@@ -36,7 +37,8 @@
           />
         </keep-alive>
       </ScrollingDocument>
-      <DocumentLabelSets ref="labelSets" />
+      <DocumentLabelSets ref="labelSets" v-if="!editMode" />
+      <DocumentEdit ref="editView" v-else />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -66,6 +68,7 @@ import { DocumentTopBar } from "./DocumentTopBar";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentLabelSets } from "./DocumentAnnotations";
+import { DocumentEdit } from "./DocumentEdit";
 import { DocumentsList } from "./DocumentsList";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
@@ -85,7 +88,8 @@ export default {
     DocumentLabelSets,
     DocumentsList,
     ErrorMessage,
-    NotOptimizedViewportModal
+    NotOptimizedViewportModal,
+    DocumentEdit
   },
   computed: {
     defaultViewport() {
@@ -104,7 +108,7 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"]),
+    ...mapState("document", ["pages", "editMode"]),
     ...mapGetters("document", ["pageCount"]),
     ...mapGetters("display", ["visiblePageRange"])
   },
