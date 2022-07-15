@@ -89,11 +89,13 @@ export default {
     }
   },
   mounted() {
-    this.categories.map(category => {
-      if (category.project === this.selectedDocument.project) {
-        this.currentProjectCategories.push(category);
-      }
-    });
+    if (this.categories) {
+      this.categories.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          this.currentProjectCategories.push(category);
+        }
+      });
+    }
   }
 };
 </script>
