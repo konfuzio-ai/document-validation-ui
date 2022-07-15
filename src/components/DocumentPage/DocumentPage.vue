@@ -23,7 +23,7 @@
           }"
         />
 
-        <template v-if="pageInVisibleRange">
+        <template v-if="pageInVisibleRange && !editMode">
           <v-group ref="entities" v-if="showEntities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
@@ -261,8 +261,13 @@ export default {
       "bboxToRect",
       "clientToBbox"
     ]),
-    ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"])
+    ...mapGetters("document", [
+      "annotationsForPage",
+      "pageCount",
+      "annotationsInAnnotationSet",
+      "isAnnotationInEditMode"
+    ]),
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {

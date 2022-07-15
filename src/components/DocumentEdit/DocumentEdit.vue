@@ -8,7 +8,7 @@
         v-bind:key="index"
         class="image-section"
       >
-        <div class="image-container">
+        <div class="image-container" @click="changePage(page.number)">
           <div class="thumbnail">
             <ServerImage
               class="img-thumbnail"
@@ -16,14 +16,18 @@
             />
             <div class="icon-container">
               <div class="action-icon">
-                <b-icon icon="eye" class="is-small" />
+                <b-icon
+                  icon="eye"
+                  class="is-small"
+                  @click="changePage(page.number)"
+                />
               </div>
               <div class="action-icon" v-if="editMode === editOptions.rotate">
                 <b-icon icon="arrow-rotate-left" class="is-small" />
               </div>
             </div>
           </div>
-          <span class="page-number">{{ index + 1 }}</span>
+          <span class="page-number">{{ page.number }}</span>
         </div>
       </div>
     </div>
@@ -44,8 +48,18 @@ export default {
     ServerImage
   },
   computed: {
-    ...mapState("document", ["pages", "editMode", "editOptions"])
+    ...mapState("document", ["pages", "editMode", "editOptions"]),
+    ...mapState("display", ["currentPage"])
   },
-  methods: {}
+  methods: {
+    changePage(pageNumber) {
+      if (pageNumber != this.currentPage && !this.filter) {
+        this.$store.dispatch(
+          "display/updateCurrentPage",
+          parseInt(pageNumber, 10)
+        );
+      }
+    }
+  }
 };
 </script>

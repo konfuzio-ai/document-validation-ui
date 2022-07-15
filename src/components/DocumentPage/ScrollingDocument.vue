@@ -21,7 +21,7 @@
         :scroll="scroll"
       />
     </div>
-    <Toolbar />
+    <Toolbar v-if="!editMode" />
   </div>
 </template>
 
@@ -55,7 +55,12 @@ export default {
   },
 
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "pages"])
+    pagesLength() {
+      return this.$store.getters["document/pageCount"];
+    },
+    ...mapState("display", ["currentPage"]),
+    ...mapGetters("selection", ["isSelectionEnabled"]),
+    ...mapState("document", ["recalculatingAnnotations"])
   },
 
   methods: {
