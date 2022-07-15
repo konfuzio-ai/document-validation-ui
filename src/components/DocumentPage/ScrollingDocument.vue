@@ -28,7 +28,7 @@
         </div>
       </ScrollingPage>
     </div>
-    <Toolbar />
+    <Toolbar v-if="!editMode" />
   </div>
 </template>
 
@@ -75,7 +75,7 @@ export default {
     },
     ...mapState("display", ["currentPage"]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapState("document", ["recalculatingAnnotations"])
+    ...mapState("document", ["recalculatingAnnotations", "editMode"])
   },
 
   methods: {

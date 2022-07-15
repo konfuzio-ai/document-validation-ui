@@ -22,7 +22,7 @@
           }"
         />
 
-        <template v-if="pageInVisibleRange">
+        <template v-if="pageInVisibleRange && !editMode">
           <template v-for="annotation in pageAnnotations">
             <v-rect
               v-for="(bbox, index) in annotation.span.filter(
@@ -192,7 +192,8 @@ export default {
     ...mapState("document", [
       "documentFocusedAnnotation",
       "activeAnnotationSet",
-      "recalculatingAnnotations"
+      "recalculatingAnnotations",
+      "editMode"
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
