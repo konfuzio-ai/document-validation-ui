@@ -316,12 +316,6 @@ export default {
   mounted() {
     this.setPages();
   },
-  updated() {
-    // If there are many pages, we want to be able to scroll
-    // in the page grid
-    if (this.pages.length > 8) {
-      this.scroll = true;
-    }
-  }
+  methods: {}
 };
 </script>
