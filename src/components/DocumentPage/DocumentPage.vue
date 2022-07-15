@@ -23,7 +23,7 @@
           }"
         />
 
-        <template v-if="pageInVisibleRange">
+        <template v-if="pageInVisibleRange && !editMode">
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
@@ -208,8 +208,13 @@ export default {
       "clientToBbox",
       "imageScale"
     ]),
-    ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"])
+    ...mapGetters("document", [
+      "annotationsForPage",
+      "pageCount",
+      "annotationsInAnnotationSet",
+      "isAnnotationInEditMode"
+    ]),
+    ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
   methods: {
