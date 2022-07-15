@@ -24,7 +24,7 @@
     </template>
 
     <b-dropdown-item
-      v-for="category in categories"
+      v-for="category in currentProjectCategories"
       v-bind:key="category.id"
       aria-role="listitem"
       v-on:click="handleChangeCategory(category)"
@@ -44,6 +44,7 @@ export default {
   name: "DocumentCategory",
   data() {
     return {
+      currentProjectCategories: [],
       categoryError: false
     };
   },
@@ -85,6 +86,15 @@ export default {
             this.$store.dispatch("category/fetchDocumentList");
           }
         });
+    }
+  },
+  mounted() {
+    if (this.categories) {
+      this.categories.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          this.currentProjectCategories.push(category);
+        }
+      });
     }
   }
 };
