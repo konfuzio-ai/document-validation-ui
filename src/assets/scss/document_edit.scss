@@ -3,4 +3,81 @@
 .document-edit {
     flex: 1;
     background-color: $background;
+    padding: 16px;
+
+    .document-grid {
+        padding: 42px;
+        display: flex;
+        flex-direction: row;
+        gap: 74px;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .image-section {
+            width: 138px;
+            height: 138px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                background-color: rgba(223, 224, 228, 0.3);
+            }
+
+            .image-container {
+                width: fit-content;
+                display: flex;
+                flex-direction: column;
+
+                .thumbnail {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start;
+
+                    &:hover {
+                        .icon-container {
+                            display: flex;
+                        }
+                    }
+
+                    .icon-container {
+                        position: absolute;
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 6px;
+                        display: none;
+
+                        .action-icon {
+                            border-radius: 60px;
+                            background-color: $grey-darkest;
+                            width: 32px;
+                            height: 32px;
+                            color: $white;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .page-number {
+                    margin-top: 8px;
+                    color: $text-lighter;
+                    font-size: 12px;
+                    line-height: 12px;
+                    font-weight: 400;
+                    align-self: center;
+                }
+
+
+            }
+        }
+
+
+    }
 }
