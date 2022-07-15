@@ -4,39 +4,71 @@
     <b-dropdown>
       <template #trigger>
         <a class="navbar-item dropdown-option" role="button">
-          <b-icon :icon="optionIcon" class="option-icon" />
-          <span>Categories</span>
+          <b-icon :icon="getIcon(editMode)" class="option-icon" />
+          <span>{{ $t(editMode) }}</span>
           <div class="caret">
             <CaretDown />
           </div>
         </a>
       </template>
       <b-dropdown-item
-        v-for="item of filteredData"
-        :key="item"
+        v-for="option of Object.values(editOptions)"
+        :key="option"
         aria-role="listitem"
-        >{{ item }}</b-dropdown-item
-      >
+        class="option-item"
+        @click="handleDropdownClick(option)"
+        ><b-icon :icon="getIcon(option)" class="option-icon" />
+        <span>{{ $t(option) }}</span>
+        <b-icon
+          icon="check"
+          class="option-icon check"
+          v-if="option === editMode"
+        />
+      </b-dropdown-item>
     </b-dropdown>
     <div class="buttons">
-      <b-button label="Test" type="is-default" />
-      <b-button label="Test" type="is-primary" :disabled="true" />
+      <b-button :label="$t('cancel')" type="is-default" @click="handleCancel" />
+      <b-button
+        :label="$t('next')"
+        type="is-primary"
+        :disabled="true"
+        @click="handleNext"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import CaretDown from "../../assets/images/TopBarCaretDownImg.vue";
+import { mapState } from "vuex";
+import CaretDown from "../../assets/images/TopBarCaretDownImg";
+
 export default {
   name: "EditTopBar",
   components: {
     CaretDown
   },
-  data() {
-    return {
-      optionIcon: "xmark"
-    };
+  computed: {
+    ...mapState("document", ["editMode", "editOptions"])
   },
-  methods: {}
+  methods: {
+    getIcon(option) {
+      if (option === this.editOptions.reorder) {
+        return "repeat";
+      } else if (option === this.editOptions.rotate) {
+        return "arrow-rotate-left";
+      } else if (option === this.editOptions.split) {
+        return "scissors";
+      } else {
+        return "";
+      }
+    },
+    handleDropdownClick(option) {
+      this.$store.dispatch("document/setEditMode", option);
+    },
+    handleNext() {},
+    handleCancel() {
+      this.$store.dispatch("document/disableEditMode");
+    }
+  }
 };
 </script>

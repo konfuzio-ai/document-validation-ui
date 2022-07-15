@@ -24,7 +24,10 @@ import {
   faCheck,
   faXmark,
   faEllipsisVertical,
-  faUser
+  faUser,
+  faArrowRotateLeft,
+  faScissors,
+  faRepeat
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -40,7 +43,10 @@ library.add(
   faSpinner,
   faXmark,
   faEllipsisVertical,
-  faUser
+  faUser,
+  faArrowRotateLeft,
+  faScissors,
+  faRepeat,
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

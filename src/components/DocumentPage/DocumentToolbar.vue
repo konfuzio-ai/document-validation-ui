@@ -65,7 +65,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("display", ["scale"])
+    ...mapState("display", ["scale"]),
+    ...mapState("document", ["editOptions"])
   },
   methods: {
     handleModal() {
@@ -96,7 +97,7 @@ export default {
       this.$parent.$emit("handle-message", message);
     },
     handleEditMode() {
-      this.$store.dispatch("document/setEditMode", true);
+      this.$store.dispatch("document/setEditMode", this.editOptions.reorder);
     }
   }
 };

@@ -14,7 +14,12 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
-  editMode: true,
+  editMode: null,
+  editOptions: {
+    reorder: 'reorder',
+    rotate: 'rotate',
+    split: 'split'
+  }
 };
 
 const getters = {
@@ -197,8 +202,13 @@ const actions = {
   },
   setEditMode: ({
     commit
-  }, enabled) => {
-    commit("SET_EDIT_MODE", enabled);
+  }, option) => {
+    commit("SET_EDIT_MODE", option);
+  },
+  disableEditMode: ({
+    commit
+  }) => {
+    commit("SET_EDIT_MODE", null);
   },
   setSidebarAnnotationSelected: ({
     commit
@@ -419,8 +429,8 @@ const mutations = {
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
   },
-  SET_EDIT_MODE: (state, enabled) => {
-    state.editMode = enabled;
+  SET_EDIT_MODE: (state, option) => {
+    state.editMode = option;
   },
   SET_ACTIVE_ANNOTATION_SET: (state, annotationSet) => {
     state.activeAnnotationSet = annotationSet;
