@@ -46,6 +46,7 @@
   "rotate_all": "Rotate all",
   "cancel": "Cancel",
   "apply": "Apply",
+  "next": "Next",
   "confirm_rotation": "Are you sure you want to rotate?",
   "rotation_warning": "This action will overwrite any changes you might have made in the document.",
   "rotate": "Yes, rotate",
@@ -55,5 +56,8 @@
   "few_minutes": "This might take a few minutes.",
   "reject_label": "Reject label",
   "rejected": "Rejected",
-  "ann_exists": "An annotation for this label and label set already exists."
+  "ann_exists": "An annotation for this label and label set already exists.",
+  "split": "Split",
+  "reorder": "Reorder",
+  "rotate": "Rotate"
 }

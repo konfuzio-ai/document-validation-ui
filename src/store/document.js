@@ -19,6 +19,11 @@ const state = {
     id: null,
     index: 0
   },
+  editOptions: {
+    reorder: "reorder",
+    rotate: "rotate",
+    split: "split"
+  },
   missingAnnotations: [],
   // TODO: remove this after the reject label endpoint is merged in testing
   showRejectedLabels:
@@ -189,8 +194,11 @@ const actions = {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setEditMode: ({ commit }, enabled) => {
-    commit("SET_EDIT_MODE", enabled);
+  setEditMode: ({ commit }, option) => {
+    commit("SET_EDIT_MODE", option);
+  },
+  disableEditMode: ({ commit }) => {
+    commit("SET_EDIT_MODE", null);
   },
   setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
@@ -444,8 +452,8 @@ const mutations = {
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
   },
-  SET_EDIT_MODE: (state, enabled) => {
-    state.editMode = enabled;
+  SET_EDIT_MODE: (state, option) => {
+    state.editMode = option;
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);

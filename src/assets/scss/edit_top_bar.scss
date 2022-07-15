@@ -11,16 +11,30 @@
         align-items: center;
         justify-content: center;
 
-        .option-icon {
-            color: $primary;
-            margin-right: 8px;
-            width: 14px;
-            height: 14px;
-        }
-
         .caret {
             display: flex;
             margin-left: 8px;
         }
+    }
+
+    .option-icon {
+        color: $primary;
+        margin-right: 8px;
+        width: 14px;
+        height: 14px;
+
+        &.check {
+            margin-left: auto;
+        }
+    }
+
+    .option-item {
+        display: flex;
+        align-items: center;
+        padding-right: 16px;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+        color: $grey-darker;
     }
 }
