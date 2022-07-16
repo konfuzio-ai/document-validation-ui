@@ -27,7 +27,12 @@
       </b-dropdown-item>
     </b-dropdown>
     <div class="buttons">
-      <b-button :label="$t('cancel')" type="is-default" @click="handleCancel" />
+      <b-button
+        :label="$t('cancel')"
+        class="button-cancel"
+        type="is-default"
+        @click="handleCancel"
+      />
       <b-button
         :label="editMode === editOptions.split ? $t('next') : $t('submit')"
         type="is-primary"
