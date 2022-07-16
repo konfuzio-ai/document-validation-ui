@@ -29,7 +29,7 @@
     <div class="buttons">
       <b-button :label="$t('cancel')" type="is-default" @click="handleCancel" />
       <b-button
-        :label="$t('next')"
+        :label="editMode === editOptions.split ? $t('next') : $t('submit')"
         type="is-primary"
         :disabled="true"
         @click="handleNext"
@@ -65,9 +65,19 @@ export default {
     handleDropdownClick(option) {
       this.$store.dispatch("document/setEditMode", option);
     },
-    handleNext() {},
+    handleNext() {
+      if (this.editMode === this.editOptions.split) {
+        // then next view
+      } else if (this.editMode === this.editOptions.rotate) {
+        // handle submit
+      } else if (this.editMode === this.editOptions.reorder) {
+        // handle submit
+      }
+    },
     handleCancel() {
-      this.$store.dispatch("document/disableEditMode");
+      this.$store.dispatch("document/disableEditMode").then(() => {
+        this.$store.dispatch("display/updateFit", "width");
+      });
     }
   }
 };
