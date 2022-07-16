@@ -82,6 +82,7 @@
       }
 
       .label-property-annotation {
+
         .annotation,
         .empty-annotation {
           display: flex;
@@ -227,7 +228,6 @@
       .card-header-icon {
         padding-right: 5px;
 
-        // TODO: review why this isn't working
         .icon {
           svg {
             width: 13.37px !important;
