@@ -46,6 +46,7 @@
   "cancel": "Cancel",
   "apply": "Apply",
   "next": "Next",
+  "submit": "Submit",
   "confirm_rotation": "Are you sure you want to rotate?",
   "rotation_warning": "This action will overwrite any changes you might have made in the document.",
   "rotate": "Yes, rotate",

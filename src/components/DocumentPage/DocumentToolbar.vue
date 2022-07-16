@@ -97,7 +97,11 @@ export default {
       this.$parent.$emit("handle-message", message);
     },
     handleEditMode() {
-      this.$store.dispatch("document/setEditMode", this.editOptions.reorder);
+      this.$store
+        .dispatch("document/setEditMode", this.editOptions.reorder)
+        .then(() => {
+          this.$store.dispatch("display/updateFit", "auto");
+        });
     }
   }
 };

@@ -5,7 +5,11 @@
     overflow: hidden;
     display: flex;
     background: $grey-lighter;
-    height: calc(100vh - 56px);
+    height: calc(100vh - $top-bar-height);
+
+    &.edit-mode {
+      height: calc(100vh);
+    }
 
     .dashboard-document {
       overflow-y: auto;
