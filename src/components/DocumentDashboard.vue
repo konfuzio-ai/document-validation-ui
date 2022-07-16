@@ -9,7 +9,7 @@
         @handle-error="handleError"
       />
     </div>
-    <div class="dashboard-viewer">
+    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
       <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
@@ -125,9 +125,10 @@ export default {
       if (!defaultViewport.width) return 0;
 
       const elementsWidth =
-        this.$refs.documentPages.$el.clientWidth +
-        this.$refs.annotations.$el.clientWidth +
-        1;
+        (this.$refs.editView
+          ? this.$refs.editView.$el.clientWidth
+          : this.$refs.documentPages.$el.clientWidth +
+            this.$refs.labelSets.$el.clientWidth) + 1;
 
       return (
         (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /
