@@ -88,11 +88,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", [
-      "pages",
-      "selectedDocument",
-      "groupedAnnotationSets"
-    ])
+    ...mapState("document", ["pages", "selectedDocument"])
   },
   components: {
     RotateLeftBlack,
@@ -241,12 +237,6 @@ export default {
                   this.selectedDocument.status_data === 2 &&
                   this.selectedDocument.labeling_available === 1
                 ) {
-                  // set to null so DocumentLabelSets can reset it when watching
-                  // the new groupedAnnotationSets
-                  await this.$store.dispatch(
-                    "document/setActiveAnnotationSet",
-                    null
-                  );
                   await this.$store.dispatch("document/fetchAnnotations");
                   await this.$store.dispatch(
                     "document/endRecalculatingAnnotations"

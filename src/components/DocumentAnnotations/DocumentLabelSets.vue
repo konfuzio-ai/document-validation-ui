@@ -24,11 +24,6 @@
           >
             <a v-on:click="onAnnotationSetClick(annotationSet)"
               >{{ annotationSet.label_set.name }}
-              <span class="label-counter"
-                >{{ perfectConfidenceTotalInAnnotationSet(annotationSet) }}/{{
-                  totalAnnotationsInAnnotationSet(annotationSet)
-                }}</span
-              >
             </a>
           </li>
         </ul>
@@ -65,12 +60,7 @@ import ExtractingData from "./ExtractingData";
 export default {
   components: { DocumentLabels, EmptyState, ExtractingData },
   computed: {
-    ...mapGetters("document", {
-      totalAnnotationsInAnnotationSet: "totalAnnotationsInAnnotationSet",
-      perfectConfidenceTotalInAnnotationSet:
-        "perfectConfidenceTotalInAnnotationSet",
-      groupedAnnotationSets: "groupedAnnotationSets"
-    }),
+    ...mapGetters("document", ["groupedAnnotationSets"]),
     ...mapState("document", {
       activeAnnotationSet: "activeAnnotationSet",
       sidebarAnnotationSelected: "sidebarAnnotationSelected",

@@ -36,7 +36,7 @@
           />
         </keep-alive>
       </ScrollingDocument>
-      <DocumentLabelSets ref="labelSets" />
+      <DocumentAnnotations ref="annotations" />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -65,7 +65,7 @@ import {
 import { DocumentTopBar } from "./DocumentTopBar";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
-import { DocumentLabelSets } from "./DocumentAnnotations";
+import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
@@ -82,7 +82,7 @@ export default {
     ScrollingDocument,
     DocumentPage,
     DocumentThumbnails,
-    DocumentLabelSets,
+    DocumentAnnotations,
     DocumentsList,
     ErrorMessage,
     NotOptimizedViewportModal
@@ -133,7 +133,7 @@ export default {
 
       const elementsWidth =
         this.$refs.documentPages.$el.clientWidth +
-        this.$refs.labelSets.$el.clientWidth +
+        this.$refs.annotations.$el.clientWidth +
         1;
 
       return (

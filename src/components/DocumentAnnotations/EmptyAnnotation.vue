@@ -45,8 +45,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["activeAnnotationSet"])
+    ...mapState("selection", ["spanSelection", "selectionEnabled"])
   },
   methods: {
     emptyAnnotationId() {
@@ -69,7 +68,7 @@ export default {
       const annotationToCreate = {
         span: [this.spanSelection],
         label: this.annotation.label_id,
-        annotation_set: this.activeAnnotationSet.id,
+        annotation_set: this.annotationSet.id,
         is_correct: true,
         revised: true
       };
@@ -78,13 +77,6 @@ export default {
         .then(annotationCreated => {
           if (annotationCreated) {
             // TODO: temp fix for reloading annotations
-            this.$store.dispatch("document/setActiveAnnotationSet", null);
-            this.$store.dispatch("document/fetchAnnotations").then(() => {
-              this.$store.dispatch(
-                "document/setActiveAnnotationSet",
-                annotationSet
-              );
-            });
           }
         });
       this.cancelEmptyAnnotation();

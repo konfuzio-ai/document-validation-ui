@@ -7,6 +7,10 @@ export {
 }
 from "./DocumentLabels";
 export {
+    default as DocumentAnnotations
+}
+from "./DocumentAnnotations";
+export {
     default as EmptyAnnotation
 }
 from "./EmptyAnnotation";

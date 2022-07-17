@@ -16,7 +16,6 @@
       @paste="event => handlePaste(event, annotation)"
       @input="event => handleInput(event, annotation)"
       @keypress.enter="event => event.preventDefault()"
-      @click="annotation.label_description && onLabelClick(annotation)"
     >
       {{ annotation.span[0].offset_string }}
     </span>
@@ -54,9 +53,6 @@ export default {
       type: Object
     },
     isAnnotationBeingEditedNull: {
-      type: Function
-    },
-    onLabelClick: {
       type: Function
     }
   },
