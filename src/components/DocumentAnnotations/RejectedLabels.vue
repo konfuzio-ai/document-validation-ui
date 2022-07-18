@@ -1,4 +1,8 @@
-<style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>
 
 <template>
   <div class="rejected-label-container">

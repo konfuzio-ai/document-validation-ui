@@ -6,7 +6,6 @@ const state = {
   documentFocusedAnnotation: null,
   loading: true,
   pages: [],
-  activeAnnotationSet: null, //TODO: TO REMOVE
   annotationSets: null,
   annotations: null,
   documentId: process.env.VUE_APP_DOCUMENT_ID,
@@ -80,11 +79,6 @@ const actions = {
     commit
   }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
-  },
-  setActiveAnnotationSet: ({
-    commit
-  }, annotationSet) => {
-    commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
   },
   setAnnotationSets: ({
     commit
@@ -294,9 +288,6 @@ const mutations = {
   },
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
-  },
-  SET_ACTIVE_ANNOTATION_SET: (state, annotationSet) => {
-    state.activeAnnotationSet = annotationSet;
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;

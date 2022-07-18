@@ -1,53 +1,30 @@
 @import "./imports.scss";
 
-.label-info {
+.labels-list {
   font-family: "Inter", sans-serif;
   overflow: auto;
   flex: 1;
-  padding: 0 16px;
+  background-color: $white;
+  padding-bottom: 16px;
 
-  .label-title {
-    font-weight: 600;
-    font-size: 18px;
-    color: $text;
-    margin-top: 24px;
-  }
-
-  .label-description {
+  .label-set-name {
+    margin: 24px 16px 8px 16px;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: $text;
-    margin: 24px 0px;
-  }
-
-  .label-group {
-    cursor: default;
-
-    .label-group-name {
-      margin-top: 24px;
-      margin-bottom: 8px;
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 20px;
-      color: $text;
-    }
   }
 
   .label-properties {
     width: 100%;
+    padding: 0px 20px;
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
-    border-bottom: 1px solid $background;
+    box-shadow: 0px 1px 0px $grey-lightest;
     transition: background-color 0.2s ease-out;
     display: flex;
     align-items: flex-start;
-    z-index: 999999;
-
-    &:last-child {
-      border-bottom: none;
-    }
 
     &:hover,
     &.selected {
@@ -82,6 +59,7 @@
       }
 
       .label-property-annotation {
+
         .annotation,
         .empty-annotation {
           display: flex;

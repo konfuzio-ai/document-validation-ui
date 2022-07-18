@@ -1,13 +1,23 @@
-<style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>
 <template>
-  <div ref="annotationsList" class="label-info">
+  <div ref="annotationsList" class="labels-list">
     <div v-if="!recalculatingAnnotations">
       <div class="label-group">
         <div
           v-for="(annotationSet, indexGroup) in annotationSets"
           v-bind:key="indexGroup"
         >
-          <div class="label-set-name">{{ annotationSet.label_set.name }}</div>
+          <div class="label-set-name">
+            {{
+              `${annotationSet.label_set.name} ${getNumberOfAnnotationSetGroup(
+                annotationSet
+              )}`
+            }}
+          </div>
           <div v-for="label in annotationSet.labels" v-bind:key="label.id">
             <div
               v-for="(annotation, index) in label.annotations"
@@ -123,7 +133,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
@@ -196,6 +206,24 @@ export default {
       } else {
         return this.annBeingEdited.id;
       }
+    },
+    getNumberOfAnnotationSetGroup(annotationSet) {
+      // This method checks if theres a group of annotation sets and add an index number to them
+      let found = false;
+      let value = 0;
+      let index = 0;
+      this.annotationSets.map(annotationSetTemp => {
+        if (
+          annotationSetTemp.label_set.name === annotationSet.label_set.name &&
+          annotationSetTemp.id !== annotationSet.id
+        ) {
+          found = true;
+          index++;
+        } else if (annotationSetTemp.id === annotationSet.id) {
+          value = index;
+        }
+      });
+      return found ? `${value + 1}` : "";
     },
     handleError(value) {
       this.showError = value;
