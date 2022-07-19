@@ -4,10 +4,13 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
-        <div class="edit icon" @click="handleEditMode">
-          <EditDocIcon />
+        <div class="edit icon" @click="handleReorder">
+          <ReorderDocIcon />
         </div>
-        <div class="rotate icon" @click="handleModal">
+        <div class="edit icon" @click="handleSplit">
+          <SplitDocIcon />
+        </div>
+        <div class="rotate icon" @click="handleRotate">
           <RotateIcon />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
@@ -38,7 +41,8 @@
 
 <script>
 import { mapState } from "vuex";
-import EditDocIcon from "../../assets/images/EditDocIcon";
+import ReorderDocIcon from "../../assets/images/ReorderDocIcon";
+import SplitDocIcon from "../../assets/images/SplitDocIcon";
 import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
@@ -48,7 +52,8 @@ import RotatePagesModal from "./RotatePagesModal";
 export default {
   name: "Toolbar",
   components: {
-    EditDocIcon,
+    ReorderDocIcon,
+    SplitDocIcon,
     RotateIcon,
     FitZoomIcon,
     PlusIcon,
@@ -59,9 +64,7 @@ export default {
     return {
       currentPercentage: 100,
       increment: 0.25,
-      toolbarModalOpen: true,
-      isModalActive: false,
-      setRotations: false
+      toolbarModalOpen: true
     };
   },
   computed: {
@@ -69,9 +72,26 @@ export default {
     ...mapState("document", ["editOptions"])
   },
   methods: {
-    handleModal() {
-      this.isModalActive = !this.isModalActive;
-      this.setRotations = !this.setRotations;
+    handleRotate() {
+      this.$store
+        .dispatch("document/setEditMode", this.editOptions.rotate)
+        .then(() => {
+          this.$store.dispatch("display/updateFit", "auto");
+        });
+    },
+    handleSplit() {
+      this.$store
+        .dispatch("document/setEditMode", this.editOptions.split)
+        .then(() => {
+          this.$store.dispatch("display/updateFit", "auto");
+        });
+    },
+    handleReorder() {
+      this.$store
+        .dispatch("document/setEditMode", this.editOptions.reorder)
+        .then(() => {
+          this.$store.dispatch("display/updateFit", "auto");
+        });
     },
     zoomIn() {
       this.updateScale(this.scale + this.increment);
@@ -95,13 +115,6 @@ export default {
     },
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
-    },
-    handleEditMode() {
-      this.$store
-        .dispatch("document/setEditMode", this.editOptions.reorder)
-        .then(() => {
-          this.$store.dispatch("display/updateFit", "auto");
-        });
     }
   }
 };
