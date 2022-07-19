@@ -31,7 +31,7 @@
           </div>
           <div class="edited" v-else-if="edited">
             <b-icon icon="user" size="is-small" />{{
-              `${$t("edited_by")} ${user}`
+              user ? `${$t("edited_by")} ${user}` : $t("edited")
             }}
           </div>
           <div class="accepted" v-else-if="accepted">
