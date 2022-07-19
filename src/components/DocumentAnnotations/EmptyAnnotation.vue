@@ -8,9 +8,9 @@
     <span
       :class="[
         'label-property-value',
-        isEmptyAnnotationEditable(annotation) ? '' : 'label-empty'
+        isEmptyAnnotationEditable() ? '' : 'label-empty'
       ]"
-      :contenteditable="isEmptyAnnotationEditable(annotation)"
+      :contenteditable="isEmptyAnnotationEditable()"
       @click="event => handleEditEmptyAnnotation(event)"
       ref="emptyAnnotation"
     >
@@ -22,6 +22,7 @@
       :cancelBtn="cancelBtn"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
+      :isLoading="isLoading"
     />
   </div>
 </template>
@@ -36,12 +37,13 @@ export default {
   data() {
     return {
       saveBtn: true,
-      cancelBtn: true
+      cancelBtn: true,
+      isLoading: false
     };
   },
   components: { ActionButtons },
   props: {
-    annotation: {
+    label: {
       required: true
     },
     annotationSet: {
@@ -53,7 +55,7 @@ export default {
   },
   methods: {
     emptyAnnotationId() {
-      return `${this.annotationSet.id}_${this.annotation.label_id}`;
+      return `${this.annotationSet.id}_${this.label.id}`;
     },
     handleEditEmptyAnnotation() {
       if (this.selectionEnabled !== this.emptyAnnotationId()) {
@@ -71,16 +73,23 @@ export default {
 
       const annotationToCreate = {
         span: [this.spanSelection],
-        label: this.annotation.label_id,
+        label: this.label.id,
         annotation_set: this.annotationSet.id,
         is_correct: true,
         revised: true
       };
+      this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
-            // TODO: temp fix for reloading annotations
+            this.isLoading = false;
+            this.$emit("handle-data-changes", {
+              annotation: annotationCreated,
+              notEditing: false,
+              edited: false,
+              isLoading: false
+            });
           }
         });
       this.cancelEmptyAnnotation();

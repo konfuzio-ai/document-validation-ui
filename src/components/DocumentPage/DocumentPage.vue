@@ -168,10 +168,25 @@ export default {
     },
 
     /**
-     * Filters the `annotations` object to retrieve just the ones for this page.
+     * A filtered version of `annotations` for the chosen page.
+     * Include annotations that have *at least* one bbox in the page.
+     * If the annotation's bboxes span multiple pages, each DocumentPage receives
+     * it and only shows the ones that match the pageNumber.
      */
     pageAnnotations() {
-      return this.annotationsForPage(this.pageNumber);
+      const annotations = [];
+      if (this.annotations) {
+        this.annotations.map(annotation => {
+          if (
+            annotation.span.find(
+              span => span.page_index + 1 === this.pageNumber
+            )
+          ) {
+            annotations.push(annotation);
+          }
+        });
+      }
+      return annotations;
     },
 
     pageNumber() {
@@ -193,10 +208,10 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
-      "recalculatingAnnotations"
+      "recalculatingAnnotations",
+      "annotations"
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("document", ["annotationsForPage", "pageCount"]),
     ...mapGetters("selection", ["isSelectionEnabled"])
   },
 

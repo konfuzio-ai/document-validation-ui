@@ -7,6 +7,10 @@ export {
 }
 from "./EmptyAnnotation";
 export {
+    default as Label
+}
+from "./Label";
+export {
     default as LabelDetails
 }
 from "./LabelDetails";

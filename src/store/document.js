@@ -39,24 +39,6 @@ const getters = {
     }
     return 0;
   },
-
-  /**
-   * A filtered version of `annotations` for the chosen page.
-   * Include annotations that have *at least* one bbox in the page.
-   * If the annotation's bboxes span multiple pages, each DocumentPage receives
-   * it and only shows the ones that match the pageNumber.
-   */
-  annotationsForPage: state => pageNumber => {
-    const annotations = [];
-    if (state.annotations) {
-      state.annotations.map(annotation => {
-        if (annotation.span.find(span => span.page_index + 1 === pageNumber)) {
-          annotations.push(annotation);
-        }
-      });
-    }
-    return annotations;
-  }
 };
 
 const actions = {
@@ -84,6 +66,11 @@ const actions = {
     commit
   }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
+  },
+  addAnnotation: ({
+    commit
+  }, annotation) => {
+    commit("ADD_ANNOTATION", annotation);
   },
   setAnnotations: ({
     commit
@@ -190,11 +177,13 @@ const actions = {
   },
 
   createAnnotation: ({
-    state
+    state,
+    commit
   }, annotation) => {
     return new Promise(resolve => {
       HTTP.post(`/documents/${state.documentId}/annotations/`, annotation)
         .then(response => {
+          commit("ADD_ANNOTATION", response.data);
           resolve(response.data);
         })
         .catch(error => {
@@ -288,6 +277,9 @@ const mutations = {
   },
   SET_DOC_ID: (state, id) => {
     state.documentId = id;
+  },
+  ADD_ANNOTATION: (state, annotation) => {
+    state.annotations.push(annotation);
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;
