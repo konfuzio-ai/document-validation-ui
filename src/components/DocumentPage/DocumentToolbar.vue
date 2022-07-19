@@ -4,13 +4,13 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
-        <div class="edit icon" @click="handleReorder">
+        <div class="edit-icon icon" @click="handleReorder">
           <ReorderDocIcon />
         </div>
-        <div class="edit icon" @click="handleSplit">
+        <div class="split-icon icon" @click="handleSplit">
           <SplitDocIcon />
         </div>
-        <div class="rotate icon" @click="handleRotate">
+        <div class="rotate-icon icon" @click="handleRotate">
           <RotateIcon />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
