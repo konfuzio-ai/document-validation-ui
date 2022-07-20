@@ -9,6 +9,7 @@
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
         v-bind:key="indexGroup"
+        class="labelset-group"
       >
         <div class="label-set-name">
           {{
