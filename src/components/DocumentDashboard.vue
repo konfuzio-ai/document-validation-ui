@@ -186,7 +186,7 @@ export default {
      */
     onPageJump(scrollTop) {
       const actualScroll = scrollTop;
-      this.$refs.scrollingDocument.$el.scrollTop = actualScroll;
+      this.$refs.scrollingDocument.$el.scrollTop = actualScroll - 60;
     },
 
     handleError(error) {
