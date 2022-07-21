@@ -88,6 +88,11 @@
             color: $grey;
           }
         }
+
+        .buttons-container {
+          display: flex;
+          gap: 8px;
+        }
       }
 
       .label-property-value {

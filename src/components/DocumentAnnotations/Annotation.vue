@@ -5,7 +5,10 @@
 ></style>
 
 <template>
-  <div class="annotation">
+  <div
+    class="annotation"
+    @click="annotation.label_description && onLabelClick(annotation)"
+  >
     <span
       :class="[
         'label-property-value',
@@ -20,9 +23,25 @@
       @paste="event => handlePaste(event, annotation)"
       @input="event => handleInput(event, annotation)"
       @keypress.enter="event => event.preventDefault()"
+      @click="handleEditAnnotation(annotation.id)"
     >
       {{ annotation.span[0].offset_string }}
     </span>
+    <div
+      v-if="annotationClicked.clicked && annotation.id === annotationClicked.id"
+      class="buttons-container"
+    >
+      <ActionButtons
+        :cancelBtn="cancelBtn"
+        :annotationClicked="annotationClicked.clicked"
+        @cancel="deleteExistingAnnotation"
+      />
+      <ActionButtons
+        :saveBtn="saveBtn"
+        :annotationClicked="annotationClicked.clicked"
+        @save="saveAnnotationChanges"
+      />
+    </div>
     <div
       v-if="isLoading"
       :class="[
@@ -37,11 +56,17 @@
 
 <script>
 import ActionButtons from "./ActionButtons";
-
+/**
+ * This component is responsible for managing filled annotations.
+ */
 export default {
   name: "Annotation",
   props: {
     annotation: {
+      type: Object,
+      required: true
+    },
+    annotationClicked: {
       type: Object
     },
     isLoading: {
@@ -64,13 +89,30 @@ export default {
     return {
       oldValue: null,
       newValue: null,
-      showLoading: false
+      showLoading: false,
+      saveBtn: true,
+      cancelBtn: true
     };
   },
   components: {
     ActionButtons
   },
+  computed: {
+    ...mapState("selection", ["spanSelection", "selectionEnabled"])
+  },
   methods: {
+    handleEditAnnotation(id) {
+      this.$emit("handle-data-changes", {
+        annotation: null,
+        notEditing: null,
+        edited: null,
+        isLoading: null,
+        annotationClicked: { id: id, clicked: true }
+      });
+    },
+    deleteExistingAnnotation() {
+      console.log("deleting");
+    },
     isNewValueInOld(event, annotation) {
       this.oldValue = annotation.span[0].offset_string;
       this.newValue = event.target.textContent.trim();
@@ -87,7 +129,8 @@ export default {
         annotation,
         notEditing: false,
         edited: null,
-        isLoading: null
+        isLoading: null,
+        annotationClicked: null
       });
       this.$emit("handle-show-warning", false);
       this.$emit("handle-show-error", false);
@@ -98,13 +141,29 @@ export default {
         this.$emit("handle-show-warning", true);
       }
     },
-    handleBlur(event, annotation) {
+    handleBlur() {
+      this.$emit("handle-data-changes", {
+        annotation: null,
+        notEditing: null,
+        edited: null,
+        isLoading: null,
+        annotationClicked: { id: null, clicked: false }
+      });
+    },
+    saveAnnotationChanges(event, annotation) {
       const spanArray = annotation.span[0];
       const id = annotation.id;
       let updatedString;
 
       // If the user didn't change the value, we don't want to do anything
       if (this.newValue === this.oldValue) {
+        this.$emit("handle-data-changes", {
+          annotation: null,
+          notEditing: null,
+          edited: null,
+          isLoading: null,
+          annotationClicked: { id: null, clicked: false }
+        });
         return;
       }
 
@@ -112,7 +171,8 @@ export default {
         annotation: null,
         notEditing: null,
         edited: null,
-        isLoading: true
+        isLoading: true,
+        annotationClicked: null
       });
 
       if (this.newValue.length === 0) {
@@ -155,19 +215,20 @@ export default {
               annotation: null,
               notEditing: null,
               edited: true,
-              isLoading: null
+              isLoading: null,
+              annotationClicked: null
             });
           } else {
             event.target.textContent = this.oldValue;
             this.newValue = this.oldValue;
-            // Change to emit events
             this.$emit("handle-show-error", true);
             this.$emit("handle-show-warning", false);
             this.$emit("handle-data-changes", {
               annotation: null,
               notEditing: null,
               edited: false,
-              isLoading: null
+              isLoading: null,
+              annotationClicked: null
             });
           }
         })
@@ -177,7 +238,8 @@ export default {
             annotation: null,
             notEditing: null,
             edited: null,
-            isLoading: false
+            isLoading: false,
+            annotationClicked: { id: null, clicked: false }
           });
         });
     }

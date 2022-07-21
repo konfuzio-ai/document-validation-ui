@@ -8,13 +8,14 @@
     <b-button
       v-if="saveBtn"
       icon-left="check"
-      class="is-small"
+      :class="['is-small', annotationClicked && 'annotationSaveBtn']"
       type="is-primary"
       v-on:click="save()"
     />
+
     <b-button
       v-if="cancelBtn"
-      class="is-small"
+      :class="['is-small', annotationClicked && 'annotationCancelBtn']"
       icon-left="xmark"
       v-on:click="cancel()"
     />
@@ -59,6 +60,9 @@ export default {
       type: Boolean
     },
     isLoading: {
+      type: Boolean
+    },
+    annotationClicked: {
       type: Boolean
     }
   },
