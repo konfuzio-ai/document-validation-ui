@@ -12,30 +12,11 @@
       <DocumentThumbnails ref="documentPages" />
       <ScrollingDocument
         class="dashboard-document"
-        v-bind="{ pages, pageCount }"
-        v-slot="{ page, isPageFocused, isElementFocused }"
         ref="scrollingDocument"
-        :enable-page-jump="true"
-        @page-jump="onPageJump"
         @pages-reset="fitWidth"
         @handle-message="handleMessage"
         @handle-error="handleError"
-      >
-        <keep-alive>
-          <DummyPage
-            v-if="!pageInVisibleRange(page.number)"
-            v-bind="{ page, isPageFocused, isElementFocused }"
-          />
-          <DocumentPage
-            v-else
-            v-bind="{
-              page,
-              isPageFocused,
-              isElementFocused
-            }"
-          />
-        </keep-alive>
-      </ScrollingDocument>
+      />
       <DocumentAnnotations ref="annotations" />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
@@ -55,7 +36,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
@@ -104,9 +85,7 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"]),
-    ...mapGetters("document", ["pageCount"]),
-    ...mapGetters("display", ["visiblePageRange"])
+    ...mapState("document", ["pages"])
   },
   created() {
     window.addEventListener("resize", this.fitWidth);
@@ -152,10 +131,6 @@ export default {
       );
     },
 
-    pageInVisibleRange(pageNumber) {
-      return this.visiblePageRange.includes(pageNumber);
-    },
-
     /**
      * Determine an ideal scale using viewport of document's first page, the pixel ratio
      * from the browser and a subjective scale factor based on the screen size.
@@ -178,15 +153,6 @@ export default {
     updateScale(scale, { isOptimal = false } = {}) {
       if (!scale) return;
       this.$store.dispatch("display/updateScale", { scale, isOptimal });
-    },
-
-    /**
-     * Scrolls the ScrollingDocument to the offset specified by scrollTop
-     * (i.e., another page).
-     */
-    onPageJump(scrollTop) {
-      const actualScroll = scrollTop;
-      this.$refs.scrollingDocument.$el.scrollTop = actualScroll - 63;
     },
 
     handleError(error) {

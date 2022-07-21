@@ -1,30 +1,35 @@
+<template>
+  <keep-alive>
+    <DummyPage v-if="!pageInVisibleRange(page.number)" :page="page" />
+    <DocumentPage v-else :page="page" />
+  </keep-alive>
+</template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
+import DocumentPage from "../DocumentPage/DocumentPage";
+import DummyPage from "../DocumentPage/DummyPage";
 
 export default {
   name: "ScrollingPage",
+
+  components: {
+    DocumentPage,
+    DummyPage
+  },
 
   props: {
     page: {
       type: Object,
       required: true
     },
-    focusedPage: {
-      type: Number,
-      default: undefined
-    },
     scrollTop: {
       type: Number,
-      default: 0
+      required: true
     },
     clientHeight: {
       type: Number,
-      default: 0
-    },
-    enablePageJump: {
-      type: Boolean,
-      default: false
+      required: true
     }
   },
 
@@ -38,9 +43,7 @@ export default {
   },
 
   computed: {
-    isPageFocused() {
-      return this.page.number === this.focusedPage;
-    },
+    ...mapGetters("display", ["visiblePageRange"]),
 
     isElementFocused() {
       const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =
@@ -68,13 +71,9 @@ export default {
   },
 
   methods: {
-    jumpToPage() {
-      if (!this.enablePageJump || this.isElementFocused || !this.isPageFocused)
-        return;
-
-      this.$emit("page-jump", this.elementTop);
+    pageInVisibleRange(pageNumber) {
+      return this.visiblePageRange.includes(pageNumber);
     },
-
     updateElementBounds() {
       const { offsetTop, offsetHeight } = this.$el;
       this.elementTop = offsetTop;
@@ -116,7 +115,6 @@ export default {
   watch: {
     scrollTop: "updateElementBounds",
     clientHeight: "updateElementBounds",
-    isPageFocused: "jumpToPage",
 
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
@@ -131,6 +129,16 @@ export default {
           this.previousFocusedAnnotation = focusedCoordinates;
         });
       }
+    },
+    isElementFocused(focused) {
+      if (focused) {
+        this.$store.dispatch("display/updateCurrentPage", this.page.number);
+      }
+    },
+    currentPage(number) {
+      if (this.page.number === number && !this.isElementFocused) {
+        this.$emit("page-jump", this.elementTop);
+      }
     }
   },
 
@@ -140,14 +148,6 @@ export default {
 
   mounted() {
     this.updateElementBounds();
-  },
-
-  render() {
-    const { isPageFocused, isElementFocused } = this;
-    return this.$scopedSlots.default({
-      isPageFocused,
-      isElementFocused
-    });
   }
 };
 </script>
