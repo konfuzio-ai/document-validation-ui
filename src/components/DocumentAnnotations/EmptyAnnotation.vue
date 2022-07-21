@@ -1,12 +1,16 @@
-<style scoped lang="scss" src="../../assets/scss/document_labels.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>
 <template>
   <div class="empty-annotation">
     <span
       :class="[
         'label-property-value',
-        isEmptyAnnotationEditable(annotation) ? '' : 'label-empty'
+        isEmptyAnnotationEditable() ? '' : 'label-empty'
       ]"
-      :contenteditable="isEmptyAnnotationEditable(annotation)"
+      :contenteditable="isEmptyAnnotationEditable()"
       @click="event => handleEditEmptyAnnotation(event)"
       ref="emptyAnnotation"
     >
@@ -18,6 +22,7 @@
       :cancelBtn="cancelBtn"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
+      :isLoading="isLoading"
     />
   </div>
 </template>
@@ -32,12 +37,13 @@ export default {
   data() {
     return {
       saveBtn: true,
-      cancelBtn: true
+      cancelBtn: true,
+      isLoading: false
     };
   },
   components: { ActionButtons },
   props: {
-    annotation: {
+    label: {
       required: true
     },
     annotationSet: {
@@ -45,12 +51,11 @@ export default {
     }
   },
   computed: {
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["activeAnnotationSet"])
+    ...mapState("selection", ["spanSelection", "selectionEnabled"])
   },
   methods: {
     emptyAnnotationId() {
-      return `${this.annotationSet.id}_${this.annotation.label_id}`;
+      return `${this.annotationSet.id}_${this.label.id}`;
     },
     handleEditEmptyAnnotation() {
       if (this.selectionEnabled !== this.emptyAnnotationId()) {
@@ -68,22 +73,22 @@ export default {
 
       const annotationToCreate = {
         span: [this.spanSelection],
-        label: this.annotation.label_id,
-        annotation_set: this.activeAnnotationSet.id,
+        label: this.label.id,
+        annotation_set: this.annotationSet.id,
         is_correct: true,
         revised: true
       };
+      this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
-            // TODO: temp fix for reloading annotations
-            this.$store.dispatch("document/setActiveAnnotationSet", null);
-            this.$store.dispatch("document/fetchAnnotations").then(() => {
-              this.$store.dispatch(
-                "document/setActiveAnnotationSet",
-                annotationSet
-              );
+            this.isLoading = false;
+            this.$emit("handle-data-changes", {
+              annotation: annotationCreated,
+              notEditing: false,
+              edited: false,
+              isLoading: false
             });
           }
         });

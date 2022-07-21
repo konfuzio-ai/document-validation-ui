@@ -29,11 +29,15 @@
                 bbox => bbox.page_index + 1 == pageNumber
               )"
               :config="
-                setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox)
+                annotationRect(
+                  bbox,
+                  documentFocusedAnnotation &&
+                    annotation.id === documentFocusedAnnotation.id
+                )
               "
               :key="'ann' + annotation.id + '-' + index"
               v-on:click="selectLabelAnnotation(annotation)"
-              @mouseenter="onAnnotationHover(annotation, activeAnnotationSet)"
+              @mouseenter="onAnnotationHover(annotation)"
               @mouseleave="onAnnotationHover(null)"
             ></v-rect>
           </template>
@@ -123,9 +127,7 @@ export default {
 
   data() {
     return {
-      image: null,
-      hoveredAnnotation: false,
-      hoveredId: null
+      image: null
     };
   },
 
@@ -166,10 +168,25 @@ export default {
     },
 
     /**
-     * Filters the `annotations` object to retrieve just the ones for this page.
+     * A filtered version of `annotations` for the chosen page.
+     * Include annotations that have *at least* one bbox in the page.
+     * If the annotation's bboxes span multiple pages, each DocumentPage receives
+     * it and only shows the ones that match the pageNumber.
      */
     pageAnnotations() {
-      return this.annotationsForPage(this.pageNumber);
+      const annotations = [];
+      if (this.annotations) {
+        this.annotations.map(annotation => {
+          if (
+            annotation.span.find(
+              span => span.page_index + 1 === this.pageNumber
+            )
+          ) {
+            annotations.push(annotation);
+          }
+        });
+      }
+      return annotations;
     },
 
     pageNumber() {
@@ -191,15 +208,10 @@ export default {
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
-      "activeAnnotationSet",
-      "recalculatingAnnotations"
+      "recalculatingAnnotations",
+      "annotations"
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("document", [
-      "annotationsForPage",
-      "pageCount",
-      "annotationsInAnnotationSet"
-    ]),
     ...mapGetters("selection", ["isSelectionEnabled"])
   },
 
@@ -332,8 +344,6 @@ export default {
       if (this.isPageFocused) return;
 
       this.$store.dispatch("display/updateCurrentPage", this.pageNumber);
-
-      this.annotationsInAnnotationSet(this.activeAnnotations);
     },
 
     /**
@@ -449,59 +459,26 @@ export default {
     /**
      * Builds the konva config object for the annotation.
      */
-
-    setActiveLabelAnnotations(annotation, activeAnnotationSet, bbox) {
-      // wait for activeAnnotationSet to be ready
-      if (!activeAnnotationSet) {
-        return;
-      }
-      const annotationName = annotation.annotation_set.label_set.name;
-      const activeSetName = activeAnnotationSet.group[0].label_set.name;
-
-      let fillColor = window.annotationColor || "yellow";
+    annotationRect(bbox, focused) {
+      let fillColor = "yellow";
       let strokeWidth = 0;
       let strokeColor = "";
 
-      // if activeSet
-      if (annotationName === activeSetName) {
-        fillColor = "#67E9B7";
-      }
-
       // if hovered
-      if (
-        annotation.id === this.hoveredId ||
-        (this.documentFocusedAnnotation &&
-          annotation.id === this.documentFocusedAnnotation.id)
-      ) {
+      if (focused) {
         fillColor = "#67E9B7";
         strokeWidth = 1;
         strokeColor = "black";
       }
-
-      // Highlight with green the annotations from the active label set
-      if (this.hoveredAnnotation || this.documentFocusedAnnotation) {
-        /** If we are hovering over an annotation from the active label set,
-         * we change the style
-         */
-        return {
-          fill: fillColor,
-          globalCompositeOperation: "multiply",
-          strokeWidth: strokeWidth,
-          stroke: strokeColor,
-          name: "annotation",
-          ...this.bboxToRect(bbox)
-        };
-      } else {
-        return {
-          fill: fillColor,
-          globalCompositeOperation: "multiply",
-          hitStrokeWidth: strokeWidth,
-          name: "annotation",
-          ...this.bboxToRect(bbox)
-        };
-      }
+      return {
+        fill: fillColor,
+        globalCompositeOperation: "multiply",
+        strokeWidth: strokeWidth,
+        stroke: strokeColor,
+        name: "annotation",
+        ...this.bboxToRect(bbox)
+      };
     },
-
     /**
      * Builds the konva config object for the annotation label.
      */
@@ -518,52 +495,14 @@ export default {
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
-    onAnnotationHover(annotation, activeAnnotationSet) {
+    onAnnotationHover(annotation) {
       // hack to change the cursor when hovering an annotation
       if (annotation) {
         this.$refs.stage.$el.style.cursor = "pointer";
-
-        // Check if the current annotation belongs to the active set
-        // Get all the labels from all groups in one array
-        const activeAnnotationSetArray = activeAnnotationSet.group.flatMap(
-          group => group.labels
-        );
-
-        let found = false;
-
-        for (let i = 0; i < activeAnnotationSetArray.length; i++) {
-          if (found) {
-            break;
-          }
-
-          if (activeAnnotationSetArray[i].annotations.length === 0) {
-            continue;
-          } else {
-            // We loop over the existing annotations:
-            for (
-              let j = 0;
-              j < activeAnnotationSetArray[i].annotations.length;
-              j++
-            ) {
-              if (
-                annotation.id === activeAnnotationSetArray[i].annotations[j].id
-              ) {
-                this.hoveredAnnotation = true;
-                this.hoveredId = activeAnnotationSetArray[i].annotations[j].id;
-                found = true;
-
-                // Highlight the active annotation on the sidebar on hover
-                this.selectLabelAnnotation(annotation);
-              }
-            }
-          }
-        }
       } else {
         this.$refs.stage.$el.style.cursor = this.isSelectionEnabled
           ? "crosshair"
           : "default";
-        this.hoveredAnnotation = false;
-        this.hoveredId = null;
         // Set the id back to null so that the annotation doesn't stay selected
         this.$store.dispatch(
           "document/setDocumentFocusedAnnotation",

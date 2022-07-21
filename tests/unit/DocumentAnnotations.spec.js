@@ -2,8 +2,9 @@ import {
   mount
 } from "@vue/test-utils";
 import {
-  DocumentLabelSets,
-  DocumentLabels,
+  DocumentAnnotations,
+  Label,
+  EmptyAnnotation
 } from "../../src/components/DocumentAnnotations";
 import store from "../../src/store";
 
@@ -19,51 +20,45 @@ describe("Document Annotations Component", () => {
       ),
     ]);
   });
-  it("sidebar has tabs for label sets", () => {
-    const wrapper = mount(DocumentLabelSets, {
+  it("sidebar has group of label sets", () => {
+    const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
         $t
       },
     });
-    expect(wrapper.findAll(".label-tab").length).toBeGreaterThan(0);
+    expect(wrapper.findAll(".labelset-group").length).toBeGreaterThan(0);
   });
 
-  it("sidebar has first tab active", async () => {
-    const wrapper = mount(DocumentLabelSets, {
+  it("label set name appears", () => {
+    const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
         $t
       },
     });
-    await store.dispatch(
-      "document/setActiveAnnotationSet",
-      store.state.document.annotationSets[0]
-    );
-    expect(wrapper.findAll(".label-tab").at(0).classes()).toContain(
-      "is-active"
-    );
+    expect(wrapper.findAll(".label-set-name").at(2).text()).toContain(store.state.document.annotationSets[1].label_set.name);
   });
 
-  it("sidebar has label list from the second label set", async () => {
-    const wrapper = mount(DocumentLabels, {
+  it("label name appears", () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+
+    const wrapper = mount(Label, {
       store,
       mocks: {
         $t
       },
+      propsData: {
+        annotationSet,
+        label
+      }
     });
-
-    const annotationSet = store.state.document.annotationSets[1];
-
-    await store.dispatch("document/setActiveAnnotationSet", annotationSet);
-
-    expect(wrapper.findAll(".label-properties").length).toBe(
-      store.getters["document/totalAnnotationsInAnnotationSet"](annotationSet)
-    );
+    expect(wrapper.find(".label-property-text").text()).toContain(label.name);
   });
 
   it("check if label info appears when hovering", async () => {
-    const wrapper = mount(DocumentLabels, {
+    const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
         $t
@@ -76,5 +71,77 @@ describe("Document Annotations Component", () => {
         element.find(".tooltip-content")
         .isVisible()).toBe(true);
     })
+  });
+
+  it("Action Buttons should start hidden in empty annotation", () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+
+    const wrapper = mount(EmptyAnnotation, {
+      store,
+      propsData: {
+        label,
+        annotationSet
+      },
+      mocks: {
+        $t
+      },
+    });
+
+    expect(wrapper.findAll(".action-buttons").length).toEqual(0);
+  });
+
+  it("Click should trigger edit mode in empty annotation", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+
+    const wrapper = mount(EmptyAnnotation, {
+      store,
+      propsData: {
+        label,
+        annotationSet
+      },
+      mocks: {
+        $t
+      },
+    });
+
+    await wrapper.findComponent(".label-property-value").trigger("click");
+    expect(store.state.selection.selectionEnabled).toEqual(`${annotationSet.id}_${label.id}`);
+  });
+
+  it("Action buttons should appear when bbox is created in empty annotation", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+
+    const wrapper = mount(EmptyAnnotation, {
+      store,
+      propsData: {
+        label,
+        annotationSet
+      },
+      mocks: {
+        $t
+      },
+    });
+
+    const sampleBbox = {
+      "bottom": 141.3504,
+      "page_index": 0,
+      "top": 134.0496,
+      "x0": 99.7704,
+      "x1": 120.69359999999999,
+      "y0": 694.6487999999999,
+      "y1": 701.9496,
+      "start_offset": 439,
+      "end_offset": 444,
+      "line_number": 9,
+      "offset_string": "mit 1",
+      "offset_string_original": "mit 1"
+    }
+
+    await wrapper.findComponent(".label-property-value").trigger("click");
+    await store.dispatch("selection/setSpanSelection", sampleBbox)
+    expect(wrapper.findAll(".action-buttons").length).toEqual(1);
   });
 });

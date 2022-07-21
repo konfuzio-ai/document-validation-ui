@@ -1,15 +1,15 @@
 export {
-    default as DocumentLabelSets
+    default as DocumentAnnotations
 }
-from "./DocumentLabelSets";
-export {
-    default as DocumentLabels
-}
-from "./DocumentLabels";
+from "./DocumentAnnotations";
 export {
     default as EmptyAnnotation
 }
 from "./EmptyAnnotation";
+export {
+    default as Label
+}
+from "./Label";
 export {
     default as LabelDetails
 }

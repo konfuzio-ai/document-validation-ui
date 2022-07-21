@@ -31,7 +31,7 @@
           </div>
           <div class="edited" v-else-if="edited">
             <b-icon icon="user" size="is-small" />{{
-              `${$t("edited_by")} ${user}`
+              user ? `${$t("edited_by")} ${user}` : $t("edited")
             }}
           </div>
           <div class="accepted" v-else-if="accepted">
@@ -50,24 +50,52 @@
 <script>
 export default {
   name: "LabelDetails",
+  computed: {
+    accuracy() {
+      if (this.annotation) {
+        return this.annotation.confidence;
+      } else {
+        return null;
+      }
+    },
+    notFound() {
+      if (this.annotation) {
+        return !this.annotation.span;
+      } else {
+        return null;
+      }
+    },
+    accepted() {
+      if (this.annotation) {
+        return this.annotation.revised && this.annotation.is_correct;
+      } else {
+        return null;
+      }
+    },
+    edited() {
+      if (this.annotation) {
+        return (
+          (!this.annotation.revised && this.annotation.is_correct) ||
+          this.annotation.created_by
+        );
+      } else {
+        return null;
+      }
+    },
+    user() {
+      if (this.annotation) {
+        return this.annotation.created_by || this.annotation.revised_by;
+      } else {
+        return null;
+      }
+    }
+  },
   props: {
     description: {
       required: true
     },
-    accuracy: {
-      required: true
-    },
-    notFound: {
-      required: true
-    },
-    accepted: {
-      required: true
-    },
-    edited: {
-      required: true
-    },
-    user: {
-      default: ""
+    annotation: {
+      default: null
     }
   },
   methods: {}
