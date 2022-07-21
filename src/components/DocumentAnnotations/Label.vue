@@ -7,8 +7,7 @@
   <div
     :class="['label-properties', isAnnotationSelected() && 'selected']"
     :ref="`label_${label.id}_${annotationSet.id}`"
-    @mouseenter="onLabelHover(true)"
-    @mouseleave="onLabelHover(false)"
+    @click="onLabelClick()"
   >
     <div class="label-property-left">
       <LabelDetails :description="label.description" :annotation="annotation" />
@@ -145,8 +144,8 @@ export default {
         this.isLoading = isLoading;
       }
     },
-    onLabelHover(show) {
-      if (this.annotation && show) {
+    onLabelClick() {
+      if (this.annotation) {
         const annotation = { ...this.annotation };
         annotation.label_name = this.label.name;
         this.$store.dispatch(
