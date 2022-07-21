@@ -5,7 +5,15 @@
 ></style>
 <template>
   <div class="labels-sidebar">
-    <div v-if="!recalculatingAnnotations" class="labels-list">
+    <!-- When extracting annotations after rotating -->
+    <div v-if="recalculatingAnnotations">
+      <ExtractingData />
+    </div>
+    <!-- When there's no annotations in the label -->
+    <div v-else-if="!annotationSets || annotationSets.length === 0">
+      <EmptyState />
+    </div>
+    <div v-else class="labels-list">
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
         v-bind:key="indexGroup"
@@ -25,21 +33,6 @@
           :annotationSet="annotationSet"
         />
       </div>
-    </div>
-
-    <!-- When there's no annotations in the label -->
-    <div
-      v-if="
-        !recalculatingAnnotations &&
-        (!annotationSets || !annotationSets.length > 0)
-      "
-    >
-      <EmptyState />
-    </div>
-
-    <!-- When extracting annotations after rotating -->
-    <div v-if="recalculatingAnnotations">
-      <ExtractingData />
     </div>
   </div>
 </template>
