@@ -8,7 +8,6 @@ const state = {
     start: null,
     end: null
   },
-  selectionFromBbox: null,
   isSelecting: false,
   spanSelection: null,
   selectionEnabled: null
@@ -18,24 +17,12 @@ const getters = {
   isSelectionEnabled: state => {
     return state.selectionEnabled
   },
-  hasValidSpanSelection: state => {
-    return !!state.spanSelection;
-  },
   getSelectionForPage: state => pageNumber => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
     }
     return null;
   },
-  getSelectionFromBboxForPage: state => pageNumber => {
-    if (!state.selectionFromBbox) {
-      return null;
-    }
-    if (state.selectionFromBbox.page_index === pageNumber - 1) {
-      return state.selectionFromBbox;
-    }
-    return null;
-  }
 };
 
 const actions = {

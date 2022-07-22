@@ -192,11 +192,6 @@ export default {
       );
     },
 
-    selectionFromBbox() {
-      return this.$store.getters["selection/getSelectionFromBboxForPage"](
-        this.pageNumber
-      );
-    },
     ...mapState("selection", ["isSelecting"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
