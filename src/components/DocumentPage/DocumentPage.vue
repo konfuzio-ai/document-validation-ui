@@ -2,6 +2,7 @@
 <template>
   <div class="pdf-page-container">
     <v-stage
+      v-if="scale"
       ref="stage"
       :config="scaledViewport"
       :style="canvasStyle"
@@ -114,14 +115,6 @@ export default {
     page: {
       type: Object,
       required: true
-    },
-    isPageFocused: {
-      type: Boolean,
-      default: false
-    },
-    isElementFocused: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -338,12 +331,6 @@ export default {
       }
 
       transformerNode.getLayer().batchDraw();
-    },
-
-    focusPage() {
-      if (this.isPageFocused) return;
-
-      this.$store.dispatch("display/updateCurrentPage", this.pageNumber);
     },
 
     /**

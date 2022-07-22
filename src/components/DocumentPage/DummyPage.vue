@@ -17,14 +17,6 @@ export default {
     page: {
       type: Object,
       required: true
-    },
-    isPageFocused: {
-      type: Boolean,
-      default: false
-    },
-    isElementFocused: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -51,20 +43,6 @@ export default {
     },
 
     ...mapState("display", ["scale"])
-  },
-
-  methods: {
-    focusPage() {
-      if (this.isPageFocused) return;
-
-      this.$store.dispatch("display/updateCurrentPage", this.page.number);
-    }
-  },
-
-  watch: {
-    isElementFocused(isElementFocused) {
-      if (isElementFocused) this.focusPage();
-    }
   }
 };
 </script>
