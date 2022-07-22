@@ -5,7 +5,13 @@
 ></style>
 <template>
   <div
-    :class="['label-properties', isAnnotationSelected() && 'selected']"
+    :class="[
+      'label-properties',
+      isAnnotationSelected() && 'selected',
+      annotationClicked.clicked &&
+        annotation.id === annotationClicked.id &&
+        'editing'
+    ]"
     :ref="`label_${label.id}_${annotationSet.id}`"
     @mouseenter="onLabelHover(true)"
     @mouseleave="onLabelHover(false)"
@@ -21,6 +27,7 @@
         <Annotation
           v-if="annotation"
           :annotation="annotation"
+          :annotationClicked="annotationClicked"
           :isLoading="isLoading"
           :edited="edited"
           :notEditing="notEditing"
@@ -120,11 +127,18 @@ export default {
       showError: false,
       annBeingEdited: null,
       isLoading: false,
-      annotationAnimationTimeout: null
+      annotationAnimationTimeout: null,
+      annotationClicked: { id: null, clicked: false }
     };
   },
   methods: {
-    handleDataChanges({ annotation, notEditing, edited, isLoading }) {
+    handleDataChanges({
+      annotation,
+      notEditing,
+      edited,
+      isLoading,
+      annotationClicked
+    }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
@@ -143,6 +157,10 @@ export default {
 
       if (isLoading !== null) {
         this.isLoading = isLoading;
+      }
+
+      if (annotationClicked !== null) {
+        this.annotationClicked = annotationClicked;
       }
     },
     onLabelHover(show) {

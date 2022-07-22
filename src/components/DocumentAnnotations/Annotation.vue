@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing filled annotations.
