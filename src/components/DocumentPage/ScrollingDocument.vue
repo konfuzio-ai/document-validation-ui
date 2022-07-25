@@ -73,7 +73,9 @@ export default {
      */
     onPageJump(scrollTop) {
       const actualScroll = scrollTop;
-      this.$refs.scrollingDocument.scrollTop = actualScroll - 63;
+      this.$refs.scrollingDocument.scrollTop =
+        // the 4 comes from the margin between pages
+        actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
     }
   }
 };
