@@ -8,33 +8,36 @@
   <div
     class="annotation"
     @click="annotation.label_description && onLabelClick(annotation)"
+    ref="annotation"
   >
     <span
       :class="[
         'label-property-value',
+        !editable && 'label-empty',
         !notEditing &&
           isLoading &&
           isAnnotationBeingEditedNull() === annotation.id &&
           'saving-changes'
       ]"
       role="textbox"
-      contenteditable
-      @blur="event => handleBlur(event, annotation)"
+      ref="contentEditable"
+      :contenteditable="editable"
       @paste="event => handlePaste(event, annotation)"
       @input="event => handleInput(event, annotation)"
       @keypress.enter="event => event.preventDefault()"
-      @click="handleEditAnnotation(annotation.id)"
+      @click="handleEditAnnotation(annotation)"
     >
       {{ annotation.span[0].offset_string }}
     </span>
     <div
       v-if="annotationClicked.clicked && annotation.id === annotationClicked.id"
       class="buttons-container"
+      @blur="event => handleButtonsClicked(event)"
     >
       <ActionButtons
         :cancelBtn="cancelBtn"
         :annotationClicked="annotationClicked.clicked"
-        @cancel="deleteExistingAnnotation"
+        @cancel="replaceExistingAnnotation(annotation)"
       />
       <ActionButtons
         :saveBtn="saveBtn"
@@ -55,7 +58,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing filled annotations.
@@ -92,27 +95,49 @@ export default {
       newValue: null,
       showLoading: false,
       saveBtn: true,
-      cancelBtn: true
+      cancelBtn: true,
+      editable: true
     };
   },
   components: {
     ActionButtons
   },
   computed: {
-    ...mapState("selection", ["spanSelection", "selectionEnabled"])
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapGetters("selection", ["getSelectionFromBboxForPage"])
   },
   methods: {
-    handleEditAnnotation(id) {
+    handleButtonsClicked(event) {
+      event.preventDefault();
+    },
+    handleEditAnnotation(annotation) {
       this.$emit("handle-data-changes", {
         annotation: null,
         notEditing: null,
         edited: null,
         isLoading: null,
-        annotationClicked: { id: id, clicked: true }
+        annotationClicked: { id: annotation.id, clicked: true }
       });
+
+      this.getSelectionFromBboxForPage();
     },
-    deleteExistingAnnotation() {
-      console.log("deleting");
+    replaceExistingAnnotation(annotation) {
+      this.$store.dispatch("selection/enableSelection", annotation.id);
+      this.editable = false;
+
+      if (this.selectionEnabled === annotation.id) {
+        if (this.spanSelection && this.spanSelection.offset_string) {
+          setTimeout(() => {
+            //focus element
+            this.$refs.annotation.focus();
+          }, 200);
+          return this.spanSelection.offset_string;
+        } else {
+          return this.$t("draw_box_document");
+        }
+      } else {
+        return this.$t("no_data_found");
+      }
     },
     isNewValueInOld(event, annotation) {
       this.oldValue = annotation.span[0].offset_string;
@@ -141,15 +166,6 @@ export default {
       if (!newInOldValue || this.newValue.length === 0) {
         this.$emit("handle-show-warning", true);
       }
-    },
-    handleBlur() {
-      this.$emit("handle-data-changes", {
-        annotation: null,
-        notEditing: null,
-        edited: null,
-        isLoading: null,
-        annotationClicked: { id: null, clicked: false }
-      });
     },
     saveAnnotationChanges(event, annotation) {
       const spanArray = annotation.span[0];
@@ -235,6 +251,7 @@ export default {
         })
         .finally(() => {
           this.$store.dispatch("document/endLoading");
+          this.$store.dispatch("selection/disableSelection");
           this.$emit("handle-data-changes", {
             annotation: null,
             notEditing: null,
