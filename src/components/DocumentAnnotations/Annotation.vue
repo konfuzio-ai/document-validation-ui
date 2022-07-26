@@ -30,9 +30,12 @@
       {{ annotation.span[0].offset_string }}
     </span>
     <div
-      v-if="annotationClicked.clicked && annotation.id === annotationClicked.id"
+      v-if="
+        annotationClicked.clicked &&
+        annotation.id === annotationClicked.id &&
+        showButtons
+      "
       class="buttons-container"
-      @blur="event => handleButtonsClicked(event)"
     >
       <ActionButtons
         :cancelBtn="cancelBtn"
@@ -42,7 +45,7 @@
       <ActionButtons
         :saveBtn="saveBtn"
         :annotationClicked="annotationClicked.clicked"
-        @save="saveAnnotationChanges"
+        @save="saveAnnotationChanges(annotation)"
       />
     </div>
     <div
@@ -58,7 +61,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing filled annotations.
@@ -96,21 +99,30 @@ export default {
       showLoading: false,
       saveBtn: true,
       cancelBtn: true,
-      editable: true
+      editable: true,
+      showButtons: true
     };
   },
   components: {
     ActionButtons
   },
   computed: {
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapGetters("selection", ["getSelectionFromBboxForPage"])
+    ...mapState("selection", [
+      "selection",
+      "spanSelection",
+      "selectionEnabled",
+      "isSelecting"
+    ])
   },
   methods: {
-    handleButtonsClicked(event) {
-      event.preventDefault();
-    },
     handleEditAnnotation(annotation) {
+      // Get the bbox from the backend
+      this.$store
+        .dispatch("selection/getTextFromBboxes", annotation.span[0])
+        .then(() => {
+          // console.log(this.spanSelection.offset_string);
+        });
+
       this.$emit("handle-data-changes", {
         annotation: null,
         notEditing: null,
@@ -118,26 +130,19 @@ export default {
         isLoading: null,
         annotationClicked: { id: annotation.id, clicked: true }
       });
-
-      this.getSelectionFromBboxForPage();
     },
     replaceExistingAnnotation(annotation) {
+      // remove existing annotation text and replace with placeholder instructions
+      this.$refs.contentEditable.textContent = this.$t("draw_box_document");
       this.$store.dispatch("selection/enableSelection", annotation.id);
+
+      // prevent contenteditable from being edited
       this.editable = false;
 
-      if (this.selectionEnabled === annotation.id) {
-        if (this.spanSelection && this.spanSelection.offset_string) {
-          setTimeout(() => {
-            //focus element
-            this.$refs.annotation.focus();
-          }, 200);
-          return this.spanSelection.offset_string;
-        } else {
-          return this.$t("draw_box_document");
-        }
-      } else {
-        return this.$t("no_data_found");
-      }
+      /**
+       * Check if the selection ended
+       * if it did, replace contenteditable textContent with bbox content
+       */
     },
     isNewValueInOld(event, annotation) {
       this.oldValue = annotation.span[0].offset_string;
@@ -150,6 +155,10 @@ export default {
     },
     handleInput(event, annotation) {
       const newInOldValue = this.isNewValueInOld(event, annotation);
+
+      if (event.target.textContent === "") {
+        this.replaceExistingAnnotation(annotation);
+      }
 
       this.$emit("handle-data-changes", {
         annotation,
@@ -167,7 +176,7 @@ export default {
         this.$emit("handle-show-warning", true);
       }
     },
-    saveAnnotationChanges(event, annotation) {
+    saveAnnotationChanges(annotation) {
       const spanArray = annotation.span[0];
       const id = annotation.id;
       let updatedString;
@@ -217,6 +226,7 @@ export default {
       }
 
       this.$store.dispatch("document/startLoading");
+      this.showButtons = false;
 
       // Send to the store for the http patch request
       this.$store
@@ -228,6 +238,7 @@ export default {
           // Check if the response is successfull or not
           if (response) {
             this.oldValue = this.newValue;
+            this.$store.dispatch("document/fetchAnnotations");
             this.$emit("handle-data-changes", {
               annotation: null,
               notEditing: null,
@@ -236,7 +247,7 @@ export default {
               annotationClicked: null
             });
           } else {
-            event.target.textContent = this.oldValue;
+            this.$refs.contentEditable.textContent = this.oldValue;
             this.newValue = this.oldValue;
             this.$emit("handle-show-error", true);
             this.$emit("handle-show-warning", false);
@@ -260,6 +271,12 @@ export default {
             annotationClicked: { id: null, clicked: false }
           });
         });
+    }
+  },
+  watch: {
+    selection(newValue, oldValue) {
+      console.log(newValue);
+      console.log(oldValue);
     }
   }
 };

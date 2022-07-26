@@ -4,45 +4,50 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div
-    :class="[
-      'label-properties',
-      isAnnotationSelected() && 'selected',
-      annotationClicked.clicked &&
-        annotation.id === annotationClicked.id &&
-        'editing'
-    ]"
-    :ref="`label_${label.id}_${annotationSet.id}`"
-    @mouseenter="onLabelHover(true)"
-    @mouseleave="onLabelHover(false)"
-  >
-    <div class="label-property-left">
-      <LabelDetails :description="label.description" :annotation="annotation" />
-      <div class="label-property-name">
-        <span class="label-property-text">{{ label.name }} </span>
-      </div>
-    </div>
-    <div class="label-property-right">
-      <div class="label-property-annotation">
-        <Annotation
-          v-if="annotation"
+  <div class="labels">
+    <div
+      :class="[
+        'label-properties',
+        isAnnotationSelected() && 'selected',
+        annotationClicked.clicked &&
+          annotation.id === annotationClicked.id &&
+          'editing'
+      ]"
+      :ref="`label_${label.id}_${annotationSet.id}`"
+      @mouseenter="onLabelHover(true)"
+      @mouseleave="onLabelHover(false)"
+    >
+      <div class="label-property-left">
+        <LabelDetails
+          :description="label.description"
           :annotation="annotation"
-          :annotationClicked="annotationClicked"
-          :isLoading="isLoading"
-          :edited="edited"
-          :notEditing="notEditing"
-          :annBeingEdited="annBeingEdited"
-          :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
-          @handle-data-changes="handleDataChanges"
-          @handle-show-warning="handleWarning"
-          @handle-show-error="handleError"
         />
-        <EmptyAnnotation
-          v-else
-          :label="label"
-          :annotationSet="annotationSet"
-          @handle-data-changes="handleDataChanges"
-        />
+        <div class="label-property-name">
+          <span class="label-property-text">{{ label.name }} </span>
+        </div>
+      </div>
+      <div class="label-property-right">
+        <div class="label-property-annotation">
+          <Annotation
+            v-if="annotation && annotation.is_correct && annotation.revised"
+            :annotation="annotation"
+            :annotationClicked="annotationClicked"
+            :isLoading="isLoading"
+            :edited="edited"
+            :notEditing="notEditing"
+            :annBeingEdited="annBeingEdited"
+            :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
+            @handle-data-changes="handleDataChanges"
+            @handle-show-warning="handleWarning"
+            @handle-show-error="handleError"
+          />
+          <EmptyAnnotation
+            v-else
+            :label="label"
+            :annotationSet="annotationSet"
+            @handle-data-changes="handleDataChanges"
+          />
+        </div>
       </div>
     </div>
     <transition name="slide-fade">
@@ -231,6 +236,11 @@ export default {
           }, 1500);
         }, 100);
         // add a timeout in case we need to wait if a tab is going to be changed
+      }
+    },
+    annotationSet(newValue, oldValue) {
+      if (newValue === oldValue) {
+        console.log("not same");
       }
     }
   }
