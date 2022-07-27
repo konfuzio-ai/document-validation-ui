@@ -315,7 +315,6 @@ export default {
   },
   mounted() {
     this.setPages();
-  },
-  methods: {}
+  }
 };
 </script>
