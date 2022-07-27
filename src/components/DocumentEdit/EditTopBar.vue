@@ -36,7 +36,7 @@
       <b-button
         :label="editMode === editOptions.split ? $t('next') : $t('submit')"
         type="is-primary"
-        :disabled="true"
+        :disabled="false"
         @click="handleNext"
       />
     </div>
@@ -75,14 +75,14 @@ export default {
         // then next view
       } else if (this.editMode === this.editOptions.rotate) {
         // handle submit
+        console.log("rotation");
+        this.$emit("submit-rotation");
       } else if (this.editMode === this.editOptions.reorder) {
         // handle submit
       }
     },
     handleCancel() {
-      this.$store.dispatch("document/disableEditMode").then(() => {
-        this.$store.dispatch("display/updateFit", "width");
-      });
+      this.$emit("cancel-editing");
     }
   }
 };
