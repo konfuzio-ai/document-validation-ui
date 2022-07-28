@@ -48,5 +48,9 @@
   "few_minutes": "Dies könnte ein paar Minuten dauern.",
   "reject_label": "Label ablehnen",
   "rejected": "Abgelehnt",
-  "ann_exists": "Eine Annotation für dieses Label und Label-Set existiert bereits."
+  "ann_exists": "Eine Annotation für dieses Label und Label-Set existiert bereits.",
+  "split": "Split",
+  "reorder": "Reorder",
+  "rotate": "Rotate",
+  "edit_error": "The changes couldn’t be saved, please try again later."
 }

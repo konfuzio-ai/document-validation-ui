@@ -21,11 +21,19 @@
       />
       <DocumentAnnotations
         ref="annotations"
+        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
         :handleScroll="handleScroll"
         :scroll="scroll"
       />
+      <DocumentEdit
+        ref="editView"
+        v-else
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
+
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
