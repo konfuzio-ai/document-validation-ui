@@ -32,6 +32,7 @@
         width: fit-content;
         display: flex;
         flex-direction: column;
+        gap: 15px;
 
         .thumbnail {
           position: relative;
@@ -58,7 +59,6 @@
         }
 
         .page-number {
-          margin-top: 8px;
           color: $text-lighter;
           font-size: 12px;
           line-height: 12px;
