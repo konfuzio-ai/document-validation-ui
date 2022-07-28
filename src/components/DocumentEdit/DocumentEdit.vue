@@ -117,9 +117,6 @@ export default {
       }
     },
     changePage(pageNumber) {
-      if (this.editOptions.rotate) {
-        return;
-      }
       if (pageNumber != this.currentPage) {
         this.$store.dispatch(
           "display/updateCurrentPage",
@@ -221,8 +218,6 @@ export default {
         this.handleCancelEditing();
         return;
       }
-
-      console.log("changed rotations", changedRotations);
 
       this.$store.dispatch("document/startLoading");
       this.$store.dispatch("document/startRecalculatingAnnotations");
