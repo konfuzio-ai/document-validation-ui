@@ -91,6 +91,10 @@ export default {
   },
   methods: {
     setPages() {
+      if (!this.selectedDocument) {
+        return;
+      }
+
       if (
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
