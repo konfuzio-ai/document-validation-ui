@@ -264,8 +264,8 @@ export default {
           if (response) {
             pollUntilLabelingAvailable(5000);
           } else {
-            // TODO: add message based on new design
-            console.log("Something went wrong");
+            this.handleShowError();
+            this.handleMessage();
           }
         });
 
@@ -277,8 +277,7 @@ export default {
         this.$store.dispatch("display/updateFit", "width");
       });
 
-      console.log(this.editMode);
-
+      // Reset the rotation angles to 0 if rotation changes are cancelled
       if (this.rotations) {
         this.rotations = this.rotations.map(rotation => {
           return {
@@ -294,6 +293,12 @@ export default {
           };
         });
       }
+    },
+    handleShowError() {
+      this.$emit("handle-error", true);
+    },
+    handleMessage() {
+      this.$emit("handle-message", this.$i18n.t("edit_error"));
     }
   },
   watch: {

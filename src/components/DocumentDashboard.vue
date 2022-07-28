@@ -38,7 +38,12 @@
         </keep-alive>
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" v-if="!editMode" />
-      <DocumentEdit ref="editView" v-else />
+      <DocumentEdit
+        ref="editView"
+        v-else
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
