@@ -37,8 +37,9 @@ export default {
     return {
       elementTop: 0,
       elementHeight: 0,
-      scrollToAnnotation: false,
-      previousFocusedAnnotation: null
+      scrollToAnnotation: true,
+      previousFocusedAnnotation: null,
+      previousY: null
     };
   },
 
@@ -67,10 +68,18 @@ export default {
     },
 
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["documentFocusedAnnotation"])
+    ...mapState("document", ["documentFocusedAnnotation", "pages"])
   },
 
   methods: {
+    changePage(pageNumber) {
+      if (pageNumber !== this.currentPage) {
+        this.$store.dispatch(
+          "display/updateCurrentPage",
+          parseInt(pageNumber, 10)
+        );
+      }
+    },
     pageInVisibleRange(pageNumber) {
       return this.visiblePageRange.includes(pageNumber);
     },
@@ -99,16 +108,7 @@ export default {
      * the page's element top and a padding margin.
      */
     scrollTo(y) {
-      /**
-       * Do not scroll if the annotations are within a similar "y" coordinate
-       * to void some unnecessary scrolling
-       */
-      if (
-        this.previousFocusedAnnotation - y > 30 ||
-        y - this.previousFocusedAnnotation > 30
-      ) {
-        this.$emit("page-jump", this.elementTop + y - 80);
-      }
+      this.$emit("page-jump", y);
     }
   },
 
@@ -120,13 +120,27 @@ export default {
      * Scroll to the focused annotation if it changes and it's on this page.
      */
     documentFocusedAnnotation(focused) {
-      if (this.scrollToAnnotation && focused && focused.span) {
+      console.log(focused);
+      if (focused && focused.span) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
+
+        this.changePage(focused.span[0].page_index + 1);
+
         this.$nextTick(() => {
-          const focusedCoordinates = this.getYForBbox(focused.span[0]);
-          this.scrollTo(focusedCoordinates);
-          this.previousFocusedAnnotation = focusedCoordinates;
+          //this.scrollTo(this.getYForBbox(focused.span[0]) + this.scrollTop);
+          // Scroll to the annotation
+          //this.scrollTo(this.getYForBbox(focused.span[0]));
+          // console.log("page y before", currentPageY);
+          // // for (let i = 1; i < currentPage; i++) {
+          // //   console.log("y:", this.pages[i].size[1]);
+          // //   currentPageY += this.pages[i].size[1];
+          // // }
+          // // console.log("page y after", currentPageY);
+          // //const focusedCoordinates = this.getYForBbox(focused.span[0]);
+          // this.scrollTo(currentPageY);
+          // //console.log("coordinates", focusedCoordinates);
+          // //this.previousFocusedAnnotation = focusedCoordinates;
         });
       }
     },

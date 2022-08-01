@@ -26,7 +26,6 @@
           :annBeingEdited="annBeingEdited"
           :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
           @handle-data-changes="handleDataChanges"
-          @handle-show-warning="handleWarning"
           @handle-show-error="handleError"
         />
         <EmptyAnnotation
@@ -37,7 +36,7 @@
         />
       </div>
     </div>
-    <transition name="slide-fade">
+    <!-- <transition name="slide-fade">
       <div
         v-if="showWarning"
         :class="[
@@ -54,7 +53,7 @@
           </div>
         </b-message>
       </div>
-    </transition>
+    </transition> -->
     <transition name="slide-fade">
       <div
         v-if="showError"
@@ -115,7 +114,7 @@ export default {
     return {
       edited: false,
       notEditing: true,
-      showWarning: false,
+      // showWarning: false,
       showError: false,
       annBeingEdited: null,
       isLoading: false,
@@ -172,12 +171,12 @@ export default {
       }
       return false;
     },
-    handleWarning(value) {
-      this.showWarning = value;
-    },
-    handleWarningClose() {
-      this.showWarning = false;
-    },
+    // handleWarning(value) {
+    //   this.showWarning = value;
+    // },
+    // handleWarningClose() {
+    //   this.showWarning = false;
+    // },
     handleError(value) {
       this.showError = value;
     },
