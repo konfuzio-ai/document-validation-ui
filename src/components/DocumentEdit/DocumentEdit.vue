@@ -209,7 +209,7 @@ export default {
         return rotation;
       });
 
-      // Only keep pages that were rotated, so angle not 0
+      // Only keep pages that were rotated, so those with angle !== 0
       const changedRotations = updatedRotations.filter(
         rotation => rotation.angle != 0
       );
@@ -245,9 +245,6 @@ export default {
                     null
                   );
                   await this.$store.dispatch("document/fetchAnnotations");
-                  await this.$store.dispatch(
-                    "document/endRecalculatingAnnotations"
-                  );
                   return true;
                 } else if (this.selectedDocument.status_data === 111) {
                   return false;
@@ -266,9 +263,19 @@ export default {
             this.handleShowError();
             this.handleMessage();
           }
+        })
+        .catch(error => {
+          console.log(error);
+          this.handleShowError();
+          this.handleMessage();
+        })
+        .finally(async () => {
+          // Stop loading
+          await this.$store.dispatch("document/endLoading");
+          await this.$store.dispatch("document/endRecalculatingAnnotations");
         });
 
-      // Whether the rotation worked properly or not, end loading and close both modals
+      // Whether the rotation worked properly or not close editing mode
       this.handleCancelEditing();
     },
     handleCancelEditing() {
