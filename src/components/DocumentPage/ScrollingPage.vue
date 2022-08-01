@@ -108,7 +108,7 @@ export default {
      * the page's element top and a padding margin.
      */
     scrollTo(y) {
-      this.$emit("page-jump", y);
+      this.$emit("page-jump", this.elementTop + y - 80);
     }
   },
 
@@ -120,27 +120,16 @@ export default {
      * Scroll to the focused annotation if it changes and it's on this page.
      */
     documentFocusedAnnotation(focused) {
-      console.log(focused);
-      if (focused && focused.span) {
+      if (
+        focused &&
+        focused.span &&
+        focused.span[0].page_index + 1 === this.page.number
+      ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
-
-        this.changePage(focused.span[0].page_index + 1);
-
         this.$nextTick(() => {
-          //this.scrollTo(this.getYForBbox(focused.span[0]) + this.scrollTop);
           // Scroll to the annotation
-          //this.scrollTo(this.getYForBbox(focused.span[0]));
-          // console.log("page y before", currentPageY);
-          // // for (let i = 1; i < currentPage; i++) {
-          // //   console.log("y:", this.pages[i].size[1]);
-          // //   currentPageY += this.pages[i].size[1];
-          // // }
-          // // console.log("page y after", currentPageY);
-          // //const focusedCoordinates = this.getYForBbox(focused.span[0]);
-          // this.scrollTo(currentPageY);
-          // //console.log("coordinates", focusedCoordinates);
-          // //this.previousFocusedAnnotation = focusedCoordinates;
+          this.scrollTo(this.getYForBbox(focused.span[0]));
         });
       }
     },
