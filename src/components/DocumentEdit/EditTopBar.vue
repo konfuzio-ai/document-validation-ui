@@ -75,7 +75,6 @@ export default {
         // then next view
       } else if (this.editMode === this.editOptions.rotate) {
         // handle submit
-        console.log("rotation");
         this.$emit("submit-rotation");
       } else if (this.editMode === this.editOptions.reorder) {
         // handle submit
