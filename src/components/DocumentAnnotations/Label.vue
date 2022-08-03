@@ -4,14 +4,12 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="labels">
+  <div class="labels" ref="label">
     <div
       :class="[
         'label-properties',
         isAnnotationSelected() && 'selected',
-        annotationClicked.clicked &&
-          annotation.id === annotationClicked.id &&
-          'editing'
+        activeLabelId === `${label.id}-${indexGroup}` && 'editing'
       ]"
       :ref="`label_${label.id}_${annotationSet.id}`"
       @mouseenter="onLabelHover(true)"
@@ -33,24 +31,28 @@
             :annotation="annotation"
             :annotationClicked="annotationClicked"
             :isLoading="isLoading"
-            :edited="edited"
             :notEditing="notEditing"
             :annBeingEdited="annBeingEdited"
             :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
             @handle-data-changes="handleDataChanges"
-            @handle-show-warning="handleWarning"
-            @handle-show-error="handleError"
+            :handleShowError="handleShowError"
+            :handleMessage="handleMessage"
+            :onHandleEditAnnotation="onHandleEditAnnotation"
+            :onStopHandleEditAnnotation="onStopHandleEditAnnotation"
+            :isActive="activeLabelId === `${label.id}-${indexGroup}`"
           />
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
             @handle-data-changes="handleDataChanges"
+            :handleShowError="handleShowError"
+            :handleMessage="handleMessage"
           />
         </div>
       </div>
     </div>
-    <transition name="slide-fade">
+    <!-- <transition name="slide-fade">
       <div
         v-if="showWarning"
         :class="[
@@ -67,25 +69,7 @@
           </div>
         </b-message>
       </div>
-    </transition>
-    <transition name="slide-fade">
-      <div
-        v-if="showError"
-        :class="[
-          'message',
-          !edited && annotation.id !== annBeingEdited.id && 'hidden'
-        ]"
-      >
-        <b-message class="is-danger">
-          <div class="message-container">
-            {{ $t("error_message") }}
-            <div @click="handleErrorClose" class="btn-container">
-              <b-icon icon="xmark" class="close-btn" />
-            </div>
-          </div>
-        </b-message>
-      </div>
-    </transition>
+    </transition> -->
   </div>
 </template>
 <script>
@@ -105,6 +89,21 @@ export default {
     },
     annotationSet: {
       required: true
+    },
+    handleShowError: {
+      type: Function
+    },
+    handleMessage: {
+      type: Function
+    },
+    activeLabelId: {
+      type: String
+    },
+    setActiveLabelId: {
+      type: Function
+    },
+    indexGroup: {
+      type: Number
     }
   },
   computed: {
@@ -140,10 +139,10 @@ export default {
     handleDataChanges({
       annotation,
       notEditing,
-      edited,
       isLoading,
       annotationClicked
     }) {
+      console.log(annotationClicked);
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
@@ -154,10 +153,6 @@ export default {
 
       if (notEditing !== null) {
         this.notEditing = notEditing;
-      }
-
-      if (edited !== null) {
-        this.edited = edited;
       }
 
       if (isLoading !== null) {
@@ -196,17 +191,23 @@ export default {
       }
       return false;
     },
-    handleWarning(value) {
-      this.showWarning = value;
-    },
-    handleWarningClose() {
-      this.showWarning = false;
-    },
+    // handleWarning(value) {
+    //   this.showWarning = value;
+    // },
+    // handleWarningClose() {
+    //   this.showWarning = false;
+    // },
     handleError(value) {
       this.showError = value;
     },
     handleErrorClose() {
       this.showError = false;
+    },
+    onHandleEditAnnotation() {
+      this.setActiveLabelId(`${this.label.id}-${this.indexGroup}`);
+    },
+    onStopHandleEditAnnotation() {
+      this.setActiveLabelId(null);
     }
   },
   watch: {
@@ -242,6 +243,13 @@ export default {
       if (newValue === oldValue) {
         console.log("not same");
       }
+    }
+  },
+  mounted() {
+    if (this.activeLabelId === this.labelId) {
+      // set active
+    } else {
+      // set unactive
     }
   }
 };

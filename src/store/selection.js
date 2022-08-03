@@ -10,54 +10,43 @@ const state = {
   },
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: null
+  selectionEnabled: null,
+  selectionFromBbox: null
 };
 
 const getters = {
   isSelectionEnabled: state => {
-    return state.selectionEnabled
+    return state.selectionEnabled;
   },
   getSelectionForPage: state => pageNumber => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
     }
     return null;
-  },
+  }
 };
 
 const actions = {
-  enableSelection: ({
-    commit
-  }, value) => {
+  enableSelection: ({ commit }, value) => {
     commit("SELECTION_ENABLED", value);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
 
-  disableSelection: ({
-    commit
-  }) => {
+  disableSelection: ({ commit }) => {
     commit("SELECTION_ENABLED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
 
-  startSelection: ({
-    commit
-  }, {
-    pageNumber,
-    start
-  }) => {
+  startSelection: ({ commit }, { pageNumber, start }) => {
     commit("START_SELECTION", {
       pageNumber,
       start
     });
   },
 
-  moveSelection: ({
-    commit,
-    state
-  }, points) => {
+  moveSelection: ({ commit, state }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
     const xDiff = Math.abs(state.selection.start.x - points.end.x);
     const yDiff = Math.abs(state.selection.start.y - points.end.y);
@@ -66,10 +55,7 @@ const actions = {
     }
   },
 
-  endSelection: ({
-    commit,
-    state
-  }, end) => {
+  endSelection: ({ commit, state }, end) => {
     const xDiff = Math.abs(state.selection.start.x - end.x);
     const yDiff = Math.abs(state.selection.start.y - end.y);
     // if start and end points are the same, or if we have a selection smaller than 5x5,
@@ -84,14 +70,22 @@ const actions = {
     }
   },
 
-  getTextFromBboxes: ({
-    commit,
-    rootState
-  }, box) => {
+  setSelectionFromBbox: ({ commit }, bbox) => {
+    commit("SET_SELECTION_FROM_BBOX", bbox);
+  },
+
+  setSelection: ({ commit }, selection) => {
+    commit("SET_SELECTION", selection);
+  },
+
+  getTextFromBboxes: ({ commit, rootState }, box) => {
+    console.log("box from store", box);
+
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-        span: [box]
-      })
+      span: [box]
+    })
       .then(response => {
+        console.log(response);
         if (response.data.span.length && response.data.span.length > 0) {
           /**
            * If we have a non-empty bboxes list, we assume there
@@ -109,40 +103,30 @@ const actions = {
            */
           commit("SET_SPAN_SELECTION", box);
         }
+
+        commit("SET_SELECTION_FROM_BBOX", box);
       })
       .catch(error => {
         alert("Could not fetch the selected text from the backend");
       });
   },
-  setSpanSelection: ({
-      commit
-    },
-    span
-  ) => {
-    commit("SET_SPAN_SELECTION",
-      span
-    );
-  },
+  setSpanSelection: ({ commit }, span) => {
+    commit("SET_SPAN_SELECTION", span);
+  }
 };
 
 const mutations = {
   SELECTION_ENABLED: (state, value) => {
     state.selectionEnabled = value;
   },
-  START_SELECTION: (state, {
-    pageNumber,
-    start
-  }) => {
+  START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
     state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
     state.selection.start = start;
   },
   MOVE_SELECTION: (state, points) => {
-    const {
-      start,
-      end
-    } = points;
+    const { start, end } = points;
     if (start) {
       state.selection.start = start;
     }
@@ -162,6 +146,12 @@ const mutations = {
   },
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
+  },
+  SET_SELECTION_FROM_BBOX: (state, bbox) => {
+    state.selectionFromBbox = bbox;
+  },
+  SET_SELECTION: (state, selection) => {
+    state.selection = selection;
   }
 };
 

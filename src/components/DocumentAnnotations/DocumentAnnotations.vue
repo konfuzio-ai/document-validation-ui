@@ -31,6 +31,9 @@
           v-bind:key="label.id"
           :label="label"
           :annotationSet="annotationSet"
+          :indexGroup="indexGroup"
+          :activeLabelId="activeLabelId"
+          :setActiveLabelId="setActiveLabelId"
           :handleShowError="handleShowError"
           :handleMessage="handleMessage"
         />
@@ -59,7 +62,11 @@ export default {
     RejectedLabels,
     Label
   },
-
+  data() {
+    return {
+      activeLabelId: null
+    };
+  },
   computed: {
     ...mapState("document", ["recalculatingAnnotations", "annotationSets"])
   },
@@ -87,6 +94,14 @@ export default {
     },
     handleMessage(message) {
       this.$emit("handle-message", message);
+    },
+    setActiveLabelId(id) {
+      this.activeLabelId = id;
+    }
+  },
+  watch: {
+    activeLabelId(id) {
+      console.log("currently active label", id);
     }
   }
 };

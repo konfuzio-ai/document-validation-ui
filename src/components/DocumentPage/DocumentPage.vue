@@ -192,7 +192,7 @@ export default {
       );
     },
 
-    ...mapState("selection", ["isSelecting"]),
+    ...mapState("selection", ["isSelecting", "selectionFromBbox"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
@@ -403,6 +403,7 @@ export default {
         y1,
         page_index: this.pageNumber - 1
       };
+
       return bbox;
     },
 
@@ -495,6 +496,7 @@ export default {
     async getBoxSelectionContent() {
       const box = this.clientToBbox(this.selection.start, this.selection.end);
       this.$store.dispatch("document/startLoading");
+      console.log("box from doc page", box);
       await this.$store.dispatch("selection/getTextFromBboxes", box);
       this.$store.dispatch("document/endLoading");
     }
@@ -504,6 +506,30 @@ export default {
       if (!newState) {
         this.drawPage(true);
       }
+    },
+
+    selectionFromBbox(bbox) {
+      if (!bbox) {
+        return;
+      }
+
+      const selection = this.bboxToRect(bbox);
+      const start = { x: selection.x, y: selection.y };
+      const end = {
+        x: new BigNumber(selection.x).plus(selection.width).toNumber(),
+        y: new BigNumber(selection.y).plus(selection.height).toNumber()
+      };
+
+      this.$store.dispatch("selection/setSelection", {
+        pageNumber: this.pageNumber,
+        start,
+        end
+      });
+
+      // enable transform controls after the tick so everything's in place
+      this.$nextTick(() => {
+        this.updateTransformer();
+      });
     }
   },
   mounted() {
