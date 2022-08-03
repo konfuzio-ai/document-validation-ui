@@ -1,6 +1,6 @@
 <style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
 <template>
-  <div class="document-edit">
+  <div class="document-edit" v-if="showEditView">
     <EditTopBar
       @cancel-editing="handleCancelEditing"
       @submit-rotation="handleRotationSubmission"
@@ -78,6 +78,11 @@ export default {
       rotationsForBackend: [],
       scroll: false
     };
+  },
+  props: {
+    showEditView: {
+      type: Boolean
+    }
   },
   computed: {
     ...mapState("document", [
