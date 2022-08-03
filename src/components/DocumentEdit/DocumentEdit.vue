@@ -22,7 +22,7 @@
               "
             >
               <ServerImage
-                :class="['img-thumbnail', recalculatingAnnotations && 'blur']"
+                :class="['img-thumbnail']"
                 :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
               />
             </div>
@@ -237,7 +237,7 @@ export default {
           // 2 and labeling is available (done)
           const pollUntilLabelingAvailable = duration => {
             return this.$store
-              .dispatch("document/fetchDocumentData")
+              .dispatch("document/updateDocument", {})
               .then(async () => {
                 if (
                   this.selectedDocument.status_data === 2 &&
@@ -245,12 +245,14 @@ export default {
                 ) {
                   // set to null so DocumentLabelSets can reset it when watching
                   // the new groupedAnnotationSets
-                  await this.$store.dispatch(
-                    "document/setActiveAnnotationSet",
-                    null
-                  );
-                  await this.$store.dispatch("document/fetchAnnotations");
-                  return true;
+                  setTimeout(async () => {
+                    await this.$store.dispatch(
+                      "document/setActiveAnnotationSet",
+                      null
+                    );
+                    await this.$store.dispatch("document/fetchAnnotations");
+                    return true;
+                  }, 5000);
                 } else if (this.selectedDocument.status_data === 111) {
                   return false;
                 } else {

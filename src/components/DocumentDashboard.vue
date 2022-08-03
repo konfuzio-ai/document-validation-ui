@@ -29,7 +29,8 @@
       />
       <DocumentEdit
         ref="editView"
-        :showEditView="editMode"
+        v-else
+        :showEditView="!!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
