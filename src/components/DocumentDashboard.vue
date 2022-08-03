@@ -29,7 +29,7 @@
       />
       <DocumentEdit
         ref="editView"
-        v-else
+        :showEditView="editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
