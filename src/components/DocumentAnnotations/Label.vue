@@ -29,11 +29,7 @@
           <Annotation
             v-if="annotation && annotation.is_correct && annotation.revised"
             :annotation="annotation"
-            :annotationClicked="annotationClicked"
             :isLoading="isLoading"
-            :notEditing="notEditing"
-            :annBeingEdited="annBeingEdited"
-            :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
             @handle-data-changes="handleDataChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
@@ -57,7 +53,7 @@
         v-if="showWarning"
         :class="[
           'message',
-          !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
+        !isActive && 'hidden'
         ]"
       >
         <b-message class="is-warning">
@@ -126,41 +122,22 @@ export default {
   data() {
     return {
       edited: false,
-      notEditing: true,
       showWarning: false,
       showError: false,
-      annBeingEdited: null,
       isLoading: false,
-      annotationAnimationTimeout: null,
-      annotationClicked: { id: null, clicked: false }
+      annotationAnimationTimeout: null
     };
   },
   methods: {
-    handleDataChanges({
-      annotation,
-      notEditing,
-      isLoading,
-      annotationClicked
-    }) {
-      console.log(annotationClicked);
+    handleDataChanges({ annotation, isLoading }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
-        } else {
-          this.annBeingEdited = annotation;
         }
-      }
-
-      if (notEditing !== null) {
-        this.notEditing = notEditing;
       }
 
       if (isLoading !== null) {
         this.isLoading = isLoading;
-      }
-
-      if (annotationClicked !== null) {
-        this.annotationClicked = annotationClicked;
       }
     },
     onLabelHover(show) {
@@ -173,13 +150,6 @@ export default {
         );
       } else {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
-      }
-    },
-    isAnnotationBeingEditedNull() {
-      if (this.annBeingEdited.id === null) {
-        return false;
-      } else {
-        return this.annBeingEdited.id;
       }
     },
     isAnnotationSelected() {
@@ -238,18 +208,6 @@ export default {
         }, 100);
         // add a timeout in case we need to wait if a tab is going to be changed
       }
-    },
-    annotationSet(newValue, oldValue) {
-      if (newValue === oldValue) {
-        console.log("not same");
-      }
-    }
-  },
-  mounted() {
-    if (this.activeLabelId === this.labelId) {
-      // set active
-    } else {
-      // set unactive
     }
   }
 };

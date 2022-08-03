@@ -86,7 +86,6 @@ export default {
             this.isLoading = false;
             this.$emit("handle-data-changes", {
               annotation: annotationCreated,
-              notEditing: false,
               edited: false,
               isLoading: false
             });

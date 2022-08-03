@@ -10,10 +10,7 @@
       :class="[
         'label-property-value',
         !editable && 'label-empty',
-        !notEditing &&
-          isLoading &&
-          isAnnotationBeingEditedNull() === annotation.id &&
-          'saving-changes',
+        isLoading && 'saving-changes',
         error && 'error-editing'
       ]"
       role="textbox"
@@ -30,22 +27,16 @@
     <div v-if="isActive && showButtons" class="buttons-container">
       <ActionButtons
         :cancelBtn="cancelBtn"
-        :annotationClicked="annotationClicked.clicked"
+        :isActive="isActive"
         @cancel="replaceExistingAnnotation(annotation)"
       />
       <ActionButtons
         :saveBtn="saveBtn"
-        :annotationClicked="annotationClicked.clicked"
+        :isActive="isActive"
         @save="saveAnnotationChanges(annotation)"
       />
     </div>
-    <div
-      v-if="isLoading"
-      :class="[
-        'loading-container',
-        annotation.id !== annBeingEdited.id && 'hidden'
-      ]"
-    >
+    <div v-if="isLoading" :class="['loading-container', isActive && 'hidden']">
       <ActionButtons :isLoading="isLoading" />
     </div>
   </div>
@@ -64,20 +55,8 @@ export default {
       type: Object,
       required: true
     },
-    annotationClicked: {
-      type: Object
-    },
     isLoading: {
       type: Boolean
-    },
-    notEditing: {
-      type: Boolean
-    },
-    annBeingEdited: {
-      type: Object
-    },
-    isAnnotationBeingEditedNull: {
-      type: Function
     },
     handleShowError: {
       type: Function
@@ -139,16 +118,12 @@ export default {
         annotation.selection_bbox = this.selectionFromBbox;
       }
 
-      console.log("ann id", annotation.id);
       this.$emit("handle-data-changes", {
         annotation: null,
-        notEditing: null,
-        isLoading: null,
-        annotationClicked: { id: annotation.id, clicked: true }
+        isLoading: null
       });
     },
     replaceExistingAnnotation(annotation) {
-      console.log("clicked");
       // set ann value to be empty
       this.newValue = "";
 
@@ -156,35 +131,16 @@ export default {
       this.$store.dispatch("selection/enableSelection", annotation.id);
     },
     getAnnotationPlaceholder(annotationString) {
-      if (annotationString === "") {
-        // prevent contenteditable from being edited
-        this.editable = false;
-        console.log("empty");
-        return this.$t("draw_box_document");
-      }
-      if (
-        annotationString !== "" ||
-        annotationString !== this.$t("draw_box_document")
-      ) {
-        console.log("not empty");
-
+      if (!this.isActive) {
         return annotationString;
-      } else if (this.selectionEnabled === this.annotation.id) {
-        if (this.spanSelection && this.spanSelection.offset_string) {
-          setTimeout(() => {
-            //focus element
-            this.$refs.annotation.focus();
-          }, 200);
-          return this.spanSelection.offset_string;
-        } else {
+      } else {
+        if (this.newValue === "") {
           // prevent contenteditable from being edited
           this.editable = false;
           return this.$t("draw_box_document");
+        } else {
+          return annotationString;
         }
-      } else {
-        // prevent contenteditable from being edited
-        this.editable = false;
-        return this.$t("no_data_found");
       }
     },
     handlePaste(event) {
@@ -202,9 +158,7 @@ export default {
 
       this.$emit("handle-data-changes", {
         annotation,
-        notEditing: false,
-        isLoading: null,
-        annotationClicked: null
+        isLoading: null
       });
     },
     saveAnnotationChanges(annotation) {
@@ -217,18 +171,14 @@ export default {
       if (this.newValue === this.oldValue) {
         this.$emit("handle-data-changes", {
           annotation: null,
-          notEditing: null,
-          isLoading: null,
-          annotationClicked: { id: null, clicked: false }
+          isLoading: null
         });
         return;
       }
 
       this.$emit("handle-data-changes", {
         annotation: null,
-        notEditing: null,
-        isLoading: true,
-        annotationClicked: null
+        isLoading: true
       });
 
       if (this.newValue.length === 0) {
@@ -271,9 +221,7 @@ export default {
             this.$store.dispatch("document/fetchAnnotations");
             this.$emit("handle-data-changes", {
               annotation: null,
-              notEditing: null,
-              isLoading: null,
-              annotationClicked: null
+              isLoading: null
             });
           } else {
             this.$refs.contentEditable.textContent = this.oldValue;
@@ -285,9 +233,7 @@ export default {
 
             this.$emit("handle-data-changes", {
               annotation: null,
-              notEditing: true,
-              isLoading: null,
-              annotationClicked: null
+              isLoading: null
             });
           }
         })
@@ -296,9 +242,7 @@ export default {
           this.$store.dispatch("selection/disableSelection");
           this.$emit("handle-data-changes", {
             annotation: null,
-            notEditing: null,
-            isLoading: false,
-            annotationClicked: { id: null, clicked: false }
+            isLoading: false
           });
 
           setTimeout(() => {
@@ -318,14 +262,13 @@ export default {
       }
 
       // Else check we only add the bbox content to the annotation being edited
-      if (this.annotationClicked.id === this.editing && !this.editable) {
+      if (this.isActive && !this.editable) {
         this.$refs.contentEditable.textContent = newValue.offset_string;
         this.newValue = newValue.offset_string;
         this.editable = true;
       }
     },
     newValue(newValue) {
-      console.log(newValue);
       this.getAnnotationPlaceholder(newValue);
     }
   }

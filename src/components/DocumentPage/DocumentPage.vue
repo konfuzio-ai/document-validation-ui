@@ -496,7 +496,6 @@ export default {
     async getBoxSelectionContent() {
       const box = this.clientToBbox(this.selection.start, this.selection.end);
       this.$store.dispatch("document/startLoading");
-      console.log("box from doc page", box);
       await this.$store.dispatch("selection/getTextFromBboxes", box);
       this.$store.dispatch("document/endLoading");
     }

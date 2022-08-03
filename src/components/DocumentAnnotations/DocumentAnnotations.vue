@@ -98,11 +98,6 @@ export default {
     setActiveLabelId(id) {
       this.activeLabelId = id;
     }
-  },
-  watch: {
-    activeLabelId(id) {
-      console.log("currently active label", id);
-    }
   }
 };
 </script>

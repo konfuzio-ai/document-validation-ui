@@ -79,13 +79,10 @@ const actions = {
   },
 
   getTextFromBboxes: ({ commit, rootState }, box) => {
-    console.log("box from store", box);
-
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
       span: [box]
     })
       .then(response => {
-        console.log(response);
         if (response.data.span.length && response.data.span.length > 0) {
           /**
            * If we have a non-empty bboxes list, we assume there
