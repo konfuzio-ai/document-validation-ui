@@ -17,7 +17,11 @@
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
-      <DocumentAnnotations ref="annotations" />
+      <DocumentAnnotations
+        ref="annotations"
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage

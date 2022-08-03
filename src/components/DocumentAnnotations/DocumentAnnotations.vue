@@ -31,6 +31,8 @@
           v-bind:key="label.id"
           :label="label"
           :annotationSet="annotationSet"
+          :handleShowError="handleShowError"
+          :handleMessage="handleMessage"
         />
       </div>
     </div>
@@ -57,6 +59,7 @@ export default {
     RejectedLabels,
     Label
   },
+
   computed: {
     ...mapState("document", ["recalculatingAnnotations", "annotationSets"])
   },
@@ -78,6 +81,12 @@ export default {
         }
       });
       return found ? `${value + 1}` : "";
+    },
+    handleShowError() {
+      this.$emit("handle-error", true);
+    },
+    handleMessage(message) {
+      this.$emit("handle-message", message);
     }
   }
 };
