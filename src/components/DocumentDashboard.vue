@@ -38,9 +38,13 @@
         </keep-alive>
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" v-if="!editMode" />
+      <!-- v-else prevents the error from being shown,
+      so it should be in the component, 
+      but then the image is not loaded -->
       <DocumentEdit
         ref="editView"
-        :showEditView="editMode"
+        v-else
+        :showEditView="!!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />
