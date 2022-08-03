@@ -57,6 +57,11 @@ export default {
       prevPageAtIndex: null
     };
   },
+  props: {
+    showEditView: {
+      type: Boolean
+    }
+  },
   computed: {
     ...mapState("document", [
       "pages",
