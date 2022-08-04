@@ -1,6 +1,7 @@
 <style lang="scss" src="./assets/scss/main.scss"></style>
 <template>
   <div>
+    <div v-if="recalculatingAnnotations" class="overlay"></div>
     <DocumentsList v-if="showDocumentsList" />
     <DocumentDashboard class="dashboard-component" />
   </div>
@@ -28,7 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["documentId"])
+    ...mapState("document", ["documentId", "recalculatingAnnotations"])
   },
   data() {
     return {

@@ -62,7 +62,9 @@ describe("Document Page Component", () => {
       mocks: { $t },
     });
 
-    expect(wrapper.findComponent(".rotate").exists()).toBe(true);
+    expect(wrapper.findComponent(".edit-icon").exists()).toBe(true);
+    expect(wrapper.findComponent(".split-icon").exists()).toBe(true);
+    expect(wrapper.findComponent(".rotate-icon").exists()).toBe(true);
     expect(wrapper.findComponent(".fit-zoom").exists()).toBe(true);
     expect(wrapper.findComponent(".zoom-in").exists()).toBe(true);
     expect(wrapper.findComponent(".zoom-out").exists()).toBe(true);

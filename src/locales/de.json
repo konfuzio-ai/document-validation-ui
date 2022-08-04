@@ -39,13 +39,13 @@
   "rotate_all": "Rotate all",
   "cancel": "Cancel",
   "apply": "Apply",
-  "confirm_rotation": "Are you sure you want to rotate?",
-  "rotation_warning": "This action will overwrite any changes you might have made in the document.",
-  "rotate": "Yes, rotate",
-  "rotation_failed": "Rotation failed, the document has returned to its original state. Please try again later.",
   "data_being_extracted": "New data is being extracted",
   "analysing_document": "We are analysing your document.",
   "few_minutes": "This might take a few minutes.",
   "reject_label": "Reject label",
-  "rejected": "Rejected"
+  "rejected": "Rejected",
+  "split": "Split",
+  "reorder": "Reorder",
+  "rotate": "Rotate",
+  "edit_error": "The changes couldn’t be saved, please try again later."
 }

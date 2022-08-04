@@ -38,7 +38,12 @@
         </keep-alive>
       </ScrollingDocument>
       <DocumentLabelSets ref="labelSets" v-if="!editMode" />
-      <DocumentEdit ref="editView" v-else />
+      <DocumentEdit
+        ref="editView"
+        v-else
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -193,6 +198,9 @@ export default {
       this.$refs.scrollingDocument.$el.scrollTop = actualScroll;
     },
 
+// TODO: find solution to show error message
+// since as soon as the Edit Component is closed, the error will be false
+// and will not be displayed
     handleError(error) {
       this.showError = error;
     },

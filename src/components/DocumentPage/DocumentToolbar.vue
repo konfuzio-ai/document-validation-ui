@@ -2,7 +2,7 @@
 
 <template>
   <div class="toolbar-container">
-    <div class="toolbar">
+    <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
       <div class="icons icons-left">
         <div class="edit-icon icon" @click="handleReorder">
           <ReorderDocIcon />
@@ -27,15 +27,6 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
-    <!-- <div class="rotate-pages" v-if="toolbarModalOpen">
-      <RotatePagesModal
-        @close-modal="handleModal"
-        :isModalActive="isModalActive"
-        :setRotations="setRotations"
-        :handleShowError="handleShowError"
-        :handleMessage="handleMessage"
-      />
-    </div> -->
   </div>
 </template>
 
@@ -47,7 +38,6 @@ import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
-import RotatePagesModal from "./RotatePagesModal";
 
 export default {
   name: "Toolbar",
@@ -57,8 +47,7 @@ export default {
     RotateIcon,
     FitZoomIcon,
     PlusIcon,
-    MinusIcon,
-    RotatePagesModal
+    MinusIcon
   },
   data() {
     return {
@@ -69,7 +58,7 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["editOptions"])
+    ...mapState("document", ["editOptions", "recalculatingAnnotations"])
   },
   methods: {
     handleRotate() {
