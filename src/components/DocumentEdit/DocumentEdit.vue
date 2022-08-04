@@ -2,62 +2,69 @@
 <template>
   <div class="document-edit">
     <EditTopBar
+      :confirmSplitting="confirmSplitting"
       @cancel-editing="handleCancelEditing"
       @submit-rotation="handleRotationSubmission"
+      @confirm-splitting="handleConfirmSplitting"
     />
-    <div :class="['document-grid', scroll && 'scroll']">
-      <div
-        v-for="(page, index) in pages"
-        v-bind:key="index"
-        :class="['image-section']"
-      >
-        <div class="image-container" @click="changePage(page.number)">
-          <div class="thumbnail">
-            <div
-              class="img-container"
-              :style="
-                editMode === 'rotate' && {
-                  transform: 'rotate(' + getRotation(page.id) + 'deg)'
-                }
-              "
-            >
-              <ServerImage
-                :class="['img-thumbnail']"
-                :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-              />
-            </div>
-            <div class="icon-container">
-              <div class="action-icon">
-                <b-icon
-                  icon="eye"
-                  class="is-small"
-                  @click="changePage(page.number)"
+    <div class="pages-section" v-if="!confirmSplitting">
+      <div :class="['document-grid', scroll && 'scroll']">
+        <div
+          v-for="(page, index) in pages"
+          v-bind:key="index"
+          :class="['image-section']"
+        >
+          <div class="image-container" @click="changePage(page.number)">
+            <div class="thumbnail">
+              <div
+                class="img-container"
+                :style="
+                  editMode === 'rotate' && {
+                    transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                  }
+                "
+              >
+                <ServerImage
+                  :class="['img-thumbnail']"
+                  :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
                 />
               </div>
-              <div
-                class="action-icon"
-                v-if="editMode === editOptions.rotate"
-                @click="rotateSinglePage(page.id, page.number)"
-              >
-                <b-icon icon="arrow-rotate-left" class="is-small" />
+              <div class="icon-container">
+                <div class="action-icon">
+                  <b-icon
+                    icon="eye"
+                    class="is-small"
+                    @click="changePage(page.number)"
+                  />
+                </div>
+                <div
+                  class="action-icon"
+                  v-if="editMode === editOptions.rotate"
+                  @click="rotateSinglePage(page.id, page.number)"
+                >
+                  <b-icon icon="arrow-rotate-left" class="is-small" />
+                </div>
               </div>
             </div>
+            <span class="page-number">{{ page.number }}</span>
           </div>
-          <span class="page-number">{{ page.number }}</span>
-        </div>
-        <div
-          v-if="editMode === editOptions.split"
-          :class="[
-            'splitting-lines',
-            splitActive && page.id === splitPage && 'active-split'
-          ]"
-          @click="handleSplitting(page)"
-        >
-          <div class="scissors-icon">
-            <b-icon icon="scissors" class="is-small" />
+          <div
+            v-if="editMode === editOptions.split"
+            :class="['splitting-lines', splitActive && 'active-split']"
+            @click="handleSplitting(page)"
+          >
+            <div class="scissors-icon">
+              <b-icon icon="scissors" class="is-small" />
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-else class="confirm-split-component">
+      <ConfirmSplit
+        :splitPages="splitPages"
+        :selectedDocument="selectedDocument"
+      />
     </div>
     <div class="footer">
       <EditFooter
@@ -73,6 +80,7 @@
 import { mapState } from "vuex";
 import EditTopBar from "./EditTopBar";
 import EditFooter from "./EditFooter";
+import ConfirmSplit from "./ConfirmSplit";
 import ServerImage from "../../assets/images/ServerImage";
 /**
  * This component shows a document thumbnail grid view to be able to edit the document.
@@ -82,6 +90,7 @@ export default {
   components: {
     EditTopBar,
     EditFooter,
+    ConfirmSplit,
     ServerImage
   },
   data() {
@@ -90,7 +99,8 @@ export default {
       rotationsForBackend: [],
       scroll: false,
       splitActive: false,
-      splitPages: null
+      splitPages: [],
+      confirmSplitting: false
     };
   },
   computed: {
@@ -113,6 +123,7 @@ export default {
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
       ) {
+        // Set pages for rotation:
         this.rotations = this.pages.map(page => {
           return {
             id: page.id,
@@ -127,6 +138,18 @@ export default {
             angle: 0,
             page_number: page.number
           };
+        });
+
+        // Set pages for splitting:
+        const pagesArray = [];
+        this.pages.map(page => {
+          pagesArray.push(page.number);
+        });
+
+        this.splitPages.push({
+          name: this.selectedDocument.data_file_name,
+          category: this.selectedDocument.category,
+          pages: pagesArray
         });
       }
     },
@@ -315,6 +338,15 @@ export default {
           };
         });
       }
+
+      // Reset splitting final step to false
+      this.finalSplitting = false;
+    },
+    handleSplitting(page) {
+      this.splitActive = !this.splitActive;
+    },
+    handleConfirmSplitting() {
+      this.confirmSplitting = true;
     },
     handleShowError() {
       this.$emit("handle-error", true);
@@ -334,11 +366,7 @@ export default {
   updated() {
     if (this.pages.length > 12) {
       this.scroll = true;
-    handleSplitting(page) {
-      this.splitPage = page.id;
-      this.splitActive = !this.splitActive;
     }
   }
-}
-}
+};
 </script>

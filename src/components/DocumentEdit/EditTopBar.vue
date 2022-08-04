@@ -1,9 +1,16 @@
 <style scoped lang="scss" src="../../assets/scss/edit_top_bar.scss"></style>
 <template>
   <div class="edit-top-bar">
-    <b-dropdown>
+    <div class="split-top-bar option" v-if="confirmSplitting">
+      <b-icon :icon="getIcon(editMode)" class="option-icon" />
+      <span>{{ $t(editMode) }}</span>
+      <b-icon icon="angle-right" class="caret-right is-small" />
+      <span class="overview">{{ $t("overview") }}</span>
+    </div>
+
+    <b-dropdown v-else>
       <template #trigger>
-        <a class="navbar-item dropdown-option" role="button">
+        <a class="navbar-item option" role="button">
           <b-icon :icon="getIcon(editMode)" class="option-icon" />
           <span>{{ $t(editMode) }}</span>
           <div class="caret">
@@ -34,7 +41,9 @@
         @click="handleCancel"
       />
       <b-button
-        :label="editMode === editOptions.split ? $t('next') : $t('submit')"
+        :label="
+          editMode === editOptions.split ? handleSplitButton() : $t('submit')
+        "
         type="is-primary"
         :disabled="false"
         @click="handleNext"
@@ -55,6 +64,11 @@ export default {
   computed: {
     ...mapState("document", ["editMode", "editOptions"])
   },
+  props: {
+    confirmSplitting: {
+      type: Boolean
+    }
+  },
   methods: {
     getIcon(option) {
       if (option === this.editOptions.reorder) {
@@ -70,9 +84,16 @@ export default {
     handleDropdownClick(option) {
       this.$store.dispatch("document/setEditMode", option);
     },
+    handleSplitButton() {
+      if (this.confirmSplitting) {
+        return this.$i18n.t("save");
+      }
+      return this.$i18n.t("next");
+    },
     handleNext() {
       if (this.editMode === this.editOptions.split) {
         // then next view
+        this.$emit("confirm-splitting");
       } else if (this.editMode === this.editOptions.rotate) {
         // handle submit
         this.$emit("submit-rotation");
