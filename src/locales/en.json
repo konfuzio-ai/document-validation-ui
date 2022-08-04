@@ -57,5 +57,6 @@
   "split": "Split",
   "reorder": "Reorder",
   "rotate": "Rotate",
-  "edit_error": "The changes couldn’t be saved, please try again later."
+  "edit_error": "The changes couldn’t be saved, please try again later.",
+  "overview": "Overview"
 }
