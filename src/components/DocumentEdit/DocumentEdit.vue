@@ -9,7 +9,7 @@
       <div
         v-for="(page, index) in pages"
         v-bind:key="index"
-        class="image-section"
+        :class="['image-section']"
       >
         <div class="image-container" @click="changePage(page.number)">
           <div class="thumbnail">
@@ -45,6 +45,18 @@
           </div>
           <span class="page-number">{{ page.number }}</span>
         </div>
+        <div
+          v-if="editMode === editOptions.split"
+          :class="[
+            'splitting-lines',
+            splitActive && page.id === splitPage && 'active-split'
+          ]"
+          @click="handleSplitting(page)"
+        >
+          <div class="scissors-icon">
+            <b-icon icon="scissors" class="is-small" />
+          </div>
+        </div>
       </div>
     </div>
     <div class="footer">
@@ -76,7 +88,9 @@ export default {
     return {
       rotations: [],
       rotationsForBackend: [],
-      scroll: false
+      scroll: false,
+      splitActive: false,
+      splitPages: null
     };
   },
   computed: {
@@ -320,7 +334,11 @@ export default {
   updated() {
     if (this.pages.length > 12) {
       this.scroll = true;
+    handleSplitting(page) {
+      this.splitPage = page.id;
+      this.splitActive = !this.splitActive;
     }
   }
-};
+}
+}
 </script>
