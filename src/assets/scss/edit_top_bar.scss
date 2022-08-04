@@ -6,7 +6,7 @@
   flex-direction: row;
   padding-bottom: 5px;
 
-  .dropdown-option {
+  .option {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,5 +36,22 @@
     line-height: 20px;
     font-weight: 400;
     color: $grey-darker;
+  }
+
+  .split-top-bar {
+    margin-left: 12px;
+
+    .overview {
+      margin-left: 8px;
+    }
+
+    .caret-right {
+      margin-left: 8px;
+
+      svg {
+        fill: $grey-detail;
+        height: 10px !important;
+      }
+    }
   }
 }
