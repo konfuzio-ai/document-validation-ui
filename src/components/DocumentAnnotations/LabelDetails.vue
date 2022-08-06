@@ -62,7 +62,7 @@ export default {
       if (this.annotation) {
         return !this.annotation.span;
       } else {
-        return null;
+        return true;
       }
     },
     accepted() {

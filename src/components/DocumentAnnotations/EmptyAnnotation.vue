@@ -23,6 +23,7 @@
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
       :isLoading="isLoading"
+      :isActive="!isLoading"
     />
   </div>
 </template>
@@ -37,8 +38,7 @@ export default {
   data() {
     return {
       saveBtn: true,
-      cancelBtn: true,
-      isLoading: false
+      cancelBtn: true
     };
   },
   components: { ActionButtons },
@@ -48,6 +48,9 @@ export default {
     },
     annotationSet: {
       required: true
+    },
+    isLoading: {
+      type: Boolean
     }
   },
   computed: {
@@ -58,7 +61,10 @@ export default {
       return `${this.annotationSet.id}_${this.label.id}`;
     },
     handleEditEmptyAnnotation() {
-      if (this.selectionEnabled !== this.emptyAnnotationId()) {
+      if (
+        !this.isLoading &&
+        this.selectionEnabled !== this.emptyAnnotationId()
+      ) {
         this.$store.dispatch(
           "selection/enableSelection",
           this.emptyAnnotationId()
@@ -78,12 +84,14 @@ export default {
         is_correct: true,
         revised: true
       };
-      this.isLoading = true;
+      this.$emit("handle-data-changes", {
+        annotation: null,
+        isLoading: true
+      });
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
-            this.isLoading = false;
             this.$emit("handle-data-changes", {
               annotation: annotationCreated,
               edited: false,
@@ -120,9 +128,10 @@ export default {
     },
     showActionButtons() {
       return (
-        this.selectionEnabled === this.emptyAnnotationId() &&
-        this.spanSelection &&
-        this.spanSelection.offset_string
+        (this.selectionEnabled === this.emptyAnnotationId() &&
+          this.spanSelection &&
+          this.spanSelection.offset_string) ||
+        this.isLoading
       );
     }
   }

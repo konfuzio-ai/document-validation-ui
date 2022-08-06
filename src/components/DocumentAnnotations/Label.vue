@@ -9,7 +9,7 @@
       :class="[
         'label-properties',
         isAnnotationSelected() && 'selected',
-        activeLabelId === `${label.id}-${indexGroup}` && 'editing'
+        isAnnotationInEditMode(annotation) && 'editing'
       ]"
       :ref="`label_${label.id}_${annotationSet.id}`"
       @mouseenter="onLabelHover(true)"
@@ -27,20 +27,18 @@
       <div class="label-property-right">
         <div class="label-property-annotation">
           <Annotation
-            v-if="annotation && annotation.is_correct && annotation.revised"
+            v-if="annotation"
             :annotation="annotation"
             :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
-            :onHandleEditAnnotation="onHandleEditAnnotation"
-            :onStopHandleEditAnnotation="onStopHandleEditAnnotation"
-            :isActive="activeLabelId === `${label.id}-${indexGroup}`"
           />
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
+            :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
@@ -69,7 +67,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
@@ -95,15 +93,13 @@ export default {
     activeLabelId: {
       type: String
     },
-    setActiveLabelId: {
-      type: Function
-    },
     indexGroup: {
       type: Number
     }
   },
   computed: {
     ...mapState("document", ["sidebarAnnotationSelected"]),
+    ...mapGetters("document", ["isAnnotationInEditMode"]),
     labelHasAnnotations() {
       return (
         this.label &&
@@ -172,12 +168,6 @@ export default {
     },
     handleErrorClose() {
       this.showError = false;
-    },
-    onHandleEditAnnotation() {
-      this.setActiveLabelId(`${this.label.id}-${this.indexGroup}`);
-    },
-    onStopHandleEditAnnotation() {
-      this.setActiveLabelId(null);
     }
   },
   watch: {

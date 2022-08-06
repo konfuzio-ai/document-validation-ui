@@ -5,8 +5,16 @@
 ></style>
 <template>
   <div class="action-buttons">
+    <div v-if="isLoading">
+      <b-notification :closable="false" class="loading-background">
+        <b-loading :is-full-page="isFullPage" v-model="isLoading">
+          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
+          </b-icon>
+        </b-loading>
+      </b-notification>
+    </div>
     <b-button
-      v-if="saveBtn"
+      v-if="saveBtn && !isLoading"
       icon-left="check"
       :class="['is-small', isActive && 'annotationSaveBtn']"
       type="is-primary"
@@ -14,13 +22,13 @@
     />
 
     <b-button
-      v-if="cancelBtn"
+      v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotationCancelBtn']"
       icon-left="xmark"
       v-on:click="cancel()"
     />
 
-    <div v-if="menu" class="menu">
+    <div v-if="menu && !isLoading" class="menu">
       <b-dropdown aria-role="list" position="is-bottom-left">
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon"></b-icon>
@@ -29,15 +37,6 @@
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>
-    </div>
-
-    <div v-if="isLoading">
-      <b-notification :closable="false" class="loading-background">
-        <b-loading :is-full-page="isFullPage" v-model="isLoading">
-          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
-          </b-icon>
-        </b-loading>
-      </b-notification>
     </div>
   </div>
 </template>

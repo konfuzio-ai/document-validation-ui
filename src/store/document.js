@@ -12,7 +12,8 @@ const state = {
   sidebarAnnotationSelected: null,
   showDeletedAnnotations: false,
   selectedDocument: null,
-  recalculatingAnnotations: false
+  recalculatingAnnotations: false,
+  editAnnotation: null
 };
 
 const getters = {
@@ -38,6 +39,23 @@ const getters = {
       return state.pages.length;
     }
     return 0;
+  },
+
+  /**
+   * Number of pages. If the pages array doesn't exist yet, return 0.
+   */
+  pageSelected: (state, _, rootState) => {
+    if (state.pages) {
+      return state.pages[rootState.display.currentPage - 1];
+    }
+    return null;
+  },
+
+  /**
+   * Checks if annotation is being edited
+   */
+  isAnnotationInEditMode: state => annotation => {
+    return state.editAnnotation && annotation && state.editAnnotation.id === annotation.id
   },
 };
 
@@ -66,6 +84,11 @@ const actions = {
     commit
   }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
+  },
+  setEditAnnotation: ({
+    commit
+  }, annotation) => {
+    commit("SET_EDIT_ANNOTATION", annotation);
   },
   addAnnotation: ({
     commit
@@ -289,6 +312,9 @@ const mutations = {
   },
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
+  },
+  SET_EDIT_ANNOTATION: (state, annotation) => {
+    state.editAnnotation = annotation;
   },
   ADD_PAGE: (state, page) => {
     state.pages.push(page);

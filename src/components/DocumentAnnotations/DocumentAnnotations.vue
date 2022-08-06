@@ -33,7 +33,6 @@
           :annotationSet="annotationSet"
           :indexGroup="indexGroup"
           :activeLabelId="activeLabelId"
-          :setActiveLabelId="setActiveLabelId"
           :handleShowError="handleShowError"
           :handleMessage="handleMessage"
         />
@@ -94,9 +93,6 @@ export default {
     },
     handleMessage(message) {
       this.$emit("handle-message", message);
-    },
-    setActiveLabelId(id) {
-      this.activeLabelId = id;
     }
   }
 };
