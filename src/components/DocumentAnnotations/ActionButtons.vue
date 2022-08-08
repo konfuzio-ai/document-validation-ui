@@ -14,20 +14,18 @@
       </b-notification>
     </div>
     <b-button
-      v-if="saveBtn && !isLoading"
-      icon-left="check"
-      :class="['is-small', isActive && 'annotationSaveBtn']"
-      type="is-primary"
-      v-on:click="save()"
-    />
-
-    <b-button
       v-if="cancelBtn && !isLoading"
-      :class="['is-small', isActive && 'annotationCancelBtn']"
+      :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
       v-on:click="cancel()"
     />
-
+    <b-button
+      v-if="saveBtn && !isLoading"
+      icon-left="check"
+      :class="['is-small', isActive && 'annotation-save-btn']"
+      type="is-primary"
+      v-on:click="save()"
+    />
     <div v-if="menu && !isLoading" class="menu">
       <b-dropdown aria-role="list" position="is-bottom-left">
         <template #trigger>

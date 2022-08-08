@@ -48,24 +48,6 @@
         </div>
       </div>
     </div>
-    <!-- <transition name="slide-fade">
-      <div
-        v-if="showWarning"
-        :class="[
-          'message',
-        !isActive && 'hidden'
-        ]"
-      >
-        <b-message class="is-warning">
-          <div class="message-container">
-            {{ $t("warning_message") }}
-            <div @click="handleWarningClose" class="btn-container">
-              <b-icon icon="xmark" class="close-btn" />
-            </div>
-          </div>
-        </b-message>
-      </div>
-    </transition> -->
   </div>
 </template>
 <script>
@@ -120,7 +102,6 @@ export default {
   data() {
     return {
       edited: false,
-      showWarning: false,
       showError: false,
       isLoading: false,
       annotationAnimationTimeout: null
@@ -159,12 +140,6 @@ export default {
       }
       return false;
     },
-    // handleWarning(value) {
-    //   this.showWarning = value;
-    // },
-    // handleWarningClose() {
-    //   this.showWarning = false;
-    // },
     handleError(value) {
       this.showError = value;
     },

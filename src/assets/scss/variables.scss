@@ -60,15 +60,24 @@ $header-size: 2px;
 
 $carousel-overlay-background: none;
 
-button.is-primary {
-  background-color: $primary !important;
+button {
+  &.is-primary {
+    background-color: $primary !important;
 
-  &:hover:enabled {
-    background-color: $primary-dark !important;
+    &:hover:enabled {
+      background-color: $primary-dark !important;
+    }
+
+    &:disabled {
+      background-color: $grey;
+    }
   }
 
-  &:disabled {
-    background-color: $grey;
+  .icon {
+    svg {
+      width: 12px !important;
+      height: 12px !important;
+    }
   }
 }
 
