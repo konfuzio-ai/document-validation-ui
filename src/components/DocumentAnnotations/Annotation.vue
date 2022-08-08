@@ -89,14 +89,14 @@ export default {
         edited: null,
         isLoading: null
       });
-      this.$emit("handle-show-warning", false);
+      // this.$emit("handle-show-warning", false);
       this.$emit("handle-show-error", false);
 
       // If the user changes the input by adding to the existing annotation
       // we show a warning
-      if (!newInOldValue || this.newValue.length === 0) {
-        this.$emit("handle-show-warning", true);
-      }
+      // if (!newInOldValue || this.newValue.length === 0) {
+      //   this.$emit("handle-show-warning", true);
+      // }
     },
     handleBlur(event, annotation) {
       const spanArray = annotation.span[0];
@@ -162,7 +162,7 @@ export default {
             this.newValue = this.oldValue;
             // Change to emit events
             this.$emit("handle-show-error", true);
-            this.$emit("handle-show-warning", false);
+            // this.$emit("handle-show-warning", false);
             this.$emit("handle-data-changes", {
               annotation: null,
               notEditing: null,

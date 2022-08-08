@@ -7,8 +7,7 @@
   <div
     :class="['label-properties', isAnnotationSelected() && 'selected']"
     :ref="`label_${label.id}_${annotationSet.id}`"
-    @mouseenter="onLabelHover(true)"
-    @mouseleave="onLabelHover(false)"
+    @click="onLabelClick()"
   >
     <div class="label-property-left">
       <LabelDetails :description="label.description" :annotation="annotation" />
@@ -27,7 +26,6 @@
           :annBeingEdited="annBeingEdited"
           :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
           @handle-data-changes="handleDataChanges"
-          @handle-show-warning="handleWarning"
           @handle-show-error="handleError"
         />
         <EmptyAnnotation
@@ -38,7 +36,7 @@
         />
       </div>
     </div>
-    <transition name="slide-fade">
+    <!-- <transition name="slide-fade">
       <div
         v-if="showWarning"
         :class="[
@@ -55,7 +53,7 @@
           </div>
         </b-message>
       </div>
-    </transition>
+    </transition> -->
     <transition name="slide-fade">
       <div
         v-if="showError"
@@ -116,7 +114,7 @@ export default {
     return {
       edited: false,
       notEditing: true,
-      showWarning: false,
+      // showWarning: false,
       showError: false,
       annBeingEdited: null,
       isLoading: false,
@@ -145,8 +143,8 @@ export default {
         this.isLoading = isLoading;
       }
     },
-    onLabelHover(show) {
-      if (this.annotation && show) {
+    onLabelClick() {
+      if (this.annotation) {
         const annotation = { ...this.annotation };
         annotation.label_name = this.label.name;
         this.$store.dispatch(
@@ -173,12 +171,12 @@ export default {
       }
       return false;
     },
-    handleWarning(value) {
-      this.showWarning = value;
-    },
-    handleWarningClose() {
-      this.showWarning = false;
-    },
+    // handleWarning(value) {
+    //   this.showWarning = value;
+    // },
+    // handleWarningClose() {
+    //   this.showWarning = false;
+    // },
     handleError(value) {
       this.showError = value;
     },
