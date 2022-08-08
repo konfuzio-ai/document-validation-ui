@@ -4,6 +4,14 @@
   cursor: pointer;
   border-right: 1px solid $detail;
 
+  &.split-mode {
+    border: 1px solid $grey-detail;
+    border-radius: 4px;
+    background-color: $white;
+    height: 40px;
+    max-width: 220px;
+  }
+
   .category-drop-down {
     display: flex;
     height: 100%;
@@ -14,6 +22,10 @@
     .icon {
       text-align: center;
       margin-right: 8px;
+
+      &.split-mode-caret {
+        padding-left: 8px;
+      }
     }
 
     .category-info {
