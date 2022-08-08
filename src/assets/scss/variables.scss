@@ -63,6 +63,7 @@ $carousel-overlay-background: none;
 button {
   &.is-primary {
     background-color: $primary !important;
+    color: $white !important;
 
     &:hover:enabled {
       background-color: $primary-dark !important;
@@ -72,6 +73,9 @@ button {
       background-color: $grey;
     }
   }
+
+  background-color: $white !important;
+  color: $dark-blue !important;
 
   .icon {
     svg {
