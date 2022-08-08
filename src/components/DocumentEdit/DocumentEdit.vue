@@ -50,11 +50,17 @@
           </div>
           <div
             v-if="editMode === editOptions.split"
-            :class="['splitting-lines', splitActive && 'active-split']"
+            :class="[
+              'splitting-lines',
+              activeSplittingLines[index] === page.number && 'active-split'
+            ]"
             @click="handleSplitting(page)"
           >
             <div class="scissors-icon">
               <b-icon icon="scissors" class="is-small" />
+            </div>
+            <div v-if="activeSplittingLines[index] === page.number">
+              <SplitDivider />
             </div>
           </div>
         </div>
@@ -64,6 +70,8 @@
       <ConfirmSplit
         :splitPages="splitPages"
         :selectedDocument="selectedDocument"
+        :fileNames="fileNames"
+        :fileExtension="fileExtension"
       />
     </div>
     <div class="footer">
@@ -82,6 +90,8 @@ import EditTopBar from "./EditTopBar";
 import EditFooter from "./EditFooter";
 import ConfirmSplit from "./ConfirmSplit";
 import ServerImage from "../../assets/images/ServerImage";
+import SplitDivider from "../../assets/images/SplitDivider";
+
 /**
  * This component shows a document thumbnail grid view to be able to edit the document.
  */
@@ -91,16 +101,21 @@ export default {
     EditTopBar,
     EditFooter,
     ConfirmSplit,
-    ServerImage
+    ServerImage,
+    SplitDivider
   },
   data() {
     return {
       rotations: [],
       rotationsForBackend: [],
       scroll: false,
-      splitActive: false,
+      activeSplittingLines: [],
+      pagesArray: [],
+      originalSplitPages: [],
       splitPages: [],
-      confirmSplitting: false
+      confirmSplitting: false,
+      fileNames: [],
+      fileExtension: null
     };
   },
   computed: {
@@ -114,11 +129,13 @@ export default {
     ...mapState("display", ["currentPage"])
   },
   methods: {
+    /** USED BY ALL EDIT MODES */
     setPages() {
       if (!this.selectedDocument) {
         return;
       }
 
+      /** Rotations */
       if (
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
@@ -132,6 +149,7 @@ export default {
           };
         });
 
+        // Set pages to send to the backend
         this.rotationsForBackend = this.pages.map(page => {
           return {
             id: page.id,
@@ -140,16 +158,19 @@ export default {
           };
         });
 
-        // Set pages for splitting:
-        const pagesArray = [];
+        /** Splitting */
+
+        // Add only the page numbers to a new array of all pages
         this.pages.map(page => {
-          pagesArray.push(page.number);
+          this.pagesArray.push(page.number);
         });
 
-        this.splitPages.push({
+        // The original array will have the original file name and all pages,
+        // as a base for splitting changes
+        this.originalSplitPages.push({
           name: this.selectedDocument.data_file_name,
           category: this.selectedDocument.category,
-          pages: pagesArray
+          pages: this.pagesArray
         });
       }
     },
@@ -161,6 +182,39 @@ export default {
         );
       }
     },
+    handleCancelEditing() {
+      this.$store.dispatch("document/disableEditMode").then(() => {
+        this.$store.dispatch("display/updateFit", "width");
+      });
+
+      // Reset the rotation angles to 0 if rotation changes are cancelled
+      if (this.rotations) {
+        this.rotations = this.rotations.map(rotation => {
+          return {
+            ...rotation,
+            angle: 0
+          };
+        });
+
+        this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
+          return {
+            ...rotation,
+            angle: 0
+          };
+        });
+      }
+
+      // Reset splitting final step to false
+      this.finalSplitting = false;
+    },
+    handleShowError() {
+      this.$emit("handle-error", true);
+    },
+    handleMessage() {
+      this.$emit("handle-message", this.$i18n.t("edit_error"));
+    },
+
+    /** ROTATE */
     rotateSinglePage(pageId, pageNumber) {
       // If the item already exists in the array and matches the clicked one, update it to the new rotation
       if (this.rotations.find(rotation => rotation.id === pageId)) {
@@ -317,47 +371,93 @@ export default {
       // Whether the rotation worked properly or not close editing mode
       this.handleCancelEditing();
     },
-    handleCancelEditing() {
-      this.$store.dispatch("document/disableEditMode").then(() => {
-        this.$store.dispatch("display/updateFit", "width");
-      });
 
-      // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.rotations) {
-        this.rotations = this.rotations.map(rotation => {
-          return {
-            ...rotation,
-            angle: 0
-          };
-        });
-
-        this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
-          return {
-            ...rotation,
-            angle: 0
-          };
+    /** SPLIT */
+    splitFileNameFromExtension() {
+      // Save the file name and the extension in different variables
+      // to be used in the next step of the splitting
+      if (this.splitPages) {
+        this.fileNames = this.splitPages.map(page => {
+          return page.name.split(".").slice(0, -1).join(".");
         });
       }
 
-      // Reset splitting final step to false
-      this.finalSplitting = false;
+      if (this.selectedDocument.data_file_name) {
+        this.fileExtension = this.selectedDocument.data_file_name
+          .split(".")
+          .at(-1);
+      }
     },
     handleSplitting(page) {
-      this.splitActive = !this.splitActive;
+      // For splitting line purposes
+      // Add page number to specific index
+      // Or replace it with 0 (to keep the same index) if it exists
+      const found = this.activeSplittingLines.find(
+        item => item === page.number
+      );
+
+      if (found) {
+        this.activeSplittingLines.splice(page.number - 1, 1, 0);
+      } else {
+        console.log("hi");
+        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
+      }
+
+      // Create array of separate page objects
+      this.splitPages = this.originalSplitPages;
+
+      this.splitPages[0] = {
+        ...this.splitPages[0],
+        pages: this.pagesArray.slice(0, this.activeSplittingLines[0])
+      };
+
+      if (this.activeSplittingLines) {
+        this.splitPages.push({
+          name: this.handleFileName(),
+          category: this.selectedDocument.category,
+          pages: this.pagesArray.slice(
+            this.activeSplittingLines.find(p => p === page.number)
+          )
+        });
+      }
     },
     handleConfirmSplitting() {
+      // This will take the user to the final step,
+      // the overview
       this.confirmSplitting = true;
+
+      // If there was no splitting
+      // we continue to the overview with the original array
+      if (this.splitPages.length === 0) {
+        this.splitPages = this.originalSplitPages;
+      }
     },
-    handleShowError() {
-      this.$emit("handle-error", true);
-    },
-    handleMessage() {
-      this.$emit("handle-message", this.$i18n.t("edit_error"));
+    handleFileName() {
+      let fileName;
+
+      // Return original file name,
+      // file name + copy,
+      // or file name + copy + number
+      // based on where the object will be located in the array
+      if (this.splitPages.length === 0) {
+        fileName = this.selectedDocument.data_file_name;
+      } else if (this.splitPages.length === 1) {
+        fileName = `${this.fileNames[0]}_copy.${this.fileExtension}`;
+      } else {
+        fileName = `${this.fileNames[0]}_copy${this.splitPages.length}.${this.fileExtension}`;
+      }
+
+      return fileName;
     }
   },
   watch: {
     pages() {
       this.setPages();
+      this.splitFileNameFromExtension();
+    },
+    pagesArray() {
+      // Set an initial length on the splitting lines array:
+      this.activeSplittingLines = new Array(this.pagesArray.length - 1);
     }
   },
   mounted() {

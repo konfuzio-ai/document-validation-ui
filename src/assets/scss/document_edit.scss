@@ -54,7 +54,7 @@
         }
 
         &.active-split {
-          border-right: 1px solid $grey-darkest;
+          border: none;
           height: 60px;
 
           &:hover {
@@ -166,82 +166,99 @@
 
   .confirm-split-component {
     margin-top: 40px;
-  }
 
-  .confirm-split-container {
-    .document-details {
-      display: flex;
-      align-items: center;
+    .confirm-split-container {
+      display: grid;
+      grid-template-rows: 1fr;
+      gap: 40px;
+      max-height: 700px;
+      overflow: scroll;
 
-      .overview-thumbnails {
-        margin-right: 15px;
-
-        .split-documents {
-          width: 50px;
-          height: 70px;
-          background-color: black;
-        }
-      }
-
-      .file-name-section {
+      .document-details {
         display: flex;
         align-items: center;
-        margin-right: 8px;
+        gap: 15px;
 
-        .control {
-          .input {
-            border-radius: 4px 0 0 4px !important;
-            box-shadow: none !important;
-            border-right: 0;
+        .overview-thumbnails {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 50px;
 
-            &:hover {
-              border-color: $grey-outline;
-            }
+          .split-documents {
+            width: 40px;
+            height: 60px;
+            background-color: $white;
+            border: 1px solid $grey-detail;
           }
         }
 
-        .name-input {
+        &:last-child {
+          .split-documents {
+            width: 60px;
+            height: 40px;
+          }
+        }
+        .file-name-section {
           display: flex;
           align-items: center;
-          height: 40px;
-          padding: 13px;
-          border-radius: 4px 0 0 4px;
-          border: 1px solid $grey-outline;
-          border-right: 0;
-          background-color: $white;
-          max-width: 200px;
 
-          .content-editable {
-            display: inline-block;
-            white-space: nowrap;
-            max-width: 100%;
-            height: 40px;
-            padding-top: 8px;
+          .control {
+            .input {
+              border-radius: 4px 0 0 4px !important;
+              box-shadow: none !important;
+              border-right: 0;
 
-            &.not-editable {
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-
-            &.is-editable {
-              overflow: auto;
-
-              &:focus {
-                outline: none;
+              &:hover {
+                border-color: $grey-outline;
               }
             }
           }
-        }
 
-        .file-extension-container {
-          display: flex;
-          align-items: center;
-          padding: 13px;
-          height: 40px;
-          border-radius: 0 4px 4px 0;
-          border: 1px solid $grey-outline;
-          background-color: $white;
-          color: $grey-blue;
+          .name-input {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            padding: 13px;
+            border-radius: 4px 0 0 4px;
+            border: 1px solid $grey-outline;
+            border-right: 0;
+            background-color: $white;
+            width: 200px;
+            max-width: 200px;
+            cursor: pointer;
+
+            .content-editable {
+              display: inline-block;
+              white-space: nowrap;
+              max-width: 100%;
+              height: 40px;
+              padding-top: 8px;
+
+              &.not-editable {
+                overflow: hidden;
+              }
+
+              &.is-editable {
+                overflow: auto;
+
+                &:focus {
+                  outline: none;
+                }
+              }
+            }
+          }
+
+          .file-extension-container {
+            display: flex;
+            align-items: center;
+            padding: 13px;
+            height: 40px;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid $grey-outline;
+            background-color: $white;
+            color: $grey-blue;
+          }
         }
       }
     }
