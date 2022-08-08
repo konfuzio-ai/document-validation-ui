@@ -74,11 +74,13 @@ export default {
     ])
   },
   methods: {
+    /** USED BY ALL EDIT MODES */
     setPages() {
       if (!this.selectedDocument) {
         return;
       }
 
+      /** Rotations */
       if (
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
