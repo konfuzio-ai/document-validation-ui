@@ -21,15 +21,18 @@
             :contenteditable="editable"
             @blur="handleEditable(false)"
           >
-            {{ page.name.trim() }}
+            {{ fileNames[index] }}
           </span>
         </div>
         <div class="file-extension-container">
-          <span>.pdf</span>
+          <span>{{ `.${fileExtension}` }}</span>
         </div>
       </div>
       <div class="category">
-        <DocumentCategory :selectedDocument="selectedDocument" />
+        <DocumentCategory
+          :selectedDocument="selectedDocument"
+          :splitMode="splitMode"
+        />
       </div>
     </div>
   </div>
@@ -51,18 +54,24 @@ export default {
     },
     splitPages: {
       type: Array
+    },
+    fileNames: {
+      type: Array
+    },
+    fileExtension: {
+      type: String
     }
   },
   data() {
     return {
-      editable: false
+      editable: false,
+      splitMode: true
     };
   },
   methods: {
     handleEditable(value) {
       this.editable = value;
     }
-    // TODO: get file name and extension separately
   }
 };
 </script>
