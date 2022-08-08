@@ -9,7 +9,9 @@
       :class="[
         'label-properties',
         isAnnotationSelected() && 'selected',
-        isAnnotationInEditMode(annotation) && 'editing'
+        isAnnotationInEditMode(
+          annotation ? annotation.id : `${annotationSet.id}_${label.id}`
+        ) && 'editing'
       ]"
       :ref="`label_${label.id}_${annotationSet.id}`"
       @mouseenter="onLabelHover(true)"

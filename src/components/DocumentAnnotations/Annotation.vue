@@ -9,27 +9,27 @@
     <span
       :class="[
         'label-property-value',
-        empty && 'label-empty',
         isLoading && 'saving-changes',
         error && 'error-editing'
       ]"
       role="textbox"
       ref="contentEditable"
       :contenteditable="true"
-      @paste="event => handlePaste(event)"
-      @keypress.enter="event => event.preventDefault()"
-      @click="handleEditAnnotation()"
+      @paste="handlePaste"
+      @keypress.enter="saveAnnotationChanges"
+      @click="handleEditAnnotation"
+      @input="isEmpty"
     >
       {{ annotation.span[0].offset_string }}
     </span>
-    <div v-if="isAnnotationInEditMode(annotation)" class="buttons-container">
+    <div v-if="isAnnotationInEditMode(annotation.id)" class="buttons-container">
       <ActionButtons
-        :saveBtn="true"
+        :saveBtn="!empty"
         :cancelBtn="true"
         :isActive="!isLoading"
         :isLoading="isLoading"
-        @cancel="handleCancel()"
-        @save="saveAnnotationChanges()"
+        @cancel="handleCancel"
+        @save="saveAnnotationChanges"
       />
     </div>
   </div>
@@ -60,7 +60,8 @@ export default {
   },
   data() {
     return {
-      error: null
+      error: null,
+      empty: false
     };
   },
   components: {
@@ -70,14 +71,8 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageSelected"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    empty() {
-      return (
-        this.$refs.contentEditable &&
-        this.$refs.contentEditable.textContent.trim() === ""
-      );
-    },
     annotationText() {
-      if (this.isAnnotationInEditMode(this.annotation)) {
+      if (this.isAnnotationInEditMode(this.annotation.id)) {
         return this.$refs.contentEditable.textContent.trim();
       } else {
         return this.annotation.span[0].offset_string;
@@ -85,11 +80,16 @@ export default {
     }
   },
   methods: {
+    isEmpty() {
+      this.empty =
+        this.$refs.contentEditable &&
+        this.$refs.contentEditable.textContent.trim() === "";
+    },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
-      if (!this.isAnnotationInEditMode(this.annotation) && !this.isLoading) {
+      if (!this.isAnnotationInEditMode(this.annotation.id) && !this.isLoading) {
         const span = this.annotation.span[0];
 
         if (this.pageSelected) {
@@ -115,7 +115,10 @@ export default {
             selection,
             span
           });
-          this.$store.dispatch("document/setEditAnnotation", this.annotation);
+          this.$store.dispatch(
+            "document/setEditAnnotation",
+            this.annotation.id
+          );
         }
       }
     },
@@ -123,12 +126,16 @@ export default {
       this.setText(this.annotation.span[0].offset_string);
       this.$store.dispatch("document/setEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
+      this.$refs.contentEditable.blur();
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
       event.preventDefault();
     },
-    saveAnnotationChanges() {
+    saveAnnotationChanges(event) {
+      if (event) {
+        event.preventDefault();
+      }
       const spanArray = this.annotation.span[0];
       let updatedString;
 
@@ -207,6 +214,8 @@ export default {
             isLoading: false
           });
 
+          this.$refs.contentEditable.blur();
+
           setTimeout(() => {
             this.error = false;
           }, 2000);
@@ -216,7 +225,7 @@ export default {
   watch: {
     spanSelection(span) {
       if (
-        this.isAnnotationInEditMode(this.annotation) &&
+        this.isAnnotationInEditMode(this.annotation.id) &&
         span &&
         span.offset_string
       ) {

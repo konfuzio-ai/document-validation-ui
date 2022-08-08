@@ -11,15 +11,17 @@
         isEmptyAnnotationEditable() ? '' : 'label-empty'
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
-      @click="event => handleEditEmptyAnnotation(event)"
+      @click="handleEditEmptyAnnotation"
+      @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
+      @input="isEmpty"
     >
-      {{ getEmptyAnnotationPlaceholder() }}
+      {{ $t("no_data_found") }}
     </span>
     <ActionButtons
       v-if="showActionButtons()"
-      :saveBtn="saveBtn"
-      :cancelBtn="cancelBtn"
+      :saveBtn="!empty && isEmptyAnnotationEditable()"
+      :cancelBtn="true"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
       :isLoading="isLoading"
@@ -37,8 +39,7 @@ export default {
   name: "EmptyAnnotation",
   data() {
     return {
-      saveBtn: true,
-      cancelBtn: true
+      empty: false
     };
   },
   components: { ActionButtons },
@@ -57,6 +58,11 @@ export default {
     ...mapState("selection", ["spanSelection", "selectionEnabled"])
   },
   methods: {
+    isEmpty() {
+      this.empty =
+        this.$refs.emptyAnnotation &&
+        this.$refs.emptyAnnotation.textContent.trim() === "";
+    },
     emptyAnnotationId() {
       return `${this.annotationSet.id}_${this.label.id}`;
     },
@@ -65,13 +71,21 @@ export default {
         !this.isLoading &&
         this.selectionEnabled !== this.emptyAnnotationId()
       ) {
+        this.setText(this.$t("draw_box_document"));
         this.$store.dispatch(
           "selection/enableSelection",
           this.emptyAnnotationId()
         );
+        this.$store.dispatch(
+          "document/setEditAnnotation",
+          this.emptyAnnotationId()
+        );
       }
     },
-    saveEmptyAnnotation() {
+    saveEmptyAnnotation(event) {
+      if (event) {
+        event.preventDefault();
+      }
       // update the bbox text with the one from the input
       this.spanSelection.offset_string = this.$refs.emptyAnnotation.textContent;
       this.spanSelection.offset_string_original =
@@ -99,40 +113,41 @@ export default {
             });
           }
         });
-      this.cancelEmptyAnnotation();
+      this.$store.dispatch("document/setEditAnnotation", null);
+      this.$store.dispatch("selection/disableSelection");
+      this.$refs.emptyAnnotation.blur();
     },
     cancelEmptyAnnotation() {
+      this.$store.dispatch("document/setEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
+      this.$refs.emptyAnnotation.blur();
+      this.setText(this.$t("no_data_found"));
     },
     isEmptyAnnotationEditable() {
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
-        this.spanSelection.offset_string
+        this.spanSelection.offset_string != null
       );
-    },
-    getEmptyAnnotationPlaceholder() {
-      if (this.selectionEnabled === this.emptyAnnotationId()) {
-        if (this.spanSelection && this.spanSelection.offset_string) {
-          setTimeout(() => {
-            //focus element
-            this.$refs.emptyAnnotation.focus();
-          }, 200);
-          return this.spanSelection.offset_string;
-        } else {
-          return this.$t("draw_box_document");
-        }
-      } else {
-        return this.$t("no_data_found");
-      }
     },
     showActionButtons() {
       return (
-        (this.selectionEnabled === this.emptyAnnotationId() &&
-          this.spanSelection &&
-          this.spanSelection.offset_string) ||
-        this.isLoading
+        this.selectionEnabled === this.emptyAnnotationId() || this.isLoading
       );
+    },
+    setText(text) {
+      this.$refs.emptyAnnotation.textContent = text;
+    }
+  },
+  watch: {
+    spanSelection(span) {
+      if (
+        this.selectionEnabled === this.emptyAnnotationId() &&
+        span &&
+        span.offset_string
+      ) {
+        this.setText(span.offset_string);
+      }
     }
   }
 };

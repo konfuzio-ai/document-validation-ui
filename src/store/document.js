@@ -13,7 +13,7 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
-  editAnnotation: null
+  editAnnotation: null // annotation id
 };
 
 const getters = {
@@ -54,8 +54,8 @@ const getters = {
   /**
    * Checks if annotation is being edited
    */
-  isAnnotationInEditMode: state => annotation => {
-    return state.editAnnotation && annotation && state.editAnnotation.id === annotation.id
+  isAnnotationInEditMode: state => annotationId => {
+    return state.editAnnotation && annotationId && state.editAnnotation === annotationId
   },
 };
 

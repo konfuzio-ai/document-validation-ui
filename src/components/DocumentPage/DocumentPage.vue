@@ -31,7 +31,7 @@
               )"
             >
               <v-rect
-                v-if="!isAnnotationInEditMode(annotation)"
+                v-if="!isAnnotationInEditMode(annotation.id)"
                 :config="
                   annotationRect(
                     bbox,
@@ -52,7 +52,7 @@
         v-if="
           documentFocusedAnnotation &&
           documentFocusedAnnotation.span &&
-          !isAnnotationInEditMode(documentFocusedAnnotation)
+          !isAnnotationInEditMode(documentFocusedAnnotation.id)
         "
       >
         <template>
