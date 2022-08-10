@@ -45,7 +45,13 @@
         </template>
       </v-layer>
       <v-layer
-        v-if="documentFocusedAnnotation && documentFocusedAnnotation.span"
+        v-if="
+          documentFocusedAnnotation &&
+          documentFocusedAnnotation.span &&
+          visiblePageRange.includes(
+            documentFocusedAnnotation.span[0].page_index + 1
+          )
+        "
       >
         <template>
           <v-label

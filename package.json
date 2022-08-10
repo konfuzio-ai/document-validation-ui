@@ -1,6 +1,6 @@
 {
   "name": "@konfuzio/capture-vue",
-  "version": "0.0.6",
+  "version": "0.0.7-scroll-annotation",
   "repository": "git://github.com:konfuzio-ai/konfuzio-capture-vue.git",
   "scripts": {
     "serve": "vue-cli-service serve",
