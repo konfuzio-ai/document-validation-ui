@@ -97,6 +97,8 @@ export default {
         return;
       }
 
+      // Send the category ID to the split overview
+      // to update the new document category
       this.$emit("category-change", category.id);
     }
   }
