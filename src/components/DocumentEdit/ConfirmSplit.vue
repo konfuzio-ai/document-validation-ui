@@ -22,9 +22,7 @@
               @click="handlePageChange(page.pages[0])"
             >
               <div class="thumbnail">
-                <div class="img-container">
-                  <ServerImage :imageUrl="`${page.img_url}`" />
-                </div>
+                <ServerImage :imageUrl="getImageUrl(page)" />
                 <div class="icon-container">
                   <div class="action-icon">
                     <b-icon
@@ -46,6 +44,7 @@
           >
             <span
               ref="contentEditable"
+              :key="index"
               :class="[
                 'content-editable',
                 editable ? 'is-editable' : 'not-editable'
@@ -97,6 +96,9 @@ export default {
     fileExtension: {
       type: String
     },
+    imagesArray: {
+      type: Array
+    },
     handleShowError: {
       type: Function
     },
@@ -132,7 +134,19 @@ export default {
 
       // Do not show file extension
       return name.split(".").slice(0, -1).join(".");
+    },
+    getImageUrl(page) {
+      // returns the first thumbnail in the pages array
+      // for each new document
+      const image = this.imagesArray.find(
+        image => image.number === page.pages[0]
+      );
+
+      return `${image.url}?${image.updated}`;
     }
+  },
+  mounted() {
+    console.log(this.imagesArray);
   }
 };
 </script>

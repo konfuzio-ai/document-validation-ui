@@ -1,6 +1,6 @@
 <style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
 <template>
-  <div class="document-edit">
+  <div :class="['document-edit', splitOverview && 'split-overview-component']">
     <EditTopBar
       :splitOverview="splitOverview"
       @cancel-editing="handleCancelEditing"
@@ -73,10 +73,11 @@
         :selectedDocument="selectedDocument"
         :fileName="fileName"
         :fileExtension="fileExtension"
-        @change-page="changePage"
-        @go-back="closeSplitOverview = true"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
+        :imagesArray="imagesArray"
+        @change-page="changePage"
+        @go-back="closeSplitOverview = true"
       />
     </div>
     <div class="footer">
@@ -116,6 +117,7 @@ export default {
       scroll: false,
       activeSplittingLines: [],
       pagesArray: [],
+      imagesArray: [],
       originalSplitPages: [],
       splitPages: [],
       splitOverview: false,
@@ -169,6 +171,11 @@ export default {
         // Add only the page numbers to a new array of all pages
         this.pages.map(page => {
           this.pagesArray.push(page.number);
+          this.imagesArray.push({
+            number: page.number,
+            url: page.image_url,
+            updated: page.updated_at
+          });
         });
       }
     },
