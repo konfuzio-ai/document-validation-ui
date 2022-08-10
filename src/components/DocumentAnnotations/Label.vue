@@ -7,7 +7,9 @@
   <div
     :class="['label-properties', isAnnotationSelected() && 'selected']"
     :ref="`label_${label.id}_${annotationSet.id}`"
-    @click="onLabelClick()"
+    @click="onLabelClick(true)"
+    @mouseenter="onLabelHover(true)"
+    @mouseleave="onLabelHover(false)"
   >
     <div class="label-property-left">
       <LabelDetails :description="label.description" :annotation="annotation" />
@@ -91,10 +93,16 @@ export default {
     },
     annotationSet: {
       required: true
+    },
+    handleScroll: {
+      type: Function
     }
   },
   computed: {
-    ...mapState("document", ["sidebarAnnotationSelected"]),
+    ...mapState("document", [
+      "sidebarAnnotationSelected",
+      "documentFocusedAnnotation"
+    ]),
     labelHasAnnotations() {
       return (
         this.label &&
@@ -143,8 +151,12 @@ export default {
         this.isLoading = isLoading;
       }
     },
-    onLabelClick() {
-      if (this.annotation) {
+    onLabelHover(value) {
+      if (value) {
+        this.handleScroll(!value);
+      }
+
+      if (this.annotation && value) {
         const annotation = { ...this.annotation };
         annotation.label_name = this.label.name;
         this.$store.dispatch(
@@ -153,6 +165,11 @@ export default {
         );
       } else {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
+      }
+    },
+    onLabelClick(value) {
+      if (value && this.documentFocusedAnnotation) {
+        this.handleScroll(value);
       }
     },
     isAnnotationBeingEditedNull() {
@@ -208,6 +225,7 @@ export default {
           // remove annotation selection after some time
           this.annotationAnimationTimeout = setTimeout(() => {
             this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+            this.handleScroll(false);
           }, 1500);
         }, 100);
         // add a timeout in case we need to wait if a tab is going to be changed

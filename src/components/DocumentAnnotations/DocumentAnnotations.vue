@@ -31,6 +31,7 @@
           v-bind:key="label.id"
           :label="label"
           :annotationSet="annotationSet"
+          :handleScroll="handleScroll"
         />
       </div>
     </div>
@@ -56,6 +57,14 @@ export default {
     ActionButtons,
     RejectedLabels,
     Label
+  },
+  props: {
+    scroll: {
+      type: Boolean
+    },
+    handleScroll: {
+      type: Function
+    }
   },
   computed: {
     ...mapState("document", ["recalculatingAnnotations", "annotationSets"])

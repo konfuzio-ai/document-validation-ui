@@ -16,8 +16,13 @@
         @pages-reset="fitWidth"
         @handle-message="handleMessage"
         @handle-error="handleError"
+        :scroll="scroll"
       />
-      <DocumentAnnotations ref="annotations" />
+      <DocumentAnnotations
+        ref="annotations"
+        :handleScroll="handleScroll"
+        :scroll="scroll"
+      />
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -98,7 +103,8 @@ export default {
       isMinimunWidth: true,
       optimized: true,
       showError: false,
-      errorMessage: null
+      errorMessage: null,
+      scroll: false
     };
   },
   mounted() {
@@ -153,6 +159,10 @@ export default {
     updateScale(scale, { isOptimal = false } = {}) {
       if (!scale) return;
       this.$store.dispatch("display/updateScale", { scale, isOptimal });
+    },
+
+    handleScroll(value) {
+      this.scroll = value;
     },
 
     handleError(error) {

@@ -53,6 +53,7 @@ export default {
   data() {
     return {
       currentPercentage: 100,
+      minimumPercentage: 0,
       increment: 0.25,
       toolbarModalOpen: true,
       isModalActive: false,
@@ -73,16 +74,34 @@ export default {
     },
     zoomOut() {
       if (this.scale <= this.increment) return;
+      if (this.currentPercentage === 0) return;
+
       this.updateScale(this.scale - this.increment);
+
+      // Check if the difference between the current %
+      // and the increment is negative
+      if (
+        this.currentPercentage - this.increment * 100 <
+        this.minimumPercentage
+      ) {
+        // We want to lower the zoom only one more time
+        // when reaching this lowest value
+        // and set the current % to 0
+        this.currentPercentage = this.minimumPercentage;
+        return;
+      }
+
       this.currentPercentage -= this.increment * 100;
     },
     updateScale(scale) {
       this.$store.dispatch("display/updateScale", { scale });
+      // set the update fit to undefined so it can be fired again
+      // after changing the zoom
       this.$store.dispatch("display/updateFit", "undefined");
     },
     fitAuto() {
       this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 30;
+      this.currentPercentage = 60;
     },
     handleShowError() {
       this.$parent.$emit("handle-error", true);
