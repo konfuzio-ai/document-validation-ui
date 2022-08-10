@@ -240,7 +240,12 @@
     .sidebar {
       width: 50%;
     }
-  }
+
+        .rotate {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
 
   @media (max-width: 1100px) {
     .sidebar {
@@ -274,6 +279,7 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        height: 70px;
 
         .overview-thumbnails {
           display: flex;

@@ -17,6 +17,9 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
+        :imagesArray="imagesArray"
+        @change-page="changePage"
+        @go-back="closeSplitOverview = true"
       />
     </div>
     <div class="footer">
