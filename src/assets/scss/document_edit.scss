@@ -186,10 +186,34 @@
           width: 50px;
 
           .split-documents {
-            width: 40px;
-            height: 60px;
             background-color: $white;
             border: 1px solid $grey-detail;
+            border-radius: 2px;
+
+            .icon-container {
+              position: absolute;
+              margin-left: 8px;
+              top: 105px;
+              display: none;
+
+              .action-icon {
+                border-radius: 60px;
+                background-color: $grey-darkest;
+                width: 32px;
+                height: 32px;
+                color: $white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              }
+            }
+
+            &:hover {
+              .icon-container {
+                display: flex;
+              }
+            }
           }
         }
 
@@ -259,6 +283,10 @@
             background-color: $white;
             color: $grey-blue;
           }
+        }
+
+        .category {
+          margin-bottom: 39px;
         }
       }
     }
