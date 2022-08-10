@@ -164,10 +164,16 @@
     }
   }
 
-  .confirm-split-component {
-    margin-top: 40px;
+  .confirm-split {
+    margin: 40px 12px;
 
-    .confirm-split-container {
+    .back-btn-section {
+      width: 15px;
+      height: 20px;
+    }
+
+    .new-documents-container {
+      margin-top: 26px;
       display: grid;
       grid-template-rows: 1fr;
       gap: 40px;
@@ -249,7 +255,6 @@
             border-right: 0;
             background-color: $white;
             width: 200px;
-            max-width: 200px;
             cursor: pointer;
 
             .content-editable {
@@ -270,6 +275,18 @@
                   outline: none;
                 }
               }
+            }
+          }
+
+          @media (max-width: 1130px) {
+            .name-input {
+              width: 180px;
+            }
+          }
+
+          @media (max-width: 1080px) {
+            .name-input {
+              width: 150px;
             }
           }
 
