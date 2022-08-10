@@ -122,6 +122,14 @@
           align-self: center;
           padding-bottom: 10px;
         }
+
+        &.split-overview {
+          img {
+            height: 30px !important;
+            width: 30px !important;
+            border: 1px solid red;
+          }
+        }
       }
     }
 
@@ -164,6 +172,9 @@
     }
   }
 
+  &.split-overview-component {
+    background-color: $white;
+  }
   .confirm-split {
     margin: 40px 12px;
 
@@ -173,7 +184,8 @@
     }
 
     .new-documents-container {
-      margin-top: 26px;
+      margin-top: 5px;
+      padding-bottom: 26px;
       display: grid;
       grid-template-rows: 1fr;
       gap: 40px;
@@ -184,6 +196,7 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        height: 70px;
 
         .overview-thumbnails {
           display: flex;
@@ -192,14 +205,27 @@
           width: 50px;
 
           .split-documents {
-            background-color: $white;
-            border: 1px solid $grey-detail;
-            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            height: 70px;
+
+            .thumbnail {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              img {
+                border: 1px solid $detail;
+                border-radius: 2px;
+                height: auto;
+                width: 90%;
+                box-shadow: 3px 3px #fff, 4px 4px #e2e3e4, 6px 6px #fff,
+                  7px 7px #e2e3e4;
+              }
+            }
 
             .icon-container {
               position: absolute;
-              margin-left: 8px;
-              top: 105px;
               display: none;
 
               .action-icon {
@@ -222,16 +248,10 @@
             }
           }
         }
-
-        &:last-child {
-          .split-documents {
-            width: 60px;
-            height: 40px;
-          }
-        }
         .file-name-section {
           display: flex;
           align-items: center;
+          height: 40px;
 
           .control {
             .input {
@@ -248,21 +268,20 @@
           .name-input {
             display: flex;
             align-items: center;
-            height: 40px;
+            height: 100%;
             padding: 13px;
             border-radius: 4px 0 0 4px;
             border: 1px solid $grey-outline;
             border-right: 0;
             background-color: $white;
-            width: 200px;
+            width: 210px;
             cursor: pointer;
 
             .content-editable {
-              display: inline-block;
+              display: flex;
               white-space: nowrap;
-              max-width: 100%;
-              height: 40px;
-              padding-top: 8px;
+              width: 100%;
+              height: auto;
 
               &.not-editable {
                 overflow: hidden;
