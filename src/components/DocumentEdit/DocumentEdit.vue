@@ -54,7 +54,7 @@
               'splitting-lines',
               activeSplittingLines[index] === page.number && 'active-split'
             ]"
-            @click="handleSplitting(page)"
+            @click="handleSplittingLines(page)"
           >
             <div class="scissors-icon">
               <b-icon icon="scissors" class="is-small" />
@@ -70,8 +70,11 @@
       <ConfirmSplit
         :splitPages="splitPages"
         :selectedDocument="selectedDocument"
-        :fileNames="fileNames"
+        :fileName="fileName"
         :fileExtension="fileExtension"
+        @change-page="changePage"
+        :handleShowError="handleShowError"
+        :handleMessage="handleMessage"
       />
     </div>
     <div class="footer">
@@ -114,7 +117,7 @@ export default {
       originalSplitPages: [],
       splitPages: [],
       confirmSplitting: false,
-      fileNames: [],
+      fileName: [],
       fileExtension: null
     };
   },
@@ -164,14 +167,6 @@ export default {
         this.pages.map(page => {
           this.pagesArray.push(page.number);
         });
-
-        // The original array will have the original file name and all pages,
-        // as a base for splitting changes
-        this.originalSplitPages.push({
-          name: this.selectedDocument.data_file_name,
-          category: this.selectedDocument.category,
-          pages: this.pagesArray
-        });
       }
     },
     changePage(pageNumber) {
@@ -210,8 +205,8 @@ export default {
     handleShowError() {
       this.$emit("handle-error", true);
     },
-    handleMessage() {
-      this.$emit("handle-message", this.$i18n.t("edit_error"));
+    handleMessage(message) {
+      this.$emit("handle-message", message);
     },
 
     /** ROTATE */
@@ -354,13 +349,13 @@ export default {
             pollUntilLabelingAvailable(5000);
           } else {
             this.handleShowError();
-            this.handleMessage();
+            this.handleMessage(this.$i18n.t("edit_error"));
           }
         })
         .catch(error => {
           console.log(error);
           this.handleShowError();
-          this.handleMessage();
+          this.handleMessage(this.$i18n.t("edit_error"));
         })
         .finally(async () => {
           // Stop loading
@@ -374,12 +369,16 @@ export default {
 
     /** SPLIT */
     splitFileNameFromExtension() {
+      if (!this.selectedDocument) return;
+
       // Save the file name and the extension in different variables
       // to be used in the next step of the splitting
-      if (this.splitPages) {
-        this.fileNames = this.splitPages.map(page => {
-          return page.name.split(".").slice(0, -1).join(".");
-        });
+
+      if (this.selectedDocument.data_file_name) {
+        this.fileName = this.selectedDocument.data_file_name
+          .split(".")
+          .slice(0, -1)
+          .join(".");
       }
 
       if (this.selectedDocument.data_file_name) {
@@ -388,7 +387,7 @@ export default {
           .at(-1);
       }
     },
-    handleSplitting(page) {
+    handleSplittingLines(page) {
       // For splitting line purposes
       // Add page number to specific index
       // Or replace it with 0 (to keep the same index) if it exists
@@ -399,61 +398,97 @@ export default {
       if (found) {
         this.activeSplittingLines.splice(page.number - 1, 1, 0);
       } else {
-        console.log("hi");
         this.activeSplittingLines.splice(page.number - 1, 1, page.number);
       }
 
-      // Create array of separate page objects
-      this.splitPages = this.originalSplitPages;
+      this.saveSplitPages();
+    },
+    saveSplitPages() {
+      this.splitFileNameFromExtension();
 
-      this.splitPages[0] = {
-        ...this.splitPages[0],
-        pages: this.pagesArray.slice(0, this.activeSplittingLines[0])
-      };
+      // Check how many sub docs we have
+      const subDocuments = this.activeSplittingLines.filter(item => item !== 0);
 
-      if (this.activeSplittingLines) {
-        this.splitPages.push({
-          name: this.handleFileName(),
+      // Create array of objects
+      // with a fixed size based on how many sub documents are currently
+      const pageObjectArray = new Array(subDocuments.length + 1);
+
+      // Loop over the created array
+      // for each iteration we create the page object with the correponding data
+      for (let i = 0; i < pageObjectArray.length; i++) {
+        const pageObject = {
+          name: this.handleFileName(i),
           category: this.selectedDocument.category,
-          pages: this.pagesArray.slice(
-            this.activeSplittingLines.find(p => p === page.number)
-          )
-        });
-      }
-    },
-    handleConfirmSplitting() {
-      // This will take the user to the final step,
-      // the overview
-      this.confirmSplitting = true;
+          pages: this.handleSubPages(i, subDocuments),
+          img_url: this.pages[0].image_url
+        };
 
-      // If there was no splitting
-      // we continue to the overview with the original array
-      if (this.splitPages.length === 0) {
-        this.splitPages = this.originalSplitPages;
+        // Then we replace the "undefined" with the created object
+        pageObjectArray.splice(i, 1, pageObject);
       }
+
+      // Set the state to the created array
+      this.splitPages = pageObjectArray;
     },
-    handleFileName() {
-      let fileName;
+    handleFileName(index) {
+      let newFileName;
 
       // Return original file name,
       // file name + copy,
       // or file name + copy + number
       // based on where the object will be located in the array
-      if (this.splitPages.length === 0) {
-        fileName = this.selectedDocument.data_file_name;
-      } else if (this.splitPages.length === 1) {
-        fileName = `${this.fileNames[0]}_copy.${this.fileExtension}`;
+      if (index === 0) {
+        newFileName = this.selectedDocument.data_file_name;
+      } else if (index === 1) {
+        newFileName = `${this.fileName}_copy.${this.fileExtension}`;
       } else {
-        fileName = `${this.fileNames[0]}_copy${this.splitPages.length}.${this.fileExtension}`;
+        newFileName = `${this.fileName}_copy${index}.${this.fileExtension}`;
       }
 
-      return fileName;
+      return newFileName;
+    },
+    handleSubPages(index, splittingLine) {
+      let pages;
+
+      if (index === 0) {
+        pages = this.pagesArray.slice(0, splittingLine[index]);
+      } else {
+        if (!splittingLine[index]) {
+          pages = this.pagesArray.slice(splittingLine[index - 1]);
+        } else {
+          pages = this.pagesArray.slice(
+            splittingLine[index - 1],
+            splittingLine[index]
+          );
+        }
+      }
+
+      return pages;
+    },
+    handleConfirmSplitting() {
+      // This will take the user to the final step,
+      // which is the overview
+      this.confirmSplitting = true;
+
+      this.splitFileNameFromExtension();
+
+      // If there was no splitting, we just update the splitPages array
+      // to have 1 item with all the pages in the document
+      if (this.splitPages.length === 0) {
+        this.splitPages = [
+          {
+            name: this.selectedDocument.data_file_name,
+            category: this.selectedDocument.category,
+            pages: this.pagesArray,
+            img_url: this.pages[0].image_url
+          }
+        ];
+      }
     }
   },
   watch: {
     pages() {
       this.setPages();
-      this.splitFileNameFromExtension();
     },
     pagesArray() {
       // Set an initial length on the splitting lines array:
