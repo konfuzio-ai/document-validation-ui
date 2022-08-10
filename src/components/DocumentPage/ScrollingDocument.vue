@@ -18,6 +18,7 @@
         :scrollTop="scrollTop"
         @page-jump="onPageJump"
         class="scrolling-page"
+        :scroll="scroll"
       />
     </div>
     <Toolbar />
@@ -38,6 +39,12 @@ export default {
 
   directives: {
     scroll
+  },
+
+  props: {
+    scroll: {
+      type: Boolean
+    }
   },
 
   data() {

@@ -30,6 +30,9 @@ export default {
     clientHeight: {
       type: Number,
       required: true
+    },
+    scroll: {
+      type: Boolean
     }
   },
 
@@ -65,6 +68,10 @@ export default {
 
     scrollBottom() {
       return this.scrollTop + this.clientHeight;
+    },
+
+    focusedAnnotationAndScroll() {
+      return [this.documentFocusedAnnotation, this.scroll];
     },
 
     ...mapState("display", ["scale", "currentPage"]),
@@ -119,17 +126,21 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    documentFocusedAnnotation(focused) {
+    focusedAnnotationAndScroll(newValue) {
+      const focusedAnn = newValue[0];
+      const scroll = newValue[1];
+
       if (
-        focused &&
-        focused.span &&
-        focused.span[0].page_index + 1 === this.page.number
+        focusedAnn &&
+        focusedAnn.span &&
+        focusedAnn.span[0].page_index + 1 === this.page.number &&
+        scroll
       ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {
           // Scroll to the annotation
-          this.scrollTo(this.getYForBbox(focused.span[0]));
+          this.scrollTo(this.getYForBbox(focusedAnn.span[0]));
         });
       }
     },
