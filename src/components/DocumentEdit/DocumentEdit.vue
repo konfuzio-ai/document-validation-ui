@@ -2,12 +2,13 @@
 <template>
   <div class="document-edit">
     <EditTopBar
-      :confirmSplitting="confirmSplitting"
+      :splitOverview="splitOverview"
       @cancel-editing="handleCancelEditing"
       @submit-rotation="handleRotationSubmission"
       @confirm-splitting="handleConfirmSplitting"
+      :handleCancelEditing="handleCancelEditing"
     />
-    <div class="pages-section" v-if="!confirmSplitting">
+    <div class="pages-section" v-if="!splitOverview">
       <div :class="['document-grid', scroll && 'scroll']">
         <div
           v-for="(page, index) in pages"
@@ -117,7 +118,7 @@ export default {
       pagesArray: [],
       originalSplitPages: [],
       splitPages: [],
-      confirmSplitting: false,
+      splitOverview: false,
       fileName: [],
       fileExtension: null,
       closeSplitOverview: false
@@ -470,7 +471,7 @@ export default {
     handleConfirmSplitting() {
       // This will take the user to the final step,
       // which is the overview
-      this.confirmSplitting = true;
+      this.splitOverview = true;
       this.closeSplitOverview = false;
 
       this.splitFileNameFromExtension();
@@ -499,7 +500,7 @@ export default {
     },
     closeSplitOverview(newValue) {
       if (newValue) {
-        this.confirmSplitting = false;
+        this.splitOverview = false;
       }
     }
   },

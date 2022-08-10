@@ -1,7 +1,7 @@
 <style scoped lang="scss" src="../../assets/scss/edit_top_bar.scss"></style>
 <template>
   <div class="edit-top-bar">
-    <div class="split-top-bar option" v-if="confirmSplitting">
+    <div class="split-top-bar option" v-if="splitOverview">
       <b-icon :icon="getIcon(editMode)" class="option-icon" />
       <span>{{ $t(editMode) }}</span>
       <div class="caret">
@@ -69,8 +69,11 @@ export default {
     ...mapState("document", ["editMode", "editOptions"])
   },
   props: {
-    confirmSplitting: {
+    splitOverview: {
       type: Boolean
+    },
+    handleCancelEditing: {
+      type: Function
     }
   },
   methods: {
@@ -89,7 +92,7 @@ export default {
       this.$store.dispatch("document/setEditMode", option);
     },
     handleSplitButton() {
-      if (this.confirmSplitting) {
+      if (this.splitOverview) {
         return this.$i18n.t("save");
       }
       return this.$i18n.t("next");
@@ -97,7 +100,11 @@ export default {
     handleNext() {
       if (this.editMode === this.editOptions.split) {
         // then next view
-        this.$emit("confirm-splitting");
+        if (this.splitOverview) {
+          this.handleCancelEditing();
+        } else {
+          this.$emit("confirm-splitting");
+        }
       } else if (this.editMode === this.editOptions.rotate) {
         // handle submit
         this.$emit("submit-rotation");
