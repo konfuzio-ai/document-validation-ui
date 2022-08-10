@@ -4,7 +4,9 @@
     <div class="split-top-bar option" v-if="confirmSplitting">
       <b-icon :icon="getIcon(editMode)" class="option-icon" />
       <span>{{ $t(editMode) }}</span>
-      <b-icon icon="angle-right" class="caret-right is-small" />
+      <div class="caret">
+        <CaretSplittingOverview />
+      </div>
       <span class="overview">{{ $t("overview") }}</span>
     </div>
 
@@ -55,11 +57,13 @@
 <script>
 import { mapState } from "vuex";
 import CaretDown from "../../assets/images/TopBarCaretDownImg";
+import CaretSplittingOverview from "../../assets/images/CaretSplittingOverview";
 
 export default {
   name: "EditTopBar",
   components: {
-    CaretDown
+    CaretDown,
+    CaretSplittingOverview
   },
   computed: {
     ...mapState("document", ["editMode", "editOptions"])
