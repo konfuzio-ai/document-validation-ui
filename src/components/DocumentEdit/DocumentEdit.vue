@@ -73,6 +73,7 @@
         :fileName="fileName"
         :fileExtension="fileExtension"
         @change-page="changePage"
+        @go-back="closeSplitOverview = true"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
       />
@@ -118,7 +119,8 @@ export default {
       splitPages: [],
       confirmSplitting: false,
       fileName: [],
-      fileExtension: null
+      fileExtension: null,
+      closeSplitOverview: false
     };
   },
   computed: {
@@ -469,6 +471,7 @@ export default {
       // This will take the user to the final step,
       // which is the overview
       this.confirmSplitting = true;
+      this.closeSplitOverview = false;
 
       this.splitFileNameFromExtension();
 
@@ -493,6 +496,11 @@ export default {
     pagesArray() {
       // Set an initial length on the splitting lines array:
       this.activeSplittingLines = new Array(this.pagesArray.length - 1);
+    },
+    closeSplitOverview(newValue) {
+      if (newValue) {
+        this.confirmSplitting = false;
+      }
     }
   },
   mounted() {
