@@ -39,7 +39,11 @@
           </div>
         </div>
         <div class="file-name-section">
-          <div class="name-input" @click="handleEditable(true)">
+          <div
+            class="name-input"
+            @click="handleEditable(true)"
+            @paste="event => handlePaste(event)"
+          >
             <span
               ref="contentEditable"
               :class="[
@@ -110,6 +114,10 @@ export default {
     handleBackButton() {
       this.$emit("go-back");
     },
+    handlePaste(event) {
+      // TODO: modify to only paste plain text
+      event.preventDefault();
+    },
     handleEditable(value) {
       this.editable = value;
     },
@@ -125,9 +133,6 @@ export default {
       // Do not show file extension
       return name.split(".").slice(0, -1).join(".");
     }
-  },
-  mounted() {
-    console.log(this.splitPages);
   }
 };
 </script>
