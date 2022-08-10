@@ -17,15 +17,13 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        @change-page="changePage"
       />
     </div>
-    <div class="sidebar" v-if="!splitOverview">
-      <EditSidebar
-        @rotate-left="rotatePage"
-        @rotate-right="rotatePage"
-        @rotate-all-left="handleRotationsToTheLeft"
-        @rotate-all-right="handleRotationsToTheRight"
+    <div class="footer">
+      <EditFooter
+        v-if="editMode === 'rotate'"
+        @rotate-left="handleRotationToTheLeft"
+        @rotate-right="handleRotationToTheRight"
       />
     </div>
   </div>
