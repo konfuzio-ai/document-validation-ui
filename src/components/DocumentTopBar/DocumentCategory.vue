@@ -96,6 +96,8 @@ export default {
 
         return;
       }
+
+      this.$emit("category-change", category.id);
     }
   }
 };
