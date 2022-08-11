@@ -312,4 +312,15 @@ describe("Document Edit Component", () => {
         .text()
     ).toBe("ZRU3S3");
   });
+
+  // it("Check number of subdocuments", async () => {
+  //   const wrapper = mount(DocumentEdit, {
+  //     store,
+  //     mocks: {
+  //       $t,
+  //     },
+
+  //   });
+
+  // });
 });

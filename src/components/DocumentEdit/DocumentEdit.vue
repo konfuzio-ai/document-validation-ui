@@ -17,7 +17,7 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :imagesArray="imagesArray"
+        :pageData="pageData"
         @change-page="changePage"
         @go-back="closeSplitOverview = true"
       />
@@ -243,12 +243,12 @@ export default {
       let pages;
 
       if (index === 0) {
-        pages = this.pagesArray.slice(0, splittingLine[index]);
+        pages = this.pageData.slice(0, splittingLine[index]);
       } else {
         if (!splittingLine[index]) {
-          pages = this.pagesArray.slice(splittingLine[index - 1]);
+          pages = this.pageData.slice(splittingLine[index - 1]);
         } else {
-          pages = this.pagesArray.slice(
+          pages = this.pageData.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );

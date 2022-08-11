@@ -66,7 +66,7 @@ export default {
     CaretSplittingOverview
   },
   computed: {
-    ...mapState("document", ["editMode", "editOptions"])
+    ...mapState("edit", ["editMode", "editOptions"])
   },
   props: {
     splitOverview: {
@@ -89,7 +89,7 @@ export default {
       }
     },
     handleDropdownClick(option) {
-      this.$store.dispatch("document/setEditMode", option);
+      this.$store.dispatch("edit/setEditMode", option);
     },
     handleSplitButton() {
       if (this.splitOverview) {
