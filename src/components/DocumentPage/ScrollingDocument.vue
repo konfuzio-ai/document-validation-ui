@@ -60,7 +60,8 @@ export default {
     },
     ...mapState("display", ["currentPage"]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapState("document", ["recalculatingAnnotations"])
+    ...mapState("document", ["recalculatingAnnotations"]),
+    ...mapState("edit", ["editMode"])
   },
 
   methods: {
