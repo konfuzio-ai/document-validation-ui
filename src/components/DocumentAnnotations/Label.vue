@@ -71,10 +71,17 @@ export default {
     },
     handleScroll: {
       type: Function
+    },
+    handleMessage: {
+      type: Function
+    },
+    handleShowError: {
+      type: Function
     }
   },
   computed: {
     ...mapState("document", ["documentFocusedAnnotation"]),
+    ...mapGetters("document", ["isAnnotationInEditMode"]),
     labelHasAnnotations() {
       return (
         this.label &&

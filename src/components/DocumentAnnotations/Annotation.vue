@@ -10,7 +10,10 @@
       :class="[
         'label-property-value',
         isLoading && 'saving-changes',
-        error && 'error-editing'
+        error && 'error-editing',
+        isAnnotationEmpty && !isAnnotationInEditMode(annotation.id)
+          ? 'label-empty'
+          : ''
       ]"
       role="textbox"
       ref="contentEditable"
@@ -18,13 +21,16 @@
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
       @click="handleEditAnnotation"
-      @input="isEmpty"
     >
-      {{ annotation.span[0].offset_string }}
+      {{
+        isAnnotationEmpty
+          ? $t("no_data_found")
+          : annotation.span[0].offset_string
+      }}
     </span>
     <div v-if="isAnnotationInEditMode(annotation.id)" class="buttons-container">
       <ActionButtons
-        :saveBtn="!empty"
+        :saveBtn="true"
         :cancelBtn="true"
         :isActive="!isLoading"
         :isLoading="isLoading"
@@ -60,8 +66,7 @@ export default {
   },
   data() {
     return {
-      error: null,
-      empty: false
+      error: null
     };
   },
   components: {
@@ -77,20 +82,22 @@ export default {
       } else {
         return this.annotation.span[0].offset_string;
       }
+    },
+    isAnnotationEmpty() {
+      return this.annotation.revised && !this.annotation.is_correct;
     }
   },
   methods: {
-    isEmpty() {
-      this.empty =
-        this.$refs.contentEditable &&
-        this.$refs.contentEditable.textContent.trim() === "";
-    },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
       if (!this.isAnnotationInEditMode(this.annotation.id) && !this.isLoading) {
         const span = this.annotation.span[0];
+
+        if (this.isAnnotationEmpty) {
+          this.setText("");
+        }
 
         if (this.pageSelected) {
           this.$store.dispatch("selection/enableSelection", this.annotation.id);
@@ -123,7 +130,11 @@ export default {
       }
     },
     handleCancel() {
-      this.setText(this.annotation.span[0].offset_string);
+      this.setText(
+        this.isAnnotationEmpty
+          ? this.$t("no_data_found")
+          : this.annotation.span[0].offset_string
+      );
       this.$store.dispatch("document/setEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
       this.$refs.contentEditable.blur();
@@ -161,6 +172,7 @@ export default {
         };
       } else {
         updatedString = {
+          is_correct: true,
           span: [
             {
               offset_string: this.annotationText,
@@ -194,11 +206,20 @@ export default {
               annotation: null,
               isLoading: null
             });
+            this.setText(
+              this.annotationText === ""
+                ? this.$t("no_data_found")
+                : this.annotationText
+            );
           } else {
             this.error = true;
             this.handleShowError();
             this.handleMessage(this.$i18n.t("editing_error"));
-
+            this.setText(
+              this.isAnnotationEmpty
+                ? this.$t("no_data_found")
+                : this.annotation.span[0].offset_string
+            );
             this.$emit("handle-data-changes", {
               annotation: null,
               isLoading: null
@@ -227,7 +248,8 @@ export default {
       if (
         this.isAnnotationInEditMode(this.annotation.id) &&
         span &&
-        span.offset_string
+        span.offset_string &&
+        span.offset_string !== this.annotation.span[0].offset_string
       ) {
         this.setText(span.offset_string);
       }
