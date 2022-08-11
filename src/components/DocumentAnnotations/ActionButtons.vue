@@ -5,21 +5,28 @@
 ></style>
 <template>
   <div class="action-buttons">
+    <div v-if="isLoading">
+      <b-notification :closable="false" class="loading-background">
+        <b-loading :is-full-page="isFullPage" v-model="isLoading">
+          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
+          </b-icon>
+        </b-loading>
+      </b-notification>
+    </div>
     <b-button
-      v-if="saveBtn"
-      icon-left="check"
-      class="is-small"
-      type="is-primary"
-      v-on:click="save()"
-    />
-    <b-button
-      v-if="cancelBtn"
-      class="is-small"
+      v-if="cancelBtn && !isLoading"
+      :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
       v-on:click="cancel()"
     />
-
-    <div v-if="menu" class="menu">
+    <b-button
+      v-if="saveBtn && !isLoading"
+      icon-left="check"
+      :class="['is-small', isActive && 'annotation-save-btn']"
+      type="is-primary"
+      v-on:click="save()"
+    />
+    <div v-if="menu && !isLoading" class="menu">
       <b-dropdown aria-role="list" position="is-bottom-left">
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon"></b-icon>
@@ -28,15 +35,6 @@
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>
-    </div>
-
-    <div v-if="isLoading">
-      <b-notification :closable="false" class="loading-background">
-        <b-loading :is-full-page="isFullPage" v-model="isLoading">
-          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
-          </b-icon>
-        </b-loading>
-      </b-notification>
     </div>
   </div>
 </template>
@@ -59,6 +57,9 @@ export default {
       type: Boolean
     },
     isLoading: {
+      type: Boolean
+    },
+    isActive: {
       type: Boolean
     }
   },

@@ -25,22 +25,26 @@
 
         <template v-if="pageInVisibleRange">
           <template v-for="annotation in pageAnnotations">
-            <v-rect
+            <template
               v-for="(bbox, index) in annotation.span.filter(
                 bbox => bbox.page_index + 1 == pageNumber
               )"
-              :config="
-                annotationRect(
-                  bbox,
-                  documentFocusedAnnotation &&
-                    annotation.id === documentFocusedAnnotation.id
-                )
-              "
-              :key="'ann' + annotation.id + '-' + index"
-              v-on:click="selectLabelAnnotation(annotation)"
-              @mouseenter="onAnnotationHover(annotation)"
-              @mouseleave="onAnnotationHover(null)"
-            ></v-rect>
+            >
+              <v-rect
+                v-if="!isAnnotationInEditMode(annotation.id)"
+                :config="
+                  annotationRect(
+                    bbox,
+                    documentFocusedAnnotation &&
+                      annotation.id === documentFocusedAnnotation.id
+                  )
+                "
+                :key="'ann' + annotation.id + '-' + index"
+                v-on:click="selectLabelAnnotation(annotation)"
+                @mouseenter="onAnnotationHover(annotation)"
+                @mouseleave="onAnnotationHover(null)"
+              ></v-rect>
+            </template>
           </template>
         </template>
       </v-layer>
@@ -50,7 +54,8 @@
           documentFocusedAnnotation.span &&
           visiblePageRange.includes(
             documentFocusedAnnotation.span[0].page_index + 1
-          )
+          ) &&
+          !isAnnotationInEditMode(documentFocusedAnnotation.id)
         "
       >
         <template>
@@ -105,7 +110,6 @@
 </template>
 
 <script>
-import BigNumber from "bignumber.js";
 import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
@@ -131,16 +135,6 @@ export default {
   },
 
   computed: {
-    /**
-     * The proportion between the original size of the page and the
-     * image rendering.
-     */
-    imageScale() {
-      return new BigNumber(this.page.size[0])
-        .div(this.page.original_size[0])
-        .toNumber();
-    },
-
     actualSizeViewport() {
       return {
         width: this.page.size[0] * this.scale,
@@ -198,15 +192,22 @@ export default {
       );
     },
 
-    ...mapState("selection", ["isSelecting"]),
+    ...mapState("selection", ["isSelecting", "selectionFromBbox"]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
       "recalculatingAnnotations",
-      "annotations"
+      "annotations",
+      "editAnnotation"
     ]),
-    ...mapGetters("display", ["visiblePageRange"]),
-    ...mapGetters("selection", ["isSelectionEnabled"])
+    ...mapGetters("display", [
+      "visiblePageRange",
+      "bboxToRect",
+      "clientToBbox",
+      "imageScale"
+    ]),
+    ...mapGetters("selection", ["isSelectionEnabled"]),
+    ...mapGetters("document", ["isAnnotationInEditMode"])
   },
 
   methods: {
@@ -356,98 +357,9 @@ export default {
     },
 
     /**
-     * Transform the `position` coordinates into the bbox format accepted by
-     * the backend.
-     */
-    clientToBbox(start, end) {
-      /**
-       * The backend bbox's `y0` and `y1` attributes depend on knowing the
-       * page's height.
-       */
-      const pageHeight = new BigNumber(this.page.original_size[1]);
-
-      /**
-       * We use `Math.min` and `Math.max` because depending on how the area
-       * selection is made the `start` and `end` attributes might be reversed.
-       */
-      const x0 = new BigNumber(Math.min(start.x, end.x))
-        .div(this.scale)
-        .div(this.imageScale)
-        .times(PIXEL_RATIO)
-        .dp(3, BigNumber.ROUND_DOWN)
-        .toNumber();
-      const x1 = new BigNumber(Math.max(start.x, end.x))
-        .div(this.scale)
-        .div(this.imageScale)
-        .times(PIXEL_RATIO)
-        .dp(3, BigNumber.ROUND_UP)
-        .toNumber();
-      const top = new BigNumber(Math.min(start.y, end.y))
-        .div(this.scale)
-        .div(this.imageScale)
-        .times(PIXEL_RATIO)
-        .dp(3)
-        .toNumber();
-      const bottom = new BigNumber(Math.max(start.y, end.y))
-        .div(this.scale)
-        .div(this.imageScale)
-        .times(PIXEL_RATIO)
-        .dp(3)
-        .toNumber();
-      const y0 = pageHeight
-        .minus(bottom)
-        .dp(3, BigNumber.ROUND_DOWN)
-        .toNumber();
-      const y1 = pageHeight.minus(top).dp(3, BigNumber.ROUND_UP).toNumber();
-
-      const bbox = {
-        x0,
-        x1,
-        top,
-        bottom,
-        y0,
-        y1,
-        page_index: this.pageNumber - 1
-      };
-      return bbox;
-    },
-
-    bboxToRect(bbox) {
-      const { x0, x1, y0, y1, top } = bbox;
-      const rect = {
-        // left
-        x: new BigNumber(x0)
-          .times(this.scale)
-          .times(this.imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        // top
-        y: new BigNumber(top)
-          .times(this.scale)
-          .times(this.imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        width: new BigNumber(x1)
-          .minus(x0)
-          .abs()
-          .times(this.scale)
-          .times(this.imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        height: new BigNumber(y1)
-          .minus(y0)
-          .times(this.scale)
-          .times(this.imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber()
-      };
-      return rect;
-    },
-
-    /**
      * Builds the konva config object for the annotation.
      */
-    annotationRect(bbox, focused) {
+    annotationRect(bbox, focused, draggable) {
       let fillColor = "yellow";
       let strokeWidth = 0;
       let strokeColor = "";
@@ -464,7 +376,8 @@ export default {
         strokeWidth: strokeWidth,
         stroke: strokeColor,
         name: "annotation",
-        ...this.bboxToRect(bbox)
+        draggable,
+        ...this.bboxToRect(this.page, bbox)
       };
     },
     /**
@@ -472,14 +385,15 @@ export default {
      */
     annotationLabelRect(bbox, hasOffset = false) {
       return {
-        y: (bbox.top * this.scale * this.imageScale) / PIXEL_RATIO - 16,
-        x: (bbox.x0 * this.scale * this.imageScale) / PIXEL_RATIO - 1,
+        y:
+          (bbox.top * this.scale * this.imageScale(this.page)) / PIXEL_RATIO -
+          16,
+        x:
+          (bbox.x0 * this.scale * this.imageScale(this.page)) / PIXEL_RATIO - 1,
         offsetX: hasOffset ? -30 : 0
       };
     },
     selectLabelAnnotation(annotation) {
-      // TODO: to implement in the future, label name should be on the annotation
-      //this.$store.dispatch("document/setDocumentFocusedAnnotation", annotation);
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
@@ -499,7 +413,11 @@ export default {
       }
     },
     async getBoxSelectionContent() {
-      const box = this.clientToBbox(this.selection.start, this.selection.end);
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
       this.$store.dispatch("document/startLoading");
       await this.$store.dispatch("selection/getTextFromBboxes", box);
       this.$store.dispatch("document/endLoading");
@@ -509,6 +427,13 @@ export default {
     recalculatingAnnotations(newState) {
       if (!newState) {
         this.drawPage(true);
+      }
+    },
+    editAnnotation(annotation) {
+      if (annotation) {
+        setTimeout(() => {
+          this.updateTransformer();
+        }, 100);
       }
     }
   },

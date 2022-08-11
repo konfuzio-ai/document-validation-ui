@@ -15,14 +15,14 @@ const state = {
 
 const getters = {
   isSelectionEnabled: state => {
-    return state.selectionEnabled
+    return state.selectionEnabled;
   },
   getSelectionForPage: state => pageNumber => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
     }
     return null;
-  },
+  }
 };
 
 const actions = {
@@ -84,6 +84,16 @@ const actions = {
     }
   },
 
+  setSelection: ({
+    commit
+  }, {
+    span,
+    selection
+  }) => {
+    commit("SET_SELECTION", selection);
+    commit("SET_SPAN_SELECTION", span);
+  },
+
   getTextFromBboxes: ({
     commit,
     rootState
@@ -115,14 +125,10 @@ const actions = {
       });
   },
   setSpanSelection: ({
-      commit
-    },
-    span
-  ) => {
-    commit("SET_SPAN_SELECTION",
-      span
-    );
-  },
+    commit
+  }, span) => {
+    commit("SET_SPAN_SELECTION", span);
+  }
 };
 
 const mutations = {
@@ -162,6 +168,9 @@ const mutations = {
   },
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
+  },
+  SET_SELECTION: (state, selection) => {
+    state.selection = selection;
   }
 };
 

@@ -72,7 +72,7 @@ export default {
       node.scaleX(1);
       node.scaleY(1);
 
-      // we emit this to PDFPage so that it can refresh the selection from the
+      // we emit this to DocumentPage so that it can refresh the selection from the
       // backend once we're finished transforming/dragging
       this.$emit("changed");
     },

@@ -20,6 +20,8 @@
       />
       <DocumentAnnotations
         ref="annotations"
+        @handle-message="handleMessage"
+        @handle-error="handleError"
         :handleScroll="handleScroll"
         :scroll="scroll"
       />

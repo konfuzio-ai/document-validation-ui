@@ -5,117 +5,156 @@
 ></style>
 
 <template>
-  <div class="annotation">
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       :class="[
         'label-property-value',
-        !notEditing &&
-          isLoading &&
-          isAnnotationBeingEditedNull() === annotation.id &&
-          'saving-changes'
+        isLoading && 'saving-changes',
+        error && 'error-editing'
       ]"
       role="textbox"
-      contenteditable
-      @blur="event => handleBlur(event, annotation)"
-      @paste="event => handlePaste(event, annotation)"
-      @input="event => handleInput(event, annotation)"
-      @keypress.enter="event => event.preventDefault()"
+      ref="contentEditable"
+      :contenteditable="true"
+      @paste="handlePaste"
+      @keypress.enter="saveAnnotationChanges"
+      @click="handleEditAnnotation"
+      @input="isEmpty"
     >
       {{ annotation.span[0].offset_string }}
     </span>
-    <div
-      v-if="isLoading"
-      :class="[
-        'loading-container',
-        annotation.id !== annBeingEdited.id && 'hidden'
-      ]"
-    >
-      <ActionButtons :isLoading="isLoading" />
+    <div v-if="isAnnotationInEditMode(annotation.id)" class="buttons-container">
+      <ActionButtons
+        :saveBtn="!empty"
+        :cancelBtn="true"
+        :isActive="!isLoading"
+        :isLoading="isLoading"
+        @cancel="handleCancel"
+        @save="saveAnnotationChanges"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 import ActionButtons from "./ActionButtons";
-
+/**
+ * This component is responsible for managing filled annotations.
+ */
 export default {
   name: "Annotation",
   props: {
     annotation: {
-      type: Object
+      type: Object,
+      required: true
     },
     isLoading: {
       type: Boolean
     },
-    edited: {
-      type: Boolean
+    handleShowError: {
+      type: Function
     },
-    notEditing: {
-      type: Boolean
-    },
-    annBeingEdited: {
-      type: Object
-    },
-    isAnnotationBeingEditedNull: {
+    handleMessage: {
       type: Function
     }
   },
   data() {
     return {
-      oldValue: null,
-      newValue: null,
-      showLoading: false
+      error: null,
+      empty: false
     };
   },
   components: {
     ActionButtons
   },
+  computed: {
+    ...mapGetters("document", ["isAnnotationInEditMode", "pageSelected"]),
+    ...mapGetters("display", ["bboxToRect"]),
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    annotationText() {
+      if (this.isAnnotationInEditMode(this.annotation.id)) {
+        return this.$refs.contentEditable.textContent.trim();
+      } else {
+        return this.annotation.span[0].offset_string;
+      }
+    }
+  },
   methods: {
-    isNewValueInOld(event, annotation) {
-      this.oldValue = annotation.span[0].offset_string;
-      this.newValue = event.target.textContent.trim();
-      return this.oldValue.includes(this.newValue);
+    isEmpty() {
+      this.empty =
+        this.$refs.contentEditable &&
+        this.$refs.contentEditable.textContent.trim() === "";
+    },
+    setText(text) {
+      this.$refs.contentEditable.textContent = text;
+    },
+    handleEditAnnotation() {
+      if (!this.isAnnotationInEditMode(this.annotation.id) && !this.isLoading) {
+        const span = this.annotation.span[0];
+
+        if (this.pageSelected) {
+          this.$store.dispatch("selection/enableSelection", this.annotation.id);
+          const { x, y, width, height } = this.bboxToRect(
+            this.pageSelected,
+            span
+          );
+
+          const selection = {
+            start: {
+              x,
+              y
+            },
+            end: {
+              x: x + width,
+              y: y + height
+            },
+            pageNumber: this.pageSelected.number
+          };
+
+          this.$store.dispatch("selection/setSelection", {
+            selection,
+            span
+          });
+          this.$store.dispatch(
+            "document/setEditAnnotation",
+            this.annotation.id
+          );
+        }
+      }
+    },
+    handleCancel() {
+      this.setText(this.annotation.span[0].offset_string);
+      this.$store.dispatch("document/setEditAnnotation", null);
+      this.$store.dispatch("selection/disableSelection");
+      this.$refs.contentEditable.blur();
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
       event.preventDefault();
     },
-    handleInput(event, annotation) {
-      const newInOldValue = this.isNewValueInOld(event, annotation);
-
-      this.$emit("handle-data-changes", {
-        annotation,
-        notEditing: false,
-        edited: null,
-        isLoading: null
-      });
-      // this.$emit("handle-show-warning", false);
-      this.$emit("handle-show-error", false);
-
-      // If the user changes the input by adding to the existing annotation
-      // we show a warning
-      // if (!newInOldValue || this.newValue.length === 0) {
-      //   this.$emit("handle-show-warning", true);
-      // }
-    },
-    handleBlur(event, annotation) {
-      const spanArray = annotation.span[0];
-      const id = annotation.id;
+    saveAnnotationChanges(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      const spanArray = this.annotation.span[0];
       let updatedString;
 
       // If the user didn't change the value, we don't want to do anything
-      if (this.newValue === this.oldValue) {
+      if (this.annotationText === spanArray.offset_string) {
+        this.$emit("handle-data-changes", {
+          annotation: null,
+          isLoading: null
+        });
+        this.handleCancel();
         return;
       }
 
       this.$emit("handle-data-changes", {
         annotation: null,
-        notEditing: null,
-        edited: null,
         isLoading: true
       });
 
-      if (this.newValue.length === 0) {
+      if (this.annotationText.length === 0) {
         updatedString = {
           is_correct: false,
           revised: true
@@ -124,16 +163,16 @@ export default {
         updatedString = {
           span: [
             {
-              offset_string: this.newValue,
-              bottom: spanArray.bottom,
-              top: spanArray.top,
-              page_index: spanArray.page_index,
-              x0: spanArray.x0,
-              x1: spanArray.x1,
-              y0: spanArray.y0,
-              y1: spanArray.y1,
-              start_offset: spanArray.start_offset,
-              end_offset: spanArray.end_offset
+              offset_string: this.annotationText,
+              bottom: this.spanSelection.bottom,
+              top: this.spanSelection.top,
+              page_index: this.spanSelection.page_index,
+              x0: this.spanSelection.x0,
+              x1: this.spanSelection.x1,
+              y0: this.spanSelection.y0,
+              y1: this.spanSelection.y1,
+              start_offset: this.spanSelection.start_offset,
+              end_offset: this.spanSelection.end_offset
             }
           ]
         };
@@ -145,41 +184,53 @@ export default {
       this.$store
         .dispatch("document/updateAnnotation", {
           updatedValues: updatedString,
-          annotationId: id
+          annotationId: this.annotation.id
         })
         .then(response => {
-          // Check if the response is successfull or not
+          // Check if the response is successful or not
           if (response) {
-            this.oldValue = this.newValue;
+            this.$store.dispatch("document/fetchAnnotations");
             this.$emit("handle-data-changes", {
               annotation: null,
-              notEditing: null,
-              edited: true,
               isLoading: null
             });
           } else {
-            event.target.textContent = this.oldValue;
-            this.newValue = this.oldValue;
-            // Change to emit events
-            this.$emit("handle-show-error", true);
-            // this.$emit("handle-show-warning", false);
+            this.error = true;
+            this.handleShowError();
+            this.handleMessage(this.$i18n.t("editing_error"));
+
             this.$emit("handle-data-changes", {
               annotation: null,
-              notEditing: null,
-              edited: false,
               isLoading: null
             });
           }
         })
         .finally(() => {
+          this.$store.dispatch("document/setEditAnnotation", null);
           this.$store.dispatch("document/endLoading");
+          this.$store.dispatch("selection/disableSelection");
           this.$emit("handle-data-changes", {
             annotation: null,
-            notEditing: null,
-            edited: null,
             isLoading: false
           });
+
+          this.$refs.contentEditable.blur();
+
+          setTimeout(() => {
+            this.error = false;
+          }, 2000);
         });
+    }
+  },
+  watch: {
+    spanSelection(span) {
+      if (
+        this.isAnnotationInEditMode(this.annotation.id) &&
+        span &&
+        span.offset_string
+      ) {
+        this.setText(span.offset_string);
+      }
     }
   }
 };

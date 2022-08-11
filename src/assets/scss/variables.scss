@@ -10,7 +10,6 @@ $lightest-red: rgba(254, 227, 226, 0.5);
 $dark: #2f3032;
 $full-black: #000;
 $grey-dark: #344054;
-$grey-darkest: #2b3545;
 $grey: #858c9a;
 $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
@@ -61,15 +60,28 @@ $header-size: 2px;
 
 $carousel-overlay-background: none;
 
-button.is-primary {
-  background-color: $primary !important;
+button {
+  &.is-primary {
+    background-color: $primary !important;
+    color: $white !important;
 
-  &:hover:enabled {
-    background-color: $primary-dark !important;
+    &:hover:enabled {
+      background-color: $primary-dark !important;
+    }
+
+    &:disabled {
+      background-color: $grey;
+    }
   }
 
-  &:disabled {
-    background-color: $grey;
+  background-color: $white !important;
+  color: $dark-blue !important;
+
+  .icon {
+    svg {
+      width: 12px !important;
+      height: 12px !important;
+    }
   }
 }
 

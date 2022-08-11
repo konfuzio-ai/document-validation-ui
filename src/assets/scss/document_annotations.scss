@@ -34,6 +34,11 @@
         background-color: $grey-lightest;
       }
 
+      &.editing {
+        background-color: $background;
+        border-bottom: 1px solid $lighter-green;
+      }
+
       .label-property-left {
         flex: 1;
         padding-left: 8px;
@@ -70,7 +75,6 @@
           .empty-annotation {
             display: flex;
             align-items: center;
-            padding: 5px 0;
           }
 
           .loading-container {
@@ -87,6 +91,11 @@
           .spinner {
             color: $grey;
           }
+        }
+
+        .buttons-container {
+          display: flex;
+          gap: 8px;
         }
       }
 
@@ -114,6 +123,11 @@
         button {
           width: 32px;
           height: 32px;
+
+          &.annotation-save-btn,
+          &.annotation-cancel-btn {
+            border-radius: 50%;
+          }
         }
       }
 
@@ -129,6 +143,36 @@
 
       .saving-changes {
         color: $grey;
+      }
+
+      .error-editing {
+        color: $red;
+        animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        transform: translate3d(0, 0, 0);
+      }
+
+      @keyframes shake {
+
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
       }
     }
   }

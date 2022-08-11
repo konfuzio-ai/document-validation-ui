@@ -32,6 +32,9 @@
           :label="label"
           :annotationSet="annotationSet"
           :handleScroll="handleScroll"
+          :indexGroup="indexGroup"
+          :handleShowError="handleShowError"
+          :handleMessage="handleMessage"
         />
       </div>
     </div>
@@ -87,6 +90,12 @@ export default {
         }
       });
       return found ? `${value + 1}` : "";
+    },
+    handleShowError() {
+      this.$emit("handle-error", true);
+    },
+    handleMessage(message) {
+      this.$emit("handle-message", message);
     }
   }
 };

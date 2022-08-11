@@ -4,80 +4,55 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div
-    :class="['label-properties', isAnnotationSelected() && 'selected']"
-    :ref="`label_${label.id}_${annotationSet.id}`"
-    @click="onLabelClick(true)"
-    @mouseenter="onLabelHover(true)"
-    @mouseleave="onLabelHover(false)"
-  >
-    <div class="label-property-left">
-      <LabelDetails :description="label.description" :annotation="annotation" />
-      <div class="label-property-name">
-        <span class="label-property-text">{{ label.name }} </span>
-      </div>
-    </div>
-    <div class="label-property-right">
-      <div class="label-property-annotation">
-        <Annotation
-          v-if="annotation"
+  <div class="labels" ref="label">
+    <div
+      :class="[
+        'label-properties',
+        isAnnotationSelected() && 'selected',
+        isAnnotationInEditMode(
+          annotation ? annotation.id : `${annotationSet.id}_${label.id}`
+        ) && 'editing'
+      ]"
+      :ref="`label_${label.id}_${annotationSet.id}`"
+      @click="onLabelClick(true)"
+      @mouseenter="onLabelHover(true)"
+      @mouseleave="onLabelHover(false)"
+    >
+      <div class="label-property-left">
+        <LabelDetails
+          :description="label.description"
           :annotation="annotation"
-          :isLoading="isLoading"
-          :edited="edited"
-          :notEditing="notEditing"
-          :annBeingEdited="annBeingEdited"
-          :isAnnotationBeingEditedNull="isAnnotationBeingEditedNull"
-          @handle-data-changes="handleDataChanges"
-          @handle-show-error="handleError"
         />
-        <EmptyAnnotation
-          v-else
-          :label="label"
-          :annotationSet="annotationSet"
-          @handle-data-changes="handleDataChanges"
-        />
+        <div class="label-property-name">
+          <span class="label-property-text">{{ label.name }} </span>
+        </div>
+      </div>
+      <div class="label-property-right">
+        <div class="label-property-annotation">
+          <Annotation
+            v-if="annotation"
+            :annotation="annotation"
+            :isLoading="isLoading"
+            @handle-data-changes="handleDataChanges"
+            :handleShowError="handleShowError"
+            :handleMessage="handleMessage"
+          />
+          <EmptyAnnotation
+            v-else
+            :label="label"
+            :annotationSet="annotationSet"
+            :isLoading="isLoading"
+            @handle-data-changes="handleDataChanges"
+            :handleShowError="handleShowError"
+            :handleMessage="handleMessage"
+          />
+        </div>
       </div>
     </div>
-    <!-- <transition name="slide-fade">
-      <div
-        v-if="showWarning"
-        :class="[
-          'message',
-          !notEditing && annotation.id !== annBeingEdited.id && 'hidden'
-        ]"
-      >
-        <b-message class="is-warning">
-          <div class="message-container">
-            {{ $t("warning_message") }}
-            <div @click="handleWarningClose" class="btn-container">
-              <b-icon icon="xmark" class="close-btn" />
-            </div>
-          </div>
-        </b-message>
-      </div>
-    </transition> -->
-    <transition name="slide-fade">
-      <div
-        v-if="showError"
-        :class="[
-          'message',
-          !edited && annotation.id !== annBeingEdited.id && 'hidden'
-        ]"
-      >
-        <b-message class="is-danger">
-          <div class="message-container">
-            {{ $t("error_message") }}
-            <div @click="handleErrorClose" class="btn-container">
-              <b-icon icon="xmark" class="close-btn" />
-            </div>
-          </div>
-        </b-message>
-      </div>
-    </transition>
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
@@ -99,10 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", [
-      "sidebarAnnotationSelected",
-      "documentFocusedAnnotation"
-    ]),
+    ...mapState("document", ["documentFocusedAnnotation"]),
     labelHasAnnotations() {
       return (
         this.label &&
@@ -121,30 +93,17 @@ export default {
   data() {
     return {
       edited: false,
-      notEditing: true,
-      // showWarning: false,
       showError: false,
-      annBeingEdited: null,
       isLoading: false,
       annotationAnimationTimeout: null
     };
   },
   methods: {
-    handleDataChanges({ annotation, notEditing, edited, isLoading }) {
+    handleDataChanges({ annotation, isLoading }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
-        } else {
-          this.annBeingEdited = annotation;
         }
-      }
-
-      if (notEditing !== null) {
-        this.notEditing = notEditing;
-      }
-
-      if (edited !== null) {
-        this.edited = edited;
       }
 
       if (isLoading !== null) {
@@ -172,13 +131,6 @@ export default {
         this.handleScroll(value);
       }
     },
-    isAnnotationBeingEditedNull() {
-      if (this.annBeingEdited.id === null) {
-        return false;
-      } else {
-        return this.annBeingEdited.id;
-      }
-    },
     isAnnotationSelected() {
       if (this.annotation) {
         return (
@@ -188,12 +140,6 @@ export default {
       }
       return false;
     },
-    // handleWarning(value) {
-    //   this.showWarning = value;
-    // },
-    // handleWarningClose() {
-    //   this.showWarning = false;
-    // },
     handleError(value) {
       this.showError = value;
     },
