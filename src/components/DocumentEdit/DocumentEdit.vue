@@ -5,7 +5,7 @@
       :splitOverview="splitOverview"
       @cancel-editing="handleCancelEditing"
       @submit-rotation="handleRotationSubmission"
-      @confirm-splitting="handleConfirmSplitting"
+      @confirm-splitting="handleSplitOverview"
       :handleCancelEditing="handleCancelEditing"
     />
     <div class="pages-section" v-if="!splitOverview">
@@ -68,14 +68,14 @@
       </div>
     </div>
     <div v-else class="confirm-split-component">
-      <ConfirmSplit
+      <SplitOverview
         :splitPages="splitPages"
         :selectedDocument="selectedDocument"
         :fileName="fileName"
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :imagesArray="imagesArray"
+        :pageData="pageData"
         @change-page="changePage"
         @go-back="closeSplitOverview = true"
       />
@@ -94,7 +94,7 @@
 import { mapState } from "vuex";
 import EditTopBar from "./EditTopBar";
 import EditFooter from "./EditFooter";
-import ConfirmSplit from "./ConfirmSplit";
+import SplitOverview from "./SplitOverview";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
 
@@ -106,35 +106,35 @@ export default {
   components: {
     EditTopBar,
     EditFooter,
-    ConfirmSplit,
+    SplitOverview,
     ServerImage,
     SplitDivider
   },
   data() {
     return {
-      rotations: [],
-      rotationsForBackend: [],
-      scroll: false,
-      activeSplittingLines: [],
-      pagesArray: [],
-      imagesArray: [],
-      originalSplitPages: [],
-      splitPages: [],
-      splitOverview: false,
       fileName: [],
       fileExtension: null,
+      scroll: false,
+      splitOverview: false,
       closeSplitOverview: false
     };
   },
   computed: {
     ...mapState("document", [
       "pages",
-      "editMode",
-      "editOptions",
       "recalculatingAnnotations",
       "selectedDocument"
     ]),
-    ...mapState("display", ["currentPage"])
+    ...mapState("display", ["currentPage"]),
+    ...mapState("edit", [
+      "editMode",
+      "editOptions",
+      "rotations",
+      "rotationsForBackend",
+      "activeSplittingLines",
+      "pageData",
+      "splitPages"
+    ])
   },
   methods: {
     /** USED BY ALL EDIT MODES */
@@ -148,30 +148,18 @@ export default {
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
       ) {
-        // Set pages for rotation:
-        this.rotations = this.pages.map(page => {
-          return {
-            id: page.id,
-            angle: 0,
-            page_number: page.number
-          };
-        });
-
-        // Set pages to send to the backend
-        this.rotationsForBackend = this.pages.map(page => {
-          return {
-            id: page.id,
-            angle: 0,
-            page_number: page.number
-          };
-        });
+        // Set pages for rotation array & backend:
+        this.$store.dispatch("edit/setRotations", this.createRotations());
+        this.$store.dispatch(
+          "edit/setRotationsForBackend",
+          this.createRotations()
+        );
 
         /** Splitting */
 
-        // Add only the page numbers to a new array of all pages
+        // Create new array with
         this.pages.map(page => {
-          this.pagesArray.push(page.number);
-          this.imagesArray.push({
+          this.pageData.push({
             number: page.number,
             url: page.image_url,
             updated: page.updated_at
@@ -188,25 +176,17 @@ export default {
       }
     },
     handleCancelEditing() {
-      this.$store.dispatch("document/disableEditMode").then(() => {
+      this.$store.dispatch("edit/disableEditMode").then(() => {
         this.$store.dispatch("display/updateFit", "width");
       });
 
       // Reset the rotation angles to 0 if rotation changes are cancelled
       if (this.rotations) {
-        this.rotations = this.rotations.map(rotation => {
-          return {
-            ...rotation,
-            angle: 0
-          };
-        });
-
-        this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
-          return {
-            ...rotation,
-            angle: 0
-          };
-        });
+        this.$store.dispatch("edit/setRotations", this.createRotations());
+        this.$store.dispatch(
+          "edit/setRotationsForBackend",
+          this.createRotations()
+        );
       }
 
       // Reset splitting final step to false
@@ -220,79 +200,26 @@ export default {
     },
 
     /** ROTATE */
+    createRotations() {
+      return this.pages.map(page => {
+        return {
+          id: page.id,
+          angle: 0,
+          page_number: page.number
+        };
+      });
+    },
     rotateSinglePage(pageId, pageNumber) {
-      // If the item already exists in the array and matches the clicked one, update it to the new rotation
-      if (this.rotations.find(rotation => rotation.id === pageId)) {
-        this.rotations = this.rotations.map(rotation => {
-          if (rotation.id === pageId) {
-            return {
-              ...rotation,
-              angle: rotation.angle - 90
-            };
-          }
-          return rotation;
-        });
-
-        // Rotations to send to the backend
-        // due to only allowing -90 to 180 angles
-        if (this.rotationsForBackend.find(rotation => rotation.id === pageId)) {
-          this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
-            let rotatedAngle = rotation.angle - 90;
-            if (rotation.id === pageId) {
-              if (rotatedAngle === -270) {
-                rotatedAngle = 90;
-              }
-              return {
-                ...rotation,
-                angle: rotatedAngle
-              };
-            }
-            return rotation;
-          });
-        } else {
-          this.rotationsForBackend.push({
-            id: pageId,
-            page_number: pageNumber,
-            angle: -90
-          });
-        }
-      } else {
-        this.rotations.push({
-          id: pageId,
-          page_number: pageNumber,
-          angle: -90
-        });
-      }
+      this.$store.dispatch("edit/updateSinglePageRotation", {
+        pageId,
+        pageNumber
+      });
     },
     handleRotationToTheLeft() {
-      // Rotations for frontend purposes
-      this.rotations = this.rotations.map(rotation => {
-        return { ...rotation, angle: rotation.angle - 90 };
-      });
-
-      // Rotations to send in the POST request
-      this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
-        let rotatedAngle = rotation.angle - 90;
-        if (rotatedAngle === -270) {
-          rotatedAngle = 90;
-        }
-        return { ...rotation, angle: rotatedAngle };
-      });
+      this.$store.dispatch("edit/updateRotationToTheLeft");
     },
     handleRotationToTheRight() {
-      // Rotations for frontend purposes
-      this.rotations = this.rotations.map(rotation => {
-        return { ...rotation, angle: rotation.angle + 90 };
-      });
-
-      // Rotations to send in the POST request
-      this.rotationsForBackend = this.rotationsForBackend.map(rotation => {
-        let rotatedAngle = rotation.angle + 90;
-        if (rotatedAngle === 270) {
-          rotatedAngle = -90;
-        }
-        return { ...rotation, angle: rotatedAngle };
-      });
+      this.$store.dispatch("edit/updateRotationToTheRight");
     },
     getRotation(pageId) {
       // rotate page
@@ -320,7 +247,7 @@ export default {
 
       // Dispatch request to the store to rotate
       this.$store
-        .dispatch("document/updatePageRotation", changedRotations)
+        .dispatch("edit/updatePageRotation", changedRotations)
         .then(response => {
           const sleep = duration =>
             new Promise(resolve => setTimeout(resolve, duration));
@@ -401,15 +328,7 @@ export default {
       // For splitting line purposes
       // Add page number to specific index
       // Or replace it with 0 (to keep the same index) if it exists
-      const found = this.activeSplittingLines.find(
-        item => item === page.number
-      );
-
-      if (found) {
-        this.activeSplittingLines.splice(page.number - 1, 1, 0);
-      } else {
-        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
-      }
+      this.$store.dispatch("edit/updateActiveSplittingLines", page);
 
       this.saveSplitPages();
     },
@@ -438,7 +357,7 @@ export default {
       }
 
       // Set the state to the created array
-      this.splitPages = pageObjectArray;
+      this.$store.dispatch("edit/setSplitPages", pageObjectArray);
     },
     handleFileName(index) {
       let newFileName;
@@ -461,12 +380,12 @@ export default {
       let pages;
 
       if (index === 0) {
-        pages = this.pagesArray.slice(0, splittingLine[index]);
+        pages = this.pageData.slice(0, splittingLine[index]);
       } else {
         if (!splittingLine[index]) {
-          pages = this.pagesArray.slice(splittingLine[index - 1]);
+          pages = this.pageData.slice(splittingLine[index - 1]);
         } else {
-          pages = this.pagesArray.slice(
+          pages = this.pageData.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );
@@ -475,7 +394,7 @@ export default {
 
       return pages;
     },
-    handleConfirmSplitting() {
+    handleSplitOverview() {
       // This will take the user to the final step,
       // which is the overview
       this.splitOverview = true;
@@ -490,7 +409,7 @@ export default {
           {
             name: this.selectedDocument.data_file_name,
             category: this.selectedDocument.category,
-            pages: this.pagesArray,
+            pages: this.pageData.page,
             img_url: this.pages[0].image_url
           }
         ];
@@ -499,11 +418,13 @@ export default {
   },
   watch: {
     pages() {
-      this.setPages();
-    },
-    pagesArray() {
-      // Set an initial length on the splitting lines array:
-      this.activeSplittingLines = new Array(this.pagesArray.length - 1);
+      if (this.pages.length === this.selectedDocument.number_of_pages) {
+        this.setPages();
+        this.$store.dispatch(
+          "edit/setActiveSplittingLines",
+          new Array(this.pages.length - 1)
+        );
+      }
     },
     closeSplitOverview(newValue) {
       if (newValue) {

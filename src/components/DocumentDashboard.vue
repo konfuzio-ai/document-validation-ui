@@ -104,7 +104,8 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages", "editMode"]),
+    ...mapState("document", ["pages"]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("document", ["pageCount"]),
     ...mapGetters("display", ["visiblePageRange"])
   },

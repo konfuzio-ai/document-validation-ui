@@ -74,11 +74,12 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import DocumentCategory from "../DocumentTopBar/DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
 
 export default {
-  name: "ConfirmSplit",
+  name: "SplitOverview",
   components: {
     DocumentCategory,
     ServerImage
@@ -87,17 +88,11 @@ export default {
     selectedDocument: {
       type: Object
     },
-    splitPages: {
-      type: Array
-    },
     fileName: {
       type: String
     },
     fileExtension: {
       type: String
-    },
-    imagesArray: {
-      type: Array
     },
     handleShowError: {
       type: Function
@@ -111,6 +106,9 @@ export default {
       editable: false,
       splitMode: true
     };
+  },
+  computed: {
+    ...mapState("edit", ["splitPages", "pageData"])
   },
   methods: {
     handleBackButton() {
@@ -138,9 +136,8 @@ export default {
     getImageUrl(page) {
       // returns the first thumbnail in the pages array
       // for each new document
-      const image = this.imagesArray.find(
-        image => image.number === page.pages[0]
-      );
+      console.log(this.pageData);
+      const image = this.pageData.find(image => image.number === page.pages[0]);
 
       return `${image.url}?${image.updated}`;
     }

@@ -202,6 +202,7 @@ export default {
       "annotations",
       "editAnnotation"
     ]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
       "visiblePageRange",
       "bboxToRect",
