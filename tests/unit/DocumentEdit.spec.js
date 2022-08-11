@@ -1,6 +1,7 @@
 import { shallowMount, mount } from "@vue/test-utils";
 import {
   DocumentEdit,
+  SplitOverview,
   EditTopBar,
   EditFooter,
 } from "../../src/components/DocumentEdit";
@@ -16,7 +17,7 @@ describe("Document Edit Component", () => {
         require("../mock/page_1.json"),
         require("../mock/page_2.json"),
       ]),
-      store.dispatch("document/setEditMode", "rotate"),
+      store.dispatch("edit/setEditMode", "rotate"),
     ]);
   });
 
@@ -30,7 +31,7 @@ describe("Document Edit Component", () => {
     expect(wrapper.findAll(".image-section").length).toEqual(2);
   });
 
-  it("check if cancelling close edit view", async () => {
+  it("check if cancelling closes edit view", async () => {
     const wrapper = mount(DocumentEdit, {
       store,
       mocks: {
@@ -41,7 +42,7 @@ describe("Document Edit Component", () => {
       .find(".edit-top-bar .buttons .button-cancel")
       .trigger("click");
 
-    expect(store.state.document.editMode).toBe(null);
+    expect(store.state.edit.editMode).toBe(null);
   });
 
   it("check if footer is shown in rotate mode", async () => {
@@ -53,4 +54,15 @@ describe("Document Edit Component", () => {
     });
     expect(await wrapper.find(".edit-footer").exists()).toBe(true);
   });
+
+  // it("Check number of subdocuments", async () => {
+  //   const wrapper = mount(DocumentEdit, {
+  //     store,
+  //     mocks: {
+  //       $t,
+  //     },
+
+  //   });
+
+  // });
 });

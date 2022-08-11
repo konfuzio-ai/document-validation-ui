@@ -75,7 +75,8 @@ export default {
     },
     ...mapState("display", ["currentPage"]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapState("document", ["recalculatingAnnotations", "editMode"])
+    ...mapState("document", ["recalculatingAnnotations"]),
+    ...mapState("edit", ["editMode"])
   },
 
   methods: {

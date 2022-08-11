@@ -192,9 +192,9 @@ export default {
     ...mapState("document", [
       "documentFocusedAnnotation",
       "activeAnnotationSet",
-      "recalculatingAnnotations",
-      "editMode"
+      "recalculatingAnnotations"
     ]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange"]),
     ...mapGetters("document", [
       "annotationsForPage",
