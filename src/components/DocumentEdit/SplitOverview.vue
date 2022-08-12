@@ -19,17 +19,13 @@
           <div class="split-documents">
             <div
               class="image-container"
-              @click="handlePageChange(page.pages[0])"
+              @click="handlePageChange(page.pages[0].number)"
             >
               <div class="thumbnail">
                 <ServerImage :imageUrl="getImageUrl(page)" />
                 <div class="icon-container">
                   <div class="action-icon">
-                    <b-icon
-                      icon="eye"
-                      class="is-small"
-                      @click="handlePageChange(page.pages[0])"
-                    />
+                    <b-icon icon="eye" class="is-small" />
                   </div>
                 </div>
               </div>
@@ -37,20 +33,12 @@
           </div>
         </div>
         <div class="file-name-section">
-          <div
-            class="name-input"
-            @click="handleEditable(true)"
-            @paste="event => handlePaste(event)"
-          >
+          <div class="name-input" @paste="handlePaste">
             <span
               ref="contentEditable"
               :key="index"
-              :class="[
-                'content-editable',
-                editable ? 'is-editable' : 'not-editable'
-              ]"
-              :contenteditable="editable"
-              @blur="handleEditable(false)"
+              class="content-editable"
+              contenteditable
             >
               {{ getFileName(page.name) }}
             </span>
@@ -100,7 +88,6 @@ export default {
   },
   data() {
     return {
-      editable: false,
       splitMode: true
     };
   },
@@ -115,9 +102,6 @@ export default {
     handlePaste(event) {
       // TODO: modify to only paste plain text
       event.preventDefault();
-    },
-    handleEditable(value) {
-      this.editable = value;
     },
     handleCategoryChange(category) {
       console.log("category", category);
