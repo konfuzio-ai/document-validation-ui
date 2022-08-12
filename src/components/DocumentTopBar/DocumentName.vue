@@ -9,18 +9,20 @@
     </div>
     <span class="file-name-section">
       <span
-        v-if="isEditable"
-        class="document-name is-editable"
-        contenteditable
-        @input="event => handleInput(event)"
-        @paste="event => handlePaste(event)"
-        @keydown.enter="event => handleSave(event)"
+        :class="['document-name', isEditable ? 'is-editable' : '']"
+        :contenteditable="isEditable"
+        @input="handleInput"
+        @paste="handlePaste"
+        @keydown.enter="handleSave"
         @blur="handleSave"
-        >{{ oldFileName }}</span
+        >{{
+          isEditable
+            ? oldFileName
+            : fileName
+            ? `${fileName}.${fileExtension}`
+            : dataFileName
+        }}</span
       >
-      <span v-else class="document-name not-editable" contenteditable="false">{{
-        fileName ? `${fileName}.${fileExtension}` : dataFileName
-      }}</span>
     </span>
     <div v-if="showEditBtn" class="edit-btn btn" @click="handleEdit">
       {{ $t("edit") }}

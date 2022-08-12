@@ -3,8 +3,9 @@
 .document-name-component {
   display: flex;
   align-items: center;
+  justify-content: center;
   width: auto;
-  gap: 11px;
+  gap: 12px;
   line-height: 20px;
 
   .document-icon {
@@ -19,16 +20,22 @@
   }
 
   .document-name {
-    margin-right: 0;
-  }
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
 
-  .document-name:focus {
-    border-radius: 8px;
-  }
-
-  [contenteditable].document-name:focus {
-    padding: 6px 14px 6px 14px;
-    outline: 1px solid $grey-outline;
+    &.is-editable {
+      display: inline;
+      text-overflow: none;
+      overflow: auto;
+      white-space: nowrap;
+      border-radius: 8px;
+      padding: 6px 14px 6px 14px;
+      outline: 1px solid $grey-outline;
+    }
   }
 
   .btn {
@@ -43,7 +50,7 @@
   .message-container {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     color: $grey;
 
     .notification {
@@ -57,25 +64,6 @@
 
     .cloud-icon {
       display: flex;
-    }
-  }
-
-  @media (max-width: 1200px) {
-    .document-name.not-editable {
-      display: inline-block;
-      position: relative;
-      top: 2px;
-      max-width: 400px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .document-name.is-editable {
-      display: inline-block;
-      max-width: 400px;
-      overflow: auto;
-      white-space: nowrap;
     }
   }
 }
