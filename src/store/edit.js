@@ -1,3 +1,4 @@
+import { root } from "postcss";
 import myImports from "../api";
 
 const HTTP = myImports.HTTP;
@@ -12,8 +13,6 @@ const state = {
   },
   rotations: [],
   rotationsForBackend: [],
-  activeSplittingLines: [],
-  pageData: [],
   splitPages: []
 };
 
@@ -38,15 +37,6 @@ const actions = {
 
   setRotationsForBackend: ({ commit }, rotations) => {
     commit("SET_ROTATIONS_FOR_BACKEND", rotations);
-  },
-
-  setActiveSplittingLines: ({ commit }, splitLines) => {
-    console.log("split", splitLines);
-    commit("SET_ACTIVE_SPLITTING_LINES", splitLines);
-  },
-
-  setImages: ({ commit }, images) => {
-    commit("SET_IMAGES", images);
   },
 
   setSplitPages: ({ commit }, splitPages) => {
@@ -153,23 +143,6 @@ const actions = {
           console.log(error);
         });
     });
-  },
-
-  updateActiveSplittingLines: ({ state, commit }, page) => {
-    console.log(page);
-    const found = state.activeSplittingLines.find(item => item === page.number);
-
-    if (found) {
-      commit(
-        "SET_ACTIVE_SPLITTING_LINES",
-        state.activeSplittingLines.splice(page.number - 1, 1, 0)
-      );
-    } else {
-      commit(
-        "SET_ACTIVE_SPLITTING_LINES",
-        state.activeSplittingLines.splice(page.number - 1, 1, page.number)
-      );
-    }
   }
 };
 
@@ -188,14 +161,6 @@ const mutations = {
 
   SET_ROTATIONS_FOR_BACKEND: (state, rotations) => {
     state.rotationsForBackend = rotations;
-  },
-
-  SET_ACTIVE_SPLITTING_LINES: (state, splitLines) => {
-    state.activeSplittingLines = splitLines;
-  },
-
-  SET_IMAGES: (state, images) => {
-    state.imagesArray = images;
   },
 
   SET_SPLIT_PAGES: (state, splitPages) => {

@@ -69,13 +69,10 @@
     </div>
     <div v-else class="confirm-split-component">
       <SplitOverview
-        :splitPages="splitPages"
-        :selectedDocument="selectedDocument"
         :fileName="fileName"
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :pageData="pageData"
         @change-page="changePage"
         @go-back="closeSplitOverview = true"
       />
@@ -116,7 +113,9 @@ export default {
       fileExtension: null,
       scroll: false,
       splitOverview: false,
-      closeSplitOverview: false
+      closeSplitOverview: false,
+      activeSplittingLines: [],
+      pagesArray: []
     };
   },
   computed: {
@@ -131,8 +130,6 @@ export default {
       "editOptions",
       "rotations",
       "rotationsForBackend",
-      "activeSplittingLines",
-      "pageData",
       "splitPages"
     ])
   },
@@ -143,12 +140,11 @@ export default {
         return;
       }
 
-      /** Rotations */
       if (
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
       ) {
-        // Set pages for rotation array & backend:
+        /** Rotations */
         this.$store.dispatch("edit/setRotations", this.createRotations());
         this.$store.dispatch(
           "edit/setRotationsForBackend",
@@ -156,15 +152,13 @@ export default {
         );
 
         /** Splitting */
-
-        // Create new array with
         this.pages.map(page => {
-          this.pageData.push({
-            number: page.number,
-            url: page.image_url,
-            updated: page.updated_at
+          this.pagesArray.push({
+            number: page.number
           });
         });
+
+        this.activeSplittingLines = new Array(this.pages.length - 1);
       }
     },
     changePage(pageNumber) {
@@ -188,6 +182,8 @@ export default {
           this.createRotations()
         );
       }
+
+      this.$store.dispatch("edit/setSplitPages", null);
 
       // Reset splitting final step to false
       this.finalSplitting = false;
@@ -328,7 +324,15 @@ export default {
       // For splitting line purposes
       // Add page number to specific index
       // Or replace it with 0 (to keep the same index) if it exists
-      this.$store.dispatch("edit/updateActiveSplittingLines", page);
+      const found = this.activeSplittingLines.find(
+        item => item === page.number
+      );
+
+      if (found) {
+        this.activeSplittingLines.splice(page.number - 1, 1, 0);
+      } else {
+        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
+      }
 
       this.saveSplitPages();
     },
@@ -348,8 +352,7 @@ export default {
         const pageObject = {
           name: this.handleFileName(i),
           category: this.selectedDocument.category,
-          pages: this.handleSubPages(i, subDocuments),
-          img_url: this.pages[0].image_url
+          pages: this.handleSubPages(i, subDocuments)
         };
 
         // Then we replace the "undefined" with the created object
@@ -373,25 +376,23 @@ export default {
       } else {
         newFileName = `${this.fileName}_copy${index}.${this.fileExtension}`;
       }
-
       return newFileName;
     },
     handleSubPages(index, splittingLine) {
       let pages;
 
       if (index === 0) {
-        pages = this.pageData.slice(0, splittingLine[index]);
+        pages = this.pages.slice(0, splittingLine[index]);
       } else {
         if (!splittingLine[index]) {
-          pages = this.pageData.slice(splittingLine[index - 1]);
+          pages = this.pages.slice(splittingLine[index - 1]);
         } else {
-          pages = this.pageData.slice(
+          pages = this.pages.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );
         }
       }
-
       return pages;
     },
     handleSplitOverview() {
@@ -404,15 +405,16 @@ export default {
 
       // If there was no splitting, we just update the splitPages array
       // to have 1 item with all the pages in the document
-      if (this.splitPages.length === 0) {
-        this.splitPages = [
+      if (this.splitPages === null || this.splitPages.length === 0) {
+        const singleDocument = [
           {
             name: this.selectedDocument.data_file_name,
             category: this.selectedDocument.category,
-            pages: this.pageData.page,
-            img_url: this.pages[0].image_url
+            pages: this.pagesArray
           }
         ];
+
+        this.$store.dispatch("edit/setSplitPages", singleDocument);
       }
     }
   },
@@ -420,10 +422,6 @@ export default {
     pages() {
       if (this.pages.length === this.selectedDocument.number_of_pages) {
         this.setPages();
-        this.$store.dispatch(
-          "edit/setActiveSplittingLines",
-          new Array(this.pages.length - 1)
-        );
       }
     },
     closeSplitOverview(newValue) {

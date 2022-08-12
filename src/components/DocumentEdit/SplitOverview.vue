@@ -85,9 +85,6 @@ export default {
     ServerImage
   },
   props: {
-    selectedDocument: {
-      type: Object
-    },
     fileName: {
       type: String
     },
@@ -108,7 +105,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("edit", ["splitPages", "pageData"])
+    ...mapState("document", ["selectedDocument", "pages"]),
+    ...mapState("edit", ["splitPages"])
   },
   methods: {
     handleBackButton() {
@@ -136,14 +134,10 @@ export default {
     getImageUrl(page) {
       // returns the first thumbnail in the pages array
       // for each new document
-      console.log(this.pageData);
-      const image = this.pageData.find(image => image.number === page.pages[0]);
+      const image = this.pages.find(p => p.number === page.pages[0].number);
 
-      return `${image.url}?${image.updated}`;
+      return `${image.thumbnail_url}?${image.updated_at}`;
     }
-  },
-  mounted() {
-    console.log(this.imagesArray);
   }
 };
 </script>
