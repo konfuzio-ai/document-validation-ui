@@ -33,12 +33,13 @@
           </div>
         </div>
         <div class="file-name-section">
-          <div class="name-input" @paste="handlePaste">
+          <div class="name-input">
             <span
-              ref="contentEditable"
-              :key="index"
-              class="content-editable"
               contenteditable
+              role="textbox"
+              class="content-editable"
+              @input="event => handleNameChange(event, page)"
+              @paste="event => event.preventDefault()"
             >
               {{ getFileName(page.name) }}
             </span>
@@ -99,9 +100,18 @@ export default {
     handleBackButton() {
       this.$emit("go-back");
     },
-    handlePaste(event) {
-      // TODO: modify to only paste plain text
-      event.preventDefault();
+    handleNameChange(event, page) {
+      const updatedSplitPages = this.splitPages.map(splitPage => {
+        if (splitPage.pages[0].number === page.pages[0].number) {
+          return {
+            ...splitPage,
+            name: `${event.target.textContent.trim()}.${this.fileExtension}`
+          };
+        }
+        return splitPage;
+      });
+
+      this.$store.dispatch("edit/setSplitPages", updatedSplitPages);
     },
     handleCategoryChange(category) {
       console.log("category", category);
