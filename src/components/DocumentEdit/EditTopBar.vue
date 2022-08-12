@@ -66,7 +66,7 @@ export default {
     CaretSplittingOverview
   },
   computed: {
-    ...mapState("edit", ["editMode", "editOptions"])
+    ...mapState("edit", ["editMode", "editOptions", "splitPages"])
   },
   props: {
     splitOverview: {
@@ -101,6 +101,7 @@ export default {
       if (this.editMode === this.editOptions.split) {
         // then next view
         if (this.splitOverview) {
+          this.$store.dispatch("edit/editDocument", this.splitPages);
           this.handleCancelEditing();
         } else {
           this.$emit("confirm-splitting");
