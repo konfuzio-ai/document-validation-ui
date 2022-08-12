@@ -17,7 +17,6 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :pageData="pageData"
         @change-page="changePage"
         @go-back="closeSplitOverview = true"
       />
@@ -81,7 +80,6 @@ export default {
         return;
       }
 
-      /** Rotations */
       if (
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
@@ -243,12 +241,12 @@ export default {
       let pages;
 
       if (index === 0) {
-        pages = this.pageData.slice(0, splittingLine[index]);
+        pages = this.pages.slice(0, splittingLine[index]);
       } else {
         if (!splittingLine[index]) {
-          pages = this.pageData.slice(splittingLine[index - 1]);
+          pages = this.pages.slice(splittingLine[index - 1]);
         } else {
-          pages = this.pageData.slice(
+          pages = this.pages.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );
