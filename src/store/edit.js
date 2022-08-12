@@ -130,7 +130,6 @@ const actions = {
   },
 
   updatePageRotation: ({ state }, changedRotations) => {
-    console.log(changedRotations);
     return new Promise(resolve => {
       HTTP.post(`/documents/${state.documentId}/rotate/`, changedRotations)
         .then(response => {
@@ -143,6 +142,23 @@ const actions = {
           console.log(error);
         });
     });
+  },
+
+  editDocument: ({ state }, editedDocument) => {
+    console.log(editedDocument);
+    // return new Promise(resolve => {
+    //   HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
+    //     .then(response => {
+    //       console.log(response);
+    //       // if (response.status === 204) {
+    //       //   resolve(true);
+    //       // }
+    //     })
+    //     .catch(error => {
+    //       resolve(false);
+    //       console.log(error);
+    //     });
+    // });
   }
 };
 
