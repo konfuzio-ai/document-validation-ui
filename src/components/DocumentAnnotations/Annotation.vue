@@ -22,11 +22,7 @@
       @keypress.enter="saveAnnotationChanges"
       @click="handleEditAnnotation"
     >
-      {{
-        isAnnotationEmpty
-          ? $t("no_data_found")
-          : annotation.span[0].offset_string
-      }}
+      {{ isAnnotationEmpty ? $t("no_data_found") : annotation.offset_string }}
     </span>
     <div v-if="isAnnotationInEditMode(annotation.id)" class="buttons-container">
       <ActionButtons
@@ -80,7 +76,7 @@ export default {
       if (this.isAnnotationInEditMode(this.annotation.id)) {
         return this.$refs.contentEditable.textContent.trim();
       } else {
-        return this.annotation.span[0].offset_string;
+        return this.annotation.offset_string;
       }
     },
     isAnnotationEmpty() {
