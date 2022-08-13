@@ -80,7 +80,10 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["documentFocusedAnnotation"]),
+    ...mapState("document", [
+      "documentFocusedAnnotation",
+      "sidebarAnnotationSelected"
+    ]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     labelHasAnnotations() {
       return (
