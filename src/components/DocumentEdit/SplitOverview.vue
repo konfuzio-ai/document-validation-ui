@@ -22,7 +22,7 @@
               @click="handlePageChange(page.pages[0].number)"
             >
               <div class="thumbnail">
-                <ServerImage :imageUrl="getImageUrl(page)" />
+                <ServerImage :imageUrl="getImageUrl(page)" ref="image" />
                 <div class="icon-container">
                   <div class="action-icon">
                     <b-icon icon="eye" class="is-small" />
@@ -38,8 +38,9 @@
               contenteditable
               role="textbox"
               class="content-editable"
-              @input="event => handleNameChange(event, page)"
-              @paste="event => event.preventDefault()"
+              @input="handleInput"
+              @paste="handlePaste"
+              @blur="handleNameChange(page)"
             >
               {{ getFileName(page.name) }}
             </span>
@@ -89,7 +90,8 @@ export default {
   },
   data() {
     return {
-      splitMode: true
+      splitMode: true,
+      updatedFileName: null
     };
   },
   computed: {
@@ -100,12 +102,19 @@ export default {
     handleBackButton() {
       this.$emit("go-back");
     },
-    handleNameChange(event, page) {
+    handlePaste(event) {
+      // TODO: modify to only paste plain text
+      event.preventDefault();
+    },
+    handleInput(event) {
+      this.updatedFileName = event.target.textContent;
+    },
+    handleNameChange(page) {
       const updatedSplitPages = this.splitPages.map(splitPage => {
         if (splitPage.pages[0].number === page.pages[0].number) {
           return {
             ...splitPage,
-            name: `${event.target.textContent.trim()}.${this.fileExtension}`
+            name: `${this.updatedFileName}.${this.fileExtension}`
           };
         }
         return splitPage;
