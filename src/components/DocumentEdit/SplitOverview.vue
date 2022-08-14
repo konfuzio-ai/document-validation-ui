@@ -107,7 +107,7 @@ export default {
       event.preventDefault();
     },
     handleInput(event) {
-      this.updatedFileName = event.target.textContent;
+      this.updatedFileName = event.target.textContent.trim();
     },
     handleNameChange(page) {
       const updatedSplitPages = this.splitPages.map(splitPage => {
