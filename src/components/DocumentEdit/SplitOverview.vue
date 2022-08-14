@@ -110,6 +110,8 @@ export default {
       this.updatedFileName = event.target.textContent.trim();
     },
     handleNameChange(page) {
+      if (!this.updatedFileName) return;
+
       const updatedSplitPages = this.splitPages.map(splitPage => {
         if (splitPage.pages[0].number === page.pages[0].number) {
           return {
