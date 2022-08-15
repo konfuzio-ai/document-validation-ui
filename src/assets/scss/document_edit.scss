@@ -209,18 +209,24 @@
             align-items: center;
             height: 70px;
 
-            .thumbnail {
-              display: flex;
-              align-items: center;
-              justify-content: center;
+            .image-container {
+              // background-image: url("../images/PagesStack.svg");
+              // background-size: cover;
+              // height: 70px;
 
-              img {
-                border: 1px solid $detail;
-                border-radius: 2px;
-                height: auto;
-                width: 90%;
-                box-shadow: 3px 3px #fff, 4px 4px #e2e3e4, 6px 6px #fff,
-                  7px 7px #e2e3e4;
+              .thumbnail {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                  border: 1px solid $detail;
+                  border-radius: 2px;
+                  height: auto;
+                  width: 90%;
+                  box-shadow: 2px 2px $white, 3px 3px $detail, 5px 5px $white,
+                    6px 6px $detail;
+                }
               }
             }
 
@@ -282,17 +288,10 @@
               white-space: nowrap;
               width: 100%;
               height: auto;
+              overflow: hidden;
 
-              &.not-editable {
-                overflow: hidden;
-              }
-
-              &.is-editable {
-                overflow: auto;
-
-                &:focus {
-                  outline: none;
-                }
+              &:focus {
+                outline: none;
               }
             }
           }
