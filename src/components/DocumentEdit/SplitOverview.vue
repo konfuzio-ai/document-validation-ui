@@ -147,6 +147,8 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
+      if (!this.pages) return;
+
       // returns the first thumbnail in the pages array
       // for each new document
       const image = this.pages.find(p => p.number === page.pages[0].number);
