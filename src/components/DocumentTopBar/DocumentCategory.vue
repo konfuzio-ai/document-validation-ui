@@ -62,6 +62,9 @@ export default {
     },
     splitMode: {
       type: Boolean
+    },
+    page: {
+      type: Object
     }
   },
   components: {
@@ -99,7 +102,7 @@ export default {
 
       // Send the category ID to the split overview
       // to update the new document category
-      this.$emit("category-change", category.id);
+      this.$emit("category-change", this.page, category.id);
     }
   }
 };
