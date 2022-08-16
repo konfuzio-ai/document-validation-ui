@@ -40,7 +40,7 @@
                   )
                 "
                 :key="'ann' + annotation.id + '-' + index"
-                v-on:click="selectLabelAnnotation(annotation)"
+                @click="selectLabelAnnotation(annotation)"
                 @mouseenter="onAnnotationHover(annotation)"
                 @mouseleave="onAnnotationHover(null)"
               ></v-rect>

@@ -13,7 +13,7 @@
         isAnnotationSelected(annotation) && 'selected',
         isAnnotationInEditMode(annotationId(annotation)) && 'editing'
       ]"
-      :ref="`label_${label.id}_${annotationSet.id}`"
+      :ref="referenceId(annotation)"
       @click="onLabelClick(true)"
       @mouseenter="onLabelHover(true, annotation)"
       @mouseleave="onLabelHover(false, annotation)"
@@ -57,7 +57,7 @@ import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
 /**
- * This component shows each label
+ * This component shows each label and it's annotations
  */
 export default {
   name: "Label",
@@ -99,13 +99,6 @@ export default {
         return [null];
       }
     }
-    // annotation() {
-    //   if (this.labelHasAnnotations) {
-    //     return this.label.annotations[0];
-    //   } else {
-    //     return null;
-    //   }
-    // }
   },
   data() {
     return {
@@ -116,6 +109,13 @@ export default {
     };
   },
   methods: {
+    referenceId(annotation) {
+      let refId = `label_${this.label.id}_${this.annotationSet.id}`;
+      if (annotation) {
+        refId = `${refId}_${annotation.id}`;
+      }
+      return refId;
+    },
     annotationId(annotation) {
       return annotation
         ? annotation.id
@@ -172,34 +172,30 @@ export default {
   watch: {
     sidebarAnnotationSelected() {
       // if an annotation is selected, scroll to it
-      if (
-        this.sidebarAnnotationSelected &&
-        this.annotation &&
-        this.annotations.find(
-          annotation =>
-            annotation && this.sidebarAnnotationSelected.id === annotation.id
-        )
-      ) {
-        const refId = `label_${this.label.id}_${this.annotationSet.id}`;
+      const annotation = this.annotations.find(
+        annotation =>
+          annotation && this.sidebarAnnotationSelected.id === annotation.id
+      );
+      if (this.sidebarAnnotationSelected && annotation) {
+        const refId = this.referenceId(annotation);
         clearTimeout(this.annotationAnimationTimeout);
-        setTimeout(() => {
-          if (this.$refs[`${refId}`] === undefined) {
-            return;
-          }
+        console.log("ref_id", refId);
+        console.log("ref", this.$refs[`${refId}`]);
+        if (this.$refs[`${refId}`] === undefined) {
+          return;
+        }
 
-          this.$refs[`${refId}`].scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest"
-          });
+        this.$refs[`${refId}`][0].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest"
+        });
 
-          // remove annotation selection after some time
-          this.annotationAnimationTimeout = setTimeout(() => {
-            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-            this.handleScroll(false);
-          }, 1500);
-        }, 100);
-        // add a timeout in case we need to wait if a tab is going to be changed
+        // remove annotation selection after some time
+        this.annotationAnimationTimeout = setTimeout(() => {
+          this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+          this.handleScroll(false);
+        }, 1500);
       }
     }
   }
