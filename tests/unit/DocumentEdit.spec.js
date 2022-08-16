@@ -44,25 +44,4 @@ describe("Document Edit Component", () => {
 
     expect(store.state.edit.editMode).toBe(null);
   });
-
-  it("check if footer is shown in rotate mode", async () => {
-    const wrapper = mount(EditFooter, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-    expect(await wrapper.find(".edit-footer").exists()).toBe(true);
-  });
-
-  // it("Check number of subdocuments", async () => {
-  //   const wrapper = mount(DocumentEdit, {
-  //     store,
-  //     mocks: {
-  //       $t,
-  //     },
-
-  //   });
-
-  // });
 });
