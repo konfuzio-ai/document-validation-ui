@@ -176,16 +176,17 @@
     background-color: $white;
   }
   .confirm-split {
-    margin: 40px 12px;
+    margin-top: 40px;
 
     .back-btn-section {
+      margin-left: 12px;
       width: 15px;
       height: 20px;
     }
 
     .new-documents-container {
-      margin-top: 5px;
-      padding-bottom: 26px;
+      margin-top: 20px;
+      padding-bottom: 40px;
       display: grid;
       grid-template-rows: 1fr;
       gap: 40px;
@@ -196,24 +197,18 @@
         display: flex;
         align-items: center;
         gap: 15px;
-        height: 70px;
 
         .overview-thumbnails {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 50px;
+          width: 85px;
 
           .split-documents {
             display: flex;
             align-items: center;
-            height: 70px;
 
             .image-container {
-              // background-image: url("../images/PagesStack.svg");
-              // background-size: cover;
-              // height: 70px;
-
               .thumbnail {
                 display: flex;
                 align-items: center;
@@ -223,7 +218,7 @@
                   border: 1px solid $detail;
                   border-radius: 2px;
                   height: auto;
-                  width: 90%;
+                  width: 60%;
                   box-shadow: 2px 2px $white, 3px 3px $detail, 5px 5px $white,
                     6px 6px $detail;
                 }
