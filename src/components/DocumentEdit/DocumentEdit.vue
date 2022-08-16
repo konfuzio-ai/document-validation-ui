@@ -184,9 +184,6 @@ export default {
       }
 
       this.$store.dispatch("edit/setSplitPages", null);
-
-      // Reset splitting final step to false
-      this.finalSplitting = false;
     },
     handleShowError() {
       this.$emit("handle-error", true);
@@ -420,6 +417,8 @@ export default {
   },
   watch: {
     pages() {
+      if (!this.selectedDocument) return;
+
       if (this.pages.length === this.selectedDocument.number_of_pages) {
         this.setPages();
       }
