@@ -113,7 +113,8 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages", "editMode"]),
+    ...mapState("document", ["pages"]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("document", ["pageCount"]),
     ...mapGetters("display", ["visiblePageRange"])
   },
@@ -198,9 +199,9 @@ export default {
       this.$refs.scrollingDocument.$el.scrollTop = actualScroll;
     },
 
-// TODO: find solution to show error message
-// since as soon as the Edit Component is closed, the error will be false
-// and will not be displayed
+    // TODO: find solution to show error message
+    // since as soon as the Edit Component is closed, the error will be false
+    // and will not be displayed
     handleError(error) {
       this.showError = error;
     },

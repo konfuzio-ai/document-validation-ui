@@ -5,19 +5,22 @@
 ></style>
 
 <template>
-  <b-dropdown class="category-chooser" aria-role="list">
+  <b-dropdown
+    :class="['category-chooser', splitMode && 'split-mode']"
+    aria-role="list"
+  >
     <template #trigger>
       <div class="category-drop-down">
         <div class="icon">
           <CategoryIcon />
         </div>
         <div class="category-info">
-          <p class="category-title">{{ $t("category") }}</p>
+          <p class="category-title" v-if="!splitMode">{{ $t("category") }}</p>
           <div class="category-name">
             {{ categoryName(selectedDocument.category) }}
           </div>
         </div>
-        <div class="caret">
+        <div :class="['caret', splitMode && 'split-mode-caret']">
           <CaretDown />
         </div>
       </div>
@@ -56,6 +59,12 @@ export default {
     },
     handleMessage: {
       type: Function
+    },
+    splitMode: {
+      type: Boolean
+    },
+    page: {
+      type: Object
     }
   },
   components: {
@@ -73,18 +82,27 @@ export default {
       const updatedCategory = {
         category: category.id
       };
-      this.$store
-        .dispatch("document/updateDocument", updatedCategory)
-        .then(response => {
-          if (!response) {
-            this.handleShowError();
-            this.handleMessage(this.$i18n.t("category_error"));
-          }
-          // update document list if visible
-          if (process.env.VUE_APP_CATEGORY_ID) {
-            this.$store.dispatch("category/fetchDocumentList");
-          }
-        });
+
+      if (!this.splitMode) {
+        this.$store
+          .dispatch("document/updateDocument", updatedCategory)
+          .then(response => {
+            if (!response) {
+              this.handleShowError();
+              this.handleMessage(this.$i18n.t("category_error"));
+            }
+            // update document list if visible
+            if (process.env.VUE_APP_CATEGORY_ID) {
+              this.$store.dispatch("category/fetchDocumentList");
+            }
+          });
+
+        return;
+      }
+
+      // Send the category ID to the split overview
+      // to update the new document category
+      this.$emit("category-change", this.page, category.id);
     }
   }
 };

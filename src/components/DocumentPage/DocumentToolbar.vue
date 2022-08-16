@@ -58,26 +58,27 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["editOptions", "recalculatingAnnotations"])
+    ...mapState("document", ["recalculatingAnnotations"]),
+    ...mapState("edit", ["editOptions"])
   },
   methods: {
     handleRotate() {
       this.$store
-        .dispatch("document/setEditMode", this.editOptions.rotate)
+        .dispatch("edit/setEditMode", this.editOptions.rotate)
         .then(() => {
           this.$store.dispatch("display/updateFit", "auto");
         });
     },
     handleSplit() {
       this.$store
-        .dispatch("document/setEditMode", this.editOptions.split)
+        .dispatch("edit/setEditMode", this.editOptions.split)
         .then(() => {
           this.$store.dispatch("display/updateFit", "auto");
         });
     },
     handleReorder() {
       this.$store
-        .dispatch("document/setEditMode", this.editOptions.reorder)
+        .dispatch("edit/setEditMode", this.editOptions.reorder)
         .then(() => {
           this.$store.dispatch("display/updateFit", "auto");
         });
