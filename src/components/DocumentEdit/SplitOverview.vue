@@ -40,7 +40,7 @@
               class="content-editable"
               @input="handleInput"
               @paste="handlePaste"
-              @blur="handleNameChange(page)"
+              @blur="handleChanges(page)"
             >
               {{ getFileName(page.name) }}
             </span>
@@ -53,7 +53,8 @@
           <DocumentCategory
             :selectedDocument="selectedDocument"
             :splitMode="splitMode"
-            @category-change="handleCategoryChange"
+            :page="page"
+            @category-change="handleChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
           />
@@ -109,23 +110,32 @@ export default {
     handleInput(event) {
       this.updatedFileName = event.target.textContent.trim();
     },
-    handleNameChange(page) {
-      if (!this.updatedFileName) return;
-
+    handleChanges(page, category) {
+      // This function handles file name or category changes
       const updatedSplitPages = this.splitPages.map(splitPage => {
         if (splitPage.pages[0].number === page.pages[0].number) {
-          return {
-            ...splitPage,
-            name: `${this.updatedFileName}.${this.fileExtension}`
-          };
+          if (this.updatedFileName) {
+            return {
+              ...splitPage,
+              name: `${this.updatedFileName}.${this.fileExtension}`
+            };
+          } else if (category) {
+            return {
+              ...splitPage,
+              category: category
+            };
+          } else {
+            return;
+          }
         }
         return splitPage;
       });
 
       this.$store.dispatch("edit/setSplitPages", updatedSplitPages);
-    },
-    handleCategoryChange(category) {
-      console.log("category", category);
+
+      if (this.updatedFileName) {
+        this.updatedFileName = null;
+      }
     },
     handlePageChange(pageNumber) {
       this.$emit("change-page", pageNumber);
