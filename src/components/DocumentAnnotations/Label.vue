@@ -6,17 +6,17 @@
 <template>
   <div class="labels" ref="label">
     <div
+      v-for="annotation in annotations"
+      :key="annotationId(annotation)"
       :class="[
         'label-properties',
-        isAnnotationSelected() && 'selected',
-        isAnnotationInEditMode(
-          annotation ? annotation.id : `${annotationSet.id}_${label.id}`
-        ) && 'editing'
+        isAnnotationSelected(annotation) && 'selected',
+        isAnnotationInEditMode(annotationId(annotation)) && 'editing'
       ]"
       :ref="`label_${label.id}_${annotationSet.id}`"
       @click="onLabelClick(true)"
-      @mouseenter="onLabelHover(true)"
-      @mouseleave="onLabelHover(false)"
+      @mouseenter="onLabelHover(true, annotation)"
+      @mouseleave="onLabelHover(false, annotation)"
     >
       <div class="label-property-left">
         <LabelDetails
@@ -92,13 +92,20 @@ export default {
         this.label.annotations.length > 0
       );
     },
-    annotation() {
+    annotations() {
       if (this.labelHasAnnotations) {
-        return this.label.annotations[0];
+        return this.label.annotations;
       } else {
-        return null;
+        return [null];
       }
     }
+    // annotation() {
+    //   if (this.labelHasAnnotations) {
+    //     return this.label.annotations[0];
+    //   } else {
+    //     return null;
+    //   }
+    // }
   },
   data() {
     return {
@@ -109,6 +116,11 @@ export default {
     };
   },
   methods: {
+    annotationId(annotation) {
+      return annotation
+        ? annotation.id
+        : `${this.annotationSet.id}_${this.label.id}`;
+    },
     handleDataChanges({ annotation, isLoading }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
@@ -120,17 +132,17 @@ export default {
         this.isLoading = isLoading;
       }
     },
-    onLabelHover(value) {
+    onLabelHover(value, annotation) {
       if (value) {
         this.handleScroll(!value);
       }
 
-      if (this.annotation && value) {
-        const annotation = { ...this.annotation };
-        annotation.label_name = this.label.name;
+      if (annotation && value) {
+        const focusedAnnotation = { ...annotation };
+        focusedAnnotation.label_name = this.label.name;
         this.$store.dispatch(
           "document/setDocumentFocusedAnnotation",
-          annotation
+          focusedAnnotation
         );
       } else {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
@@ -141,11 +153,11 @@ export default {
         this.handleScroll(value);
       }
     },
-    isAnnotationSelected() {
-      if (this.annotation) {
+    isAnnotationSelected(annotation) {
+      if (annotation) {
         return (
           this.sidebarAnnotationSelected &&
-          this.annotation.id === this.sidebarAnnotationSelected.id
+          annotation.id === this.sidebarAnnotationSelected.id
         );
       }
       return false;
@@ -163,7 +175,10 @@ export default {
       if (
         this.sidebarAnnotationSelected &&
         this.annotation &&
-        this.sidebarAnnotationSelected.id === this.annotation.id
+        this.annotations.find(
+          annotation =>
+            annotation && this.sidebarAnnotationSelected.id === annotation.id
+        )
       ) {
         const refId = `label_${this.label.id}_${this.annotationSet.id}`;
         clearTimeout(this.annotationAnimationTimeout);
