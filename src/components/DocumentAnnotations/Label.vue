@@ -172,30 +172,31 @@ export default {
   watch: {
     sidebarAnnotationSelected() {
       // if an annotation is selected, scroll to it
-      const annotation = this.annotations.find(
-        annotation =>
-          annotation && this.sidebarAnnotationSelected.id === annotation.id
-      );
-      if (this.sidebarAnnotationSelected && annotation) {
-        const refId = this.referenceId(annotation);
-        clearTimeout(this.annotationAnimationTimeout);
-        console.log("ref_id", refId);
-        console.log("ref", this.$refs[`${refId}`]);
-        if (this.$refs[`${refId}`] === undefined) {
-          return;
+      if (this.sidebarAnnotationSelected) {
+        const annotation = this.annotations.find(
+          annotation =>
+            annotation && this.sidebarAnnotationSelected.id === annotation.id
+        );
+
+        if (annotation) {
+          const refId = this.referenceId(annotation);
+          clearTimeout(this.annotationAnimationTimeout);
+          if (this.$refs[`${refId}`] === undefined) {
+            return;
+          }
+
+          this.$refs[`${refId}`][0].scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest"
+          });
+
+          // remove annotation selection after some time
+          this.annotationAnimationTimeout = setTimeout(() => {
+            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+            this.handleScroll(false);
+          }, 1500);
         }
-
-        this.$refs[`${refId}`][0].scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest"
-        });
-
-        // remove annotation selection after some time
-        this.annotationAnimationTimeout = setTimeout(() => {
-          this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-          this.handleScroll(false);
-        }, 1500);
       }
     }
   }
