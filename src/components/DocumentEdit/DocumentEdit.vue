@@ -3,10 +3,10 @@
   <div :class="['document-edit', splitOverview && 'split-overview-component']">
     <EditTopBar
       :splitOverview="splitOverview"
-      @cancel-editing="handleCancelEditing"
+      @cancel-editing="handleCloseEditing"
       @submit-rotation="handleRotationSubmission"
       @confirm-splitting="handleSplitOverview"
-      :handleCancelEditing="handleCancelEditing"
+      :handleCloseEditing="handleCloseEditing"
     />
     <div class="pages-section" v-if="!splitOverview">
       <div :class="[scroll && 'scroll']">
@@ -19,7 +19,7 @@
           :move="checkMove"
         >
           <div
-            v-for="page in pagesArray"
+            v-for="(page, index) in pagesArray"
             :key="page.id"
             :class="['image-section']"
           >
@@ -82,6 +82,7 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
+        :pagesArray="pagesArray"
         @change-page="changePage"
         @go-back="closeSplitOverview = true"
       />
@@ -185,7 +186,7 @@ export default {
         );
       }
     },
-    handleCancelEditing() {
+    handleCloseEditing() {
       this.$store.dispatch("edit/disableEditMode").then(() => {
         this.$store.dispatch("display/updateFit", "width");
       });
@@ -247,7 +248,7 @@ export default {
       );
 
       if (changedRotations.length === 0) {
-        this.handleCancelEditing();
+        this.handleCloseEditing();
         return;
       }
 
@@ -310,7 +311,7 @@ export default {
         });
 
       // Whether the rotation worked properly or not close editing mode
-      this.handleCancelEditing();
+      this.handleCloseEditing();
     },
 
     /** SPLIT */
@@ -395,12 +396,12 @@ export default {
       let pages;
 
       if (index === 0) {
-        pages = this.pages.slice(0, splittingLine[index]);
+        pages = this.pagesArray.slice(0, splittingLine[index]);
       } else {
         if (!splittingLine[index]) {
-          pages = this.pages.slice(splittingLine[index - 1]);
+          pages = this.pagesArray.slice(splittingLine[index - 1]);
         } else {
-          pages = this.pages.slice(
+          pages = this.pagesArray.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );
@@ -411,15 +412,17 @@ export default {
     handleSplitOverview() {
       // This will take the user to the final step,
       // which is the overview
-      // this.splitOverview = true;
-      // this.closeSplitOverview = false;
+      this.splitOverview = true;
+      this.closeSplitOverview = false;
 
       this.splitFileNameFromExtension();
-
+      this.saveDocument();
+    },
+    saveDocument() {
       // If there was no splitting, we just update the splitPages array
       // to have 1 item with all the pages in the document
       if (this.splitPages === null || this.splitPages.length === 0) {
-        const singleDocument = [
+        const document = [
           {
             name: this.selectedDocument.data_file_name,
             category: this.selectedDocument.category,
@@ -427,36 +430,30 @@ export default {
           }
         ];
 
-        this.$store.dispatch("edit/setSplitPages", singleDocument);
+        this.$store.dispatch("edit/setSplitPages", document);
       }
     },
 
     /** SORT */
     checkMove(e) {
+      // Save the page placed originally where the page we are dragging will go
       this.prevPageAtIndex = this.pagesArray.find(
         page => this.pagesArray.indexOf(page) === e.draggedContext.futureIndex
       );
     },
-    handleEnd(e) {
+    handleEnd() {
       this.draggable = false;
 
+      // Update page numbers
       this.pagesArray = this.pagesArray.map(page => {
-        if (page.id === this.prevPageAtIndex.id) {
-          return {
-            ...page,
-            number: this.pagesArray[e.oldIndex].number
-          };
-        }
-
-        if (page.id === this.pagesArray[e.oldIndex].id) {
-          return {
-            ...page,
-            number: this.prevPageAtIndex.number
-          };
-        }
-
-        return page;
+        const index = this.pagesArray.indexOf(page);
+        return {
+          ...page,
+          number: index + 1
+        };
       });
+
+      this.saveDocument();
     }
   },
   watch: {
@@ -471,9 +468,6 @@ export default {
       if (newValue) {
         this.splitOverview = false;
       }
-    },
-    pagesArray(newValue) {
-      console.log(newValue);
     }
   },
   mounted() {

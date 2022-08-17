@@ -72,7 +72,7 @@ export default {
     splitOverview: {
       type: Boolean
     },
-    handleCancelEditing: {
+    handleCloseEditing: {
       type: Function
     }
   },
@@ -102,7 +102,7 @@ export default {
         // then next view
         if (this.splitOverview) {
           this.$store.dispatch("edit/editDocument", this.splitPages);
-          this.handleCancelEditing();
+          this.handleCloseEditing();
         } else {
           this.$emit("confirm-splitting");
         }
@@ -111,6 +111,8 @@ export default {
         this.$emit("submit-rotation");
       } else if (this.editMode === this.editOptions.reorder) {
         // handle submit
+        this.$store.dispatch("edit/editDocument", this.splitPages);
+        this.handleCloseEditing();
       }
     },
     handleCancel() {
