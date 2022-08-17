@@ -9,62 +9,71 @@
       :handleCancelEditing="handleCancelEditing"
     />
     <div class="pages-section" v-if="!splitOverview">
-      <div :class="['document-grid', scroll && 'scroll']">
-        <div
-          v-for="(page, index) in pages"
-          v-bind:key="index"
-          :class="['image-section']"
+      <div :class="[scroll && 'scroll']">
+        <draggable
+          v-model="pagesArray"
+          :class="['document-grid']"
+          easing="cubic-bezier(0.37, 0, 0.63, 1)"
+          @start="dragging = true"
+          @end="handleEnd"
+          :move="checkMove"
         >
-          <div class="image-container" @click="changePage(page.number)">
-            <div class="thumbnail">
-              <div
-                class="img-container"
-                :style="
-                  editMode === 'rotate' && {
-                    transform: 'rotate(' + getRotation(page.id) + 'deg)'
-                  }
-                "
-              >
-                <ServerImage
-                  :class="['img-thumbnail']"
-                  :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-                />
-              </div>
-              <div class="icon-container">
-                <div class="action-icon">
-                  <b-icon
-                    icon="eye"
-                    class="is-small"
-                    @click="changePage(page.number)"
+          <div
+            v-for="page in pagesArray"
+            :key="page.id"
+            :class="['image-section']"
+          >
+            <div class="image-container" @click="changePage(page.number)">
+              <div class="thumbnail">
+                <div
+                  class="img-container"
+                  :style="
+                    editMode === 'rotate' && {
+                      transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                    }
+                  "
+                >
+                  <ServerImage
+                    :class="['img-thumbnail']"
+                    :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
                   />
                 </div>
-                <div
-                  class="action-icon"
-                  v-if="editMode === editOptions.rotate"
-                  @click="rotateSinglePage(page.id, page.number)"
-                >
-                  <b-icon icon="arrow-rotate-left" class="is-small" />
+                <div class="icon-container">
+                  <div class="action-icon">
+                    <b-icon
+                      icon="eye"
+                      class="is-small"
+                      @click="changePage(page.number)"
+                    />
+                  </div>
+                  <div
+                    class="action-icon"
+                    v-if="editMode === editOptions.rotate"
+                    @click="rotateSinglePage(page.id, page.number)"
+                  >
+                    <b-icon icon="arrow-rotate-left" class="is-small" />
+                  </div>
                 </div>
               </div>
+              <span class="page-number">{{ page.number }}</span>
             </div>
-            <span class="page-number">{{ page.number }}</span>
+            <div
+              v-if="editMode === editOptions.split"
+              :class="[
+                'splitting-lines',
+                activeSplittingLines[index] === page.number && 'active-split'
+              ]"
+              @click="handleSplittingLines(page)"
+            >
+              <div class="scissors-icon">
+                <b-icon icon="scissors" class="is-small" />
+              </div>
+              <div v-if="activeSplittingLines[index] === page.number">
+                <SplitDivider />
+              </div>
+            </div>
           </div>
-          <div
-            v-if="editMode === editOptions.split"
-            :class="[
-              'splitting-lines',
-              activeSplittingLines[index] === page.number && 'active-split'
-            ]"
-            @click="handleSplittingLines(page)"
-          >
-            <div class="scissors-icon">
-              <b-icon icon="scissors" class="is-small" />
-            </div>
-            <div v-if="activeSplittingLines[index] === page.number">
-              <SplitDivider />
-            </div>
-          </div>
-        </div>
+        </draggable>
       </div>
     </div>
     <div v-else class="confirm-split-component">
@@ -94,6 +103,7 @@ import EditFooter from "./EditFooter";
 import SplitOverview from "./SplitOverview";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
+import draggable from "vuedraggable";
 
 /**
  * This component shows a document thumbnail grid view to be able to edit the document.
@@ -105,7 +115,8 @@ export default {
     EditFooter,
     SplitOverview,
     ServerImage,
-    SplitDivider
+    SplitDivider,
+    draggable
   },
   data() {
     return {
@@ -115,7 +126,9 @@ export default {
       splitOverview: false,
       closeSplitOverview: false,
       activeSplittingLines: [],
-      pagesArray: []
+      pagesArray: [],
+      dragging: false,
+      prevPageAtIndex: null
     };
   },
   computed: {
@@ -154,7 +167,10 @@ export default {
         /** Splitting */
         this.pages.map(page => {
           this.pagesArray.push({
-            number: page.number
+            id: page.id,
+            number: page.number,
+            thumbnail_url: page.thumbnail_url,
+            updated_at: page.updated_at
           });
         });
 
@@ -395,8 +411,8 @@ export default {
     handleSplitOverview() {
       // This will take the user to the final step,
       // which is the overview
-      this.splitOverview = true;
-      this.closeSplitOverview = false;
+      // this.splitOverview = true;
+      // this.closeSplitOverview = false;
 
       this.splitFileNameFromExtension();
 
@@ -413,6 +429,34 @@ export default {
 
         this.$store.dispatch("edit/setSplitPages", singleDocument);
       }
+    },
+
+    /** SORT */
+    checkMove(e) {
+      this.prevPageAtIndex = this.pagesArray.find(
+        page => this.pagesArray.indexOf(page) === e.draggedContext.futureIndex
+      );
+    },
+    handleEnd(e) {
+      this.draggable = false;
+
+      this.pagesArray = this.pagesArray.map(page => {
+        if (page.id === this.prevPageAtIndex.id) {
+          return {
+            ...page,
+            number: this.pagesArray[e.oldIndex].number
+          };
+        }
+
+        if (page.id === this.pagesArray[e.oldIndex].id) {
+          return {
+            ...page,
+            number: this.prevPageAtIndex.number
+          };
+        }
+
+        return page;
+      });
     }
   },
   watch: {
@@ -427,6 +471,9 @@ export default {
       if (newValue) {
         this.splitOverview = false;
       }
+    },
+    pagesArray(newValue) {
+      console.log(newValue);
     }
   },
   mounted() {
