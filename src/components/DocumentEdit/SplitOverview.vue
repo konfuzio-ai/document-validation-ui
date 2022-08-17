@@ -87,6 +87,9 @@ export default {
     },
     handleMessage: {
       type: Function
+    },
+    pagesArray: {
+      type: Array
     }
   },
   data() {
@@ -147,11 +150,13 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
-      if (!this.pages) return;
+      if (!this.pagesArray || !this.pages) return;
 
       // returns the first thumbnail in the pages array
       // for each new document
-      const image = this.pages.find(p => p.number === page.pages[0].number);
+      const image = this.pagesArray.find(
+        p => p.number === page.pages[0].number
+      );
 
       return `${image.thumbnail_url}?${image.updated_at}`;
     }
