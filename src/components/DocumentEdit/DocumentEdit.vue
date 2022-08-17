@@ -312,6 +312,9 @@ export default {
       if (newValue) {
         this.saveUpdatedDocument();
       }
+    },
+    pagesArray(newValue) {
+      console.log(newValue);
     }
   },
   mounted() {
