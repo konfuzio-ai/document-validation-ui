@@ -37,12 +37,14 @@
               :span="span"
               :spanIndex="index"
               :isLoading="isLoading"
-              @handle-data-changes="handleDataChanges"
               :handleShowError="handleShowError"
               :handleMessage="handleMessage"
+              :label="label"
+              :annotationSet="annotationSet"
+              @handle-data-changes="handleDataChanges"
+              @handle-menu="handleMenu"
             />
           </div>
-
           <EmptyAnnotation
             v-else
             :label="label"
@@ -51,6 +53,7 @@
             @handle-data-changes="handleDataChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
+            @handle-menu="handleMenu"
           />
         </div>
       </div>
@@ -62,6 +65,7 @@ import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
+
 /**
  * This component shows each label and it's annotations
  */

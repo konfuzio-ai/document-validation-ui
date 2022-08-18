@@ -45,7 +45,8 @@ export default {
       this.$store.dispatch("document/startLoading");
       Promise.all([
         this.$store.dispatch("document/fetchAnnotations"),
-        this.$store.dispatch("document/fetchDocumentData")
+        this.$store.dispatch("document/fetchDocumentData"),
+        this.$store.dispatch("document/fetchMissingAnnotations")
       ]).finally(() => {
         this.$store.dispatch("document/endLoading");
       });

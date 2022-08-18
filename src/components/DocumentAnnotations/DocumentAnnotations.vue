@@ -13,7 +13,10 @@
     <div v-else-if="!annotationSets || annotationSets.length === 0">
       <EmptyState />
     </div>
-    <div v-else class="labels-list">
+    <div
+      v-else
+      :class="['labels-list', rejectedLabelList.length && 'showing-rejected']"
+    >
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
         v-bind:key="indexGroup"
@@ -37,6 +40,9 @@
           :handleMessage="handleMessage"
         />
       </div>
+      <div v-if="rejectedLabelList.length" class="rejected-labels-list">
+        <RejectedLabels :rejectedLabelList="rejectedLabelList" />
+      </div>
     </div>
   </div>
 </template>
@@ -47,8 +53,8 @@ import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
-import RejectedLabels from "./RejectedLabels";
 import Label from "./Label";
+import RejectedLabels from "./RejectedLabels.vue";
 /**
  * This component loads all annotations in a label set
  */
@@ -58,8 +64,8 @@ export default {
     ExtractingData,
     CaretDown,
     ActionButtons,
-    RejectedLabels,
-    Label
+    Label,
+    RejectedLabels
   },
   props: {
     scroll: {
@@ -69,8 +75,27 @@ export default {
       type: Function
     }
   },
+  data() {
+    return {
+      rejectedLabelList: [
+        { id: 1, name: "name1" },
+        { id: 2, name: "name2" },
+        { id: 3, name: "name3" },
+        { id: 4, name: "name4" },
+        { id: 5, name: "name5" },
+        { id: 6, name: "name6" },
+        { id: 7, name: "name7" },
+        { id: 8, name: "name8" },
+        { id: 9, name: "name9" }
+      ]
+    };
+  },
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "annotationSets"])
+    ...mapState("document", [
+      "recalculatingAnnotations",
+      "annotationSets",
+      "missingAnnotations"
+    ])
   },
   methods: {
     getNumberOfAnnotationSetGroup(annotationSet) {

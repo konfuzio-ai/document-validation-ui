@@ -6,38 +6,20 @@
 
 <template>
   <div class="rejected-label-container">
-    <section>
-      <b-collapse class="card" animation="slide" :open="false">
-        <template #trigger="props">
-          <div class="card-header" role="button" :aria-expanded="props.open">
-            <p class="card-header-title">
-              {{ `${$t("rejected")} (${number})` }}
-            </p>
-            <a class="card-header-icon">
-              <b-icon :icon="props.open ? 'angle-right' : 'angle-down'">
-              </b-icon>
-            </a>
-          </div>
-        </template>
-
-        <div class="card-content">
-          <div class="content">
-            <div class="label-list" v-for="label in labels" :key="label.id">
-              <b-field>
-                <b-tag
-                  v-if="isLabelRejected"
-                  attached
-                  closable
-                  aria-close-label="Close tag"
-                  @close="isLabelRejected = false"
-                >
-                  {{ label.name }}
-                </b-tag>
-              </b-field>
-            </div>
-          </div>
-        </div>
-      </b-collapse>
+    <p class="title">
+      {{ `${$t("rejected")} (${rejectedLabelList.length})` }}
+    </p>
+    <section class="tag-container">
+      <b-taglist v-for="label in rejectedLabelList" :key="label.id">
+        <b-tag
+          attached
+          closable
+          aria-close-label="Close tag"
+          @close="removeRejectedLabel(label.id)"
+        >
+          {{ label.name }}
+        </b-tag>
+      </b-taglist>
     </section>
   </div>
 </template>
@@ -59,14 +41,19 @@
 export default {
   name: "RejectedLabels",
   data() {
-    return {
-      isLabelRejected: true,
-      number: null
-    };
+    return {};
   },
   props: {
-    labels: {
+    rejectedLabelList: {
       type: Array
+    },
+    missingAnnotations: {
+      type: Array
+    }
+  },
+  methods: {
+    removeRejectedLabel(id) {
+      console.log("removing", id);
     }
   }
 };

@@ -21,10 +21,19 @@
       v-if="showActionButtons()"
       :saveBtn="!empty && isEmptyAnnotationEditable()"
       :cancelBtn="true"
+      :menu="false"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
       :isLoading="isLoading"
       :isActive="!isLoading"
+    />
+    <ActionButtons
+      v-else
+      :menu="true"
+      :cancelBtn="false"
+      :saveBtn="false"
+      :isActive="!isLoading"
+      :isLoading="isLoading"
     />
   </div>
 </template>

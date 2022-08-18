@@ -13,12 +13,14 @@
         </b-loading>
       </b-notification>
     </div>
+
     <b-button
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
       v-on:click.stop="cancel()"
     />
+
     <b-button
       v-if="saveBtn && !isLoading"
       icon-left="check"
@@ -26,10 +28,11 @@
       type="is-primary"
       v-on:click.stop="save()"
     />
-    <div v-if="menu && !isLoading" class="menu">
-      <b-dropdown aria-role="list" position="is-bottom-left">
+
+    <div v-if="menu && !isLoading" class="menu-buttons">
+      <b-dropdown aria-role="list" position="is-top-left">
         <template #trigger>
-          <b-icon icon="ellipsis-vertical" class="menu-icon"></b-icon>
+          <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
         </template>
         <b-dropdown-item aria-role="listitem" @click="handleMenu()">{{
           $t("reject_label")

@@ -37,8 +37,19 @@
         :cancelBtn="true"
         :isActive="!isLoading"
         :isLoading="isLoading"
+        :menu="false"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
+      />
+    </div>
+    <div v-else>
+      <ActionButtons
+        :menu="true"
+        :cancelBtn="false"
+        :saveBtn="false"
+        :isActive="!isLoading"
+        :isLoading="isLoading"
+        @handle-menu="handleMenu"
       />
     </div>
   </div>
@@ -73,6 +84,12 @@ export default {
     },
     handleMessage: {
       type: Function
+    },
+    label: {
+      type: Object
+    },
+    annotationSet: {
+      type: Object
     }
   },
   data() {
@@ -249,7 +266,8 @@ export default {
             this.error = false;
           }, 2000);
         });
-    }
+    },
+    handleMenu() {}
   },
   watch: {
     spanSelection(span) {
