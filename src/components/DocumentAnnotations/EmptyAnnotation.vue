@@ -7,7 +7,7 @@
   <div class="empty-annotation">
     <span
       :class="[
-        'label-property-value',
+        'annotation-value',
         isEmptyAnnotationEditable() ? '' : 'label-empty'
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
@@ -55,7 +55,8 @@ export default {
     }
   },
   computed: {
-    ...mapState("selection", ["spanSelection", "selectionEnabled"])
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("document", ["editAnnotation"])
   },
   methods: {
     isEmpty() {
@@ -76,10 +77,9 @@ export default {
           "selection/enableSelection",
           this.emptyAnnotationId()
         );
-        this.$store.dispatch(
-          "document/setEditAnnotation",
-          this.emptyAnnotationId()
-        );
+        this.$store.dispatch("document/setEditAnnotation", {
+          id: this.emptyAnnotationId()
+        });
       }
     },
     saveEmptyAnnotation(event) {
@@ -113,12 +113,12 @@ export default {
             });
           }
         });
-      this.$store.dispatch("document/setEditAnnotation", null);
+      this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
     },
     cancelEmptyAnnotation() {
-      this.$store.dispatch("document/setEditAnnotation", null);
+      this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
       this.setText(this.$t("no_data_found"));
@@ -147,6 +147,19 @@ export default {
         span.offset_string
       ) {
         this.setText(span.offset_string);
+      }
+    },
+    editAnnotation(newAnnotation, oldAnnotation) {
+      // verify if new annotation in edit mode is not this one and if this
+      // one was selected before so we set the state to the previous one (like a cancel)
+      if (
+        oldAnnotation &&
+        newAnnotation &&
+        oldAnnotation.id === this.emptyAnnotationId() &&
+        oldAnnotation.id !== newAnnotation.id
+      ) {
+        this.$refs.emptyAnnotation.blur();
+        this.setText(this.$t("no_data_found"));
       }
     }
   }

@@ -106,7 +106,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    await wrapper.findComponent(".label-property-value").trigger("click");
+    await wrapper.findComponent(".annotation-value").trigger("click");
     expect(store.state.selection.selectionEnabled).toEqual(`${annotationSet.id}_${label.id}`);
   });
 
@@ -140,7 +140,7 @@ describe("Document Annotations Component", () => {
       "offset_string_original": "mit 1"
     }
 
-    await wrapper.findComponent(".label-property-value").trigger("click");
+    await wrapper.findComponent(".annotation-value").trigger("click");
     await store.dispatch("selection/setSpanSelection", sampleBbox)
     expect(wrapper.findAll(".action-buttons").length).toEqual(1);
   });

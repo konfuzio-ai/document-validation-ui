@@ -5,13 +5,18 @@
 ></style>
 
 <template>
-  <div class="annotation" ref="annotation" :id="annotation.id">
-    <span
+  <div
+    class="annotation"
+    ref="annotation"
+    :id="annotation.id"
+    @click="handleEditAnnotation"
+  >
+    <div
       :class="[
-        'label-property-value',
+        'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationEmpty && !isAnnotationInEditMode(annotation.id)
+        isAnnotationEmpty && !isAnnotationInEditMode(annotation.id, spanIndex)
           ? 'label-empty'
           : ''
       ]"
@@ -20,11 +25,13 @@
       :contenteditable="true"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
-      @click="handleEditAnnotation"
     >
-      {{ isAnnotationEmpty ? $t("no_data_found") : annotation.offset_string }}
-    </span>
-    <div v-if="isAnnotationInEditMode(annotation.id)" class="buttons-container">
+      {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
+    </div>
+    <div
+      v-if="isAnnotationInEditMode(annotation.id, spanIndex)"
+      class="buttons-container"
+    >
       <ActionButtons
         :saveBtn="true"
         :cancelBtn="true"
@@ -50,6 +57,14 @@ export default {
       type: Object,
       required: true
     },
+    span: {
+      type: Object,
+      required: true
+    },
+    spanIndex: {
+      type: Number,
+      required: true
+    },
     isLoading: {
       type: Boolean
     },
@@ -72,11 +87,12 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageSelected"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("document", ["editAnnotation"]),
     annotationText() {
-      if (this.isAnnotationInEditMode(this.annotation.id)) {
+      if (this.isAnnotationInEditMode(this.annotation.id, this.spanIndex)) {
         return this.$refs.contentEditable.textContent.trim();
       } else {
-        return this.annotation.offset_string;
+        return this.span.offset_string;
       }
     },
     isAnnotationEmpty() {
@@ -88,9 +104,10 @@ export default {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
-      if (!this.isAnnotationInEditMode(this.annotation.id) && !this.isLoading) {
-        const span = this.annotation.span[0];
-
+      if (
+        !this.isAnnotationInEditMode(this.annotation.id, this.spanIndex) &&
+        !this.isLoading
+      ) {
         if (this.isAnnotationEmpty) {
           this.setText("");
         }
@@ -99,7 +116,7 @@ export default {
           this.$store.dispatch("selection/enableSelection", this.annotation.id);
           const { x, y, width, height } = this.bboxToRect(
             this.pageSelected,
-            span
+            this.span
           );
 
           const selection = {
@@ -116,12 +133,12 @@ export default {
 
           this.$store.dispatch("selection/setSelection", {
             selection,
-            span
+            span: this.span
           });
-          this.$store.dispatch(
-            "document/setEditAnnotation",
-            this.annotation.id
-          );
+          this.$store.dispatch("document/setEditAnnotation", {
+            id: this.annotation.id,
+            index: this.spanIndex
+          });
         }
       }
     },
@@ -129,9 +146,9 @@ export default {
       this.setText(
         this.isAnnotationEmpty
           ? this.$t("no_data_found")
-          : this.annotation.span[0].offset_string
+          : this.span.offset_string
       );
-      this.$store.dispatch("document/setEditAnnotation", null);
+      this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
       this.$refs.contentEditable.blur();
     },
@@ -143,11 +160,10 @@ export default {
       if (event) {
         event.preventDefault();
       }
-      const spanArray = this.annotation.span[0];
       let updatedString;
 
       // If the user didn't change the value, we don't want to do anything
-      if (this.annotationText === spanArray.offset_string) {
+      if (this.annotationText === this.span.offset_string) {
         this.$emit("handle-data-changes", {
           annotation: null,
           isLoading: null
@@ -167,22 +183,23 @@ export default {
           revised: true
         };
       } else {
+        const spans = this.annotation.span;
+        spans[this.spanIndex] = {
+          ...spans[this.spanIndex],
+          offset_string: this.annotationText,
+          bottom: this.spanSelection.bottom,
+          top: this.spanSelection.top,
+          page_index: this.spanSelection.page_index,
+          x0: this.spanSelection.x0,
+          x1: this.spanSelection.x1,
+          y0: this.spanSelection.y0,
+          y1: this.spanSelection.y1,
+          start_offset: this.spanSelection.start_offset,
+          end_offset: this.spanSelection.end_offset
+        };
         updatedString = {
           is_correct: true,
-          span: [
-            {
-              offset_string: this.annotationText,
-              bottom: this.spanSelection.bottom,
-              top: this.spanSelection.top,
-              page_index: this.spanSelection.page_index,
-              x0: this.spanSelection.x0,
-              x1: this.spanSelection.x1,
-              y0: this.spanSelection.y0,
-              y1: this.spanSelection.y1,
-              start_offset: this.spanSelection.start_offset,
-              end_offset: this.spanSelection.end_offset
-            }
-          ]
+          span: spans
         };
       }
 
@@ -214,7 +231,7 @@ export default {
             this.setText(
               this.isAnnotationEmpty
                 ? this.$t("no_data_found")
-                : this.annotation.span[0].offset_string
+                : this.span.offset_string
             );
             this.$emit("handle-data-changes", {
               annotation: null,
@@ -223,7 +240,7 @@ export default {
           }
         })
         .finally(() => {
-          this.$store.dispatch("document/setEditAnnotation", null);
+          this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("document/endLoading");
           this.$store.dispatch("selection/disableSelection");
           this.$emit("handle-data-changes", {
@@ -242,12 +259,31 @@ export default {
   watch: {
     spanSelection(span) {
       if (
-        this.isAnnotationInEditMode(this.annotation.id) &&
+        this.isAnnotationInEditMode(this.annotation.id, this.spanIndex) &&
         span &&
         span.offset_string &&
-        span.offset_string !== this.annotation.span[0].offset_string
+        span.offset_string !== this.span.offset_string
       ) {
         this.setText(span.offset_string);
+      }
+    },
+    editAnnotation(newAnnotation, oldAnnotation) {
+      // verify if new annotation in edit mode is not this one and if this
+      // one was selected before so we set the state to the previous one (like a cancel)
+      if (
+        oldAnnotation &&
+        newAnnotation &&
+        oldAnnotation.id === this.annotation.id &&
+        oldAnnotation.index === this.spanIndex &&
+        (oldAnnotation.id !== newAnnotation.id ||
+          oldAnnotation.index !== newAnnotation.index)
+      ) {
+        this.setText(
+          this.isAnnotationEmpty
+            ? this.$t("no_data_found")
+            : this.span.offset_string
+        );
+        this.$refs.contentEditable.blur();
       }
     }
   }

@@ -26,7 +26,7 @@
       box-shadow: 0px 1px 0px $grey-lightest;
       transition: background-color 0.2s ease-out;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       padding-right: 16px;
 
       &:hover,
@@ -60,7 +60,6 @@
 
       .label-property-right {
         width: 60%;
-        min-height: 40px;
         display: flex;
         align-items: center;
 
@@ -71,8 +70,10 @@
         .label-property-annotation {
           width: 100%;
 
+
           .annotation,
           .empty-annotation {
+            min-height: 52px;
             display: flex;
             align-items: center;
           }
@@ -99,15 +100,18 @@
         }
       }
 
-      .label-property-value {
+      .annotation-value {
         color: $text;
-        padding-left: 8px;
-        padding-right: 8px;
+        padding: 0 8px;
         border: none;
         background-color: transparent;
         inline-size: 100%;
         overflow-wrap: break-word;
         display: inline-block;
+
+        &:focus {
+          outline: none;
+        }
 
         &.label-empty {
           font-weight: 400;
@@ -135,10 +139,6 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-      }
-
-      .label-property-value:focus {
-        outline: none;
       }
 
       .saving-changes {
