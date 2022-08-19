@@ -34,6 +34,9 @@
       :saveBtn="false"
       :isActive="!isLoading"
       :isLoading="isLoading"
+      :handleMenu="handleMenu"
+      :label="label"
+      :annotationSet="annotationSet"
     />
   </div>
 </template>
@@ -60,6 +63,9 @@ export default {
     },
     isLoading: {
       type: Boolean
+    },
+    handleMenu: {
+      type: Function
     }
   },
   computed: {

@@ -49,6 +49,8 @@
         :saveBtn="false"
         :isActive="!isLoading"
         :isLoading="isLoading"
+        :annotationSet="annotationSet"
+        :label="label"
         @handle-menu="handleMenu"
       />
     </div>
@@ -83,6 +85,9 @@ export default {
       type: Function
     },
     handleMessage: {
+      type: Function
+    },
+    handleMenu: {
       type: Function
     },
     label: {
@@ -266,8 +271,7 @@ export default {
             this.error = false;
           }, 2000);
         });
-    },
-    handleMenu() {}
+    }
   },
   watch: {
     spanSelection(span) {

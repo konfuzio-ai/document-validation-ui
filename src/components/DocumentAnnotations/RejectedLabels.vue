@@ -7,17 +7,21 @@
 <template>
   <div class="rejected-label-container">
     <p class="title">
-      {{ `${$t("rejected")} (${rejectedLabelList.length})` }}
+      {{ `${$t("rejected")} (${missingAnnotations.length})` }}
     </p>
     <section class="tag-container">
-      <b-taglist v-for="label in rejectedLabelList" :key="label.id">
+      <b-taglist
+        v-for="missingAnnotation in missingAnnotations"
+        :key="missingAnnotation.id"
+      >
         <b-tag
+          v-if="notActive !== missingAnnotation.id || !notActive"
           attached
           closable
           aria-close-label="Close tag"
-          @close="removeRejectedLabel(label.id)"
+          @close="removeRejectedLabel(missingAnnotation.id)"
         >
-          {{ label.name }}
+          {{ missingAnnotation.label }}
         </b-tag>
       </b-taglist>
     </section>
@@ -25,35 +29,26 @@
 </template>
 
 <script>
-/**
- * TODO when backend ready:
- * Get an array of rejected labels, and be able to "toggle" the status (rejected or not)
- * by sending a request to the backend
- */
-
-/**
- * To take into account:
- * - might need to keep a state with all the labels indeces
- * to be able to return them to their original place in the array, if "unrejected"
- * - Need to try more solutions to have the menu open to the top but be fully visible
- */
-
 export default {
   name: "RejectedLabels",
   data() {
-    return {};
+    return {
+      notActive: null
+    };
   },
   props: {
-    rejectedLabelList: {
-      type: Array
-    },
     missingAnnotations: {
       type: Array
+    },
+    deleteLabel: {
+      type: Function
     }
   },
   methods: {
     removeRejectedLabel(id) {
-      console.log("removing", id);
+      this.$emit("remove-label", id);
+
+      this.$store.dispatch("document/deleteMissingAnnotation", id);
     }
   }
 };

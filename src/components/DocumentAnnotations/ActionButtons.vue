@@ -34,7 +34,7 @@
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
         </template>
-        <b-dropdown-item aria-role="listitem" @click="handleMenu()">{{
+        <b-dropdown-item aria-role="listitem" @click="handleMenu">{{
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>
@@ -64,6 +64,12 @@ export default {
     },
     isActive: {
       type: Boolean
+    },
+    annotationSet: {
+      type: Object
+    },
+    label: {
+      type: Object
     }
   },
   methods: {
@@ -74,7 +80,13 @@ export default {
       this.$emit("cancel");
     },
     handleMenu() {
-      this.$emit("handle-menu");
+      const rejected = {
+        id: Math.round(Math.random() * 1000),
+        label: this.label.id,
+        label_set: this.annotationSet.label_set.id
+      };
+
+      this.$emit("handle-menu", rejected);
     }
   }
 };

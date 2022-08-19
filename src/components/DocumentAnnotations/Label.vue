@@ -41,8 +41,8 @@
               :handleMessage="handleMessage"
               :label="label"
               :annotationSet="annotationSet"
+              :handleMenu="handleMenu"
               @handle-data-changes="handleDataChanges"
-              @handle-menu="handleMenu"
             />
           </div>
           <EmptyAnnotation
@@ -53,13 +53,14 @@
             @handle-data-changes="handleDataChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
-            @handle-menu="handleMenu"
+            :handleMenu="handleMenu"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
@@ -87,6 +88,12 @@ export default {
     },
     handleShowError: {
       type: Function
+    },
+    handleMenu: {
+      type: Function
+    },
+    rejectedLabelList: {
+      type: Array
     }
   },
   computed: {
@@ -108,6 +115,18 @@ export default {
       } else {
         return [null];
       }
+    },
+    labelIsRejected() {
+      if (this.rejectedLabelList.length === 0) {
+        return;
+      }
+
+      this.rejectedLabelList.map(l => {
+        if (l.id === this.label.id) {
+          console.log(l.id);
+          return l.id;
+        }
+      });
     }
   },
   data() {

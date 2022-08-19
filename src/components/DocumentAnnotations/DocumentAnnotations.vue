@@ -15,7 +15,7 @@
     </div>
     <div
       v-else
-      :class="['labels-list', rejectedLabelList.length && 'showing-rejected']"
+      :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
     >
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
@@ -38,11 +38,13 @@
           :indexGroup="indexGroup"
           :handleShowError="handleShowError"
           :handleMessage="handleMessage"
+          :handleMenu="handleMenu"
+          :missingAnnotations="missingAnnotations"
         />
       </div>
-      <div v-if="rejectedLabelList.length" class="rejected-labels-list">
-        <RejectedLabels :rejectedLabelList="rejectedLabelList" />
-      </div>
+    </div>
+    <div v-if="missingAnnotations.length" class="rejected-labels-list">
+      <RejectedLabels :missingAnnotations="missingAnnotations" />
     </div>
   </div>
 </template>
@@ -75,21 +77,7 @@ export default {
       type: Function
     }
   },
-  data() {
-    return {
-      rejectedLabelList: [
-        { id: 1, name: "name1" },
-        { id: 2, name: "name2" },
-        { id: 3, name: "name3" },
-        { id: 4, name: "name4" },
-        { id: 5, name: "name5" },
-        { id: 6, name: "name6" },
-        { id: 7, name: "name7" },
-        { id: 8, name: "name8" },
-        { id: 9, name: "name9" }
-      ]
-    };
-  },
+
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
@@ -121,6 +109,9 @@ export default {
     },
     handleMessage(message) {
       this.$emit("handle-message", message);
+    },
+    handleMenu(rejected) {
+      this.$store.dispatch("document/addMissingAnnotation", rejected);
     }
   }
 };
