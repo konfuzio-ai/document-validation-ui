@@ -4,14 +4,13 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="empty-annotation">
+  <div class="empty-annotation" @click="handleEditEmptyAnnotation">
     <span
       :class="[
         'annotation-value',
         isEmptyAnnotationEditable() ? '' : 'label-empty'
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
-      @click="handleEditEmptyAnnotation"
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
       @input="isEmpty"

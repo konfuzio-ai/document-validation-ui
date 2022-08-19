@@ -11,7 +11,7 @@
     :id="annotation.id"
     @click="handleEditAnnotation"
   >
-    <div
+    <span
       :class="[
         'annotation-value',
         isLoading && 'saving-changes',
@@ -27,7 +27,7 @@
       @keypress.enter="saveAnnotationChanges"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
-    </div>
+    </span>
     <div
       v-if="isAnnotationInEditMode(annotation.id, spanIndex)"
       class="buttons-container"
