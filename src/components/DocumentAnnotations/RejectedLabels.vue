@@ -39,9 +39,6 @@ export default {
   props: {
     missingAnnotations: {
       type: Array
-    },
-    deleteLabel: {
-      type: Function
     }
   },
   methods: {

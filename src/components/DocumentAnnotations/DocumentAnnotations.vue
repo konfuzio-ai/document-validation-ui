@@ -29,18 +29,19 @@
             )}`
           }}
         </div>
-        <Label
-          v-for="label in annotationSet.labels"
-          v-bind:key="label.id"
-          :label="label"
-          :annotationSet="annotationSet"
-          :handleScroll="handleScroll"
-          :indexGroup="indexGroup"
-          :handleShowError="handleShowError"
-          :handleMessage="handleMessage"
-          :handleMenu="handleMenu"
-          :missingAnnotations="missingAnnotations"
-        />
+        <div v-for="label in annotationSet.labels" :key="label.id">
+          <Label
+            v-if="label.id === labelNotRejected(label)"
+            :label="label"
+            :annotationSet="annotationSet"
+            :handleScroll="handleScroll"
+            :indexGroup="indexGroup"
+            :handleShowError="handleShowError"
+            :handleMessage="handleMessage"
+            :handleMenu="handleMenu"
+            :missingAnnotations="missingAnnotations"
+          />
+        </div>
       </div>
     </div>
     <div v-if="missingAnnotations.length" class="rejected-labels-list">
@@ -103,6 +104,19 @@ export default {
         }
       });
       return found ? `${value + 1}` : "";
+    },
+    labelNotRejected(label) {
+      if (this.missingAnnotations.length === 0) {
+        return label.id;
+      } else {
+        const found = this.missingAnnotations.find(l => l.label === label.id);
+
+        if (found) {
+          return 0;
+        } else {
+          return label.id;
+        }
+      }
     },
     handleShowError() {
       this.$emit("handle-error", true);

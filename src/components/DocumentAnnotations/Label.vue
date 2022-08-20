@@ -92,7 +92,7 @@ export default {
     handleMenu: {
       type: Function
     },
-    rejectedLabelList: {
+    missingAnnotations: {
       type: Array
     }
   },
@@ -115,18 +115,6 @@ export default {
       } else {
         return [null];
       }
-    },
-    labelIsRejected() {
-      if (this.rejectedLabelList.length === 0) {
-        return;
-      }
-
-      this.rejectedLabelList.map(l => {
-        if (l.id === this.label.id) {
-          console.log(l.id);
-          return l.id;
-        }
-      });
     }
   },
   data() {
