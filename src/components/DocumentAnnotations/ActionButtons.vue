@@ -80,6 +80,8 @@ export default {
       this.$emit("cancel");
     },
     handleMenu() {
+      if (!this.label || !this.annotationSet) return;
+
       const rejected = {
         id: Math.round(Math.random() * 1000),
         label: this.label.id,

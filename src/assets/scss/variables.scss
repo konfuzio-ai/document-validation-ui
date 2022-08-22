@@ -307,11 +307,11 @@ button {
     background-color: $detail;
 
     &:hover {
-      cursor: pointer;
       background-color: $detail !important;
     }
 
     &.is-delete {
+      cursor: pointer;
       &::before {
         height: 1.5px;
         border-radius: 4px;
