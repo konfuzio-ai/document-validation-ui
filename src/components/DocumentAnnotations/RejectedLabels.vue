@@ -15,13 +15,12 @@
         :key="missingAnnotation.id"
       >
         <b-tag
-          v-if="notActive !== missingAnnotation.id || !notActive"
           attached
           closable
           aria-close-label="Close tag"
           @close="removeRejectedLabel(missingAnnotation.id)"
         >
-          {{ missingAnnotation.label }}
+          {{ getLabelName(missingAnnotation.label) }}
         </b-tag>
       </b-taglist>
     </section>
@@ -29,23 +28,32 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "RejectedLabels",
-  data() {
-    return {
-      notActive: null
-    };
-  },
   props: {
     missingAnnotations: {
       type: Array
     }
+  },
+  computed: {
+    ...mapState("document", ["labels"])
   },
   methods: {
     removeRejectedLabel(id) {
       this.$emit("remove-label", id);
 
       this.$store.dispatch("document/deleteMissingAnnotation", id);
+    },
+    getLabelName(label) {
+      if (!this.labels) return;
+
+      const found = this.labels.find(l => l.id === label);
+
+      if (found) {
+        return found.name;
+      }
     }
   }
 };

@@ -8,6 +8,7 @@ const state = {
   pages: [],
   annotationSets: null,
   annotations: null,
+  labels: [],
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   sidebarAnnotationSelected: null,
   showDeletedAnnotations: false,
@@ -32,6 +33,16 @@ const getters = {
       });
     });
     return annotations;
+  },
+
+  labels: state => annotationSets => {
+    const labels = [];
+    annotationSets.map(annotationSet => {
+      annotationSet.labels.map(label => {
+        labels.push(label);
+      });
+    });
+    return labels;
   },
 
   /**
@@ -108,6 +119,9 @@ const actions = {
   setAnnotations: ({ commit }, annotations) => {
     commit("SET_ANNOTATIONS", annotations);
   },
+  setLabels: ({ commit }, labels) => {
+    commit("SET_LABELS", labels);
+  },
   setPages: ({ commit }, pages) => {
     commit("SET_PAGES", pages);
   },
@@ -138,6 +152,7 @@ const actions = {
             "SET_ANNOTATIONS",
             getters.annotations(response.data.annotation_sets)
           );
+          commit("SET_LABELS", getters.labels(response.data.annotation_sets));
           // commit("SET_PAGES", []);
 
           const documentId = state.documentId;
@@ -326,6 +341,9 @@ const mutations = {
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
+  },
+  SET_LABELS: (state, labels) => {
+    state.labels = labels;
   },
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
