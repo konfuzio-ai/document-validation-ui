@@ -43,7 +43,12 @@
                 documentId == document.id && 'selected'
               ]"
             >
-              {{ document.data_file_name }}
+              <!-- if is the current document, then we use the store variable to get the file name edits in real time -->
+              {{
+                selectedDocument.id == document.id
+                  ? selectedDocument.data_file_name
+                  : document.data_file_name
+              }}
             </div>
           </div>
         </template>
@@ -74,7 +79,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["documentId"]),
+    ...mapState("document", ["documentId", "selectedDocument"]),
     ...mapState("category", ["documents", "selectedCategory"])
   },
   methods: {
