@@ -58,5 +58,9 @@
   "reorder": "Reorder",
   "rotate": "Rotate",
   "edit_error": "The changes couldn’t be saved, please try again later.",
-  "overview": "Overview"
+  "overview": "Overview",
+  "select_pages": "Select pages to rotate, drag and drop to reorder or split.",
+  "edit_document": "Edit document",
+  "selected": "selected",
+  "rotate_selected": "Rotate selected"
 }
