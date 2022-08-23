@@ -19,14 +19,13 @@
         :handleMessage="handleMessage"
         :pagesArray="pagesArray"
         @change-page="changePage"
-        @go-back="closeSplitOverview = true"
       />
     </div>
-    <div class="footer">
-      <EditFooter
-        v-if="editMode === 'rotate'"
-        @rotate-left="handleRotationToTheLeft"
-        @rotate-right="handleRotationToTheRight"
+    <div class="sidebar" v-if="!splitOverview">
+      <EditSidebar
+        @rotate-left="rotatePage"
+        @rotate-all-left="handleRotationsToTheLeft"
+        @rotate-all-right="handleRotationsToTheRight"
       />
     </div>
   </div>
@@ -75,7 +74,6 @@ export default {
     ])
   },
   methods: {
-    /** USED BY ALL EDIT MODES */
     setPages() {
       if (!this.selectedDocument) {
         return;

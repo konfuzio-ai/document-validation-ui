@@ -4,7 +4,6 @@
   <div class="dashboard">
     <div class="dashboard-top-bar">
       <DocumentTopBar
-        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
       />

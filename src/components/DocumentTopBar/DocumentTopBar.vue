@@ -82,6 +82,26 @@ export default {
     },
     handleShowMessage(message) {
       this.$emit("handle-message", message);
+    },
+    handleCancelEditing() {
+      this.$store.dispatch("edit/disableEditMode").then(() => {
+        this.$store.dispatch("display/updateFit", "width");
+      });
+    },
+    handleNext() {
+      if (this.splitPages.length > 1) {
+        // then next view
+        if (this.splitOverview) {
+          this.$store.dispatch("edit/editDocument", this.splitPages);
+          this.handleCloseEditing();
+        } else {
+          this.$store.dispatch("edit/setSplitOverview", true);
+        }
+        // handle submit
+        this.$emit("submit-rotation");
+        // handle submit
+        this.$store.dispatch("edit/disableEditMode");
+      }
     }
   }
 };
