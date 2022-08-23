@@ -1,11 +1,14 @@
 @import "./imports.scss";
 
 .document-edit {
+  display: flex;
   flex: 1;
   background-color: $background;
-  padding: 16px;
+  justify-content: space-between;
 
   .pages-section {
+    width: 100%;
+
     &.scroll {
       height: calc(100% - 50px - 42px);
       overflow: scroll;
@@ -146,30 +149,63 @@
     }
   }
 
-  .footer {
-    height: 50px;
-    position: fixed;
-    z-index: 999;
-    background-color: inherit;
-    padding: 15px 0 20px 0;
-    bottom: 0;
-    width: 100%;
+  .sidebar {
+    width: 45%;
+    background-color: $white;
 
-    .edit-footer {
+    .edit-sidebar {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      height: 100%;
+      justify-content: center;
+      text-align: center;
+      height: calc(100% - 60px);
+      gap: 50px;
 
-      p {
-        margin-right: 16px;
-        color: $grey;
-        font-size: 14px;
-        font-weight: 400;
+      .sidebar-header {
+        width: 85%;
+        height: 50%;
+
+        h3 {
+          color: $dark-blue;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 24px;
+        }
+
+        .description {
+          color: $grey;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+        }
       }
 
       .buttons-container {
+        width: 85%;
         display: flex;
-        gap: 4px;
+        flex-direction: column;
+        gap: 24px;
+        color: $grey-dark;
+
+        .page-selection {
+          font-weight: 400;
+          font-size: 14px;
+        }
+
+        .rotate {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .rotate-button {
+          span {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+          }
+        }
       }
     }
   }

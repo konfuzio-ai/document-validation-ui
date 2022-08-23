@@ -6,11 +6,8 @@ const HTTP = myImports.HTTP;
 const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   editMode: null,
-  editOptions: {
-    reorder: "reorder",
-    rotate: "rotate",
-    split: "split"
-  },
+  splitOverview: null,
+  selectedPages: [],
   rotations: [],
   rotationsForBackend: [],
   splitPages: []
@@ -23,12 +20,17 @@ const actions = {
     commit("SET_DOC_ID", id);
   },
 
-  setEditMode: ({ commit }, option) => {
-    commit("SET_EDIT_MODE", option);
+  setEditMode: ({ commit }, value) => {
+    commit("SET_EDIT_MODE", value);
   },
 
   disableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", null);
+    commit("SET_SPLIT_OVERVIEW", null);
+  },
+
+  setSplitOverview: ({ commit }, overview) => {
+    commit("SET_SPLIT_OVERVIEW", overview);
   },
 
   setRotations: ({ commit }, rotations) => {
@@ -41,6 +43,16 @@ const actions = {
 
   setSplitPages: ({ commit }, splitPages) => {
     commit("SET_SPLIT_PAGES", splitPages);
+  },
+
+  setSelectedPages: ({ state }, selectedPage) => {
+    const found = state.selectedPages.find(page => page === selectedPage);
+
+    if (found) {
+      state.selectedPages.filter(page => page !== selectedPage);
+    } else {
+      state.selectedPages.push(selectedPage);
+    }
   },
 
   updateSinglePageRotation: ({ state, commit }, { pageId, pageNumber }) => {
@@ -169,6 +181,10 @@ const mutations = {
 
   SET_EDIT_MODE: (state, option) => {
     state.editMode = option;
+  },
+
+  SET_SPLIT_OVERVIEW: (state, overview) => {
+    state.splitOverview = overview;
   },
 
   SET_ROTATIONS: (state, rotations) => {

@@ -1,82 +1,18 @@
 <style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
 <template>
   <div :class="['document-edit', splitOverview && 'split-overview-component']">
-    <EditTopBar
-      :splitOverview="splitOverview"
-      @cancel-editing="handleCloseEditing"
-      @submit-rotation="handleRotationSubmission"
-      @confirm-splitting="handleSplitOverview"
-      :handleCloseEditing="handleCloseEditing"
-    />
     <div class="pages-section" v-if="!splitOverview">
-      <div :class="[scroll && 'scroll']">
-        <draggable
-          v-model="pagesArray"
-          :class="['document-grid']"
-          easing="cubic-bezier(0.37, 0, 0.63, 1)"
-          @start="dragging = true"
-          @end="handleEnd"
-          :move="checkMove"
-        >
-          <div
-            v-for="(page, index) in pagesArray"
-            :key="page.id"
-            :class="['image-section']"
-          >
-            <div class="image-container" @click="changePage(page.number)">
-              <div class="thumbnail">
-                <div
-                  class="img-container"
-                  :style="
-                    editMode === 'rotate' && {
-                      transform: 'rotate(' + getRotation(page.id) + 'deg)'
-                    }
-                  "
-                >
-                  <ServerImage
-                    :class="['img-thumbnail']"
-                    :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-                  />
-                </div>
-                <div class="icon-container">
-                  <div class="action-icon">
-                    <b-icon
-                      icon="eye"
-                      class="is-small"
-                      @click="changePage(page.number)"
-                    />
-                  </div>
-                  <div
-                    class="action-icon"
-                    v-if="editMode === editOptions.rotate"
-                    @click="rotateSinglePage(page.id, page.number)"
-                  >
-                    <b-icon icon="arrow-rotate-left" class="is-small" />
-                  </div>
-                </div>
-              </div>
-              <span class="page-number">{{ page.number }}</span>
-            </div>
-            <div
-              v-if="editMode === editOptions.split"
-              :class="[
-                'splitting-lines',
-                activeSplittingLines[index] === page.number && 'active-split'
-              ]"
-              @click="handleSplittingLines(page)"
-            >
-              <div class="scissors-icon">
-                <b-icon icon="scissors" class="is-small" />
-              </div>
-              <div v-if="activeSplittingLines[index] === page.number">
-                <SplitDivider />
-              </div>
-            </div>
-          </div>
-        </draggable>
-      </div>
+      <EditPages
+        :pagesArray="pagesArray"
+        :activeSplittingLines="activeSplittingLines"
+        :scroll="scroll"
+        @change-page="changePage"
+        @handle-splitting-lines="handleSplittingLines"
+        @check-move="checkMove"
+        @handle-drag-end="handleDragEnd"
+      />
     </div>
-    <div v-else class="confirm-split-component">
+    <div v-else class="split-overview-section">
       <SplitOverview
         :fileName="fileName"
         :fileExtension="fileExtension"
@@ -84,14 +20,13 @@
         :handleMessage="handleMessage"
         :pagesArray="pagesArray"
         @change-page="changePage"
-        @go-back="closeSplitOverview = true"
       />
     </div>
-    <div class="footer">
-      <EditFooter
-        v-if="editMode === 'rotate'"
-        @rotate-left="handleRotationToTheLeft"
-        @rotate-right="handleRotationToTheRight"
+    <div class="sidebar" v-if="!splitOverview">
+      <EditSidebar
+        @rotate-left="rotatePage"
+        @rotate-all-left="handleRotationsToTheLeft"
+        @rotate-all-right="handleRotationsToTheRight"
       />
     </div>
   </div>
@@ -99,33 +34,25 @@
 
 <script>
 import { mapState } from "vuex";
-import EditTopBar from "./EditTopBar";
-import EditFooter from "./EditFooter";
+import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
-import ServerImage from "../../assets/images/ServerImage";
-import SplitDivider from "../../assets/images/SplitDivider";
-import draggable from "vuedraggable";
+import EditPages from "./EditPages";
 
 /**
- * This component shows a document thumbnail grid view to be able to edit the document.
+ * This component shows a document thumbnail grid view and sidebar, to be able to edit the document.
  */
 export default {
   name: "DocumentEdit",
   components: {
-    EditTopBar,
-    EditFooter,
+    EditSidebar,
     SplitOverview,
-    ServerImage,
-    SplitDivider,
-    draggable
+    EditPages
   },
   data() {
     return {
       fileName: [],
       fileExtension: null,
       scroll: false,
-      splitOverview: false,
-      closeSplitOverview: false,
       activeSplittingLines: [],
       pagesArray: [],
       dragging: false,
@@ -141,14 +68,13 @@ export default {
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
-      "editOptions",
       "rotations",
       "rotationsForBackend",
-      "splitPages"
+      "splitPages",
+      "splitOverview"
     ])
   },
   methods: {
-    /** USED BY ALL EDIT MODES */
     setPages() {
       if (!this.selectedDocument) {
         return;
@@ -186,6 +112,7 @@ export default {
         );
       }
     },
+
     handleCloseEditing() {
       this.$store.dispatch("edit/disableEditMode").then(() => {
         this.$store.dispatch("display/updateFit", "width");
@@ -219,21 +146,17 @@ export default {
         };
       });
     },
-    rotateSinglePage(pageId, pageNumber) {
+    rotatePage(pageId, pageNumber) {
       this.$store.dispatch("edit/updateSinglePageRotation", {
         pageId,
         pageNumber
       });
     },
-    handleRotationToTheLeft() {
+    handleRotationsToTheLeft() {
       this.$store.dispatch("edit/updateRotationToTheLeft");
     },
-    handleRotationToTheRight() {
+    handleRotationsToTheRight() {
       this.$store.dispatch("edit/updateRotationToTheRight");
-    },
-    getRotation(pageId) {
-      // rotate page
-      return this.rotations?.find(rotation => rotation.id === pageId)?.angle;
     },
     handleRotationSubmission() {
       // Remove id from rotation object since the backend doesn't need it
@@ -412,9 +335,6 @@ export default {
     handleSplitOverview() {
       // This will take the user to the final step,
       // which is the overview
-      this.splitOverview = true;
-      this.closeSplitOverview = false;
-
       this.splitFileNameFromExtension();
       this.saveDocument();
     },
@@ -441,9 +361,7 @@ export default {
         page => this.pagesArray.indexOf(page) === e.draggedContext.futureIndex
       );
     },
-    handleEnd() {
-      this.draggable = false;
-
+    handleDragEnd() {
       // Update page numbers
       this.pagesArray = this.pagesArray.map(page => {
         const index = this.pagesArray.indexOf(page);
@@ -464,9 +382,10 @@ export default {
         this.setPages();
       }
     },
-    closeSplitOverview(newValue) {
+    splitOverview(newValue) {
       if (newValue) {
-        this.splitOverview = false;
+        this.splitFileNameFromExtension();
+        this.saveDocument();
       }
     }
   },

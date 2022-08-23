@@ -30,6 +30,12 @@
         margin-right: 10px;
         padding-right: 10px;
 
+        &:hover {
+          cursor: pointer;
+          background: $low-opacity-white;
+          border-radius: 4px;
+        }
+
         &:after {
           content: "";
           position: relative;
@@ -38,6 +44,10 @@
           width: 50%;
           border-right: 1px solid $grey-detail;
           opacity: 30%;
+        }
+
+        .edit-text {
+          color: $white;
         }
       }
 
@@ -53,7 +63,7 @@
         height: 32px;
         padding: 7px;
 
-        &:hover {
+        &:hover:not(.edit-icon) {
           cursor: pointer;
           background: $low-opacity-white;
           border-radius: 4px;

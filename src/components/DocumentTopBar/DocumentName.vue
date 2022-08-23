@@ -24,10 +24,18 @@
         }}</span
       >
     </span>
-    <div v-if="showEditBtn" class="edit-btn btn" @click="handleEdit">
+    <div
+      v-if="showEditBtn && !editMode"
+      class="edit-btn btn"
+      @click="handleEdit"
+    >
       {{ $t("edit") }}
     </div>
-    <div v-if="showSaveBtn" class="save-btn btn" @click="handleSave">
+    <div
+      v-if="showSaveBtn && !editMode"
+      class="save-btn btn"
+      @click="handleSave"
+    >
       {{ $t("save") }}
     </div>
     <div v-if="saving" class="message-container">
@@ -82,7 +90,8 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument"]),
+    ...mapState("edit", ["editMode"])
   },
   methods: {
     handleFileName() {

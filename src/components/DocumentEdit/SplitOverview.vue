@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     handleBackButton() {
-      this.$emit("go-back");
+      this.$store.dispatch("edit/setSplitOverview", false);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
