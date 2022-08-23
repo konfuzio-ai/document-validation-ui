@@ -1,10 +1,5 @@
 import { shallowMount, mount } from "@vue/test-utils";
-import {
-  DocumentEdit,
-  SplitOverview,
-  EditTopBar,
-  EditFooter,
-} from "../../src/components/DocumentEdit";
+import { DocumentEdit, SplitOverview } from "../../src/components/DocumentEdit";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library

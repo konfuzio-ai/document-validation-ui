@@ -1,4 +1,4 @@
 export { default as DocumentEdit } from "./DocumentEdit";
-export { default as EditTopBar } from "./EditTopBar";
-export { default as EditFooter } from "./EditFooter";
+export { default as EditSidebar } from "./EditSidebar";
+export { default as EditPages } from "./EditPages";
 export { default as SplitOverview } from "./SplitOverview";
