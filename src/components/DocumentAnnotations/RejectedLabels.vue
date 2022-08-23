@@ -20,7 +20,9 @@
           aria-close-label="Close tag"
           @close="removeRejectedLabel(missingAnnotation.id)"
         >
-          {{ getLabelName(missingAnnotation.label) }}
+          <span class="label-name">
+            {{ getLabelName(missingAnnotation.label) }}
+          </span>
         </b-tag>
       </b-taglist>
     </section>
