@@ -87,9 +87,6 @@ export default {
     },
     handleMessage: {
       type: Function
-    },
-    pagesArray: {
-      type: Array
     }
   },
   data() {
@@ -100,7 +97,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["splitPages"])
+    ...mapState("edit", ["splitPages", "pagesArray"])
   },
   methods: {
     handleBackButton() {

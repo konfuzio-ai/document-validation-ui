@@ -5,8 +5,9 @@ const HTTP = myImports.HTTP;
 
 const state = {
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  editMode: null,
-  splitOverview: null,
+  editMode: false,
+  splitOverview: false,
+  pagesArray: [],
   selectedPages: [],
   rotations: [],
   rotationsForBackend: [],
@@ -43,6 +44,10 @@ const actions = {
 
   setSplitPages: ({ commit }, splitPages) => {
     commit("SET_SPLIT_PAGES", splitPages);
+  },
+
+  setPagesArray: ({ commit }, pagesArray) => {
+    commit("SET_PAGES_ARRAY", pagesArray);
   },
 
   setSelectedPages: ({ state, commit }, selectedPage) => {
@@ -162,19 +167,19 @@ const actions = {
 
   editDocument: ({ state }, editedDocument) => {
     console.log(editedDocument);
-    // return new Promise(resolve => {
-    //   HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
-    //     .then(response => {
-    //       console.log(response);
-    //       // if (response.status === 204) {
-    //       //   resolve(true);
-    //       // }
-    //     })
-    //     .catch(error => {
-    //       resolve(false);
-    //       console.log(error);
-    //     });
-    // });
+    return new Promise(resolve => {
+      HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
+        .then(response => {
+          console.log(response);
+          if (response.status === 204) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
   }
 };
 
@@ -185,6 +190,10 @@ const mutations = {
 
   SET_EDIT_MODE: (state, option) => {
     state.editMode = option;
+  },
+
+  SET_PAGES_ARRAY: (state, pagesArray) => {
+    state.pagesArray = pagesArray;
   },
 
   SET_SPLIT_OVERVIEW: (state, overview) => {

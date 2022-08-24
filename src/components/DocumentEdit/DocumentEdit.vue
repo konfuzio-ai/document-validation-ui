@@ -3,7 +3,6 @@
   <div :class="['document-edit', splitOverview && 'split-overview-component']">
     <div class="pages-section" v-if="!splitOverview">
       <EditPages
-        :pagesArray="pagesArray"
         :activeSplittingLines="activeSplittingLines"
         :scroll="scroll"
         @change-page="changePage"
@@ -18,7 +17,6 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :pagesArray="pagesArray"
         @change-page="changePage"
       />
     </div>
@@ -54,7 +52,6 @@ export default {
       fileExtension: null,
       scroll: false,
       activeSplittingLines: [],
-      pagesArray: [],
       dragging: false,
       prevPageAtIndex: null
     };
@@ -71,7 +68,8 @@ export default {
       "rotations",
       "rotationsForBackend",
       "splitPages",
-      "splitOverview"
+      "splitOverview",
+      "pagesArray"
     ])
   },
   methods: {
@@ -92,14 +90,18 @@ export default {
         );
 
         /** Splitting */
+        const array = [];
+
         this.pages.map(page => {
-          this.pagesArray.push({
+          array.push({
             id: page.id,
             number: page.number,
             thumbnail_url: page.thumbnail_url,
             updated_at: page.updated_at
           });
         });
+
+        this.$store.dispatch("edit/setPagesArray", array);
 
         this.activeSplittingLines = new Array(this.pages.length - 1);
       }
@@ -363,13 +365,15 @@ export default {
     },
     handleDragEnd() {
       // Update page numbers
-      this.pagesArray = this.pagesArray.map(page => {
+      const pages = this.pagesArray.map(page => {
         const index = this.pagesArray.indexOf(page);
         return {
           ...page,
           number: index + 1
         };
       });
+
+      this.$store.dispatch("edit/setPagesArray", pages);
 
       this.saveDocument();
     }

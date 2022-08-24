@@ -4,15 +4,15 @@
   <div class="edit-pages">
     <div :class="[scroll && 'scroll']">
       <draggable
-        v-model="pagesArray"
+        v-model="editPages"
         :class="['document-grid']"
         easing="cubic-bezier(0.37, 0, 0.63, 1)"
         @start="dragging = true"
         @end="handleDragEnd"
-        :move="checkMove"
+        @move="checkMove"
       >
         <div
-          v-for="(page, index) in pagesArray"
+          v-for="(page, index) in editPages"
           :key="page.id"
           :class="['image-section']"
         >
@@ -69,7 +69,6 @@ import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
 import draggable from "vuedraggable";
-import { is } from "@babel/types";
 
 export default {
   name: "EditPages",
@@ -79,15 +78,17 @@ export default {
     draggable
   },
   props: {
-    pagesArray: {
-      type: Array
-    },
     activeSplittingLines: {
       type: Array
     },
     scroll: {
       type: Boolean
     }
+  },
+  data() {
+    return {
+      editPages: null
+    };
   },
   computed: {
     ...mapState("document", [
@@ -100,7 +101,9 @@ export default {
       "rotations",
       "rotationsForBackend",
       "splitOverview",
-      "selectedPages"
+      "selectedPages",
+      "pagesArray",
+      "splitOverview"
     ])
   },
   methods: {
@@ -129,6 +132,27 @@ export default {
 
       this.$emit("handle-drag-end");
     }
+  },
+  watch: {
+    pagesArray(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.editPages = newValue;
+      }
+    },
+    editPages(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.$store.dispatch("edit/setPagesArray", newValue);
+      }
+    },
+    splitOverview(newValue) {
+      if (newValue) {
+        console.log("hi");
+        this.editPages = this.pagesArray;
+      }
+    }
+  },
+  mounted() {
+    this.editPages = this.pagesArray;
   }
 };
 </script>
