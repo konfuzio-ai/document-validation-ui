@@ -29,6 +29,10 @@
         align-items: center;
 
         .img-container {
+          &:hover {
+            cursor: pointer;
+          }
+
           .img-thumbnail {
             border: 1px solid $detail;
             border-radius: 2px;
