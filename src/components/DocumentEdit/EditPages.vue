@@ -84,7 +84,6 @@ import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
 import draggable from "vuedraggable";
-import { is } from "@babel/types";
 
 export default {
   name: "EditPages",

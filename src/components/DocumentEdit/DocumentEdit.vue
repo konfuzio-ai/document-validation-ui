@@ -17,7 +17,6 @@
         :fileExtension="fileExtension"
         :handleShowError="handleShowError"
         :handleMessage="handleMessage"
-        :pagesArray="pagesArray"
         @change-page="changePage"
       />
     </div>

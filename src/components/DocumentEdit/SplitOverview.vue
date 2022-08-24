@@ -97,9 +97,6 @@ export default {
     },
     handleMessage: {
       type: Function
-    },
-    pagesArray: {
-      type: Array
     }
   },
   data() {

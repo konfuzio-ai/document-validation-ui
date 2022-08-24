@@ -132,6 +132,17 @@ const actions = {
           });
         }
       }
+
+        if (direction === "right") {
+          state.pagesArray.push({
+            id: page.id,
+            page_number: page.number,
+            angle: 90,
+            thumbnail_url: page.thumbnail_url,
+            updated_at: page.updated_at
+          });
+        }
+      }
     } else {
       if (direction === "left") {
         state.pagesFrontend.push({
@@ -223,19 +234,19 @@ const actions = {
 
   editDocument: ({ state }, editedDocument) => {
     console.log(editedDocument);
-    // return new Promise(resolve => {
-    //   HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
-    //     .then(response => {
-    //       console.log(response);
-    //       // if (response.status === 204) {
-    //       //   resolve(true);
-    //       // }
-    //     })
-    //     .catch(error => {
-    //       resolve(false);
-    //       console.log(error);
-    //     });
-    // });
+    return new Promise(resolve => {
+      HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
+        .then(response => {
+          console.log(response);
+          if (response.status === 204) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
   }
 };
 
