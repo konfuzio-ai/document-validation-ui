@@ -45,11 +45,21 @@ const getters = {
   },
 
   /**
-   * Number of pages. If the pages array doesn't exist yet, return 0.
+   * Returns the current page
    */
   pageSelected: (state, _, rootState) => {
     if (state.pages) {
       return state.pages[rootState.display.currentPage - 1];
+    }
+    return null;
+  },
+
+  /**
+   * Returns a page in the given index
+   */
+  pageAtIndex: (state) => index => {
+    if (state.pages) {
+      return state.pages[index];
     }
     return null;
   },

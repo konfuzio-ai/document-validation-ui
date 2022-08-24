@@ -84,7 +84,7 @@ export default {
     ActionButtons
   },
   computed: {
-    ...mapGetters("document", ["isAnnotationInEditMode", "pageSelected"]),
+    ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["editAnnotation"]),
@@ -111,13 +111,10 @@ export default {
         if (this.isAnnotationEmpty) {
           this.setText("");
         }
-
-        if (this.pageSelected) {
+        const page = this.pageAtIndex(this.span.page_index);
+        if (page) {
           this.$store.dispatch("selection/enableSelection", this.annotation.id);
-          const { x, y, width, height } = this.bboxToRect(
-            this.pageSelected,
-            this.span
-          );
+          const { x, y, width, height } = this.bboxToRect(page, this.span);
 
           const selection = {
             start: {
@@ -128,7 +125,7 @@ export default {
               x: x + width,
               y: y + height
             },
-            pageNumber: this.pageSelected.number
+            pageNumber: page.number
           };
 
           this.$store.dispatch("selection/setSelection", {
