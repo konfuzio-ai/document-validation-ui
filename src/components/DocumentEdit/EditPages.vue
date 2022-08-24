@@ -17,9 +17,12 @@
           :class="['image-section']"
         >
           <div class="image-container" @click="handlePageChange(page.number)">
-            <div class="thumbnail">
+            <div class="thumbnail" @click="selectPage(page.number)">
               <div
-                class="img-container"
+                :class="[
+                  'img-container',
+                  isPageSelected(page.number) === page.number && 'selected'
+                ]"
                 :style="{
                   transform: 'rotate(' + getRotation(page.id) + 'deg)'
                 }"
@@ -27,7 +30,6 @@
                 <ServerImage
                   :class="['img-thumbnail']"
                   :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-                  @click="selectPage(page.number)"
                 />
               </div>
               <div class="icon-container">
@@ -67,6 +69,7 @@ import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
 import draggable from "vuedraggable";
+import { is } from "@babel/types";
 
 export default {
   name: "EditPages",
@@ -74,9 +77,6 @@ export default {
     ServerImage,
     SplitDivider,
     draggable
-  },
-  data() {
-    return {};
   },
   props: {
     pagesArray: {
@@ -99,12 +99,17 @@ export default {
       "editMode",
       "rotations",
       "rotationsForBackend",
-      "splitOverview"
+      "splitOverview",
+      "selectedPages"
     ])
   },
   methods: {
     handlePageChange(pageNumber) {
       this.$emit("change-page", pageNumber);
+    },
+    isPageSelected(pageNumber) {
+      const page = this.selectedPages.find(page => page === pageNumber);
+      return page;
     },
     selectPage(pageNumber) {
       this.$store.dispatch("edit/setSelectedPages", pageNumber);

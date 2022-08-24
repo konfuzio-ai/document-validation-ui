@@ -9,17 +9,23 @@
 
     <div class="buttons-container">
       <div class="rotate-selected rotate">
-        <p class="page-selection">
+        <p :class="['pages-selected', buttonDisabled && 'disabled']">
           {{ selectedPages.length }} {{ $t("selected") }}
         </p>
         <b-button
           class="rotate-button"
           icon-left="arrow-rotate-left"
           @click="rotateLeft"
+          :disabled="buttonDisabled"
         >
           <span class="btn-text">{{ $t("rotate_selected") }}</span>
         </b-button>
-        <b-button class="rotate-button" icon-left="arrow-rotate-right">
+        <b-button
+          class="rotate-button"
+          icon-left="arrow-rotate-right"
+          @click="rotateRight"
+          :disabled="buttonDisabled"
+        >
           <span class="btn-text">{{ $t("rotate_selected") }}</span>
         </b-button>
       </div>
@@ -49,12 +55,20 @@ import { mapState } from "vuex";
 
 export default {
   name: "EditSidebar",
+  data() {
+    return {
+      buttonDisabled: true
+    };
+  },
   computed: {
     ...mapState("edit", ["selectedPages"])
   },
   methods: {
     rotateLeft() {
       this.$emit("rotate-left");
+    },
+    rotateRight() {
+      this.$emit("rotate-right");
     },
     rotateAllLeft() {
       this.$emit("rotate-all-left");
@@ -63,8 +77,14 @@ export default {
       this.$emit("rotate-all-right");
     }
   },
-  updated() {
-    console.log(this.selectedPages);
+  watch: {
+    selectedPages(newValue) {
+      if (newValue.length > 0) {
+        this.buttonDisabled = false;
+      } else {
+        this.buttonDisabled = true;
+      }
+    }
   }
 };
 </script>

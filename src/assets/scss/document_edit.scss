@@ -28,8 +28,18 @@
         justify-content: center;
         align-items: center;
 
-        &:hover {
-          background-color: rgba(223, 224, 228, 0.3);
+        .img-container {
+          .img-thumbnail {
+            border: 1px solid $detail;
+            border-radius: 2px;
+          }
+
+          &.selected {
+            .img-thumbnail {
+              border-color: $dark-blue;
+              filter: contrast(0.7);
+            }
+          }
         }
 
         .splitting-lines {
@@ -188,9 +198,13 @@
         gap: 24px;
         color: $grey-dark;
 
-        .page-selection {
+        .pages-selected {
           font-weight: 400;
           font-size: 14px;
+
+          &.disabled {
+            color: $grey;
+          }
         }
 
         .rotate {
@@ -213,7 +227,8 @@
   &.split-overview-component {
     background-color: $white;
   }
-  .confirm-split {
+
+  .split-overview {
     margin-top: 40px;
 
     .back-btn-section {
