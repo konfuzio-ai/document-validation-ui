@@ -88,18 +88,19 @@ export default {
         this.$store.dispatch("display/updateFit", "width");
       });
     },
-    handleNext() {
+
+    // Buttons only shown on edit mode
+    handleButton() {
       if (this.splitPages.length > 1) {
-        // then next view
         if (this.splitOverview) {
           this.$store.dispatch("edit/editDocument", this.splitPages);
-          this.handleCloseEditing();
+          this.$emit("submit-rotation");
+          this.$store.dispatch("edit/disableEditMode");
+          this.$store.dispatch("edit/setSplitOverview", false);
         } else {
           this.$store.dispatch("edit/setSplitOverview", true);
         }
-        // handle submit
-        this.$emit("submit-rotation");
-        // handle submit
+      } else {
         this.$store.dispatch("edit/disableEditMode");
       }
     }
