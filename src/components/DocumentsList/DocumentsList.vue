@@ -14,7 +14,7 @@
           <b-button
             class="action-button"
             type="is-primary"
-            v-on:click="requestTrialAccess()"
+            @click="requestTrialAccess"
             >{{ $t("request_trial") }}</b-button
           >
         </div>
@@ -67,7 +67,6 @@ import ServerImage from "../../assets/images/ServerImage";
 
 export default {
   name: "DocumentsList",
-  props: {},
   components: {
     ServerImage
   },

@@ -58,16 +58,6 @@ export default {
     ...mapState("document", ["recalculatingAnnotations", "pages"])
   },
 
-  created() {
-    this.unwatchPages = this.$watch("pages", pages => {
-      // reset pages first load
-      if (pages.length > 0) {
-        this.$emit("pages-reset");
-        this.unwatchPages();
-      }
-    });
-  },
-
   methods: {
     updateScrollBounds() {
       const { scrollTop, clientHeight } = this.$el;
@@ -83,6 +73,14 @@ export default {
       this.$refs.scrollingDocument.scrollTop =
         // the 4 comes from the margin between pages
         actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
+    }
+  },
+  watch: {
+    pages(pages) {
+      // if pages change
+      if (pages.length > 0) {
+        this.$emit("pages-reset");
+      }
     }
   }
 };

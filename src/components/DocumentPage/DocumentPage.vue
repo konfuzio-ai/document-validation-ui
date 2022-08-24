@@ -48,16 +48,7 @@
           </template>
         </template>
       </v-layer>
-      <v-layer
-        v-if="
-          documentFocusedAnnotation &&
-          documentFocusedAnnotation.span &&
-          visiblePageRange.includes(
-            documentFocusedAnnotation.span[0].page_index + 1
-          ) &&
-          !isAnnotationInEditMode(documentFocusedAnnotation.id)
-        "
-      >
+      <v-layer v-if="showFocusedAnnotation">
         <template>
           <v-label
             :key="`label${documentFocusedAnnotation.id}`"
@@ -132,6 +123,18 @@ export default {
   },
 
   computed: {
+    showFocusedAnnotation() {
+      return (
+        this.documentFocusedAnnotation &&
+        this.documentFocusedAnnotation.span &&
+        this.documentFocusedAnnotation.span[0].page_index + 1 ===
+          this.pageNumber &&
+        this.visiblePageRange.includes(
+          this.documentFocusedAnnotation.span[0].page_index + 1
+        ) &&
+        !this.isAnnotationInEditMode(this.documentFocusedAnnotation.id)
+      );
+    },
     actualSizeViewport() {
       return {
         width: this.page.size[0] * this.scale,
@@ -429,6 +432,9 @@ export default {
           this.updateTransformer();
         }, 100);
       }
+    },
+    page() {
+      this.drawPage(true);
     }
   },
   mounted() {

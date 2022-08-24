@@ -73,6 +73,7 @@ const actions = {
   setDocId: ({
     commit
   }, id) => {
+    commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
   setSidebarAnnotationSelected: ({
