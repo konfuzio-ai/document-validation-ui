@@ -17,14 +17,14 @@
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
-      v-on:click="cancel()"
+      v-on:click.stop="cancel()"
     />
     <b-button
       v-if="saveBtn && !isLoading"
       icon-left="check"
       :class="['is-small', isActive && 'annotation-save-btn']"
       type="is-primary"
-      v-on:click="save()"
+      v-on:click.stop="save()"
     />
     <div v-if="menu && !isLoading" class="menu">
       <b-dropdown aria-role="list" position="is-bottom-left">

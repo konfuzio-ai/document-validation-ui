@@ -29,14 +29,20 @@
       </div>
       <div class="label-property-right">
         <div class="label-property-annotation">
-          <Annotation
-            v-if="annotation"
-            :annotation="annotation"
-            :isLoading="isLoading"
-            @handle-data-changes="handleDataChanges"
-            :handleShowError="handleShowError"
-            :handleMessage="handleMessage"
-          />
+          <div v-if="annotation">
+            <Annotation
+              v-for="(span, index) in annotation.span"
+              :key="index"
+              :annotation="annotation"
+              :span="span"
+              :spanIndex="index"
+              :isLoading="isLoading"
+              @handle-data-changes="handleDataChanges"
+              :handleShowError="handleShowError"
+              :handleMessage="handleMessage"
+            />
+          </div>
+
           <EmptyAnnotation
             v-else
             :label="label"

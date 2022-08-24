@@ -13,7 +13,10 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
-  editAnnotation: null // annotation id
+  editAnnotation: {
+    id: null,
+    index: 0
+  }
 };
 
 const getters = {
@@ -54,8 +57,13 @@ const getters = {
   /**
    * Checks if annotation is being edited
    */
-  isAnnotationInEditMode: state => annotationId => {
-    return state.editAnnotation && annotationId && state.editAnnotation === annotationId
+  isAnnotationInEditMode: state => (annotationId, index = null) => {
+    if (state.editAnnotation && annotationId) {
+      if (index != null) {
+        return state.editAnnotation.id === annotationId && state.editAnnotation.index === index;
+      }
+      return state.editAnnotation.id === annotationId;
+    }
   },
 };
 
@@ -88,8 +96,13 @@ const actions = {
   },
   setEditAnnotation: ({
     commit
-  }, annotation) => {
-    commit("SET_EDIT_ANNOTATION", annotation);
+  }, values) => {
+    commit("SET_EDIT_ANNOTATION", values);
+  },
+  resetEditAnnotation: ({
+    commit
+  }) => {
+    commit("RESET_EDIT_ANNOTATION");
   },
   addAnnotation: ({
     commit
@@ -314,8 +327,20 @@ const mutations = {
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
   },
-  SET_EDIT_ANNOTATION: (state, annotation) => {
-    state.editAnnotation = annotation;
+  SET_EDIT_ANNOTATION: (state, {
+    id,
+    index
+  }) => {
+    state.editAnnotation = {
+      id,
+      index
+    };
+  },
+  RESET_EDIT_ANNOTATION: (state) => {
+    state.editAnnotation = {
+      id: null,
+      index: 0
+    };
   },
   ADD_PAGE: (state, page) => {
     state.pages.push(page);
