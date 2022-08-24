@@ -172,7 +172,6 @@ export default {
           span: [
             {
               offset_string: this.annotationText,
-              bottom: this.spanSelection.bottom,
               page_index: this.spanSelection.page_index,
               x0: this.spanSelection.x0,
               x1: this.spanSelection.x1,
