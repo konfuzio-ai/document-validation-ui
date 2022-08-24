@@ -63,11 +63,7 @@
             :key="`label${documentFocusedAnnotation.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(
-                documentFocusedAnnotation.span[0],
-                !documentFocusedAnnotation.revised &&
-                  !documentFocusedAnnotation.is_correct
-              )
+              ...annotationLabelRect(documentFocusedAnnotation.span[0])
             }"
           >
             <v-tag
@@ -80,9 +76,10 @@
             ></v-tag>
             <v-text
               :config="{
-                padding: 2,
+                padding: 4,
                 text: documentFocusedAnnotation.label_name,
                 fill: 'white',
+                fontSize: 12,
                 listening: false
               }"
             ></v-text>
@@ -383,14 +380,11 @@ export default {
     /**
      * Builds the konva config object for the annotation label.
      */
-    annotationLabelRect(bbox, hasOffset = false) {
+    annotationLabelRect(bbox) {
+      const rect = this.bboxToRect(this.page, bbox, true);
       return {
-        y:
-          (bbox.top * this.scale * this.imageScale(this.page)) / PIXEL_RATIO -
-          16,
-        x:
-          (bbox.x0 * this.scale * this.imageScale(this.page)) / PIXEL_RATIO - 1,
-        offsetX: hasOffset ? -30 : 0
+        x: rect.x,
+        y: rect.y
       };
     },
     selectLabelAnnotation(annotation) {

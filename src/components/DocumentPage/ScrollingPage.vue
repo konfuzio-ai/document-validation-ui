@@ -6,7 +6,6 @@
 </template>
 <script>
 import { mapGetters, mapState } from "vuex";
-import { PIXEL_RATIO } from "../../constants";
 import DocumentPage from "../DocumentPage/DocumentPage";
 import DummyPage from "../DocumentPage/DummyPage";
 
@@ -47,7 +46,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("display", ["visiblePageRange"]),
+    ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
 
     isElementFocused() {
       const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =
@@ -102,12 +101,7 @@ export default {
      * from the page object).
      */
     getYForBbox(bbox) {
-      return (
-        (bbox.top *
-          this.scale *
-          (this.page.size[0] / this.page.original_size[0])) /
-        PIXEL_RATIO
-      );
+      return this.bboxToRect(this.page, bbox).y;
     },
 
     /**
