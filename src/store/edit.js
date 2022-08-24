@@ -45,12 +45,16 @@ const actions = {
     commit("SET_SPLIT_PAGES", splitPages);
   },
 
-  setSelectedPages: ({ state }, selectedPage) => {
+  setSelectedPages: ({ state, commit }, selectedPage) => {
     const found = state.selectedPages.find(page => page === selectedPage);
 
     if (found) {
-      state.selectedPages.filter(page => page !== selectedPage);
+      const filtered = state.selectedPages.filter(
+        page => page !== selectedPage
+      );
+      commit("SET_SELECTED_PAGES", filtered);
     } else {
+      state.selectedPages.pop();
       state.selectedPages.push(selectedPage);
     }
   },
@@ -197,6 +201,10 @@ const mutations = {
 
   SET_SPLIT_PAGES: (state, splitPages) => {
     state.splitPages = splitPages;
+  },
+
+  SET_SELECTED_PAGES: (state, selectedPages) => {
+    state.selectedPages = selectedPages;
   }
 };
 

@@ -1,7 +1,7 @@
 <style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
 
 <template>
-  <div class="confirm-split">
+  <div class="split-overview">
     <div class="back-btn-section" @click="handleBackButton">
       <b-icon
         icon="arrow-left"
