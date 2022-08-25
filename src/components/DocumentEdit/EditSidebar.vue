@@ -51,6 +51,11 @@
 </template>
 
 <script>
+/**
+ * This component renders buttons to rotate single pages or all pages
+ * in edit mode
+ * */
+
 import { mapState } from "vuex";
 
 export default {

@@ -66,10 +66,10 @@ export default {
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
-      "pagesForTheBackend",
-      "splitPages",
-      "splitOverview",
       "pagesArray",
+      "updatedDocument",
+      "splitOverview",
+      "pagesFrontend",
       "selectedPages"
     ])
   },
@@ -85,41 +85,11 @@ export default {
       ) {
         // set array of pages only with the data we need
         this.$store.dispatch("edit/setPagesArray", this.createPagesArray());
+        this.$store.dispatch("edit/setPagesFrontend", this.createPagesArray());
         // create array to handle the splitting
+        // length - 1 because of how many lines to split we need (last one not necessary)
         this.activeSplittingLines = new Array(this.pages.length - 1);
       }
-    },
-    changePage(pageNumber) {
-      // This will scroll to the clicked page
-      if (pageNumber != this.currentPage) {
-        this.$store.dispatch(
-          "display/updateCurrentPage",
-          parseInt(pageNumber, 10)
-        );
-      }
-    },
-
-    handleCloseEditing() {
-      this.$store.dispatch("edit/disableEditMode").then(() => {
-        this.$store.dispatch("display/updateFit", "width");
-      });
-
-      // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.pagesArray) {
-        this.$store.dispatch("edit/setPagesArray", this.createPagesArray());
-        this.$store.dispatch(
-          "edit/setPagesForTheBackend",
-          this.createPagesArray()
-        );
-      }
-
-      this.$store.dispatch("edit/setSplitPages", null);
-    },
-    handleShowError() {
-      this.$emit("handle-error", true);
-    },
-    handleMessage(message) {
-      this.$emit("handle-message", message);
     },
     createPagesArray() {
       return this.pages.map(page => {
@@ -132,6 +102,38 @@ export default {
         };
       });
     },
+    changePage(pageNumber) {
+      // This will scroll to the clicked page
+      if (pageNumber != this.currentPage) {
+        this.$store.dispatch(
+          "display/updateCurrentPage",
+          parseInt(pageNumber, 10)
+        );
+      }
+    },
+
+    closeEditMode() {
+      this.$store.dispatch("edit/disableEditMode").then(() => {
+        this.$store.dispatch("display/updateFit", "width");
+      });
+
+      // Reset the rotation angles to 0 if rotation changes are cancelled
+      if (this.pagesFrontend) {
+        this.$store.dispatch("edit/setPagesFrontend", this.createPagesArray());
+        this.$store.dispatch("edit/setPagesArray", this.createPagesArray());
+      }
+
+      this.$store.dispatch("edit/setUpdatedDocument", null);
+      this.$store.dispatch("edit/setSelectedPages", null);
+    },
+    handleShowError() {
+      this.$emit("handle-error", true);
+    },
+    handleMessage(message) {
+      this.$emit("handle-message", message);
+    },
+
+    /** ROTATE */
     rotatePage(direction) {
       const page = this.selectedPages.map(page => {
         return page;
@@ -147,81 +149,6 @@ export default {
     },
     handleRotationsToTheRight() {
       this.$store.dispatch("edit/updateRotationToTheRight");
-    },
-    handleRotationSubmission() {
-      // TODO: change to fit all edited changes
-      const updatedRotations = this.pagesForTheBackend.map(page => {
-        return page;
-      });
-
-      // Only keep pages that were rotated, so those with angle !== 0
-      const changedRotations = updatedRotations.filter(page => page.angle != 0);
-
-      if (changedRotations.length === 0) {
-        this.handleCloseEditing();
-        return;
-      }
-
-      this.$store.dispatch("document/startLoading");
-      this.$store.dispatch("document/startRecalculatingAnnotations");
-
-      // Dispatch request to the store to rotate
-      this.$store
-        .dispatch("edit/updatePageRotation", changedRotations)
-        .then(response => {
-          const sleep = duration =>
-            new Promise(resolve => setTimeout(resolve, duration));
-          // Poll document data until the status_data is 111 (error) or
-          // 2 and labeling is available (done)
-          const pollUntilLabelingAvailable = duration => {
-            return this.$store
-              .dispatch("document/updateDocument", {})
-              .then(async () => {
-                if (
-                  this.selectedDocument.status_data === 2 &&
-                  this.selectedDocument.labeling_available === 1
-                ) {
-                  // set to null so DocumentLabelSets can reset it when watching
-                  // the new groupedAnnotationSets
-                  setTimeout(async () => {
-                    await this.$store.dispatch(
-                      "document/setActiveAnnotationSet",
-                      null
-                    );
-                    await this.$store.dispatch("document/fetchAnnotations");
-                    return true;
-                  }, 5000);
-                } else if (this.selectedDocument.status_data === 111) {
-                  return false;
-                } else {
-                  return sleep(duration).then(() =>
-                    pollUntilLabelingAvailable(duration)
-                  );
-                }
-              });
-          };
-
-          // Check if the response is successfull or not
-          if (response) {
-            pollUntilLabelingAvailable(5000);
-          } else {
-            this.handleShowError();
-            this.handleMessage(this.$i18n.t("edit_error"));
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          this.handleShowError();
-          this.handleMessage(this.$i18n.t("edit_error"));
-        })
-        .finally(async () => {
-          // Stop loading
-          await this.$store.dispatch("document/endLoading");
-          await this.$store.dispatch("document/endRecalculatingAnnotations");
-        });
-
-      // Whether the rotation worked properly or not close editing mode
-      this.handleCloseEditing();
     },
 
     /** SPLIT */
@@ -262,9 +189,9 @@ export default {
         );
       }
 
-      this.saveSplitPages();
+      this.saveUpdatedDocument();
     },
-    saveSplitPages() {
+    saveUpdatedDocument() {
       this.splitFileNameFromExtension();
 
       // Check how many sub docs we have
@@ -288,7 +215,7 @@ export default {
       }
 
       // Set the state to the created array
-      this.$store.dispatch("edit/setSplitPages", pageObjectArray);
+      this.$store.dispatch("edit/setUpdatedDocument", pageObjectArray);
     },
     handleFileName(index) {
       let newFileName;
@@ -307,6 +234,7 @@ export default {
       return newFileName;
     },
     handleSubPages(index, splittingLine) {
+      // assign the correct pages to each object
       let pages;
 
       if (index === 0) {
@@ -322,27 +250,6 @@ export default {
         }
       }
       return pages;
-    },
-    handleSplitOverview() {
-      // This will take the user to the final step,
-      // which is the overview
-      this.splitFileNameFromExtension();
-      this.saveDocument();
-    },
-    saveDocument() {
-      // If there was no splitting, we just update the splitPages array
-      // to have 1 item with all the pages in the document
-      if (this.splitPages === null || this.splitPages.length === 0) {
-        const document = [
-          {
-            name: this.selectedDocument.data_file_name,
-            category: this.selectedDocument.category,
-            pages: this.pagesArray
-          }
-        ];
-
-        this.$store.dispatch("edit/setSplitPages", document);
-      }
     },
 
     /** SORT */
@@ -363,22 +270,22 @@ export default {
       });
 
       this.$store.dispatch("edit/setPagesArray", pages);
-
-      this.saveDocument();
+      this.$store.dispatch("edit/setPagesFrontend", pages);
     }
   },
   watch: {
     pages() {
       if (!this.selectedDocument) return;
-
-      if (this.pages.length === this.selectedDocument.number_of_pages) {
-        this.setPages();
-      }
+      this.setPages();
     },
     splitOverview(newValue) {
       if (newValue) {
         this.splitFileNameFromExtension();
-        this.saveDocument();
+      }
+    },
+    pagesArray(newValue) {
+      if (newValue) {
+        this.saveUpdatedDocument();
       }
     }
   },
@@ -386,7 +293,9 @@ export default {
     this.setPages();
   },
   updated() {
-    if (this.pages.length > 12) {
+    // If there are many pages, we want to be able to scroll
+    // in the page grid
+    if (this.pages.length > 8) {
       this.scroll = true;
     }
   }

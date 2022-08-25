@@ -68,6 +68,11 @@
 </template>
 
 <script>
+/**
+ * This component renders a grid of the document pages
+ * that will be possible to resort, split and/or rotate
+ */
+
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitDivider from "../../assets/images/SplitDivider";
@@ -101,10 +106,10 @@ export default {
     ]),
     ...mapState("edit", [
       "editMode",
-      "pagesForTheBackend",
+      "pagesArray",
       "splitOverview",
       "selectedPages",
-      "pagesArray",
+      "pagesFrontend",
       "splitOverview"
     ])
   },
@@ -125,7 +130,7 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesArray?.find(p => p.id === pageId)?.angle;
+      return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
     },
     handleSplittingLines(page) {
       this.$emit("handle-splitting-lines", page);
@@ -148,6 +153,7 @@ export default {
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.$store.dispatch("edit/setPagesArray", newValue);
+        this.$store.dispatch("edit/setPagesFrontend", newValue);
       }
     },
     splitOverview(newValue) {
