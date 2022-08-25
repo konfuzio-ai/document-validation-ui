@@ -8,7 +8,7 @@ White-label widget that lets you upload your documents to [Konfuzio](https://kon
 
 # **Requirements**
 
-The widget requires `node` and `npm`. It also requires a connection to the Konfuzio API version 3 (https://app.konfuzio.com/v3/swagger/) and a look at https://help.konfuzio.com/ documentation for getting aware of the app business concepts.
+The widget requires `node` and `npm`. It also requires a connection to the [Konfuzio API version 3](https://app.konfuzio.com/v3/swagger/) and a look at the [Documentation](https://help.konfuzio.com/) for getting aware of the app business concepts.
 
 # **Installation**
 
@@ -40,7 +40,7 @@ The app uses FontAwesome for the icons. If you need to add new ones, you can do 
 
 `locales` - translations files.
 
-`store` - the store is implemented using `Vuex`. It is responsible for saving all information coming from the API and local information regarding the use of the app, like the display scale. Most of the information is obtained, filtered, grouped and processed in the store files which are separated by their concept.
+`store` - the store is implemented using [Vuex](https://vuex.vuejs.org/). It is responsible for saving all information coming from the API and local information regarding the use of the app, like the display scale. Most of the information is obtained, filtered, grouped and processed in the store files which are separated by their concept.
 
 The entry point of the app is the `main.js` which loads all the Vue libraries and therefore opens the first Vue component, the `App.vue`. This component has the responsibility to tell the store to fetch the API data required to load the next components. There are 4 main components which will be explained next.
 
@@ -54,7 +54,7 @@ This is a simple component that loads the document images and displays them in a
 
 ![DocumentPage](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_page.svg)
 
-This component is responsible for drawing the document and handling any interaction with it. The main thing is that it uses `Konva JS` package (https://konvajs.org/docs/vue/index.html) to render a canvas element that has the document image as background and shapes on top. Most of the shapes are annotations from the Konfuzio API. 
+This component is responsible for drawing the document and handling any interaction with it. The main thing is that it uses [Konva JS](https://konvajs.org/docs/vue/index.html) to render a canvas element that has the document image as background and shapes on top. Most of the shapes are annotations from the Konfuzio API. 
 
 ### DocumentAnnotations
 
@@ -70,4 +70,4 @@ This is an optional component that is only loaded if a category ID is provided u
 
 # **Tests**
 
-You can test the app by running `npm run test:unit`. Tests are developed using `Vue Test Utils` and are located on the `tests` folder. Mock data is used to get information into the testing environment, so there's no requirement to connect to an API. The tests are grouped by the four main components and are focused on testing the components behavior.
+You can test the app by running `npm run test:unit`. Tests are developed using [Vue Test Utils](https://github.com/vuejs/vue-test-utils) and are located on the `tests` folder. Mock data is used to get information into the testing environment, so there's no requirement to connect to an API. The tests are grouped by the four main components and are focused on testing the components behavior.
