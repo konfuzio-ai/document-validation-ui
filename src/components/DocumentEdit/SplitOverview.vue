@@ -113,7 +113,7 @@ export default {
     handleChanges(page, category) {
       // This function handles file name or category changes
       const updatedSplitPages = this.splitPages.map(splitPage => {
-        if (splitPage.pages[0].page_number === page.pages[0].page_number) {
+        if (splitPage.pages[0].id === page.pages[0].id) {
           if (this.updatedFileName) {
             return {
               ...splitPage,
@@ -125,7 +125,7 @@ export default {
               category: category
             };
           } else {
-            return;
+            return splitPage;
           }
         }
         return splitPage;
@@ -147,7 +147,7 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
-      if (!this.pagesArray || !this.pages) return;
+      if (!this.pagesArray || !this.pages || !page) return;
 
       // returns the first thumbnail in the pages array
       // for each new document

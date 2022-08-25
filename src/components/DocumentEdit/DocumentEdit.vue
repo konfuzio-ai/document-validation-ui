@@ -90,6 +90,7 @@ export default {
       }
     },
     changePage(pageNumber) {
+      // This will scroll to the clicked page
       if (pageNumber != this.currentPage) {
         this.$store.dispatch(
           "display/updateCurrentPage",
