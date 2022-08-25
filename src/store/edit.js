@@ -233,11 +233,9 @@ const actions = {
   },
 
   editDocument: ({ state }, editedDocument) => {
-    console.log(editedDocument);
     return new Promise(resolve => {
-      HTTP.post(`/documents/${state.documentId}/process/`, editedDocument)
+      HTTP.post(`/documents/${state.documentId}/postprocess/`, editedDocument)
         .then(response => {
-          console.log(response);
           if (response.status === 204) {
             resolve(true);
           }
