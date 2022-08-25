@@ -9,12 +9,9 @@ const state = {
   splitOverview: false,
   pagesArray: [],
   selectedPages: [],
-  rotations: [],
-  rotationsForBackend: [],
+  pagesForTheBackend: [],
   splitPages: []
 };
-
-const getters = {};
 
 const actions = {
   setDocId: ({ commit }, id) => {
@@ -26,36 +23,32 @@ const actions = {
   },
 
   disableEditMode: ({ commit }) => {
-    commit("SET_EDIT_MODE", null);
-    commit("SET_SPLIT_OVERVIEW", null);
+    commit("SET_EDIT_MODE", false);
+    commit("SET_SPLIT_OVERVIEW", false);
   },
 
   setSplitOverview: ({ commit }, overview) => {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
-  setRotations: ({ commit }, rotations) => {
-    commit("SET_ROTATIONS", rotations);
+  setPagesArray: ({ commit }, pagesArray) => {
+    commit("SET_PAGES_ARRAY", pagesArray);
   },
 
-  setRotationsForBackend: ({ commit }, rotations) => {
-    commit("SET_ROTATIONS_FOR_BACKEND", rotations);
+  setPagesForTheBackend: ({ commit }, pages) => {
+    commit("SET_PAGES_FOR_THE_BACKEND", pages);
   },
 
   setSplitPages: ({ commit }, splitPages) => {
     commit("SET_SPLIT_PAGES", splitPages);
   },
 
-  setPagesArray: ({ commit }, pagesArray) => {
-    commit("SET_PAGES_ARRAY", pagesArray);
-  },
-
   setSelectedPages: ({ state, commit }, selectedPage) => {
-    const found = state.selectedPages.find(page => page === selectedPage);
+    const found = state.selectedPages.find(page => page.id === selectedPage.id);
 
     if (found) {
       const filtered = state.selectedPages.filter(
-        page => page !== selectedPage
+        page => page.id !== selectedPage.id
       );
       commit("SET_SELECTED_PAGES", filtered);
     } else {
@@ -64,92 +57,104 @@ const actions = {
     }
   },
 
-  updateSinglePageRotation: ({ state, commit }, { pageId, pageNumber }) => {
+  rotatePage: ({ state, commit }, { page, direction }) => {
     // If the item already exists in the array and matches the clicked one,
     // update it to the new rotation
-    if (state.rotations.find(rotation => rotation.id === pageId)) {
-      const rotations = state.rotations.map(rotation => {
-        if (rotation.id === pageId) {
-          return {
-            ...rotation,
-            angle: rotation.angle - 90
-          };
+    if (state.pagesArray.find(p => p.id === page[0].id)) {
+      const array = state.pagesArray.map(p => {
+        if (p.id === page[0].id) {
+          if (direction === "left")
+            return {
+              ...p,
+              angle: p.angle - 90
+            };
+          if (direction === "right") {
+            return {
+              ...p,
+              angle: p.angle + 90
+            };
+          }
         }
-        return rotation;
+        return p;
       });
 
-      commit("SET_ROTATIONS", rotations);
+      commit("SET_PAGES_ARRAY", array);
 
       // Rotations to send to the backend
       // due to only allowing -90 to 180 angles
-      if (state.rotationsForBackend.find(rotation => rotation.id === pageId)) {
-        const rotationsForBackend = state.rotationsForBackend.map(rotation => {
-          let rotatedAngle = rotation.angle - 90;
-          if (rotation.id === pageId) {
+      if (state.pagesForTheBackend.find(p => p.id === page[0].id)) {
+        const pagesForTheBackend = state.pagesForTheBackend.map(p => {
+          let rotatedAngle = p.angle - 90;
+          if (p.id === page[0].id) {
             if (rotatedAngle === -270) {
               rotatedAngle = 90;
             }
             return {
-              ...rotation,
+              ...p,
               angle: rotatedAngle
             };
           }
-          return rotation;
+          return p;
         });
 
-        commit("SET_ROTATIONS_FOR_BACKEND", rotationsForBackend);
+        commit("SET_PAGES_FOR_THE_BACKEND", pagesForTheBackend);
       } else {
-        state.rotationsForBackend.push({
-          id: pageId,
-          page_number: pageNumber,
-          angle: -90
+        state.pagesForTheBackend.push({
+          id: page.id,
+          page_number: page.number,
+          angle: -90,
+          thumbnail_url: page.thumbnail_url,
+          updated_at: page.updated_at
         });
       }
     } else {
-      state.rotations.push({
-        id: pageId,
-        page_number: pageNumber,
-        angle: -90
+      state.pagesArray.push({
+        id: page.id,
+        page_number: page.number,
+        angle: -90,
+        thumbnail_url: page.thumbnail_url,
+        updated_at: page.updated_at
       });
     }
   },
 
   updateRotationToTheLeft: ({ state, commit }) => {
-    const rotations = state.rotations.map(rotation => {
-      return { ...rotation, angle: rotation.angle - 90 };
+    const pages = state.pagesArray.map(p => {
+      return { ...p, angle: p.angle - 90 };
     });
 
-    commit("SET_ROTATIONS", rotations);
+    commit("SET_PAGES_ARRAY", pages);
 
-    const rotationsForBackend = state.rotationsForBackend.map(rotation => {
-      let rotatedAngle = rotation.angle - 90;
+    const pagesForTheBackend = state.pagesForTheBackend.map(p => {
+      let rotatedAngle = p.angle - 90;
       if (rotatedAngle === -270) {
         rotatedAngle = 90;
       }
-      return { ...rotation, angle: rotatedAngle };
+      return { ...p, angle: rotatedAngle };
     });
 
-    commit("SET_ROTATIONS_FOR_BACKEND", rotationsForBackend);
+    commit("SET_PAGES_FOR_THE_BACKEND", pagesForTheBackend);
   },
 
   updateRotationToTheRight: ({ state, commit }) => {
-    const rotations = state.rotations.map(rotation => {
-      return { ...rotation, angle: rotation.angle + 90 };
+    const pages = state.pagesArray.map(p => {
+      return { ...p, angle: p.angle + 90 };
     });
 
-    commit("SET_ROTATIONS", rotations);
+    commit("SET_PAGES_ARRAY", pages);
 
-    const rotationsForBackend = state.rotationsForBackend.map(rotation => {
-      let rotatedAngle = rotation.angle + 90;
+    const pagesForTheBackend = state.pagesForTheBackend.map(p => {
+      let rotatedAngle = p.angle + 90;
       if (rotatedAngle === 270) {
         rotatedAngle = -90;
       }
-      return { ...rotation, angle: rotatedAngle };
+      return { ...p, angle: rotatedAngle };
     });
 
-    commit("SET_ROTATIONS_FOR_BACKEND", rotationsForBackend);
+    commit("SET_PAGES_FOR_THE_BACKEND", pagesForTheBackend);
   },
 
+  // TODO: unify this function with editDocument
   updatePageRotation: ({ state }, changedRotations) => {
     return new Promise(resolve => {
       HTTP.post(`/documents/${state.documentId}/rotate/`, changedRotations)
@@ -200,12 +205,8 @@ const mutations = {
     state.splitOverview = overview;
   },
 
-  SET_ROTATIONS: (state, rotations) => {
-    state.rotations = rotations;
-  },
-
-  SET_ROTATIONS_FOR_BACKEND: (state, rotations) => {
-    state.rotationsForBackend = rotations;
+  SET_PAGES_FOR_THE_BACKEND: (state, pages) => {
+    state.pagesForTheBackend = pages;
   },
 
   SET_SPLIT_PAGES: (state, splitPages) => {
@@ -220,7 +221,6 @@ const mutations = {
 export default {
   namespaced: true,
   state,
-  getters,
   actions,
   mutations
 };
