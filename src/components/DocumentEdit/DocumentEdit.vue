@@ -23,6 +23,7 @@
     <div class="sidebar" v-if="!splitOverview">
       <EditSidebar
         @rotate-left="rotatePage"
+        @rotate-right="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
       />
