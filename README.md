@@ -8,37 +8,41 @@ White-label widget that lets you upload your documents to [Konfuzio](https://kon
 
 # **Requirements**
 
-The widget requires `node` and `npm`.
+The widget requires `node` and `npm`. It also requires a connection to the Konfuzio API version 3 (https://app.konfuzio.com/v3/swagger/) and a look at https://help.konfuzio.com/ documentation for getting aware of the app business concepts.
 
 # **Installation**
 
 Follow the steps below to get the app running.
 
 1. Clone this repository.
-2. Run `npm install` in the project root.
-3. Create a `.env` file in the project root with the properties from the `.env.example` file.
+2. Create a `.env` file in the project root with the properties from the `.env.example` file. Take a look at the required ones. 
+3. Run `npm install` in the project root.
 4. Run `npm run serve` to serve a local development app to run on a browser (default URL: http://localhost:3000).
-5. (Optional) Run `npm run build` to build the app for production if you want to put it on a web server. After building, export the `dist` folder to the desired location.
+
+# **Deployment**
+
+If you want to serve this app in a web server environment (like your company host xxxx.mycompany.com or in a cloud environment), do all steps from the previous section (except point 4) and then:
+
+1. Run `npm run build` to build the app for production. 
+2. Export the `dist` folder generated from the command above to the destination source in the host server.
+3. Configure the web server engine in order to have the `index.html` file as the entry point. If everything is correctly configured you should be able to open the server URL and the app will load.
 
 # **Documentation**
 
-This sample app is built using Vue.js and all the required components are inside the `app` folder.
+This sample app is built using Vue.js version 2. The `src` folder is the root of the project and is divided into:
 
-## Vue Components
+`assets` - contains all the images and styles. Each component has it's styles under the `scss` folder. The app uses the [Buefy](https://buefy.org) library, so if you want to edit the app theme you can go to the file `scss/variables.scss` and edit all the colors and variables to match the desired design. 
+The app uses FontAwesome for the icons. If you need to add new ones, you can do so on the `main.js` file on the icon library setup.
 
-The entry point of the app is the `main.js` where the `App.vue` component is loaded. This component has the responsibility to tell the store to fetch API data and save it. While fetching the data, the main UI of the app is drawn on the `DocumentsList` and `DocumentDashboard` components.
+`components` - Vue components that are responsible for making the app work. They are divided into sections related to their function.
 
-## DocumentsList
+`directives` - directives for manipulating the elements in the HTML.
 
-![DocumentsList](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/documents_list.gif)
+`locales` - translations files.
 
-This main component is responsible for loading the documents list for a given category. You can then select which document will appear on the dashboard.
+`store` - the store is implemented using `Vuex`. It is responsible for saving all information coming from the API and local information regarding the use of the app, like the display scale. Most of the information is obtained, filtered, grouped and processed in the store files which are separated by their concept.
 
-By default, this feature is disabled: in order to use it, you will need to add an [authentication token](https://dev.konfuzio.com/web/api_v3.html#authentication) to the `.env` file alongside the category ID that you want to load.
-
-## DocumentDashboard
-
-This main component is divided into three components: `DocumentThumbnails`, `DocumentPage` and `DocumentAnnotations`.
+The entry point of the app is the `main.js` which loads all the Vue libraries and therefore opens the first Vue component, the `App.vue`. This component has the responsibility to tell the store to fetch the API data required to load the next components. There are 4 main components which will be explained next.
 
 ### DocumentThumbnails
 
@@ -50,23 +54,19 @@ This is a simple component that loads the document images and displays them in a
 
 ![DocumentPage](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_page.svg)
 
-This component is responsible for drawing the document and handling any interaction with it, like scrolling (`ScrollingDocument.vue`) and rendering a loading dummy page (`DummyPage.vue`). It also draws the bounding boxes for the existing annotations.
+This component is responsible for drawing the document and handling any interaction with it. The main thing is that it uses `Konva JS` package (https://konvajs.org/docs/vue/index.html) to render a canvas element that has the document image as background and shapes on top. Most of the shapes are annotations from the Konfuzio API. 
 
 ### DocumentAnnotations
 
 ![DocumentAnnotations](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_annotations.svg)
 
-This component is responsible for creating a tab bar container to interact with each label set on the project. For each label set selected, a list of labels and annotations is shown alongside with corresponding information.
+This component is responsible for creating a list to interact with each annotation on the document. You can edit the annotation, edit empty labels and change the annotation bounding box, among other things. 
 
-## Store
+### DocumentsList
 
-The store is implemented using `Vuex` and is located under `store/index.js`. It is responsible for the behaviour of the app, and it is where most of the information is obtained, filtered, grouped and processed.
+![DocumentsList](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/documents_list.gif)
 
-## Styles
-
-The styles for each component are located under the `assets/scss` folder with the same name as the component file. The app uses the [Buefy](https://buefy.org) library, so if you want to edit the app theme you can go to the file `assets/scss/variables.scss` and edit all the colors and variables to match the desired design. You can also add new ones following the guidelines from the [Bulma documentation](https://bulma.io/documentation/overview/variables/).
-
-The app uses FontAwesome for the icons; if you need to add new icons, you can do so on the `main.js` file on the icon library.
+This is an optional component that is only loaded if a category ID is provided under the environment file. You also need to add add an [authentication token](https://dev.konfuzio.com/web/api_v3.html#authentication). Is responsible for loading the documents list for a given category. You can then select which document will appear on the dashboard.
 
 # **Tests**
 
