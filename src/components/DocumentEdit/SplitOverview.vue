@@ -19,7 +19,7 @@
           <div class="split-documents">
             <div
               class="image-container"
-              @click="handlePageChange(page.pages[0].number)"
+              @click="handlePageChange(page.pages[0].page_number)"
             >
               <div class="thumbnail">
                 <ServerImage :imageUrl="getImageUrl(page)" ref="image" />
@@ -113,7 +113,7 @@ export default {
     handleChanges(page, category) {
       // This function handles file name or category changes
       const updatedSplitPages = this.splitPages.map(splitPage => {
-        if (splitPage.pages[0].number === page.pages[0].number) {
+        if (splitPage.pages[0].page_number === page.pages[0].page_number) {
           if (this.updatedFileName) {
             return {
               ...splitPage,
@@ -152,7 +152,7 @@ export default {
       // returns the first thumbnail in the pages array
       // for each new document
       const image = this.pagesArray.find(
-        p => p.number === page.pages[0].number
+        p => p.page_number === page.pages[0].page_number
       );
 
       return `${image.thumbnail_url}?${image.updated_at}`;

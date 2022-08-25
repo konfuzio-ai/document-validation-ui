@@ -16,7 +16,10 @@
           :key="page.id"
           :class="['image-section']"
         >
-          <div class="image-container" @click="handlePageChange(page.number)">
+          <div
+            class="image-container"
+            @click="handlePageChange(page.page_number)"
+          >
             <div class="thumbnail" @click="selectPage(page)">
               <div
                 :class="[
@@ -37,24 +40,24 @@
                   <b-icon
                     icon="eye"
                     class="is-small"
-                    @click="handlePageChange(page.number)"
+                    @click="handlePageChange(page.page_number)"
                   />
                 </div>
               </div>
             </div>
-            <span class="page-number">{{ page.number }}</span>
+            <span class="page-number">{{ page.page_number }}</span>
           </div>
           <div
             :class="[
               'splitting-lines',
-              activeSplittingLines[index] === page.number && 'active-split'
+              activeSplittingLines[index] === page.page_number && 'active-split'
             ]"
             @click="handleSplittingLines(page)"
           >
             <div class="scissors-icon">
               <b-icon icon="scissors" class="is-small" />
             </div>
-            <div v-if="activeSplittingLines[index] === page.number">
+            <div v-if="activeSplittingLines[index] === page.page_number">
               <SplitDivider />
             </div>
           </div>
@@ -149,7 +152,6 @@ export default {
     },
     splitOverview(newValue) {
       if (newValue) {
-        console.log("hi");
         this.editPages = this.pagesArray;
       }
     }

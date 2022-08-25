@@ -248,13 +248,17 @@ export default {
       // Add page number to specific index
       // Or replace it with 0 (to keep the same index) if it exists
       const found = this.activeSplittingLines.find(
-        item => item === page.number
+        item => item === page.page_number
       );
 
       if (found) {
-        this.activeSplittingLines.splice(page.number - 1, 1, 0);
+        this.activeSplittingLines.splice(page.page_number - 1, 1, 0);
       } else {
-        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
+        this.activeSplittingLines.splice(
+          page.page_number - 1,
+          1,
+          page.page_number
+        );
       }
 
       this.saveSplitPages();
@@ -353,7 +357,7 @@ export default {
         const index = this.pagesArray.indexOf(page);
         return {
           ...page,
-          number: index + 1
+          page_number: index + 1
         };
       });
 
