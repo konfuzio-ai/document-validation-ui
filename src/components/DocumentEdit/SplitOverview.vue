@@ -11,7 +11,7 @@
     </div>
     <div class="new-documents-container">
       <div
-        v-for="(page, index) in splitPages"
+        v-for="(page, index) in updatedDocument"
         :key="index"
         class="document-details"
       >
@@ -21,7 +21,12 @@
               class="image-container"
               @click="handlePageChange(page.pages[0].page_number)"
             >
-              <div class="thumbnail">
+              <div
+                class="thumbnail"
+                :style="{
+                  transform: 'rotate(' + getRotation(page.pages[0].id) + 'deg)'
+                }"
+              >
                 <ServerImage :imageUrl="getImageUrl(page)" ref="image" />
                 <div class="icon-container">
                   <div class="action-icon">
@@ -65,6 +70,10 @@
 </template>
 
 <script>
+/**
+ * This component will only be rendered if document pages were split
+ */
+
 import { mapState } from "vuex";
 import DocumentCategory from "../DocumentTopBar/DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
@@ -97,7 +106,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["splitPages", "pagesArray"])
+    ...mapState("edit", ["updatedDocument", "pagesFrontend"])
   },
   methods: {
     handleBackButton() {
@@ -112,7 +121,7 @@ export default {
     },
     handleChanges(page, category) {
       // This function handles file name or category changes
-      const updatedSplitPages = this.splitPages.map(splitPage => {
+      const updatedPages = this.updatedDocument.map(splitPage => {
         if (splitPage.pages[0].id === page.pages[0].id) {
           if (this.updatedFileName) {
             return {
@@ -131,7 +140,7 @@ export default {
         return splitPage;
       });
 
-      this.$store.dispatch("edit/setSplitPages", updatedSplitPages);
+      this.$store.dispatch("edit/setUpdatedDocument", updatedPages);
 
       if (this.updatedFileName) {
         this.updatedFileName = null;
@@ -147,15 +156,19 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
-      if (!this.pagesArray || !this.pages || !page) return;
+      if (!this.pagesFrontend || !this.pages || !page) return;
 
       // returns the first thumbnail in the pages array
       // for each new document
-      const image = this.pagesArray.find(
+      const image = this.pagesFrontend.find(
         p => p.page_number === page.pages[0].page_number
       );
 
       return `${image.thumbnail_url}?${image.updated_at}`;
+    },
+    getRotation(pageId) {
+      // rotate page
+      return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
     }
   }
 };
