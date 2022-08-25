@@ -17,11 +17,11 @@
           :class="['image-section']"
         >
           <div class="image-container" @click="handlePageChange(page.number)">
-            <div class="thumbnail" @click="selectPage(page.number)">
+            <div class="thumbnail" @click="selectPage(page)">
               <div
                 :class="[
                   'img-container',
-                  isPageSelected(page.number) === page.number && 'selected'
+                  isPageSelected(page) === page.id && 'selected'
                 ]"
                 :style="{
                   transform: 'rotate(' + getRotation(page.id) + 'deg)'
@@ -98,8 +98,7 @@ export default {
     ]),
     ...mapState("edit", [
       "editMode",
-      "rotations",
-      "rotationsForBackend",
+      "pagesForTheBackend",
       "splitOverview",
       "selectedPages",
       "pagesArray",
@@ -110,16 +109,20 @@ export default {
     handlePageChange(pageNumber) {
       this.$emit("change-page", pageNumber);
     },
-    isPageSelected(pageNumber) {
-      const page = this.selectedPages.find(page => page === pageNumber);
-      return page;
+    isPageSelected(p) {
+      const page = this.selectedPages.find(page => page.id === p.id);
+      if (!page) return null;
+      return page.id;
     },
-    selectPage(pageNumber) {
-      this.$store.dispatch("edit/setSelectedPages", pageNumber);
+    selectPage(page) {
+      this.$store.dispatch("edit/setSelectedPages", {
+        id: page.id,
+        number: page.page_number
+      });
     },
     getRotation(pageId) {
       // rotate page
-      return this.rotations?.find(rotation => rotation.id === pageId)?.angle;
+      return this.pagesArray?.find(p => p.id === pageId)?.angle;
     },
     handleSplittingLines(page) {
       this.$emit("handle-splitting-lines", page);

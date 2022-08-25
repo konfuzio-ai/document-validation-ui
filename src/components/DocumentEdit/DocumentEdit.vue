@@ -23,6 +23,7 @@
     <div class="sidebar" v-if="!splitOverview">
       <EditSidebar
         @rotate-left="rotatePage"
+        @rotate-right="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
       />
@@ -65,11 +66,11 @@ export default {
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
-      "rotations",
-      "rotationsForBackend",
+      "pagesForTheBackend",
       "splitPages",
       "splitOverview",
-      "pagesArray"
+      "pagesArray",
+      "selectedPages"
     ])
   },
   methods: {
@@ -82,27 +83,9 @@ export default {
         this.pages.length &&
         this.pages.length === this.selectedDocument.number_of_pages
       ) {
-        /** Rotations */
-        this.$store.dispatch("edit/setRotations", this.createRotations());
-        this.$store.dispatch(
-          "edit/setRotationsForBackend",
-          this.createRotations()
-        );
-
-        /** Splitting */
-        const array = [];
-
-        this.pages.map(page => {
-          array.push({
-            id: page.id,
-            number: page.number,
-            thumbnail_url: page.thumbnail_url,
-            updated_at: page.updated_at
-          });
-        });
-
-        this.$store.dispatch("edit/setPagesArray", array);
-
+        // set array of pages only with the data we need
+        this.$store.dispatch("edit/setPagesArray", this.createPagesArray());
+        // create array to handle the splitting
         this.activeSplittingLines = new Array(this.pages.length - 1);
       }
     },
@@ -121,11 +104,11 @@ export default {
       });
 
       // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.rotations) {
-        this.$store.dispatch("edit/setRotations", this.createRotations());
+      if (this.pagesArray) {
+        this.$store.dispatch("edit/setPagesArray", this.createPagesArray());
         this.$store.dispatch(
-          "edit/setRotationsForBackend",
-          this.createRotations()
+          "edit/setPagesForTheBackend",
+          this.createPagesArray()
         );
       }
 
@@ -137,21 +120,25 @@ export default {
     handleMessage(message) {
       this.$emit("handle-message", message);
     },
-
-    /** ROTATE */
-    createRotations() {
+    createPagesArray() {
       return this.pages.map(page => {
         return {
           id: page.id,
           angle: 0,
-          page_number: page.number
+          page_number: page.number,
+          thumbnail_url: page.thumbnail_url,
+          updated_at: page.updated_at
         };
       });
     },
-    rotatePage(pageId, pageNumber) {
-      this.$store.dispatch("edit/updateSinglePageRotation", {
-        pageId,
-        pageNumber
+    rotatePage(direction) {
+      const page = this.selectedPages.map(page => {
+        return page;
+      });
+
+      this.$store.dispatch("edit/rotatePage", {
+        page,
+        direction
       });
     },
     handleRotationsToTheLeft() {
@@ -161,16 +148,13 @@ export default {
       this.$store.dispatch("edit/updateRotationToTheRight");
     },
     handleRotationSubmission() {
-      // Remove id from rotation object since the backend doesn't need it
-      const updatedRotations = this.rotationsForBackend.map(rotation => {
-        delete rotation.id;
-        return rotation;
+      // TODO: change to fit all edited changes
+      const updatedRotations = this.pagesForTheBackend.map(page => {
+        return page;
       });
 
       // Only keep pages that were rotated, so those with angle !== 0
-      const changedRotations = updatedRotations.filter(
-        rotation => rotation.angle != 0
-      );
+      const changedRotations = updatedRotations.filter(page => page.angle != 0);
 
       if (changedRotations.length === 0) {
         this.handleCloseEditing();

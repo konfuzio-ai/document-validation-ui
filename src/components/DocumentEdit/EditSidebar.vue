@@ -65,10 +65,10 @@ export default {
   },
   methods: {
     rotateLeft() {
-      this.$emit("rotate-left");
+      this.$emit("rotate-left", "left");
     },
     rotateRight() {
-      this.$emit("rotate-right");
+      this.$emit("rotate-right", "right");
     },
     rotateAllLeft() {
       this.$emit("rotate-all-left");
