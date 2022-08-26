@@ -56,15 +56,14 @@ describe("Document Page Component", () => {
     expect(wrapper.findComponent(".toolbar-container"));
   });
 
-  it("Toolbar should have icons visible", async () => {
+  it("Toolbar should have icons and text visible", async () => {
     const wrapper = shallowMount(ToolBar, {
       store,
       mocks: { $t },
     });
 
     expect(wrapper.findComponent(".edit-icon").exists()).toBe(true);
-    expect(wrapper.findComponent(".split-icon").exists()).toBe(true);
-    expect(wrapper.findComponent(".rotate-icon").exists()).toBe(true);
+    expect(wrapper.findComponent(".edit-text").exists()).toBe(true);
     expect(wrapper.findComponent(".fit-zoom").exists()).toBe(true);
     expect(wrapper.findComponent(".zoom-in").exists()).toBe(true);
     expect(wrapper.findComponent(".zoom-out").exists()).toBe(true);
