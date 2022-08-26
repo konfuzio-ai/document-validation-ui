@@ -1,4 +1,3 @@
-import { root } from "postcss";
 import myImports from "../api";
 
 const HTTP = myImports.HTTP;
@@ -232,11 +231,27 @@ const actions = {
     });
   },
 
-  editDocument: ({ state }, editedDocument) => {
+  editDocument: ({ rootState, dispatch }, editedDocument) => {
     return new Promise(resolve => {
-      HTTP.post(`/documents/${state.documentId}/postprocess/`, editedDocument)
+      HTTP.post(
+        `/documents/${rootState.document.documentId}/postprocess/`,
+        editedDocument
+      )
         .then(response => {
-          if (response.status === 204) {
+          if (response.status === 200) {
+            const newDocument = response.data[0];
+            const newId = newDocument.id;
+            console.log(newId);
+            console.log(rootState.document.documentId);
+
+            if (newId !== rootState.document.documentId) {
+              dispatch("document/setDocId", { newId }, { root: true });
+              dispatch(
+                "document/setSelectedDocument",
+                { newDocument },
+                { root: true }
+              );
+            }
             resolve(true);
           }
         })
