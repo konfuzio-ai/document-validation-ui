@@ -241,8 +241,6 @@ const actions = {
           if (response.status === 200) {
             const newDocument = response.data[0];
             const newId = newDocument.id;
-            console.log(newId);
-            console.log(rootState.document.documentId);
 
             if (newId !== rootState.document.documentId) {
               dispatch("document/setDocId", { newId }, { root: true });
