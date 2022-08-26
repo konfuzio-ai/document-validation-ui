@@ -34,7 +34,7 @@
       :saveBtn="false"
       :isActive="!isLoading"
       :isLoading="isLoading"
-      :handleMenu="handleMenu"
+      @handle-menu="handleMenu"
       :label="label"
       :annotationSet="annotationSet"
     />

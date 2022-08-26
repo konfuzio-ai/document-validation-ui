@@ -37,6 +37,12 @@ export default {
   props: {
     missingAnnotations: {
       type: Array
+    },
+    handleMessage: {
+      type: Function
+    },
+    handleError: {
+      type: Function
     }
   },
   computed: {
@@ -44,9 +50,16 @@ export default {
   },
   methods: {
     removeRejectedLabel(id) {
-      this.$emit("remove-label", id);
-
-      this.$store.dispatch("document/deleteMissingAnnotation", id);
+      this.$store
+        .dispatch("document/deleteMissingAnnotation", id)
+        .then(response => {
+          if (response) {
+            this.$store.dispatch("document/fetchMissingAnnotations");
+          } else {
+            this.handleError();
+            this.handleMessage(this.$i18n.t("ann_exists"));
+          }
+        });
     },
     getLabelName(label) {
       if (!this.labels) return;

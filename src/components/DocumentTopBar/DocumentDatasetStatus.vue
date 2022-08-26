@@ -58,7 +58,7 @@ export default {
     datasetStatus: {
       type: Number
     },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMessage: {
@@ -82,7 +82,7 @@ export default {
           if (response) {
             this.currentStatus = this.statusList[index];
           } else {
-            this.handleShowError();
+            this.handleError();
             this.handleMessage(this.$i18n.t("status_error"));
           }
         });

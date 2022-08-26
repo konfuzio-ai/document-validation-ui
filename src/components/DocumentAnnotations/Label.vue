@@ -37,7 +37,7 @@
               :span="span"
               :spanIndex="index"
               :isLoading="isLoading"
-              :handleShowError="handleShowError"
+              :handleError="handleError"
               :handleMessage="handleMessage"
               :label="label"
               :annotationSet="annotationSet"
@@ -51,7 +51,7 @@
             :annotationSet="annotationSet"
             :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
-            :handleShowError="handleShowError"
+            :handleError="handleError"
             :handleMessage="handleMessage"
             :handleMenu="handleMenu"
           />
@@ -86,7 +86,7 @@ export default {
     handleMessage: {
       type: Function
     },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMenu: {
@@ -120,7 +120,6 @@ export default {
   data() {
     return {
       edited: false,
-      showError: false,
       isLoading: false,
       annotationAnimationTimeout: null
     };
@@ -178,12 +177,6 @@ export default {
         );
       }
       return false;
-    },
-    handleError(value) {
-      this.showError = value;
-    },
-    handleErrorClose() {
-      this.showError = false;
     }
   },
   watch: {

@@ -36,8 +36,8 @@
             :annotationSet="annotationSet"
             :handleScroll="handleScroll"
             :indexGroup="indexGroup"
-            :handleShowError="handleShowError"
-            :handleMessage="handleMessage"
+            :handleError="handleShowError"
+            :handleMessage="handleShowMessage"
             :handleMenu="handleMenu"
             :missingAnnotations="missingAnnotations"
           />
@@ -45,7 +45,11 @@
       </div>
     </div>
     <div v-if="missingAnnotations.length" class="rejected-labels-list">
-      <RejectedLabels :missingAnnotations="missingAnnotations" />
+      <RejectedLabels
+        :missingAnnotations="missingAnnotations"
+        :handleError="handleShowError"
+        :handleMessage="handleShowMessage"
+      />
     </div>
   </div>
 </template>
@@ -119,13 +123,22 @@ export default {
       }
     },
     handleShowError() {
-      this.$emit("handle-error", true);
+      this.$emit("handle-error");
     },
-    handleMessage(message) {
+    handleShowMessage(message) {
       this.$emit("handle-message", message);
     },
     handleMenu(rejected) {
-      this.$store.dispatch("document/addMissingAnnotation", rejected);
+      this.$store
+        .dispatch("document/addMissingAnnotation", rejected)
+        .then(response => {
+          if (response) {
+            this.$store.dispatch("document/fetchMissingAnnotations");
+          } else {
+            this.handleShowError();
+            this.handleShowMessage(this.$i18n.t("ann_exists"));
+          }
+        });
     }
   }
 };

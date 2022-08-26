@@ -54,5 +54,6 @@
   "analysing_document": "We are analysing your document.",
   "few_minutes": "This might take a few minutes.",
   "reject_label": "Reject label",
-  "rejected": "Rejected"
+  "rejected": "Rejected",
+  "ann_exists": "An annotation for this label and label set already exists."
 }

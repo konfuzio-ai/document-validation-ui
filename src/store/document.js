@@ -260,43 +260,48 @@ const actions = {
   },
 
   fetchMissingAnnotations: ({ commit, state }) => {
-    // return HTTP.get(`documents/${state.documentId}/missing-annotations/`)
-    //   .then(response => {
-    //     commit("SET_MISSING_ANNOTATIONS", response.data.results);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+    return HTTP.get(`documents/${state.documentId}/missing-annotations/`)
+      .then(response => {
+        commit("SET_MISSING_ANNOTATIONS", response.data.results);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   },
 
   addMissingAnnotation: ({ state }, missingAnnotation) => {
-    state.missingAnnotations.push(missingAnnotation);
-
-    // return HTTP.post(`documents/${state.documentId}/missing-annotations/`)
-    //   .then(response => {
-    //     dispatch("fetchMissingAnnotations");
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+    return new Promise(resolve => {
+      return HTTP.post(
+        `documents/${state.documentId}/missing-annotations/`,
+        missingAnnotation
+      )
+        .then(response => {
+          if (response.status === 201) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          resolve(false);
+        });
+    });
   },
 
-  deleteMissingAnnotation: ({ commit, state }, id) => {
-    const updatedLabelList = state.missingAnnotations.filter(
-      label => label.id !== id
-    );
-
-    commit("SET_MISSING_ANNOTATIONS", updatedLabelList);
-
-    // return HTTP.delete(
-    //   `documents/${state.documentId}/missing-annotations/${id}/`
-    // )
-    //   .then(response => {
-    //     dispatch("fetchMissingAnnotations");
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+  deleteMissingAnnotation: ({ state }, id) => {
+    return new Promise(resolve => {
+      return HTTP.delete(
+        `documents/${state.documentId}/missing-annotations/${id}/`
+      )
+        .then(response => {
+          if (response.status === 204) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          resolve(false);
+        });
+    });
   },
 
   // Get document data

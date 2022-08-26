@@ -167,8 +167,8 @@ export default {
       this.scroll = value;
     },
 
-    handleError(error) {
-      this.showError = error;
+    handleError() {
+      this.showError = true;
     },
 
     handleMessage(message) {
