@@ -24,7 +24,7 @@
               <div
                 :class="[
                   'img-container',
-                  isPageSelected(page) === page.id && 'selected'
+                  selected && isPageSelected(page.id) === page.id && 'selected'
                 ]"
                 :style="{
                   transform: 'rotate(' + getRotation(page.id) + 'deg)'
@@ -95,7 +95,8 @@ export default {
   },
   data() {
     return {
-      editPages: null
+      editPages: null,
+      selected: null
     };
   },
   computed: {
@@ -117,16 +118,26 @@ export default {
     handlePageChange(pageNumber) {
       this.$emit("change-page", pageNumber);
     },
-    isPageSelected(p) {
-      const page = this.selectedPages.find(page => page.id === p.id);
-      if (!page) return null;
-      return page.id;
+    isPageSelected(id) {
+      if (this.selectedPages === 0) return;
+
+      const selectedPage = this.selectedPages.find(page => page.id === id);
+      if (selectedPage) return selectedPage.id;
     },
     selectPage(page) {
-      this.$store.dispatch("edit/setSelectedPages", {
-        id: page.id,
-        number: page.page_number
-      });
+      let selectedPage;
+
+      if (!page) {
+        selectedPage = null;
+        this.selected = null;
+      } else {
+        selectedPage = {
+          id: page.id,
+          number: page.page_number
+        };
+        this.selected = true;
+      }
+      this.$store.dispatch("edit/setSelectedPages", selectedPage);
     },
     getRotation(pageId) {
       // rotate page

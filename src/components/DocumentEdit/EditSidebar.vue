@@ -14,35 +14,31 @@
         </p>
         <b-button
           class="rotate-button"
-          icon-left="arrow-rotate-left"
           @click="rotateLeft"
           :disabled="buttonDisabled"
         >
+          <b-icon icon="arrow-rotate-left" class="is-small" />
           <span class="btn-text">{{ $t("rotate_selected") }}</span>
         </b-button>
         <b-button
           class="rotate-button"
-          icon-left="arrow-rotate-right"
           @click="rotateRight"
           :disabled="buttonDisabled"
         >
-          <span class="btn-text">{{ $t("rotate_selected") }}</span>
+          <div class="button-content">
+            <b-icon icon="arrow-rotate-right" class="is-small" />
+            <span class="btn-text">{{ $t("rotate_selected") }}</span>
+          </div>
         </b-button>
       </div>
 
       <div class="rotate-all rotate">
-        <b-button
-          class="rotate-button"
-          icon-left="arrow-rotate-left"
-          @click="rotateAllLeft"
-        >
+        <b-button class="rotate-button" @click="rotateAllLeft">
+          <b-icon icon="arrow-rotate-left" class="is-small" />
           <span class="btn-text">{{ $t("rotate_all") }}</span>
         </b-button>
-        <b-button
-          class="rotate-button"
-          icon-left="arrow-rotate-right"
-          @click="rotateAllRight"
-        >
+        <b-button class="rotate-button" @click="rotateAllRight">
+          <b-icon icon="arrow-rotate-right" class="is-small" />
           <span class="btn-text">{{ $t("rotate_all") }}</span>
         </b-button>
       </div>
