@@ -5,6 +5,7 @@
     <div class="document-top-bar">
       <div class="left-bar-components">
         <DocumentCategory
+          v-if="categories"
           :selectedDocument="selectedDocument"
           :handleError="handleShowError"
           :handleMessage="handleShowMessage"
@@ -57,7 +58,8 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument"]),
+    ...mapState("category", ["categories"])
   },
   methods: {
     handleShowError() {

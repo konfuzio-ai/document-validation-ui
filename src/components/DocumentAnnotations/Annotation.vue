@@ -89,7 +89,7 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"]),
+    ...mapState("document", ["editAnnotation", "publicView"]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -107,17 +107,22 @@ export default {
   methods: {
     isAnnotationEditable() {
       return (
-        !this.isAnnotationEmpty ||
-        (this.isAnnotationBeingEdited &&
-          this.spanSelection &&
-          this.spanSelection.offset_string != null)
+        !publicView &&
+        (!this.isAnnotationEmpty ||
+          (this.isAnnotationBeingEdited &&
+            this.spanSelection &&
+            this.spanSelection.offset_string != null))
       );
     },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
-      if (!this.isAnnotationBeingEdited && !this.isLoading) {
+      if (
+        !this.publicView &&
+        !this.isAnnotationBeingEdited &&
+        !this.isLoading
+      ) {
         this.$store.dispatch("selection/enableSelection", this.annotation.id);
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.annotation.id,

@@ -22,13 +22,15 @@ export default {
   created() {
     // fetch info from API and save it on store
     this.documentLoading();
-    this.categoryLoading();
-    if (process.env.VUE_APP_CATEGORY_ID) {
-      this.documentsListLoading();
+    if (!this.publicView) {
+      this.categoryLoading();
+      if (process.env.VUE_APP_CATEGORY_ID) {
+        this.documentsListLoading();
+      }
     }
   },
   computed: {
-    ...mapState("document", ["documentId", "showRejectedLabels"])
+    ...mapState("document", ["documentId", "showRejectedLabels", "publicView"])
   },
   data() {
     return {
