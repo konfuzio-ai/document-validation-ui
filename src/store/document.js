@@ -113,6 +113,9 @@ const actions = {
   setEditAnnotation: ({ commit }, values) => {
     commit("SET_EDIT_ANNOTATION", values);
   },
+  resetEditAnnotation: ({ commit }) => {
+    commit("RESET_EDIT_ANNOTATION");
+  },
   addAnnotation: ({ commit }, annotation) => {
     commit("ADD_ANNOTATION", annotation);
   },

@@ -74,7 +74,6 @@
         .label-property-annotation {
           width: 100%;
 
-
           .annotation,
           .empty-annotation {
             min-height: 52px;
@@ -121,6 +120,9 @@
           font-weight: 400;
           font-size: 14px;
           color: $text-lighter;
+          min-height: 52px;
+          display: flex;
+          align-items: center;
         }
       }
 

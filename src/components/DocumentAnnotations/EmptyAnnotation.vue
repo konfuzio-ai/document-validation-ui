@@ -4,7 +4,7 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="empty-annotation" @click="handleEditEmptyAnnotation">
+  <div class="empty-annotation">
     <span
       :class="[
         'annotation-value',
@@ -14,6 +14,7 @@
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
       @input="isEmpty"
+      @click="handleEditEmptyAnnotation"
     >
       {{ $t("no_data_found") }}
     </span>

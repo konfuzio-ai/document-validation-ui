@@ -5,12 +5,7 @@
 ></style>
 
 <template>
-  <div
-    class="annotation"
-    ref="annotation"
-    :id="annotation.id"
-    @click="handleEditAnnotation"
-  >
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       :class="[
         'annotation-value',
@@ -25,6 +20,7 @@
       :contenteditable="true"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
+      @click="handleEditAnnotation"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
