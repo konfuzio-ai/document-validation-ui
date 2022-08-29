@@ -129,6 +129,8 @@ export default {
       this.$emit("handle-message", message);
     },
     handleMenu(rejected) {
+      if (!rejected) return;
+
       this.$store
         .dispatch("document/addMissingAnnotation", rejected)
         .then(response => {

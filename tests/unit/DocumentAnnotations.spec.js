@@ -149,8 +149,6 @@ describe("Document Annotations Component", () => {
   });
 
   it("Should only show the Rejected title when there are rejected labels", async () => {
-    const missingAnnotations = store.state.document.missingAnnotations[0];
-
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -158,17 +156,20 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = {
-      id: 429,
-      label: 82,
-      label_set: 29,
-    };
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
     expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
     await wrapper
       .findComponent(".annotation .action-buttons .menu-buttons")
       .trigger("click");
-    await store.dispatch("document/addMissingAnnotation", rejectedAnnotation);
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+    expect(store.state.document.missingAnnotations.length).toEqual(1);
     expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(true);
     expect(
       wrapper
@@ -180,10 +181,7 @@ describe("Document Annotations Component", () => {
         ".rejected-labels-list .rejected-label-container .tags .is-delete"
       )
       .trigger("click");
-    await store.dispatch(
-      "document/deleteMissingAnnotation",
-      rejectedAnnotation.id
-    );
+    await store.dispatch("document/setMissingAnnotations", []);
     expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
   });
 
@@ -195,22 +193,26 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = {
-      id: 429,
-      label: 82,
-      label_set: 29,
-    };
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
     await wrapper
       .findComponent(".annotation .action-buttons .menu-buttons")
       .trigger("click");
-    await store.dispatch("document/addMissingAnnotation", rejectedAnnotation);
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
     expect(
       wrapper
         .findAll(".label-properties .label-property-name .label-property-text")
         .at(0)
         .text()
-    ).not.toBe("Anrede");
+    ).not.toBe(
+      require("../mock/document.json").annotation_sets[0].labels[0].name
+    );
 
     expect(
       wrapper.findAll(
@@ -227,25 +229,24 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = {
-      id: 429,
-      label: 82,
-      label_set: 29,
-    };
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
     await wrapper
       .findComponent(".annotation .action-buttons .menu-buttons")
       .trigger("click");
-    await store.dispatch("document/addMissingAnnotation", rejectedAnnotation);
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
     await wrapper
       .findAll(
         ".rejected-labels-list .rejected-label-container .tags .is-delete"
       )
       .trigger("click");
-    await store.dispatch(
-      "document/deleteMissingAnnotation",
-      rejectedAnnotation.id
-    );
+    await store.dispatch("document/setMissingAnnotations", []);
     expect(
       wrapper
         .findAll(".label-properties .label-property-name .label-property-text")

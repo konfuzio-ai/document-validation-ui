@@ -137,6 +137,9 @@ const actions = {
   endRecalculatingAnnotations: ({ commit }) => {
     commit("SET_RECALCULATING_ANNOTATIONS", false);
   },
+  setMissingAnnotations: ({ commit }, missingAnnotations) => {
+    commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
