@@ -478,7 +478,7 @@ export default {
         "selection/getTextFromBboxes",
         entity.original
       );
-      alert(this.spanSelection.offset_string);
+      //alert(this.spanSelection.offset_string);
       this.$store.dispatch("document/endLoading");
     }
   },
