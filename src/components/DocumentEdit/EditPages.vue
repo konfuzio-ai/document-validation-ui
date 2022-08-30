@@ -50,14 +50,21 @@
           <div
             :class="[
               'splitting-lines',
-              activeSplittingLines[index] === page.page_number && 'active-split'
+              activeSplittingLines &&
+                activeSplittingLines[index] === page.page_number &&
+                'active-split'
             ]"
             @click="handleSplittingLines(page)"
           >
             <div class="scissors-icon">
               <b-icon icon="scissors" class="is-small" />
             </div>
-            <div v-if="activeSplittingLines[index] === page.page_number">
+            <div
+              v-if="
+                activeSplittingLines &&
+                activeSplittingLines[index] === page.page_number
+              "
+            >
               <SplitDivider />
             </div>
           </div>
