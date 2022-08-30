@@ -329,3 +329,13 @@ button {
   width: 14px;
   height: 14px;
 }
+
+.dropdown {
+  .dropdown-trigger {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    width: 12px;
+    align-items: center;
+  }
+}
