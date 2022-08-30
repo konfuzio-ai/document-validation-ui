@@ -19,6 +19,7 @@
       "
       type="is-primary"
       :disabled="false"
+      class="button-next"
       @click="handleButton"
     />
   </div>
