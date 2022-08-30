@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "../DocumentPage/DocumentToolbar";
@@ -60,7 +60,7 @@ export default {
     },
     ...mapState("display", ["currentPage"]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapState("document", ["recalculatingAnnotations"]),
+    ...mapState("document", ["recalculatingAnnotations", "pages"]),
     ...mapState("edit", ["editMode"])
   },
 
