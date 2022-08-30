@@ -109,8 +109,8 @@
         border: none;
         background-color: transparent;
         inline-size: 100%;
-        overflow-wrap: break-word;
         display: inline-block;
+        overflow-wrap: break-word;
 
         &:focus {
           outline: none;
@@ -120,9 +120,6 @@
           font-weight: 400;
           font-size: 14px;
           color: $text-lighter;
-          min-height: 52px;
-          display: flex;
-          align-items: center;
         }
       }
 
