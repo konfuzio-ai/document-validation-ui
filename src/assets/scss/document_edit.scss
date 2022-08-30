@@ -9,8 +9,8 @@
   .pages-section {
     width: 100%;
 
-    &.scroll {
-      height: calc(100% - 50px - 42px);
+    .scroll {
+      height: 100vh;
       overflow: scroll;
     }
 
