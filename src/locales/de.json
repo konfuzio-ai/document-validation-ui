@@ -15,7 +15,7 @@
   "test": "Test",
   "excluded": "Excluded",
   "set_status": "Set a status",
-  "category_error": "We couldn’t change the category. Please try again later.",
+  "category_error": "Category cannot be changed because there are already accepted annotations for this document.",
   "status_error": "We couldn’t change the status. Please try again later.",
   "edit": "Edit",
   "save": "Save",

@@ -113,6 +113,10 @@ button {
   position: fixed;
   width: 100%;
 
+  .message {
+    padding: 0;
+  }
+
   .message-body {
     background-color: $error-red;
     color: $white;
