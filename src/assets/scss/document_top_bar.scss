@@ -31,36 +31,37 @@
       justify-content: center;
     }
 
-    .handover {
-      display: flex;
+    .right-bar-components {
       flex: 1;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 16px;
-    }
 
-    .public-mode-info {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 24px;
-      color: $text-lighter;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 400;
-
-      .info-icon {
-        margin-left: 14px;
-        vertical-align: text-top;
+      .handover {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 16px;
       }
 
-      .public-mode-details {
-        white-space: pre-line;
-        font-size: 12px;
+      .public-mode-info {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 24px;
+        color: $text-lighter;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+
+        .info-icon {
+          margin-left: 14px;
+          vertical-align: text-top;
+        }
+
+        .public-mode-details {
+          white-space: pre-line;
+          font-size: 12px;
+        }
       }
     }
-
   }
 
   .btn-container {
