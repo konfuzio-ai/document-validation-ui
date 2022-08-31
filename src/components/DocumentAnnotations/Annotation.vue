@@ -7,6 +7,7 @@
 <template>
   <div class="annotation" ref="annotation" :id="annotation.id">
     <span
+      v-if="!publicView"
       :class="[
         'annotation-value',
         isLoading && 'saving-changes',
