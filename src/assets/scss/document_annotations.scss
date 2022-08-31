@@ -174,6 +174,7 @@
       }
 
       @keyframes shake {
+
         10%,
         90% {
           transform: translate3d(-1px, 0, 0);
@@ -197,12 +198,14 @@
       }
     }
   }
+
   .rejected-labels-list {
     position: fixed;
     bottom: 0;
     background-color: $white;
     max-height: 120px;
     min-width: 50%;
+    border-top: 1px solid $detail;
 
     .rejected-label-container {
       margin: 15px;
