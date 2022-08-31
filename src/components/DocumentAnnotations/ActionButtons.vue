@@ -18,7 +18,7 @@
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
-      v-on:click.stop="cancel()"
+      v-on:click.stop="cancel"
     />
 
     <b-button
@@ -26,15 +26,15 @@
       icon-left="check"
       :class="['is-small', isActive && 'annotation-save-btn']"
       type="is-primary"
-      v-on:click.stop="save()"
+      v-on:click.stop="save"
     />
 
     <div v-if="showRejectedLabels && menu && !isLoading" class="menu-buttons">
-      <b-dropdown aria-role="list" position="is-top-left">
+      <b-dropdown aria-role="list" position="is-top-left" class="width-12">
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
         </template>
-        <b-dropdown-item aria-role="listitem" @click="handleMenu">{{
+        <b-dropdown-item aria-role="listitem" v-on:click.stop="handleMenu">{{
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>

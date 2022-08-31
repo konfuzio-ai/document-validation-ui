@@ -316,6 +316,7 @@ button {
 
     &.is-delete {
       cursor: pointer;
+
       &::before {
         height: 1.5px;
         border-radius: 4px;
@@ -335,11 +336,17 @@ button {
 }
 
 .dropdown {
+
+  &.width-12 {
+    .dropdown-trigger {
+      width: 12px;
+    }
+  }
+
   .dropdown-trigger {
     height: 100%;
     display: flex;
     justify-content: center;
-    width: 12px;
     align-items: center;
   }
 }
