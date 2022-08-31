@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
