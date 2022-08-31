@@ -29,7 +29,7 @@
       v-on:click.stop="save()"
     />
 
-    <div v-if="menu && !isLoading" class="menu-buttons">
+    <div v-if="showRejectedLabels && menu && !isLoading" class="menu-buttons">
       <b-dropdown aria-role="list" position="is-top-left">
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
@@ -42,6 +42,7 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   name: "ActionButtons",
   data() {
@@ -71,6 +72,9 @@ export default {
     label: {
       type: Object
     }
+  },
+  computed: {
+    ...mapState("document", ["showRejectedLabels"])
   },
   methods: {
     save() {

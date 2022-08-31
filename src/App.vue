@@ -28,7 +28,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["documentId"])
+    ...mapState("document", ["documentId", "showRejectedLabels"])
   },
   data() {
     return {
@@ -46,7 +46,8 @@ export default {
       Promise.all([
         this.$store.dispatch("document/fetchAnnotations"),
         this.$store.dispatch("document/fetchDocumentData"),
-        this.$store.dispatch("document/fetchMissingAnnotations")
+        this.showRejectedLabels &&
+          this.$store.dispatch("document/fetchMissingAnnotations")
       ]).finally(() => {
         this.$store.dispatch("document/endLoading");
       });

@@ -44,7 +44,10 @@
         </div>
       </div>
     </div>
-    <div v-if="missingAnnotations.length" class="rejected-labels-list">
+    <div
+      v-if="showRejectedLabels && missingAnnotations.length"
+      class="rejected-labels-list"
+    >
       <RejectedLabels
         :missingAnnotations="missingAnnotations"
         :handleError="handleShowError"
@@ -87,7 +90,8 @@ export default {
     ...mapState("document", [
       "recalculatingAnnotations",
       "annotationSets",
-      "missingAnnotations"
+      "missingAnnotations",
+      "showRejectedLabels"
     ])
   },
   methods: {
