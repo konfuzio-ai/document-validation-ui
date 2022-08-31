@@ -288,14 +288,36 @@ button {
 }
 
 .b-tooltip {
-  .tooltip-content {
-    left: 10px !important;
-    transform: none !important;
-    padding: 8px 10px !important;
+  &.left-aligned {
+    .tooltip-content {
+      left: 10px !important;
+      transform: none !important;
+      padding: 8px 10px !important;
 
-    &::before {
-      left: 16px !important;
-      right: auto !important;
+      &::before {
+        left: 16px !important;
+        right: auto !important;
+      }
+    }
+  }
+
+  &.right-aligned {
+    .tooltip-content {
+      right: -20px !important;
+      left: auto !important;
+      transform: none !important;
+      padding: 8px 10px !important;
+
+      &::before {
+        right: 16px !important;
+        left: auto !important;
+      }
+    }
+  }
+
+  &.width-184 {
+    .tooltip-content {
+      width: 184px !important;
     }
   }
 }

@@ -38,6 +38,29 @@
       justify-content: flex-end;
       padding-right: 16px;
     }
+
+    .public-mode-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 24px;
+      color: $text-lighter;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+
+      .info-icon {
+        margin-left: 14px;
+        vertical-align: baseline;
+      }
+
+      .public-mode-details {
+        white-space: pre-line;
+        font-size: 12px;
+      }
+    }
+
   }
 
   .btn-container {

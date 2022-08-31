@@ -55,5 +55,7 @@
   "few_minutes": "This might take a few minutes.",
   "reject_label": "Reject label",
   "rejected": "Rejected",
-  "ann_exists": "An annotation for this label and label set already exists."
+  "ann_exists": "An annotation for this label and label set already exists.",
+  "lite_mode": "Lite version",
+  "limited_functionalities": "You are using the lite version with limited functionalities."
 }
