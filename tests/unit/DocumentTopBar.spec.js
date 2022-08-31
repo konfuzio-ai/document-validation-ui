@@ -100,8 +100,8 @@ describe("Document Top Bar", () => {
 
     await wrapper.getComponent(".edit-btn").trigger("click");
     await wrapper.getComponent(".save-btn").trigger("click");
-    expect(wrapper.findComponent(".document-name").classes()).toContain(
-      "not-editable"
+    expect(wrapper.findComponent(".document-name").classes()).not.toContain(
+      "is-editable"
     );
   });
 

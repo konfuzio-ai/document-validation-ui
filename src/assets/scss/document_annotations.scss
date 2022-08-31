@@ -10,6 +10,10 @@
     overflow: auto;
     height: 100%;
 
+    &.showing-rejected {
+      height: 90%;
+    }
+
     .label-set-name {
       margin: 24px 16px 8px 16px;
       font-weight: 400;
@@ -70,7 +74,6 @@
         .label-property-annotation {
           width: 100%;
 
-
           .annotation,
           .empty-annotation {
             min-height: 52px;
@@ -101,13 +104,14 @@
       }
 
       .annotation-value {
+        display: inline-block;
         color: $text;
         padding: 0 8px;
         border: none;
         background-color: transparent;
         inline-size: 100%;
         overflow-wrap: break-word;
-        display: inline-block;
+        word-break: break-all;
 
         &:focus {
           outline: none;
@@ -131,6 +135,24 @@
           &.annotation-save-btn,
           &.annotation-cancel-btn {
             border-radius: 50%;
+          }
+        }
+
+        .menu-buttons {
+          .dropdown {
+            border: none;
+
+            &:hover {
+              background: none;
+              cursor: pointer;
+            }
+
+            .dropdown-trigger {
+              .menu-icon {
+                width: 3px;
+                color: $action-grey;
+              }
+            }
           }
         }
       }
@@ -176,6 +198,36 @@
       }
     }
   }
+
+  .rejected-labels-list {
+    position: fixed;
+    bottom: 0;
+    background-color: $white;
+    max-height: 120px;
+    min-width: 50%;
+    border-top: 1px solid $detail;
+
+    .rejected-label-container {
+      margin: 15px;
+
+      .title {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        color: $dark-blue;
+        padding-bottom: 15px;
+        margin: 0;
+      }
+
+      .tag-container {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        overflow: scroll;
+        max-height: 60px;
+      }
+    }
+  }
 }
 
 .message {
@@ -205,91 +257,11 @@
         &:hover {
           background-color: $grey-lighter;
         }
-
-        .dropdown-menu {
-          .dropdown-item {
-            &:hover {
-              background: none;
-            }
-          }
-        }
-
-        .dropdown-trigger {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-
-          .menu-icon {
-            width: 2.5px;
-            color: $action-grey;
-          }
-        }
       }
     }
 
     &:hover {
       cursor: pointer;
-    }
-  }
-
-  .menu-icon {
-    width: 2.5px;
-    color: $action-grey;
-  }
-}
-
-.rejected-labels {
-  margin-top: 20px;
-
-  .collapse-trigger {
-    .card-header {
-      box-shadow: none !important;
-
-      .card-header-title {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        padding-left: 10px;
-      }
-
-      .card-header-icon {
-        padding-right: 5px;
-
-        .icon {
-          svg {
-            width: 13.37px !important;
-            height: 13.37px !important;
-          }
-        }
-      }
-    }
-  }
-
-  .collapse-content {
-    .card-content {
-      padding: 10px;
-
-      .content {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 10px;
-
-        .label-list {
-          .field {
-            .tags {
-              .tag {
-                background-color: $detail;
-                color: $dark-blue;
-
-                &.is-delete {
-                  color: $grey;
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 }

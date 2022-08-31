@@ -5,12 +5,7 @@
 ></style>
 
 <template>
-  <div
-    class="annotation"
-    ref="annotation"
-    :id="annotation.id"
-    @click="handleEditAnnotation"
-  >
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       :class="[
         'annotation-value',
@@ -25,6 +20,7 @@
       :contenteditable="true"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
+      @click="handleEditAnnotation"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
@@ -37,8 +33,21 @@
         :cancelBtn="true"
         :isActive="!isLoading"
         :isLoading="isLoading"
+        :menu="false"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
+      />
+    </div>
+    <div v-else>
+      <ActionButtons
+        :menu="true"
+        :cancelBtn="false"
+        :saveBtn="false"
+        :isActive="!isLoading"
+        :isLoading="isLoading"
+        :annotationSet="annotationSet"
+        :label="label"
+        @handle-menu="handleMenu"
       />
     </div>
   </div>
@@ -68,11 +77,20 @@ export default {
     isLoading: {
       type: Boolean
     },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMessage: {
       type: Function
+    },
+    handleMenu: {
+      type: Function
+    },
+    label: {
+      type: Object
+    },
+    annotationSet: {
+      type: Object
     }
   },
   data() {
@@ -221,7 +239,7 @@ export default {
             );
           } else {
             this.error = true;
-            this.handleShowError();
+            this.handleError();
             this.handleMessage(this.$i18n.t("editing_error"));
             this.setText(
               this.isAnnotationEmpty

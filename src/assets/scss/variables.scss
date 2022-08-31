@@ -35,6 +35,9 @@ $primary: #34ab7d;
 $primary-dark: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
+$background: #f7f7f7;
+$detail: #e2e3e4;
+
 $link: $primary;
 $info: $blue;
 $danger: $red;
@@ -44,9 +47,6 @@ $text: $grey-dark;
 $text-strong: $dark;
 $text-lighter: $grey;
 $black: $dark;
-
-$background: #f7f7f7;
-$detail: #e2e3e4;
 
 $error-red: #d4453d;
 $error-background: #fdf4f6;
@@ -301,7 +301,45 @@ button {
   }
 }
 
+.tags {
+  margin: 0 !important;
+
+  .tag {
+    margin-bottom: 0 !important;
+    color: $dark;
+    font-weight: 400;
+    background-color: $detail;
+
+    &:hover {
+      background-color: $detail !important;
+    }
+
+    &.is-delete {
+      cursor: pointer;
+      &::before {
+        height: 1.5px;
+        border-radius: 4px;
+      }
+
+      &::after {
+        width: 1.5px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
 .icon.is-small {
   width: 14px;
   height: 14px;
+}
+
+.dropdown {
+  .dropdown-trigger {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    width: 12px;
+    align-items: center;
+  }
 }

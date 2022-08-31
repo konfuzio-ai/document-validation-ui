@@ -4,7 +4,7 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="empty-annotation" @click="handleEditEmptyAnnotation">
+  <div class="empty-annotation">
     <span
       :class="[
         'annotation-value',
@@ -14,6 +14,7 @@
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
       @input="isEmpty"
+      @click="handleEditEmptyAnnotation"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -21,10 +22,22 @@
       v-if="showActionButtons()"
       :saveBtn="!empty && isEmptyAnnotationEditable()"
       :cancelBtn="true"
+      :menu="false"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
       :isLoading="isLoading"
       :isActive="!isLoading"
+    />
+    <ActionButtons
+      v-else
+      :menu="true"
+      :cancelBtn="false"
+      :saveBtn="false"
+      :isActive="!isLoading"
+      :isLoading="isLoading"
+      @handle-menu="handleMenu"
+      :label="label"
+      :annotationSet="annotationSet"
     />
   </div>
 </template>
@@ -51,6 +64,9 @@ export default {
     },
     isLoading: {
       type: Boolean
+    },
+    handleMenu: {
+      type: Function
     }
   },
   computed: {

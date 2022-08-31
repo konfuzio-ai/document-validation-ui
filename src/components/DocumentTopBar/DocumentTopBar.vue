@@ -6,14 +6,14 @@
       <div class="left-bar-components">
         <DocumentCategory
           :selectedDocument="selectedDocument"
-          :handleShowError="handleShowError"
-          :handleMessage="handleMessage"
+          :handleError="handleShowError"
+          :handleMessage="handleShowMessage"
         />
         <DocumentDatasetStatus
           v-if="showDatasetDropdown"
           :datasetStatus="selectedDocument.dataset_status"
-          :handleShowError="handleShowError"
-          :handleMessage="handleMessage"
+          :handleError="handleShowError"
+          :handleMessage="handleShowMessage"
         />
       </div>
 
@@ -61,9 +61,9 @@ export default {
   },
   methods: {
     handleShowError() {
-      this.$emit("handle-error", true);
+      this.$emit("handle-error");
     },
-    handleMessage(message) {
+    handleShowMessage(message) {
       this.$emit("handle-message", message);
     }
   }

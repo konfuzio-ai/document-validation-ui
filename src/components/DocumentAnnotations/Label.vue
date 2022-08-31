@@ -37,31 +37,36 @@
               :span="span"
               :spanIndex="index"
               :isLoading="isLoading"
-              @handle-data-changes="handleDataChanges"
-              :handleShowError="handleShowError"
+              :handleError="handleError"
               :handleMessage="handleMessage"
+              :label="label"
+              :annotationSet="annotationSet"
+              :handleMenu="handleMenu"
+              @handle-data-changes="handleDataChanges"
             />
           </div>
-
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
             :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
-            :handleShowError="handleShowError"
+            :handleError="handleError"
             :handleMessage="handleMessage"
+            :handleMenu="handleMenu"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
+
 /**
  * This component shows each label and it's annotations
  */
@@ -81,8 +86,14 @@ export default {
     handleMessage: {
       type: Function
     },
-    handleShowError: {
+    handleError: {
       type: Function
+    },
+    handleMenu: {
+      type: Function
+    },
+    missingAnnotations: {
+      type: Array
     }
   },
   computed: {
@@ -109,7 +120,6 @@ export default {
   data() {
     return {
       edited: false,
-      showError: false,
       isLoading: false,
       annotationAnimationTimeout: null
     };
@@ -167,12 +177,6 @@ export default {
         );
       }
       return false;
-    },
-    handleError(value) {
-      this.showError = value;
-    },
-    handleErrorClose() {
-      this.showError = false;
     }
   },
   watch: {
