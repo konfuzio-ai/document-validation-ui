@@ -35,6 +35,9 @@ const actions = {
   setDocuments: ({ commit }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
+  setAvailableDocumentsList: ({ commit }, availableDocumentsList) => {
+    commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
+  },
   setCategories: ({ commit }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
@@ -67,7 +70,7 @@ const actions = {
       });
   },
 
-  setAvailableDocumentsList: ({ state, dispatch }) => {
+  createAvailableDocumentsList: ({ state, dispatch }) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -127,10 +130,19 @@ const actions = {
 
     // Poll as long as the lengths are different
     if (
-      state.documents.length !== state.availableDocumentsList.length &&
-      count <= 10
+      state.documents &&
+      state.documents.length !== state.availableDocumentsList.length
     ) {
-      pollUntilLabelingAvailable(5000);
+      let duration;
+      if (count <= 5) {
+        duration = 5000;
+      } else if (count > 10) {
+        duration = 20000;
+      } else {
+        duration = 10000;
+      }
+
+      pollUntilLabelingAvailable(duration);
     } else {
       return;
     }
@@ -164,6 +176,9 @@ const mutations = {
   },
   SET_DOCUMENTS: (state, documents) => {
     state.documents = documents;
+  },
+  SET_AVAILABLE_DOCUMENTS: (state, availableDocumentsList) => {
+    state.availableDocumentsList = availableDocumentsList;
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;

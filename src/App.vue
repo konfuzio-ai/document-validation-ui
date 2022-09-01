@@ -58,7 +58,7 @@ export default {
     documentsListLoading() {
       Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
         () => {
-          this.$store.dispatch("category/setAvailableDocumentsList");
+          this.$store.dispatch("category/createAvailableDocumentsList");
         }
       );
     }
