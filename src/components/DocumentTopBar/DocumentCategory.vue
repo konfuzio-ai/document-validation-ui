@@ -84,6 +84,7 @@ export default {
           // update document list if visible
           if (process.env.VUE_APP_CATEGORY_ID) {
             this.$store.dispatch("category/fetchDocumentList");
+            this.$store.dispatch("category/setAvailableDocumentsList");
           }
         });
     }
