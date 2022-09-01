@@ -14,7 +14,7 @@
         isAnnotationInEditMode(annotationId(annotation)) && 'editing'
       ]"
       :ref="referenceId(annotation)"
-      @click="onLabelClick(true)"
+      @click="onLabelClick"
       @mouseenter="onLabelHover(true, annotation)"
       @mouseleave="onLabelHover(false, annotation)"
     >
@@ -36,20 +36,17 @@
               :annotation="annotation"
               :span="span"
               :spanIndex="index"
-              :isLoading="isLoading"
               :handleError="handleError"
               :handleMessage="handleMessage"
               :label="label"
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
-              @handle-data-changes="handleDataChanges"
             />
           </div>
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
-            :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
             :handleError="handleError"
             :handleMessage="handleMessage"
@@ -120,7 +117,6 @@ export default {
   data() {
     return {
       edited: false,
-      isLoading: false,
       annotationAnimationTimeout: null
     };
   },
@@ -137,15 +133,11 @@ export default {
         ? annotation.id
         : `${this.annotationSet.id}_${this.label.id}`;
     },
-    handleDataChanges({ annotation, isLoading }) {
+    handleDataChanges({ annotation }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
         }
-      }
-
-      if (isLoading !== null) {
-        this.isLoading = isLoading;
       }
     },
     onLabelHover(value, annotation) {
@@ -164,9 +156,12 @@ export default {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
       }
     },
-    onLabelClick(value) {
-      if (value && this.documentFocusedAnnotation) {
-        this.handleScroll(value);
+    onLabelClick() {
+      if (
+        this.documentFocusedAnnotation &&
+        this.documentFocusedAnnotation.is_correct
+      ) {
+        this.handleScroll(true);
       }
     },
     isAnnotationSelected(annotation) {

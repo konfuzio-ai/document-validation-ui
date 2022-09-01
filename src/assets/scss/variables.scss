@@ -185,9 +185,8 @@ button {
   }
 }
 
-// Styles are not applied when moved to document_labels.scss
-.label-properties {
-  .message {
+.message {
+  &.label-message {
     .message-body {
       padding: 5px 15px 5px 15px !important;
     }
