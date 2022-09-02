@@ -22,6 +22,12 @@ const getters = {
       ).name;
     }
     return "";
+  },
+
+  documentListForUser: () => currentUser => {
+    return state.availableDocumentsList.filter(
+      document => document.assignee === currentUser
+    );
   }
 };
 
