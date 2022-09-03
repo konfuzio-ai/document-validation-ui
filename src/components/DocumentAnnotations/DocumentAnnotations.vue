@@ -38,7 +38,7 @@
             :indexGroup="indexGroup"
             :handleError="handleShowError"
             :handleMessage="handleShowMessage"
-            :handleMenu="handleMenu"
+            @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
           />
         </div>
@@ -132,7 +132,7 @@ export default {
     handleShowMessage(message) {
       this.$emit("handle-message", message);
     },
-    handleMenu(rejected) {
+    rejectAnnotation(rejected) {
       if (!rejected) return;
 
       this.$store

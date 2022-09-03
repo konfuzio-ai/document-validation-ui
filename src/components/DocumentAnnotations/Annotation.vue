@@ -19,6 +19,9 @@
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
       @click="handleEditAnnotation"
+      @focus="handleEditAnnotation"
+      @keyup.esc="handleCancel"
+      @keydown.delete="handleDelete"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
@@ -33,7 +36,7 @@
         @save="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
-        @handle-menu="handleMenu"
+        :handleMenu="handleMenu"
       />
     </div>
   </div>
@@ -74,6 +77,9 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    focusContenteditable: {
+      type: Boolean
     }
   },
   data() {
@@ -246,6 +252,14 @@ export default {
             this.error = false;
           }, 2000);
         });
+    },
+    // On annotation: pressing the "Delete" key
+    // will NOT delete text, and will reject the label/annotation
+    handleDelete(event) {
+      if (event.key === "Delete") {
+        event.preventDefault();
+        this.handleMenu();
+      }
     }
   },
   watch: {
@@ -277,6 +291,11 @@ export default {
         );
         this.$refs.contentEditable.blur();
       }
+    }
+  },
+  updated() {
+    if (this.focusContenteditable) {
+      this.handleEditAnnotation();
     }
   }
 };

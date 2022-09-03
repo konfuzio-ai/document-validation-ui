@@ -28,7 +28,11 @@
         </div>
       </div>
       <div class="label-property-right">
-        <div class="label-property-annotation">
+        <div
+          class="label-property-annotation"
+          @focus="handleFocus(true)"
+          @blur="handleFocus(false)"
+        >
           <div v-if="annotation">
             <Annotation
               v-for="(span, index) in annotation.span"
@@ -41,6 +45,7 @@
               :label="label"
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
+              @handle-data-changes="handleDataChanges"
             />
           </div>
           <EmptyAnnotation
@@ -86,9 +91,6 @@ export default {
     handleError: {
       type: Function
     },
-    handleMenu: {
-      type: Function
-    },
     missingAnnotations: {
       type: Array
     }
@@ -117,6 +119,7 @@ export default {
   data() {
     return {
       edited: false,
+      isLoading: false,
       annotationAnimationTimeout: null
     };
   },
@@ -172,6 +175,19 @@ export default {
         );
       }
       return false;
+    },
+    handleMenu() {
+      if (!this.label || !this.annotationSet) return;
+
+      const rejected = {
+        label: this.label.id,
+        label_set: this.annotationSet.label_set.id
+      };
+
+      this.$emit("handle-menu", rejected);
+    },
+    handleFocus(value) {
+      this.focusContenteditable = value;
     }
   },
   watch: {
