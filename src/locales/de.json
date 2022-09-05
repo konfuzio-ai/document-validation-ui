@@ -3,7 +3,7 @@
   "no_label_sets_found_description": "In diesem Dokument sind keine Label Sets vorhanden.",
   "no_labels_found": "Keine Labels vorhanden",
   "no_labels_description": "In diesem Label Set sind keine Labels vorhanden.",
-  "resolution_not_supported": "App not supported on this resolution",
+  "resolution_not_supported": "App bei dieser Auflösung nicht unterstützt",
   "upload_documents": "Upload your own documents",
   "request_trial": "Request  trial access",
   "warning_message": "AI can’t be trained if you change the text manually.",
