@@ -28,11 +28,7 @@
         </div>
       </div>
       <div class="label-property-right">
-        <div
-          class="label-property-annotation"
-          @focus="handleFocus(true)"
-          @blur="handleFocus(false)"
-        >
+        <div class="label-property-annotation">
           <div v-if="annotation">
             <Annotation
               v-for="(span, index) in annotation.span"
@@ -46,6 +42,8 @@
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
               @handle-data-changes="handleDataChanges"
+              @handle-delete="handleDelete"
+              @handle-arrow-navigation="handleArrowNavigation"
             />
           </div>
           <EmptyAnnotation
@@ -56,6 +54,7 @@
             :handleError="handleError"
             :handleMessage="handleMessage"
             :handleMenu="handleMenu"
+            @handle-delete="handleDelete"
           />
         </div>
       </div>
@@ -70,7 +69,7 @@ import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
 
 /**
- * This component shows each label and it's annotations
+ * This component shows each label and its annotations
  */
 export default {
   name: "Label",
@@ -186,8 +185,15 @@ export default {
 
       this.$emit("handle-menu", rejected);
     },
-    handleFocus(value) {
-      this.focusContenteditable = value;
+
+    handleDelete(event) {
+      if (event.key === "Delete") {
+        event.preventDefault();
+        this.handleMenu();
+      }
+    },
+    handleArrowNavigation(event) {
+      console.log(event);
     }
   },
   watch: {

@@ -15,6 +15,9 @@
       ref="emptyAnnotation"
       @input="isEmpty"
       @click="handleEditEmptyAnnotation"
+      @focus="handleEditEmptyAnnotation"
+      @keyup.esc="cancelEmptyAnnotation"
+      @keydown.delete="handleDelete"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -147,6 +150,11 @@ export default {
     },
     setText(text) {
       this.$refs.emptyAnnotation.textContent = text;
+    },
+    // On empty annotation: pressing the "Delete" key
+    // will NOT delete text, and will reject the label/annotation
+    handleDelete(event) {
+      this.$emit("handle-delete", event);
     }
   },
   watch: {

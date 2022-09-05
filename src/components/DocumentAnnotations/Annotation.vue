@@ -22,6 +22,8 @@
       @focus="handleEditAnnotation"
       @keyup.esc="handleCancel"
       @keydown.delete="handleDelete"
+      @keydown.up="handleArrowNavigation"
+      @keydown.down="handleArrowNavigation"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
@@ -77,9 +79,6 @@ export default {
     },
     annotationSet: {
       type: Object
-    },
-    focusContenteditable: {
-      type: Boolean
     }
   },
   data() {
@@ -256,9 +255,13 @@ export default {
     // On annotation: pressing the "Delete" key
     // will NOT delete text, and will reject the label/annotation
     handleDelete(event) {
-      if (event.key === "Delete") {
-        event.preventDefault();
-        this.handleMenu();
+      this.$emit("handle-delete", event);
+    },
+    handleArrowNavigation(event) {
+      if (event.key === "ArrowDown") {
+      } else if (event.key === "ArrowUp") {
+      } else {
+        return;
       }
     }
   },
@@ -291,11 +294,6 @@ export default {
         );
         this.$refs.contentEditable.blur();
       }
-    }
-  },
-  updated() {
-    if (this.focusContenteditable) {
-      this.handleEditAnnotation();
     }
   }
 };
