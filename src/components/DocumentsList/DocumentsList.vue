@@ -20,8 +20,8 @@
         </div>
       </div>
     </div>
-    <div class="documents-list-bottom" v-if="documents">
-      <b-carousel-list :data="documents" :items-to-show="5">
+    <div class="documents-list-bottom" v-if="availableDocumentsList">
+      <b-carousel-list :data="availableDocumentsList" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
@@ -79,7 +79,11 @@ export default {
   },
   computed: {
     ...mapState("document", ["documentId", "selectedDocument"]),
-    ...mapState("category", ["documents", "selectedCategory"])
+    ...mapState("category", [
+      "documents",
+      "availableDocumentsList",
+      "selectedCategory"
+    ])
   },
   methods: {
     changeDocument(documentId) {
