@@ -51,7 +51,8 @@ export default {
   name: "EmptyAnnotation",
   data() {
     return {
-      empty: false
+      empty: false,
+      isLoading: false
     };
   },
   components: { ActionButtons },
@@ -61,9 +62,6 @@ export default {
     },
     annotationSet: {
       required: true
-    },
-    isLoading: {
-      type: Boolean
     },
     handleMenu: {
       type: Function
@@ -113,19 +111,16 @@ export default {
         is_correct: true,
         revised: true
       };
-      this.$emit("handle-data-changes", {
-        annotation: null,
-        isLoading: true
-      });
+      this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
             this.$emit("handle-data-changes", {
               annotation: annotationCreated,
-              edited: false,
-              isLoading: false
+              edited: false
             });
+            this.isLoading = false;
           }
         });
       this.$store.dispatch("document/resetEditAnnotation");
