@@ -135,6 +135,7 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
       this.setText(this.$t("no_data_found"));
+      this.$parent.$emit("cancel-editing");
     },
     isEmptyAnnotationEditable() {
       return (

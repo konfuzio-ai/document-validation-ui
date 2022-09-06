@@ -40,6 +40,7 @@
             :handleMessage="handleShowMessage"
             @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
+            @cancel-editing="cancelEditing"
           />
         </div>
       </div>
@@ -85,7 +86,11 @@ export default {
       type: Function
     }
   },
-
+  data() {
+    return {
+      count: 0
+    };
+  },
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
@@ -94,7 +99,57 @@ export default {
       "showRejectedLabels"
     ])
   },
+  created() {
+    window.addEventListener("keydown", this.keyDownHandler);
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keyDownHandler);
+  },
   methods: {
+    keyDownHandler(event) {
+      let countTracking;
+
+      // validate the arrow up or down key
+      if (event.key === "ArrowDown") {
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        this.count++;
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        countTracking = "Increased";
+      } else if (event.key === "ArrowUp") {
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        if (this.count === 0) return;
+        this.count--;
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        countTracking = "Decreased";
+      }
+
+      // get out of edit mode and navigation
+      if (event.key === "Escape") {
+        this.count = 0;
+      }
+
+      // reject label/annotation
+      if (event.key === "Delete") {
+        if (countTracking === "Increased") {
+          document
+            .getElementsByClassName("annotation-value")
+            [this.count - 1].click();
+        } else if (countTracking === "Decreased") {
+          document
+            .getElementsByClassName("annotation-value")
+            [this.count + 1].click();
+        } else {
+          document.getElementsByClassName("annotation-value")[this.count];
+        }
+
+        console.log(event.path);
+        console.log("reject");
+        this.rejectAnnotation();
+      }
+    },
+    cancelEditing() {
+      this.count = 0;
+    },
     getNumberOfAnnotationSetGroup(annotationSet) {
       // This method checks if theres a group of annotation sets and add an index number to them
       let found = false;

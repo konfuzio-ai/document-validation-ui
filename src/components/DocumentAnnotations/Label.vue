@@ -43,7 +43,6 @@
               :handleMenu="handleMenu"
               @handle-data-changes="handleDataChanges"
               @handle-delete="handleDelete"
-              @handle-arrow-navigation="handleArrowNavigation"
             />
           </div>
           <EmptyAnnotation
@@ -94,6 +93,13 @@ export default {
       type: Array
     }
   },
+  data() {
+    return {
+      edited: false,
+      isLoading: false,
+      annotationAnimationTimeout: null
+    };
+  },
   computed: {
     ...mapState("document", [
       "documentFocusedAnnotation",
@@ -114,13 +120,6 @@ export default {
         return [null];
       }
     }
-  },
-  data() {
-    return {
-      edited: false,
-      isLoading: false,
-      annotationAnimationTimeout: null
-    };
   },
   methods: {
     referenceId(annotation) {
@@ -191,9 +190,6 @@ export default {
         event.preventDefault();
         this.handleMenu();
       }
-    },
-    handleArrowNavigation(event) {
-      console.log(event);
     }
   },
   watch: {

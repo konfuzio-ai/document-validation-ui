@@ -16,20 +16,17 @@
       role="textbox"
       ref="contentEditable"
       :contenteditable="isAnnotationEditable()"
+      @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
-      @click="handleEditAnnotation"
-      @focus="handleEditAnnotation"
       @keyup.esc="handleCancel"
       @keydown.delete="handleDelete"
-      @keydown.up="handleArrowNavigation"
-      @keydown.down="handleArrowNavigation"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
-        :saveBtn="isAnnotationBeingEdited && spanSelection"
+        :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
         :isActive="!isLoading"
         :isLoading="isLoading"
@@ -131,6 +128,8 @@ export default {
         if (this.isAnnotationEmpty) {
           this.setText(this.$t("draw_box_document"));
         } else {
+          this.$refs.contentEditable.focus();
+
           const page = this.pageAtIndex(this.span.page_index);
           if (page) {
             // this.$store.dispatch("selection/enableSelection", this.annotation.id);
@@ -165,6 +164,7 @@ export default {
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
       this.$refs.contentEditable.blur();
+      this.$parent.$emit("cancel-editing");
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
@@ -257,12 +257,11 @@ export default {
     handleDelete(event) {
       this.$emit("handle-delete", event);
     },
-    handleArrowNavigation(event) {
-      if (event.key === "ArrowDown") {
-      } else if (event.key === "ArrowUp") {
-      } else {
-        return;
+    showButton() {
+      if (this.isAnnotationBeingEdited && this.spanSelection) {
+        return true;
       }
+      return false;
     }
   },
   watch: {
