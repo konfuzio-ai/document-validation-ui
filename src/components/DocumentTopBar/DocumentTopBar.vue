@@ -28,7 +28,7 @@
       <div class="edit-mode-buttons" v-if="editMode">
         <DocumentTopBarButtons
           :handleShowError="handleShowError"
-          :handleMessage="handleMessage"
+          :handleMessage="handleShowMessage"
         />
       </div>
     </div>
