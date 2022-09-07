@@ -108,8 +108,14 @@ export default {
   },
   methods: {
     keyDownHandler(event) {
-      // validate the arrow up or down key
+      // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
+        if (
+          document.getElementsByClassName("annotation-value")[this.count] ===
+          undefined
+        )
+          return;
+
         document.getElementsByClassName("annotation-value")[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
