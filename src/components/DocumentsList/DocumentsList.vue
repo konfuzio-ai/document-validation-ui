@@ -20,8 +20,8 @@
         </div>
       </div>
     </div>
-    <div class="documents-list-bottom" v-if="availableDocumentsList">
-      <b-carousel-list :data="availableDocumentsList" :items-to-show="5">
+    <div class="documents-list-bottom" v-if="documentsList">
+      <b-carousel-list :data="documentsList" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 
 /**
@@ -74,16 +74,14 @@ export default {
     return {
       showCategoryInfo:
         process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP &&
-        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP == "true"
+        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP == "true",
+      documentsList: null
     };
   },
   computed: {
-    ...mapState("document", ["documentId", "selectedDocument"]),
-    ...mapState("category", [
-      "documents",
-      "availableDocumentsList",
-      "selectedCategory"
-    ])
+    ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
+    ...mapState("category", ["documents", "selectedCategory"]),
+    ...mapGetters("category", { documentListForUser: "documentListForUser" })
   },
   methods: {
     changeDocument(documentId) {
@@ -92,6 +90,13 @@ export default {
     requestTrialAccess() {
       if (process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK) {
         window.open(process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK, "_blank");
+      }
+    }
+  },
+  watch: {
+    documents(newValue) {
+      if (newValue) {
+        this.documentsList = this.documentListForUser(this.currentUser);
       }
     }
   }

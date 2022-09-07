@@ -47,7 +47,8 @@ export default {
         this.$store.dispatch("document/fetchAnnotations"),
         this.$store.dispatch("document/fetchDocumentData"),
         this.showRejectedLabels &&
-          this.$store.dispatch("document/fetchMissingAnnotations")
+          this.$store.dispatch("document/fetchMissingAnnotations"),
+        this.$store.dispatch("document/fetchCurrentUser")
       ]).finally(() => {
         this.$store.dispatch("document/endLoading");
       });
