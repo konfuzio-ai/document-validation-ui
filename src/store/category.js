@@ -5,7 +5,7 @@ const HTTP = myImports.HTTP;
 const state = {
   loading: true,
   selectedCategory: null,
-  categoryId: process.env.VUE_APP_CATEGORY_ID,
+  categoryId: null,
   documents: null,
   availableDocumentsList: [],
   categories: null
@@ -32,29 +32,51 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({ commit }) => {
+  startLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({ commit }) => {
+  endLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", false);
   },
-  setDocuments: ({ commit }, documents) => {
+  setDocuments: ({
+    commit
+  }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
-  setAvailableDocumentsList: ({ commit }, availableDocumentsList) => {
+  setAvailableDocumentsList: ({
+    commit
+  }, availableDocumentsList) => {
     commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
   },
-  setCategories: ({ commit }, categories) => {
+  setCategoryId: ({
+    commit
+  }, categoryId) => {
+    commit("SET_CATEGORIES", null);
+    commit("SET_CATEGORY_ID", categoryId);
+  },
+  setCategories: ({
+    commit
+  }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
-  setSelectedCategory: ({ commit }, category) => {
+  setSelectedCategory: ({
+    commit
+  }, category) => {
     commit("SET_SELECTED_CATEGORY", category);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit, state, rootState }) => {
+  fetchDocumentList: ({
+    commit,
+    state,
+    rootState
+  }) => {
     // TODO: add lazy loading
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
@@ -76,7 +98,10 @@ const actions = {
       });
   },
 
-  createAvailableDocumentsList: ({ state, dispatch }) => {
+  createAvailableDocumentsList: ({
+    state,
+    dispatch
+  }) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -120,7 +145,7 @@ const actions = {
         if (
           state.documents.length !== state.availableDocumentsList.length &&
           state.availableDocumentsList.length + errors !==
-            state.documents.length
+          state.documents.length
         ) {
           if (count >= 10) return true;
 
@@ -154,7 +179,10 @@ const actions = {
     }
   },
 
-  fetchCategories: ({ commit, state }) => {
+  fetchCategories: ({
+    commit,
+    state
+  }) => {
     return HTTP.get(`categories/?limit=100`)
       .then(async response => {
         if (response.data && response.data.results) {
@@ -188,6 +216,9 @@ const mutations = {
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;
+  },
+  SET_CATEGORY_ID: (state, categoryId) => {
+    state.categoryId = categoryId;
   }
 };
 

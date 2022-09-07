@@ -23,6 +23,9 @@
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
+    <span v-else class="annotation-value">
+      {{ isAnnotationEmpty ? "" : this.span.offset_string }}
+    </span>
     <div class="buttons-container">
       <ActionButtons
         :saveBtn="isAnnotationBeingEdited && spanSelection"

@@ -56,6 +56,6 @@
   "reject_label": "Reject label",
   "rejected": "Rejected",
   "ann_exists": "An annotation for this label and label set already exists.",
-  "lite_mode": "Lite version",
-  "limited_functionalities": "You are using the lite version with limited functionalities."
+  "lite_mode": "Read Only",
+  "limited_functionalities": "You are using the Read Only version with limited functionalities."
 }
