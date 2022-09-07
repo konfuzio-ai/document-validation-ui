@@ -243,12 +243,10 @@ const actions = {
             const newId = newDocument.id;
 
             if (newId !== rootState.document.documentId) {
-              dispatch("document/setDocId", { newId }, { root: true });
-              dispatch(
-                "document/setSelectedDocument",
-                { newDocument },
-                { root: true }
-              );
+              dispatch("document/setDocId", newId, { root: true });
+              dispatch("document/setSelectedDocument", newDocument, {
+                root: true
+              });
             }
             resolve(true);
           }
