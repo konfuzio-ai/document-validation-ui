@@ -41,6 +41,7 @@
               :label="label"
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
+              :cancelEditing="cancelEditing"
               @handle-data-changes="handleDataChanges"
             />
           </div>
@@ -52,6 +53,7 @@
             :handleError="handleError"
             :handleMessage="handleMessage"
             :handleMenu="handleMenu"
+            :cancelEditing="cancelEditing"
           />
         </div>
       </div>
@@ -90,8 +92,8 @@ export default {
     missingAnnotations: {
       type: Array
     },
-    reject: {
-      type: Array
+    cancelEditing: {
+      type: Boolean
     }
   },
   data() {
@@ -214,12 +216,6 @@ export default {
             this.handleScroll(false);
           }, 1500);
         }
-      }
-    },
-    reject(newValue) {
-      console.log(newValue);
-      if (newValue) {
-        this.handleMenu();
       }
     }
   }

@@ -17,7 +17,6 @@
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
       @keyup.esc="cancelEmptyAnnotation"
-      @keydown.delete="handleDelete"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -68,6 +67,9 @@ export default {
     },
     handleMenu: {
       type: Function
+    },
+    cancelEditing: {
+      type: Boolean
     }
   },
   computed: {
@@ -151,11 +153,6 @@ export default {
     },
     setText(text) {
       this.$refs.emptyAnnotation.textContent = text;
-    },
-    // On empty annotation: pressing the "Delete" key
-    // will NOT delete text, and will reject the label/annotation
-    handleDelete(event) {
-      this.$emit("handle-delete", event);
     }
   },
   watch: {
@@ -179,6 +176,11 @@ export default {
       ) {
         this.$refs.emptyAnnotation.blur();
         this.setText(this.$t("no_data_found"));
+      }
+    },
+    cancelEditing(newValue) {
+      if (newValue) {
+        this.cancelEmptyAnnotation();
       }
     }
   }

@@ -74,6 +74,9 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    cancelEditing: {
+      type: Boolean
     }
   },
   data() {
@@ -250,11 +253,6 @@ export default {
           }, 2000);
         });
     },
-    // On annotation: pressing the "Delete" key
-    // will NOT delete text, and will reject the label/annotation
-    handleDelete(event) {
-      this.$emit("handle-delete", event);
-    },
     showButton() {
       if (this.isAnnotationBeingEdited && this.spanSelection) {
         return true;
@@ -290,6 +288,11 @@ export default {
             : this.span.offset_string
         );
         this.$refs.contentEditable.blur();
+      }
+    },
+    cancelEditing(newValue) {
+      if (newValue) {
+        this.handleCancel();
       }
     }
   }

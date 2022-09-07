@@ -38,10 +38,9 @@
             :indexGroup="indexGroup"
             :handleError="handleShowError"
             :handleMessage="handleShowMessage"
-            :reject="reject"
             @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
-            @cancel-editing="cancelEditing"
+            :cancelEditing="cancelEditing"
           />
         </div>
       </div>
@@ -90,7 +89,7 @@ export default {
   data() {
     return {
       count: 0,
-      reject: null
+      cancelEditing: false
     };
   },
   computed: {
@@ -111,11 +110,8 @@ export default {
     keyDownHandler(event) {
       // validate the arrow up or down key
       if (event.key === "ArrowDown") {
-        if (this.count === 0) {
-          document.getElementsByClassName("annotation-value")[0].click();
-        }
-        this.count++;
         document.getElementsByClassName("annotation-value")[this.count].click();
+        this.count++;
       } else if (event.key === "ArrowUp") {
         if (this.count === 0) return;
         this.count--;
@@ -124,11 +120,11 @@ export default {
 
       // get out of edit mode and navigation
       if (event.key === "Escape") {
+        this.cancelEditing = true;
         this.count = 0;
+      } else {
+        this.cancelEditing = false;
       }
-    },
-    cancelEditing() {
-      this.count = 0;
     },
     getNumberOfAnnotationSetGroup(annotationSet) {
       // This method checks if theres a group of annotation sets and add an index number to them
