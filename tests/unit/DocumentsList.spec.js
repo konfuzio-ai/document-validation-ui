@@ -19,6 +19,7 @@ describe("Documents List Component", () => {
         "category/setAvailableDocumentsList",
         availableDocumentsList
       ),
+      store.dispatch("document/setCurrentUser", "translationuser@konfuzio.com"),
     ]);
   });
 
@@ -38,7 +39,8 @@ describe("Documents List Component", () => {
       require("../mock/category.json").name
     );
   });
-  it("document list renders with all the documents with status_data 2 and labeling_available 1", async () => {
+
+  it("document list renders with all the documents with status_data 2 and labeling_available 1 & assigned to current user", async () => {
     const wrapper = mount(DocumentsList, {
       store,
       mocks: {
@@ -46,9 +48,18 @@ describe("Documents List Component", () => {
       },
     });
 
+    const filteredByCurrentUser =
+      require("../mock/documents_list.json").results.filter(
+        (d) => d.assignee === store.state.document.currentUser
+      );
+
+    await wrapper.setData({ documentsList: filteredByCurrentUser });
+
+    expect(wrapper.vm.documentsList).toEqual(filteredByCurrentUser);
+
     expect(
       wrapper.findAll(".documents-list-bottom .documents-list-thumbnail").length
-    ).toBe(require("../mock/documents_list.json").count);
+    ).toBe(filteredByCurrentUser.length);
   });
 
   it("document list click adds selected class", async () => {
@@ -58,6 +69,13 @@ describe("Documents List Component", () => {
         $t,
       },
     });
+
+    const filteredByCurrentUser =
+      require("../mock/documents_list.json").results.filter(
+        (d) => d.assignee === store.state.document.currentUser
+      );
+
+    await wrapper.setData({ documentsList: filteredByCurrentUser });
 
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")
@@ -78,12 +96,16 @@ describe("Documents List Component", () => {
         $t,
       },
     });
+
+    const filteredByCurrentUser =
+      require("../mock/documents_list.json").results.filter(
+        (d) => d.assignee === store.state.document.currentUser
+      );
+
     await wrapper
       .findAll(".documents-list-bottom .documents-list-thumbnail")
       .at(1)
       .trigger("click");
-    expect(store.state.document.documentId).toEqual(
-      require("../mock/documents_list.json").results[1].id
-    );
+    expect(store.state.document.documentId).toEqual(filteredByCurrentUser.id);
   });
 });
