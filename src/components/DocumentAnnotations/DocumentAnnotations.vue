@@ -38,6 +38,7 @@
             :indexGroup="indexGroup"
             :handleError="handleShowError"
             :handleMessage="handleShowMessage"
+            :reject="reject"
             @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
             @cancel-editing="cancelEditing"
@@ -88,7 +89,8 @@ export default {
   },
   data() {
     return {
-      count: 0
+      count: 0,
+      reject: null
     };
   },
   computed: {
@@ -113,38 +115,36 @@ export default {
       if (event.key === "ArrowDown") {
         document.getElementsByClassName("annotation-value")[this.count].click();
         this.count++;
-        document.getElementsByClassName("annotation-value")[this.count].click();
         countTracking = "Increased";
       } else if (event.key === "ArrowUp") {
         document.getElementsByClassName("annotation-value")[this.count].click();
         if (this.count === 0) return;
         this.count--;
-        document.getElementsByClassName("annotation-value")[this.count].click();
         countTracking = "Decreased";
       }
 
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
+        this.reject = false;
       }
 
       // reject label/annotation
       if (event.key === "Delete") {
-        if (countTracking === "Increased") {
-          document
-            .getElementsByClassName("annotation-value")
-            [this.count - 1].click();
-        } else if (countTracking === "Decreased") {
-          document
-            .getElementsByClassName("annotation-value")
-            [this.count + 1].click();
-        } else {
-          document.getElementsByClassName("annotation-value")[this.count];
-        }
+        // if (countTracking === "Increased") {
+        //   document
+        //     .getElementsByClassName("annotation-value")
+        //     [this.count - 1].click();
+        // } else if (countTracking === "Decreased") {
+        //   document
+        //     .getElementsByClassName("annotation-value")
+        //     [this.count + 1].click();
+        // } else {
+        //   document.getElementsByClassName("annotation-value")[this.count];
+        // }
 
         console.log(event.path);
-        console.log("reject");
-        this.rejectAnnotation();
+        this.reject = event.path;
       }
     },
     cancelEditing() {
@@ -188,6 +188,7 @@ export default {
       this.$emit("handle-message", message);
     },
     rejectAnnotation(rejected) {
+      console.log("rejected", rejected);
       if (!rejected) return;
 
       this.$store

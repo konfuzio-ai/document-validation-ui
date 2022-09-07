@@ -19,8 +19,6 @@
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
-      @keyup.esc="handleCancel"
-      @keydown.delete="handleDelete"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>

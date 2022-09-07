@@ -42,7 +42,6 @@
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
               @handle-data-changes="handleDataChanges"
-              @handle-delete="handleDelete"
             />
           </div>
           <EmptyAnnotation
@@ -53,7 +52,6 @@
             :handleError="handleError"
             :handleMessage="handleMessage"
             :handleMenu="handleMenu"
-            @handle-delete="handleDelete"
           />
         </div>
       </div>
@@ -90,6 +88,9 @@ export default {
       type: Function
     },
     missingAnnotations: {
+      type: Array
+    },
+    reject: {
       type: Array
     }
   },
@@ -183,13 +184,6 @@ export default {
       };
 
       this.$emit("handle-menu", rejected);
-    },
-
-    handleDelete(event) {
-      if (event.key === "Delete") {
-        event.preventDefault();
-        this.handleMenu();
-      }
     }
   },
   watch: {
@@ -220,6 +214,12 @@ export default {
             this.handleScroll(false);
           }, 1500);
         }
+      }
+    },
+    reject(newValue) {
+      console.log(newValue);
+      if (newValue) {
+        this.handleMenu();
       }
     }
   }
