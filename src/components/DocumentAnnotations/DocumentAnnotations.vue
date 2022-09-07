@@ -109,42 +109,22 @@ export default {
   },
   methods: {
     keyDownHandler(event) {
-      let countTracking;
-
       // validate the arrow up or down key
       if (event.key === "ArrowDown") {
-        document.getElementsByClassName("annotation-value")[this.count].click();
+        if (this.count === 0) {
+          document.getElementsByClassName("annotation-value")[0].click();
+        }
         this.count++;
-        countTracking = "Increased";
-      } else if (event.key === "ArrowUp") {
         document.getElementsByClassName("annotation-value")[this.count].click();
+      } else if (event.key === "ArrowUp") {
         if (this.count === 0) return;
         this.count--;
-        countTracking = "Decreased";
+        document.getElementsByClassName("annotation-value")[this.count].click();
       }
 
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
-        this.reject = false;
-      }
-
-      // reject label/annotation
-      if (event.key === "Delete") {
-        // if (countTracking === "Increased") {
-        //   document
-        //     .getElementsByClassName("annotation-value")
-        //     [this.count - 1].click();
-        // } else if (countTracking === "Decreased") {
-        //   document
-        //     .getElementsByClassName("annotation-value")
-        //     [this.count + 1].click();
-        // } else {
-        //   document.getElementsByClassName("annotation-value")[this.count];
-        // }
-
-        console.log(event.path);
-        this.reject = event.path;
       }
     },
     cancelEditing() {
