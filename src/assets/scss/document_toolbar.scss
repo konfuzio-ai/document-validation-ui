@@ -46,6 +46,15 @@
           opacity: 30%;
         }
 
+        &.disabled {
+          opacity: 30%;
+
+          &:hover {
+            cursor: not-allowed !important;
+            background: inherit;
+          }
+        }
+
         .edit-text {
           color: $white;
         }

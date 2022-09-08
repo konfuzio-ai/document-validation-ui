@@ -3,12 +3,17 @@
 <template>
   <div class="toolbar-container">
     <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
-      <div class="icons icons-left" @click="handleEdit">
-        <div class="edit-icon icon">
-          <EditDocIcon />
+      <b-tooltip :label="tooltipInfo" multilined type="is-dark">
+        <div
+          :class="['icons icons-left', disabled && 'disabled']"
+          @click="handleEdit"
+        >
+          <div class="edit-icon icon">
+            <EditDocIcon />
+          </div>
+          <span class="edit-text">{{ $t("edit") }}</span>
         </div>
-        <span class="edit-text">{{ $t("edit") }}</span>
-      </div>
+      </b-tooltip>
       <div class="icons icons-right">
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
@@ -45,15 +50,18 @@ export default {
       currentPercentage: 100,
       minimumPercentage: 0,
       increment: 0.25,
-      toolbarModalOpen: true
+      toolbarModalOpen: true,
+      disabled: false,
+      tooltipInfo: this.$i18n.t("edit_not_available")
     };
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["recalculatingAnnotations"])
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
   },
   methods: {
     handleEdit() {
+      if (this.disabled) return;
       this.$store.dispatch("edit/setEditMode", true).then(() => {
         this.$store.dispatch("display/updateFit", "auto");
       });
@@ -98,6 +106,15 @@ export default {
     },
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
+    }
+  },
+  watch: {
+    selectedDocument(newValue) {
+      // check if the document has a dataset status of 'Training' or 'Test'
+      // and if so disable the option to edit the document
+      if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
+        this.disabled = true;
+      }
     }
   }
 };
