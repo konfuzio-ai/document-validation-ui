@@ -62,5 +62,6 @@
   "select_pages": "Select pages to rotate, drag and drop to reorder or split.",
   "edit_document": "Edit document",
   "selected": "selected",
-  "rotate_selected": "Rotate selected"
+  "rotate_selected": "Rotate selected",
+  "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'"
 }
