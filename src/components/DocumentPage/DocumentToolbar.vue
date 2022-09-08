@@ -3,7 +3,12 @@
 <template>
   <div class="toolbar-container">
     <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
-      <b-tooltip :label="tooltipInfo" multilined type="is-dark">
+      <b-tooltip
+        :label="tooltipInfo"
+        multilined
+        type="is-dark"
+        :active="disabled"
+      >
         <div
           :class="['icons icons-left', disabled && 'disabled']"
           @click="handleEdit"
