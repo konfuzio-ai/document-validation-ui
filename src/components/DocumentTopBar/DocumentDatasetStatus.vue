@@ -46,10 +46,10 @@ export default {
   data() {
     return {
       statusList: [
-        this.$i18n.t("preparation"),
-        this.$i18n.t("training"),
-        this.$i18n.t("test"),
-        this.$i18n.t("excluded")
+        this.$t("preparation"),
+        this.$t("training"),
+        this.$t("test"),
+        this.$t("excluded")
       ],
       currentStatus: null
     };
@@ -83,7 +83,7 @@ export default {
             this.currentStatus = this.statusList[index];
           } else {
             this.handleError();
-            this.handleMessage(this.$i18n.t("status_error"));
+            this.handleMessage(this.$t("status_error"));
           }
         });
     },

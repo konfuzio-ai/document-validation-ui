@@ -220,7 +220,7 @@ export default {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.handleShowError();
-            this.handleShowMessage(this.$i18n.t("ann_exists"));
+            this.handleShowMessage(this.$t("ann_exists"));
           }
         });
     }

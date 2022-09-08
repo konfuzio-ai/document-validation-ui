@@ -109,13 +109,13 @@ export default {
               pollUntilLabelingAvailable(5000);
             } else {
               this.handleShowError();
-              this.handleMessage(this.$i18n.t("edit_error"));
+              this.handleMessage(this.$t("edit_error"));
             }
           })
           .catch(error => {
             console.log(error);
             this.handleShowError();
-            this.handleMessage(this.$i18n.t("edit_error"));
+            this.handleMessage(this.$t("edit_error"));
           })
           .finally(async () => {
             // Stop loading

@@ -232,7 +232,7 @@ export default {
           } else {
             this.error = true;
             this.handleError();
-            this.handleMessage(this.$i18n.t("editing_error"));
+            this.handleMessage(this.$t("editing_error"));
             this.setText(
               this.isAnnotationEmpty
                 ? this.$t("no_data_found")

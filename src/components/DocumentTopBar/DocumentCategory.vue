@@ -106,7 +106,7 @@ export default {
           .then(response => {
             if (!response) {
               this.handleError();
-              this.handleMessage(this.$i18n.t("category_error"));
+              this.handleMessage(this.$t("category_error"));
             }
             // update document list if visible
             if (process.env.VUE_APP_CATEGORY_ID) {

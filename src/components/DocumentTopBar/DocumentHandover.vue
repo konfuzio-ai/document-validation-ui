@@ -222,7 +222,7 @@ export default {
     snackbar() {
       this.$buefy.snackbar.open({
         message: `
-        ${this.$i18n.t("document_successfully_handed")} ${this.selected}`,
+        ${this.$t("document_successfully_handed")} ${this.selected}`,
         actionText: null
       });
     }

@@ -57,7 +57,7 @@ export default {
       increment: 0.25,
       toolbarModalOpen: true,
       disabled: false,
-      tooltipInfo: this.$i18n.t("edit_not_available")
+      tooltipInfo: this.$t("edit_not_available")
     };
   },
   computed: {
