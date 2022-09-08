@@ -62,6 +62,7 @@
             @category-change="handleChanges"
             :handleShowError="handleShowError"
             :handleMessage="handleMessage"
+            :index="index"
           />
         </div>
       </div>
