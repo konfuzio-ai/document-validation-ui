@@ -6,6 +6,16 @@
   background-color: $background;
   justify-content: space-between;
 
+  // &::before {
+  //   content: "";
+  //   background-color: $background;
+  //   position: relative;
+  //   left: 0;
+  //   width: 6px;
+  //   height: 100%;
+  //   cursor: ew-resize;
+  // }
+
   .pages-section {
     width: 100%;
 
