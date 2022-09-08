@@ -17,7 +17,11 @@
         <div class="category-info">
           <p class="category-title" v-if="!splitMode">{{ $t("category") }}</p>
           <div class="category-name">
-            {{ categoryName(selectedDocument.category) }}
+            {{
+              !splitMode
+                ? categoryName(selectedDocument.category)
+                : categoryName(updatedDocument[index].category)
+            }}
           </div>
         </div>
         <div :class="['caret', splitMode && 'split-mode-caret']">
@@ -31,7 +35,7 @@
       v-bind:key="category.id"
       aria-role="listitem"
       v-on:click="handleChangeCategory(category)"
-      :disabled="category.id === selectedDocument.category"
+      :disabled="handleOptionInDropdownDisabled(category)"
     >
       <span>{{ category.name }}</span>
     </b-dropdown-item>
@@ -66,6 +70,9 @@ export default {
     },
     page: {
       type: Object
+    },
+    index: {
+      type: Number
     }
   },
   components: {
@@ -76,9 +83,18 @@ export default {
     ...mapGetters("category", {
       categoryName: "categoryName"
     }),
-    ...mapState("category", ["categories"])
+    ...mapState("category", ["categories"]),
+    ...mapState("edit", ["updatedDocument"])
   },
   methods: {
+    // The current category name will change
+    // depending on if we are on edit mode or not
+    handleOptionInDropdownDisabled(category) {
+      if (!this.splitMode)
+        return category.id === this.selectedDocument.category;
+
+      return category.id === this.updatedDocument[this.index].category;
+    },
     handleChangeCategory(category) {
       const updatedCategory = {
         category: category.id
@@ -101,15 +117,14 @@ export default {
 
         return;
       }
-
       // Send the category ID to the split overview
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
     }
   },
-  mounted() {
-    if (this.categories) {
-      this.categories.map(category => {
+  watch: {
+    categories(newValue) {
+      newValue.map(category => {
         if (category.project === this.selectedDocument.project) {
           this.currentProjectCategories.push(category);
         }
