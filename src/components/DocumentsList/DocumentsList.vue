@@ -72,9 +72,7 @@ export default {
   },
   data() {
     return {
-      showCategoryInfo:
-        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP &&
-        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP == "true",
+      showCategoryInfo: false,
       documentsList: null
     };
   },

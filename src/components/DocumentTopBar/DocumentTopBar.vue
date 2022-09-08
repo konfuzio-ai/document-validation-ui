@@ -58,12 +58,8 @@ export default {
   data() {
     return {
       categoryError: false,
-      showDatasetDropdown:
-        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN &&
-        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN == "true",
-      showHandoverButton:
-        process.env.VUE_APP_SHOW_HANDOVER_BUTTON &&
-        process.env.VUE_APP_SHOW_HANDOVER_BUTTON == "true"
+      showDatasetDropdown: false,
+      showHandoverButton: false
     };
   },
   components: {

@@ -1,5 +1,4 @@
 # Documentation
-
 ## Source Code
 
 This app is built using Vue.js version 2. The `src` folder is the root of the project and is divided into:
@@ -49,15 +48,15 @@ You can test the app by running `npm run test:unit`. Tests are developed using [
 
 For creating an account you will need to go to [Konfuzio](https://app.konfuzio.com/) and follow the steps. 
 
+## Generate User Token
+
+You can access the [Konfuzio API version 3 Auth Request](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and make a request with your username and password. If the account exists, then a token will be generated that you can copy.
+
 ## Upload Document & Get Document ID
 
 Login to [Konfuzio](https://app.konfuzio.com/) and upload a document to the platform. After successfully uploading, if you want to show it on this app you need to set it as public in the document details page and copy the document id.
 
 ![Screenshot](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/doc_info.png)
-
-## Generate User Token
-
-You can access the [Konfuzio API version 3 Auth Request](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and make a request with your username and password. If the account exists, then a token will be generated that you can copy.
 
 ## Creating a .env
 

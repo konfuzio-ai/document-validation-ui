@@ -11,45 +11,111 @@ White-label app that lets you preview and interact with documents uploaded to [K
 The documentation for this app is in the docs directory. [Take a look here](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md).
 Browse the Konfuzio [documentation](https://dev.konfuzio.com/) and [support](https://help.konfuzio.com/).
 
-## Requirements
+## Installation
 
 The app requires `node` and `npm` to run. It also requires a connection to the [Konfuzio API version 3](https://app.konfuzio.com/v3/swagger/).
 
-There are two modes for running the app: Read Only (default) and Full mode.
+### 1 Clone the repository
 
-### Read Only Mode (default)
+You can download the app by cloning this repository or downloading the source code.
+```bash
+git clone git@github.com:konfuzio-ai/konfuzio-capture-vue.git
+```
 
-In this mode, you will have a sample document with annotations that you can only view. There's no additional requirement needed, you just need to install the app as described in the [Installation](#installation) section. 
+### 2 Configure the App
 
-### Full Mode
+There are two modes for running the app: Read Only (default) and Full mode:
 
-If you want to run the widget in full mode to be able to interact with the document by editing annotations, document pages and other functionalities, you will need to have an user account created in [Konfuzio](https://app.konfuzio.com/). After you create an account, you need to upload a document to the platform and set it as public in the document details page and copy the document id.
+#### Read Only Mode (default)
 
-### Setup Local Environment
+In this mode, you will have a sample document with annotations that you can only preview. The default API endpoint will be https://app.konfuzio.com and no user account is needed.
+
+#### Full Mode
+
+If you want to run the widget in full mode to be able to interact with the document by editing annotations, document pages and other functionalities, you will need to have an [user account created](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md#create-an-user-account). Then, you should [generate a user token](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md#generate-user-token).
+[You will also need a document uploaded and a document id](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md#upload-document-&-get-document-id).
+
+With the user token and the document id, you can create a `.env` file with those 2 variables. [More information on how to create this file](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md#creating-a-.env). And if you want, you can now specify which document category to load in the `index.html` file or in the `.env`. 
+
+### 3 Install all packages
+
+Install all the dependencies by running:
+
+```bash
+npm install
+```
+
+### 3 Run the App
+
+#### Local Development
+
+If you want to serve the app locally to run on a browser (default URL: http://localhost:3000) you should run:
+
+```bash
+npm run serve
+```
+
+#### Deploy
+
+If you want to deploy this app in a web server environment then you should run:
+```bash
+npm run build
+```
+
+When succeeded, you should export the `dist` folder generated from that command to the destination source in the host server and configure the web server engine in order to have the `index.html` file as the entry point. If everything is correctly configured you should be able to open the server URL and the app will load.
+
+## Integration
+
+If you want to integrate it in an existing application then we recommend to use the available package on the [npm repository](https://www.npmjs.com/package/@konfuzio/capture-vue).
+You can also deploy the app as stated in the previous section and copy the `dist` folder to the existing application.
+
+An example of that integration using a `Webpack` based configuration:
+
+### webpack.config.js
+
+Create a webpack configuration for the app:
+
+```javascript
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+
+module.exports = {
+  entry: {
+    capture_vue: "./node_modules/@konfuzio/capture-vue/src/main.js",
+  },
+  output: {
+    path: "/server/bundle",
+    publicPath: "/bundle/",
+    filename: "[name].js",
+    sourceMapFilename: "[name].js.map",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+        options: {
+          sourceMap: true,
+        },
+      }
+    ],
+  },
+  plugins: [
+    new VueLoaderPlugin()
+  ],
+};
+```
+
+### HTML
+
+In the html we should load the script we created with the webpack and customize the variables we want:
+
+```html
+  <div id="app">
+    <App document="DOCUMENT_ID" category="CATEGORY_ID" locale="LOCALE"></App>
+  </div>
+
+  <script src="/server/bundle/capture_vue.js"></script>
+```
 
 
-# **Setup**
-
-Follow the sections below to get the app running.
-
-## Getting the code
-
-You can download the app by cloning this repository or installing it through `npm`. The app is available as a npm package [here](https://www.npmjs.com/package/@konfuzio/capture-vue). 
-
-## Running a local 
-
-Clone this repository.
-2. Create a `.env` file in the project root with the properties from the `.env.example` file. Take a look at the required ones.
-3. Run `npm install` in the project root.
-4. Run `npm run serve` to serve a local development app to run on a browser (default URL: http://localhost:3000).
-
-
-
-# **Deployment**
-
-If you want to serve this app in a web server environment (like your company host xxxx.mycompany.com or in a cloud environment), do all steps from the previous section (except point 4) and then:
-
-1. Run `npm run build` to build the app for production.
-2. Export the `dist` folder generated from the command above to the destination source in the host server.
-3. Configure the web server engine in order to have the `index.html` file as the entry point. If everything is correctly configured you should be able to open the server URL and the app will load.
 

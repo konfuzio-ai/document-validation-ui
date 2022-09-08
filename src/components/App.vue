@@ -24,10 +24,13 @@ export default {
       type: String,
       required: false
     },
-    category: { type: String, required: false }
+    category: { type: String, required: false },
+    locale: { type: String, required: false }
   },
   created() {
-    this.documentLoading();
+    if (this.locale && this.locale !== "") {
+      this.$i18n.locale = this.locale;
+    }
     if (!this.publicView) {
       this.categoryLoading();
       this.documentsListLoading();
@@ -36,10 +39,22 @@ export default {
   computed: {
     ...mapState("document", ["documentId", "showRejectedLabels", "publicView"]),
     documentId() {
-      return this.document ? this.document : process.env.VUE_APP_DOCUMENT_ID;
+      if (process.env.VUE_APP_DOCUMENT_ID) {
+        return process.env.VUE_APP_DOCUMENT_ID;
+      } else if (this.document) {
+        return this.document;
+      } else {
+        return null;
+      }
     },
     categoryId() {
-      return this.category ? this.category : process.env.VUE_APP_CATEGORY_ID;
+      if (process.env.VUE_APP_CATEGORY_ID) {
+        return process.env.VUE_APP_CATEGORY_ID;
+      } else if (this.category) {
+        return this.category;
+      } else {
+        return null;
+      }
     }
   },
   watch: {
