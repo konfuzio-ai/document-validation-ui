@@ -88,9 +88,7 @@ export default {
       this.$store.dispatch("document/setDocId", documentId);
     },
     requestTrialAccess() {
-      if (process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK) {
-        window.open(process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK, "_blank");
-      }
+      window.open("https://konfuzio.com", "_blank");
     }
   },
   watch: {
