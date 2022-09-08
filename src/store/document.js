@@ -203,9 +203,6 @@ const actions = {
   setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setActiveAnnotationSet: ({ commit }, annotationSet) => {
-    commit("SET_ACTIVE_ANNOTATION_SET", annotationSet);
-  },
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
