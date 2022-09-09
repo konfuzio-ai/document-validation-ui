@@ -40,7 +40,6 @@
             :handleMessage="handleShowMessage"
             @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
-            :cancelEditing="cancelEditing"
           />
         </div>
       </div>
@@ -88,8 +87,7 @@ export default {
   },
   data() {
     return {
-      count: 0,
-      cancelEditing: false
+      count: 0
     };
   },
   computed: {
@@ -97,7 +95,8 @@ export default {
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
-      "showRejectedLabels"
+      "showRejectedLabels",
+      "editingActive"
     ])
   },
   created() {
@@ -108,9 +107,27 @@ export default {
   },
   methods: {
     keyDownHandler(event) {
+      // get out of edit mode and navigation
+      if (event.key === "Escape") {
+        this.count = 0;
+        this.$store.dispatch("document/setEditingActive", false);
+        return;
+      }
+
+      // Not allow starting edit mode with ArrowUp key
+      if (event.key === "ArrowUp" && !this.editingActive) return;
+
+      // Do not start navigation if any other key is pressed
+      if (!(event.key === "ArrowDown" || event.key === "ArrowUp")) {
+        return;
+      }
+
+      this.$store.dispatch("document/setEditingActive", true);
+
       const annPath = event.path[0];
 
-      // Create an array from the result:
+      // Create an array from the result
+      // for easier management of data
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
       );
@@ -120,17 +137,14 @@ export default {
 
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
-        if (
-          document.getElementsByClassName("annotation-value")[this.count] ===
-          undefined
-        ) {
+        if (this.count >= annotations.length) {
           return;
         }
 
         // Check if the current element returns -1 (empty annotations)
         // to find that element in the array
-        // and if we are not going over the length of the array
-        if (currentAnnIndex !== -1 && currentAnnIndex < annotations.length) {
+        // and check we are not going over the length of the array
+        if (currentAnnIndex !== -1) {
           this.count = currentAnnIndex + 1;
         }
 
@@ -150,16 +164,13 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
+        console.log(annPath);
+
+        console.log(
+          document.getElementsByClassName("annotation-value")[this.count]
+        );
         document.getElementsByClassName("annotation-value")[this.count].click();
         this.count--;
-      }
-
-      // get out of edit mode and navigation
-      if (event.key === "Escape") {
-        this.cancelEditing = true;
-        this.count = 0;
-      } else {
-        this.cancelEditing = false;
       }
     },
     getNumberOfAnnotationSetGroup(annotationSet) {

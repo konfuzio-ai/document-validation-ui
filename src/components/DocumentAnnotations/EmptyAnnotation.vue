@@ -67,14 +67,11 @@ export default {
     },
     handleMenu: {
       type: Function
-    },
-    cancelEditing: {
-      type: Boolean
     }
   },
   computed: {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"])
+    ...mapState("document", ["editAnnotation", "editingActive"])
   },
   methods: {
     isEmpty() {
@@ -98,6 +95,7 @@ export default {
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId()
         });
+        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -137,7 +135,6 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
       this.setText(this.$t("no_data_found"));
-      this.$parent.$emit("cancel-editing");
     },
     isEmptyAnnotationEditable() {
       return (
@@ -178,8 +175,8 @@ export default {
         this.setText(this.$t("no_data_found"));
       }
     },
-    cancelEditing(newValue) {
-      if (newValue) {
+    editingActive(newValue) {
+      if (!newValue) {
         this.cancelEmptyAnnotation();
       }
     }

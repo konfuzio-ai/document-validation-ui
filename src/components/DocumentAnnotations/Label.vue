@@ -41,7 +41,6 @@
               :label="label"
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
-              :cancelEditing="cancelEditing"
               @handle-data-changes="handleDataChanges"
             />
           </div>
@@ -53,7 +52,6 @@
             :handleError="handleError"
             :handleMessage="handleMessage"
             :handleMenu="handleMenu"
-            :cancelEditing="cancelEditing"
           />
         </div>
       </div>
@@ -91,9 +89,6 @@ export default {
     },
     missingAnnotations: {
       type: Array
-    },
-    cancelEditing: {
-      type: Boolean
     }
   },
   data() {

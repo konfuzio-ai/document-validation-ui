@@ -74,9 +74,6 @@ export default {
     },
     annotationSet: {
       type: Object
-    },
-    cancelEditing: {
-      type: Boolean
     }
   },
   data() {
@@ -92,7 +89,7 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"]),
+    ...mapState("document", ["editAnnotation", "editingActive"]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -126,6 +123,8 @@ export default {
           id: this.annotation.id,
           index: this.spanIndex
         });
+        this.$store.dispatch("document/setEditingActive", true);
+
         if (this.isAnnotationEmpty) {
           this.setText(this.$t("draw_box_document"));
         } else {
@@ -165,7 +164,6 @@ export default {
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
       this.$refs.contentEditable.blur();
-      this.$parent.$emit("cancel-editing");
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
@@ -290,8 +288,8 @@ export default {
         this.$refs.contentEditable.blur();
       }
     },
-    cancelEditing(newValue) {
-      if (newValue) {
+    editingActive(newValue) {
+      if (!newValue) {
         this.handleCancel();
       }
     }

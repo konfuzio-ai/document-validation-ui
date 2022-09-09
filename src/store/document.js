@@ -23,7 +23,8 @@ const state = {
   showRejectedLabels:
     process.env.VUE_APP_SHOW_REJECT_LABELS &&
     process.env.VUE_APP_SHOW_REJECT_LABELS == "true",
-  currentUser: null
+  currentUser: null,
+  editingActive: false
 };
 
 const getters = {
@@ -147,6 +148,9 @@ const actions = {
   },
   setCurrentUser: ({ commit }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
+  },
+  setEditingActive: ({ commit }, value) => {
+    commit("SET_EDITING_ACTIVE", value);
   },
 
   /**
@@ -405,6 +409,9 @@ const mutations = {
   },
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
+  },
+  SET_EDITING_ACTIVE: (state, value) => {
+    state.editingActive = value;
   }
 };
 
