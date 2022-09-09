@@ -89,7 +89,7 @@ export default {
                     // the new groupedAnnotationSets
                     setTimeout(async () => {
                       await this.$store.dispatch(
-                        "document/setAnnotationSet",
+                        "document/setAnnotationSets",
                         null
                       );
                       await this.$store.dispatch("document/fetchAnnotations");
