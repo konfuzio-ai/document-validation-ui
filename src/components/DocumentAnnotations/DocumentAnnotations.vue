@@ -38,7 +38,7 @@
             :indexGroup="indexGroup"
             :handleError="handleShowError"
             :handleMessage="handleShowMessage"
-            :handleMenu="handleMenu"
+            @handle-menu="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
           />
         </div>
@@ -85,16 +85,94 @@ export default {
       type: Function
     }
   },
-
+  data() {
+    return {
+      count: 0
+    };
+  },
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
-      "showRejectedLabels"
+      "showRejectedLabels",
+      "editingActive"
     ])
   },
+  created() {
+    window.addEventListener("keydown", this.keyDownHandler);
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keyDownHandler);
+  },
   methods: {
+    keyDownHandler(event) {
+      // get out of edit mode and navigation
+      if (event.key === "Escape") {
+        this.count = 0;
+        this.$store.dispatch("document/setEditingActive", false);
+        return;
+      }
+
+      // Not allow starting edit mode with ArrowUp key
+      if (event.key === "ArrowUp" && !this.editingActive) return;
+
+      // Do not start navigation if any other key is pressed
+      if (!(event.key === "ArrowDown" || event.key === "ArrowUp")) {
+        return;
+      }
+
+      this.$store.dispatch("document/setEditingActive", true);
+
+      const annPath = event.path[0];
+
+      // Create an array from the result
+      // for easier management of data
+      const annotations = Array.from(
+        document.getElementsByClassName("annotation-value")
+      );
+
+      // get index of currently focused element
+      const currentAnnIndex = annotations.findIndex(el => el === annPath);
+
+      // navigate with the arrow up or down keys
+      if (event.key === "ArrowDown") {
+        if (this.count >= annotations.length) {
+          return;
+        }
+
+        // Check if the current element returns -1 (empty annotations)
+        // to find that element in the array
+        // and check we are not going over the length of the array
+        if (currentAnnIndex !== -1) {
+          this.count = currentAnnIndex + 1;
+        }
+
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        this.count++;
+      } else if (event.key === "ArrowUp") {
+        // Check if the event happened on the first element from the array
+        // If so, reset count to 0
+        if (annPath === annotations[0]) {
+          this.count = 0;
+          return;
+        }
+
+        // Check if the current element returns -1 (empty annotations)
+        // to find that element in the array
+        if (currentAnnIndex !== -1) {
+          this.count = currentAnnIndex - 1;
+        }
+
+        console.log(annPath);
+
+        console.log(
+          document.getElementsByClassName("annotation-value")[this.count]
+        );
+        document.getElementsByClassName("annotation-value")[this.count].click();
+        this.count--;
+      }
+    },
     getNumberOfAnnotationSetGroup(annotationSet) {
       // This method checks if theres a group of annotation sets and add an index number to them
       let found = false;
@@ -132,7 +210,8 @@ export default {
     handleShowMessage(message) {
       this.$emit("handle-message", message);
     },
-    handleMenu(rejected) {
+    rejectAnnotation(rejected) {
+      console.log("rejected", rejected);
       if (!rejected) return;
 
       this.$store

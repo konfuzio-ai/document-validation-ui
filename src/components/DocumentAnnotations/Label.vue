@@ -41,6 +41,7 @@
               :label="label"
               :annotationSet="annotationSet"
               :handleMenu="handleMenu"
+              @handle-data-changes="handleDataChanges"
             />
           </div>
           <EmptyAnnotation
@@ -65,7 +66,7 @@ import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
 
 /**
- * This component shows each label and it's annotations
+ * This component shows each label and its annotations
  */
 export default {
   name: "Label",
@@ -86,12 +87,16 @@ export default {
     handleError: {
       type: Function
     },
-    handleMenu: {
-      type: Function
-    },
     missingAnnotations: {
       type: Array
     }
+  },
+  data() {
+    return {
+      edited: false,
+      isLoading: false,
+      annotationAnimationTimeout: null
+    };
   },
   computed: {
     ...mapState("document", [
@@ -113,12 +118,6 @@ export default {
         return [null];
       }
     }
-  },
-  data() {
-    return {
-      edited: false,
-      annotationAnimationTimeout: null
-    };
   },
   methods: {
     referenceId(annotation) {
@@ -172,6 +171,16 @@ export default {
         );
       }
       return false;
+    },
+    handleMenu() {
+      if (!this.label || !this.annotationSet) return;
+
+      const rejected = {
+        label: this.label.id,
+        label_set: this.annotationSet.label_set.id
+      };
+
+      this.$emit("handle-menu", rejected);
     }
   },
   watch: {

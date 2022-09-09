@@ -16,15 +16,15 @@
       role="textbox"
       ref="contentEditable"
       :contenteditable="isAnnotationEditable()"
+      @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
-      @click="handleEditAnnotation"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
-        :saveBtn="isAnnotationBeingEdited && spanSelection"
+        :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
         :isActive="!isLoading"
         :isLoading="isLoading"
@@ -33,7 +33,7 @@
         @save="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
-        @handle-menu="handleMenu"
+        :handleMenu="handleMenu"
       />
     </div>
   </div>
@@ -89,7 +89,7 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"]),
+    ...mapState("document", ["editAnnotation", "editingActive"]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -123,9 +123,13 @@ export default {
           id: this.annotation.id,
           index: this.spanIndex
         });
+        this.$store.dispatch("document/setEditingActive", true);
+
         if (this.isAnnotationEmpty) {
           this.setText(this.$t("draw_box_document"));
         } else {
+          this.$refs.contentEditable.focus();
+
           const page = this.pageAtIndex(this.span.page_index);
           if (page) {
             // this.$store.dispatch("selection/enableSelection", this.annotation.id);
@@ -246,6 +250,12 @@ export default {
             this.error = false;
           }, 2000);
         });
+    },
+    showButton() {
+      if (this.isAnnotationBeingEdited && this.spanSelection) {
+        return true;
+      }
+      return false;
     }
   },
   watch: {
@@ -276,6 +286,11 @@ export default {
             : this.span.offset_string
         );
         this.$refs.contentEditable.blur();
+      }
+    },
+    editingActive(newValue) {
+      if (!newValue) {
+        this.handleCancel();
       }
     }
   }

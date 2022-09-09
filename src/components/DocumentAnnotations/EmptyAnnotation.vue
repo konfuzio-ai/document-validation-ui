@@ -15,6 +15,8 @@
       ref="emptyAnnotation"
       @input="isEmpty"
       @click="handleEditEmptyAnnotation"
+      @focus="handleEditEmptyAnnotation"
+      @keyup.esc="cancelEmptyAnnotation"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -69,7 +71,7 @@ export default {
   },
   computed: {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"])
+    ...mapState("document", ["editAnnotation", "editingActive"])
   },
   methods: {
     isEmpty() {
@@ -93,6 +95,7 @@ export default {
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId()
         });
+        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -170,6 +173,11 @@ export default {
       ) {
         this.$refs.emptyAnnotation.blur();
         this.setText(this.$t("no_data_found"));
+      }
+    },
+    editingActive(newValue) {
+      if (!newValue) {
+        this.cancelEmptyAnnotation();
       }
     }
   }
