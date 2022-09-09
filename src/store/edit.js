@@ -200,14 +200,13 @@ const actions = {
         `/documents/${rootState.document.documentId}/postprocess/`,
         editedDocument
       )
-        .then(response => {
+        .then(async response => {
           if (response.status === 200) {
             const newDocument = response.data[0];
             const newId = newDocument.id;
 
             if (newId !== rootState.document.documentId) {
-              dispatch("document/setDocId", newId, { root: true });
-              dispatch("document/setSelectedDocument", newDocument, {
+              await dispatch("document/setDocId", newId, {
                 root: true
               });
             }

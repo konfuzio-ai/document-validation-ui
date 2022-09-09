@@ -19,11 +19,6 @@ const state = {
     id: null,
     index: 0
   },
-  editOptions: {
-    reorder: "reorder",
-    rotate: "rotate",
-    split: "split"
-  },
   missingAnnotations: [],
   // TODO: remove this after the reject label endpoint is merged in testing
   showRejectedLabels:

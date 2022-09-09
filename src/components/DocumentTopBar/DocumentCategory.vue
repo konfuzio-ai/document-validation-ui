@@ -130,6 +130,15 @@ export default {
         }
       });
     }
+  },
+  mounted() {
+    if (this.categories) {
+      this.categories.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          this.currentProjectCategories.push(category);
+        }
+      });
+    }
   }
 };
 </script>
