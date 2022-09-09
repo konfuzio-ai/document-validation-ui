@@ -518,7 +518,10 @@ export default {
     }
   },
   mounted() {
-    if (this.selectedDocument.labeling_available === 1) {
+    if (
+      this.selectedDocument &&
+      this.selectedDocument.labeling_available === 1
+    ) {
       this.drawPage();
     }
   }
