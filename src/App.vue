@@ -49,8 +49,8 @@ export default {
     documentLoading() {
       this.$store.dispatch("document/startLoading");
       Promise.all([
-        this.$store.dispatch("document/fetchAnnotations"),
         this.$store.dispatch("document/fetchDocumentData"),
+        this.$store.dispatch("document/fetchAnnotations"),
         this.showRejectedLabels &&
           this.$store.dispatch("document/fetchMissingAnnotations"),
         this.$store.dispatch("document/fetchCurrentUser")

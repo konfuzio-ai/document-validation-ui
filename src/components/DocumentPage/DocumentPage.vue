@@ -200,7 +200,8 @@ export default {
       "documentFocusedAnnotation",
       "recalculatingAnnotations",
       "annotations",
-      "editAnnotation"
+      "editAnnotation",
+      "selectedDocument"
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
@@ -442,11 +443,20 @@ export default {
       }
     },
     page() {
-      this.drawPage(true);
+      if (this.selectedDocument.labeling_available === 1) {
+        this.drawPage(true);
+      }
+    },
+    selectedDocument(newValue) {
+      if (newValue.labeling_available === 1) {
+        this.drawPage(true);
+      }
     }
   },
   mounted() {
-    this.drawPage();
+    if (this.selectedDocument.labeling_available === 1) {
+      this.drawPage();
+    }
   }
 };
 </script>
