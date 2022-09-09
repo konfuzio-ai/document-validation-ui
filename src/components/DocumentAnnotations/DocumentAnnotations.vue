@@ -108,20 +108,50 @@ export default {
   },
   methods: {
     keyDownHandler(event) {
+      const annPath = event.path[0];
+
+      // Create an array from the result:
+      const annotations = Array.from(
+        document.getElementsByClassName("annotation-value")
+      );
+
+      // get index of currently focused element
+      const currentAnnIndex = annotations.findIndex(el => el === annPath);
+
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
         if (
           document.getElementsByClassName("annotation-value")[this.count] ===
           undefined
-        )
+        ) {
           return;
+        }
+
+        // Check if the current element returns -1 (empty annotations)
+        // to find that element in the array
+        // and if we are not going over the length of the array
+        if (currentAnnIndex !== -1 && currentAnnIndex < annotations.length) {
+          this.count = currentAnnIndex + 1;
+        }
 
         document.getElementsByClassName("annotation-value")[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
-        if (this.count === 0) return;
-        this.count--;
+        // Check if the event happened on the first element from the array
+        // If so, reset count to 0
+        if (annPath === annotations[0]) {
+          this.count = 0;
+          return;
+        }
+
+        // Check if the current element returns -1 (empty annotations)
+        // to find that element in the array
+        if (currentAnnIndex !== -1) {
+          this.count = currentAnnIndex - 1;
+        }
+
         document.getElementsByClassName("annotation-value")[this.count].click();
+        this.count--;
       }
 
       // get out of edit mode and navigation
