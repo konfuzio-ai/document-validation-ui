@@ -71,14 +71,15 @@ export default {
         // Send update request to the backend
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
-          .then(response => {
+          .then(async response => {
+            await this.$store.dispatch("document/setPages", []);
             const sleep = duration =>
               new Promise(resolve => setTimeout(resolve, duration));
             // Poll document data until the status_data is 111 (error) or
             // 2 and labeling is available (done)
             const pollUntilLabelingAvailable = duration => {
               return this.$store
-                .dispatch("document/updateDocument", {})
+                .dispatch("document/fetchDocumentData")
                 .then(async () => {
                   if (
                     this.selectedDocument.status_data === 2 &&
