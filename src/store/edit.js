@@ -243,8 +243,7 @@ const actions = {
             const newId = newDocument.id;
 
             if (newId !== rootState.document.documentId) {
-              dispatch("document/setDocId", newId, { root: true });
-              dispatch("document/setSelectedDocument", newDocument, {
+              await dispatch("document/setDocId", newId, {
                 root: true
               });
             }
