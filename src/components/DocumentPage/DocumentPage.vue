@@ -24,7 +24,7 @@
         />
 
         <template v-if="pageInVisibleRange">
-          <v-group ref="entities">
+          <v-group ref="entities" v-if="showEntities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
@@ -140,7 +140,9 @@ export default {
 
   data() {
     return {
-      image: null
+      image: null,
+      // TODO: remove this when annotation creation is implemented
+      showEntities: false
     };
   },
 
