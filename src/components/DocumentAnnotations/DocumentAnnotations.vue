@@ -164,11 +164,6 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
-        console.log(annPath);
-
-        console.log(
-          document.getElementsByClassName("annotation-value")[this.count]
-        );
         document.getElementsByClassName("annotation-value")[this.count].click();
         this.count--;
       }
@@ -211,7 +206,6 @@ export default {
       this.$emit("handle-message", message);
     },
     rejectAnnotation(rejected) {
-      console.log("rejected", rejected);
       if (!rejected) return;
 
       this.$store
