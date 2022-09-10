@@ -52,7 +52,7 @@ export default {
     selectedDocument: {
       type: Object
     },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMessage: {
@@ -78,12 +78,13 @@ export default {
         .dispatch("document/updateDocument", updatedCategory)
         .then(response => {
           if (!response) {
-            this.handleShowError();
+            this.handleError();
             this.handleMessage(this.$i18n.t("category_error"));
           }
           // update document list if visible
           if (process.env.VUE_APP_CATEGORY_ID) {
             this.$store.dispatch("category/fetchDocumentList");
+            this.$store.dispatch("category/setAvailableDocumentsList");
           }
         });
     }

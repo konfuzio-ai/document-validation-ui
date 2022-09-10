@@ -4,7 +4,7 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="empty-annotation" @click="handleEditEmptyAnnotation">
+  <div class="empty-annotation">
     <span
       :class="[
         'annotation-value',
@@ -14,6 +14,9 @@
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
       @input="isEmpty"
+      @click="handleEditEmptyAnnotation"
+      @focus="handleEditEmptyAnnotation"
+      @keyup.esc="cancelEmptyAnnotation"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -21,10 +24,22 @@
       v-if="showActionButtons()"
       :saveBtn="!empty && isEmptyAnnotationEditable()"
       :cancelBtn="true"
+      :menu="false"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
       :isLoading="isLoading"
       :isActive="!isLoading"
+    />
+    <ActionButtons
+      v-else
+      :menu="true"
+      :cancelBtn="false"
+      :saveBtn="false"
+      :isActive="!isLoading"
+      :isLoading="isLoading"
+      @handle-menu="handleMenu"
+      :label="label"
+      :annotationSet="annotationSet"
     />
   </div>
 </template>
@@ -38,7 +53,8 @@ export default {
   name: "EmptyAnnotation",
   data() {
     return {
-      empty: false
+      empty: false,
+      isLoading: false
     };
   },
   components: { ActionButtons },
@@ -49,13 +65,13 @@ export default {
     annotationSet: {
       required: true
     },
-    isLoading: {
-      type: Boolean
+    handleMenu: {
+      type: Function
     }
   },
   computed: {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"])
+    ...mapState("document", ["editAnnotation", "editingActive"])
   },
   methods: {
     isEmpty() {
@@ -79,6 +95,7 @@ export default {
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId()
         });
+        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -97,19 +114,16 @@ export default {
         is_correct: true,
         revised: true
       };
-      this.$emit("handle-data-changes", {
-        annotation: null,
-        isLoading: true
-      });
+      this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
           if (annotationCreated) {
             this.$emit("handle-data-changes", {
               annotation: annotationCreated,
-              edited: false,
-              isLoading: false
+              edited: false
             });
+            this.isLoading = false;
           }
         });
       this.$store.dispatch("document/resetEditAnnotation");
@@ -159,6 +173,11 @@ export default {
       ) {
         this.$refs.emptyAnnotation.blur();
         this.setText(this.$t("no_data_found"));
+      }
+    },
+    editingActive(newValue) {
+      if (!newValue) {
+        this.cancelEmptyAnnotation();
       }
     }
   }

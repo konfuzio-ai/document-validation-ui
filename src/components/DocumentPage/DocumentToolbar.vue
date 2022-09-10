@@ -26,7 +26,7 @@
         @close-modal="handleModal"
         :isModalActive="isModalActive"
         :setRotations="setRotations"
-        :handleShowError="handleShowError"
+        :handleError="handleError"
         :handleMessage="handleMessage"
       />
     </div> -->
@@ -103,7 +103,7 @@ export default {
       this.$store.dispatch("display/updateFit", "auto");
       this.currentPercentage = 60;
     },
-    handleShowError() {
+    handleError() {
       this.$parent.$emit("handle-error", true);
     },
     handleMessage(message) {

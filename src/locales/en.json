@@ -15,7 +15,7 @@
   "test": "Test",
   "excluded": "Excluded",
   "set_status": "Set a status",
-  "category_error": "We couldn’t change the category. Please try again later.",
+  "category_error": "Category cannot be changed because there are already accepted annotations for this document.",
   "status_error": "We couldn’t change the status. Please try again later.",
   "edit": "Edit",
   "save": "Save",
@@ -54,5 +54,6 @@
   "analysing_document": "We are analysing your document.",
   "few_minutes": "This might take a few minutes.",
   "reject_label": "Reject label",
-  "rejected": "Rejected"
+  "rejected": "Rejected",
+  "ann_exists": "An annotation for this label and label set already exists."
 }

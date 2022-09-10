@@ -80,7 +80,7 @@ export default {
     setRotations: {
       type: Boolean
     },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMessage: {
@@ -256,7 +256,7 @@ export default {
           if (response) {
             pollUntilLabelingAvailable(5000);
           } else {
-            this.handleShowError();
+            this.handleError();
             this.handleMessage(this.$i18n.t("rotation_failed"));
           }
         });

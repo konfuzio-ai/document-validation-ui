@@ -13,25 +13,28 @@
         </b-loading>
       </b-notification>
     </div>
+
     <b-button
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
-      v-on:click.stop="cancel()"
+      v-on:click.stop="cancel"
     />
+
     <b-button
       v-if="saveBtn && !isLoading"
       icon-left="check"
       :class="['is-small', isActive && 'annotation-save-btn']"
       type="is-primary"
-      v-on:click.stop="save()"
+      v-on:click.stop="save"
     />
-    <div v-if="menu && !isLoading" class="menu">
-      <b-dropdown aria-role="list" position="is-bottom-left">
+
+    <div v-if="showRejectedLabels && menu && !isLoading" class="menu-buttons">
+      <b-dropdown aria-role="list" position="is-top-left" class="width-12">
         <template #trigger>
-          <b-icon icon="ellipsis-vertical" class="menu-icon"></b-icon>
+          <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
         </template>
-        <b-dropdown-item aria-role="listitem" @click="handleMenu()">{{
+        <b-dropdown-item aria-role="listitem" @click.stop="handleMenu">{{
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>
@@ -39,6 +42,7 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   name: "ActionButtons",
   data() {
@@ -61,7 +65,13 @@ export default {
     },
     isActive: {
       type: Boolean
+    },
+    handleMenu: {
+      type: Function
     }
+  },
+  computed: {
+    ...mapState("document", ["showRejectedLabels"])
   },
   methods: {
     save() {
@@ -69,9 +79,6 @@ export default {
     },
     cancel() {
       this.$emit("cancel");
-    },
-    handleMenu() {
-      this.$emit("handle-menu");
     }
   }
 };

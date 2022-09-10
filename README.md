@@ -15,7 +15,7 @@ The widget requires `node` and `npm`. It also requires a connection to the [Konf
 Follow the steps below to get the app running.
 
 1. Clone this repository.
-2. Create a `.env` file in the project root with the properties from the `.env.example` file. Take a look at the required ones. 
+2. Create a `.env` file in the project root with the properties from the `.env.example` file. Take a look at the required ones.
 3. Run `npm install` in the project root.
 4. Run `npm run serve` to serve a local development app to run on a browser (default URL: http://localhost:3000).
 
@@ -23,7 +23,7 @@ Follow the steps below to get the app running.
 
 If you want to serve this app in a web server environment (like your company host xxxx.mycompany.com or in a cloud environment), do all steps from the previous section (except point 4) and then:
 
-1. Run `npm run build` to build the app for production. 
+1. Run `npm run build` to build the app for production.
 2. Export the `dist` folder generated from the command above to the destination source in the host server.
 3. Configure the web server engine in order to have the `index.html` file as the entry point. If everything is correctly configured you should be able to open the server URL and the app will load.
 
@@ -31,14 +31,14 @@ If you want to serve this app in a web server environment (like your company hos
 
 This sample app is built using Vue.js version 2. The `src` folder is the root of the project and is divided into:
 
-`assets` - contains all the images and styles. Each component has it's styles under the `scss` folder. The app uses the [Buefy](https://buefy.org) library, so if you want to edit the app theme you can go to the file `scss/variables.scss` and edit all the colors and variables to match the desired design. 
+`assets` - contains all the images and styles. Each component has it's styles under the `scss` folder. The app uses the [Buefy](https://buefy.org) library, so if you want to edit the app theme you can go to the file `scss/variables.scss` and edit all the colors and variables to match the desired design.
 The app uses FontAwesome for the icons. If you need to add new ones, you can do so on the `main.js` file on the icon library setup.
 
 `components` - Vue components that are responsible for making the app work. They are divided into sections related to their function.
 
 `directives` - directives for manipulating the elements in the HTML.
 
-`locales` - translations files.
+`locales` - translations files, which consist of key-value pairs. There can be as many files as languages needed. Translations are implemented using the library [Vue I18n](https://vue-i18n.intlify.dev/), and the expected value is rendered by using the `$t` translation API and passing the key as an argument.
 
 `store` - the store is implemented using [Vuex](https://vuex.vuejs.org/). It is responsible for saving all information coming from the API and local information regarding the use of the app, like the display scale. Most of the information is obtained, filtered, grouped and processed in the store files which are separated by their concept.
 
@@ -54,13 +54,13 @@ This is a simple component that loads the document images and displays them in a
 
 ![DocumentPage](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_page.svg)
 
-This component is responsible for drawing the document and handling any interaction with it. The main thing is that it uses [Konva JS](https://konvajs.org/docs/vue/index.html) to render a canvas element that has the document image as background and shapes on top. Most of the shapes are annotations from the Konfuzio API. 
+This component is responsible for drawing the document and handling any interaction with it. The main thing is that it uses [Konva JS](https://konvajs.org/docs/vue/index.html) to render a canvas element that has the document image as background and shapes on top. Most of the shapes are annotations from the Konfuzio API.
 
 ### DocumentAnnotations
 
 ![DocumentAnnotations](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/document_annotations.svg)
 
-This component is responsible for creating a list to interact with each annotation on the document. You can edit the annotation, edit empty labels and change the annotation bounding box, among other things. 
+This component is responsible for creating a list to interact with each annotation on the document. You can edit the annotation, edit empty labels and change the annotation bounding box, among other things.
 
 ### DocumentsList
 

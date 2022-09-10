@@ -28,7 +28,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["documentId"])
+    ...mapState("document", ["documentId", "showRejectedLabels"])
   },
   data() {
     return {
@@ -45,7 +45,10 @@ export default {
       this.$store.dispatch("document/startLoading");
       Promise.all([
         this.$store.dispatch("document/fetchAnnotations"),
-        this.$store.dispatch("document/fetchDocumentData")
+        this.$store.dispatch("document/fetchDocumentData"),
+        this.showRejectedLabels &&
+          this.$store.dispatch("document/fetchMissingAnnotations"),
+        this.$store.dispatch("document/fetchCurrentUser")
       ]).finally(() => {
         this.$store.dispatch("document/endLoading");
       });
@@ -54,7 +57,11 @@ export default {
       Promise.all([this.$store.dispatch("category/fetchCategories")]);
     },
     documentsListLoading() {
-      Promise.all([this.$store.dispatch("category/fetchDocumentList")]);
+      Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
+        () => {
+          this.$store.dispatch("category/createAvailableDocumentsList");
+        }
+      );
     }
   }
 };

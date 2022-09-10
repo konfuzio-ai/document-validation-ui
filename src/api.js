@@ -9,6 +9,12 @@ if (process.env.VUE_APP_GUEST_USER_TOKEN) {
   ] = `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`;
 }
 
+// if (process.env.VUE_APP_USERNAME) {
+//   axios.defaults.headers.common["Authorization"] =
+//     "Basic " +
+//     btoa(process.env.VUE_APP_USERNAME + ":" + process.env.VUE_APP_PASSWORD);
+// }
+
 const HTTP = axios.create({
   baseURL: process.env.VUE_APP_API_URL || `/api/v3/`
 });

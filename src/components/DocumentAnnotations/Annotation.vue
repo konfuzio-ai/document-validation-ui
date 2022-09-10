@@ -5,40 +5,35 @@
 ></style>
 
 <template>
-  <div
-    class="annotation"
-    ref="annotation"
-    :id="annotation.id"
-    @click="handleEditAnnotation"
-  >
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       :class="[
         'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationEmpty && !isAnnotationInEditMode(annotation.id, spanIndex)
-          ? 'label-empty'
-          : ''
+        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : ''
       ]"
       role="textbox"
       ref="contentEditable"
-      :contenteditable="true"
+      :contenteditable="isAnnotationEditable()"
+      @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
     >
       {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
     </span>
-    <div
-      v-if="isAnnotationInEditMode(annotation.id, spanIndex)"
-      class="buttons-container"
-    >
+    <div class="buttons-container">
       <ActionButtons
-        :saveBtn="true"
-        :cancelBtn="true"
+        :saveBtn="showButton()"
+        :cancelBtn="isAnnotationBeingEdited"
         :isActive="!isLoading"
         :isLoading="isLoading"
+        :menu="!isAnnotationBeingEdited"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
+        :annotationSet="annotationSet"
+        :label="label"
+        :handleMenu="handleMenu"
       />
     </div>
   </div>
@@ -65,19 +60,26 @@ export default {
       type: Number,
       required: true
     },
-    isLoading: {
-      type: Boolean
-    },
-    handleShowError: {
+    handleError: {
       type: Function
     },
     handleMessage: {
       type: Function
+    },
+    handleMenu: {
+      type: Function
+    },
+    label: {
+      type: Object
+    },
+    annotationSet: {
+      type: Object
     }
   },
   data() {
     return {
-      error: null
+      error: null,
+      isLoading: false
     };
   },
   components: {
@@ -87,9 +89,9 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation"]),
+    ...mapState("document", ["editAnnotation", "editingActive"]),
     annotationText() {
-      if (this.isAnnotationInEditMode(this.annotation.id, this.spanIndex)) {
+      if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
       } else {
         return this.span.offset_string;
@@ -97,45 +99,59 @@ export default {
     },
     isAnnotationEmpty() {
       return this.annotation.revised && !this.annotation.is_correct;
+    },
+    isAnnotationBeingEdited() {
+      return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
     }
   },
   methods: {
+    isAnnotationEditable() {
+      return (
+        !this.isAnnotationEmpty ||
+        (this.isAnnotationBeingEdited &&
+          this.spanSelection &&
+          this.spanSelection.offset_string != null)
+      );
+    },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
-      if (
-        !this.isAnnotationInEditMode(this.annotation.id, this.spanIndex) &&
-        !this.isLoading
-      ) {
+      if (!this.isAnnotationBeingEdited && !this.isLoading) {
+        this.$store.dispatch("selection/enableSelection", this.annotation.id);
+        this.$store.dispatch("document/setEditAnnotation", {
+          id: this.annotation.id,
+          index: this.spanIndex
+        });
+        this.$store.dispatch("document/setEditingActive", true);
+
         if (this.isAnnotationEmpty) {
-          this.setText("");
-        }
-        const page = this.pageAtIndex(this.span.page_index);
-        if (page) {
-          this.$store.dispatch("selection/enableSelection", this.annotation.id);
-          const { x, y, width, height } = this.bboxToRect(page, this.span);
+          this.setText(this.$t("draw_box_document"));
+        } else {
+          this.$refs.contentEditable.focus();
 
-          const selection = {
-            start: {
-              x,
-              y
-            },
-            end: {
-              x: x + width,
-              y: y + height
-            },
-            pageNumber: page.number
-          };
+          const page = this.pageAtIndex(this.span.page_index);
+          if (page) {
+            // this.$store.dispatch("selection/enableSelection", this.annotation.id);
+            const { x, y, width, height } = this.bboxToRect(page, this.span);
 
-          this.$store.dispatch("selection/setSelection", {
-            selection,
-            span: this.span
-          });
-          this.$store.dispatch("document/setEditAnnotation", {
-            id: this.annotation.id,
-            index: this.spanIndex
-          });
+            const selection = {
+              start: {
+                x,
+                y
+              },
+              end: {
+                x: x + width,
+                y: y + height
+              },
+              pageNumber: page.number
+            };
+
+            this.$store.dispatch("selection/setSelection", {
+              selection,
+              span: this.span
+            });
+          }
         }
       }
     },
@@ -161,18 +177,12 @@ export default {
 
       // If the user didn't change the value, we don't want to do anything
       if (this.annotationText === this.span.offset_string) {
-        this.$emit("handle-data-changes", {
-          annotation: null,
-          isLoading: null
-        });
+        this.isLoading = false;
         this.handleCancel();
         return;
       }
 
-      this.$emit("handle-data-changes", {
-        annotation: null,
-        isLoading: true
-      });
+      this.isLoading = true;
 
       if (this.annotationText.length === 0) {
         updatedString = {
@@ -210,10 +220,8 @@ export default {
           // Check if the response is successful or not
           if (response) {
             this.$store.dispatch("document/fetchAnnotations");
-            this.$emit("handle-data-changes", {
-              annotation: null,
-              isLoading: null
-            });
+            this.isLoading = false;
+
             this.setText(
               this.annotationText === ""
                 ? this.$t("no_data_found")
@@ -221,27 +229,20 @@ export default {
             );
           } else {
             this.error = true;
-            this.handleShowError();
+            this.handleError();
             this.handleMessage(this.$i18n.t("editing_error"));
             this.setText(
               this.isAnnotationEmpty
                 ? this.$t("no_data_found")
                 : this.span.offset_string
             );
-            this.$emit("handle-data-changes", {
-              annotation: null,
-              isLoading: null
-            });
           }
         })
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("document/endLoading");
           this.$store.dispatch("selection/disableSelection");
-          this.$emit("handle-data-changes", {
-            annotation: null,
-            isLoading: false
-          });
+          this.isLoading = false;
 
           this.$refs.contentEditable.blur();
 
@@ -249,12 +250,18 @@ export default {
             this.error = false;
           }, 2000);
         });
+    },
+    showButton() {
+      if (this.isAnnotationBeingEdited && this.spanSelection) {
+        return true;
+      }
+      return false;
     }
   },
   watch: {
     spanSelection(span) {
       if (
-        this.isAnnotationInEditMode(this.annotation.id, this.spanIndex) &&
+        this.isAnnotationBeingEdited &&
         span &&
         span.offset_string &&
         span.offset_string !== this.span.offset_string
@@ -270,8 +277,8 @@ export default {
         newAnnotation &&
         oldAnnotation.id === this.annotation.id &&
         oldAnnotation.index === this.spanIndex &&
-        (oldAnnotation.id !== newAnnotation.id ||
-          oldAnnotation.index !== newAnnotation.index)
+        oldAnnotation.id !== newAnnotation.id &&
+        oldAnnotation.index !== newAnnotation.index
       ) {
         this.setText(
           this.isAnnotationEmpty
@@ -279,6 +286,11 @@ export default {
             : this.span.offset_string
         );
         this.$refs.contentEditable.blur();
+      }
+    },
+    editingActive(newValue) {
+      if (!newValue) {
+        this.handleCancel();
       }
     }
   }

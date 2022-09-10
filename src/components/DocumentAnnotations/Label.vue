@@ -14,7 +14,7 @@
         isAnnotationInEditMode(annotationId(annotation)) && 'editing'
       ]"
       :ref="referenceId(annotation)"
-      @click="onLabelClick(true)"
+      @click="onLabelClick"
       @mouseenter="onLabelHover(true, annotation)"
       @mouseleave="onLabelHover(false, annotation)"
     >
@@ -36,34 +36,37 @@
               :annotation="annotation"
               :span="span"
               :spanIndex="index"
-              :isLoading="isLoading"
-              @handle-data-changes="handleDataChanges"
-              :handleShowError="handleShowError"
+              :handleError="handleError"
               :handleMessage="handleMessage"
+              :label="label"
+              :annotationSet="annotationSet"
+              :handleMenu="handleMenu"
+              @handle-data-changes="handleDataChanges"
             />
           </div>
-
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
-            :isLoading="isLoading"
             @handle-data-changes="handleDataChanges"
-            :handleShowError="handleShowError"
+            :handleError="handleError"
             :handleMessage="handleMessage"
+            :handleMenu="handleMenu"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters, mapState } from "vuex";
 import LabelDetails from "./LabelDetails";
 import Annotation from "./Annotation";
 import EmptyAnnotation from "./EmptyAnnotation";
+
 /**
- * This component shows each label and it's annotations
+ * This component shows each label and its annotations
  */
 export default {
   name: "Label",
@@ -81,9 +84,19 @@ export default {
     handleMessage: {
       type: Function
     },
-    handleShowError: {
+    handleError: {
       type: Function
+    },
+    missingAnnotations: {
+      type: Array
     }
+  },
+  data() {
+    return {
+      edited: false,
+      isLoading: false,
+      annotationAnimationTimeout: null
+    };
   },
   computed: {
     ...mapState("document", [
@@ -106,14 +119,6 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      edited: false,
-      showError: false,
-      isLoading: false,
-      annotationAnimationTimeout: null
-    };
-  },
   methods: {
     referenceId(annotation) {
       let refId = `label_${this.label.id}_${this.annotationSet.id}`;
@@ -127,15 +132,11 @@ export default {
         ? annotation.id
         : `${this.annotationSet.id}_${this.label.id}`;
     },
-    handleDataChanges({ annotation, isLoading }) {
+    handleDataChanges({ annotation }) {
       if (annotation !== null) {
         if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
         }
-      }
-
-      if (isLoading !== null) {
-        this.isLoading = isLoading;
       }
     },
     onLabelHover(value, annotation) {
@@ -154,9 +155,12 @@ export default {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
       }
     },
-    onLabelClick(value) {
-      if (value && this.documentFocusedAnnotation) {
-        this.handleScroll(value);
+    onLabelClick() {
+      if (
+        this.documentFocusedAnnotation &&
+        this.documentFocusedAnnotation.is_correct
+      ) {
+        this.handleScroll(true);
       }
     },
     isAnnotationSelected(annotation) {
@@ -168,11 +172,15 @@ export default {
       }
       return false;
     },
-    handleError(value) {
-      this.showError = value;
-    },
-    handleErrorClose() {
-      this.showError = false;
+    handleMenu() {
+      if (!this.label || !this.annotationSet) return;
+
+      const rejected = {
+        label: this.label.id,
+        label_set: this.annotationSet.label_set.id
+      };
+
+      this.$emit("handle-menu", rejected);
     }
   },
   watch: {
