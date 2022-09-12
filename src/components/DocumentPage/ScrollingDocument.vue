@@ -4,12 +4,12 @@
   src="../../assets/scss/scrolling_document.scss"
 ></style>
 <template>
-  <div
-    class="scrolling-document"
-    v-scroll.immediate="updateScrollBounds"
-    ref="scrollingDocument"
-  >
-    <div :class="[recalculatingAnnotations && 'blur']">
+  <div>
+    <div
+      v-scroll.immediate="updateScrollBounds"
+      ref="scrollingDocument"
+      :class="['scrolling-document', recalculatingAnnotations && 'blur']"
+    >
       <ScrollingPage
         v-for="page in pages"
         :key="page.number"

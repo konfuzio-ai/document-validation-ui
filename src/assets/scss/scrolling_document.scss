@@ -1,11 +1,14 @@
 @import "./imports.scss";
 
-.scrolling-page {
-  margin: 8px 0;
-}
-
 .scrolling-document {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
   scroll-behavior: smooth;
+
+  .scrolling-page {
+    margin: 8px 0;
+  }
 
   .blur {
     filter: blur(2px);
