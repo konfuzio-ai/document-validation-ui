@@ -8,7 +8,8 @@
     <span
       :class="[
         'annotation-value',
-        isEmptyAnnotationEditable() ? '' : 'label-empty'
+        isEmptyAnnotationEditable() ? '' : 'label-empty',
+        isEmptyAnnotationEditable() && clicked && 'clicked'
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotation"
@@ -54,7 +55,8 @@ export default {
   data() {
     return {
       empty: false,
-      isLoading: false
+      isLoading: false,
+      clicked: false
     };
   },
   components: { ActionButtons },
@@ -96,6 +98,7 @@ export default {
           id: this.emptyAnnotationId()
         });
         this.$store.dispatch("document/setEditingActive", true);
+        this.clicked = true;
       }
     },
     saveEmptyAnnotation(event) {
@@ -135,6 +138,8 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
       this.setText(this.$t("no_data_found"));
+      this.$store.dispatch("document/setEditingActive", false);
+      this.clicked = false;
     },
     isEmptyAnnotationEditable() {
       return (

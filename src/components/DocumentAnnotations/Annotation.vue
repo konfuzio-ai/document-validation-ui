@@ -11,7 +11,8 @@
         'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : ''
+        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : '',
+        isAnnotationBeingEdited && clicked && 'clicked'
       ]"
       role="textbox"
       ref="contentEditable"
@@ -79,7 +80,8 @@ export default {
   data() {
     return {
       error: null,
-      isLoading: false
+      isLoading: false,
+      clicked: false
     };
   },
   components: {
@@ -117,6 +119,7 @@ export default {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation() {
+      this.clicked = true;
       if (!this.isAnnotationBeingEdited && !this.isLoading) {
         this.$store.dispatch("selection/enableSelection", this.annotation.id);
         this.$store.dispatch("document/setEditAnnotation", {
@@ -163,6 +166,8 @@ export default {
       );
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/setEditingActive", false);
+      this.clicked = false;
       this.$refs.contentEditable.blur();
     },
     handlePaste(event) {
