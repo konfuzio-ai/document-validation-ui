@@ -11,7 +11,8 @@
         'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : ''
+        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : '',
+        isAnnotationBeingEdited && 'clicked'
       ]"
       role="textbox"
       ref="contentEditable"
@@ -163,6 +164,7 @@ export default {
       );
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/setEditingActive", false);
       this.$refs.contentEditable.blur();
     },
     handlePaste(event) {

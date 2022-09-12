@@ -117,23 +117,23 @@ export default {
       // Not allow starting edit mode with ArrowUp key
       if (event.key === "ArrowUp" && !this.editingActive) return;
 
-      // Do not start navigation if any other key is pressed
-      if (!(event.key === "ArrowDown" || event.key === "ArrowUp")) {
-        return;
-      }
-
       this.$store.dispatch("document/setEditingActive", true);
 
-      const annPath = event.path[0];
-
-      // Create an array from the result
+      // Create an array from the elements selected
       // for easier management of data
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
       );
 
-      // get index of currently focused element
-      const currentAnnIndex = annotations.findIndex(el => el === annPath);
+      // Get clicked element to get the index
+      const clickedAnnotations = Array.from(
+        document.getElementsByClassName("clicked")
+      );
+
+      // get index of currently active element
+      const currentAnnIndex = annotations.findIndex(
+        el => el === clickedAnnotations[0]
+      );
 
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
@@ -141,36 +141,36 @@ export default {
           return;
         }
 
-        // Check if the current element returns -1 (empty annotations)
-        // to find that element in the array
-        // and check we are not going over the length of the array
-        if (currentAnnIndex !== -1) {
+        /**
+         * Enable navigation when some annotation is already focused
+         */
+        // Update count to avoid restarting the navigation
+        if (clickedAnnotations[0]) {
           this.count = currentAnnIndex + 1;
         }
 
-        document.getElementsByClassName("annotation-value")[this.count].click();
+        annotations[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
         // Check if the event happened on the first element from the array
         // If so, reset count to 0
-        if (annPath === annotations[0]) {
+        if (clickedAnnotations[0] === annotations[0]) {
           this.count = 0;
           return;
         }
 
-        // Check if the current element returns -1 (empty annotations)
-        // to find that element in the array
-        if (currentAnnIndex !== -1) {
+        /**
+         * Enable navigation when some annotation is already focused
+         */
+        // Update count to avoid restarting the navigation
+        if (clickedAnnotations[0]) {
           this.count = currentAnnIndex - 1;
         }
 
-        console.log(annPath);
-
-        console.log(
-          document.getElementsByClassName("annotation-value")[this.count]
-        );
-        document.getElementsByClassName("annotation-value")[this.count].click();
+        annotations[this.count].click();
         this.count--;
+      } else {
+        return;
       }
     },
     getNumberOfAnnotationSetGroup(annotationSet) {
@@ -211,7 +211,6 @@ export default {
       this.$emit("handle-message", message);
     },
     rejectAnnotation(rejected) {
-      console.log("rejected", rejected);
       if (!rejected) return;
 
       this.$store
@@ -224,6 +223,13 @@ export default {
             this.handleShowMessage(this.$i18n.t("ann_exists"));
           }
         });
+    }
+  },
+  watch: {
+    editingActive(newValue) {
+      if (!newValue) {
+        this.count = 0;
+      }
     }
   }
 };
