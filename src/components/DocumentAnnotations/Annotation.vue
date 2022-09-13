@@ -279,8 +279,8 @@ export default {
         newAnnotation &&
         oldAnnotation.id === this.annotation.id &&
         oldAnnotation.index === this.spanIndex &&
-        oldAnnotation.id !== newAnnotation.id &&
-        oldAnnotation.index !== newAnnotation.index
+        (oldAnnotation.id !== newAnnotation.id ||
+          oldAnnotation.index !== newAnnotation.index)
       ) {
         this.setText(
           this.isAnnotationEmpty
