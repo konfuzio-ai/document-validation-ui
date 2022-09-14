@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "../DocumentPage/DocumentToolbar";
