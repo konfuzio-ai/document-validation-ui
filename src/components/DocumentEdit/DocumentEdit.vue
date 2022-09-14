@@ -274,28 +274,6 @@ export default {
       this.$store.dispatch("edit/setPagesArray", pages);
       this.$store.dispatch("edit/setPagesFrontend", pages);
     }
-
-    // resize(event) {
-    //   console.log("event", event.x);
-    //   const divX = this.divPosition - event.x;
-    //   this.divPosition = event.x;
-
-    //   while (this.resizing && this.width < 100) {
-    //     this.width += 1;
-    //   }
-    // },
-    // handleMouseDown(event) {
-    //   if (event.offsetX < this.borderSize) {
-    //     this.resizing = true;
-    //     this.divPosition = event.x;
-
-    //     document.addEventListener("mousemove", this.resize, false);
-    //   }
-    // },
-    // handleMouseUp() {
-    //   this.resizing = false;
-    //   document.removeEventListener("mousemove", this.resize, false);
-    // }
   },
   watch: {
     pages() {
@@ -311,9 +289,6 @@ export default {
       if (newValue) {
         this.saveUpdatedDocument();
       }
-    },
-    pagesArray(newValue) {
-      console.log(newValue);
     }
   },
   mounted() {

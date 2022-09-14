@@ -132,15 +132,14 @@ const actions = {
         }
       }
 
-        if (direction === "right") {
-          state.pagesArray.push({
-            id: page.id,
-            page_number: page.number,
-            angle: 90,
-            thumbnail_url: page.thumbnail_url,
-            updated_at: page.updated_at
-          });
-        }
+      if (direction === "right") {
+        state.pagesArray.push({
+          id: page.id,
+          page_number: page.number,
+          angle: 90,
+          thumbnail_url: page.thumbnail_url,
+          updated_at: page.updated_at
+        });
       }
     } else {
       if (direction === "left") {
@@ -243,7 +242,7 @@ const actions = {
             const newId = newDocument.id;
 
             if (newId !== rootState.document.documentId) {
-              await dispatch("document/setDocId", newId, {
+              dispatch("document/setDocId", newId, {
                 root: true
               });
             }
