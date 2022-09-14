@@ -26,13 +26,13 @@
                   'img-container',
                   selected && isPageSelected(page.id) === page.id && 'selected'
                 ]"
-                :style="{
-                  transform: 'rotate(' + getRotation(page.id) + 'deg)'
-                }"
               >
                 <ServerImage
                   :class="['img-thumbnail']"
                   :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+                  :style="{
+                    transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                  }"
                 />
               </div>
               <div class="icon-container">
