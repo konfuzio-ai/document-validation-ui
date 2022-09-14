@@ -66,7 +66,7 @@ export default {
 
   methods: {
     updateScrollBounds() {
-      const { scrollTop, clientHeight } = this.$el;
+      const { scrollTop, clientHeight } = this.$refs.scrollingDocument;
       this.scrollTop = scrollTop;
       this.clientHeight = clientHeight;
     },
