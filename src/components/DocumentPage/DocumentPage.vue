@@ -235,6 +235,9 @@ export default {
     },
 
     pageNumber() {
+      if (this.editMode) {
+        return this.page.page_number;
+      }
       return this.page.number;
     },
 
