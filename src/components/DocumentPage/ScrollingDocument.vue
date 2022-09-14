@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapGetters } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "../DocumentPage/DocumentToolbar";
@@ -78,7 +78,7 @@ export default {
 
   methods: {
     updateScrollBounds() {
-      const { scrollTop, clientHeight } = this.$el;
+      const { scrollTop, clientHeight } = this.$refs.scrollingDocument;
       this.scrollTop = scrollTop;
       this.clientHeight = clientHeight;
     },
