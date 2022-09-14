@@ -1,6 +1,6 @@
 <template>
   <keep-alive>
-    <DummyPage v-if="!pageInVisibleRange(page.number)" :page="page" />
+    <DummyPage v-if="!pageInVisibleRange(page)" :page="page" />
     <DocumentPage v-else :page="page" />
   </keep-alive>
 </template>
@@ -74,7 +74,8 @@ export default {
     },
 
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["documentFocusedAnnotation", "pages"])
+    ...mapState("document", ["documentFocusedAnnotation", "pages"]),
+    ...mapState("edit", ["editMode"])
   },
 
   methods: {
@@ -86,8 +87,14 @@ export default {
         );
       }
     },
-    pageInVisibleRange(pageNumber) {
-      return this.visiblePageRange.includes(pageNumber);
+    pageInVisibleRange(page) {
+      let number;
+      if (this.editMode) {
+        number = page.page_number;
+      } else {
+        number = page.number;
+      }
+      return this.visiblePageRange.includes(number);
     },
     updateElementBounds() {
       const { offsetTop, offsetHeight } = this.$el;
@@ -140,11 +147,20 @@ export default {
     },
     isElementFocused(focused) {
       if (focused) {
-        this.$store.dispatch("display/updateCurrentPage", this.page.number);
+        let pageNumber;
+        if (this.editMode) {
+          pageNumber = this.page.page_number;
+        } else {
+          pageNumber = this.page.number;
+        }
+        this.$store.dispatch("display/updateCurrentPage", pageNumber);
       }
     },
     currentPage(number) {
-      if (this.page.number === number && !this.isElementFocused) {
+      if (
+        (this.page.number === number || this.page.page_number === number) &&
+        !this.isElementFocused
+      ) {
         this.$emit("page-jump", this.elementTop);
       }
     }

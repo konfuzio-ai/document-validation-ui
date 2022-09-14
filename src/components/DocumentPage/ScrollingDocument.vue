@@ -101,6 +101,12 @@ export default {
       if (pages.length > 0) {
         this.$emit("pages-reset");
       }
+    },
+    pagesArray(pages) {
+      // if pages change
+      if (pages.length > 0) {
+        this.$emit("pages-reset");
+      }
     }
   }
 };
