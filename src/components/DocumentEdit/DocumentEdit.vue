@@ -98,7 +98,9 @@ export default {
           angle: 0,
           page_number: page.number,
           thumbnail_url: page.thumbnail_url,
-          updated_at: page.updated_at
+          updated_at: page.updated_at,
+          image_url: page.image_url,
+          size: page.size
         };
       });
     },

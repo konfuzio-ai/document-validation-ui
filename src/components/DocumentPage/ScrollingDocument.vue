@@ -9,9 +9,21 @@
     v-scroll.immediate="updateScrollBounds"
     ref="scrollingDocument"
   >
-    <div :class="[recalculatingAnnotations && 'blur']">
+    <div :class="[recalculatingAnnotations && 'blur']" v-if="!editMode">
       <ScrollingPage
         v-for="page in pages"
+        :key="page.number"
+        :page="page"
+        :clientHeight="clientHeight"
+        :scrollTop="scrollTop"
+        @page-jump="onPageJump"
+        class="scrolling-page"
+        :scroll="scroll"
+      />
+    </div>
+    <div v-else>
+      <ScrollingPage
+        v-for="page in pagesArray"
         :key="page.number"
         :page="page"
         :clientHeight="clientHeight"
@@ -61,7 +73,7 @@ export default {
     ...mapState("display", ["currentPage"]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapState("document", ["recalculatingAnnotations", "pages"]),
-    ...mapState("edit", ["editMode"])
+    ...mapState("edit", ["editMode", "pagesArray"])
   },
 
   methods: {
