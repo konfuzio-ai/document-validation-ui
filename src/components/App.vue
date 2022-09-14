@@ -1,7 +1,7 @@
 <style lang="scss" src="../assets/scss/main.scss"></style>
 <template>
   <div>
-    <DocumentsList v-if="categoryId" />
+    <DocumentsList v-if="showDocumentsList" />
     <DocumentDashboard class="dashboard-component" />
   </div>
 </template>
@@ -27,17 +27,30 @@ export default {
     category: { type: String, required: false },
     locale: { type: String, required: false }
   },
+  data() {
+    return {
+      showDocumentsList: false
+    };
+  },
   created() {
+    this.$store.dispatch("document/setDocId", this.documentId);
+    this.$store.dispatch("category/setCategoryId", this.categoryId);
+
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
     }
+    this.documentLoading();
     if (!this.publicView) {
       this.categoryLoading();
       this.documentsListLoading();
     }
   },
   computed: {
-    ...mapState("document", ["documentId", "showRejectedLabels", "publicView"]),
+    ...mapState("document", {
+      documentIdLoaded: "documentId",
+      showRejectedLabels: "showRejectedLabels",
+      publicView: "publicView"
+    }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
@@ -58,35 +71,35 @@ export default {
     }
   },
   watch: {
-    documentId() {
-      this.documentLoading();
+    documentIdLoaded(newId, oldId) {
+      // if oldId is null, then it's the first time
+      if (oldId !== null && newId !== oldId) {
+        this.documentLoading();
+      }
     }
   },
   methods: {
     documentLoading() {
       this.$store.dispatch("document/startLoading");
       Promise.all([
-        this.$store.dispatch("document/setDocId", this.documentId),
         this.$store.dispatch("document/fetchAnnotations"),
         this.$store.dispatch("document/fetchDocumentData"),
         this.showRejectedLabels &&
           !this.publicView &&
           this.$store.dispatch("document/fetchMissingAnnotations"),
-        this.$store.dispatch("document/fetchCurrentUser")
+        !this.publicView && this.$store.dispatch("document/fetchCurrentUser")
       ]).finally(() => {
         this.$store.dispatch("document/endLoading");
       });
     },
     categoryLoading() {
-      Promise.all([
-        this.$store.dispatch("category/setCategoryId", this.categoryId),
-        this.$store.dispatch("category/fetchCategories")
-      ]);
+      Promise.all([this.$store.dispatch("category/fetchCategories")]);
     },
     documentsListLoading() {
       if (this.categoryId) {
         Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
           () => {
+            this.showDocumentsList = true;
             this.$store.dispatch("category/createAvailableDocumentsList");
           }
         );

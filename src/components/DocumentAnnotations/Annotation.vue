@@ -111,7 +111,7 @@ export default {
   methods: {
     isAnnotationEditable() {
       return (
-        !publicView &&
+        !this.publicView &&
         (!this.isAnnotationEmpty ||
           (this.isAnnotationBeingEdited &&
             this.spanSelection &&
