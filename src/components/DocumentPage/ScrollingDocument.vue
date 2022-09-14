@@ -4,34 +4,36 @@
   src="../../assets/scss/scrolling_document.scss"
 ></style>
 <template>
-  <div
-    class="scrolling-document"
-    v-scroll.immediate="updateScrollBounds"
-    ref="scrollingDocument"
-  >
-    <div :class="[recalculatingAnnotations && 'blur']" v-if="!editMode">
-      <ScrollingPage
-        v-for="page in pages"
-        :key="page.number"
-        :page="page"
-        :clientHeight="clientHeight"
-        :scrollTop="scrollTop"
-        @page-jump="onPageJump"
-        class="scrolling-page"
-        :scroll="scroll"
-      />
-    </div>
-    <div v-else>
-      <ScrollingPage
-        v-for="page in pagesArray"
-        :key="page.number"
-        :page="page"
-        :clientHeight="clientHeight"
-        :scrollTop="scrollTop"
-        @page-jump="onPageJump"
-        class="scrolling-page"
-        :scroll="scroll"
-      />
+  <div>
+    <div
+      class="scrolling-document"
+      v-scroll.immediate="updateScrollBounds"
+      ref="scrollingDocument"
+    >
+      <div :class="[recalculatingAnnotations && 'blur']" v-if="!editMode">
+        <ScrollingPage
+          v-for="page in pages"
+          :key="page.number"
+          :page="page"
+          :clientHeight="clientHeight"
+          :scrollTop="scrollTop"
+          @page-jump="onPageJump"
+          class="scrolling-page"
+          :scroll="scroll"
+        />
+      </div>
+      <div v-else>
+        <ScrollingPage
+          v-for="page in pagesArray"
+          :key="page.number"
+          :page="page"
+          :clientHeight="clientHeight"
+          :scrollTop="scrollTop"
+          @page-jump="onPageJump"
+          class="scrolling-page"
+          :scroll="scroll"
+        />
+      </div>
     </div>
     <Toolbar v-if="!editMode" />
   </div>
