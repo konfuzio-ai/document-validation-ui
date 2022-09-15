@@ -102,7 +102,7 @@ export default {
       const { width, height } = this.defaultViewport;
       return width <= height;
     },
-    ...mapState("display", ["scale", "fit"]),
+    ...mapState("display", ["scale", "fit", "optimalScale"]),
     ...mapState("document", ["pages"]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("document", ["pageCount"]),
@@ -131,13 +131,11 @@ export default {
     pageWidthScale() {
       const { defaultViewport, $el } = this;
       if (!this.defaultViewport.width) return 0;
-
       const elementsWidth =
         (this.$refs.editView
           ? this.$refs.editView.$el.clientWidth
           : this.$refs.documentPages.$el.clientWidth +
             this.$refs.annotations.$el.clientWidth) + 1;
-
       return (
         (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /
         defaultViewport.width
@@ -161,7 +159,6 @@ export default {
     fitWidth() {
       this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
       this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
-
       const scale = this.pageWidthScale();
       this.updateScale(scale, {
         isOptimal: !this.optimalScale
