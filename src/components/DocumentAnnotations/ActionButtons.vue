@@ -37,7 +37,7 @@
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
         </template>
-        <b-dropdown-item aria-role="listitem" v-on:click.stop="handleMenu">{{
+        <b-dropdown-item aria-role="listitem" @click.stop="handleMenu">{{
           $t("reject_label")
         }}</b-dropdown-item>
       </b-dropdown>
@@ -69,11 +69,8 @@ export default {
     isActive: {
       type: Boolean
     },
-    annotationSet: {
-      type: Object
-    },
-    label: {
-      type: Object
+    handleMenu: {
+      type: Function
     }
   },
   computed: {
@@ -85,16 +82,6 @@ export default {
     },
     cancel() {
       this.$emit("cancel");
-    },
-    handleMenu() {
-      if (!this.label || !this.annotationSet) return;
-
-      const rejected = {
-        label: this.label.id,
-        label_set: this.annotationSet.label_set.id
-      };
-
-      this.$emit("handle-menu", rejected);
     }
   }
 };

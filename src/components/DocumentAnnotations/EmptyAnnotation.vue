@@ -9,13 +9,16 @@
       v-if="!publicView"
       :class="[
         'annotation-value',
-        isEmptyAnnotationEditable() ? '' : 'label-empty'
+        isEmptyAnnotationEditable() ? '' : 'label-empty',
+        isAnnotationBeingEdited() && 'clicked'
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
       @input="isEmpty"
       @click="handleEditEmptyAnnotation"
+      @focus="handleEditEmptyAnnotation"
+      @keyup.esc="cancelEmptyAnnotation"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -43,7 +46,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
  * This component is responsible for managing empty annotations.
@@ -69,8 +72,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "publicView"])
+    ...mapState("document", ["editAnnotation", "editingActive", "publicView"])
   },
   methods: {
     isEmpty() {
@@ -80,6 +84,9 @@ export default {
     },
     emptyAnnotationId() {
       return `${this.annotationSet.id}_${this.label.id}`;
+    },
+    isAnnotationBeingEdited() {
+      return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
       if (
@@ -95,6 +102,7 @@ export default {
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId()
         });
+        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -134,6 +142,7 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
       this.setText(this.$t("no_data_found"));
+      this.$store.dispatch("document/setEditingActive", false);
     },
     isEmptyAnnotationEditable() {
       return (
@@ -172,6 +181,11 @@ export default {
       ) {
         this.$refs.emptyAnnotation.blur();
         this.setText(this.$t("no_data_found"));
+      }
+    },
+    editingActive(newValue) {
+      if (!newValue) {
+        this.cancelEmptyAnnotation();
       }
     }
   }

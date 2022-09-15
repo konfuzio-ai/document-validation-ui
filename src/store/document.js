@@ -21,8 +21,9 @@ const state = {
   missingAnnotations: [],
   // TODO: remove this after the reject label endpoint is merged in testing
   showRejectedLabels: false,
+  currentUser: null,
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
-  currentUser: null
+  editingActive: false
 };
 
 const getters = {
@@ -177,6 +178,9 @@ const actions = {
     commit
   }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
+  },
+  setEditingActive: ({ commit }, value) => {
+    commit("SET_EDITING_ACTIVE", value);
   },
 
   /**
@@ -472,6 +476,9 @@ const mutations = {
   },
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
+  },
+  SET_EDITING_ACTIVE: (state, value) => {
+    state.editingActive = value;
   }
 };
 

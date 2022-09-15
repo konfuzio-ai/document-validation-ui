@@ -24,6 +24,28 @@
         />
 
         <template v-if="pageInVisibleRange">
+          <v-group ref="entities" v-if="showEntities">
+            <v-rect
+              v-for="(entity, index) in scaledEntities"
+              :key="index"
+              :config="{
+                stroke: '#ccc',
+                strokeWidth: 2,
+                dash: [5, 2],
+                fill: 'transparent',
+                globalCompositeOperation: 'multiply',
+                transformsEnabled: 'position',
+                hitStrokeWidth: 0,
+                shadowForStrokeEnabled: false,
+                perfectDrawEnabled: false,
+                name: 'entity',
+                ...entity.scaled
+              }"
+              @mouseenter="cursor = 'pointer'"
+              @mouseleave="cursor = 'crosshair'"
+              @click="getEntitySelectionContent(entity)"
+            ></v-rect>
+          </v-group>
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
@@ -118,7 +140,9 @@ export default {
 
   data() {
     return {
-      image: null
+      image: null,
+      // TODO: remove this when annotation creation is implemented
+      showEntities: false
     };
   },
 
@@ -162,6 +186,32 @@ export default {
     },
 
     /**
+     * We take the entities from the backend and resize them according
+     * to the `scale` (zoom), the `imageScale` (proportion between the original
+     * document and the served image) and `PIXEL_RATIO` (in case of retina displays).
+     * We also change the original bbox format to something that can be used with CSS.
+     * The original is stored inside the `original` property, since it can be reused
+     * when we're sending the entity to the backend for selection or saving.
+     */
+    scaledEntities() {
+      // entities are either not loaded yet or empty
+      if (!this.page.hasOwnProperty("entities") || !this.page.entities) {
+        return [];
+      }
+
+      return this.page.entities.map(entity => {
+        const box = this.bboxToRect(this.page, entity);
+        return {
+          original: entity,
+          scaled: {
+            ...box
+          },
+          clickSelected: false
+        };
+      });
+    },
+
+    /**
      * A filtered version of `annotations` for the chosen page.
      * Include annotations that have *at least* one bbox in the page.
      * If the annotation's bboxes span multiple pages, each DocumentPage receives
@@ -194,7 +244,11 @@ export default {
       );
     },
 
-    ...mapState("selection", ["isSelecting", "selectionFromBbox"]),
+    ...mapState("selection", [
+      "isSelecting",
+      "selectionFromBbox",
+      "spanSelection"
+    ]),
     ...mapState("display", ["currentPage", "scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
@@ -205,8 +259,7 @@ export default {
     ...mapGetters("display", [
       "visiblePageRange",
       "bboxToRect",
-      "clientToBbox",
-      "imageScale"
+      "clientToBbox"
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
@@ -411,6 +464,7 @@ export default {
         );
       }
     },
+
     async getBoxSelectionContent() {
       const box = this.clientToBbox(
         this.page,
@@ -419,6 +473,16 @@ export default {
       );
       this.$store.dispatch("document/startLoading");
       await this.$store.dispatch("selection/getTextFromBboxes", box);
+      this.$store.dispatch("document/endLoading");
+    },
+
+    async getEntitySelectionContent(entity) {
+      this.$store.dispatch("document/startLoading");
+      await this.$store.dispatch(
+        "selection/getTextFromBboxes",
+        entity.original
+      );
+      //alert(this.spanSelection.offset_string);
       this.$store.dispatch("document/endLoading");
     }
   },
