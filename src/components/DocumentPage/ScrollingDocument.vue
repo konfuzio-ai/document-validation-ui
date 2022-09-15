@@ -21,7 +21,7 @@
         :scroll="scroll"
       />
     </div>
-    <Toolbar />
+    <Toolbar v-if="pages && pages.length > 0" />
   </div>
 </template>
 

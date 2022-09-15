@@ -24,7 +24,11 @@
         }}</span
       >
     </span>
-    <div v-if="showEditBtn" class="edit-btn btn" @click="handleEdit">
+    <div
+      v-if="!publicView && showEditBtn"
+      class="edit-btn btn"
+      @click="handleEdit"
+    >
       {{ $t("edit") }}
     </div>
     <div v-if="showSaveBtn" class="save-btn btn" @click="handleSave">
@@ -82,7 +86,7 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument", "publicView"])
   },
   methods: {
     handleFileName() {

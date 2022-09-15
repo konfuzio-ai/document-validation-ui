@@ -2,8 +2,7 @@ import Vue from "vue";
 import Buefy from "buefy";
 import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
-import store from "./store";
-import App from "./App";
+import App from "./components/App";
 import * as Sentry from "@sentry/vue";
 import {
   Integrations
@@ -24,7 +23,8 @@ import {
   faCheck,
   faXmark,
   faEllipsisVertical,
-  faUser
+  faUser,
+  faCircleInfo
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -40,10 +40,11 @@ library.add(
   faSpinner,
   faXmark,
   faEllipsisVertical,
-  faUser
+  faUser,
+  faCircleInfo
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
-
+Vue.component("App", App);
 Vue.use(VueKonva);
 Vue.use(Buefy, {
   defaultIconPack: "fas",
@@ -72,10 +73,9 @@ if (process.env.NODE_ENV != "development") {
 }
 
 /**
- * Main entrypoint for the Document Dashboard.
+ * Main entrypoint for the App
  */
 new Vue({
-  store,
   i18n,
-  render: h => h(App)
-}).$mount("#app");
+  el: "#app",
+})

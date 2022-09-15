@@ -5,6 +5,7 @@
     <div class="document-top-bar">
       <div class="left-bar-components">
         <DocumentCategory
+          v-if="categories"
           :selectedDocument="selectedDocument"
           :handleError="handleShowError"
           :handleMessage="handleShowMessage"
@@ -20,7 +21,27 @@
       <div class="document-name-container">
         <DocumentName :dataFileName="selectedDocument.data_file_name" />
       </div>
-      <div class="handover"><DocumentHandover v-if="showHandoverButton" /></div>
+      <div class="right-bar-components">
+        <div class="public-mode-info" v-if="publicView">
+          <b-tooltip
+            type="is-dark"
+            :animated="false"
+            position="is-bottom"
+            class="right-aligned width-184"
+          >
+            {{ $t("lite_mode")
+            }}<b-icon class="info-icon is-small" icon="circle-info" />
+            <template v-slot:content>
+              <div class="public-mode-details">
+                {{ $t("limited_functionalities") }}
+              </div>
+            </template>
+          </b-tooltip>
+        </div>
+        <div class="handover" v-else-if="showHandoverButton">
+          <DocumentHandover />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -37,12 +58,8 @@ export default {
   data() {
     return {
       categoryError: false,
-      showDatasetDropdown:
-        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN &&
-        process.env.VUE_APP_SHOW_DATA_SET_STATUS_DROPDOWN == "true",
-      showHandoverButton:
-        process.env.VUE_APP_SHOW_HANDOVER_BUTTON &&
-        process.env.VUE_APP_SHOW_HANDOVER_BUTTON == "true"
+      showDatasetDropdown: false,
+      showHandoverButton: false
     };
   },
   components: {
@@ -57,7 +74,8 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("category", ["categories"])
   },
   methods: {
     handleShowError() {

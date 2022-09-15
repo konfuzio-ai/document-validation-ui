@@ -45,7 +45,7 @@
       </div>
     </div>
     <div
-      v-if="showRejectedLabels && missingAnnotations.length"
+      v-if="showRejectedLabels && !publicView && missingAnnotations.length"
       class="rejected-labels-list"
     >
       <RejectedLabels
@@ -95,7 +95,10 @@ export default {
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
+      "publicView",
+      "showRejectedLabels"
       "showRejectedLabels",
+      "publicView",
       "editingActive"
     ])
   },

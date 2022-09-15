@@ -1,6 +1,11 @@
 <style scoped lang="scss" src="../../assets/scss/label_details.scss"></style>
 <template>
-  <b-tooltip type="is-dark" :animated="false" position="is-bottom">
+  <b-tooltip
+    type="is-dark"
+    :animated="false"
+    position="is-bottom"
+    class="left-aligned"
+  >
     <div class="label-icon">
       <b-icon v-if="notFound" class="red" icon="xmark" size="is-small" />
       <b-icon v-else-if="edited" class="green" icon="user" size="is-small" />

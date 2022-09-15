@@ -3,24 +3,20 @@ import axios from "axios";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
+const DEFAULT_URL = "https://app.konfuzio.com";
+
 if (process.env.VUE_APP_GUEST_USER_TOKEN) {
   axios.defaults.headers.common[
     "Authorization"
   ] = `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`;
 }
 
-// if (process.env.VUE_APP_USERNAME) {
-//   axios.defaults.headers.common["Authorization"] =
-//     "Basic " +
-//     btoa(process.env.VUE_APP_USERNAME + ":" + process.env.VUE_APP_PASSWORD);
-// }
-
 const HTTP = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || `/api/v3/`
+  baseURL: process.env.VUE_APP_API_URL || `${DEFAULT_URL}/api/v3/`
 });
 
 const IMG_REQUEST = axios.create({
-  baseURL: process.env.VUE_APP_DOCUMENT_IMAGES_URL || ``,
+  baseURL: process.env.VUE_APP_DOCUMENT_IMAGES_URL || `${DEFAULT_URL}`,
   responseType: "blob"
 });
 

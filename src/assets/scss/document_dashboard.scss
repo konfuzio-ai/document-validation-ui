@@ -1,11 +1,19 @@
 @import "./imports.scss";
 
 .dashboard {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+
+  .dashboard-top-bar {
+    height: 56px;
+  }
+
   .dashboard-viewer {
     overflow: hidden;
     display: flex;
     background: $grey-lighter;
-    height: calc(100vh - 56px);
+    flex: 1;
 
     .dashboard-document {
       overflow-y: auto;

@@ -2,7 +2,7 @@
 
 <template>
   <div class="dashboard">
-    <div class="dashboard-top-bar">
+    <div class="dashboard-top-bar" v-if="pages && pages.length > 0">
       <DocumentTopBar
         @handle-message="handleMessage"
         @handle-error="handleError"

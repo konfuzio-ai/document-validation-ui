@@ -29,7 +29,10 @@
       v-on:click.stop="save"
     />
 
-    <div v-if="showRejectedLabels && menu && !isLoading" class="menu-buttons">
+    <div
+      v-if="showRejectedLabels && !publicView && menu && !isLoading"
+      class="menu-buttons"
+    >
       <b-dropdown aria-role="list" position="is-top-left" class="width-12">
         <template #trigger>
           <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
@@ -71,7 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["showRejectedLabels"])
+    ...mapState("document", ["showRejectedLabels", "publicView"])
   },
   methods: {
     save() {

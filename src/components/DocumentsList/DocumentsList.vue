@@ -72,9 +72,7 @@ export default {
   },
   data() {
     return {
-      showCategoryInfo:
-        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP &&
-        process.env.VUE_APP_SHOW_CATEGORY_INFO_TOP == "true",
+      showCategoryInfo: false,
       documentsList: null
     };
   },
@@ -88,9 +86,7 @@ export default {
       this.$store.dispatch("document/setDocId", documentId);
     },
     requestTrialAccess() {
-      if (process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK) {
-        window.open(process.env.VUE_APP_REQUEST_TRIAL_ACCESS_LINK, "_blank");
-      }
+      window.open("https://konfuzio.com", "_blank");
     }
   },
   watch: {

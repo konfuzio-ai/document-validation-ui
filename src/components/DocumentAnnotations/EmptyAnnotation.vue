@@ -6,6 +6,7 @@
 <template>
   <div class="empty-annotation">
     <span
+      v-if="!publicView"
       :class="[
         'annotation-value',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
@@ -73,7 +74,7 @@ export default {
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "editingActive"])
+    ...mapState("document", ["editAnnotation", "editingActive", "publicView"])
   },
   methods: {
     isEmpty() {
@@ -89,6 +90,7 @@ export default {
     },
     handleEditEmptyAnnotation() {
       if (
+        !this.publicView &&
         !this.isLoading &&
         this.selectionEnabled !== this.emptyAnnotationId()
       ) {

@@ -4,7 +4,7 @@
   <div class="toolbar-container">
     <div class="toolbar">
       <div class="icons icons-left">
-        <div class="rotate icon" @click="handleModal">
+        <div class="rotate icon" @click="handleModal" v-if="!publicView">
           <RotateIcon />
         </div>
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
@@ -61,7 +61,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("display", ["scale"])
+    ...mapState("display", ["scale"]),
+    ...mapState("document", ["publicView"])
   },
   methods: {
     handleModal() {
