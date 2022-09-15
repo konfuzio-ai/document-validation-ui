@@ -130,7 +130,7 @@ export default {
   methods: {
     pageWidthScale() {
       const { defaultViewport, $el } = this;
-      if (!this.defaultViewport.width) return 0;
+      if (!defaultViewport.width) return 0;
       const elementsWidth =
         (this.$refs.editView
           ? this.$refs.editView.$el.clientWidth
