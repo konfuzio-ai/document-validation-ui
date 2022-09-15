@@ -33,7 +33,7 @@ In this mode, you will have a sample document with annotations that you can only
 #### Full Mode
 
 If you want to run the widget in full mode to be able to interact with the document by editing annotations, document pages and other functionalities, you will need to have an [user account created](docs/README.md#create-an-user-account). Then, you should [generate a user token](docs/README.md#generate-user-token).
-[You will also need a document uploaded and a document id](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md#upload-document--get-document-id).
+[You will also need a document uploaded and a document id](docs/README.md#upload-document--get-document-id).
 
 With the user token and the document id, you can create a `.env` file with those 2 variables. [More information on how to create this file](docs/README.md#creating-a-env). And if you want, you can now specify which document category to load in the `index.html` file or in the `.env`. 
 
