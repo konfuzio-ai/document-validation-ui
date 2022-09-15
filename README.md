@@ -8,7 +8,7 @@ White-label app that lets you preview and interact with documents uploaded to [K
 
 ## Documentation
 
-The documentation for this app is in the docs directory. [Take a look here](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/README.md).
+The documentation for this app is in the docs directory. [Take a look here](docs/README.md).
 Browse the Konfuzio [documentation](https://dev.konfuzio.com/) and [support](https://help.konfuzio.com/).
 
 ## Installation
@@ -45,7 +45,7 @@ Install all the dependencies by running:
 npm install
 ```
 
-### 3 Run the App
+### 4 Run the App
 
 #### Local Development
 
