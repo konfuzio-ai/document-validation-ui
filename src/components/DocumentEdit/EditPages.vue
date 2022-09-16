@@ -60,12 +60,16 @@
               <b-icon icon="scissors" class="is-small" />
             </div>
             <div
+              class="lines"
               v-if="
                 activeSplittingLines &&
                 activeSplittingLines[index] === page.page_number
               "
             >
-              <SplitDivider />
+              <SplitZigZag />
+            </div>
+            <div class="lines" v-else>
+              <SplitLines />
             </div>
           </div>
         </div>
@@ -82,14 +86,16 @@
 
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
-import SplitDivider from "../../assets/images/SplitDivider";
+import SplitLines from "../../assets/images/SplitLines";
+import SplitZigZag from "../../assets/images/SplitZigZag";
 import draggable from "vuedraggable";
 
 export default {
   name: "EditPages",
   components: {
     ServerImage,
-    SplitDivider,
+    SplitLines,
+    SplitZigZag,
     draggable
   },
   props: {
@@ -143,6 +149,12 @@ export default {
       }
       this.$store.dispatch("edit/setSelectedPages", selectedPage);
     },
+    unselectPage(event) {
+      if (event.target.className === "document-grid") {
+        this.selected = null;
+        this.$store.dispatch("edit/setSelectedPages", null);
+      }
+    },
     getRotation(pageId) {
       // rotate page
       return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
@@ -176,6 +188,9 @@ export default {
         this.editPages = this.pagesArray;
       }
     }
+  },
+  created() {
+    window.addEventListener("click", event => this.unselectPage(event));
   },
   mounted() {
     this.editPages = this.pagesArray;

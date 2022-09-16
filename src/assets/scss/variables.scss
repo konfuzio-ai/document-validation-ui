@@ -111,7 +111,7 @@ button {
 }
 
 .error-message {
-  position: fixed;
+  position: absolute;
   width: 100%;
 
   .message {
@@ -349,6 +349,12 @@ button {
 }
 
 .dropdown {
+  &.split-mode {
+    .dropdown-trigger {
+      font-size: 14px;
+    }
+  }
+
   &.width-12 {
     .dropdown-trigger {
       width: 12px;

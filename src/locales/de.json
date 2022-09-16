@@ -53,9 +53,13 @@
   "reorder": "Reorder",
   "edit_error": "The changes couldn’t be saved, please try again later.",
   "overview": "Overview",
-  "select_pages": "Select pages to rotate, drag and drop to reorder or split.",
-  "edit_document": "Edit document",
-  "selected": "selected",
-  "rotate_selected": "Rotate selected",
-  "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'"
+  "select_pages": "Wähle Seiten zum Drehen aus, Drag and Drop zum Umsortieren oder Splitten.",
+  "edit_document": "Dokument bearbeiten",
+  "selected": "ausgewählt",
+  "rotate_selected": "Ausgewählte Seite drehen",
+  "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'",
+  "back_to_edit": "Back to edit",
+  "split_document": "Split document",
+  "submit": "Senden",
+  "next": "Next"
 }

@@ -63,5 +63,7 @@
   "edit_document": "Edit document",
   "selected": "selected",
   "rotate_selected": "Rotate selected",
-  "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'"
+  "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'",
+  "back_to_edit": "Back to edit",
+  "split_document": "Split document"
 }

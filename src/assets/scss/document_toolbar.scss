@@ -24,28 +24,26 @@
       display: none;
     }
 
+    .toolbar-divider {
+      width: 1px;
+      background-color: $grey-detail;
+      height: 20px;
+      margin-left: 10px;
+      margin-right: 10px;
+      opacity: 30%;
+    }
+
     .icons {
       display: flex;
       align-items: center;
 
       &.icons-left {
-        margin-right: 10px;
         padding-right: 10px;
 
         &:hover {
           cursor: pointer;
           background: $low-opacity-white;
           border-radius: 4px;
-        }
-
-        &:after {
-          content: "";
-          position: relative;
-          left: 10px;
-          height: 20px;
-          width: 50%;
-          border-right: 1px solid $grey-detail;
-          opacity: 30%;
         }
 
         &.editModeDisabled {
@@ -78,25 +76,6 @@
           cursor: pointer;
           background: $low-opacity-white;
           border-radius: 4px;
-        }
-      }
-    }
-  }
-
-  .rotate-pages {
-    .rotation-modal-container {
-      .modal {
-        &.is-active {
-          .modal-content {
-            width: 840px !important;
-            max-width: 840px !important;
-            border-radius: 16px;
-            background-color: $white;
-          }
-
-          .modal-card {
-            width: 100%;
-          }
         }
       }
     }

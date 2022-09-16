@@ -2,13 +2,17 @@
 
 <template>
   <div class="split-overview">
-    <div class="back-btn-section" @click="handleBackButton">
-      <b-icon
-        icon="arrow-left"
-        class="is-small arrow"
-        :style="{ color: '#858C9A', cursor: 'pointer' }"
-      />
+    <div class="back-section">
+      <div class="back-btn-section" @click="handleBackButton">
+        <b-icon
+          icon="arrow-left"
+          class="is-small arrow"
+          :style="{ color: '#858C9A', cursor: 'pointer' }"
+        />
+      </div>
+      <div class="back-text">{{ $t("back_to_edit") }}</div>
     </div>
+    <div class="overview-title">{{ $t("split_document") }}</div>
     <div class="new-documents-container">
       <div
         v-for="(page, index) in updatedDocument"
@@ -22,12 +26,16 @@
               @click="handlePageChange(page.pages[0].page_number)"
             >
               <div
-                class="thumbnail"
-                :style="{
-                  transform: 'rotate(' + getRotation(page.pages[0].id) + 'deg)'
-                }"
+                :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
               >
-                <ServerImage :imageUrl="getImageUrl(page)" ref="image" />
+                <ServerImage
+                  :imageUrl="getImageUrl(page)"
+                  ref="image"
+                  :style="{
+                    transform:
+                      'rotate(' + getRotation(page.pages[0].id) + 'deg)'
+                  }"
+                />
                 <div class="icon-container">
                   <div class="action-icon">
                     <b-icon icon="eye" class="is-small" />
@@ -37,33 +45,35 @@
             </div>
           </div>
         </div>
-        <div class="file-name-section">
-          <div class="name-input">
-            <span
-              contenteditable
-              role="textbox"
-              class="content-editable"
-              @input="handleInput"
-              @paste="handlePaste"
-              @blur="handleChanges(page)"
-            >
-              {{ getFileName(page.name) }}
-            </span>
+        <div class="doc-info">
+          <div class="file-name-section">
+            <div class="name-input">
+              <span
+                contenteditable
+                role="textbox"
+                class="content-editable"
+                @input="handleInput"
+                @paste="handlePaste"
+                @blur="handleChanges(page)"
+              >
+                {{ getFileName(page.name) }}
+              </span>
+            </div>
+            <div class="file-extension-container">
+              <span>{{ `.${fileExtension}` }}</span>
+            </div>
           </div>
-          <div class="file-extension-container">
-            <span>{{ `.${fileExtension}` }}</span>
+          <div class="category">
+            <DocumentCategory
+              :selectedDocument="selectedDocument"
+              :splitMode="splitMode"
+              :page="page"
+              @category-change="handleChanges"
+              :handleShowError="handleShowError"
+              :handleMessage="handleMessage"
+              :index="index"
+            />
           </div>
-        </div>
-        <div class="category">
-          <DocumentCategory
-            :selectedDocument="selectedDocument"
-            :splitMode="splitMode"
-            :page="page"
-            @category-change="handleChanges"
-            :handleShowError="handleShowError"
-            :handleMessage="handleMessage"
-            :index="index"
-          />
         </div>
       </div>
     </div>
