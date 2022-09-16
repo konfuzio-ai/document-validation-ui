@@ -4,55 +4,59 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="labels" ref="label">
+  <div class="labels">
     <div
       v-for="annotation in annotations"
       :key="annotationId(annotation)"
-      :class="[
-        'label-properties',
-        isAnnotationSelected(annotation) && 'selected',
-        isAnnotationInEditMode(annotationId(annotation)) && 'editing'
-      ]"
       :ref="referenceId(annotation)"
-      @click="onLabelClick"
-      @mouseenter="onLabelHover(true, annotation)"
-      @mouseleave="onLabelHover(false, annotation)"
     >
-      <div class="label-property-left">
-        <LabelDetails
-          :description="label.description"
-          :annotation="annotation"
-        />
-        <div class="label-property-name">
-          <span class="label-property-text">{{ label.name }} </span>
+      <div
+        v-if="!annotationDeleted(annotation)"
+        :class="[
+          'label-properties',
+          isAnnotationSelected(annotation) && 'selected',
+          isAnnotationInEditMode(annotationId(annotation)) && 'editing'
+        ]"
+        @click="onLabelClick"
+        @mouseenter="onLabelHover(true, annotation)"
+        @mouseleave="onLabelHover(false, annotation)"
+      >
+        <div class="label-property-left">
+          <LabelDetails
+            :description="label.description"
+            :annotation="annotation"
+          />
+          <div class="label-property-name">
+            <span class="label-property-text">{{ label.name }} </span>
+          </div>
         </div>
-      </div>
-      <div class="label-property-right">
-        <div class="label-property-annotation">
-          <div v-if="annotation">
-            <Annotation
-              v-for="(span, index) in annotation.span"
-              :key="index"
-              :annotation="annotation"
-              :span="span"
-              :spanIndex="index"
-              :handleError="handleError"
-              :handleMessage="handleMessage"
+        <div class="label-property-right">
+          <div class="label-property-annotation">
+            <div v-if="annotation">
+              <Annotation
+                v-for="(span, index) in annotation.span"
+                :key="index"
+                :annotation="annotation"
+                :span="span"
+                :spanIndex="index"
+                :handleError="handleError"
+                :handleMessage="handleMessage"
+                :label="label"
+                :annotationSet="annotationSet"
+                :handleMenu="handleMenu"
+                @handle-data-changes="handleDataChanges"
+              />
+            </div>
+            <EmptyAnnotation
+              v-else
               :label="label"
               :annotationSet="annotationSet"
-              :handleMenu="handleMenu"
               @handle-data-changes="handleDataChanges"
+              :handleError="handleError"
+              :handleMessage="handleMessage"
+              :handleMenu="handleMenu"
             />
           </div>
-          <EmptyAnnotation
-            v-else
-            :label="label"
-            :annotationSet="annotationSet"
-            @handle-data-changes="handleDataChanges"
-            :handleError="handleError"
-            :handleMessage="handleMessage"
-            :handleMenu="handleMenu"
-          />
         </div>
       </div>
     </div>
@@ -131,6 +135,12 @@ export default {
       return annotation
         ? annotation.id
         : `${this.annotationSet.id}_${this.label.id}`;
+    },
+    annotationDeleted(annotation) {
+      if (annotation) {
+        return annotation.revised && !annotation.is_correct;
+      }
+      return false;
     },
     handleDataChanges({ annotation }) {
       if (annotation !== null) {
