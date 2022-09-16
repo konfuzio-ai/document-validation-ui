@@ -4,7 +4,6 @@
     <div class="pages-section" v-if="!splitOverview">
       <EditPages
         :activeSplittingLines="activeSplittingLines"
-        :scroll="scroll"
         @change-page="changePage"
         @handle-splitting-lines="handleSplittingLines"
         @check-move="checkMove"
@@ -51,7 +50,6 @@ export default {
     return {
       fileName: [],
       fileExtension: null,
-      scroll: false,
       activeSplittingLines: [],
       dragging: false,
       prevPageAtIndex: null

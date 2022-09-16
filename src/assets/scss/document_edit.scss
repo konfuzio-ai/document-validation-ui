@@ -8,11 +8,7 @@
 
   .pages-section {
     width: 100%;
-
-    .scroll {
-      height: 100vh;
-      overflow: scroll;
-    }
+    overflow: scroll;
 
     .document-grid {
       padding: 42px;
@@ -269,7 +265,7 @@
       grid-template-rows: 1fr;
       gap: 40px;
       max-height: 700px;
-      overflow: scroll;
+      overflow-y: scroll;
 
       .document-details {
         display: flex;
@@ -354,7 +350,7 @@
             border-right: 0;
             background-color: $white;
             width: 210px;
-            cursor: pointer;
+            cursor: text;
 
             .content-editable {
               display: flex;
@@ -391,10 +387,6 @@
             background-color: $white;
             color: $grey-blue;
           }
-        }
-
-        .category {
-          margin-bottom: 39px;
         }
       }
     }

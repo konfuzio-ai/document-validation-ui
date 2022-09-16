@@ -2,7 +2,7 @@
 
 <template>
   <div class="edit-pages">
-    <div :class="[scroll && 'scroll']">
+    <div>
       <draggable
         v-model="editPages"
         :class="['document-grid']"
@@ -95,9 +95,6 @@ export default {
   props: {
     activeSplittingLines: {
       type: Array
-    },
-    scroll: {
-      type: Boolean
     }
   },
   data() {

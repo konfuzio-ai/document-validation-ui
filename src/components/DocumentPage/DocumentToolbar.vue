@@ -7,10 +7,10 @@
         :label="tooltipInfo"
         multilined
         type="is-dark"
-        :active="disabled"
+        :active="editModeDisabled"
       >
         <div
-          :class="['icons icons-left', disabled && 'disabled']"
+          :class="['icons icons-left', editModeDisabled && 'disabled']"
           @click="handleEdit"
         >
           <div class="edit-icon icon">
@@ -56,7 +56,7 @@ export default {
       minimumPercentage: 0,
       increment: 0.25,
       toolbarModalOpen: true,
-      disabled: false,
+      editModeDisabled: false,
       tooltipInfo: this.$t("edit_not_available")
     };
   },
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     handleEdit() {
-      if (this.disabled) return;
+      if (this.editModeDisabled) return;
       this.$store.dispatch("edit/setEditMode", true).then(() => {
         this.$store.dispatch("display/updateFit", "auto");
       });
@@ -118,7 +118,7 @@ export default {
       // check if the document has a dataset status of 'Training' or 'Test'
       // and if so disable the option to edit the document
       if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
-        this.disabled = true;
+        this.editModeDisabled = true;
       }
     }
   }

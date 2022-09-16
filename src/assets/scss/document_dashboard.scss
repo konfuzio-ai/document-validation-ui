@@ -8,7 +8,7 @@
     height: calc(100vh - $top-bar-height);
 
     &.edit-mode {
-      height: calc(100vh);
+      height: calc(100vh - 56px);
     }
 
     .dashboard-document {
