@@ -9,7 +9,7 @@ White-label app that lets you preview and interact with documents uploaded to [K
 ## Documentation
 
 The documentation for this app is in the docs directory. [Take a look here](docs/README.md).
-Browse the Konfuzio [documentation](https://dev.konfuzio.com/) and [support](https://help.konfuzio.com/).
+Also, you can browse the Konfuzio [documentation](https://dev.konfuzio.com/) and [support](https://help.konfuzio.com/).
 
 ## Installation
 
