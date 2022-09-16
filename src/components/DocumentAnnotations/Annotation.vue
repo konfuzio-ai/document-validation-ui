@@ -12,7 +12,7 @@
         'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationEmpty && !isAnnotationEditable() ? 'label-empty' : '',
+        isAnnotationDeleted && !isAnnotationEditable() ? 'label-empty' : '',
         isAnnotationBeingEdited && 'clicked'
       ]"
       role="textbox"
@@ -22,10 +22,10 @@
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
     >
-      {{ isAnnotationEmpty ? $t("no_data_found") : this.span.offset_string }}
+      {{ isAnnotationDeleted ? $t("no_data_found") : this.span.offset_string }}
     </span>
     <span v-else class="annotation-value">
-      {{ isAnnotationEmpty ? "" : this.span.offset_string }}
+      {{ isAnnotationDeleted ? "" : this.span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
@@ -102,7 +102,7 @@ export default {
         return this.span.offset_string;
       }
     },
-    isAnnotationEmpty() {
+    isAnnotationDeleted() {
       return this.annotation.revised && !this.annotation.is_correct;
     },
     isAnnotationBeingEdited() {
@@ -113,7 +113,7 @@ export default {
     isAnnotationEditable() {
       return (
         !this.publicView &&
-        (!this.isAnnotationEmpty ||
+        (!this.isAnnotationDeleted ||
           (this.isAnnotationBeingEdited &&
             this.spanSelection &&
             this.spanSelection.offset_string != null))
@@ -135,7 +135,7 @@ export default {
         });
         this.$store.dispatch("document/setEditingActive", true);
 
-        if (this.isAnnotationEmpty) {
+        if (this.isAnnotationDeleted) {
           this.setText(this.$t("draw_box_document"));
         } else {
           this.$refs.contentEditable.focus();
@@ -167,7 +167,7 @@ export default {
     },
     handleCancel() {
       this.setText(
-        this.isAnnotationEmpty
+        this.isAnnotationDeleted
           ? this.$t("no_data_found")
           : this.span.offset_string
       );
@@ -186,21 +186,15 @@ export default {
       }
       let updatedString;
 
-      // If the user didn't change the value, we don't want to do anything
-      if (this.annotationText === this.span.offset_string) {
-        this.isLoading = false;
-        this.handleCancel();
-        return;
-      }
-
       this.isLoading = true;
+      this.$store.dispatch("document/startLoading");
+
+      let storeAction;
 
       if (this.annotationText.length === 0) {
-        updatedString = {
-          is_correct: false,
-          revised: true
-        };
+        storeAction = "document/deleteAnnotation";
       } else {
+        storeAction = "document/updateAnnotation";
         const spans = this.annotation.span;
         spans[this.spanIndex] = {
           ...spans[this.spanIndex],
@@ -219,11 +213,9 @@ export default {
         };
       }
 
-      this.$store.dispatch("document/startLoading");
-
-      // Send to the store for the http patch request
+      // Send to the store for the http patch/delete request
       this.$store
-        .dispatch("document/updateAnnotation", {
+        .dispatch(storeAction, {
           updatedValues: updatedString,
           annotationId: this.annotation.id
         })
@@ -232,18 +224,12 @@ export default {
           if (response) {
             this.$store.dispatch("document/fetchAnnotations");
             this.isLoading = false;
-
-            this.setText(
-              this.annotationText === ""
-                ? this.$t("no_data_found")
-                : this.annotationText
-            );
           } else {
             this.error = true;
             this.handleError();
             this.handleMessage(this.$i18n.t("editing_error"));
             this.setText(
-              this.isAnnotationEmpty
+              this.isAnnotationDeleted
                 ? this.$t("no_data_found")
                 : this.span.offset_string
             );
@@ -292,7 +278,7 @@ export default {
           oldAnnotation.index !== newAnnotation.index)
       ) {
         this.setText(
-          this.isAnnotationEmpty
+          this.isAnnotationDeleted
             ? this.$t("no_data_found")
             : this.span.offset_string
         );

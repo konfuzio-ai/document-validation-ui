@@ -179,7 +179,9 @@ const actions = {
   }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
   },
-  setEditingActive: ({ commit }, value) => {
+  setEditingActive: ({
+    commit
+  }, value) => {
     commit("SET_EDITING_ACTIVE", value);
   },
 
@@ -307,7 +309,26 @@ const actions = {
         });
     });
   },
-
+  deleteAnnotation: ({
+    state
+  }, {
+    annotationId
+  }) => {
+    return new Promise(resolve => {
+      HTTP.delete(
+          `/documents/${state.documentId}/annotations/${annotationId}/`
+        )
+        .then(response => {
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          resolve(false);
+          console.log(error);
+        });
+    });
+  },
   updateDocument: ({
     commit,
     state
