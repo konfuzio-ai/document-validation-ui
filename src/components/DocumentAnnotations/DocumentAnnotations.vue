@@ -95,8 +95,6 @@ export default {
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
-      "publicView",
-      "showRejectedLabels"
       "showRejectedLabels",
       "publicView",
       "editingActive"
