@@ -156,6 +156,7 @@ export default {
         event.target.className === "sidebar" ||
         event.target.className === "sidebar-header" ||
         event.target.className === "edit-sidebar" ||
+        event.targe.className === "pages-section" ||
         event.target.nodeName === "CANVAS";
 
       if (clickedOutside) {
