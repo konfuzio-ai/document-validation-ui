@@ -156,16 +156,6 @@
           }
         }
       }
-
-      @media (max-width: 772px) {
-        height: calc(100% - 50px - 42px);
-        overflow: scroll;
-      }
-
-      @media (max-height: 500px) {
-        height: calc(100% - 50px - 42px);
-        overflow: scroll;
-      }
     }
   }
 
@@ -261,6 +251,7 @@
     .split-overview-section {
       padding-left: 30px;
       padding-right: 10px;
+      overflow-y: scroll;
     }
 
     .split-overview {
@@ -291,14 +282,12 @@
       }
 
       .new-documents-container {
-        padding-bottom: 35px;
+        padding-bottom: 70px;
         padding-top: 35px;
         padding-right: 10px;
         display: grid;
         grid-template-rows: 1fr;
         gap: 40px;
-        overflow-y: scroll;
-        overflow-x: hidden;
 
         .document-details {
           display: flex;
