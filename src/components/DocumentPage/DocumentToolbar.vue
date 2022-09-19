@@ -8,6 +8,7 @@
         multilined
         type="is-dark"
         :active="editModeDisabled"
+        size="is-large"
       >
         <div
           :class="['icons icons-left', editModeDisabled && 'disabled']"

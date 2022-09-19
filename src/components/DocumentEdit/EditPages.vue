@@ -129,30 +129,38 @@ export default {
       this.$emit("change-page", pageNumber);
     },
     isPageSelected(id) {
-      if (this.selectedPages === 0) return;
+      if (this.selectedPages.length === 0) return;
 
       const selectedPage = this.selectedPages.find(page => page.id === id);
       if (selectedPage) return selectedPage.id;
     },
     selectPage(page) {
-      let selectedPage;
+      if (!page) return;
 
-      if (!page) {
-        selectedPage = null;
-        this.selected = null;
-      } else {
-        selectedPage = {
-          id: page.id,
-          number: page.page_number
-        };
-        this.selected = true;
-      }
+      const selectedPage = {
+        id: page.id,
+        number: page.page_number,
+        thumbnail_url: page.thumbnail_url,
+        updated_at: page.updated_at
+      };
+
+      this.selected = true;
+
       this.$store.dispatch("edit/setSelectedPages", selectedPage);
     },
-    unselectPage(event) {
-      if (event.target.className === "document-grid") {
+    deselect(event) {
+      // Check if user clicks in any of these elements to deselect the thumbnail
+      const clickedOutside =
+        event.target.className === "document-grid" ||
+        event.target.className === "document-name-container" ||
+        event.target.className === "sidebar" ||
+        event.target.className === "sidebar-header" ||
+        event.target.className === "edit-sidebar" ||
+        event.target.nodeName === "CANVAS";
+
+      if (clickedOutside) {
         this.selected = null;
-        this.$store.dispatch("edit/setSelectedPages", null);
+        this.$store.dispatch("edit/setSelectedPages");
       }
     },
     getRotation(pageId) {
@@ -190,7 +198,7 @@ export default {
     }
   },
   created() {
-    window.addEventListener("click", event => this.unselectPage(event));
+    window.addEventListener("click", event => this.deselect(event));
   },
   mounted() {
     this.editPages = this.pagesArray;

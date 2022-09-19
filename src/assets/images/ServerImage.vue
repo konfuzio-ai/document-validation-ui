@@ -18,6 +18,8 @@ export default {
   },
   methods: {
     loadImage() {
+      if (!this.imageUrl) return;
+
       if (this.selectedDocument.labeling_available === 1) {
         return api.IMG_REQUEST.get(this.imageUrl)
           .then(response => {
