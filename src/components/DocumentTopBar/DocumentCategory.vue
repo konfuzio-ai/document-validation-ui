@@ -74,18 +74,28 @@ export default {
       const updatedCategory = {
         category: category.id
       };
+
+      this.$store.dispatch("document/startRecalculatingAnnotations");
+
       this.$store
         .dispatch("document/updateDocument", updatedCategory)
         .then(response => {
-          if (!response) {
+          if (response) {
+            // Poll document data until the status_data is 111 (error) or
+            // 2 and labeling is available (done)
+            this.$store
+              .dispatch("document/pollDocumentEndpoint", 5000)
+              .then(() => {
+                if (process.env.VUE_APP_CATEGORY_ID) {
+                  this.$store.dispatch("category/fetchDocumentList");
+                  this.$store.dispatch("category/setAvailableDocumentsList");
+                }
+              });
+          } else {
             this.handleError();
             this.handleMessage(this.$i18n.t("category_error"));
           }
           // update document list if visible
-          if (process.env.VUE_APP_CATEGORY_ID) {
-            this.$store.dispatch("category/fetchDocumentList");
-            this.$store.dispatch("category/setAvailableDocumentsList");
-          }
         });
     }
   },
