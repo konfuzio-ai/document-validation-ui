@@ -92,6 +92,7 @@ export default {
                 }
               });
           } else {
+            this.$store.dispatch("document/endRecalculatingAnnotations");
             this.handleError();
             this.handleMessage(this.$i18n.t("category_error"));
           }
