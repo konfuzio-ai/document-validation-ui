@@ -83,14 +83,7 @@ export default {
           if (response) {
             // Poll document data until the status_data is 111 (error) or
             // 2 and labeling is available (done)
-            this.$store
-              .dispatch("document/pollDocumentEndpoint", 5000)
-              .then(() => {
-                if (process.env.VUE_APP_CATEGORY_ID) {
-                  this.$store.dispatch("category/fetchDocumentList");
-                  this.$store.dispatch("category/setAvailableDocumentsList");
-                }
-              });
+            this.$store.dispatch("document/pollDocumentEndpoint", 5000);
           } else {
             this.$store.dispatch("document/endRecalculatingAnnotations");
             this.handleError();
@@ -100,10 +93,29 @@ export default {
         });
     }
   },
+  watch: {
+    categories(newValue) {
+      newValue.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
+          this.currentProjectCategories.push(category);
+        }
+      });
+    }
+  },
   mounted() {
     if (this.categories) {
       this.categories.map(category => {
         if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
           this.currentProjectCategories.push(category);
         }
       });
