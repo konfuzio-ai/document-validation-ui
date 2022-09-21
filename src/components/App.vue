@@ -49,7 +49,8 @@ export default {
     ...mapState("document", {
       documentIdLoaded: "documentId",
       showRejectedLabels: "showRejectedLabels",
-      publicView: "publicView"
+      publicView: "publicView",
+      selectedDocument: "selectedDocument"
     }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {
@@ -75,6 +76,16 @@ export default {
       // if oldId is null, then it's the first time
       if (oldId !== null && newId !== oldId) {
         this.documentLoading();
+      }
+    },
+    selectedDocument(newValue) {
+      if (
+        newValue.labeling_available == 1 &&
+        newValue.status_data === 2 &&
+        this.categoryId !== newValue.category
+      ) {
+        this.categoryLoading();
+        this.documentsListLoading();
       }
     }
   },
