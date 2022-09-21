@@ -110,7 +110,7 @@ export default {
       if (
         newValue.labeling_available == 1 &&
         newValue.status_data === 2 &&
-        newValue.category !== oldValue
+        newValue.category !== oldValue.category
       ) {
         this.$store.dispatch("category/setCategoryId", newValue.category);
       }
