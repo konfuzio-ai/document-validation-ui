@@ -11,7 +11,10 @@
         size="is-large"
       >
         <div
-          :class="['icons icons-left', editModeDisabled && 'disabled']"
+          :class="[
+            'icons icons-left',
+            editModeDisabled && 'edit-mode-disabled'
+          ]"
           @click="handleEdit"
         >
           <div class="edit-icon icon">
