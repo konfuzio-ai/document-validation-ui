@@ -223,9 +223,9 @@ const actions = {
     commit("SET_DOCUMENT_FOCUSED_ANNOTATION", null);
   },
 
-  createAnnotation: ({ state, commit }, annotation) => {
+  createAnnotation: ({ commit }, annotation) => {
     return new Promise(resolve => {
-      HTTP.post(`/documents/${state.documentId}/annotations/`, annotation)
+      HTTP.post(`/annotations/`, annotation)
         .then(response => {
           commit("ADD_ANNOTATION", response.data);
           resolve(response.data);
@@ -239,10 +239,7 @@ const actions = {
 
   updateAnnotation: ({ state }, { updatedValues, annotationId }) => {
     return new Promise(resolve => {
-      HTTP.patch(
-        `/documents/${state.documentId}/annotations/${annotationId}/`,
-        updatedValues
-      )
+      HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then(response => {
           if (response.status === 200) {
             const annotation = state.annotations.find(
@@ -259,9 +256,9 @@ const actions = {
         });
     });
   },
-  deleteAnnotation: ({ state }, { annotationId }) => {
+  deleteAnnotation: ({}, { annotationId }) => {
     return new Promise(resolve => {
-      HTTP.delete(`/documents/${state.documentId}/annotations/${annotationId}/`)
+      HTTP.delete(`/annotations/${annotationId}/`)
         .then(response => {
           if (response.status === 200) {
             resolve(true);
