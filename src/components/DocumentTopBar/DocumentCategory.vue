@@ -105,6 +105,15 @@ export default {
           this.currentProjectCategories.push(category);
         }
       });
+    },
+    selectedDocument(newValue, oldValue) {
+      if (
+        newValue.labeling_available == 1 &&
+        newValue.status_data === 2 &&
+        newValue.category !== oldValue
+      ) {
+        this.$store.dispatch("category/setCategoryId", newValue.category);
+      }
     }
   },
   mounted() {

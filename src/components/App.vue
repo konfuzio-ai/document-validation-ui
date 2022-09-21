@@ -78,18 +78,12 @@ export default {
         this.documentLoading();
       }
     },
-    async selectedDocument(newValue, oldValue) {
-      if (newValue.labeling_available != 1 && newValue.status_data != 2) {
-        return;
-      }
-
+    selectedDocument(newValue) {
       if (
         newValue.labeling_available == 1 &&
         newValue.status_data === 2 &&
-        (newValue.category !== this.categoryId ||
-          newValue.category !== oldValue)
+        this.categoryId !== newValue.category
       ) {
-        await this.$store.dispatch("category/setCategoryId", newValue.category);
         this.categoryLoading();
         this.documentsListLoading();
       }
