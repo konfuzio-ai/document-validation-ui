@@ -74,7 +74,12 @@ export default {
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "editingActive", "publicView"])
+    ...mapState("document", [
+      "editAnnotation",
+      "editingActive",
+      "publicView",
+      "documentId"
+    ])
   },
   methods: {
     isEmpty() {
@@ -115,6 +120,7 @@ export default {
         this.$refs.emptyAnnotation.textContent;
 
       const annotationToCreate = {
+        document: this.documentId,
         span: [this.spanSelection],
         label: this.label.id,
         annotation_set: this.annotationSet.id,
