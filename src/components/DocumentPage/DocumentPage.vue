@@ -257,7 +257,8 @@ export default {
       "documentFocusedAnnotation",
       "recalculatingAnnotations",
       "annotations",
-      "editAnnotation"
+      "editAnnotation",
+      "selectedDocument"
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
