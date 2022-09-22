@@ -57,7 +57,7 @@ export default {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.handleError();
-            this.handleMessage(this.$i18n.t("ann_exists"));
+            this.handleMessage(this.$t("ann_exists"));
           }
         });
     },

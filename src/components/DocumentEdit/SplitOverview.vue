@@ -1,0 +1,186 @@
+<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
+
+<template>
+  <div class="split-overview">
+    <div class="back-section">
+      <div class="back-btn-section" @click="handleBackButton">
+        <b-icon
+          icon="arrow-left"
+          class="is-small arrow"
+          :style="{ color: '#858C9A', cursor: 'pointer' }"
+        />
+      </div>
+      <div class="back-text">{{ $t("back_to_edit") }}</div>
+    </div>
+    <div class="overview-title">{{ $t("split_document") }}</div>
+    <div class="new-documents-container">
+      <div
+        v-for="(page, index) in updatedDocument"
+        :key="index"
+        class="document-details"
+      >
+        <div class="overview-thumbnails">
+          <div class="split-documents">
+            <div
+              class="image-container"
+              @click="handlePageChange(page.pages[0].page_number)"
+            >
+              <div
+                :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
+              >
+                <ServerImage
+                  :imageUrl="getImageUrl(page)"
+                  ref="image"
+                  :style="{
+                    transform:
+                      'rotate(' + getRotation(page.pages[0].id) + 'deg)'
+                  }"
+                />
+                <div class="icon-container">
+                  <div class="action-icon">
+                    <b-icon icon="eye" class="is-small" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="doc-info">
+          <div class="file-name-section">
+            <div class="name-input">
+              <span
+                contenteditable
+                role="textbox"
+                class="content-editable"
+                @input="handleInput"
+                @paste="handlePaste"
+                @blur="handleChanges(page)"
+              >
+                {{ getFileName(page.name) }}
+              </span>
+            </div>
+            <div class="file-extension-container">
+              <span>{{ `.${fileExtension}` }}</span>
+            </div>
+          </div>
+          <div class="category">
+            <DocumentCategory
+              :selectedDocument="selectedDocument"
+              :splitMode="splitMode"
+              :page="page"
+              @category-change="handleChanges"
+              :handleShowError="handleShowError"
+              :handleMessage="handleMessage"
+              :index="index"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+/**
+ * This component will only be rendered if document pages were split
+ */
+
+import { mapState } from "vuex";
+import DocumentCategory from "../DocumentTopBar/DocumentCategory";
+import ServerImage from "../../assets/images/ServerImage";
+
+export default {
+  name: "SplitOverview",
+  components: {
+    DocumentCategory,
+    ServerImage
+  },
+  props: {
+    fileName: {
+      type: String
+    },
+    fileExtension: {
+      type: String
+    },
+    handleShowError: {
+      type: Function
+    },
+    handleMessage: {
+      type: Function
+    }
+  },
+  data() {
+    return {
+      splitMode: true,
+      updatedFileName: null
+    };
+  },
+  computed: {
+    ...mapState("document", ["selectedDocument", "pages"]),
+    ...mapState("edit", ["updatedDocument", "pagesFrontend"])
+  },
+  methods: {
+    handleBackButton() {
+      this.$store.dispatch("edit/setSplitOverview", false);
+    },
+    handlePaste(event) {
+      // TODO: modify to only paste plain text
+      event.preventDefault();
+    },
+    handleInput(event) {
+      this.updatedFileName = event.target.textContent.trim();
+    },
+    handleChanges(page, category) {
+      // This function handles file name or category changes
+      const updatedPages = this.updatedDocument.map(splitPage => {
+        if (splitPage.pages[0].id === page.pages[0].id) {
+          if (this.updatedFileName) {
+            return {
+              ...splitPage,
+              name: `${this.updatedFileName}.${this.fileExtension}`
+            };
+          } else if (category) {
+            return {
+              ...splitPage,
+              category: category
+            };
+          } else {
+            return splitPage;
+          }
+        }
+        return splitPage;
+      });
+
+      this.$store.dispatch("edit/setUpdatedDocument", updatedPages);
+
+      if (this.updatedFileName) {
+        this.updatedFileName = null;
+      }
+    },
+    handlePageChange(pageNumber) {
+      this.$emit("change-page", pageNumber);
+    },
+    getFileName(name) {
+      if (!name) return;
+
+      // Do not show file extension
+      return name.split(".").slice(0, -1).join(".");
+    },
+    getImageUrl(page) {
+      if (!this.pagesFrontend || !this.pages || !page) return;
+
+      // returns the first thumbnail in the pages array
+      // for each new document
+      const image = this.pagesFrontend.find(
+        p => p.page_number === page.pages[0].page_number
+      );
+
+      return `${image.thumbnail_url}?${image.updated_at}`;
+    },
+    getRotation(pageId) {
+      // rotate page
+      return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
+    }
+  }
+};
+</script>

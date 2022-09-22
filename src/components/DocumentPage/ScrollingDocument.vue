@@ -4,24 +4,38 @@
   src="../../assets/scss/scrolling_document.scss"
 ></style>
 <template>
-  <div
-    class="scrolling-document"
-    v-scroll.immediate="updateScrollBounds"
-    ref="scrollingDocument"
-  >
-    <div :class="[recalculatingAnnotations && 'blur']">
-      <ScrollingPage
-        v-for="page in pages"
-        :key="page.number"
-        :page="page"
-        :clientHeight="clientHeight"
-        :scrollTop="scrollTop"
-        @page-jump="onPageJump"
-        class="scrolling-page"
-        :scroll="scroll"
-      />
+  <div>
+    <div
+      class="scrolling-document"
+      v-scroll.immediate="updateScrollBounds"
+      ref="scrollingDocument"
+    >
+      <div :class="[recalculatingAnnotations && 'blur']" v-if="!editMode">
+        <ScrollingPage
+          v-for="page in pages"
+          :key="page.number"
+          :page="page"
+          :clientHeight="clientHeight"
+          :scrollTop="scrollTop"
+          @page-jump="onPageJump"
+          class="scrolling-page"
+          :scroll="scroll"
+        />
+      </div>
+      <div v-else>
+        <ScrollingPage
+          v-for="page in pagesArray"
+          :key="page.number"
+          :page="page"
+          :clientHeight="clientHeight"
+          :scrollTop="scrollTop"
+          @page-jump="onPageJump"
+          class="scrolling-page"
+          :scroll="scroll"
+        />
+      </div>
     </div>
-    <Toolbar v-if="pages && pages.length > 0" />
+    <Toolbar v-if="!editMode && pages && pages.length > 0" />
   </div>
 </template>
 
@@ -55,12 +69,13 @@ export default {
   },
 
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "pages"])
+    ...mapState("document", ["recalculatingAnnotations", "pages"]),
+    ...mapState("edit", ["editMode", "pagesArray"])
   },
 
   methods: {
     updateScrollBounds() {
-      const { scrollTop, clientHeight } = this.$el;
+      const { scrollTop, clientHeight } = this.$refs.scrollingDocument;
       this.scrollTop = scrollTop;
       this.clientHeight = clientHeight;
     },

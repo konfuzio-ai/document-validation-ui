@@ -8,8 +8,8 @@
         @handle-error="handleError"
       />
     </div>
-    <div class="dashboard-viewer">
-      <DocumentThumbnails ref="documentPages" />
+    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
+      <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
         ref="scrollingDocument"
@@ -20,11 +20,19 @@
       />
       <DocumentAnnotations
         ref="annotations"
+        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
         :handleScroll="handleScroll"
         :scroll="scroll"
       />
+      <DocumentEdit
+        ref="editView"
+        v-else
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
+
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -43,7 +51,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
@@ -55,6 +63,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
+import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
@@ -72,6 +81,7 @@ export default {
     DocumentThumbnails,
     DocumentAnnotations,
     DocumentsList,
+    DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal
   },
@@ -92,7 +102,8 @@ export default {
       return width <= height;
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"])
+    ...mapState("document", ["pages"]),
+    ...mapState("edit", ["editMode"])
   },
   created() {
     window.addEventListener("resize", this.fitWidth);
@@ -119,9 +130,10 @@ export default {
       if (!defaultViewport.width) return 0;
 
       const elementsWidth =
-        this.$refs.documentPages.$el.clientWidth +
-        this.$refs.annotations.$el.clientWidth +
-        1;
+        (this.$refs.editView
+          ? this.$refs.editView.$el.clientWidth
+          : this.$refs.documentPages.$el.clientWidth +
+            this.$refs.annotations.$el.clientWidth) + 1;
 
       return (
         (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /

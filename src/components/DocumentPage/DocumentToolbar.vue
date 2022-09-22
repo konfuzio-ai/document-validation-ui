@@ -2,16 +2,32 @@
 
 <template>
   <div class="toolbar-container">
-    <div class="toolbar">
-      <div class="icons icons-left">
-        <div class="rotate icon" @click="handleModal" v-if="!publicView">
-          <RotateIcon />
+    <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
+      <b-tooltip
+        :label="tooltipInfo"
+        multilined
+        type="is-dark"
+        :active="editModeDisabled"
+        size="is-large"
+      >
+        <div
+          :class="[
+            'icons icons-left',
+            editModeDisabled && 'edit-mode-disabled'
+          ]"
+          @click="handleEdit"
+        >
+          <div class="edit-icon icon">
+            <EditDocIcon />
+          </div>
+          <span class="edit-text">{{ $t("edit") }}</span>
         </div>
+      </b-tooltip>
+      <div class="toolbar-divider"></div>
+      <div class="icons icons-right">
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
         </div>
-      </div>
-      <div class="icons icons-right">
         <div class="zoom-in icon" @click.prevent.stop="zoomIn">
           <PlusIcon />
         </div>
@@ -21,34 +37,23 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
-    <!-- <div class="rotate-pages" v-if="toolbarModalOpen">
-      <RotatePagesModal
-        @close-modal="handleModal"
-        :isModalActive="isModalActive"
-        :setRotations="setRotations"
-        :handleError="handleError"
-        :handleMessage="handleMessage"
-      />
-    </div> -->
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
-import RotatePagesModal from "./RotatePagesModal";
+import EditDocIcon from "../../assets/images/EditDocIcon";
 
 export default {
   name: "Toolbar",
   components: {
-    RotateIcon,
     FitZoomIcon,
     PlusIcon,
     MinusIcon,
-    RotatePagesModal
+    EditDocIcon
   },
   data() {
     return {
@@ -56,18 +61,20 @@ export default {
       minimumPercentage: 0,
       increment: 0.25,
       toolbarModalOpen: true,
-      isModalActive: false,
-      setRotations: false
+      editModeDisabled: false,
+      tooltipInfo: this.$t("edit_not_available")
     };
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["publicView"])
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
   },
   methods: {
-    handleModal() {
-      this.isModalActive = !this.isModalActive;
-      this.setRotations = !this.setRotations;
+    handleEdit() {
+      if (this.editModeDisabled) return;
+      this.$store.dispatch("edit/setEditMode", true).then(() => {
+        this.$store.dispatch("display/updateFit", "auto");
+      });
     },
     zoomIn() {
       this.updateScale(this.scale + this.increment);
@@ -109,6 +116,15 @@ export default {
     },
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
+    }
+  },
+  watch: {
+    selectedDocument(newValue) {
+      // check if the document has a dataset status of 'Training' or 'Test'
+      // and if so disable the option to edit the document
+      if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
+        this.editModeDisabled = true;
+      }
     }
   }
 };

@@ -5,19 +5,26 @@
 ></style>
 
 <template>
-  <b-dropdown class="category-chooser" aria-role="list">
+  <b-dropdown
+    :class="['category-chooser', splitMode && 'split-mode']"
+    aria-role="list"
+  >
     <template #trigger>
       <div class="category-drop-down">
         <div class="icon">
           <CategoryIcon />
         </div>
         <div class="category-info">
-          <p class="category-title">{{ $t("category") }}</p>
+          <p class="category-title" v-if="!splitMode">{{ $t("category") }}</p>
           <div class="category-name">
-            {{ categoryName(selectedDocument.category) }}
+            {{
+              !splitMode
+                ? categoryName(selectedDocument.category)
+                : categoryName(updatedDocument[index].category)
+            }}
           </div>
         </div>
-        <div class="caret">
+        <div :class="['caret', splitMode && 'split-mode-caret']">
           <CaretDown />
         </div>
       </div>
@@ -28,7 +35,7 @@
       v-bind:key="category.id"
       aria-role="listitem"
       v-on:click="handleChangeCategory(category)"
-      :disabled="category.id === selectedDocument.category"
+      :disabled="handleOptionInDropdownDisabled(category)"
     >
       <span>{{ category.name }}</span>
     </b-dropdown-item>
@@ -37,8 +44,8 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import CategoryIcon from "../../assets/images/CategoryIconImg.vue";
-import CaretDown from "../../assets/images/TopBarCaretDownImg.vue";
+import CategoryIcon from "../../assets/images/CategoryIconImg";
+import CaretDown from "../../assets/images/TopBarCaretDownImg";
 
 export default {
   name: "DocumentCategory",
@@ -57,6 +64,15 @@ export default {
     },
     handleMessage: {
       type: Function
+    },
+    splitMode: {
+      type: Boolean
+    },
+    page: {
+      type: Object
+    },
+    index: {
+      type: Number
     }
   },
   components: {
@@ -67,30 +83,49 @@ export default {
     ...mapGetters("category", {
       categoryName: "categoryName"
     }),
-    ...mapState("category", ["categories"])
+    ...mapState("category", ["categories"]),
+    ...mapState("edit", ["updatedDocument"])
   },
   methods: {
+    // The current category name will change
+    // depending on if we are on edit mode or not
+    handleOptionInDropdownDisabled(category) {
+      if (!this.splitMode)
+        return category.id === this.selectedDocument.category;
+
+      return category.id === this.updatedDocument[this.index].category;
+    },
+
     handleChangeCategory(category) {
+      // handling the category change will be different based on
+      // the dropdown being on the topbar or the split overview
       const updatedCategory = {
         category: category.id
       };
 
-      this.$store.dispatch("document/startRecalculatingAnnotations");
+      if (!this.splitMode) {
+        this.$store.dispatch("document/startRecalculatingAnnotations");
 
-      this.$store
-        .dispatch("document/updateDocument", updatedCategory)
-        .then(response => {
-          if (response) {
-            // Poll document data until the status_data is 111 (error) or
-            // 2 and labeling is available (done)
-            this.$store.dispatch("document/pollDocumentEndpoint", 5000);
-          } else {
-            this.$store.dispatch("document/endRecalculatingAnnotations");
-            this.handleError();
-            this.handleMessage(this.$i18n.t("category_error"));
-          }
-          // update document list if visible
-        });
+        this.$store
+          .dispatch("document/updateDocument", updatedCategory)
+          .then(response => {
+            if (response) {
+              // Poll document data until the status_data is 111 (error) or
+              // 2 and labeling is available (done)
+              this.$store.dispatch("document/pollDocumentEndpoint", 5000);
+            } else {
+              this.$store.dispatch("document/endRecalculatingAnnotations");
+              this.handleError();
+              this.handleMessage(this.$t("category_error"));
+            }
+          });
+
+        return;
+      }
+
+      // Send the category ID to the split overview
+      // to update the new document category
+      this.$emit("category-change", this.page, category.id);
     }
   },
   watch: {
