@@ -74,25 +74,57 @@ export default {
       const updatedCategory = {
         category: category.id
       };
+
+      this.$store.dispatch("document/startRecalculatingAnnotations");
+
       this.$store
         .dispatch("document/updateDocument", updatedCategory)
         .then(response => {
-          if (!response) {
+          if (response) {
+            // Poll document data until the status_data is 111 (error) or
+            // 2 and labeling is available (done)
+            this.$store.dispatch("document/pollDocumentEndpoint", 5000);
+          } else {
+            this.$store.dispatch("document/endRecalculatingAnnotations");
             this.handleError();
             this.handleMessage(this.$i18n.t("category_error"));
           }
           // update document list if visible
-          if (process.env.VUE_APP_CATEGORY_ID) {
-            this.$store.dispatch("category/fetchDocumentList");
-            this.$store.dispatch("category/setAvailableDocumentsList");
-          }
         });
+    }
+  },
+  watch: {
+    categories(newValue) {
+      newValue.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
+          this.currentProjectCategories.push(category);
+        }
+      });
+    },
+    selectedDocument(newValue, oldValue) {
+      if (
+        newValue.labeling_available == 1 &&
+        newValue.status_data === 2 &&
+        newValue.category !== oldValue.category
+      ) {
+        this.$store.dispatch("category/setCategoryId", newValue.category);
+      }
     }
   },
   mounted() {
     if (this.categories) {
       this.categories.map(category => {
         if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
           this.currentProjectCategories.push(category);
         }
       });

@@ -1,4 +1,5 @@
 # Documentation
+
 ## Source Code
 
 This app is built using Vue.js version 2. The `src` folder is the root of the project and is divided into:
@@ -38,7 +39,7 @@ This component is responsible for creating a list to interact with each annotati
 
 ![DocumentsList](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/documents_list.gif)
 
-This is an optional component that is only loaded if a category ID is provided under the environment file. You also need to add add an [authentication token](https://dev.konfuzio.com/web/api_v3.html#authentication). Is responsible for loading the documents list for a given category. You can then select which document will appear on the dashboard.
+This is an optional component that is only loaded if a category ID is provided under the environment file. You also need to add add an [authentication token](https://dev.konfuzio.com/web/api_v3.html#authentication). Is responsible for loading the documents list for a given category and that are assigned to the currently authenticated user. You can then select which document will appear on the dashboard.
 
 ### **Tests**
 
@@ -46,7 +47,7 @@ You can test the app by running `npm run test:unit`. Tests are developed using [
 
 ## Create an User Account
 
-For creating an account you will need to go to [Konfuzio](https://app.konfuzio.com/) and follow the steps. 
+For creating an account you will need to go to [Konfuzio](https://app.konfuzio.com/) and follow the steps.
 
 ## Generate User Token
 
@@ -60,8 +61,6 @@ Login to [Konfuzio](https://app.konfuzio.com/) and upload a document to the plat
 
 ## Creating a .env
 
-You can create an environment variables file `.env` on the root of the project based on the `.env.example` for specifying various options, specially the API endpoint, the user token, the document/category to load and the default language of the app. 
+You can create an environment variables file `.env` on the root of the project based on the `.env.example` for specifying various options, specially the API endpoint, the user token, the document/category to load and the default language of the app.
 
 Please be aware that any variable in the `.env` will have priority from the variables defined in the `index.html`.
-
-
