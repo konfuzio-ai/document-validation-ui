@@ -1,39 +1,62 @@
 @import "./imports.scss";
 
 .toolbar-container {
-  position: fixed;
-  z-index: 999;
-  width: calc(60% - 80px);
-  bottom: 0;
-  margin-bottom: 20px;
+  position: absolute;
+  width: fit-content;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 
   .toolbar {
     background-color: $dark-blue;
     height: 40px;
-    width: 225px;
+    width: fit-content;
     border-radius: 8px;
     margin-left: auto;
     margin-right: auto;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &.hidden {
+      display: none;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      background-color: $grey-detail;
+      height: 20px;
+      margin-left: 10px;
+      margin-right: 10px;
+      opacity: 30%;
+    }
 
     .icons {
       display: flex;
       align-items: center;
 
       &.icons-left {
-        margin-right: 10px;
         padding-right: 10px;
 
-        &:after {
-          content: "";
-          position: relative;
-          left: 10px;
-          height: 20px;
-          width: 50%;
-          border-right: 1px solid $grey-detail;
+        &:hover {
+          cursor: pointer;
+          background: $low-opacity-white;
+          border-radius: 4px;
+        }
+
+        &.edit-mode-disabled {
           opacity: 30%;
+
+          &:hover {
+            cursor: not-allowed !important;
+            background: inherit;
+          }
+        }
+
+        .edit-text {
+          color: $white;
         }
       }
 
@@ -49,29 +72,10 @@
         height: 32px;
         padding: 7px;
 
-        &:hover {
+        &:hover:not(.edit-icon) {
           cursor: pointer;
           background: $low-opacity-white;
           border-radius: 4px;
-        }
-      }
-    }
-  }
-
-  .rotate-pages {
-    .rotation-modal-container {
-      .modal {
-        &.is-active {
-          .modal-content {
-            width: 840px !important;
-            max-width: 840px !important;
-            border-radius: 16px;
-            background-color: $white;
-          }
-
-          .modal-card {
-            width: 100%;
-          }
         }
       }
     }

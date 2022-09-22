@@ -11,11 +11,12 @@ $dark: #2f3032;
 $full-black: #000;
 $grey-dark: #344054;
 $grey: #858c9a;
+$grey-low-opacity: rgba(133, 140, 154, 0.4);
 $grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
 $grey-detail: #dfe0e4;
-$sublte-grey: #f2f4f7;
+$subtle-grey: #f2f4f7;
 $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
 $grey-hover: #fafafa;
@@ -56,9 +57,6 @@ $low-opacity-red: rgba(231, 66, 58, 0.3);
 $light-red: #fdf4f4;
 
 $input-shadow: none;
-$header-size: 2px;
-
-$carousel-overlay-background: none;
 
 button {
   &.is-primary {
@@ -110,7 +108,7 @@ button {
 }
 
 .error-message {
-  position: fixed;
+  position: absolute;
   width: 100%;
 
   .message {
@@ -190,20 +188,6 @@ button {
     .message-body {
       padding: 5px 15px 5px 15px !important;
     }
-
-    &.is-warning {
-      .message-body {
-        border: 1px solid $yellow !important;
-      }
-    }
-
-    &.is-danger {
-      .message-body {
-        border: 1px solid $low-opacity-red !important;
-        color: $red;
-        background-color: $light-red;
-      }
-    }
   }
 }
 
@@ -217,6 +201,20 @@ button {
 
   .dropdown-menu {
     padding-top: 0px;
+  }
+
+  &.dropdown-menu-animation {
+    a.navbar-item {
+      color: $dark-blue;
+      font-size: 16px;
+      line-height: 24px;
+
+      &:hover {
+        color: $primary;
+        background: none;
+        border: none;
+      }
+    }
   }
 }
 
@@ -242,7 +240,6 @@ button {
   height: 13px;
 }
 
-// Styles are not applied when added to document_handover.scss
 .notices {
   .snackbar {
     background-color: $dark-blue;
@@ -280,11 +277,6 @@ button {
 .close-btn {
   width: 10px;
   height: 10px;
-}
-
-.modal-background {
-  background-color: $full-black;
-  opacity: 0.5;
 }
 
 .b-tooltip {
@@ -357,6 +349,12 @@ button {
 }
 
 .dropdown {
+  &.split-mode {
+    .dropdown-trigger {
+      font-size: 14px;
+    }
+  }
+
   &.width-12 {
     .dropdown-trigger {
       width: 12px;
