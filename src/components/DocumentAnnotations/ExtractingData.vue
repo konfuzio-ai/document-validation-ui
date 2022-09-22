@@ -1,10 +1,15 @@
 <style scoped lang="scss" src="../../assets/scss/extracting_data.scss"></style>
 <template>
   <div class="data-extraction-container">
-    <!-- <img
-      src="../../assets/images/ExtractingDataGif.gif"
-      alt="document-loading"
-    /> -->
+    <div class="loading-container">
+      <ActionButtons
+        :isLoading="true"
+        :saveBtn="false"
+        :cancelBtn="false"
+        :isActive="false"
+        :menu="false"
+      />
+    </div>
     <div class="data-extraction-text">
       <p class="title">{{ $t("data_being_extracted") }}</p>
       <div class="description">
@@ -15,7 +20,10 @@
   </div>
 </template>
 <script>
+import ActionButtons from "./ActionButtons.vue";
+
 export default {
-  name: "ExtractingData"
+  name: "ExtractingData",
+  components: { ActionButtons }
 };
 </script>
