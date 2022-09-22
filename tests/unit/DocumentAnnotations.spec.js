@@ -72,26 +72,6 @@ describe("Document Annotations Component", () => {
     });
   });
 
-  // it("Only show menu from Action Buttons when not in edit mode", () => {
-  //   const annotationSet = store.state.document.annotationSets[0];
-  //   const label = annotationSet.labels[0];
-
-  //   const wrapper = mount(EmptyAnnotation, {
-  //     store,
-  //     propsData: {
-  //       label,
-  //       annotationSet,
-  //     },
-  //     mocks: {
-  //       $t,
-  //     },
-  //   });
-
-  //   expect(wrapper.findAll(".action-buttons .menu-buttons").isVisible()).toBe(
-  //     true
-  //   );
-  // });
-
   it("Click should trigger edit mode in empty annotation", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
