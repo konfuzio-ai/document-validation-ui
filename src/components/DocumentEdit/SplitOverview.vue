@@ -2,15 +2,17 @@
 
 <template>
   <div class="split-overview">
-    <div class="back-section">
-      <div class="back-btn-section" @click="handleBackButton">
+    <div class="back-section" @click="handleBackButton">
+      <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
           class="is-small arrow"
           :style="{ color: '#858C9A', cursor: 'pointer' }"
         />
       </div>
-      <div class="back-text">{{ $t("back_to_edit") }}</div>
+      <div class="back-text">
+        {{ $t("back_to_edit") }}
+      </div>
     </div>
     <div class="overview-title">{{ $t("split_document") }}</div>
     <div class="new-documents-container">
@@ -47,18 +49,14 @@
         </div>
         <div class="doc-info">
           <div class="file-name-section">
-            <div class="name-input">
-              <span
-                contenteditable
-                role="textbox"
-                class="content-editable"
-                @input="handleInput"
-                @paste="handlePaste"
-                @blur="handleChanges(page)"
-              >
-                {{ getFileName(page.name) }}
-              </span>
-            </div>
+            <input
+              type="text"
+              class="name-input"
+              @input="handleInput"
+              @paste="handlePaste"
+              @blur="handleChanges(page)"
+              :value="getFileName(page.name)"
+            />
             <div class="file-extension-container">
               <span>{{ `.${fileExtension}` }}</span>
             </div>
@@ -128,7 +126,7 @@ export default {
       event.preventDefault();
     },
     handleInput(event) {
-      this.updatedFileName = event.target.textContent.trim();
+      this.updatedFileName = event.target.value.trim();
     },
     handleChanges(page, category) {
       // This function handles file name or category changes

@@ -51,7 +51,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
@@ -96,20 +96,23 @@ export default {
 
       return { width: page.size[0], height: page.size[1] };
     },
-
-    isPortrait() {
-      const { width, height } = this.defaultViewport;
-      return width <= height;
-    },
     ...mapState("display", ["scale", "fit"]),
     ...mapState("document", ["pages"]),
     ...mapState("edit", ["editMode"])
   },
-  created() {
-    window.addEventListener("resize", this.fitWidth);
+  mounted() {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateFit();
+    });
+    this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+
+    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
   },
   destroyed() {
-    window.removeEventListener("resize", this.fitWidth);
+    if (this.$refs.scrollingDocument) {
+      this.resizeObserver.unobserve(this.$refs.scrollingDocument.$el);
+    }
   },
   data() {
     return {
@@ -117,12 +120,9 @@ export default {
       optimized: true,
       showError: false,
       errorMessage: null,
-      scroll: false
+      scroll: false,
+      resizeObserver: null
     };
-  },
-  mounted() {
-    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
-    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
   },
   methods: {
     pageWidthScale() {
@@ -185,12 +185,9 @@ export default {
 
     handleMessage(message) {
       this.errorMessage = message;
-    }
-  },
-
-  watch: {
-    fit(fit) {
-      switch (fit) {
+    },
+    updateFit() {
+      switch (this.fit) {
         case "width":
           this.fitWidth();
           break;
@@ -200,8 +197,15 @@ export default {
           break;
 
         default:
+          console.log("undefined");
           break;
       }
+    }
+  },
+
+  watch: {
+    fit() {
+      updateFit();
     }
   }
 };

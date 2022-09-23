@@ -5,6 +5,11 @@
   flex: 1;
   background-color: $background;
 
+  &.split-overview-component {
+    min-width: 600px;
+    flex: 0;
+  }
+
   .pages-section {
     width: 100%;
     overflow-y: scroll;
@@ -251,6 +256,7 @@
       padding-left: 30px;
       padding-right: 10px;
       overflow-y: scroll;
+      width: 100%;
     }
 
     .split-overview {
@@ -260,13 +266,16 @@
         display: flex;
         align-items: center;
         gap: 11px;
-        margin-bottom: 25px;
+        width: fit-content;
+        margin-bottom: 26px;
+        cursor: pointer;
 
         .back-btn-section {
           padding-top: 5px;
         }
 
         .back-text {
+
           color: $grey;
           font-weight: 400;
           font-size: 14px;
@@ -349,13 +358,15 @@
           }
 
           .doc-info {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
             gap: 8px;
 
             .file-name-section {
               display: flex;
               height: 40px;
+              flex: 2;
 
               .control {
                 .input {
@@ -373,26 +384,27 @@
                 display: flex;
                 align-items: center;
                 height: 100%;
-                max-width: 300px;
-                padding: 13px;
+                width: 100%;
+                max-width: 100%;
+                padding: 12px;
                 border-radius: 4px 0 0 4px;
                 border: 1px solid $grey-outline;
                 border-right: 0;
                 background-color: $white;
                 cursor: text;
 
-                .content-editable {
-                  display: inline-block;
-                  width: 100%;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  font-size: 14px;
-                  font-weight: 400;
+                // .content-editable {
+                //   display: inline-block;
+                //   width: 100%;
+                //   white-space: nowrap;
+                //   overflow: hidden;
+                //   font-size: 14px;
+                //   font-weight: 400;
 
-                  &:focus {
-                    outline: none;
-                  }
-                }
+                //   &:focus {
+                //     outline: none;
+                //   }
+                // }
               }
 
               .file-extension-container {
@@ -408,7 +420,7 @@
             }
 
             .category {
-              padding-right: 10px;
+              flex: 1;
             }
           }
         }
