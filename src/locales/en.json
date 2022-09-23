@@ -56,6 +56,7 @@
   "ann_exists": "An annotation for this label and label set already exists.",
   "lite_mode": "Read Only",
   "limited_functionalities": "You are using the Read Only version with limited functionalities.",
+  "accept": "Accept",
   "split": "Split",
   "reorder": "Reorder",
   "rotate": "Rotate",

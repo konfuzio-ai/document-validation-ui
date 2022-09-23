@@ -5,7 +5,13 @@
 ></style>
 
 <template>
-  <div class="annotation" ref="annotation" :id="annotation.id">
+  <div
+    class="annotation"
+    ref="annotation"
+    :id="annotation.id"
+    @mouseenter="showAcceptButton = true"
+    @mouseleave="showAcceptButton = false"
+  >
     <span
       v-if="!publicView"
       :class="[
@@ -34,8 +40,10 @@
         :isActive="!isLoading"
         :isLoading="isLoading"
         :menu="!isAnnotationBeingEdited"
+        :acceptBtn="showAcceptButton"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
+        @accept="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
         :handleMenu="handleMenu"
@@ -78,7 +86,8 @@ export default {
   data() {
     return {
       error: null,
-      isLoading: false
+      isLoading: false,
+      showAcceptButton: false
     };
   },
   components: {
@@ -178,6 +187,7 @@ export default {
       if (event) {
         event.preventDefault();
       }
+
       let updatedString;
 
       this.isLoading = true;
@@ -185,7 +195,14 @@ export default {
 
       let storeAction;
 
-      if (this.annotationText.length === 0) {
+      if (this.showAcceptButton) {
+        storeAction = "document/updateAnnotation";
+
+        updatedString = {
+          is_correct: true,
+          revised: true
+        };
+      } else if (this.annotationText.length === 0) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
