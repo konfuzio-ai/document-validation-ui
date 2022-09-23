@@ -3,6 +3,16 @@
 .category-chooser {
   cursor: pointer;
 
+  &.split-mode {
+    border: 1px solid $grey-detail;
+    border-radius: 4px;
+    background-color: $white;
+
+    .category-drop-down {
+      gap: 5px;
+    }
+  }
+
   .category-drop-down {
     display: flex;
     height: 100%;
@@ -13,6 +23,11 @@
     .icon {
       text-align: center;
       margin-right: 8px;
+
+      &.split-mode-caret {
+        padding-left: 8px;
+        padding-bottom: 2px;
+      }
     }
 
     .category-info {

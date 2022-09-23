@@ -5,13 +5,13 @@
     <div class="document-top-bar">
       <div class="left-bar-components">
         <DocumentCategory
-          v-if="categories"
+          v-if="categories && !editMode"
           :selectedDocument="selectedDocument"
           :handleError="handleShowError"
           :handleMessage="handleShowMessage"
         />
         <DocumentDatasetStatus
-          v-if="showDatasetDropdown"
+          v-if="showDatasetDropdown && !editMode"
           :datasetStatus="selectedDocument.dataset_status"
           :handleError="handleShowError"
           :handleMessage="handleShowMessage"
@@ -22,7 +22,7 @@
         <DocumentName :dataFileName="selectedDocument.data_file_name" />
       </div>
       <div class="right-bar-components">
-        <div class="public-mode-info" v-if="publicView">
+        <div class="public-mode-info" v-if="publicView && !editMode">
           <b-tooltip
             type="is-dark"
             :animated="false"
@@ -38,7 +38,15 @@
             </template>
           </b-tooltip>
         </div>
-        <div class="handover" v-else-if="showHandoverButton">
+
+        <div class="edit-mode-buttons" v-if="editMode">
+          <DocumentTopBarButtons
+            :handleShowError="handleShowError"
+            :handleMessage="handleShowMessage"
+          />
+        </div>
+
+        <div class="handover" v-if="showHandoverButton && !editMode">
           <DocumentHandover />
         </div>
       </div>
@@ -47,11 +55,17 @@
 </template>
 
 <script>
-import DocumentDatasetStatus from "./DocumentDatasetStatus.vue";
-import DocumentCategory from "./DocumentCategory.vue";
-import DocumentName from "./DocumentName.vue";
-import DocumentHandover from "./DocumentHandover.vue";
 import { mapState } from "vuex";
+import DocumentDatasetStatus from "./DocumentDatasetStatus";
+import DocumentCategory from "./DocumentCategory";
+import DocumentName from "./DocumentName";
+import DocumentHandover from "./DocumentHandover";
+import DocumentTopBarButtons from "./DocumentTopBarButtons";
+
+/**
+ * This component has different functionalities
+ * based on Dashboard View or Edit Mode
+ */
 
 export default {
   name: "DocumentTopBar",
@@ -66,7 +80,8 @@ export default {
     DocumentCategory,
     DocumentDatasetStatus,
     DocumentName,
-    DocumentHandover
+    DocumentHandover,
+    DocumentTopBarButtons
   },
   props: {
     showError: {
@@ -75,7 +90,8 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "publicView"]),
-    ...mapState("category", ["categories"])
+    ...mapState("category", ["categories"]),
+    ...mapState("edit", ["editMode"])
   },
   methods: {
     handleShowError() {

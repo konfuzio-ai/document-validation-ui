@@ -14,6 +14,7 @@ const state = {
   showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
+  editMode: false,
   editAnnotation: {
     id: null,
     index: 0
@@ -114,6 +115,12 @@ const actions = {
   },
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
+  },
+  setEditMode: ({ commit }, option) => {
+    commit("SET_EDIT_MODE", option);
+  },
+  disableEditMode: ({ commit }) => {
+    commit("SET_EDIT_MODE", null);
   },
   setEditAnnotation: ({ commit }, values) => {
     commit("SET_EDIT_ANNOTATION", values);
@@ -256,6 +263,7 @@ const actions = {
         });
     });
   },
+
   deleteAnnotation: ({}, { annotationId }) => {
     return new Promise(resolve => {
       HTTP.delete(`/annotations/${annotationId}/`)
@@ -270,6 +278,7 @@ const actions = {
         });
     });
   },
+
   updateDocument: ({ commit, state }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
@@ -342,21 +351,6 @@ const actions = {
       });
   },
 
-  updatePageRotation: ({ state }, changedRotations) => {
-    return new Promise(resolve => {
-      HTTP.post(`/documents/${state.documentId}/rotate/`, changedRotations)
-        .then(response => {
-          if (response.status === 204) {
-            resolve(true);
-          }
-        })
-        .catch(error => {
-          resolve(false);
-          console.log(error);
-        });
-    });
-  },
-
   fetchCurrentUser: ({ commit }) => {
     return HTTP.get(`/auth/me/`).then(response => {
       commit("SET_CURRENT_USER", response.data.username);
@@ -408,6 +402,9 @@ const mutations = {
   },
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
+  },
+  SET_EDIT_MODE: (state, option) => {
+    state.editMode = option;
   },
   SET_EDIT_ANNOTATION: (state, { id, index }) => {
     state.editAnnotation = {

@@ -23,7 +23,7 @@
           }"
         />
 
-        <template v-if="pageInVisibleRange">
+        <template v-if="pageInVisibleRange && !editMode">
           <v-group ref="entities" v-if="showEntities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
@@ -235,6 +235,9 @@ export default {
     },
 
     pageNumber() {
+      if (this.editMode) {
+        return this.page.page_number;
+      }
       return this.page.number;
     },
 
@@ -254,8 +257,10 @@ export default {
       "documentFocusedAnnotation",
       "recalculatingAnnotations",
       "annotations",
-      "editAnnotation"
+      "editAnnotation",
+      "selectedDocument"
     ]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
       "visiblePageRange",
       "bboxToRect",
@@ -500,11 +505,23 @@ export default {
       }
     },
     page() {
-      this.drawPage(true);
+      if (this.selectedDocument.labeling_available === 1) {
+        this.drawPage(true);
+      }
+    },
+    selectedDocument(newValue) {
+      if (newValue.labeling_available === 1) {
+        this.drawPage(true);
+      }
     }
   },
   mounted() {
-    this.drawPage();
+    if (
+      this.selectedDocument &&
+      this.selectedDocument.labeling_available === 1
+    ) {
+      this.drawPage();
+    }
   }
 };
 </script>

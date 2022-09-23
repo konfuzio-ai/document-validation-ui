@@ -4,14 +4,10 @@ import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
 import App from "./components/App";
 import * as Sentry from "@sentry/vue";
-import {
-  Integrations
-} from "@sentry/tracing";
+import { Integrations } from "@sentry/tracing";
 import i18n from "./i18n";
 
-import {
-  library
-} from "@fortawesome/fontawesome-svg-core";
+import { library } from "@fortawesome/fontawesome-svg-core";
 // internal icons
 import {
   faArrowUp,
@@ -24,11 +20,15 @@ import {
   faXmark,
   faEllipsisVertical,
   faUser,
-  faCircleInfo
+  faCircleInfo,
+  faArrowRotateLeft,
+  faArrowRotateRight,
+  faScissors,
+  faRepeat,
+  faEye,
+  faArrowLeft
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  FontAwesomeIcon
-} from "@fortawesome/vue-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faArrowUp,
@@ -41,7 +41,13 @@ library.add(
   faXmark,
   faEllipsisVertical,
   faUser,
-  faCircleInfo
+  faCircleInfo,
+  faArrowRotateLeft,
+  faArrowRotateRight,
+  faScissors,
+  faRepeat,
+  faEye,
+  faArrowLeft
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 Vue.component("App", App);
@@ -77,5 +83,5 @@ if (process.env.NODE_ENV != "development") {
  */
 new Vue({
   i18n,
-  el: "#app",
-})
+  el: "#app"
+});

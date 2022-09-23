@@ -20,7 +20,7 @@ const floor = (value, precision) => {
 const state = {
   scale: undefined,
   optimalScale: undefined,
-  fit: undefined,
+  fit: 'width',
   currentPage: 1
 };
 

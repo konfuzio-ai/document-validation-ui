@@ -20,7 +20,7 @@
   </div>
 </template>
 <script>
-import ActionButtons from "./ActionButtons.vue";
+import ActionButtons from "./ActionButtons";
 
 export default {
   name: "ExtractingData",

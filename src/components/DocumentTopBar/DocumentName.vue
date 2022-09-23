@@ -25,13 +25,17 @@
       >
     </span>
     <div
-      v-if="!publicView && showEditBtn"
+      v-if="!publicView && showEditBtn && !editMode"
       class="edit-btn btn"
       @click="handleEdit"
     >
       {{ $t("edit") }}
     </div>
-    <div v-if="showSaveBtn" class="save-btn btn" @click="handleSave">
+    <div
+      v-if="showSaveBtn && !editMode"
+      class="save-btn btn"
+      @click="handleSave"
+    >
       {{ $t("save") }}
     </div>
     <div v-if="saving" class="message-container">
@@ -54,9 +58,9 @@
 </template>
 
 <script>
-import ServerImage from "../../assets/images/ServerImage.vue";
-import FileNameSaved from "../../assets/images/FileNameSavedImage.vue";
-import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage.vue";
+import ServerImage from "../../assets/images/ServerImage";
+import FileNameSaved from "../../assets/images/FileNameSavedImage";
+import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage";
 import { mapState } from "vuex";
 
 export default {
@@ -86,7 +90,8 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView"])
+    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("edit", ["editMode"])
   },
   methods: {
     handleFileName() {

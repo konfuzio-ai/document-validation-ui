@@ -8,8 +8,8 @@
         @handle-error="handleError"
       />
     </div>
-    <div class="dashboard-viewer">
-      <DocumentThumbnails ref="documentPages" />
+    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
+      <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
         ref="scrollingDocument"
@@ -20,11 +20,19 @@
       />
       <DocumentAnnotations
         ref="annotations"
+        v-if="!editMode"
         @handle-message="handleMessage"
         @handle-error="handleError"
         :handleScroll="handleScroll"
         :scroll="scroll"
       />
+      <DocumentEdit
+        ref="editView"
+        v-else
+        @handle-message="handleMessage"
+        @handle-error="handleError"
+      />
+
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
           <ErrorMessage
@@ -55,6 +63,7 @@ import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentsList } from "./DocumentsList";
+import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
 
@@ -72,6 +81,7 @@ export default {
     DocumentThumbnails,
     DocumentAnnotations,
     DocumentsList,
+    DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal
   },
@@ -86,19 +96,23 @@ export default {
 
       return { width: page.size[0], height: page.size[1] };
     },
-
-    isPortrait() {
-      const { width, height } = this.defaultViewport;
-      return width <= height;
-    },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"])
+    ...mapState("document", ["pages"]),
+    ...mapState("edit", ["editMode"])
   },
-  created() {
-    window.addEventListener("resize", this.fitWidth);
+  mounted() {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateFit();
+    });
+    this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+
+    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
+    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
   },
   destroyed() {
-    window.removeEventListener("resize", this.fitWidth);
+    if (this.$refs.scrollingDocument) {
+      this.resizeObserver.unobserve(this.$refs.scrollingDocument.$el);
+    }
   },
   data() {
     return {
@@ -106,12 +120,9 @@ export default {
       optimized: true,
       showError: false,
       errorMessage: null,
-      scroll: false
+      scroll: false,
+      resizeObserver: null
     };
-  },
-  mounted() {
-    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
-    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
   },
   methods: {
     pageWidthScale() {
@@ -119,9 +130,10 @@ export default {
       if (!defaultViewport.width) return 0;
 
       const elementsWidth =
-        this.$refs.documentPages.$el.clientWidth +
-        this.$refs.annotations.$el.clientWidth +
-        1;
+        (this.$refs.editView
+          ? this.$refs.editView.$el.clientWidth
+          : this.$refs.documentPages.$el.clientWidth +
+            this.$refs.annotations.$el.clientWidth) + 1;
 
       return (
         (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /
@@ -173,12 +185,9 @@ export default {
 
     handleMessage(message) {
       this.errorMessage = message;
-    }
-  },
-
-  watch: {
-    fit(fit) {
-      switch (fit) {
+    },
+    updateFit() {
+      switch (this.fit) {
         case "width":
           this.fitWidth();
           break;
@@ -188,8 +197,15 @@ export default {
           break;
 
         default:
+          console.log("undefined");
           break;
       }
+    }
+  },
+
+  watch: {
+    fit() {
+      updateFit();
     }
   }
 };
