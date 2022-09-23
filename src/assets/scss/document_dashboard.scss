@@ -6,6 +6,7 @@
   flex-direction: column;
 
   .dashboard-viewer {
+    height: 100%;
     overflow: hidden;
     display: flex;
     background: $grey-lighter;

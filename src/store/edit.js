@@ -12,32 +12,47 @@ const state = {
 };
 
 const actions = {
-  setEditMode: ({ commit }, value) => {
-    commit("SET_EDIT_MODE", value);
+  enableEditMode: ({
+    commit
+  }) => {
+    commit("SET_EDIT_MODE", true);
   },
 
-  disableEditMode: ({ commit }) => {
+  disableEditMode: ({
+    commit
+  }) => {
     commit("SET_EDIT_MODE", false);
     commit("SET_SPLIT_OVERVIEW", false);
   },
 
-  setSplitOverview: ({ commit }, overview) => {
+  setSplitOverview: ({
+    commit
+  }, overview) => {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
-  setPagesFrontend: ({ commit }, pagesFrontend) => {
+  setPagesFrontend: ({
+    commit
+  }, pagesFrontend) => {
     commit("SET_PAGES_FRONTEND", pagesFrontend);
   },
 
-  setPagesArray: ({ commit }, pages) => {
+  setPagesArray: ({
+    commit
+  }, pages) => {
     commit("SET_PAGES_ARRAY", pages);
   },
 
-  setUpdatedDocument: ({ commit }, updatedDocument) => {
+  setUpdatedDocument: ({
+    commit
+  }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
   },
 
-  setSelectedPages: ({ state, commit }, selectedPage) => {
+  setSelectedPages: ({
+    state,
+    commit
+  }, selectedPage) => {
     if (!selectedPage) {
       state.selectedPages.pop();
       return;
@@ -56,7 +71,13 @@ const actions = {
     }
   },
 
-  rotatePage: ({ state, commit }, { page, direction }) => {
+  rotatePage: ({
+    state,
+    commit
+  }, {
+    page,
+    direction
+  }) => {
     // If the item already exists in the array and matches the clicked one,
     // update it to the new rotation
     if (state.pagesFrontend.find(p => p.id === page[0].id)) {
@@ -157,10 +178,16 @@ const actions = {
     }
   },
 
-  updateRotationToTheLeft: ({ state, commit }) => {
+  updateRotationToTheLeft: ({
+    state,
+    commit
+  }) => {
     // update the angles to rotate pages in the frontend
     const pages = state.pagesFrontend.map(p => {
-      return { ...p, angle: p.angle - 90 };
+      return {
+        ...p,
+        angle: p.angle - 90
+      };
     });
 
     commit("SET_PAGES_FRONTEND", pages);
@@ -171,16 +198,25 @@ const actions = {
       if (rotatedAngle === -270) {
         rotatedAngle = 90;
       }
-      return { ...p, angle: rotatedAngle };
+      return {
+        ...p,
+        angle: rotatedAngle
+      };
     });
 
     commit("SET_PAGES_ARRAY", array);
   },
 
-  updateRotationToTheRight: ({ state, commit }) => {
+  updateRotationToTheRight: ({
+    state,
+    commit
+  }) => {
     // update the angles to rotate pages in the frontend
     const pages = state.pagesFrontend.map(p => {
-      return { ...p, angle: p.angle + 90 };
+      return {
+        ...p,
+        angle: p.angle + 90
+      };
     });
 
     commit("SET_PAGES_FRONTEND", pages);
@@ -191,18 +227,24 @@ const actions = {
       if (rotatedAngle === 270) {
         rotatedAngle = -90;
       }
-      return { ...p, angle: rotatedAngle };
+      return {
+        ...p,
+        angle: rotatedAngle
+      };
     });
 
     commit("SET_PAGES_ARRAY", array);
   },
 
-  editDocument: ({ rootState, dispatch }, editedDocument) => {
+  editDocument: ({
+    rootState,
+    dispatch
+  }, editedDocument) => {
     return new Promise(resolve => {
       HTTP.post(
-        `/documents/${rootState.document.documentId}/postprocess/`,
-        editedDocument
-      )
+          `/documents/${rootState.document.documentId}/postprocess/`,
+          editedDocument
+        )
         .then(async response => {
           if (response.status === 200) {
             const newDocument = response.data[0];
