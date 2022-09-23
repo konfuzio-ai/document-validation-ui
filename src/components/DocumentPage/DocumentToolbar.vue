@@ -57,9 +57,11 @@ export default {
   },
   data() {
     return {
+      defaultScale: null,
       currentPercentage: 100,
       minimumPercentage: 0,
       increment: 0.25,
+      fit: 0.5,
       toolbarModalOpen: true,
       editModeDisabled: false,
       tooltipInfo: this.$t("edit_not_available")
@@ -68,6 +70,9 @@ export default {
   computed: {
     ...mapState("display", ["scale"]),
     ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
+  },
+  created() {
+    window.addEventListener("resize", this.handleDefaultScale);
   },
   methods: {
     handleEdit() {
@@ -81,7 +86,6 @@ export default {
       this.currentPercentage += this.increment * 100;
     },
     zoomOut() {
-      if (this.scale <= this.increment) return;
       if (this.currentPercentage === 0) return;
 
       this.updateScale(this.scale - this.increment);
@@ -108,8 +112,19 @@ export default {
       this.$store.dispatch("display/updateFit", "undefined");
     },
     fitAuto() {
-      this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 60;
+      if (this.currentPercentage === 50 || !this.defaultScale) return;
+
+      // Always set to 50%
+      this.updateScale(this.defaultScale - this.fit);
+
+      this.currentPercentage = 50;
+    },
+    handleDefaultScale() {
+      // When resizing, the doc dimensions get recalculated to fit
+      // the dashboard document
+      // so reset the % and update the scale
+      this.currentPercentage = 100;
+      this.defaultScale = this.scale;
     },
     handleError() {
       this.$parent.$emit("handle-error", true);
@@ -126,6 +141,9 @@ export default {
         this.editModeDisabled = true;
       }
     }
+  },
+  mounted() {
+    this.defaultScale = this.scale;
   }
 };
 </script>
