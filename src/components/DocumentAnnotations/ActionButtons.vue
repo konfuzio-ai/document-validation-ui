@@ -15,18 +15,19 @@
     </div>
 
     <b-button
+      v-if="saveBtn && !isLoading"
+      :class="[isActive && 'annotation-save-btn']"
+      type="is-primary"
+      v-on:click.stop="save"
+    >
+      {{ $t("save") }}
+    </b-button>
+
+    <b-button
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
       v-on:click.stop="cancel"
-    />
-
-    <b-button
-      v-if="saveBtn && !isLoading"
-      icon-left="check"
-      :class="['is-small', isActive && 'annotation-save-btn']"
-      type="is-primary"
-      v-on:click.stop="save"
     />
 
     <div

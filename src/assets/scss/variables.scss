@@ -82,6 +82,15 @@ button {
       height: 12px !important;
     }
   }
+
+  &.annotation-cancel-btn {
+    .icon {
+      svg {
+        width: 15px !important;
+        height: 15px !important;
+      }
+    }
+  }
 }
 
 .carousel-list {
