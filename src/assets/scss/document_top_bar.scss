@@ -2,7 +2,7 @@
 
 .document-top-bar-component {
   width: 100%;
-  height: 100%;
+  height: $top-bar-height;
 
   .document-top-bar {
     width: 100%;
@@ -32,6 +32,9 @@
     }
 
     .right-bar-components {
+      align-items: center;
+      justify-content: flex-end;
+      display: flex;
       flex: 1;
 
       .handover {
@@ -62,12 +65,17 @@
           font-size: 12px;
         }
       }
+
+      .edit-mode-buttons {
+        display: flex;
+        margin-right: 16px;
+      }
     }
   }
+}
 
-  .btn-container {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
+.btn-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }

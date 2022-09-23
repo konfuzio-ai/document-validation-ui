@@ -2,16 +2,32 @@
 
 <template>
   <div class="toolbar-container">
-    <div class="toolbar">
-      <div class="icons icons-left">
-        <div class="rotate icon" @click="handleModal" v-if="!publicView">
-          <RotateIcon />
+    <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
+      <b-tooltip
+        :label="tooltipInfo"
+        multilined
+        type="is-dark"
+        :active="editModeDisabled"
+        size="is-large"
+      >
+        <div
+          :class="[
+            'icons icons-left',
+            editModeDisabled && 'edit-mode-disabled'
+          ]"
+          @click="handleEdit"
+        >
+          <div class="edit-icon icon">
+            <EditDocIcon />
+          </div>
+          <span class="edit-text">{{ $t("edit") }}</span>
         </div>
+      </b-tooltip>
+      <div class="toolbar-divider"></div>
+      <div class="icons icons-right">
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
         </div>
-      </div>
-      <div class="icons icons-right">
         <div class="zoom-in icon" @click.prevent.stop="zoomIn">
           <PlusIcon />
         </div>
@@ -21,60 +37,55 @@
         <div class="percentage">{{ `${currentPercentage}%` }}</div>
       </div>
     </div>
-    <!-- <div class="rotate-pages" v-if="toolbarModalOpen">
-      <RotatePagesModal
-        @close-modal="handleModal"
-        :isModalActive="isModalActive"
-        :setRotations="setRotations"
-        :handleError="handleError"
-        :handleMessage="handleMessage"
-      />
-    </div> -->
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import RotateIcon from "../../assets/images/RotateIcon";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
-import RotatePagesModal from "./RotatePagesModal";
+import EditDocIcon from "../../assets/images/EditDocIcon";
 
 export default {
   name: "Toolbar",
   components: {
-    RotateIcon,
     FitZoomIcon,
     PlusIcon,
     MinusIcon,
-    RotatePagesModal
+    EditDocIcon
   },
   data() {
     return {
+      defaultScale: null,
       currentPercentage: 100,
       minimumPercentage: 0,
       increment: 0.25,
+      fit: 0.5,
       toolbarModalOpen: true,
-      isModalActive: false,
-      setRotations: false
+      editModeDisabled: false,
+      tooltipInfo: this.$t("edit_not_available")
     };
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["publicView"])
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
+  },
+  created() {
+    window.addEventListener("resize", this.handleDefaultScale);
   },
   methods: {
-    handleModal() {
-      this.isModalActive = !this.isModalActive;
-      this.setRotations = !this.setRotations;
+    handleEdit() {
+      if (this.editModeDisabled) return;
+      this.$store.dispatch("edit/enableEditMode").then(() => {
+        this.$store.dispatch("display/updateFit", "width");
+      });
     },
     zoomIn() {
       this.updateScale(this.scale + this.increment);
       this.currentPercentage += this.increment * 100;
     },
     zoomOut() {
-      if (this.scale <= this.increment) return;
       if (this.currentPercentage === 0) return;
 
       this.updateScale(this.scale - this.increment);
@@ -101,8 +112,19 @@ export default {
       this.$store.dispatch("display/updateFit", "undefined");
     },
     fitAuto() {
-      this.$store.dispatch("display/updateFit", "auto");
-      this.currentPercentage = 60;
+      if (this.currentPercentage === 50 || !this.defaultScale) return;
+
+      // Always set to 50%
+      this.updateScale(this.defaultScale - this.fit);
+
+      this.currentPercentage = 50;
+    },
+    handleDefaultScale() {
+      // When resizing, the doc dimensions get recalculated to fit
+      // the dashboard document
+      // so reset the % and update the scale
+      this.currentPercentage = 100;
+      this.defaultScale = this.scale;
     },
     handleError() {
       this.$parent.$emit("handle-error", true);
@@ -110,6 +132,18 @@ export default {
     handleMessage(message) {
       this.$parent.$emit("handle-message", message);
     }
+  },
+  watch: {
+    selectedDocument(newValue) {
+      // check if the document has a dataset status of 'Training' or 'Test'
+      // and if so disable the option to edit the document
+      if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
+        this.editModeDisabled = true;
+      }
+    }
+  },
+  mounted() {
+    this.defaultScale = this.scale;
   }
 };
 </script>

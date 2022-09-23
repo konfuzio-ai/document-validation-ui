@@ -1,6 +1,7 @@
 <style lang="scss" src="../assets/scss/main.scss"></style>
 <template>
   <div>
+    <div v-if="recalculatingAnnotations" class="overlay"></div>
     <DocumentsList v-if="showDocumentsList" />
     <DocumentDashboard class="dashboard-component" />
   </div>
@@ -50,7 +51,8 @@ export default {
       documentIdLoaded: "documentId",
       showRejectedLabels: "showRejectedLabels",
       publicView: "publicView",
-      selectedDocument: "selectedDocument"
+      selectedDocument: "selectedDocument",
+      recalculatingAnnotations: "recalculatingAnnotations"
     }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {

@@ -64,7 +64,7 @@ import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import Label from "./Label";
-import RejectedLabels from "./RejectedLabels.vue";
+import RejectedLabels from "./RejectedLabels";
 /**
  * This component loads all annotations in a label set
  */
@@ -221,7 +221,7 @@ export default {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.handleShowError();
-            this.handleShowMessage(this.$i18n.t("ann_exists"));
+            this.handleShowMessage(this.$t("ann_exists"));
           }
         });
     }

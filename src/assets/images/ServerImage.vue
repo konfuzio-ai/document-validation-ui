@@ -4,6 +4,7 @@
 
 <script>
 import api from "../../api";
+import { mapState } from "vuex";
 
 export default {
   name: "ServerImage",
@@ -12,15 +13,22 @@ export default {
       required: true
     }
   },
+  computed: {
+    ...mapState("document", ["selectedDocument"])
+  },
   methods: {
     loadImage() {
-      return api.IMG_REQUEST.get(this.imageUrl)
-        .then(response => {
-          return response.data;
-        })
-        .then(myBlob => {
-          this.$refs.imgTag.src = URL.createObjectURL(myBlob);
-        });
+      if (!this.imageUrl) return;
+
+      if (this.selectedDocument.labeling_available === 1) {
+        return api.IMG_REQUEST.get(this.imageUrl)
+          .then(response => {
+            return response.data;
+          })
+          .then(myBlob => {
+            this.$refs.imgTag.src = URL.createObjectURL(myBlob);
+          });
+      }
     }
   },
   mounted() {
@@ -28,6 +36,9 @@ export default {
   },
   watch: {
     imageUrl() {
+      this.loadImage();
+    },
+    selectedDocument() {
       this.loadImage();
     }
   }

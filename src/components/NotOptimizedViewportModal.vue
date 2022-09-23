@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import Illustration from "../assets/images/NotOptimizedIllustration.vue";
+import Illustration from "../assets/images/NotOptimizedIllustration";
 
 export default {
   name: "NotOptimizedViewportModal",

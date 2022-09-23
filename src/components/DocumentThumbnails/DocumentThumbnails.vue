@@ -4,20 +4,15 @@
   src="../../assets/scss/document_thumbnails.scss"
 ></style>
 <template>
-  <div :class="['document-pages', filter && 'filter']">
+  <div class="document-pages">
     <div
       :class="['document-thumbnail', currentPage == page.number && 'selected']"
       v-for="page in pages"
       v-bind:key="page.id"
       v-on:click="changePage(page.number)"
     >
-      <div :class="['image-section', rotationModal && 'rotation-modal']">
-        <div
-          :class="['image-container']"
-          :style="{
-            transform: 'rotate(' + getRotation(page.id) + 'deg)'
-          }"
-        >
+      <div class="image-section">
+        <div class="image-container">
           <ServerImage
             :class="[
               'img-thumbnail',
@@ -26,19 +21,6 @@
             ]"
             :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
           />
-          <div
-            class="icon-container"
-            @click="rotateSinglePage(page.id, page.number)"
-          >
-            <div
-              class="icon"
-              :style="{
-                transform: 'rotate(' + getIconRotation(page.id) + 'deg)'
-              }"
-            >
-              <RotateIcon />
-            </div>
-          </div>
         </div>
       </div>
       <div class="number-thumbnail">{{ page.number }}</div>
@@ -49,7 +31,7 @@
 <script>
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
-import RotateIcon from "../../assets/images/RotateIcon";
+
 /**
  * This component creates a vertical list of the document pages
  * with thumbnail pictures of it which are also clickable.
@@ -58,20 +40,8 @@ import RotateIcon from "../../assets/images/RotateIcon";
  */
 export default {
   name: "DocumentThumbnails",
-  props: {
-    filter: {
-      type: Boolean
-    },
-    rotationModal: {
-      type: Boolean
-    },
-    rotations: {
-      type: Array
-    }
-  },
   components: {
-    ServerImage,
-    RotateIcon
+    ServerImage
   },
   computed: {
     ...mapState("document", ["pages", "recalculatingAnnotations"]),
@@ -80,35 +50,12 @@ export default {
   methods: {
     /* Change page if not the currently open and not in modal */
     changePage(pageNumber) {
-      if (pageNumber != this.currentPage && !this.filter) {
+      if (pageNumber != this.currentPage) {
         this.$store.dispatch(
           "display/updateCurrentPage",
           parseInt(pageNumber, 10)
         );
       }
-    },
-    rotateSinglePage(id, number) {
-      this.$emit("rotate-single-page", {
-        pageId: id,
-        pageNumber: number
-      });
-    },
-    getRotation(pageId) {
-      // rotate page
-      return this.rotations?.find(rotation => rotation.id === pageId)?.angle;
-    },
-    getIconRotation(pageId) {
-      // Keep rotation icon fixed when rotating page
-      const pageRotation = this.getRotation(pageId);
-      if (isNaN(pageRotation)) {
-        return;
-      }
-
-      // Convert rotation into positive value
-      const negativeToPositive = pageRotation * -1;
-
-      // "rotate" the exact opposite to keep icon fixed
-      return pageRotation - negativeToPositive * 2;
     }
   }
 };
