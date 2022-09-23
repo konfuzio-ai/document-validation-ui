@@ -30,6 +30,15 @@
       v-on:click.stop="cancel"
     />
 
+    <b-button
+      v-if="acceptBtn && isActive && !saveBtn && !cancelBtn"
+      :class="[isActive && 'annotation-accept-btn']"
+      type="is-primary"
+      v-on:click.stop="accept"
+    >
+      {{ $t("accept") }}
+    </b-button>
+
     <div
       v-if="showRejectedLabels && !publicView && menu && !isLoading"
       class="menu-buttons"
@@ -72,6 +81,9 @@ export default {
     },
     handleMenu: {
       type: Function
+    },
+    acceptBtn: {
+      type: Boolean
     }
   },
   computed: {
@@ -83,6 +95,9 @@ export default {
     },
     cancel() {
       this.$emit("cancel");
+    },
+    accept() {
+      this.$emit("accept");
     }
   }
 };

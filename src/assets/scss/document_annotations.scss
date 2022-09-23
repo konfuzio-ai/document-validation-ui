@@ -144,6 +144,12 @@
             background-color: transparent !important;
             width: 32px;
           }
+
+          &.annotation-accept-btn {
+            padding: 6px 14px 6px 14px;
+            border-radius: 8px;
+            width: auto;
+          }
         }
 
         .menu-buttons {
