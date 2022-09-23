@@ -3,7 +3,7 @@
 <template>
   <div class="edit-sidebar">
     <div class="sidebar-header">
-      <h3>{{ $t("edit_document") }}</h3>
+      <h3 class="sidebar-title">{{ $t("edit_document") }}</h3>
       <p class="description">{{ $t("select_pages") }}</p>
     </div>
 

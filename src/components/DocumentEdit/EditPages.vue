@@ -153,9 +153,14 @@ export default {
       const clickedOutside =
         event.target.className === "document-grid" ||
         event.target.className === "document-name-container" ||
+        event.target.className === "document-name" ||
+        event.target.className === "right-bar-components" ||
+        event.target.className === "left-bar-components" ||
+        event.target.className === "edit-sidebar" ||
         event.target.className === "sidebar" ||
         event.target.className === "sidebar-header" ||
-        event.target.className === "edit-sidebar" ||
+        event.target.className === "description" ||
+        event.target.className === "sidebar-title" ||
         event.target.className === "pages-section" ||
         event.target.nodeName === "CANVAS";
 

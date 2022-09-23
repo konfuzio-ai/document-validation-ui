@@ -22,7 +22,6 @@
         width: 138px;
         height: 138px;
         display: flex;
-        justify-content: center;
         align-items: center;
 
         .img-container {
@@ -374,19 +373,18 @@
                 display: flex;
                 align-items: center;
                 height: 100%;
+                max-width: 300px;
                 padding: 13px;
                 border-radius: 4px 0 0 4px;
                 border: 1px solid $grey-outline;
                 border-right: 0;
                 background-color: $white;
-                width: 100%;
                 cursor: text;
 
                 .content-editable {
-                  display: flex;
-                  white-space: nowrap;
+                  display: inline-block;
                   width: 100%;
-                  height: auto;
+                  white-space: nowrap;
                   overflow: hidden;
                   font-size: 14px;
                   font-weight: 400;
