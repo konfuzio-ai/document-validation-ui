@@ -1,9 +1,9 @@
 <style lang="scss" src="../assets/scss/main.scss"></style>
 <template>
-  <div>
+  <div class="app-container">
     <div v-if="recalculatingAnnotations" class="overlay"></div>
     <DocumentsList v-if="showDocumentsList" />
-    <DocumentDashboard class="dashboard-component" />
+    <DocumentDashboard />
   </div>
 </template>
 
