@@ -37,12 +37,6 @@ export default {
   props: {
     missingAnnotations: {
       type: Array
-    },
-    handleMessage: {
-      type: Function
-    },
-    handleError: {
-      type: Function
     }
   },
   computed: {
@@ -56,8 +50,11 @@ export default {
           if (response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
-            this.handleError();
-            this.handleMessage(this.$t("ann_exists"));
+            this.$store.dispatch("document/setShowError", true);
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("ann_exists")
+            );
           }
         });
     },

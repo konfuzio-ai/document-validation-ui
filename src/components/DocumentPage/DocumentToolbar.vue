@@ -125,12 +125,6 @@ export default {
       // so reset the % and update the scale
       this.currentPercentage = 100;
       this.defaultScale = this.scale;
-    },
-    handleError() {
-      this.$parent.$emit("handle-error", true);
-    },
-    handleMessage(message) {
-      this.$parent.$emit("handle-message", message);
     }
   },
   watch: {
@@ -149,12 +143,14 @@ export default {
   mounted() {
     this.defaultScale = this.scale;
 
-    if (
-      this.selectedDocument.dataset_status === 1 ||
-      this.selectedDocument.dataset_status === 2 ||
-      this.selectedDocument.dataset_status === 3
-    ) {
-      this.editModeDisabled = true;
+    if (this.selectedDocument) {
+      if (
+        this.selectedDocument.dataset_status === 1 ||
+        this.selectedDocument.dataset_status === 2 ||
+        this.selectedDocument.dataset_status === 3
+      ) {
+        this.editModeDisabled = true;
+      }
     }
   }
 };

@@ -24,7 +24,9 @@ const state = {
   showRejectedLabels: false,
   currentUser: null,
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
-  editingActive: false
+  editingActive: false,
+  showError: false,
+  errorMessage: null
 };
 
 const getters = {
@@ -157,6 +159,12 @@ const actions = {
   },
   setEditingActive: ({ commit }, value) => {
     commit("SET_EDITING_ACTIVE", value);
+  },
+  setShowError: ({ commit }, value) => {
+    commit("SET_SHOW_ERROR", value);
+  },
+  setErrorMessage: ({ commit }, message) => {
+    commit("SET_ERROR_MESSAGE", message);
   },
 
   /**
@@ -441,6 +449,12 @@ const mutations = {
   },
   SET_EDITING_ACTIVE: (state, value) => {
     state.editingActive = value;
+  },
+  SET_SHOW_ERROR: (state, value) => {
+    state.showError = value;
+  },
+  SET_ERROR_MESSAGE: (state, message) => {
+    state.errorMessage = message;
   }
 };
 

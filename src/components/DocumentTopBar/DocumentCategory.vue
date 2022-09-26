@@ -59,12 +59,6 @@ export default {
     selectedDocument: {
       type: Object
     },
-    handleError: {
-      type: Function
-    },
-    handleMessage: {
-      type: Function
-    },
     splitMode: {
       type: Boolean
     },
@@ -115,8 +109,11 @@ export default {
               this.$store.dispatch("document/pollDocumentEndpoint", 5000);
             } else {
               this.$store.dispatch("document/endRecalculatingAnnotations");
-              this.handleError();
-              this.handleMessage(this.$t("category_error"));
+              this.$store.dispatch("document/setShowError", true);
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("category_error")
+              );
             }
           });
 
