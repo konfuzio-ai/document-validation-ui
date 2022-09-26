@@ -31,7 +31,7 @@
     />
 
     <b-button
-      v-if="acceptBtn && isActive && !saveBtn && !cancelBtn"
+      v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
       :class="[isActive && 'annotation-accept-btn']"
       type="is-primary"
       v-on:click.stop="accept"
