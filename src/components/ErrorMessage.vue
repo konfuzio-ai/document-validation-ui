@@ -18,7 +18,7 @@ export default {
   name: "ErrorMessage",
   methods: {
     handleErrorClose() {
-      this.$store.dispatch("document/setShowError", false);
+      this.$store.dispatch("document/setErrorMessage", null);
     }
   },
   computed: {

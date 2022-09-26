@@ -220,7 +220,6 @@ export default {
             this.isLoading = false;
           } else {
             this.error = true;
-            this.$store.dispatch("document/setShowError", true);
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("editing_error")

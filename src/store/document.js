@@ -160,10 +160,13 @@ const actions = {
   setEditingActive: ({ commit }, value) => {
     commit("SET_EDITING_ACTIVE", value);
   },
-  setShowError: ({ commit }, value) => {
-    commit("SET_SHOW_ERROR", value);
-  },
   setErrorMessage: ({ commit }, message) => {
+    if (message) {
+      commit("SET_SHOW_ERROR", true);
+    } else {
+      commit("SET_SHOW_ERROR", false);
+    }
+
     commit("SET_ERROR_MESSAGE", message);
   },
 

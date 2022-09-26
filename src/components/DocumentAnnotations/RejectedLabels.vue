@@ -50,7 +50,6 @@ export default {
           if (response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
-            this.$store.dispatch("document/setShowError", true);
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("ann_exists")

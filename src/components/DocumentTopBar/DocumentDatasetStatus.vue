@@ -76,7 +76,6 @@ export default {
           if (response) {
             this.currentStatus = this.statusList[index];
           } else {
-            this.$store.dispatch("document/setShowError", true);
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("status_error")

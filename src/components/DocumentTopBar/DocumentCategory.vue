@@ -109,7 +109,6 @@ export default {
               this.$store.dispatch("document/pollDocumentEndpoint", 5000);
             } else {
               this.$store.dispatch("document/endRecalculatingAnnotations");
-              this.$store.dispatch("document/setShowError", true);
               this.$store.dispatch(
                 "document/setErrorMessage",
                 this.$t("category_error")

@@ -37,7 +37,6 @@ export default {
   methods: {
     /** EDIT MODE */
     showError() {
-      this.$store.dispatch("document/setShowError", true);
       this.$store.dispatch("document/setErrorMessage", this.$t("edit_error"));
     },
     closeEditMode() {
