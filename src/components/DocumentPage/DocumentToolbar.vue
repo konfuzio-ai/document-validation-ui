@@ -137,13 +137,25 @@ export default {
     selectedDocument(newValue) {
       // check if the document has a dataset status of 'Training' or 'Test'
       // and if so disable the option to edit the document
-      if (newValue.dataset_status === 2 || newValue.dataset_status === 3) {
+      if (
+        newValue.dataset_status === 1 ||
+        newValue.dataset_status === 2 ||
+        newValue.dataset_status === 3
+      ) {
         this.editModeDisabled = true;
       }
     }
   },
   mounted() {
     this.defaultScale = this.scale;
+
+    if (
+      this.selectedDocument.dataset_status === 1 ||
+      this.selectedDocument.dataset_status === 2 ||
+      this.selectedDocument.dataset_status === 3
+    ) {
+      this.editModeDisabled = true;
+    }
   }
 };
 </script>

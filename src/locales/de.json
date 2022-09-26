@@ -55,7 +55,7 @@
   "edit_document": "Dokument bearbeiten",
   "selected": "ausgewählt",
   "rotate_selected": "Ausgewählte Seite drehen",
-  "edit_not_available": "Dokumente mit Status 'Training' oder 'Test' können nicht bearbeitet werden",
+  "edit_not_available": "Dokumente mit Status 'Vorbereitung', 'Training' oder 'Test' können nicht bearbeitet werden",
   "back_to_edit": "Zurück zum Bearbeiten Modus",
   "split_document": "Dokument aufteilen",
   "submit": "Senden",
