@@ -133,7 +133,8 @@ describe("Document Annotations Component", () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
-    const span = annotation.span;
+    const spanIndex = 0;
+    const span = annotation.span[spanIndex];
 
     const wrapper = mount(Annotation, {
       store,
@@ -142,10 +143,11 @@ describe("Document Annotations Component", () => {
         label,
         annotationSet,
         span,
+        spanIndex,
       },
       data() {
         return {
-          showAcceptButton: "false",
+          showAcceptButton: false,
         };
       },
       mocks: {
@@ -154,7 +156,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.findComponent(".annotation-value").trigger("mouseover");
-    await wrapper.setData({ showAcceptButton: "true" });
+    await wrapper.setData({ showAcceptButton: true });
 
     expect(
       await wrapper
@@ -163,7 +165,7 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
 
     await wrapper.findComponent(".annotation-value").trigger("mouseout");
-    await wrapper.setData({ showAcceptButton: "false" });
+    await wrapper.setData({ showAcceptButton: false });
 
     expect(
       await wrapper
