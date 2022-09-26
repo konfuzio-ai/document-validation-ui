@@ -96,7 +96,12 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "editingActive", "publicView"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "editingActive",
+      "publicView",
+      "acceptAnnotation"
+    ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -115,7 +120,11 @@ export default {
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
-    handleEditAnnotation() {
+    handleEditAnnotation(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
       if (
         !this.publicView &&
         !this.isAnnotationBeingEdited &&
@@ -160,6 +169,7 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("document/endLoading");
       this.$store.dispatch("document/setEditingActive", false);
+      this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
       this.$refs.contentEditable.blur();
     },
@@ -180,7 +190,7 @@ export default {
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (this.showAcceptButton) {
+      if (this.showAcceptButton || this.saveAnnotationChanges) {
         storeAction = "document/updateAnnotation";
 
         updatedString = {
@@ -275,6 +285,11 @@ export default {
     editingActive(newValue) {
       if (!newValue) {
         this.handleCancel();
+      }
+    },
+    acceptAnnotation(newValue) {
+      if (newValue) {
+        this.saveAnnotationChanges();
       }
     }
   }
