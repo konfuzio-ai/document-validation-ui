@@ -97,7 +97,12 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "editingActive", "publicView"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "editingActive",
+      "publicView",
+      "acceptAnnotation"
+    ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -125,7 +130,11 @@ export default {
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
-    handleEditAnnotation() {
+    handleEditAnnotation(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
       if (
         !this.publicView &&
         !this.isAnnotationBeingEdited &&
@@ -177,6 +186,7 @@ export default {
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("document/setEditingActive", false);
+      this.$store.dispatch("document/setAcceptAnnotation", false);
       this.$refs.contentEditable.blur();
     },
     handlePaste(event) {
@@ -195,7 +205,7 @@ export default {
 
       let storeAction;
 
-      if (this.showAcceptButton) {
+      if (this.showAcceptButton || this.saveAnnotationChanges) {
         storeAction = "document/updateAnnotation";
 
         updatedString = {
@@ -252,6 +262,7 @@ export default {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("document/endLoading");
           this.$store.dispatch("selection/disableSelection");
+          this.$store.dispatch("document/setAcceptAnnotation", false);
           this.isLoading = false;
 
           this.$refs.contentEditable.blur();
@@ -301,6 +312,11 @@ export default {
     editingActive(newValue) {
       if (!newValue) {
         this.handleCancel();
+      }
+    },
+    acceptAnnotation(newValue) {
+      if (newValue) {
+        this.saveAnnotationChanges();
       }
     }
   }

@@ -26,7 +26,8 @@ const state = {
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
   editingActive: false,
   showError: false,
-  errorMessage: null
+  errorMessage: null,
+  acceptAnnotation: false
 };
 
 const getters = {
@@ -168,6 +169,9 @@ const actions = {
     }
 
     commit("SET_ERROR_MESSAGE", message);
+  },
+  setAcceptAnnotation: ({ commit }, value) => {
+    commit("SET_ACCEPT_ANNOTATION", value);
   },
 
   /**
@@ -458,6 +462,9 @@ const mutations = {
   },
   SET_ERROR_MESSAGE: (state, message) => {
     state.errorMessage = message;
+  },
+  SET_ACCEPT_ANNOTATION: (state, value) => {
+    state.acceptAnnotation = value;
   }
 };
 

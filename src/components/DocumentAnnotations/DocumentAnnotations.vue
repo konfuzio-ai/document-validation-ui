@@ -167,6 +167,10 @@ export default {
       } else {
         return;
       }
+
+      if (event.key === "Enter") {
+        this.$store.dispatch("document/setAcceptAnnotation", true);
+      }
     },
     getNumberOfAnnotationSetGroup(annotationSet) {
       // This method checks if theres a group of annotation sets and add an index number to them
