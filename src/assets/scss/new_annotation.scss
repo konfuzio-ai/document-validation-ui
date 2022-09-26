@@ -1,0 +1,47 @@
+@import "./imports.scss";
+
+.annotation-popup {
+    border-radius: 12px;
+    background-color: $dark-blue;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    width: 205px;
+    height: 152px;
+    z-index: 9999999;
+    color: $white;
+    padding: 8px;
+
+    .annotation-value {
+        background-color: $dark-blue;
+        color: $white;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        outline: none;
+        padding: 8px;
+        border-radius: 12px;
+        border: 1px solid $grey;
+    }
+
+    .annotation-buttons {
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row;
+        gap: 2px;
+
+
+        .cancel-button {
+            color: $white;
+
+            &:hover {
+                border: 1px solid $grey;
+            }
+        }
+
+        .popup-button {
+            font-size: 14px;
+        }
+    }
+}

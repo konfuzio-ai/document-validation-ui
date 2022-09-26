@@ -73,8 +73,18 @@ button {
     }
   }
 
-  background-color: $white !important;
-  color: $dark-blue !important;
+  &:not(.is-text, .is-primary) {
+    background-color: $white !important;
+    color: $dark-blue !important;
+  }
+
+  &.is-text {
+    text-decoration: none;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
 
   .icon {
     svg {

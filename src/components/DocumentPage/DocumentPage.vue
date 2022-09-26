@@ -1,6 +1,15 @@
 <style scoped lang="scss" src="../../assets/scss/document_page.scss"></style>
 <template>
-  <div class="pdf-page-container">
+  <div class="pdf-page-container" ref="pdfContainer">
+    <NewAnnotation
+      v-if="newAnnotation"
+      :content="newAnnotation.content"
+      :x="newAnnotation.x"
+      :y="newAnnotation.y"
+      :entityWidth="newAnnotation.width"
+      :entityHeight="newAnnotation.height"
+      @close="closeNewAnnotation"
+    />
     <v-stage
       v-if="scale"
       ref="stage"
@@ -43,7 +52,7 @@
               }"
               @mouseenter="cursor = 'pointer'"
               @mouseleave="cursor = 'crosshair'"
-              @click="getEntitySelectionContent(entity)"
+              @click="openNewAnnotation(entity)"
             ></v-rect>
           </v-group>
           <template v-for="annotation in pageAnnotations">
@@ -64,7 +73,7 @@
                 :key="'ann' + annotation.id + '-' + index"
                 @click="selectLabelAnnotation(annotation)"
                 @mouseenter="onAnnotationHover(annotation)"
-                @mouseleave="onAnnotationHover(null)"
+                @mouseleave="onAnnotationHover()"
               ></v-rect>
             </template>
           </template>
@@ -124,11 +133,13 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
+import NewAnnotation from "./NewAnnotation";
 
 export default {
   name: "DocumentPage",
   components: {
-    BoxSelection
+    BoxSelection,
+    NewAnnotation
   },
 
   props: {
@@ -142,7 +153,8 @@ export default {
     return {
       image: null,
       // TODO: remove this when annotation creation is implemented
-      showEntities: false
+      showEntities: true,
+      newAnnotation: null
     };
   },
 
@@ -451,10 +463,11 @@ export default {
       };
     },
     selectLabelAnnotation(annotation) {
+      this.closeNewAnnotation();
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
-    onAnnotationHover(annotation) {
+    onAnnotationHover(annotation = null) {
       // hack to change the cursor when hovering an annotation
       if (annotation) {
         this.$refs.stage.$el.style.cursor = "pointer";
@@ -481,14 +494,17 @@ export default {
       this.$store.dispatch("document/endLoading");
     },
 
-    async getEntitySelectionContent(entity) {
-      this.$store.dispatch("document/startLoading");
-      await this.$store.dispatch(
-        "selection/getTextFromBboxes",
-        entity.original
-      );
-      //alert(this.spanSelection.offset_string);
-      this.$store.dispatch("document/endLoading");
+    openNewAnnotation(entity) {
+      this.newAnnotation = {
+        content: entity.original.offset_string,
+        y: entity.scaled.y,
+        x: entity.scaled.x,
+        width: entity.scaled.width,
+        height: entity.scaled.height
+      };
+    },
+    closeNewAnnotation() {
+      this.newAnnotation = null;
     }
   },
   watch: {
