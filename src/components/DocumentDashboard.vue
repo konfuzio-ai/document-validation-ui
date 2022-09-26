@@ -3,10 +3,7 @@
 <template>
   <div class="dashboard">
     <div class="dashboard-top-bar" v-if="pages && pages.length > 0">
-      <DocumentTopBar
-        @handle-message="handleMessage"
-        @handle-error="handleError"
-      />
+      <DocumentTopBar />
     </div>
     <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
       <DocumentThumbnails ref="documentPages" v-if="!editMode" />
@@ -14,31 +11,19 @@
         class="dashboard-document"
         ref="scrollingDocument"
         @pages-reset="fitWidth"
-        @handle-message="handleMessage"
-        @handle-error="handleError"
         :scroll="scroll"
       />
       <DocumentAnnotations
         ref="annotations"
         v-if="!editMode"
-        @handle-message="handleMessage"
-        @handle-error="handleError"
         :handleScroll="handleScroll"
         :scroll="scroll"
       />
-      <DocumentEdit
-        ref="editView"
-        v-else
-        @handle-message="handleMessage"
-        @handle-error="handleError"
-      />
+      <DocumentEdit ref="editView" v-else />
 
       <transition name="slide-fade">
         <div v-if="showError" class="error-message">
-          <ErrorMessage
-            @close-error="showError = false"
-            :message="errorMessage"
-          />
+          <ErrorMessage />
         </div>
       </transition>
     </div>
@@ -97,14 +82,17 @@ export default {
       return { width: page.size[0], height: page.size[1] };
     },
     ...mapState("display", ["scale", "fit"]),
-    ...mapState("document", ["pages"]),
+    ...mapState("document", ["pages", "showError"]),
     ...mapState("edit", ["editMode"])
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
       this.updateFit();
     });
-    this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+
+    if (this.$refs.scrollingDocument) {
+      this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+    }
 
     this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
     this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
@@ -118,8 +106,6 @@ export default {
     return {
       isMinimunWidth: true,
       optimized: true,
-      showError: false,
-      errorMessage: null,
       scroll: false,
       resizeObserver: null
     };
@@ -177,14 +163,6 @@ export default {
 
     handleScroll(value) {
       this.scroll = value;
-    },
-
-    handleError() {
-      this.showError = true;
-    },
-
-    handleMessage(message) {
-      this.errorMessage = message;
     },
     updateFit() {
       switch (this.fit) {

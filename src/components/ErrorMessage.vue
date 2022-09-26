@@ -3,7 +3,7 @@
 <template>
   <b-message>
     <div class="message-container">
-      {{ message }}
+      {{ errorMessage }}
     </div>
     <div @click="handleErrorClose" class="btn-container">
       <b-icon icon="xmark" class="close-btn error-icon" />
@@ -12,17 +12,17 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "ErrorMessage",
   methods: {
     handleErrorClose() {
-      this.$emit("close-error");
+      this.$store.dispatch("document/setErrorMessage", null);
     }
   },
-  props: {
-    message: {
-      type: String
-    }
+  computed: {
+    ...mapState("document", ["errorMessage"])
   }
 };
 </script>

@@ -67,8 +67,6 @@
               :splitMode="splitMode"
               :page="page"
               @category-change="handleChanges"
-              :handleShowError="handleShowError"
-              :handleMessage="handleMessage"
               :index="index"
             />
           </div>
@@ -99,12 +97,6 @@ export default {
     },
     fileExtension: {
       type: String
-    },
-    handleShowError: {
-      type: Function
-    },
-    handleMessage: {
-      type: Function
     }
   },
   data() {

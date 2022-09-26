@@ -65,12 +65,6 @@ export default {
       type: Number,
       required: true
     },
-    handleError: {
-      type: Function
-    },
-    handleMessage: {
-      type: Function
-    },
     handleMenu: {
       type: Function
     },
@@ -226,8 +220,10 @@ export default {
             this.isLoading = false;
           } else {
             this.error = true;
-            this.handleError();
-            this.handleMessage(this.$t("editing_error"));
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("editing_error")
+            );
             this.setText(
               this.isAnnotationDeleted
                 ? this.$t("no_data_found")

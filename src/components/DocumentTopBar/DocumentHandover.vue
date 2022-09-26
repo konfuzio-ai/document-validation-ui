@@ -62,22 +62,6 @@
               <div v-if="invalidEmail" class="invalid-email-msg">
                 <p>{{ $t("invalid_email") }}</p>
               </div>
-
-              <transition name="slide-fade">
-                <div v-if="showError" class="error-message handover">
-                  <b-message>
-                    <div class="message-container">
-                      {{ $t("handover_not_possible") }}
-                    </div>
-                    <div
-                      @click="showError = false"
-                      class="close-icon-container"
-                    >
-                      <b-icon icon="xmark" class="close-btn error-icon" />
-                    </div>
-                  </b-message>
-                </div>
-              </transition>
             </div>
             <div class="members-section">
               <div class="members-title">
@@ -121,7 +105,6 @@ export default {
       ],
       isFullPage: false,
       isLoading: false,
-      showError: false,
       selected: null,
       scroll: false,
       invalidEmail: false,
@@ -186,7 +169,6 @@ export default {
       //       this.snackbar();
       //       this.selected = null;
       //     } else {
-      //       this.showError = true;
       //     }
       //   })
       //   .finally(() => {
@@ -205,7 +187,6 @@ export default {
       //       this.snackbar();
       //       this.selected = null;
       //     } else {
-      //       this.showError = true;
       //     }
       //   })
       //   .finally(() => {
@@ -215,7 +196,6 @@ export default {
       setTimeout(() => {
         this.isLoading = false;
         // this.snackbar();
-        this.showError = true;
         this.selected = null;
       }, 2000);
     },

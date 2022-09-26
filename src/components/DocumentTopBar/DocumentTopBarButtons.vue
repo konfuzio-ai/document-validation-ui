@@ -30,20 +30,15 @@ import { mapState } from "vuex";
 
 export default {
   name: "DocumentTopBarButtons",
-  props: {
-    handleShowError: {
-      type: Function
-    },
-    handleMessage: {
-      type: Function
-    }
-  },
   computed: {
     ...mapState("document", ["selectedDocument"]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"])
   },
   methods: {
     /** EDIT MODE */
+    showError() {
+      this.$store.dispatch("document/setErrorMessage", this.$t("edit_error"));
+    },
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode").then(() => {
         this.$store.dispatch("display/updateFit", "width");
@@ -96,6 +91,7 @@ export default {
                       return true;
                     }, 5000);
                   } else if (this.selectedDocument.status_data === 111) {
+                    this.showError();
                     return false;
                   } else {
                     return sleep(duration).then(() =>
@@ -109,14 +105,12 @@ export default {
             if (response) {
               pollUntilLabelingAvailable(5000);
             } else {
-              this.handleShowError();
-              this.handleMessage(this.$t("edit_error"));
+              this.showError();
             }
           })
           .catch(error => {
             console.log(error);
-            this.handleShowError();
-            this.handleMessage(this.$t("edit_error"));
+            this.showError();
           })
           .finally(async () => {
             // Stop loading

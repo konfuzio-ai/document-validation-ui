@@ -7,14 +7,10 @@
         <DocumentCategory
           v-if="categories && !editMode"
           :selectedDocument="selectedDocument"
-          :handleError="handleShowError"
-          :handleMessage="handleShowMessage"
         />
         <DocumentDatasetStatus
           v-if="showDatasetDropdown && !editMode"
           :datasetStatus="selectedDocument.dataset_status"
-          :handleError="handleShowError"
-          :handleMessage="handleShowMessage"
         />
       </div>
 
@@ -40,10 +36,7 @@
         </div>
 
         <div class="edit-mode-buttons" v-if="editMode">
-          <DocumentTopBarButtons
-            :handleShowError="handleShowError"
-            :handleMessage="handleShowMessage"
-          />
+          <DocumentTopBarButtons />
         </div>
 
         <div class="handover" v-if="showHandoverButton && !editMode">
@@ -83,23 +76,10 @@ export default {
     DocumentHandover,
     DocumentTopBarButtons
   },
-  props: {
-    showError: {
-      type: Boolean
-    }
-  },
   computed: {
     ...mapState("document", ["selectedDocument", "publicView"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"])
-  },
-  methods: {
-    handleShowError() {
-      this.$emit("handle-error");
-    },
-    handleShowMessage(message) {
-      this.$emit("handle-message", message);
-    }
   }
 };
 </script>

@@ -14,8 +14,6 @@
       <SplitOverview
         :fileName="fileName"
         :fileExtension="fileExtension"
-        :handleShowError="handleShowError"
-        :handleMessage="handleMessage"
         @change-page="changePage"
       />
     </div>
@@ -125,12 +123,6 @@ export default {
 
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
-    },
-    handleShowError() {
-      this.$emit("handle-error", true);
-    },
-    handleMessage(message) {
-      this.$emit("handle-message", message);
     },
 
     /** ROTATE */
