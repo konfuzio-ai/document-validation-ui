@@ -27,7 +27,7 @@ describe("Document Edit Component", () => {
       store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch("document/setPages", pages),
       store.dispatch("edit/setPagesArray", pages),
-      store.dispatch("edit/setEditMode", true),
+      store.dispatch("edit/enableEditMode"),
     ]);
   });
 
@@ -305,11 +305,8 @@ describe("Document Edit Component", () => {
 
     expect(
       wrapper
-        .findAll(
-          ".document-details .file-name-section .name-input .content-editable"
-        )
-        .at(0)
-        .text()
+        .findAll(".document-details .doc-info .file-name-section .name-input")
+        .at(0).element.value
     ).toBe("ZRU3S3");
   });
 });

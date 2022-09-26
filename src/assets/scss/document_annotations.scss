@@ -31,7 +31,7 @@
       transition: background-color 0.2s ease-out;
       display: flex;
       align-items: center;
-      padding-right: 16px;
+      padding-right: 5px;
 
       &:hover,
       &.selected {
@@ -129,12 +129,20 @@
         gap: 6px;
 
         button {
-          width: 32px;
           height: 32px;
 
-          &.annotation-save-btn,
+          &.annotation-save-btn {
+            border-radius: 8px;
+            padding: 6px 14px 6px 14px;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+          }
+
           &.annotation-cancel-btn {
-            border-radius: 50%;
+            border: none !important;
+            background-color: transparent !important;
+            width: 32px;
           }
         }
 
@@ -174,7 +182,6 @@
       }
 
       @keyframes shake {
-
         10%,
         90% {
           transform: translate3d(-1px, 0, 0);
