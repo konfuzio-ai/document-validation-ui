@@ -37,6 +37,16 @@
     }
   }
 
+  .top-bar {
+    height: 56px;
+    width: 100%;
+    border-bottom: 1px solid $detail;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 16px;
+  }
+
   .labels-list {
     padding-bottom: 16px;
     overflow: auto;
@@ -288,6 +298,54 @@
 
           .loading-background {
             padding: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+
+    button {
+      height: 32px;
+
+      &.finish-review-btn {
+        height: 40px;
+      }
+
+      &.text-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      &.annotation-save-btn {
+        padding: 6px 14px 6px 14px;
+      }
+
+      &.annotation-cancel-btn {
+        border: none !important;
+        background-color: transparent !important;
+        width: 32px;
+      }
+    }
+
+    .menu-buttons {
+      .dropdown {
+        border: none;
+
+        &:hover {
+          background: none;
+          cursor: pointer;
+        }
+
+        .dropdown-trigger {
+          .menu-icon {
+            width: 3px;
+            color: $action-grey;
           }
         }
       }

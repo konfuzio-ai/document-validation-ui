@@ -75,5 +75,6 @@
   "accept": "Akzeptieren",
   "document_error_title": "Dokumentenfehler",
   "document_error_info": "Es tut uns leid, das Dokument ist auf ein Problem gestoßen und seine Daten können nicht wiederhergestellt werden.",
-  "contact_support": "Support kontaktieren"
+  "contact_support": "Support kontaktieren",
+  "finish-review": "Finish review"
 }

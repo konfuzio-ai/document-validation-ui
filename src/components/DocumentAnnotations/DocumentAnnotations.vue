@@ -5,6 +5,10 @@
 ></style>
 <template>
   <div class="labels-sidebar">
+    <div class="labels-top-bar">
+      <AnnotationsTopBar />
+    </div>
+
     <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations">
       <ExtractingData />
@@ -70,6 +74,8 @@ import ActionButtons from "./ActionButtons";
 import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
+import AnnotationsTopBar from "./AnnotationsTopBar";
+
 /**
  * This component loads all annotations in a label set
  */
@@ -81,7 +87,8 @@ export default {
     ActionButtons,
     Label,
     RejectedLabels,
-    LoadingAnnotations
+    LoadingAnnotations,
+    AnnotationsTopBar
   },
   props: {
     handleScroll: {

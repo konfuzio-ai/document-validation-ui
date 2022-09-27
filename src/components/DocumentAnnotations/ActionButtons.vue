@@ -16,7 +16,7 @@
 
     <b-button
       v-if="saveBtn && !isLoading"
-      :class="[isActive && 'annotation-save-btn']"
+      :class="[isActive && 'annotation-save-btn', 'text-btn']"
       type="is-primary"
       @click.stop="save"
     >
@@ -46,6 +46,16 @@
         {{ $t("reject_label") }}
       </b-button>
     </div>
+
+    <b-button
+      v-if="finishReviewBtn"
+      :class="['finish-review-btn', 'text-btn']"
+      type="is-primary"
+      :disabled="finishDisabled"
+      @click.stop="finishReview"
+    >
+      {{ $t("finish-review") }}
+    </b-button>
   </div>
 </template>
 
@@ -76,6 +86,12 @@ export default {
     },
     acceptBtn: {
       type: Boolean
+    },
+    finishReviewBtn: {
+      type: Boolean
+    },
+    finishDisabled: {
+      type: Boolean
     }
   },
   computed: {
@@ -94,6 +110,9 @@ export default {
     },
     reject() {
       this.$parent.$emit("reject");
+    },
+    finishReview() {
+      this.$emit("finish-review");
     }
   }
 };
