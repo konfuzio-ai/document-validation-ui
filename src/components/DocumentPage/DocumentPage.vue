@@ -3,11 +3,8 @@
   <div class="pdf-page-container" ref="pdfContainer">
     <NewAnnotation
       v-if="!publicView && newAnnotation"
+      :entity="newAnnotation.entity"
       :content="newAnnotation.content"
-      :x="newAnnotation.x"
-      :y="newAnnotation.y"
-      :entityWidth="newAnnotation.width"
-      :entityHeight="newAnnotation.height"
       :containerWidth="scaledViewport.width"
       :containerHeight="scaledViewport.height"
       @close="closeNewAnnotation"
@@ -43,7 +40,10 @@
                 stroke: '#ccc',
                 strokeWidth: 2,
                 dash: [5, 2],
-                fill: 'transparent',
+                fill:
+                  newAnnotation && newAnnotation.entity === entity
+                    ? '#67E9B7'
+                    : 'transparent',
                 globalCompositeOperation: 'multiply',
                 transformsEnabled: 'position',
                 hitStrokeWidth: 0,
@@ -498,15 +498,7 @@ export default {
     },
 
     openNewAnnotation(entity) {
-      console.log(entity);
-      console.log(this.page);
-      this.newAnnotation = {
-        content: entity.original.offset_string,
-        y: entity.scaled.y,
-        x: entity.scaled.x,
-        width: entity.scaled.width,
-        height: entity.scaled.height
-      };
+      this.newAnnotation = { entity, content: entity.original.offset_string };
     },
     closeNewAnnotation() {
       this.newAnnotation = null;
