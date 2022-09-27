@@ -2,12 +2,14 @@
 <template>
   <div class="pdf-page-container" ref="pdfContainer">
     <NewAnnotation
-      v-if="newAnnotation"
+      v-if="!publicView && newAnnotation"
       :content="newAnnotation.content"
       :x="newAnnotation.x"
       :y="newAnnotation.y"
       :entityWidth="newAnnotation.width"
       :entityHeight="newAnnotation.height"
+      :containerWidth="scaledViewport.width"
+      :containerHeight="scaledViewport.height"
       @close="closeNewAnnotation"
     />
     <v-stage
@@ -270,7 +272,8 @@ export default {
       "recalculatingAnnotations",
       "annotations",
       "editAnnotation",
-      "selectedDocument"
+      "selectedDocument",
+      "publicView"
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
@@ -495,6 +498,8 @@ export default {
     },
 
     openNewAnnotation(entity) {
+      console.log(entity);
+      console.log(this.page);
       this.newAnnotation = {
         content: entity.original.offset_string,
         y: entity.scaled.y,
