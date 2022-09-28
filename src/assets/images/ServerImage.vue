@@ -14,7 +14,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument", "loading"])
   },
   methods: {
     loadImage() {
@@ -26,6 +26,7 @@ export default {
       ) {
         return api.IMG_REQUEST.get(this.imageUrl)
           .then(response => {
+            this.$store.dispatch("document/setImageLoaded");
             return response.data;
           })
           .then(myBlob => {

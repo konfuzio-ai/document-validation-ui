@@ -10,7 +10,13 @@
       v-scroll.immediate="updateScrollBounds"
       ref="scrollingDocument"
     >
-      <div :class="[recalculatingAnnotations && 'blur']" v-if="!editMode">
+      <div class="loading-page" v-if="!imageLoaded">
+        <div class="placeholder-page"></div>
+      </div>
+      <div
+        :class="[recalculatingAnnotations && 'blur']"
+        v-else-if="!editMode && imageLoaded"
+      >
         <ScrollingPage
           v-for="page in pages"
           :key="page.number"
@@ -69,7 +75,11 @@ export default {
   },
 
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "pages"]),
+    ...mapState("document", [
+      "recalculatingAnnotations",
+      "pages",
+      "imageLoaded"
+    ]),
     ...mapState("edit", ["editMode", "pagesArray"])
   },
 

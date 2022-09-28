@@ -5,25 +5,60 @@
 ></style>
 <template>
   <div class="document-pages">
-    <div
-      :class="['document-thumbnail', currentPage == page.number && 'selected']"
-      v-for="page in pages"
-      v-bind:key="page.id"
-      v-on:click="changePage(page.number)"
-    >
-      <div class="image-section">
-        <div class="image-container">
-          <ServerImage
-            :class="[
-              'img-thumbnail',
-              currentPage == page.number && 'selected',
-              recalculatingAnnotations && 'blur'
-            ]"
-            :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-          />
+    <div class="skeleton-container">
+      <b-skeleton
+        width="40px"
+        height="57px"
+        :active="!imageLoaded"
+      ></b-skeleton>
+
+      <b-skeleton
+        width="7px"
+        height="5px"
+        :active="!imageLoaded"
+        :rounded="false"
+      ></b-skeleton>
+    </div>
+
+    <div class="skeleton-container">
+      <b-skeleton
+        width="40px"
+        height="57px"
+        :active="!imageLoaded"
+      ></b-skeleton>
+
+      <b-skeleton
+        width="7px"
+        height="5px"
+        :active="!imageLoaded"
+        :rounded="false"
+      ></b-skeleton>
+    </div>
+
+    <div v-if="imageLoaded">
+      <div
+        :class="[
+          'document-thumbnail',
+          currentPage == page.number && 'selected'
+        ]"
+        v-for="page in pages"
+        v-bind:key="page.id"
+        v-on:click="changePage(page.number)"
+      >
+        <div class="image-section">
+          <div class="image-container">
+            <ServerImage
+              :class="[
+                'img-thumbnail',
+                currentPage == page.number && 'selected',
+                recalculatingAnnotations && 'blur'
+              ]"
+              :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+            />
+          </div>
         </div>
+        <div class="number-thumbnail">{{ page.number }}</div>
       </div>
-      <div class="number-thumbnail">{{ page.number }}</div>
     </div>
   </div>
 </template>
@@ -44,7 +79,11 @@ export default {
     ServerImage
   },
   computed: {
-    ...mapState("document", ["pages", "recalculatingAnnotations"]),
+    ...mapState("document", [
+      "pages",
+      "recalculatingAnnotations",
+      "imageLoaded"
+    ]),
     ...mapState("display", ["currentPage"])
   },
   methods: {

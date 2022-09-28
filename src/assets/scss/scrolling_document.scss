@@ -10,6 +10,20 @@
     margin: 8px 0;
   }
 
+  .loading-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    .placeholder-page {
+      height: 98%;
+      width: 98%;
+      background-color: $white;
+    }
+  }
+
   .blur {
     filter: blur(2px);
   }
