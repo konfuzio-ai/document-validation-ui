@@ -4,6 +4,7 @@
   <div class="edit-sidebar">
     <div class="sidebar-header">
       <h3 class="sidebar-title">{{ $t("edit_document") }}</h3>
+      <p class="description">{{ $t("edit_early_access") }}</p>
       <p class="description">{{ $t("select_pages") }}</p>
     </div>
 
