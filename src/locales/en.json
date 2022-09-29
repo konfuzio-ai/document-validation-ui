@@ -7,7 +7,7 @@
   "upload_documents": "Upload your own documents",
   "request_trial": "Request  trial access",
   "warning_message": "AI can’t be trained if you change the text manually.",
-  "editing_error": "Editing was not possible. Please try again later",
+  "editing_error": "Editing this annotation is not possible.",
   "category": "Category",
   "status": "Status",
   "preparation": "Preparation",

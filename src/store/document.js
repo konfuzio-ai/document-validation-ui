@@ -205,7 +205,9 @@ const actions = {
   }, value) => {
     commit("SET_EDITING_ACTIVE", value);
   },
-  setErrorMessage: ({ commit }, message) => {
+  setErrorMessage: ({
+    commit
+  }, message) => {
     if (message) {
       commit("SET_SHOW_ERROR", true);
     } else {
@@ -319,7 +321,7 @@ const actions = {
   },
 
   updateAnnotation: ({
-    state
+    commit
   }, {
     updatedValues,
     annotationId
@@ -328,12 +330,8 @@ const actions = {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then(response => {
           if (response.status === 200) {
-            const annotation = state.annotations.find(
-              annotation => annotation.id === response.data.id
-            );
-            annotation.span = response.data.span;
-
-            resolve(true);
+            commit("UPDATE_ANNOTATION", response.data);
+            resolve(response.data);
           }
         })
         .catch(error => {
@@ -343,15 +341,16 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({}, {
+  deleteAnnotation: ({
+    commit
+  }, {
     annotationId
   }) => {
     return new Promise(resolve => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(response => {
-          if (response.status === 200) {
-            resolve(true);
-          }
+          commit("DELETE_ANNOTATION", annotationId);
+          resolve(true);
         })
         .catch(error => {
           resolve(false);
@@ -493,11 +492,40 @@ const mutations = {
       if (annotation.annotation_set && annotationSet.id === annotation.annotation_set) {
         annotationSet.labels.map((label) => {
           if (annotation.label && annotation.label.id === label.id) {
-            label.annotations.push(annotation);
+            const exists = label.annotations.find((existingAnnotation) => existingAnnotation.id === annotation.id)
+            if (!exists) {
+              label.annotations.push(annotation);
+              return;
+            }
           }
         });
       }
     })
+  },
+  UPDATE_ANNOTATION: (state, annotation) => {
+    const annotationToEdit = state.annotations.find(
+      existingAnnotation => existingAnnotation.id === annotation.id
+    );
+    if (annotationToEdit) {
+      annotationToEdit.span = annotation.span;
+    }
+  },
+  DELETE_ANNOTATION: (state, annotationId) => {
+    const indexOfAnnotationToDelete = state.annotations.findIndex((existingAnnotation) => existingAnnotation.id === annotationId);
+    if (indexOfAnnotationToDelete > -1) {
+      console.log("removed 1");
+      state.annotations.splice(indexOfAnnotationToDelete, 1);
+    }
+    state.annotationSets.map((annotationSet) => {
+      annotationSet.labels.map((label) => {
+        const indexOfAnnotationInLabelToDelete = label.annotations.findIndex((existingAnnotation) => existingAnnotation.id === annotationId);
+        if (indexOfAnnotationInLabelToDelete > -1) {
+          console.log("removed 2");
+          label.annotations.splice(indexOfAnnotationInLabelToDelete, 1);
+          return;
+        }
+      });
+    });
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;

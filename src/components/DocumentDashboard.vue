@@ -115,11 +115,16 @@ export default {
       const { defaultViewport, $el } = this;
       if (!defaultViewport.width) return 0;
 
-      const elementsWidth =
-        (this.$refs.editView
-          ? this.$refs.editView.$el.clientWidth
-          : this.$refs.documentPages.$el.clientWidth +
-            this.$refs.annotations.$el.clientWidth) + 1;
+      let elementsWidth = 1;
+      if (this.$refs.editView) {
+        elementsWidth += this.$refs.editView.$el.clientWidth;
+      }
+      if (this.$refs.documentPages) {
+        elementsWidth += this.$refs.documentPages.$el.clientWidth;
+      }
+      if (this.$refs.annotations) {
+        elementsWidth += this.$refs.annotations.$el.clientWidth;
+      }
 
       return (
         (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /

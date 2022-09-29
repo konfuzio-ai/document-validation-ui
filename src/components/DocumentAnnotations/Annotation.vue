@@ -12,20 +12,19 @@
         'annotation-value',
         isLoading && 'saving-changes',
         error && 'error-editing',
-        isAnnotationDeleted && !isAnnotationEditable() ? 'label-empty' : '',
         isAnnotationBeingEdited && 'clicked'
       ]"
       role="textbox"
       ref="contentEditable"
-      :contenteditable="isAnnotationEditable()"
+      :contenteditable="isAnnotationBeingEdited"
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
     >
-      {{ isAnnotationDeleted ? $t("no_data_found") : this.span.offset_string }}
+      {{ this.span.offset_string }}
     </span>
     <span v-else class="annotation-value">
-      {{ isAnnotationDeleted ? "" : this.span.offset_string }}
+      {{ this.span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
@@ -104,15 +103,6 @@ export default {
     }
   },
   methods: {
-    isAnnotationEditable() {
-      return (
-        !this.publicView &&
-        (!this.isAnnotationDeleted ||
-          (this.isAnnotationBeingEdited &&
-            this.spanSelection &&
-            this.spanSelection.offset_string != null))
-      );
-    },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
@@ -123,51 +113,45 @@ export default {
         !this.isLoading
       ) {
         this.$store.dispatch("selection/enableSelection", this.annotation.id);
-        this.$store.dispatch("document/setEditAnnotation", {
-          id: this.annotation.id,
-          index: this.spanIndex
-        });
+        this.$store
+          .dispatch("document/setEditAnnotation", {
+            id: this.annotation.id,
+            index: this.spanIndex
+          })
+          .then(() => {
+            this.$refs.contentEditable.focus();
+          });
         this.$store.dispatch("document/setEditingActive", true);
 
-        if (this.isAnnotationDeleted) {
-          this.setText(this.$t("draw_box_document"));
-        } else {
-          this.$refs.contentEditable.focus();
+        const page = this.pageAtIndex(this.span.page_index);
+        if (page) {
+          const { x, y, width, height } = this.bboxToRect(page, this.span);
 
-          const page = this.pageAtIndex(this.span.page_index);
-          if (page) {
-            // this.$store.dispatch("selection/enableSelection", this.annotation.id);
-            const { x, y, width, height } = this.bboxToRect(page, this.span);
+          const selection = {
+            start: {
+              x,
+              y
+            },
+            end: {
+              x: x + width,
+              y: y + height
+            },
+            pageNumber: page.number
+          };
 
-            const selection = {
-              start: {
-                x,
-                y
-              },
-              end: {
-                x: x + width,
-                y: y + height
-              },
-              pageNumber: page.number
-            };
-
-            this.$store.dispatch("selection/setSelection", {
-              selection,
-              span: this.span
-            });
-          }
+          this.$store.dispatch("selection/setSelection", {
+            selection,
+            span: this.span
+          });
         }
       }
     },
     handleCancel() {
-      this.setText(
-        this.isAnnotationDeleted
-          ? this.$t("no_data_found")
-          : this.span.offset_string
-      );
       this.$store.dispatch("document/resetEditAnnotation", null);
       this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/endLoading");
       this.$store.dispatch("document/setEditingActive", false);
+      this.isLoading = false;
       this.$refs.contentEditable.blur();
     },
     handlePaste(event) {
@@ -183,9 +167,10 @@ export default {
       this.isLoading = true;
       this.$store.dispatch("document/startLoading");
 
+      let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (this.annotationText.length === 0) {
+      if (isToDelete) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
@@ -213,35 +198,30 @@ export default {
           updatedValues: updatedString,
           annotationId: this.annotation.id
         })
-        .then(response => {
+        .then(updatedAnnotation => {
           // Check if the response is successful or not
-          if (response) {
-            this.$store.dispatch("document/fetchAnnotations");
-            this.isLoading = false;
+          if (updatedAnnotation) {
+            console.log("is to delete", isToDelete);
+            this.$emit("handle-data-changes", {
+              annotation: isToDelete ? this.annotation : updatedAnnotation,
+              isToDelete
+            });
           } else {
             this.error = true;
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("editing_error")
             );
-            this.setText(
-              this.isAnnotationDeleted
-                ? this.$t("no_data_found")
-                : this.span.offset_string
-            );
           }
         })
         .finally(() => {
-          this.$store.dispatch("document/resetEditAnnotation");
-          this.$store.dispatch("document/endLoading");
-          this.$store.dispatch("selection/disableSelection");
-          this.isLoading = false;
+          this.handleCancel();
 
-          this.$refs.contentEditable.blur();
-
-          setTimeout(() => {
-            this.error = false;
-          }, 2000);
+          if (this.error) {
+            setTimeout(() => {
+              this.error = false;
+            }, 2000);
+          }
         });
     },
     showButton() {
@@ -266,18 +246,12 @@ export default {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
       if (
-        oldAnnotation &&
-        newAnnotation &&
         oldAnnotation.id === this.annotation.id &&
         oldAnnotation.index === this.spanIndex &&
         (oldAnnotation.id !== newAnnotation.id ||
           oldAnnotation.index !== newAnnotation.index)
       ) {
-        this.setText(
-          this.isAnnotationDeleted
-            ? this.$t("no_data_found")
-            : this.span.offset_string
-        );
+        this.setText(this.span.offset_string);
         this.$refs.contentEditable.blur();
       }
     },

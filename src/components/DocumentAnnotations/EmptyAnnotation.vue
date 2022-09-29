@@ -9,6 +9,7 @@
       v-if="!publicView"
       :class="[
         'annotation-value',
+        error && 'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked'
       ]"
@@ -56,7 +57,8 @@ export default {
   data() {
     return {
       empty: false,
-      isLoading: false
+      isLoading: false,
+      error: false
     };
   },
   components: { ActionButtons },
@@ -133,28 +135,36 @@ export default {
         .then(annotationCreated => {
           if (annotationCreated) {
             this.$emit("handle-data-changes", {
-              annotation: annotationCreated,
-              edited: false
+              annotation: annotationCreated
             });
-            this.isLoading = false;
+          } else {
+            this.error = true;
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("editing_error")
+            );
           }
+        })
+        .finally(() => {
+          this.cancelEmptyAnnotation();
+          setTimeout(() => {
+            this.error = false;
+          }, 2000);
         });
-      this.$store.dispatch("document/resetEditAnnotation");
-      this.$store.dispatch("selection/disableSelection");
-      this.$refs.emptyAnnotation.blur();
     },
     cancelEmptyAnnotation() {
+      this.isLoading = false;
       this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("selection/disableSelection");
       this.$refs.emptyAnnotation.blur();
-      this.setText(this.$t("no_data_found"));
       this.$store.dispatch("document/setEditingActive", false);
     },
     isEmptyAnnotationEditable() {
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
-        this.spanSelection.offset_string != null
+        this.spanSelection.offset_string != null &&
+        !this.isLoading
       );
     },
     showActionButtons() {
