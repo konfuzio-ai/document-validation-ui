@@ -73,8 +73,18 @@ button {
     }
   }
 
-  background-color: $white !important;
-  color: $dark-blue !important;
+  &:not(.is-text, .is-primary) {
+    background-color: $white !important;
+    color: $dark-blue !important;
+  }
+
+  &.is-text {
+    text-decoration: none;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
 
   .icon {
     svg {
@@ -203,14 +213,22 @@ button {
 
 .dropdown {
   height: 100%;
-  border-right: 1px solid $detail;
 
-  &:hover {
-    background-color: $background;
+  +.dropdown {
+    margin-left: 0;
+  }
+
+  .dropdown-trigger {
+    justify-content: space-between;
+    width: 100%;
   }
 
   .dropdown-menu {
     padding-top: 0px;
+  }
+
+  a.dropdown-item.is-active {
+    background-color: $primary;
   }
 
   &.dropdown-menu-animation {

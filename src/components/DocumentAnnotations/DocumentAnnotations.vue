@@ -24,7 +24,7 @@
       >
         <div class="label-set-name">
           {{
-            `${annotationSet.label_set.name} ${getNumberOfAnnotationSetGroup(
+            `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
               annotationSet
             )}`
           }}
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import CaretDown from "../../assets/images/CaretDownImg";
@@ -92,7 +92,8 @@ export default {
       "showRejectedLabels",
       "publicView",
       "editingActive"
-    ])
+    ]),
+    ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -167,24 +168,6 @@ export default {
       } else {
         return;
       }
-    },
-    getNumberOfAnnotationSetGroup(annotationSet) {
-      // This method checks if theres a group of annotation sets and add an index number to them
-      let found = false;
-      let value = 0;
-      let index = 0;
-      this.annotationSets.map(annotationSetTemp => {
-        if (
-          annotationSetTemp.label_set.name === annotationSet.label_set.name &&
-          annotationSetTemp.id !== annotationSet.id
-        ) {
-          found = true;
-          index++;
-        } else if (annotationSetTemp.id === annotationSet.id) {
-          value = index;
-        }
-      });
-      return found ? `${value + 1}` : "";
     },
     labelNotRejected(label) {
       if (this.missingAnnotations.length === 0) {
