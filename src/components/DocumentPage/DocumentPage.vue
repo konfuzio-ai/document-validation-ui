@@ -423,7 +423,7 @@ export default {
           image.onload = () => {
             // set image only when it is loaded
             this.image = image;
-            this.$store.dispatch("document/setImageLoaded");
+            this.$store.dispatch("document/setImageLoaded", true);
           };
         });
     },

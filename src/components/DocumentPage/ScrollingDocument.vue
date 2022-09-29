@@ -6,13 +6,14 @@
 <template>
   <div>
     <div
-      class="scrolling-document"
+      :class="['scrolling-document', !imageLoaded && 'loading-pages']"
       v-scroll.immediate="updateScrollBounds"
       ref="scrollingDocument"
     >
       <div class="loading-page" v-if="!imageLoaded">
         <div class="placeholder-page"></div>
       </div>
+
       <div
         :class="[recalculatingAnnotations && 'blur']"
         v-else-if="!editMode && imageLoaded"

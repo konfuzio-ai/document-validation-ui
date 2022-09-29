@@ -4,42 +4,25 @@
   src="../../assets/scss/document_thumbnails.scss"
 ></style>
 <template>
-  <div class="document-pages">
-    <div class="skeleton-container">
-      <b-skeleton
-        width="40px"
-        height="57px"
-        :active="!imageLoaded"
-      ></b-skeleton>
-
-      <b-skeleton
-        width="7px"
-        height="5px"
-        :active="!imageLoaded"
-        :rounded="false"
-      ></b-skeleton>
+  <div :class="['document-pages', !imageLoaded && 'loading-pages']">
+    <div class="skeleton-section" v-if="!imageLoaded">
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
+      <LoadingThumbnails />
     </div>
 
-    <div class="skeleton-container">
-      <b-skeleton
-        width="40px"
-        height="57px"
-        :active="!imageLoaded"
-      ></b-skeleton>
-
-      <b-skeleton
-        width="7px"
-        height="5px"
-        :active="!imageLoaded"
-        :rounded="false"
-      ></b-skeleton>
-    </div>
-
-    <div v-if="imageLoaded">
+    <div>
       <div
         :class="[
           'document-thumbnail',
-          currentPage == page.number && 'selected'
+          currentPage == page.number && 'selected',
+          !imageLoaded && 'hidden'
         ]"
         v-for="page in pages"
         v-bind:key="page.id"
@@ -66,6 +49,7 @@
 <script>
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
+import LoadingThumbnails from "./LoadingThumbnails.vue";
 
 /**
  * This component creates a vertical list of the document pages
@@ -76,7 +60,8 @@ import ServerImage from "../../assets/images/ServerImage";
 export default {
   name: "DocumentThumbnails",
   components: {
-    ServerImage
+    ServerImage,
+    LoadingThumbnails
   },
   computed: {
     ...mapState("document", [

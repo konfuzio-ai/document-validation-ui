@@ -10,17 +10,22 @@
     margin: 8px 0;
   }
 
-  .loading-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
+  &.loading-pages {
+    overflow: hidden;
 
-    .placeholder-page {
-      height: 98%;
-      width: 98%;
-      background-color: $white;
+    .loading-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+
+      .placeholder-page {
+        margin-top: 10px;
+        height: 100%;
+        width: 98%;
+        background-color: $white;
+      }
     }
   }
 

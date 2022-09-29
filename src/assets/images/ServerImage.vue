@@ -14,7 +14,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "loading"])
+    ...mapState("document", ["selectedDocument"])
   },
   methods: {
     loadImage() {
@@ -26,10 +26,11 @@ export default {
       ) {
         return api.IMG_REQUEST.get(this.imageUrl)
           .then(response => {
-            this.$store.dispatch("document/setImageLoaded");
             return response.data;
           })
           .then(myBlob => {
+            // stop loading images
+            this.$store.dispatch("document/setImageLoaded", true);
             this.$refs.imgTag.src = URL.createObjectURL(myBlob);
           });
       }

@@ -5,14 +5,23 @@
 ></style>
 <template>
   <div class="labels-sidebar">
-    <!-- When extracting annotations after rotating -->
+    <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations">
       <ExtractingData />
     </div>
+
+    <!-- When document data is still loading -->
+    <div v-else-if="!imageLoaded && !recalculatingAnnotations">
+      <LoadingAnnotations />
+      <LoadingAnnotations />
+      <LoadingAnnotations />
+    </div>
+
     <!-- When there's no annotations in the label -->
     <div v-else-if="!annotationSets || annotationSets.length === 0">
       <EmptyState />
     </div>
+
     <div
       v-else
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
@@ -42,8 +51,14 @@
         </div>
       </div>
     </div>
+
     <div
-      v-if="!publicView && missingAnnotations.length"
+      v-if="
+        showRejectedLabels &&
+        !publicView &&
+        missingAnnotations.length &&
+        imageLoaded
+      "
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -59,6 +74,7 @@ import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
+import LoadingAnnotations from "./LoadingAnnotations";
 /**
  * This component loads all annotations in a label set
  */
@@ -69,7 +85,8 @@ export default {
     CaretDown,
     ActionButtons,
     Label,
-    RejectedLabels
+    RejectedLabels,
+    LoadingAnnotations
   },
   props: {
     scroll: {
@@ -93,7 +110,8 @@ export default {
       "publicView",
       "editingActive",
       "annotations",
-      "editAnnotation"
+      "editAnnotation",
+      "imageLoaded"
     ]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },

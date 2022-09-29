@@ -189,8 +189,8 @@ const actions = {
   setDocumentError: ({ commit }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
   },
-  setImageLoaded: ({ commit }) => {
-    commit("SET_IMAGE_LOADED", true);
+  setImageLoaded: ({ commit }, value) => {
+    commit("SET_IMAGE_LOADED", value);
   },
 
   /**
