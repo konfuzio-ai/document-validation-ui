@@ -227,13 +227,18 @@
           align-items: center;
           justify-content: center;
           padding: 0 !important;
+          white-space: initial;
+          line-height: 1;
+          gap: 5px;
 
           .button-content {
             display: flex;
             align-items: center;
+            justify-content: center;
 
             .btn-text {
               font-size: 16px;
+              max-width: 70%;
             }
           }
         }

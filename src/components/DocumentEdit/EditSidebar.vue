@@ -18,8 +18,10 @@
           @click="rotateLeft"
           :disabled="buttonDisabled"
         >
-          <b-icon icon="arrow-rotate-left" class="is-small" />
-          <span class="btn-text">{{ $t("rotate_selected") }}</span>
+          <div class="button-content">
+            <b-icon icon="arrow-rotate-left" class="is-small" />
+            <span class="btn-text">{{ $t("rotate_selected") }}</span>
+          </div>
         </b-button>
         <b-button
           class="rotate-button"
