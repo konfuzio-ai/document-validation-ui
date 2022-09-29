@@ -205,6 +205,10 @@ button {
 .dropdown {
   height: 100%;
 
+  +.dropdown {
+    margin-left: 0;
+  }
+
   .dropdown-trigger {
     justify-content: space-between;
     width: 100%;

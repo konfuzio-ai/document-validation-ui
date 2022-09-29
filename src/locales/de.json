@@ -60,5 +60,6 @@
   "split_document": "Dokument aufteilen",
   "submit": "Senden",
   "next": "Weiter",
-  "select_label": "Select Label"
+  "select_label": "Select Label",
+  "select_annotation_set": "Select Annotation Set"
 }

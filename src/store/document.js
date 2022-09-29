@@ -11,7 +11,6 @@ const state = {
   labels: [],
   documentId: null,
   sidebarAnnotationSelected: null,
-  showDeletedAnnotations: false,
   selectedDocument: null,
   recalculatingAnnotations: false,
   editMode: false,
@@ -28,33 +27,6 @@ const state = {
 };
 
 const getters = {
-  /**
-   * All annotations with required information
-   */
-  annotations: state => annotationSets => {
-    const annotations = [];
-    annotationSets.map(annotationSet => {
-      annotationSet.labels.map(label => {
-        annotations.push(...label.annotations);
-      });
-    });
-    return annotations;
-  },
-
-  labels: state => annotationSets => {
-    const labels = [];
-    annotationSets.map(annotationSet => {
-      annotationSet.labels.map(label => {
-        const newLabel = {
-          ...label,
-          annotation_set: annotationSet
-        }
-        labels.push(newLabel);
-      });
-    });
-    return labels;
-  },
-
   /**
    * Number of pages. If the pages array doesn't exist yet, return 0.
    */
@@ -83,6 +55,43 @@ const getters = {
       return state.pages[index];
     }
     return null;
+  },
+
+  /**
+   * Gets labels for an annotation set
+   */
+  labelsInAnnotationSet: state => annotationSet => {
+    const labels = [];
+    if (annotationSet && annotationSet.labels) {
+      annotationSet.labels.map(label => {
+        const newLabel = {
+          ...label
+        }
+        labels.push(newLabel);
+      });
+    }
+    return labels;
+  },
+
+  /**
+   * Checks if theres a group of annotation sets and add an index number to them
+   */
+  numberOfAnnotationSetGroup: state => annotationSet => {
+    let found = false;
+    let value = 0;
+    let index = 0;
+    state.annotationSets.map(annotationSetTemp => {
+      if (
+        annotationSetTemp.label_set.name === annotationSet.label_set.name &&
+        annotationSetTemp.id !== annotationSet.id
+      ) {
+        found = true;
+        index++;
+      } else if (annotationSetTemp.id === annotationSet.id) {
+        value = index;
+      }
+    });
+    return found ? `${value + 1}` : "";
   },
 
   /**
@@ -149,11 +158,6 @@ const actions = {
   }) => {
     commit("RESET_EDIT_ANNOTATION");
   },
-  addAnnotation: ({
-    commit
-  }, annotation) => {
-    commit("ADD_ANNOTATION", annotation);
-  },
   setAnnotations: ({
     commit
   }, annotations) => {
@@ -206,22 +210,29 @@ const actions = {
    */
   fetchAnnotations: ({
     commit,
-    state,
-    getters
+    state
   }) => {
     return HTTP.get(
-        `documents/${state.documentId}/${
-        !state.showDeletedAnnotations ? "?revised=true&is_correct=false" : ""
-      }`
+        `documents/${state.documentId}/`
       )
       .then(async response => {
         if (response.data.annotation_sets) {
+          // set annotation sets
           commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
-          commit(
-            "SET_ANNOTATIONS",
-            getters.annotations(response.data.annotation_sets)
-          );
-          commit("SET_LABELS", getters.labels(response.data.annotation_sets));
+
+          // set annotations & labels
+          const annotations = [];
+          const labels = [];
+          response.data.annotation_sets.map(annotationSet => {
+            annotationSet.labels.map(label => {
+              annotations.push(...label.annotations);
+              labels.push(label);
+            });
+          });
+          commit("SET_ANNOTATIONS", annotations);
+          commit("SET_LABELS", labels);
+
+
           // commit("SET_PAGES", []);
 
           const documentId = state.documentId;
@@ -467,6 +478,15 @@ const mutations = {
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);
+    state.annotationSets.map((annotationSet) => {
+      if (annotation.annotation_set && annotationSet.id === annotation.annotation_set) {
+        annotationSet.labels.map((label) => {
+          if (annotation.label && annotation.label.id === label.id) {
+            label.annotations.push(annotation);
+          }
+        });
+      }
+    })
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;

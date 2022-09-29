@@ -2,7 +2,40 @@
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
     <input class="popup-input" type="text" v-model="selectedContent" />
-    <b-dropdown v-model="selectedLabel" aria-role="list">
+    <b-dropdown v-model="selectedAnnotationSet" aria-role="list">
+      <template #trigger>
+        <b-button
+          :class="['popup-input', selectedAnnotationSet ? '' : 'not-selected']"
+          type="is-text"
+        >
+          {{
+            selectedAnnotationSet
+              ? `${
+                  selectedAnnotationSet.label_set.name
+                } ${numberOfAnnotationSetGroup(selectedAnnotationSet)}`
+              : $t("select_annotation_set")
+          }}
+          <span class="caret-icon"><CaretDownWhite /></span
+        ></b-button>
+      </template>
+      <b-dropdown-item
+        aria-role="listitem"
+        v-for="annotationSet in annotationSets"
+        :key="annotationSet.id"
+        :value="annotationSet"
+      >
+        <span>{{
+          `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
+            annotationSet
+          )}`
+        }}</span>
+      </b-dropdown-item>
+    </b-dropdown>
+    <b-dropdown
+      v-model="selectedLabel"
+      aria-role="list"
+      :disabled="!selectedAnnotationSet"
+    >
       <template #trigger>
         <b-button
           :class="['popup-input', selectedLabel ? '' : 'not-selected']"
@@ -14,7 +47,7 @@
       </template>
       <b-dropdown-item
         aria-role="listitem"
-        v-for="label in labels"
+        v-for="label in labelsInAnnotationSet(selectedAnnotationSet)"
         :key="label.id"
         :value="label"
       >
@@ -45,11 +78,11 @@
  * This component is used to show a popup
  * for creating a new annotation.
  */
-const heightOfPopup = 160;
+const heightOfPopup = 192;
 const margin = 12;
 const widthOfPopup = 205;
 
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import CaretDownWhite from "../../assets/images/CaretDownWhiteImg";
 
 export default {
@@ -75,7 +108,11 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["labels", "documentId"]),
+    ...mapState("document", ["annotationSets", "documentId"]),
+    ...mapGetters("document", [
+      "numberOfAnnotationSetGroup",
+      "labelsInAnnotationSet"
+    ]),
     top() {
       const top = this.entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
 
@@ -101,6 +138,7 @@ export default {
   data() {
     return {
       selectedLabel: null,
+      selectedAnnotationSet: null,
       selectedContent: this.content,
       loading: false
     };
@@ -125,9 +163,6 @@ export default {
     },
     save() {
       this.loading = true;
-      console.log(this.selectedLabel);
-      console.log(this.selectedContent);
-      console.log(this.entity);
       const span = {
         ...this.entity.original,
         offset_string: this.selectedContent
@@ -136,23 +171,16 @@ export default {
         document: this.documentId,
         span: [span],
         label: this.selectedLabel.id,
-        annotation_set: this.selectedLabel.annotation_set.id,
+        annotation_set: this.selectedAnnotationSet.id,
         is_correct: true,
         revised: true
       };
-      console.log(annotationToCreate);
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(annotationCreated => {
+        .then(() => {
           this.close();
           this.loading = false;
-          console.log("annotationCreated", annotationCreated);
         });
-    }
-  },
-  watch: {
-    content(newContent) {
-      this.selectedContent = newContent;
     }
   }
 };

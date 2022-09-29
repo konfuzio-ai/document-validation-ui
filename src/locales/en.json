@@ -68,5 +68,6 @@
   "edit_not_available": "Editing is not possible for documents with a status of 'training' or 'test'",
   "back_to_edit": "Back to edit",
   "split_document": "Split document",
-  "select_label": "Select Label"
+  "select_label": "Select Label",
+  "select_annotation_set": "Select Annotation Set"
 }
