@@ -18,8 +18,8 @@
           isAnnotationInEditMode(annotationId(annotation)) && 'editing'
         ]"
         @click="onLabelClick"
-        @mouseenter="onLabelHover(true, annotation)"
-        @mouseleave="onLabelHover(false, annotation)"
+        @mouseenter="onLabelHover(annotation)"
+        @mouseleave="onLabelHover"
       >
         <div class="label-property-left">
           <LabelDetails
@@ -39,6 +39,8 @@
                 :annotation="annotation"
                 :span="span"
                 :spanIndex="index"
+                :handleError="handleError"
+                :handleMessage="handleMessage"
                 :label="label"
                 :annotationSet="annotationSet"
                 :handleMenu="handleMenu"
@@ -50,6 +52,8 @@
               :label="label"
               :annotationSet="annotationSet"
               @handle-data-changes="handleDataChanges"
+              :handleError="handleError"
+              :handleMessage="handleMessage"
               :handleMenu="handleMenu"
             />
           </div>
@@ -81,13 +85,18 @@ export default {
     handleScroll: {
       type: Function
     },
+    handleMessage: {
+      type: Function
+    },
+    handleError: {
+      type: Function
+    },
     missingAnnotations: {
       type: Array
     }
   },
   data() {
     return {
-      edited: false,
       isLoading: false,
       annotationAnimationTimeout: null
     };
@@ -132,19 +141,29 @@ export default {
       }
       return false;
     },
-    handleDataChanges({ annotation }) {
+    handleDataChanges({ annotation, isToDelete }) {
       if (annotation !== null) {
-        if (!this.labelHasAnnotations) {
+        if (isToDelete) {
+          // deleted annotation
+          const indexOfAnnotationToDelete = this.label.annotations.findIndex(
+            existingAnnotation => existingAnnotation.id === annotation.id
+          );
+          if (indexOfAnnotationToDelete > -1) {
+            this.label.annotations.splice(indexOfAnnotationToDelete, 1);
+          }
+        } else if (!this.labelHasAnnotations) {
           this.label.annotations = [annotation];
+        } else {
+          const index = this.label.annotations.findIndex(
+            existingAnnotation => existingAnnotation.id === annotation.id
+          );
+          this.label.annotations[index] = annotation;
         }
       }
     },
-    onLabelHover(value, annotation) {
-      if (value) {
-        this.handleScroll(!value);
-      }
-
-      if (annotation && value) {
+    onLabelHover(annotation = null) {
+      if (annotation) {
+        this.handleScroll(false);
         const focusedAnnotation = { ...annotation };
         focusedAnnotation.label_name = this.label.name;
         this.$store.dispatch(
@@ -156,10 +175,7 @@ export default {
       }
     },
     onLabelClick() {
-      if (
-        this.documentFocusedAnnotation &&
-        this.documentFocusedAnnotation.is_correct
-      ) {
+      if (this.documentFocusedAnnotation) {
         this.handleScroll(true);
       }
     },

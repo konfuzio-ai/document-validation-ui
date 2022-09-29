@@ -7,7 +7,7 @@
   "upload_documents": "Laden Sie Ihre Dokumente hoch",
   "request_trial": "Fordern Sie Ihren Probezugang an",
   "warning_message": "Die KI kann nicht trainiert werden, wenn Sie den Text manuell ändern.",
-  "editing_error": "Eine Bearbeitung war nicht möglich. Bitte versuchen Sie es später erneut.",
+  "editing_error": "Editing this annotation is not possible.",
   "category": "Kategorie",
   "status": "Status",
   "preparation": "Vorbereitung",

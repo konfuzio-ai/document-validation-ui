@@ -32,7 +32,7 @@
         />
 
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group ref="entities" v-if="!publicView">
+          <v-group ref="entities" v-if="!publicView && !isSelectionEnabled">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
@@ -165,7 +165,6 @@ export default {
         this.documentFocusedAnnotation.span &&
         this.documentFocusedAnnotation.span[0].page_index + 1 ===
           this.pageNumber &&
-        this.documentFocusedAnnotation.is_correct &&
         this.visiblePageRange.includes(
           this.documentFocusedAnnotation.span[0].page_index + 1
         ) &&
@@ -234,7 +233,6 @@ export default {
       if (this.annotations) {
         this.annotations.map(annotation => {
           if (
-            annotation.is_correct &&
             annotation.span.find(
               span => span.page_index + 1 === this.pageNumber
             )
