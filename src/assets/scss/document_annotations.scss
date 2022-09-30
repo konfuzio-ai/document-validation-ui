@@ -50,7 +50,7 @@
   .labels-list {
     padding-bottom: 16px;
     overflow: auto;
-    height: 100%;
+    height: calc(100% - 56px);
 
     &.showing-rejected {
       padding-bottom: 130px;

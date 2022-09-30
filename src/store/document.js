@@ -322,6 +322,9 @@ const actions = {
         .then(response => {
           if (response.status === 200) {
             commit("SET_SELECTED_DOCUMENT", response.data);
+            if (response.data.is_reviewed === true) {
+              state.publicView = true;
+            }
             resolve(true);
           }
         })
@@ -454,7 +457,8 @@ const mutations = {
       existingAnnotation => existingAnnotation.id === annotation.id
     );
     if (annotationToEdit) {
-      annotationToEdit.span = annotation.span;
+      const index = state.annotations.indexOf(annotationToEdit);
+      state.annotations.splice(index, 1, annotation);
     }
   },
   DELETE_ANNOTATION: (state, annotationId) => {

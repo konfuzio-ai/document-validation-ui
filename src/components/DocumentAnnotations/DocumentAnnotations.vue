@@ -168,6 +168,18 @@ export default {
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
         if (this.count >= annotations.length) {
+          const finishBtn = Array.from(
+            document.getElementsByClassName("finish-review-btn")
+          );
+          finishBtn[0].focus();
+          this.$store.dispatch("document/setEditAnnotation", {
+            id: null,
+            index: null
+          });
+          this.count = 0;
+          if (event.key === "Enter" && !finishBtn.disabled) {
+            finishBtn.click();
+          }
           return;
         }
 

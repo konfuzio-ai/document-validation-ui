@@ -97,7 +97,8 @@ export default {
       "editAnnotation",
       "editingActive",
       "publicView",
-      "acceptAnnotation"
+      "acceptAnnotation",
+      "annotations"
     ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
@@ -170,7 +171,6 @@ export default {
       this.$store.dispatch("document/setEditingActive", false);
       this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
-
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
       }

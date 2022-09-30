@@ -77,5 +77,6 @@
   "document_error_title": "Document error",
   "document_error_info": "We’re sorry, the document ran into a problem and its data can’t be restored.",
   "contact_support": "Contact support",
-  "finish-review": "Finish review"
+  "finish-review": "Finish review",
+  "review_error": "Something went wrong finishing the review. Please try again later."
 }

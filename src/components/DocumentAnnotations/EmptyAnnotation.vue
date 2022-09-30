@@ -218,6 +218,12 @@ export default {
         this.isLoading = false;
       }
     }
+  },
+  created() {
+    this.$store.dispatch("document/setEmptyAnnotations", true);
+  },
+  destroyed() {
+    this.$store.dispatch("document/setEmptyAnnotations", false);
   }
 };
 </script>
