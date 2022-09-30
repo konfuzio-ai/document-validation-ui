@@ -4,7 +4,11 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div class="empty-annotation">
+  <div
+    class="empty-annotation"
+    @mouseenter="handleShowReject"
+    @mouseleave="showReject = false"
+  >
     <span
       v-if="!publicView"
       :class="[
@@ -23,26 +27,16 @@
     >
       {{ $t("no_data_found") }}
     </span>
+
     <ActionButtons
-      v-if="showActionButtons()"
       :saveBtn="!empty && isEmptyAnnotationEditable()"
-      :cancelBtn="true"
-      :menu="false"
+      :cancelBtn="isAnnotationBeingEdited()"
+      :showReject="showReject"
+      :isLoading="isLoading"
+      :isActive="!isLoading"
+      :handleReject="handleReject"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
-      :isLoading="isLoading"
-      :isActive="!isLoading"
-    />
-    <ActionButtons
-      v-else
-      :menu="true"
-      :cancelBtn="false"
-      :saveBtn="false"
-      :isActive="!isLoading"
-      :isLoading="isLoading"
-      @handle-menu="handleMenu"
-      :label="label"
-      :annotationSet="annotationSet"
     />
   </div>
 </template>
@@ -58,7 +52,8 @@ export default {
     return {
       empty: false,
       isLoading: false,
-      error: false
+      error: false,
+      showReject: false
     };
   },
   components: { ActionButtons },
@@ -69,7 +64,7 @@ export default {
     annotationSet: {
       required: true
     },
-    handleMenu: {
+    handleReject: {
       type: Function
     }
   },
@@ -174,6 +169,11 @@ export default {
     },
     setText(text) {
       this.$refs.emptyAnnotation.textContent = text;
+    },
+    handleShowReject() {
+      if (!this.isAnnotationBeingEdited()) {
+        this.showReject = true;
+      }
     }
   },
   watch: {

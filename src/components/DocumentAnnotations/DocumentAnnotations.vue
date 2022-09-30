@@ -36,7 +36,7 @@
             :annotationSet="annotationSet"
             :handleScroll="handleScroll"
             :indexGroup="indexGroup"
-            @handle-menu="rejectAnnotation"
+            @handle-reject="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
           />
         </div>
@@ -187,21 +187,24 @@ export default {
       }
     },
 
-    rejectAnnotation(rejected) {
-      if (!rejected) return;
+    rejectAnnotation(label, labelSet) {
+      const rejected = {
+        label: label,
+        label_set: labelSet
+      };
 
-      this.$store
-        .dispatch("document/addMissingAnnotation", rejected)
-        .then(response => {
-          if (response) {
-            this.$store.dispatch("document/fetchMissingAnnotations");
-          } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("ann_exists")
-            );
-          }
-        });
+      console.log(rejected);
+
+      // this.$store
+      //   .dispatch("document/addMissingAnnotation", rejected)
+      //   .then(response => {
+      //     if (response) {
+      //       this.$store.dispatch("document/fetchMissingAnnotations");
+      //     } else {
+      //       this.handleShowError();
+      //       this.handleShowMessage(this.$t("ann_exists"));
+      //     }
+      //   });
     }
   },
   watch: {

@@ -45,7 +45,6 @@
         @accept="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
-        :handleMenu="handleMenu"
       />
     </div>
   </div>
@@ -71,9 +70,6 @@ export default {
     spanIndex: {
       type: Number,
       required: true
-    },
-    handleMenu: {
-      type: Function
     },
     label: {
       type: Object

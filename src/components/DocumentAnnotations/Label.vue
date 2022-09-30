@@ -39,11 +39,8 @@
                 :annotation="annotation"
                 :span="span"
                 :spanIndex="index"
-                :handleError="handleError"
-                :handleMessage="handleMessage"
                 :label="label"
                 :annotationSet="annotationSet"
-                :handleMenu="handleMenu"
                 @handle-data-changes="handleDataChanges"
               />
             </div>
@@ -52,9 +49,7 @@
               :label="label"
               :annotationSet="annotationSet"
               @handle-data-changes="handleDataChanges"
-              :handleError="handleError"
-              :handleMessage="handleMessage"
-              :handleMenu="handleMenu"
+              :handleReject="handleReject"
             />
           </div>
         </div>
@@ -83,12 +78,6 @@ export default {
       required: true
     },
     handleScroll: {
-      type: Function
-    },
-    handleMessage: {
-      type: Function
-    },
-    handleError: {
       type: Function
     },
     missingAnnotations: {
@@ -188,7 +177,7 @@ export default {
       }
       return false;
     },
-    handleMenu() {
+    handleReject() {
       if (!this.label || !this.annotationSet) return;
 
       const rejected = {

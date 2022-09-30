@@ -39,17 +39,12 @@
     >
 
     <div
-      v-if="showRejectedLabels && !publicView && menu && !isLoading"
-      class="menu-buttons"
+      class="reject-button-container"
+      v-if="showRejectedLabels && showReject && !isLoading"
     >
-      <b-dropdown aria-role="list" position="is-top-left" class="width-12">
-        <template #trigger>
-          <b-icon icon="ellipsis-vertical" class="menu-icon is-small"></b-icon>
-        </template>
-        <b-dropdown-item aria-role="listitem" @click.stop="handleMenu">{{
-          $t("reject_label")
-        }}</b-dropdown-item>
-      </b-dropdown>
+      <b-button type="is-ghost" class="reject-btn" @click.stop="handleReject">
+        {{ $t("reject_label") }}
+      </b-button>
     </div>
   </div>
 </template>
@@ -70,7 +65,7 @@ export default {
     cancelBtn: {
       type: Boolean
     },
-    menu: {
+    showReject: {
       type: Boolean
     },
     isLoading: {
@@ -79,11 +74,11 @@ export default {
     isActive: {
       type: Boolean
     },
-    handleMenu: {
-      type: Function
-    },
     acceptBtn: {
       type: Boolean
+    },
+    handleReject: {
+      type: Function
     }
   },
   computed: {

@@ -149,20 +149,23 @@
           }
         }
 
-        .menu-buttons {
-          .dropdown {
-            border: none;
+        .reject-button-container {
+          background-color: transparent;
+
+          .reject-btn {
+            color: $grey-blue !important;
+            font-size: 14px !important;
+            font-weight: 500;
+            background-color: transparent !important;
+            width: auto;
 
             &:hover {
-              background: none;
-              cursor: pointer;
+              text-decoration: none !important;
+              color: $dark-blue !important;
             }
 
-            .dropdown-trigger {
-              .menu-icon {
-                width: 3px;
-                color: $action-grey;
-              }
+            &:focus {
+              box-shadow: none !important;
             }
           }
         }

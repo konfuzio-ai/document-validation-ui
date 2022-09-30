@@ -20,7 +20,6 @@ const state = {
   },
   missingAnnotations: [],
   // TODO: remove this after the reject label endpoint is merged in testing
-  showRejectedLabels: false,
   currentUser: null,
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
   editingActive: false,
