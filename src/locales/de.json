@@ -62,5 +62,6 @@
   "submit": "Senden",
   "next": "Weiter",
   "select_label": "Select Label",
-  "select_annotation_set": "Select Annotation Set"
+  "select_annotation_set": "Select Annotation Set",
+  "accept": "Accept"
 }

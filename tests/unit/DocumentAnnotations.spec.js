@@ -3,6 +3,7 @@ import {
   DocumentAnnotations,
   Label,
   EmptyAnnotation,
+  Annotation,
   RejectedLabels,
 } from "../../src/components/DocumentAnnotations";
 import store from "../../src/store";
@@ -126,6 +127,51 @@ describe("Document Annotations Component", () => {
     await wrapper.findComponent(".annotation-value").trigger("click");
     await store.dispatch("selection/setSpanSelection", sampleBbox);
     expect(wrapper.findAll(".action-buttons").length).toEqual(1);
+  });
+
+  it("Only show 'accept' button on hover on filled annotations", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const annotation = label.annotations[0];
+    const spanIndex = 0;
+    const span = annotation.span[spanIndex];
+
+    const wrapper = mount(Annotation, {
+      store,
+      propsData: {
+        annotation,
+        label,
+        annotationSet,
+        span,
+        spanIndex,
+      },
+      data() {
+        return {
+          showAcceptButton: false,
+        };
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper.findComponent(".annotation-value").trigger("mouseover");
+    await wrapper.setData({ showAcceptButton: true });
+
+    expect(
+      await wrapper
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .isVisible()
+    ).toBe(true);
+
+    await wrapper.findComponent(".annotation-value").trigger("mouseout");
+    await wrapper.setData({ showAcceptButton: false });
+
+    expect(
+      await wrapper
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .exists()
+    ).toBe(false);
   });
 
   // it("Should only show the Rejected title when there are rejected labels", async () => {

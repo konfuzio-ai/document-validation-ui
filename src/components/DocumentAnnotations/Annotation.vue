@@ -5,7 +5,13 @@
 ></style>
 
 <template>
-  <div class="annotation" ref="annotation" :id="annotation.id">
+  <div
+    class="annotation"
+    ref="annotation"
+    :id="annotation.id"
+    @mouseenter="handleAcceptButton(annotation)"
+    @mouseleave="showAcceptButton = false"
+  >
     <span
       v-if="!publicView"
       :class="[
@@ -33,8 +39,10 @@
         :isActive="!isLoading"
         :isLoading="isLoading"
         :menu="!isAnnotationBeingEdited"
+        :acceptBtn="showAcceptButton"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
+        @accept="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
         :handleMenu="handleMenu"
@@ -77,7 +85,8 @@ export default {
   data() {
     return {
       error: null,
-      isLoading: false
+      isLoading: false,
+      showAcceptButton: false
     };
   },
   components: {
@@ -87,7 +96,12 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "editingActive", "publicView"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "editingActive",
+      "publicView",
+      "acceptAnnotation"
+    ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -106,7 +120,11 @@ export default {
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },
-    handleEditAnnotation() {
+    handleEditAnnotation(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
       if (
         !this.publicView &&
         !this.isAnnotationBeingEdited &&
@@ -151,6 +169,7 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("document/endLoading");
       this.$store.dispatch("document/setEditingActive", false);
+      this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
       this.$refs.contentEditable.blur();
     },
@@ -162,6 +181,7 @@ export default {
       if (event) {
         event.preventDefault();
       }
+
       let updatedString;
 
       this.isLoading = true;
@@ -170,7 +190,14 @@ export default {
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (isToDelete) {
+      if (this.showAcceptButton || this.saveAnnotationChanges) {
+        storeAction = "document/updateAnnotation";
+
+        updatedString = {
+          is_correct: true,
+          revised: true
+        };
+      } else if (isToDelete) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
@@ -201,7 +228,6 @@ export default {
         .then(updatedAnnotation => {
           // Check if the response is successful or not
           if (updatedAnnotation) {
-            console.log("is to delete", isToDelete);
             this.$emit("handle-data-changes", {
               annotation: isToDelete ? this.annotation : updatedAnnotation,
               isToDelete
@@ -229,6 +255,13 @@ export default {
         return true;
       }
       return false;
+    },
+    handleAcceptButton(annotation) {
+      if (!annotation.revised) {
+        this.showAcceptButton = true;
+      } else {
+        this.showAcceptButton = false;
+      }
     }
   },
   watch: {
@@ -258,6 +291,11 @@ export default {
     editingActive(newValue) {
       if (!newValue) {
         this.handleCancel();
+      }
+    },
+    acceptAnnotation(newValue) {
+      if (newValue) {
+        this.saveAnnotationChanges();
       }
     }
   }

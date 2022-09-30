@@ -131,15 +131,18 @@
         button {
           height: 32px;
 
-          &.annotation-save-btn {
-            border-radius: 8px;
+          &.annotation-save-btn,
+          &.annotation-accept-btn {
             padding: 6px 14px 6px 14px;
+            border-radius: 8px;
             font-weight: 500;
             font-size: 14px;
-            display: flex;
+            line-height: 20px;
+            width: auto;
           }
 
           &.annotation-cancel-btn {
+            padding-top: 8px !important;
             border: none !important;
             background-color: transparent !important;
             width: 32px;

@@ -6,14 +6,16 @@ import store from "../../src/store";
 const $t = () => {};
 
 describe("Document Thumbnails Component", () => {
+  const annotations = [];
+  require("../mock/document.json").annotation_sets.map((annotationSet) => {
+    annotationSet.labels.map((label) => {
+      annotations.push(...label.annotations);
+    });
+  });
+
   beforeEach(() => {
     Promise.all([
-      store.dispatch(
-        "document/setAnnotations",
-        store.getters["document/annotations"](
-          require("../mock/document.json").annotation_sets
-        )
-      ),
+      store.dispatch("document/setAnnotations", annotations),
       store.dispatch("document/setPages", [
         require("../mock/page_1.json"),
         require("../mock/page_2.json"),

@@ -18,7 +18,7 @@
       v-if="saveBtn && !isLoading"
       :class="[isActive && 'annotation-save-btn']"
       type="is-primary"
-      v-on:click.stop="save"
+      @click.stop="save"
     >
       {{ $t("save") }}
     </b-button>
@@ -27,8 +27,16 @@
       v-if="cancelBtn && !isLoading"
       :class="['is-small', isActive && 'annotation-cancel-btn']"
       icon-left="xmark"
-      v-on:click.stop="cancel"
+      @click.stop="cancel"
     />
+
+    <b-button
+      v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
+      :class="[isActive && 'annotation-accept-btn']"
+      type="is-primary"
+      @click.stop="accept"
+      >{{ $t("accept") }}</b-button
+    >
 
     <div
       v-if="showRejectedLabels && !publicView && menu && !isLoading"
@@ -45,6 +53,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapState } from "vuex";
 export default {
@@ -72,6 +81,9 @@ export default {
     },
     handleMenu: {
       type: Function
+    },
+    acceptBtn: {
+      type: Boolean
     }
   },
   computed: {
@@ -83,6 +95,9 @@ export default {
     },
     cancel() {
       this.$emit("cancel");
+    },
+    accept() {
+      this.$emit("accept");
     }
   }
 };

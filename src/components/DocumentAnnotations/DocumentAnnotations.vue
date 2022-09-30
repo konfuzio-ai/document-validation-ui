@@ -168,6 +168,10 @@ export default {
       } else {
         return;
       }
+
+      if (event.key === "Enter") {
+        this.$store.dispatch("document/setAcceptAnnotation", true);
+      }
     },
     labelNotRejected(label) {
       if (this.missingAnnotations.length === 0) {
