@@ -14,9 +14,8 @@
         />
       </div>
 
-      <div class="document-name-container">
-        <DocumentName :dataFileName="selectedDocument.data_file_name" />
-      </div>
+      <DocumentName :dataFileName="selectedDocument.data_file_name" />
+
       <div class="right-bar-components">
         <div class="public-mode-info" v-if="publicView && !editMode">
           <b-tooltip
