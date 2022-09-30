@@ -171,10 +171,8 @@ export default {
 
         // Accept annotation
         if (event.key === "Enter") {
-          if (!annotations[currentAnnIndex]) return;
-
           const currentAnn = this.annotations.find(
-            a => a.id == annotations[currentAnnIndex].id
+            a => a.id === this.editAnnotation.id
           );
 
           if (currentAnn.revised) return;
