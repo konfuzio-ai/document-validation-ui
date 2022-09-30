@@ -16,7 +16,9 @@ const state = {
   editMode: false,
   editAnnotation: {
     id: null,
-    index: 0
+    index: 0,
+    label: null,
+    label_set: null
   },
   missingAnnotations: [],
   // TODO: remove this after the reject label endpoint is merged in testing
@@ -475,10 +477,12 @@ const mutations = {
   SET_EDIT_MODE: (state, option) => {
     state.editMode = option;
   },
-  SET_EDIT_ANNOTATION: (state, { id, index }) => {
+  SET_EDIT_ANNOTATION: (state, { id, index, label, labelSet }) => {
     state.editAnnotation = {
       id,
-      index
+      index,
+      label,
+      labelSet
     };
   },
   RESET_EDIT_ANNOTATION: state => {

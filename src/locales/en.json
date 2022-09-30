@@ -51,7 +51,7 @@
   "data_being_extracted": "New data is being extracted",
   "analysing_document": "We are analysing your document.",
   "few_minutes": "This might take a few minutes.",
-  "reject_label": "Reject label",
+  "reject_label": "Reject",
   "rejected": "Rejected",
   "ann_exists": "An annotation for this label and label set already exists.",
   "lite_mode": "Read Only",

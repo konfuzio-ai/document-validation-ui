@@ -180,12 +180,10 @@ export default {
     handleReject() {
       if (!this.label || !this.annotationSet) return;
 
-      const rejected = {
-        label: this.label.id,
-        label_set: this.annotationSet.label_set.id
-      };
+      const labelId = this.label.id;
+      const labelSetId = this.annotationSet.label_set.id;
 
-      this.$emit("handle-menu", rejected);
+      this.$emit("handle-reject", labelId, labelSetId);
     }
   },
   watch: {

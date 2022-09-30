@@ -40,7 +40,7 @@
 
     <div
       class="reject-button-container"
-      v-if="showRejectedLabels && showReject && !isLoading"
+      v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
     >
       <b-button type="is-ghost" class="reject-btn" @click.stop="handleReject">
         {{ $t("reject_label") }}
@@ -82,7 +82,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["showRejectedLabels", "publicView"])
+    ...mapState("document", ["publicView"])
   },
   methods: {
     save() {

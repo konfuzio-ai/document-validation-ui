@@ -24,6 +24,7 @@
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
       @keyup.esc="cancelEmptyAnnotation"
+      :id="emptyAnnotationId()"
     >
       {{ $t("no_data_found") }}
     </span>
@@ -102,7 +103,9 @@ export default {
           this.emptyAnnotationId()
         );
         this.$store.dispatch("document/setEditAnnotation", {
-          id: this.emptyAnnotationId()
+          id: this.emptyAnnotationId(),
+          label: this.label.id,
+          labelSet: this.annotationSet.label_set.id
         });
         this.$store.dispatch("document/setEditingActive", true);
       }

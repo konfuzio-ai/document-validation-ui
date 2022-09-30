@@ -43,7 +43,7 @@
       </div>
     </div>
     <div
-      v-if="showRejectedLabels && !publicView && missingAnnotations.length"
+      v-if="!publicView && missingAnnotations.length"
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -89,9 +89,10 @@ export default {
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
-      "showRejectedLabels",
       "publicView",
-      "editingActive"
+      "editingActive",
+      "annotations",
+      "editAnnotation"
     ]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
@@ -166,11 +167,34 @@ export default {
         annotations[this.count].click();
         this.count--;
       } else {
-        return;
-      }
+        // Check for ENTER or DELETE
 
-      if (event.key === "Enter") {
-        this.$store.dispatch("document/setAcceptAnnotation", true);
+        // Accept annotation
+        if (event.key === "Enter") {
+          if (!annotations[currentAnnIndex]) return;
+
+          const currentAnn = this.annotations.find(
+            a => a.id == annotations[currentAnnIndex].id
+          );
+
+          if (currentAnn.revised) return;
+
+          this.$store.dispatch("document/setAcceptAnnotation", true);
+        } else if (
+          event.key === "Delete" &&
+          annotations[currentAnnIndex].className.includes("label-empty") &&
+          annotations[currentAnnIndex].className.includes("clicked")
+        ) {
+          // Reject annotation
+          if (this.editAnnotation.id === annotations[currentAnnIndex].id) {
+            this.rejectAnnotation(
+              this.editAnnotation.label,
+              this.editAnnotation.labelSet
+            );
+          }
+        } else {
+          return;
+        }
       }
     },
     labelNotRejected(label) {
@@ -193,18 +217,18 @@ export default {
         label_set: labelSet
       };
 
-      console.log(rejected);
-
-      // this.$store
-      //   .dispatch("document/addMissingAnnotation", rejected)
-      //   .then(response => {
-      //     if (response) {
-      //       this.$store.dispatch("document/fetchMissingAnnotations");
-      //     } else {
-      //       this.handleShowError();
-      //       this.handleShowMessage(this.$t("ann_exists"));
-      //     }
-      //   });
+      this.$store
+        .dispatch("document/addMissingAnnotation", rejected)
+        .then(response => {
+          if (response) {
+            this.$store.dispatch("document/fetchMissingAnnotations");
+          } else {
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("ann_exists")
+            );
+          }
+        });
     }
   },
   watch: {

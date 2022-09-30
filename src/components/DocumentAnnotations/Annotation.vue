@@ -26,6 +26,7 @@
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
+      :id="annotation.id"
     >
       {{ this.span.offset_string }}
     </span>
@@ -130,7 +131,9 @@ export default {
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
-            index: this.spanIndex
+            index: this.spanIndex,
+            label: this.label.id,
+            labelSet: this.annotationSet.label_set.id
           })
           .then(() => {
             this.$refs.contentEditable.focus();
