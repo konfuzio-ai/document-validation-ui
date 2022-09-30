@@ -36,14 +36,14 @@
             :annotationSet="annotationSet"
             :handleScroll="handleScroll"
             :indexGroup="indexGroup"
-            @handle-menu="rejectAnnotation"
+            @handle-reject="rejectAnnotation"
             :missingAnnotations="missingAnnotations"
           />
         </div>
       </div>
     </div>
     <div
-      v-if="showRejectedLabels && !publicView && missingAnnotations.length"
+      v-if="!publicView && missingAnnotations.length"
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -89,9 +89,10 @@ export default {
       "recalculatingAnnotations",
       "annotationSets",
       "missingAnnotations",
-      "showRejectedLabels",
       "publicView",
-      "editingActive"
+      "editingActive",
+      "annotations",
+      "editAnnotation"
     ]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
@@ -166,11 +167,32 @@ export default {
         annotations[this.count].click();
         this.count--;
       } else {
-        return;
-      }
+        // Check for ENTER or DELETE
 
-      if (event.key === "Enter") {
-        this.$store.dispatch("document/setAcceptAnnotation", true);
+        // Accept annotation
+        if (event.key === "Enter") {
+          const currentAnn = this.annotations.find(
+            a => a.id === this.editAnnotation.id
+          );
+
+          if (currentAnn.revised) return;
+
+          this.$store.dispatch("document/setAcceptAnnotation", true);
+        } else if (
+          event.key === "Delete" &&
+          annotations[currentAnnIndex].className.includes("label-empty") &&
+          annotations[currentAnnIndex].className.includes("clicked")
+        ) {
+          // Reject annotation
+          if (this.editAnnotation.id === annotations[currentAnnIndex].id) {
+            this.rejectAnnotation(
+              this.editAnnotation.label,
+              this.editAnnotation.labelSet
+            );
+          }
+        } else {
+          return;
+        }
       }
     },
     labelNotRejected(label) {
@@ -187,8 +209,11 @@ export default {
       }
     },
 
-    rejectAnnotation(rejected) {
-      if (!rejected) return;
+    rejectAnnotation(label, labelSet) {
+      const rejected = {
+        label: label,
+        label_set: labelSet
+      };
 
       this.$store
         .dispatch("document/addMissingAnnotation", rejected)

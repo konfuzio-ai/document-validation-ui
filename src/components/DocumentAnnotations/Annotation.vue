@@ -26,6 +26,7 @@
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
+      :id="annotation.id"
     >
       {{ this.span.offset_string }}
     </span>
@@ -45,7 +46,6 @@
         @accept="saveAnnotationChanges"
         :annotationSet="annotationSet"
         :label="label"
-        :handleMenu="handleMenu"
       />
     </div>
   </div>
@@ -71,9 +71,6 @@ export default {
     spanIndex: {
       type: Number,
       required: true
-    },
-    handleMenu: {
-      type: Function
     },
     label: {
       type: Object
@@ -134,7 +131,9 @@ export default {
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
-            index: this.spanIndex
+            index: this.spanIndex,
+            label: this.label.id,
+            labelSet: this.annotationSet.label_set.id
           })
           .then(() => {
             this.$refs.contentEditable.focus();
@@ -228,6 +227,7 @@ export default {
         .then(updatedAnnotation => {
           // Check if the response is successful or not
           if (updatedAnnotation) {
+            this.showAcceptButton = false;
             this.$emit("handle-data-changes", {
               annotation: isToDelete ? this.annotation : updatedAnnotation,
               isToDelete

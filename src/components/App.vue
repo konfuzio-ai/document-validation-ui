@@ -49,7 +49,6 @@ export default {
   computed: {
     ...mapState("document", {
       documentIdLoaded: "documentId",
-      showRejectedLabels: "showRejectedLabels",
       publicView: "publicView",
       selectedDocument: "selectedDocument",
       recalculatingAnnotations: "recalculatingAnnotations"
@@ -97,8 +96,7 @@ export default {
       Promise.all([
         this.$store.dispatch("document/fetchAnnotations"),
         this.$store.dispatch("document/fetchDocumentData"),
-        this.showRejectedLabels &&
-          !this.publicView &&
+        !this.publicView &&
           this.$store.dispatch("document/fetchMissingAnnotations"),
         !this.publicView && this.$store.dispatch("document/fetchCurrentUser")
       ]).finally(() => {
