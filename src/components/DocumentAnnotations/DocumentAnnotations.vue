@@ -105,6 +105,7 @@ export default {
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
+      "annotations",
       "annotationSets",
       "missingAnnotations",
       "publicView",
