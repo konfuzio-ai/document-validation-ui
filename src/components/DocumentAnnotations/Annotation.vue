@@ -227,6 +227,7 @@ export default {
         .then(updatedAnnotation => {
           // Check if the response is successful or not
           if (updatedAnnotation) {
+            this.showAcceptButton = false;
             this.$emit("handle-data-changes", {
               annotation: isToDelete ? this.annotation : updatedAnnotation,
               isToDelete
