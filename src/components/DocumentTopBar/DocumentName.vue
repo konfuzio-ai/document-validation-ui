@@ -15,13 +15,7 @@
         @paste="handlePaste"
         @keydown.enter="handleSave"
         @blur="handleSave"
-        >{{
-          isEditable
-            ? oldFileName
-            : fileName
-            ? `${fileName}.${fileExtension}`
-            : dataFileName
-        }}</span
+        >{{ textContent }}</span
       >
     </span>
     <div
@@ -91,9 +85,31 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "publicView"]),
-    ...mapState("edit", ["editMode"])
+    ...mapState("display", ["optimalResolution"]),
+    ...mapState("edit", ["editMode"]),
+    textContent() {
+      if (this.isEditable) {
+        return this.oldFileName;
+      } else if (this.fileName) {
+        return this.shortFilenameIfNeeded(
+          `${this.fileName}.${this.fileExtension}`
+        );
+      } else {
+        return this.shortFilenameIfNeeded(this.dataFileName);
+      }
+    }
   },
   methods: {
+    shortFilenameIfNeeded(filename) {
+      if (filename.length >= 70 || !this.optimalResolution) {
+        return (
+          filename.substr(0, 20) +
+          "..." +
+          filename.substr(filename.length - 10, filename.length)
+        );
+      }
+      return filename;
+    },
     handleFileName() {
       // Save the file name and the extension in different variables
       this.fileName = this.dataFileName.split(".").slice(0, -1).join(".");

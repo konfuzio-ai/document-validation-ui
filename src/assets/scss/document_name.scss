@@ -1,12 +1,15 @@
 @import "./imports.scss";
 
 .document-name-component {
+  flex: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: auto;
+  width: 100%;
   gap: 12px;
   line-height: 20px;
+
+
 
   .document-icon {
     display: flex;
@@ -20,21 +23,17 @@
   }
 
   .document-name {
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: inline-block;
     vertical-align: middle;
 
     &.is-editable {
-      display: inline;
-      text-overflow: none;
-      overflow: auto;
+      display: inline-block;
+      overflow-x: scroll;
       white-space: nowrap;
       border-radius: 8px;
       padding: 6px 14px 6px 14px;
       outline: 1px solid $grey-outline;
+      max-width: 420px;
     }
   }
 

@@ -21,7 +21,8 @@ const state = {
   scale: undefined,
   optimalScale: undefined,
   fit: 'width',
-  currentPage: 1
+  currentPage: 1,
+  optimalResolution: true,
 };
 
 const getters = {
@@ -170,6 +171,11 @@ const actions = {
     commit
   }, pageNumber) {
     commit("SET_CURRENT_PAGE", pageNumber);
+  },
+  updateOptimalResolution({
+    commit
+  }, isOptimal) {
+    commit("SET_OPTIMAL_RESOLUTION", isOptimal);
   }
 };
 
@@ -184,6 +190,10 @@ const mutations = {
 
   SET_FIT: (state, fit) => {
     state.fit = fit;
+  },
+
+  SET_OPTIMAL_RESOLUTION: (state, isOptimal) => {
+    state.optimalResolution = isOptimal;
   },
 
   SET_CURRENT_PAGE: (state, currentPage) => {

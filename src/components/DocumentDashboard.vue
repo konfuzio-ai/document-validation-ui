@@ -27,7 +27,7 @@
         </div>
       </transition>
     </div>
-    <div class="not-optimized" v-if="!optimized">
+    <div class="not-optimized" v-if="!optimalResolution">
       <NotOptimizedViewportModal />
     </div>
     <div class="not-supported" v-if="!isMinimunWidth">
@@ -81,7 +81,7 @@ export default {
 
       return { width: page.size[0], height: page.size[1] };
     },
-    ...mapState("display", ["scale", "fit"]),
+    ...mapState("display", ["scale", "fit", "optimalResolution"]),
     ...mapState("document", ["pages", "showError"]),
     ...mapState("edit", ["editMode"])
   },
@@ -95,7 +95,10 @@ export default {
     }
 
     this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
-    this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
+    this.$store.dispatch(
+      "display/updateOptimalResolution",
+      this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
+    );
   },
   destroyed() {
     if (this.$refs.scrollingDocument) {
@@ -105,7 +108,6 @@ export default {
   data() {
     return {
       isMinimunWidth: true,
-      optimized: true,
       scroll: false,
       resizeObserver: null
     };
@@ -149,6 +151,10 @@ export default {
     fitWidth() {
       this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
       this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
+      this.$store.dispatch(
+        "display/updateOptimalResolution",
+        this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
+      );
 
       const scale = this.pageWidthScale();
       this.updateScale(scale, {
