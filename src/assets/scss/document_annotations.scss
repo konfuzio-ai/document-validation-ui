@@ -213,7 +213,7 @@
   }
 
   .rejected-labels-list {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     background-color: $white;
     max-height: 120px;
@@ -221,7 +221,8 @@
     border-top: 1px solid $detail;
 
     .rejected-label-container {
-      margin: 15px;
+      margin-top: 15px;
+      margin-bottom: 15px;
 
       .title {
         font-weight: 400;
@@ -230,6 +231,7 @@
         color: $dark-blue;
         padding-bottom: 15px;
         margin: 0;
+        padding-left: 15px;
       }
 
       .tag-container {
@@ -238,6 +240,8 @@
         flex-wrap: wrap;
         overflow-y: scroll;
         max-height: 60px;
+        padding-left: 15px;
+        padding-right: 25px;
       }
     }
   }

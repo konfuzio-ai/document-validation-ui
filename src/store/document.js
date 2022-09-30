@@ -322,7 +322,9 @@ const actions = {
   },
 
   fetchMissingAnnotations: ({ commit, state }) => {
-    return HTTP.get(`documents/${state.documentId}/missing-annotations/`)
+    return HTTP.get(
+      `documents/${state.documentId}/missing-annotations/?limit=100`
+    )
       .then(response => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
       })
