@@ -9,7 +9,7 @@
     class="annotation"
     ref="annotation"
     :id="annotation.id"
-    @mouseenter="showAcceptButton = true"
+    @mouseenter="handleAcceptButton(annotation)"
     @mouseleave="showAcceptButton = false"
   >
     <span
@@ -228,7 +228,6 @@ export default {
         .then(updatedAnnotation => {
           // Check if the response is successful or not
           if (updatedAnnotation) {
-            console.log("is to delete", isToDelete);
             this.$emit("handle-data-changes", {
               annotation: isToDelete ? this.annotation : updatedAnnotation,
               isToDelete
@@ -256,6 +255,13 @@ export default {
         return true;
       }
       return false;
+    },
+    handleAcceptButton(annotation) {
+      if (!annotation.revised) {
+        this.showAcceptButton = true;
+      } else {
+        this.showAcceptButton = false;
+      }
     }
   },
   watch: {
