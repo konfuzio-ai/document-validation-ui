@@ -8,7 +8,7 @@
   >
     <div class="label-icon">
       <b-icon v-if="notFound" class="red" icon="xmark" size="is-small" />
-      <b-icon v-else-if="edited" class="green" icon="user" size="is-small" />
+      <b-icon v-else-if="created" class="green" icon="user" size="is-small" />
       <b-icon v-else-if="accepted" class="green" icon="check" size="is-small" />
       <b-icon v-else icon="check" size="is-small" />
     </div>
@@ -34,7 +34,7 @@
               $t("not_found_in_document")
             }}
           </div>
-          <div class="edited" v-else-if="edited">
+          <div class="created" v-else-if="created">
             <b-icon icon="user" size="is-small" />{{
               user ? `${$t("edited_by")} ${user}` : $t("edited")
             }}
@@ -70,19 +70,16 @@ export default {
         return true;
       }
     },
+    created() {
+      // if (this.annotation) {
+      //   return this.annotation.created_by;
+      // } else {
+      //   return null;
+      // }
+    },
     accepted() {
       if (this.annotation) {
         return this.annotation.revised && this.annotation.is_correct;
-      } else {
-        return null;
-      }
-    },
-    edited() {
-      if (this.annotation) {
-        return (
-          (!this.annotation.revised && this.annotation.is_correct) ||
-          this.annotation.created_by
-        );
       } else {
         return null;
       }
@@ -102,7 +99,6 @@ export default {
     annotation: {
       default: null
     }
-  },
-  methods: {}
+  }
 };
 </script>

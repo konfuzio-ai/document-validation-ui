@@ -170,7 +170,10 @@ export default {
       this.$store.dispatch("document/setEditingActive", false);
       this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
-      this.$refs.contentEditable.blur();
+
+      if (this.$refs.contentEditable) {
+        this.$refs.contentEditable.blur();
+      }
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
@@ -189,7 +192,7 @@ export default {
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (this.showAcceptButton || this.saveAnnotationChanges) {
+      if (this.showAcceptButton || this.acceptAnnotation) {
         storeAction = "document/updateAnnotation";
 
         updatedString = {
@@ -257,7 +260,7 @@ export default {
       return false;
     },
     handleAcceptButton(annotation) {
-      if (!annotation.revised) {
+      if (!annotation.is_correct && !annotation.revised) {
         this.showAcceptButton = true;
       } else {
         this.showAcceptButton = false;
