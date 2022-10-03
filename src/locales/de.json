@@ -63,5 +63,8 @@
   "next": "Weiter",
   "select_label": "Select Label",
   "select_annotation_set": "Select Annotation Set",
-  "accept": "Accept"
+  "accept": "Accept",
+  "document_error_title": "Document error",
+  "document_error_info": "We’re sorry, the document ran into a problem and its data can’t be restored.",
+  "contact_support": "Contact support"
 }

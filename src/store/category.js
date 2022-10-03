@@ -32,51 +32,33 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({
-    commit
-  }) => {
+  startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({
-    commit
-  }) => {
+  endLoading: ({ commit }) => {
     commit("SET_LOADING", false);
   },
-  setDocuments: ({
-    commit
-  }, documents) => {
+  setDocuments: ({ commit }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
-  setAvailableDocumentsList: ({
-    commit
-  }, availableDocumentsList) => {
+  setAvailableDocumentsList: ({ commit }, availableDocumentsList) => {
     commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
   },
-  setCategoryId: ({
-    commit
-  }, categoryId) => {
+  setCategoryId: ({ commit }, categoryId) => {
     commit("SET_CATEGORIES", null);
     commit("SET_CATEGORY_ID", categoryId);
   },
-  setCategories: ({
-    commit
-  }, categories) => {
+  setCategories: ({ commit }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
-  setSelectedCategory: ({
-    commit
-  }, category) => {
+  setSelectedCategory: ({ commit }, category) => {
     commit("SET_SELECTED_CATEGORY", category);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({
-    commit,
-    state,
-    rootState
-  }) => {
+  fetchDocumentList: ({ commit, state, rootState }) => {
     // TODO: add lazy loading
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
@@ -98,10 +80,7 @@ const actions = {
       });
   },
 
-  createAvailableDocumentsList: ({
-    state,
-    dispatch
-  }) => {
+  createAvailableDocumentsList: ({ state, dispatch }) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -129,6 +108,7 @@ const actions = {
             // add available doc to the end of the array
             state.availableDocumentsList.push(state.documents[i]);
           } else if (state.documents[i].status_data === 111) {
+            dispatch("document/setDocumentError", true);
             // If error, add 1
             // Then go to next item
             errors += 1;
@@ -145,7 +125,7 @@ const actions = {
         if (
           state.documents.length !== state.availableDocumentsList.length &&
           state.availableDocumentsList.length + errors !==
-          state.documents.length
+            state.documents.length
         ) {
           if (count >= 10) return true;
 
@@ -179,10 +159,7 @@ const actions = {
     }
   },
 
-  fetchCategories: ({
-    commit,
-    state
-  }) => {
+  fetchCategories: ({ commit, state }) => {
     return HTTP.get(`categories/?limit=100`)
       .then(async response => {
         if (response.data && response.data.results) {

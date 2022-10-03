@@ -91,7 +91,7 @@ export default {
                       return true;
                     }, 5000);
                   } else if (this.selectedDocument.status_data === 111) {
-                    this.showError();
+                    this.$store.dispatch("document/setDocumentError", true);
                     return false;
                   } else {
                     return sleep(duration).then(() =>

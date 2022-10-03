@@ -27,7 +27,8 @@ const state = {
   editingActive: false,
   showError: false,
   errorMessage: null,
-  acceptAnnotation: false
+  acceptAnnotation: false,
+  showDocumentError: false
 };
 
 const getters = {
@@ -183,6 +184,9 @@ const actions = {
   },
   setAcceptAnnotation: ({ commit }, value) => {
     commit("SET_ACCEPT_ANNOTATION", value);
+  },
+  setDocumentError: ({ commit }, value) => {
+    commit("SET_DOCUMENT_ERROR", value);
   },
 
   /**
@@ -399,6 +403,7 @@ const actions = {
         await dispatch("endRecalculatingAnnotations");
         return true;
       } else if (state.selectedDocument.status_data === 111) {
+        dispatch("setDocumentError", true);
         return false;
       } else {
         dispatch("sleep", duration).then(() =>
@@ -525,6 +530,9 @@ const mutations = {
   },
   SET_ACCEPT_ANNOTATION: (state, value) => {
     state.acceptAnnotation = value;
+  },
+  SET_DOCUMENT_ERROR: (state, value) => {
+    state.showDocumentError = value;
   }
 };
 
