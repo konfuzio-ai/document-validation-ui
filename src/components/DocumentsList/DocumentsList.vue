@@ -50,6 +50,9 @@
                   : document.data_file_name
               }}
             </div>
+            <div class="error-icon" v-if="document.status_data === 111">
+              <ErrorIcon />
+            </div>
           </div>
         </template>
       </b-carousel-list>
@@ -59,6 +62,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
+import ErrorIcon from "../../assets/images/ErrorIcon";
 
 /**
  * This component creates a horizontal list of documents
@@ -68,7 +72,8 @@ import ServerImage from "../../assets/images/ServerImage";
 export default {
   name: "DocumentsList",
   components: {
-    ServerImage
+    ServerImage,
+    ErrorIcon
   },
   data() {
     return {
@@ -92,7 +97,7 @@ export default {
   watch: {
     documents(newValue) {
       if (newValue) {
-        this.documentsList = this.documentListForUser(this.currentUser);
+        this.documentsList = this.documentListForUser(null);
       }
     }
   }

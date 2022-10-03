@@ -6,10 +6,10 @@
       <section class="modal-card-body">
         <div class="header">
           <div class="error-icon">
-            <ErrorIcon />
+            <ErrorIcon class="icon" />
           </div>
           <div @click="closeModal" class="btn-container">
-            <b-icon icon="xmark" class="close-btn error-icon" />
+            <b-icon icon="xmark" class="close-btn" />
           </div>
         </div>
         <div class="content">

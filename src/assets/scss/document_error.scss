@@ -21,6 +21,16 @@
             display: flex;
             justify-content: space-between;
 
+            .error-icon {
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              background: $low-opacity-red;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
             .close-btn {
               color: $grey;
 
