@@ -53,7 +53,7 @@ $error-red: #d4453d;
 $error-background: #fdf4f6;
 $dark-error-red: #bb2b3b;
 $light-error-red: rgba(187, 43, 59, 0.3);
-$low-opacity-red: rgba(231, 66, 58, 0.3);
+$low-opacity-red: rgba(231, 66, 58, 0.08);
 $light-red: #fdf4f4;
 
 $input-shadow: none;
@@ -214,7 +214,7 @@ button {
 .dropdown {
   height: 100%;
 
-  +.dropdown {
+  + .dropdown {
     margin-left: 0;
   }
 
