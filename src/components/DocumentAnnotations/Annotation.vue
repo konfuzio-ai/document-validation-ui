@@ -25,7 +25,7 @@
       :contenteditable="isAnnotationBeingEdited"
       @click="handleEditAnnotation"
       @paste="handlePaste"
-      @keypress.enter="saveAnnotationChanges"
+      @keypress.enter="event => event.preventDefault()"
       :id="annotation.id"
     >
       {{ this.span.offset_string }}
@@ -294,7 +294,7 @@ export default {
       }
     },
     acceptAnnotation(newValue) {
-      if (newValue) {
+      if (newValue && this.annotation.id === this.editAnnotation.id) {
         this.saveAnnotationChanges();
       }
     }

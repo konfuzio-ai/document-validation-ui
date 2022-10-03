@@ -81,7 +81,8 @@ export default {
   },
   data() {
     return {
-      count: 0
+      count: 0,
+      jumpToNextAnnotation: false
     };
   },
   computed: {
@@ -175,7 +176,8 @@ export default {
             a => a.id === this.editAnnotation.id
           );
 
-          if (currentAnn.revised) return;
+          if (this.editAnnotation.id !== currentAnn.id || currentAnn.revised)
+            return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
         } else if (
@@ -190,6 +192,12 @@ export default {
               this.editAnnotation.labelSet
             );
           }
+
+          setTimeout(() => {
+            if (this.jumpToNextAnnotation && annotations[this.count]) {
+              annotations[this.count].click();
+            }
+          }, 2000);
         } else {
           return;
         }
@@ -220,11 +228,13 @@ export default {
         .then(response => {
           if (response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
+            this.jumpToNextAnnotation = true;
           } else {
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("ann_exists")
             );
+            this.jumpToNextAnnotation = false;
           }
         });
     }
