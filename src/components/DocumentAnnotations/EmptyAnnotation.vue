@@ -23,7 +23,6 @@
       @input="isEmpty"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
-      @keyup.esc="cancelEmptyAnnotation"
       :id="emptyAnnotationId()"
     >
       {{ $t("no_data_found") }}
@@ -154,8 +153,10 @@ export default {
       this.isLoading = false;
       this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("selection/disableSelection");
-      this.$refs.emptyAnnotation.blur();
       this.$store.dispatch("document/setEditingActive", false);
+      if (this.$refs.emptyAnnotation) {
+        this.$refs.emptyAnnotation.blur();
+      }
     },
     isEmptyAnnotationEditable() {
       return (

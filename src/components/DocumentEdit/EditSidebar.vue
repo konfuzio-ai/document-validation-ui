@@ -20,7 +20,7 @@
         >
           <div class="button-content">
             <b-icon icon="arrow-rotate-left" class="is-small" />
-            <span class="btn-text">{{ $t("rotate_selected") }}</span>
+            <span class="button-text">{{ $t("rotate_selected") }}</span>
           </div>
         </b-button>
         <b-button
@@ -30,7 +30,7 @@
         >
           <div class="button-content">
             <b-icon icon="arrow-rotate-right" class="is-small" />
-            <span class="btn-text">{{ $t("rotate_selected") }}</span>
+            <span class="button-text">{{ $t("rotate_selected") }}</span>
           </div>
         </b-button>
       </div>
@@ -38,11 +38,11 @@
       <div class="rotate-all rotate">
         <b-button class="rotate-button" @click="rotateAllLeft">
           <b-icon icon="arrow-rotate-left" class="is-small" />
-          <span class="btn-text">{{ $t("rotate_all") }}</span>
+          <span class="button-text">{{ $t("rotate_all") }}</span>
         </b-button>
         <b-button class="rotate-button" @click="rotateAllRight">
           <b-icon icon="arrow-rotate-right" class="is-small" />
-          <span class="btn-text">{{ $t("rotate_all") }}</span>
+          <span class="button-text">{{ $t("rotate_all") }}</span>
         </b-button>
       </div>
     </div>
