@@ -97,7 +97,7 @@ export default {
   watch: {
     documents(newValue) {
       if (newValue) {
-        this.documentsList = this.documentListForUser(null);
+        this.documentsList = this.documentListForUser(this.currentUser);
       }
     }
   }

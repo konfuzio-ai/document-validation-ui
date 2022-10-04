@@ -92,6 +92,7 @@ export default {
       this.$emit("cancel");
     },
     accept() {
+      this.$store.dispatch("document/setAcceptAnnotation", true);
       this.$emit("accept");
     }
   }
