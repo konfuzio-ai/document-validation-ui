@@ -173,7 +173,7 @@ export default {
         label: this.selectedLabel.id,
         annotation_set: this.selectedAnnotationSet.id,
         is_correct: true,
-        revised: true
+        revised: false
       };
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)

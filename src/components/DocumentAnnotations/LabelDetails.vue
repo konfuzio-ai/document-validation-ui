@@ -71,11 +71,15 @@ export default {
       }
     },
     created() {
-      // if (this.annotation) {
-      //   return this.annotation.created_by;
-      // } else {
-      //   return null;
-      // }
+      if (this.annotation) {
+        return (
+          this.annotation.created_by &&
+          !this.annotation.revised &&
+          this.annotation.is_correct
+        );
+      } else {
+        return null;
+      }
     },
     accepted() {
       if (this.annotation) {

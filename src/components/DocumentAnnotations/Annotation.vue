@@ -192,7 +192,7 @@ export default {
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (this.showAcceptButton || this.acceptAnnotation) {
+      if (this.acceptAnnotation) {
         storeAction = "document/updateAnnotation";
 
         updatedString = {
@@ -260,7 +260,7 @@ export default {
       return false;
     },
     handleAcceptButton(annotation) {
-      if (!annotation.is_correct && !annotation.revised) {
+      if (!annotation.revised) {
         this.showAcceptButton = true;
       } else {
         this.showAcceptButton = false;
