@@ -15,7 +15,7 @@
 
     <template v-slot:content>
       <div class="label-details">
-        <div class="description" v-if="description">
+        <div class="label-description" v-if="description">
           <span>{{ description }}</span>
         </div>
         <div class="accuracy" v-if="accuracy">
