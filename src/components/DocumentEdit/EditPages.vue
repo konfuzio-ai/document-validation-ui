@@ -148,26 +148,22 @@ export default {
 
       this.$store.dispatch("edit/setSelectedPages", selectedPage);
     },
-    deselect(event) {
-      // Check if user clicks in any of these elements to deselect the thumbnail
-      const clickedOutside =
-        event.target.className === "document-grid" ||
-        event.target.className === "document-name-container" ||
-        event.target.className === "document-name" ||
-        event.target.className === "right-bar-components" ||
-        event.target.className === "left-bar-components" ||
-        event.target.className === "edit-sidebar" ||
-        event.target.className === "sidebar" ||
-        event.target.className === "sidebar-header" ||
-        event.target.className === "description" ||
-        event.target.className === "sidebar-title" ||
-        event.target.className === "pages-section" ||
-        event.target.nodeName === "CANVAS";
-
-      if (clickedOutside) {
-        this.selected = null;
-        this.$store.dispatch("edit/setSelectedPages");
+    clickOutside(event) {
+      // Check if user clicks in any element other than thumbnail or buttons to deselect the thumbnail
+      if (
+        !event ||
+        event.target.className.includes("button") ||
+        event.target.className.includes("thumbnail") ||
+        event.target.className.includes("icon")
+      ) {
+        return;
       }
+
+      this.deselect();
+    },
+    deselect() {
+      this.selected = null;
+      this.$store.dispatch("edit/setSelectedPages");
     },
     getRotation(pageId) {
       // rotate page
@@ -204,7 +200,10 @@ export default {
     }
   },
   created() {
-    window.addEventListener("click", event => this.deselect(event));
+    window.addEventListener("click", event => this.clickOutside(event));
+  },
+  destroyed() {
+    window.removeEventListener("click", this.clickOutside());
   },
   mounted() {
     this.editPages = this.pagesArray;

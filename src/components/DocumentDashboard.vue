@@ -27,6 +27,9 @@
         </div>
       </transition>
     </div>
+    <div class="error-modal" v-if="showDocumentError">
+      <DocumentError />
+    </div>
     <div class="not-optimized" v-if="!optimalResolution">
       <NotOptimizedViewportModal />
     </div>
@@ -51,6 +54,7 @@ import { DocumentsList } from "./DocumentsList";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
+import DocumentError from "./DocumentError";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -68,7 +72,8 @@ export default {
     DocumentsList,
     DocumentEdit,
     ErrorMessage,
-    NotOptimizedViewportModal
+    NotOptimizedViewportModal,
+    DocumentError
   },
   computed: {
     defaultViewport() {
@@ -82,7 +87,7 @@ export default {
       return { width: page.size[0], height: page.size[1] };
     },
     ...mapState("display", ["scale", "fit", "optimalResolution"]),
-    ...mapState("document", ["pages", "showError"]),
+    ...mapState("document", ["pages", "showError", "showDocumentError"]),
     ...mapState("edit", ["editMode"])
   },
   mounted() {
