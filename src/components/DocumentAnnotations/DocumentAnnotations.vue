@@ -39,13 +39,28 @@
         v-bind:key="indexGroup"
         class="annotation-set-group"
       >
-        <div class="label-set-name">
-          {{
-            `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
-              annotationSet
-            )}`
-          }}
+        <div
+          class="label-set-header"
+          @mouseenter="handleShowRejectGroup(annotationSet.id)"
+          @mouseleave="handleShowRejectGroup(null)"
+        >
+          <div class="label-set-name">
+            {{
+              `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
+                annotationSet
+              )}`
+            }}
+          </div>
+          <ActionButtons
+            :saveBtn="false"
+            :cancelBtn="false"
+            :showReject="false"
+            :acceptBtn="false"
+            :rejectGroupBtn="showRejectGroup && hovered === annotationSet.id"
+            @reject-group="rejectGroup(annotationSet)"
+          />
         </div>
+
         <div v-for="label in annotationSet.labels" :key="label.id">
           <div
             class="labels"
@@ -100,7 +115,9 @@ export default {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3
+      numberOfLoadingAnnotations: 3,
+      showRejectGroup: false,
+      hovered: null
     };
   },
   computed: {
@@ -283,6 +300,27 @@ export default {
         .finally(() => {
           this.$store.dispatch("document/setRejectAnnotation", null);
         });
+    },
+
+    handleShowRejectGroup(setId) {
+      if (!setId) {
+        this.showRejectGroup = false;
+        this.hovered = null;
+      } else {
+        this.showRejectGroup = true;
+        this.hovered = setId;
+      }
+    },
+    rejectGroup(annotationSet) {
+      const labelsToReject = [];
+
+      annotationSet.labels.map(label => {
+        if (label.annotations.length === 0) {
+          labelsToReject.push(label.id);
+        }
+      });
+
+      console.log(labelsToReject);
     }
   },
   watch: {

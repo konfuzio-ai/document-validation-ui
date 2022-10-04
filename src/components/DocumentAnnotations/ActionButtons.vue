@@ -47,6 +47,15 @@
       </b-button>
     </div>
 
+    <div
+      class="reject-button-container"
+      v-if="rejectGroupBtn && !isLoading && !cancelBtn && !saveBtn"
+    >
+      <b-button type="is-ghost" class="reject-btn" @click.stop="rejectGroup">
+        {{ $t("reject_group") }}
+      </b-button>
+    </div>
+
     <b-button
       v-if="finishReviewBtn"
       :class="['finish-review-btn', 'text-btn']"
@@ -101,6 +110,12 @@ export default {
     },
     finishDisabled: {
       type: Boolean
+    },
+    handleReject: {
+      type: Function
+    },
+    rejectGroupBtn: {
+      type: Boolean
     }
   },
   computed: {
@@ -118,6 +133,9 @@ export default {
     },
     reject() {
       this.$parent.$emit("reject");
+    },
+    rejectGroup() {
+      this.$emit("reject-group");
     },
     finishReview() {
       this.$emit("finish-review");
