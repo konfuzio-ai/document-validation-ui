@@ -64,7 +64,7 @@
               @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
               @leave-empty-labels="handleHoverEmptylabelsInSet(null)"
               :acceptGroupBtn="showAcceptGroup && hovered === annotationSet.id"
-              @accept-group="acceptGroup()"
+              @accept-group="acceptGroup(annotationSet)"
             />
           </div>
         </div>
@@ -445,14 +445,37 @@ export default {
       }
     },
 
-    acceptGroup() {
-      const labelsToAccept = [];
+    acceptGroup(annotationSet) {
+      const annotationsToAccept = [];
 
-      annotations.map(ann => {
-        if (ann) {
-          labelsToAccept.push(ann.id);
+      annotationSet.labels.map(label => {
+        if (label.annotations.length !== 0) {
+          label.annotations.map(ann => {
+            if (!ann.is_correct) {
+              annotationsToAccept.push(ann.id);
+            }
+          });
         }
       });
+
+      if (annotationsToAccept.length !== 0) {
+        const acceptedAnnotations = {
+          ids: annotationsToAccept,
+          is_correct: true,
+          revised: true
+        };
+
+        this.$store
+          .dispatch("document/updateMultipleAnnotations", acceptedAnnotations)
+          .then(response => {
+            if (!response) {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("editing_error")
+              );
+            }
+          });
+      }
     }
   },
   watch: {

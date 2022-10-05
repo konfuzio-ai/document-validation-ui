@@ -682,6 +682,24 @@ const actions = {
     });
   },
 
+  updateMultipleAnnotations: ({ state }, annotations) => {
+    console.log("update annotations", annotations);
+
+    return new Promise(resolve => {
+      return HTTP.patch(`documents/${state.documentId}/update-annotations/`)
+        .then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          resolve(false);
+        });
+    });
+  },
+
   fetchDocumentStatus: ({ state, getters }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
