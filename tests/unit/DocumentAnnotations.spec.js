@@ -18,6 +18,7 @@ describe("Document Annotations Component", () => {
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
+      store.dispatch("document/setImageLoaded", true),
     ]);
   });
 
@@ -179,6 +180,7 @@ describe("Document Annotations Component", () => {
   it("Should only show the Rejected title when there are rejected labels", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
+    const handleReject = jest.fn().mockName("rejectAnnotation");
 
     const wrapper = mount(DocumentAnnotations, {
       store,
@@ -200,6 +202,7 @@ describe("Document Annotations Component", () => {
       props: {
         label,
         annotationSet,
+        handleReject,
       },
     });
 
@@ -225,7 +228,7 @@ describe("Document Annotations Component", () => {
 
     expect(store.state.document.missingAnnotations.length).toEqual(1);
 
-    expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(true);
+    expect(wrapper.findComponent(".rejected-labels-list").exists()).toBe(true);
 
     expect(
       wrapper
@@ -260,12 +263,8 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await wrapper
-      .findComponent(
-        ".empty-annotation .action-buttons .reject-button-container .reject-btn"
-      )
-      .trigger("click");
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+
     expect(
       wrapper
         .findAll(".label-properties .label-property-name .label-property-text")
@@ -276,8 +275,8 @@ describe("Document Annotations Component", () => {
     );
 
     expect(
-      wrapper.findAll(
-        ".rejected-labels-list .rejected-label-container .tag-container .tags .tag .label-name"
+      await wrapper.findAll(
+        ".rejected-labels-list .rejected-label-container .rejected-tag-container .tags .tags"
       ).length
     ).toBe(1);
   });
@@ -298,18 +297,16 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await wrapper
-      .findComponent(
-        ".empty-annotation .action-buttons .reject-button-container .reject-btn"
-      )
-      .trigger("click");
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+
     await wrapper
       .findAll(
         ".rejected-labels-list .rejected-label-container .tags .is-delete"
       )
       .trigger("click");
+
     await store.dispatch("document/setMissingAnnotations", []);
+
     expect(
       wrapper
         .findAll(".label-properties .label-property-name .label-property-text")
