@@ -34,7 +34,6 @@
       :showReject="showReject"
       :isLoading="isLoading"
       :isActive="!isLoading"
-      :handleReject="handleReject"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
     />
@@ -63,9 +62,6 @@ export default {
     },
     annotationSet: {
       required: true
-    },
-    handleReject: {
-      type: Function
     }
   },
   computed: {
