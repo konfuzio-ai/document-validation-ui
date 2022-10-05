@@ -9,7 +9,7 @@
     <p class="title">
       {{ `${$t("rejected")} (${missingAnnotations.length})` }}
     </p>
-    <section class="tag-container">
+    <section class="rejected-tag-container">
       <b-taglist
         v-for="missingAnnotation in missingAnnotations"
         :key="missingAnnotation.id"

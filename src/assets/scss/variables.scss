@@ -342,30 +342,33 @@ button {
   }
 }
 
-.tags {
-  margin: 0 !important;
+.rejected-tag-container {
+  .tags {
+    margin: 0 !important;
 
-  .tag {
-    margin-bottom: 0 !important;
-    color: $dark;
-    font-weight: 400;
-    background-color: $detail;
+    .tag {
+      margin-bottom: 0 !important;
+      color: $dark;
+      font-weight: 400;
+      background-color: $detail;
+      border-style: none !important;
 
-    &:hover {
-      background-color: $detail !important;
-    }
-
-    &.is-delete {
-      cursor: pointer;
-
-      &::before {
-        height: 1.5px;
-        border-radius: 4px;
+      &:hover {
+        background-color: $detail !important;
       }
 
-      &::after {
-        width: 1.5px;
-        border-radius: 4px;
+      &.is-delete {
+        cursor: pointer;
+
+        &::before {
+          height: 1.5px;
+          border-radius: 4px;
+        }
+
+        &::after {
+          width: 1.5px;
+          border-radius: 4px;
+        }
       }
     }
   }
