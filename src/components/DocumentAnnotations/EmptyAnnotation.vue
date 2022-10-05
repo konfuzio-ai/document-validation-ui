@@ -85,6 +85,8 @@ export default {
         this.$refs.emptyAnnotation.textContent.trim() === "";
     },
     emptyAnnotationId() {
+      if (!this.annotationSet || !this.label) return;
+
       return `${this.annotationSet.id}_${this.label.id}`;
     },
     isAnnotationBeingEdited() {
