@@ -11,9 +11,7 @@
     </div>
 
     <!-- When document data is still loading -->
-    <div
-      v-else-if="!imageLoaded && !recalculatingAnnotations && !annotationSets"
-    >
+    <div v-else-if="!imageLoaded && !recalculatingAnnotations">
       <div v-for="n in numberOfLoadingAnnotations" :key="n">
         <LoadingAnnotations />
       </div>
