@@ -63,6 +63,8 @@
               "
               @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
               @leave-empty-labels="handleHoverEmptylabelsInSet(null)"
+              :acceptGroupBtn="showAcceptGroup && hovered === annotationSet.id"
+              @accept-group="acceptGroup()"
             />
           </div>
         </div>
@@ -118,7 +120,9 @@ export default {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3
+      numberOfLoadingAnnotations: 3,
+      showRejectAllEmptyBtn: true,
+      showAcceptGroup: false
     };
   },
   computed: {
@@ -430,6 +434,25 @@ export default {
       }
 
       this.$store.dispatch("document/setHoveredAnnotationSet", annotationSet);
+    },
+    handleActionButtons(setId) {
+      if (!setId) {
+        this.hovered = null;
+        this.showAcceptGroup = false;
+      } else {
+        this.hovered = setId;
+        this.showAcceptGroup = true;
+      }
+    },
+
+    acceptGroup() {
+      const labelsToAccept = [];
+
+      annotations.map(ann => {
+        if (ann) {
+          labelsToAccept.push(ann.id);
+        }
+      });
     }
   },
   watch: {

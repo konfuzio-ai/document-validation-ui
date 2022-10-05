@@ -71,6 +71,15 @@
       </b-button>
     </div>
 
+    <!-- accept all pending annotations -->
+    <b-button
+      v-if="acceptGroupBtn && !isLoading"
+      type="is-ghost"
+      class="accept-all-btn"
+      @click.stop="acceptGroup"
+      >{{ $t("accept_group") }}</b-button
+    >
+
     <!-- finish review button -->
     <b-button
       v-if="finishReviewBtn"
@@ -134,6 +143,9 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    acceptGroupBtn: {
+      type: Boolean
     }
   },
   computed: {
@@ -164,6 +176,9 @@ export default {
     },
     finishReview() {
       this.$emit("finish-review");
+    },
+    acceptGroup() {
+      this.$emit("accept-group");
     }
   }
 };

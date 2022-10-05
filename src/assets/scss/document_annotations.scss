@@ -319,6 +319,70 @@
     }
   }
 
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+
+    button {
+      height: 32px;
+
+      &.annotation-save-btn,
+      &.annotation-accept-btn {
+        padding: 6px 14px 6px 14px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        width: auto;
+      }
+
+      &.annotation-cancel-btn {
+        padding-top: 8px !important;
+        border: none !important;
+        background-color: transparent !important;
+        width: 32px;
+      }
+
+      &.accept-all-btn {
+        color: $lighter-green !important;
+        font-size: 14px !important;
+        font-weight: 500;
+        background-color: transparent !important;
+        width: auto;
+
+        &:hover {
+          text-decoration: none !important;
+          color: $primary-dark !important;
+        }
+
+        &:focus {
+          box-shadow: none !important;
+        }
+      }
+    }
+
+    .reject-button-container {
+      background-color: transparent;
+
+      .reject-btn {
+        color: $grey-blue !important;
+        font-size: 14px !important;
+        font-weight: 500;
+        background-color: transparent !important;
+        width: auto;
+
+        &:hover {
+          text-decoration: none !important;
+          color: $dark-blue !important;
+        }
+
+        &:focus {
+          box-shadow: none !important;
+        }
+      }
+    }
+  }
+
   .rejected-labels-list {
     position: absolute;
     bottom: 0;
