@@ -5,14 +5,23 @@
 ></style>
 <template>
   <div class="labels-sidebar">
-    <!-- When extracting annotations after rotating -->
+    <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations">
       <ExtractingData />
     </div>
+
+    <!-- When document data is still loading -->
+    <div v-else-if="!imageLoaded && !recalculatingAnnotations">
+      <div v-for="n in numberOfLoadingAnnotations" :key="n">
+        <LoadingAnnotations />
+      </div>
+    </div>
+
     <!-- When there's no annotations in the label -->
     <div v-else-if="!annotationSets || annotationSets.length === 0">
       <EmptyState />
     </div>
+
     <div
       v-else
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
@@ -42,8 +51,9 @@
         </div>
       </div>
     </div>
+
     <div
-      v-if="!publicView && missingAnnotations.length"
+      v-if="!publicView && missingAnnotations.length && imageLoaded"
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -59,6 +69,7 @@ import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
+import LoadingAnnotations from "./LoadingAnnotations";
 /**
  * This component loads all annotations in a label set
  */
@@ -69,7 +80,8 @@ export default {
     CaretDown,
     ActionButtons,
     Label,
-    RejectedLabels
+    RejectedLabels,
+    LoadingAnnotations
   },
   props: {
     scroll: {
@@ -82,7 +94,8 @@ export default {
   data() {
     return {
       count: 0,
-      jumpToNextAnnotation: false
+      jumpToNextAnnotation: false,
+      numberOfLoadingAnnotations: 3
     };
   },
   computed: {
@@ -93,7 +106,8 @@ export default {
       "publicView",
       "editingActive",
       "annotations",
-      "editAnnotation"
+      "editAnnotation",
+      "imageLoaded"
     ]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
@@ -180,6 +194,11 @@ export default {
             return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
+
+          // focus on same annotation after saving
+          setTimeout(() => {
+            annotations[currentAnnIndex].click();
+          }, 2000);
         } else if (
           event.key === "Delete" &&
           annotations[currentAnnIndex].className.includes("label-empty") &&
@@ -193,9 +212,14 @@ export default {
             );
           }
 
+          // set focus on next annotation
           setTimeout(() => {
             if (this.jumpToNextAnnotation && annotations[this.count]) {
               annotations[this.count].click();
+            } else {
+              this.count = 0;
+              this.$store.dispatch("document/setEditingActive", false);
+              return;
             }
           }, 2000);
         } else {

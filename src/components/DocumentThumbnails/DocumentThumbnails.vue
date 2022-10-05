@@ -4,26 +4,38 @@
   src="../../assets/scss/document_thumbnails.scss"
 ></style>
 <template>
-  <div class="document-pages">
-    <div
-      :class="['document-thumbnail', currentPage == page.number && 'selected']"
-      v-for="page in pages"
-      v-bind:key="page.id"
-      v-on:click="changePage(page.number)"
-    >
-      <div class="image-section">
-        <div class="image-container">
-          <ServerImage
-            :class="[
-              'img-thumbnail',
-              currentPage == page.number && 'selected',
-              recalculatingAnnotations && 'blur'
-            ]"
-            :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-          />
-        </div>
+  <div :class="['document-pages', !imageLoaded && 'loading-pages']">
+    <div class="skeleton-section" v-if="!imageLoaded">
+      <div v-for="n in numberOfLoadingThumbnails" :key="n">
+        <LoadingThumbnails />
       </div>
-      <div class="number-thumbnail">{{ page.number }}</div>
+    </div>
+
+    <div>
+      <div
+        :class="[
+          'document-thumbnail',
+          currentPage == page.number && 'selected',
+          !imageLoaded && 'hidden'
+        ]"
+        v-for="page in pages"
+        v-bind:key="page.id"
+        v-on:click="changePage(page.number)"
+      >
+        <div class="image-section">
+          <div class="image-container">
+            <ServerImage
+              :class="[
+                'img-thumbnail',
+                currentPage == page.number && 'selected',
+                recalculatingAnnotations && 'blur'
+              ]"
+              :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+            />
+          </div>
+        </div>
+        <div class="number-thumbnail">{{ page.number }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -31,6 +43,7 @@
 <script>
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
+import LoadingThumbnails from "./LoadingThumbnails.vue";
 
 /**
  * This component creates a vertical list of the document pages
@@ -41,11 +54,22 @@ import ServerImage from "../../assets/images/ServerImage";
 export default {
   name: "DocumentThumbnails",
   components: {
-    ServerImage
+    ServerImage,
+    LoadingThumbnails
+  },
+  data() {
+    return {
+      numberOfLoadingThumbnails: null
+    };
   },
   computed: {
-    ...mapState("document", ["pages", "recalculatingAnnotations"]),
-    ...mapState("display", ["currentPage"])
+    ...mapState("document", [
+      "pages",
+      "recalculatingAnnotations",
+      "imageLoaded"
+    ]),
+    ...mapState("display", ["currentPage"]),
+    ...mapState("edit", ["updatedDocument"])
   },
   methods: {
     /* Change page if not the currently open and not in modal */
@@ -56,6 +80,13 @@ export default {
           parseInt(pageNumber, 10)
         );
       }
+    }
+  },
+  mounted() {
+    if (this.pages && this.pages.length !== 0) {
+      this.numberOfLoadingThumbnails = this.pages.length;
+    } else {
+      this.numberOfLoadingThumbnails = 8;
     }
   }
 };

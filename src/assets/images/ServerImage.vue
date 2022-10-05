@@ -29,6 +29,8 @@ export default {
             return response.data;
           })
           .then(myBlob => {
+            // stop loading images
+            this.$store.dispatch("document/setImageLoaded", true);
             this.$refs.imgTag.src = URL.createObjectURL(myBlob);
           });
       }

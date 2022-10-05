@@ -28,7 +28,8 @@ const state = {
   showError: false,
   errorMessage: null,
   acceptAnnotation: false,
-  showDocumentError: false
+  showDocumentError: false,
+  imageLoaded: false
 };
 
 const getters = {
@@ -187,6 +188,9 @@ const actions = {
   },
   setDocumentError: ({ commit }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
+  },
+  setImageLoaded: ({ commit }, value) => {
+    commit("SET_IMAGE_LOADED", value);
   },
 
   /**
@@ -533,6 +537,9 @@ const mutations = {
   },
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
+  },
+  SET_IMAGE_LOADED: (state, value) => {
+    state.imageLoaded = value;
   }
 };
 

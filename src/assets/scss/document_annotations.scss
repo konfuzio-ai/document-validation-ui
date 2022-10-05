@@ -5,6 +5,38 @@
   flex: 1;
   background-color: $white;
 
+  .annotations-skeleton {
+    .label-set-name-skeleton {
+      margin: 24px 16px 8px 16px;
+    }
+
+    .label-properties-skeleton {
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-bottom: 8px;
+      width: 100%;
+      box-shadow: 0px 1px 0px $grey-lightest;
+      display: flex;
+      align-items: center;
+
+      .loading-left {
+        display: flex;
+        width: 80%;
+        align-items: center;
+        gap: 10px;
+
+        .label-skeleton {
+          padding-top: 1px;
+          width: 100%;
+        }
+      }
+
+      .loading-right {
+        width: 100%;
+      }
+    }
+  }
+
   .labels-list {
     padding-bottom: 16px;
     overflow: auto;
@@ -234,14 +266,14 @@
         padding-left: 15px;
       }
 
-      .tag-container {
+      .rejected-tag-container {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
         overflow-y: scroll;
         max-height: 60px;
         padding-left: 15px;
-        padding-right: 25px;
+        padding-right: 35px;
       }
     }
   }

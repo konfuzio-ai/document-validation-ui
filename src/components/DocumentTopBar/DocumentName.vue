@@ -3,7 +3,15 @@
 <template>
   <div class="document-name-component">
     <div class="document-icon">
+      <b-skeleton
+        width="15px"
+        height="20px"
+        :active="!imageLoaded"
+        :rounded="false"
+      ></b-skeleton>
+
       <ServerImage
+        v-if="imageLoaded"
         :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.updated_at}`"
       />
     </div>
@@ -84,7 +92,7 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("document", ["selectedDocument", "publicView", "imageLoaded"]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
     textContent() {

@@ -49,7 +49,7 @@
               :label="label"
               :annotationSet="annotationSet"
               @handle-data-changes="handleDataChanges"
-              :handleReject="handleReject"
+              @reject="handleReject"
             />
           </div>
         </div>

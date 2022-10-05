@@ -42,7 +42,7 @@
       class="reject-button-container"
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
     >
-      <b-button type="is-ghost" class="reject-btn" @click.stop="handleReject">
+      <b-button type="is-ghost" class="reject-btn" @click.stop="reject">
         {{ $t("reject_label") }}
       </b-button>
     </div>
@@ -76,9 +76,6 @@ export default {
     },
     acceptBtn: {
       type: Boolean
-    },
-    handleReject: {
-      type: Function
     }
   },
   computed: {
@@ -94,6 +91,9 @@ export default {
     accept() {
       this.$store.dispatch("document/setAcceptAnnotation", true);
       this.$emit("accept");
+    },
+    reject() {
+      this.$parent.$emit("reject");
     }
   }
 };

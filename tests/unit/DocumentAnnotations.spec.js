@@ -18,8 +18,10 @@ describe("Document Annotations Component", () => {
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
+      store.dispatch("document/setImageLoaded", true),
     ]);
   });
+
   it("sidebar has group of label sets", () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
@@ -27,6 +29,7 @@ describe("Document Annotations Component", () => {
         $t,
       },
     });
+
     expect(wrapper.findAll(".labelset-group").length).toBeGreaterThan(0);
   });
 
@@ -174,110 +177,141 @@ describe("Document Annotations Component", () => {
     ).toBe(false);
   });
 
-  // it("Should only show the Rejected title when there are rejected labels", async () => {
-  //   const wrapper = mount(DocumentAnnotations, {
-  //     store,
-  //     mocks: {
-  //       $t,
-  //     },
-  //   });
+  it("Should only show the Rejected title when there are rejected labels", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const handleReject = jest.fn().mockName("rejectAnnotation");
 
-  //   const rejectedAnnotation = [
-  //     {
-  //       label_set: require("../mock/document.json").annotation_sets[0].label_set
-  //         .id,
-  //       label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-  //     },
-  //   ];
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
 
-  //   expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-  //   await wrapper
-  //     .findComponent(".annotation .action-buttons .menu-buttons")
-  //     .trigger("click");
-  //   await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
-  //   expect(store.state.document.missingAnnotations.length).toEqual(1);
-  //   expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(true);
-  //   expect(
-  //     wrapper
-  //       .findAll(".rejected-labels-list .rejected-label-container .title")
-  //       .isVisible()
-  //   ).toBe(true);
-  //   await wrapper
-  //     .findAll(
-  //       ".rejected-labels-list .rejected-label-container .tags .is-delete"
-  //     )
-  //     .trigger("click");
-  //   await store.dispatch("document/setMissingAnnotations", []);
-  //   expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-  // });
+    const wrapper2 = mount(EmptyAnnotation, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          showReject: false,
+        };
+      },
+      props: {
+        label,
+        annotationSet,
+        handleReject,
+      },
+    });
 
-  // it("Rejecting should remove item from the label list, and it should show under Rejected", async () => {
-  //   const wrapper = mount(DocumentAnnotations, {
-  //     store,
-  //     mocks: {
-  //       $t,
-  //     },
-  //   });
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
-  //   const rejectedAnnotation = [
-  //     {
-  //       label_set: require("../mock/document.json").annotation_sets[0].label_set
-  //         .id,
-  //       label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-  //     },
-  //   ];
+    expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
 
-  //   await wrapper
-  //     .findComponent(".annotation .action-buttons .menu-buttons")
-  //     .trigger("click");
-  //   await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
-  //   expect(
-  //     wrapper
-  //       .findAll(".label-properties .label-property-name .label-property-text")
-  //       .at(0)
-  //       .text()
-  //   ).not.toBe(
-  //     require("../mock/document.json").annotation_sets[0].labels[0].name
-  //   );
+    await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
 
-  //   expect(
-  //     wrapper.findAll(
-  //       ".rejected-labels-list .rejected-label-container .tag-container .tags .tag .label-name"
-  //     ).length
-  //   ).toBe(1);
-  // });
+    await wrapper2.setData({ showReject: true });
 
-  // it("Clicking the X button should remove the label from rejected and back to the labels list", async () => {
-  //   const wrapper = mount(DocumentAnnotations, {
-  //     store,
-  //     mocks: {
-  //       $t,
-  //     },
-  //   });
+    await wrapper2
+      .findComponent(".action-buttons .reject-button-container .reject-btn")
+      .trigger("click");
 
-  //   const rejectedAnnotation = [
-  //     {
-  //       label_set: require("../mock/document.json").annotation_sets[0].label_set
-  //         .id,
-  //       label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-  //     },
-  //   ];
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
-  //   await wrapper
-  //     .findComponent(".annotation .action-buttons .menu-buttons")
-  //     .trigger("click");
-  //   await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
-  //   await wrapper
-  //     .findAll(
-  //       ".rejected-labels-list .rejected-label-container .tags .is-delete"
-  //     )
-  //     .trigger("click");
-  //   await store.dispatch("document/setMissingAnnotations", []);
-  //   expect(
-  //     wrapper
-  //       .findAll(".label-properties .label-property-name .label-property-text")
-  //       .at(0)
-  //       .text()
-  //   ).toBe("Anrede");
-  // });
+    expect(store.state.document.missingAnnotations.length).toEqual(1);
+
+    expect(wrapper.findComponent(".rejected-labels-list").exists()).toBe(true);
+
+    expect(
+      wrapper
+        .findAll(".rejected-labels-list .rejected-label-container .title")
+        .isVisible()
+    ).toBe(true);
+
+    await wrapper
+      .findAll(
+        ".rejected-labels-list .rejected-label-container .tags .is-delete"
+      )
+      .trigger("click");
+
+    await store.dispatch("document/setMissingAnnotations", []);
+
+    expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
+  });
+
+  it("Rejecting should remove item from the label list, and it should show under Rejected", async () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
+
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+
+    expect(
+      wrapper
+        .findAll(".label-properties .label-property-name .label-property-text")
+        .at(0)
+        .text()
+    ).not.toBe(
+      require("../mock/document.json").annotation_sets[0].labels[0].name
+    );
+
+    expect(
+      await wrapper.findAll(
+        ".rejected-labels-list .rejected-label-container .rejected-tag-container .tags .tags"
+      ).length
+    ).toBe(1);
+  });
+
+  it("Clicking the X button should remove the label from rejected and back to the labels list", async () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
+
+    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+
+    await wrapper
+      .findAll(
+        ".rejected-labels-list .rejected-label-container .tags .is-delete"
+      )
+      .trigger("click");
+
+    await store.dispatch("document/setMissingAnnotations", []);
+
+    expect(
+      wrapper
+        .findAll(".label-properties .label-property-name .label-property-text")
+        .at(0)
+        .text()
+    ).toBe("Anrede");
+  });
 });
