@@ -6,15 +6,9 @@
 <template>
   <div :class="['document-pages', !imageLoaded && 'loading-pages']">
     <div class="skeleton-section" v-if="!imageLoaded">
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
-      <LoadingThumbnails />
+      <div v-for="n in numberOfLoadingThumbnails" :key="n">
+        <LoadingThumbnails />
+      </div>
     </div>
 
     <div>
@@ -63,13 +57,19 @@ export default {
     ServerImage,
     LoadingThumbnails
   },
+  data() {
+    return {
+      numberOfLoadingThumbnails: null
+    };
+  },
   computed: {
     ...mapState("document", [
       "pages",
       "recalculatingAnnotations",
       "imageLoaded"
     ]),
-    ...mapState("display", ["currentPage"])
+    ...mapState("display", ["currentPage"]),
+    ...mapState("edit", ["updatedDocument"])
   },
   methods: {
     /* Change page if not the currently open and not in modal */
@@ -80,6 +80,13 @@ export default {
           parseInt(pageNumber, 10)
         );
       }
+    }
+  },
+  mounted() {
+    if (this.pages && this.pages.length !== 0) {
+      this.numberOfLoadingThumbnails = this.pages.length;
+    } else {
+      this.numberOfLoadingThumbnails = 8;
     }
   }
 };

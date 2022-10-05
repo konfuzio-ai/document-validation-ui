@@ -12,9 +12,9 @@
 
     <!-- When document data is still loading -->
     <div v-else-if="!imageLoaded && !recalculatingAnnotations">
-      <LoadingAnnotations />
-      <LoadingAnnotations />
-      <LoadingAnnotations />
+      <div v-for="n in numberOfLoadingAnnotations" :key="n">
+        <LoadingAnnotations />
+      </div>
     </div>
 
     <!-- When there's no annotations in the label -->
@@ -53,12 +53,7 @@
     </div>
 
     <div
-      v-if="
-        showRejectedLabels &&
-        !publicView &&
-        missingAnnotations.length &&
-        imageLoaded
-      "
+      v-if="!publicView && missingAnnotations.length && imageLoaded"
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -99,7 +94,8 @@ export default {
   data() {
     return {
       count: 0,
-      jumpToNextAnnotation: false
+      jumpToNextAnnotation: false,
+      numberOfLoadingAnnotations: 3
     };
   },
   computed: {

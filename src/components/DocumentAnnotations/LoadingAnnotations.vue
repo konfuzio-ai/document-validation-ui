@@ -11,13 +11,9 @@
     </div>
 
     <!-- Label rows -->
-    <LoadingLabels />
-    <LoadingLabels />
-    <LoadingLabels />
-    <LoadingLabels />
-    <LoadingLabels />
-    <LoadingLabels />
-    <LoadingLabels />
+    <div v-for="n in numberOfLabelRows" :key="n">
+      <LoadingLabels />
+    </div>
   </div>
 </template>
 
@@ -31,6 +27,11 @@ import LoadingLabels from "./LoadingLabels";
 
 export default {
   name: "LoadingAnnotations",
-  components: { LoadingLabels }
+  components: { LoadingLabels },
+  data() {
+    return {
+      numberOfLabelRows: 7
+    };
+  }
 };
 </script>
