@@ -196,6 +196,11 @@ export default {
             return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
+
+          // focus on same annotation after saving
+          setTimeout(() => {
+            annotations[currentAnnIndex].click();
+          }, 2000);
         } else if (
           event.key === "Delete" &&
           annotations[currentAnnIndex].className.includes("label-empty") &&
@@ -209,9 +214,14 @@ export default {
             );
           }
 
+          // set focus on next annotation
           setTimeout(() => {
             if (this.jumpToNextAnnotation && annotations[this.count]) {
               annotations[this.count].click();
+            } else {
+              this.count = 0;
+              this.$store.dispatch("document/setEditingActive", false);
+              return;
             }
           }, 2000);
         } else {
