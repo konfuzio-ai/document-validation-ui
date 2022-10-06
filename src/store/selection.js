@@ -2,6 +2,8 @@ import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
+const selectionPadding = 1;
+
 const state = {
   selection: {
     pageNumber: null,
@@ -80,6 +82,14 @@ const actions = {
     ) {
       commit("RESET_SELECTION");
     } else {
+
+      state.selection.start.x = state.selection.start.x - selectionPadding;
+      state.selection.start.y = state.selection.start.y - selectionPadding;
+
+      end.x = end.x + selectionPadding;
+      end.y = end.y + selectionPadding;
+
+
       commit("END_SELECTION", end);
     }
   },
