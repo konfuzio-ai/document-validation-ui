@@ -217,6 +217,7 @@ export default {
         };
         updatedString = {
           is_correct: true,
+          revised: true,
           span: spans
         };
       }
