@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ErrorIcon from "../assets/images/ErrorIcon";
 
 export default {
@@ -38,6 +39,9 @@ export default {
   },
   components: {
     ErrorIcon
+  },
+  computed: {
+    ...mapState("document", ["selectedDocument"])
   },
   methods: {
     handleContactSupport() {
