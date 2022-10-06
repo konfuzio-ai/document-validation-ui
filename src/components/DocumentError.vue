@@ -49,7 +49,7 @@ export default {
         url = "https://konfuzio.com/en/support/";
       }
 
-      window.location.href = url;
+      window.open(url, "_blank");
     },
     closeModal() {
       this.$store.dispatch("document/setDocumentError", false);
