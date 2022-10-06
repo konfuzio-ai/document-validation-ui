@@ -192,14 +192,7 @@ export default {
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
 
-      if (this.acceptAnnotation) {
-        storeAction = "document/updateAnnotation";
-
-        updatedString = {
-          is_correct: true,
-          revised: true
-        };
-      } else if (isToDelete) {
+      if (isToDelete) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
