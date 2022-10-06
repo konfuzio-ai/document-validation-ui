@@ -199,7 +199,7 @@ export default {
 
   watch: {
     fit() {
-      updateFit();
+      this.updateFit();
     }
   }
 };
