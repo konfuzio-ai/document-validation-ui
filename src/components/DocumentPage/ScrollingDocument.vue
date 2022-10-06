@@ -11,7 +11,7 @@
       ref="scrollingDocument"
     >
       <div class="loading-page" v-if="!imageLoaded">
-        <div class="placeholder-page"></div>
+        <b-skeleton width="97%" height="100vh"></b-skeleton>
       </div>
 
       <div
