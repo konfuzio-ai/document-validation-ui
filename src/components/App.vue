@@ -2,7 +2,7 @@
 <template>
   <div class="app-container">
     <div v-if="recalculatingAnnotations" class="overlay"></div>
-    <DocumentsList v-if="showDocumentsList" />
+    <DocumentsList />
     <DocumentDashboard />
   </div>
 </template>
@@ -27,11 +27,6 @@ export default {
     },
     category: { type: String, required: false },
     locale: { type: String, required: false }
-  },
-  data() {
-    return {
-      showDocumentsList: false
-    };
   },
   created() {
     this.$store.dispatch("document/setDocId", this.documentId);
@@ -110,7 +105,6 @@ export default {
       if (this.categoryId) {
         Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
           () => {
-            this.showDocumentsList = true;
             this.$store.dispatch("category/createAvailableDocumentsList");
           }
         );
