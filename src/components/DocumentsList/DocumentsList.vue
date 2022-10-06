@@ -20,7 +20,10 @@
         </div>
       </div>
     </div>
-    <div class="documents-list-bottom" v-if="documentsList">
+    <div
+      class="documents-list-bottom"
+      v-if="documentsList && documentsList.length > 0"
+    >
       <b-carousel-list :data="documentsList" :items-to-show="5">
         <template #item="document">
           <div

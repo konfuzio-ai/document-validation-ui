@@ -1,21 +1,20 @@
 @import "./imports.scss";
 
 .dashboard {
-  height: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 
   .dashboard-viewer {
-    height: 100%;
-    overflow: hidden;
     display: flex;
-    background: $grey-lighter;
+    min-height: 0;
 
     .dashboard-document {
+      height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
-      height: 100%;
       flex: 1;
       background-image: radial-gradient(#bfc1c9 0.8px, #ededed 0.1px);
       background-size: 9px 9px;

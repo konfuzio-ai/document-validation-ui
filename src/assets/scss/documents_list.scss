@@ -1,13 +1,16 @@
 @import "./imports.scss";
+$documents-list-height: 52px;
 
 .documents-list {
   background-color: $background;
   font-family: "Inter", sans-serif;
+
   .documents-list-top {
     display: flex;
     flex-direction: row;
     padding: 40px;
     margin-bottom: 14px;
+
     .documents-list-top-left {
       flex: 1;
 
@@ -18,6 +21,7 @@
         line-height: 33px;
         margin: 0;
       }
+
       p {
         font-size: 14px;
         color: $text-lighter;
@@ -26,6 +30,7 @@
         margin: 16px 0 0 0;
       }
     }
+
     .documents-list-top-right {
       flex: 1;
       display: flex;
@@ -33,6 +38,7 @@
       align-items: center;
       height: 80px;
       align-self: center;
+
       .action-box {
         align-self: center;
         width: 75%;
@@ -42,6 +48,7 @@
         justify-content: center;
         align-items: flex-start;
         position: relative;
+
         span {
           margin-top: 20px;
           font-weight: 600;
@@ -49,6 +56,7 @@
           line-height: 24px;
           color: $text;
         }
+
         .action-button {
           position: absolute;
           bottom: -20px;
@@ -61,7 +69,6 @@
       }
     }
   }
-  $documents-list-height: 52px;
 
   .documents-list-bottom {
     display: flex;
@@ -85,12 +92,15 @@
         -webkit-box-sizing: border-box;
         border-bottom: 3px solid $primary;
       }
+
       .img-thumbnail {
         max-height: 40px;
+
         &.selected {
           outline: 1px solid $dark;
         }
       }
+
       .document-name {
         margin-left: 14px;
         font-weight: 400;
@@ -101,6 +111,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 90%;
+
         &.selected {
           font-weight: 600;
         }
