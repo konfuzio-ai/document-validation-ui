@@ -10,6 +10,10 @@
     display: flex;
     min-height: 0;
 
+    &.loading-skeleton {
+      overflow: hidden;
+    }
+
     .dashboard-document {
       height: 100%;
       overflow-y: auto;
