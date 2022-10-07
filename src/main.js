@@ -63,7 +63,7 @@ if (process.env.NODE_ENV != "development") {
     Vue,
     dsn: process.env.VUE_APP_SENTRY_DSN,
     integrations: [new Integrations.BrowserTracing()],
-    environment: process.env.NODE_ENV,
+    environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
 
     // We recommend adjusting this value in production, or using tracesSampler
     // for finer control
