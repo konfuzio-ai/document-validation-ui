@@ -86,8 +86,8 @@ export default {
       let percentageChange;
 
       switch (true) {
-        case this.currentPercentage === 0:
-          this.currentPercentageDifference = this.defaultPercentage * 3;
+        case this.currentPercentage === 25:
+          this.currentPercentageDifference = this.defaultPercentage * 2;
           scale = this.defaultScale - this.currentPercentageDifference;
           percentageChange =
             this.currentPercentageDifference - this.defaultPercentage;
@@ -124,15 +124,17 @@ export default {
       this.currentPercentage += this.defaultPercentage * 100;
     },
     zoomOut() {
-      if (this.currentPercentage === 0) return;
+      if (this.currentPercentage === 25) {
+        this.currentPercentageDifference = this.defaultPercentage * 3;
+        return;
+      }
 
       let scale;
       let percentageChange;
 
       switch (true) {
         case this.currentPercentage === 50:
-          this.currentPercentageDifference += this.defaultPercentage;
-          scale = this.defaultScale - this.currentPercentageDifference;
+          scale = this.defaultScale - this.defaultPercentage * 3;
           percentageChange =
             this.currentPercentageDifference + this.defaultPercentage;
           break;
@@ -146,7 +148,10 @@ export default {
             this.currentPercentageDifference + this.defaultPercentage;
           break;
         case this.currentPercentage > 100:
-          scale = this.defaultScale + this.currentPercentageDifference;
+          scale =
+            this.defaultScale +
+            this.currentPercentageDifference -
+            this.fitPercentage;
           percentageChange =
             this.currentPercentageDifference - this.defaultPercentage;
           break;
