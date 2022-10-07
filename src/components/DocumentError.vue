@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ErrorIcon from "../assets/images/ErrorIcon";
 
 export default {
@@ -39,6 +40,9 @@ export default {
   components: {
     ErrorIcon
   },
+  computed: {
+    ...mapState("document", ["selectedDocument"])
+  },
   methods: {
     handleContactSupport() {
       let url;
@@ -49,7 +53,7 @@ export default {
         url = "https://konfuzio.com/en/support/";
       }
 
-      window.location.href = url;
+      window.open(url, "_blank");
     },
     closeModal() {
       this.$store.dispatch("document/setDocumentError", false);

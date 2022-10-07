@@ -11,7 +11,9 @@
       ref="scrollingDocument"
     >
       <div class="loading-page" v-if="!imageLoaded">
-        <div class="placeholder-page"></div>
+        <div v-for="n in docPagePlaceholder" :key="n">
+          <b-skeleton width="97%" height="700px"></b-skeleton>
+        </div>
       </div>
 
       <div
@@ -71,7 +73,8 @@ export default {
   data() {
     return {
       scrollTop: 0,
-      clientHeight: 0
+      clientHeight: 0,
+      docPagePlaceholder: 2
     };
   },
 

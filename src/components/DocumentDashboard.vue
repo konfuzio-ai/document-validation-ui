@@ -5,7 +5,13 @@
     <div class="dashboard-top-bar" v-if="pages && pages.length > 0">
       <DocumentTopBar />
     </div>
-    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
+    <div
+      :class="[
+        'dashboard-viewer',
+        editMode ? 'edit-mode' : '',
+        !imageLoaded && 'loading-skeleton'
+      ]"
+    >
       <DocumentThumbnails ref="documentPages" v-if="!editMode" />
       <ScrollingDocument
         class="dashboard-document"
@@ -87,7 +93,12 @@ export default {
       return { width: page.size[0], height: page.size[1] };
     },
     ...mapState("display", ["scale", "fit", "optimalResolution"]),
-    ...mapState("document", ["pages", "showError", "showDocumentError"]),
+    ...mapState("document", [
+      "pages",
+      "showError",
+      "showDocumentError",
+      "imageLoaded"
+    ]),
     ...mapState("edit", ["editMode"])
   },
   mounted() {
@@ -199,7 +210,7 @@ export default {
 
   watch: {
     fit() {
-      updateFit();
+      this.updateFit();
     }
   }
 };
