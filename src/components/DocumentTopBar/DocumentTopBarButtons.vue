@@ -40,9 +40,7 @@ export default {
       this.$store.dispatch("document/setErrorMessage", this.$t("edit_error"));
     },
     closeEditMode() {
-      this.$store.dispatch("edit/disableEditMode").then(() => {
-        this.$store.dispatch("display/updateFit", "width");
-      });
+      this.$store.dispatch("edit/disableEditMode");
       this.$store.dispatch("edit/setSplitOverview", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);

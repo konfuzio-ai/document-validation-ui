@@ -3,7 +3,7 @@
 .labels-sidebar {
   font-family: "Inter", sans-serif;
   flex: 1;
-  background-color: $white;
+  background-color: $background;
 
   .annotations-skeleton {
     .label-set-name-skeleton {
@@ -248,7 +248,7 @@
   .rejected-labels-list {
     position: absolute;
     bottom: 0;
-    background-color: $white;
+    background-color: $background;
     max-height: 120px;
     min-width: 50%;
     border-top: 1px solid $detail;
