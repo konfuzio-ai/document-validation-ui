@@ -30,12 +30,16 @@
       display: none;
     }
 
-    .img-thumbnail.selected {
-      outline: 2px solid $dark;
-    }
     .img-thumbnail {
       width: 40px;
       text-align: center;
+      outline: 1px solid $grey-detail;
+      border-radius: 4px;
+
+      &.selected {
+        outline: 2px solid $lighter-green;
+
+      }
 
       &.blur {
         filter: blur(2px);
@@ -43,7 +47,7 @@
     }
 
     .number-thumbnail {
-      color: $text;
+      color: $text-lighter;
       font-size: 12px;
       margin-top: 4px;
     }

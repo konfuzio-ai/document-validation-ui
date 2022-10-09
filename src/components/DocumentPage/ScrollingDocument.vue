@@ -16,24 +16,9 @@
         </div>
       </div>
 
-      <div
-        :class="[recalculatingAnnotations && 'blur']"
-        v-else-if="!editMode && imageLoaded"
-      >
+      <div :class="[recalculatingAnnotations && 'blur']" v-else>
         <ScrollingPage
-          v-for="page in pages"
-          :key="page.number"
-          :page="page"
-          :clientHeight="clientHeight"
-          :scrollTop="scrollTop"
-          @page-jump="onPageJump"
-          class="scrolling-page"
-          :scroll="scroll"
-        />
-      </div>
-      <div v-else>
-        <ScrollingPage
-          v-for="page in pagesArray"
+          v-for="page in editMode ? pagesArray : pages"
           :key="page.number"
           :page="page"
           :clientHeight="clientHeight"

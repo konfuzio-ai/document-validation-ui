@@ -77,9 +77,7 @@ export default {
   methods: {
     handleEdit() {
       if (this.editModeDisabled) return;
-      this.$store.dispatch("edit/enableEditMode").then(() => {
-        this.$store.dispatch("display/updateFit", "width");
-      });
+      this.$store.dispatch("edit/enableEditMode");
     },
     zoomIn() {
       let scale;

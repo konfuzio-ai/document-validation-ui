@@ -36,22 +36,7 @@
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
-              :config="{
-                stroke: '#ccc',
-                strokeWidth: 2,
-                dash: [5, 2],
-                fill:
-                  newAnnotation && newAnnotation.entity === entity
-                    ? '#67E9B7'
-                    : 'transparent',
-                globalCompositeOperation: 'multiply',
-                transformsEnabled: 'position',
-                hitStrokeWidth: 0,
-                shadowForStrokeEnabled: false,
-                perfectDrawEnabled: false,
-                name: 'entity',
-                ...entity.scaled
-              }"
+              :config="entityRect(entity)"
               @mouseenter="cursor = 'pointer'"
               @mouseleave="cursor = 'crosshair'"
               @click="openNewAnnotation(entity)"
@@ -426,6 +411,28 @@ export default {
             this.$store.dispatch("document/setImageLoaded", true);
           };
         });
+    },
+
+    /**
+     * Builds the konva config object for the entity.
+     */
+    entityRect(entity) {
+      return {
+        stroke: "#ccc",
+        strokeWidth: 2,
+        dash: [5, 2],
+        fill:
+          this.newAnnotation && this.newAnnotation.entity === entity
+            ? "#67E9B7"
+            : "transparent",
+        globalCompositeOperation: "multiply",
+        transformsEnabled: "position",
+        hitStrokeWidth: 0,
+        shadowForStrokeEnabled: false,
+        perfectDrawEnabled: false,
+        name: "entity",
+        ...entity.scaled
+      };
     },
 
     /**
