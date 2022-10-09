@@ -89,7 +89,7 @@ export default {
       if (this.annotation) {
         return (
           this.annotation.created_by &&
-          !this.annotation.revised &&
+          this.annotation.revised &&
           this.annotation.is_correct
         );
       } else {
@@ -127,10 +127,10 @@ export default {
   watch: {
     annotation(newAnnotation, oldAnnotation) {
       const accepted = ann => {
-        return ann.revised && ann.is_correct;
+        return ann && ann.id && ann.revised && ann.is_correct;
       };
       if (
-        newAnnotation.id === oldAnnotation.id &&
+        newAnnotation.id &&
         accepted(newAnnotation) &&
         !accepted(oldAnnotation)
       ) {
