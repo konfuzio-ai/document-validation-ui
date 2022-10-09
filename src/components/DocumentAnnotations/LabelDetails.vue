@@ -7,9 +7,24 @@
     class="left-aligned"
   >
     <div class="label-icon">
-      <b-icon v-if="notFound" class="red" icon="xmark" size="is-small" />
-      <b-icon v-else-if="created" class="green" icon="user" size="is-small" />
-      <b-icon v-else-if="accepted" class="green" icon="check" size="is-small" />
+      <b-icon
+        v-if="notFound"
+        :class="[animate ? 'animated-ripple' : '', 'red']"
+        icon="xmark"
+        size="is-small"
+      />
+      <b-icon
+        v-else-if="created"
+        :class="[animate ? 'animated-ripple' : '', 'green']"
+        icon="user"
+        size="is-small"
+      />
+      <b-icon
+        v-else-if="accepted"
+        :class="[animate ? 'animated-ripple' : '', 'green']"
+        icon="check"
+        size="is-small"
+      />
       <b-icon v-else icon="check" size="is-small" />
     </div>
 
@@ -102,6 +117,28 @@ export default {
     },
     annotation: {
       default: null
+    }
+  },
+  data() {
+    return {
+      animate: false
+    };
+  },
+  watch: {
+    annotation(newAnnotation, oldAnnotation) {
+      const accepted = ann => {
+        return ann.revised && ann.is_correct;
+      };
+      if (
+        newAnnotation.id === oldAnnotation.id &&
+        accepted(newAnnotation) &&
+        !accepted(oldAnnotation)
+      ) {
+        this.animate = true;
+        setTimeout(() => {
+          this.animate = false;
+        }, 2000);
+      }
     }
   }
 };

@@ -197,17 +197,20 @@ export default {
       } else {
         storeAction = "document/updateAnnotation";
         const spans = this.annotation.span;
-        spans[this.spanIndex] = {
-          ...spans[this.spanIndex],
-          offset_string: this.annotationText,
-          page_index: this.spanSelection.page_index,
-          x0: this.spanSelection.x0,
-          x1: this.spanSelection.x1,
-          y0: this.spanSelection.y0,
-          y1: this.spanSelection.y1,
-          start_offset: this.spanSelection.start_offset,
-          end_offset: this.spanSelection.end_offset
-        };
+        if (this.spanSelection) {
+          spans[this.spanIndex] = {
+            ...spans[this.spanIndex],
+            offset_string: this.annotationText,
+            page_index: this.spanSelection.page_index,
+            x0: this.spanSelection.x0,
+            x1: this.spanSelection.x1,
+            y0: this.spanSelection.y0,
+            y1: this.spanSelection.y1,
+            start_offset: this.spanSelection.start_offset,
+            end_offset: this.spanSelection.end_offset
+          };
+        }
+
         updatedString = {
           is_correct: true,
           revised: true,
