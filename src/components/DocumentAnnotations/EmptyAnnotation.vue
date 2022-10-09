@@ -122,7 +122,7 @@ export default {
         label: this.label.id,
         annotation_set: this.annotationSet.id,
         is_correct: true,
-        revised: false
+        revised: true
       };
       this.isLoading = true;
       this.$store
