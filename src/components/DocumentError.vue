@@ -41,11 +41,13 @@ export default {
     ErrorIcon
   },
   computed: {
-    ...mapState("document", ["selectedDocument"])
+    ...mapState("document", ["selectedDocument", "currentUser"])
   },
   methods: {
     handleContactSupport() {
       let url;
+      const documentError = "Document error";
+      const params = `project=${this.selectedDocument.project}&email=${this.currentUser}&issue=${documentError}`;
 
       if (process.env.VUE_APP_I18N_LOCALE == "de") {
         url = "https://konfuzio.com/de/support/";
@@ -53,7 +55,7 @@ export default {
         url = "https://konfuzio.com/en/support/";
       }
 
-      window.open(url, "_blank");
+      window.open(`${url}?${params}`, "_blank");
     },
     closeModal() {
       this.$store.dispatch("document/setDocumentError", false);
