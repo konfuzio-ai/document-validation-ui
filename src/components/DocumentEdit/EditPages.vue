@@ -120,7 +120,6 @@ export default {
       "pagesArray",
       "splitOverview",
       "selectedPages",
-      "pagesFrontend",
       "splitOverview"
     ])
   },
@@ -149,9 +148,10 @@ export default {
       this.$store.dispatch("edit/setSelectedPages", selectedPage);
     },
     clickOutside(event) {
+      if (!event || this.selectedPages.length === 0) return;
+
       // Check if user clicks in any element other than thumbnail or buttons to deselect the thumbnail
       if (
-        !event ||
         event.target.className.includes("button") ||
         event.target.className.includes("thumbnail") ||
         event.target.className.includes("icon")
@@ -167,7 +167,7 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
+      return this.pagesArray?.find(p => p.id === pageId)?.angle;
     },
     handleSplittingLines(page) {
       this.$emit("handle-splitting-lines", page);
@@ -190,7 +190,6 @@ export default {
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.$store.dispatch("edit/setPagesArray", newValue);
-        this.$store.dispatch("edit/setPagesFrontend", newValue);
       }
     },
     splitOverview(newValue) {

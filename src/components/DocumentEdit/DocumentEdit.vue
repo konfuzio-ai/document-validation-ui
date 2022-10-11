@@ -65,7 +65,6 @@ export default {
       "pagesArray",
       "updatedDocument",
       "splitOverview",
-      "pagesFrontend",
       "selectedPages"
     ])
   },
@@ -82,7 +81,6 @@ export default {
         // set array of pages only with the data we need
         const pages = this.createPagesArray();
         this.$store.dispatch("edit/setPagesArray", pages);
-        this.$store.dispatch("edit/setPagesFrontend", pages);
         // create array to handle the splitting
         // length - 1 because of how many lines to split we need (last one not necessary)
         this.activeSplittingLines = new Array(this.pages.length - 1);
@@ -115,9 +113,8 @@ export default {
       this.$store.dispatch("edit/disableEditMode");
 
       // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.pagesFrontend) {
+      if (this.pagesArray) {
         const pages = this.createPagesArray();
-        this.$store.dispatch("edit/setPagesFrontend", pages);
         this.$store.dispatch("edit/setPagesArray", pages);
       }
 
@@ -262,7 +259,6 @@ export default {
       });
 
       this.$store.dispatch("edit/setPagesArray", pages);
-      this.$store.dispatch("edit/setPagesFrontend", pages);
     }
   },
   watch: {
