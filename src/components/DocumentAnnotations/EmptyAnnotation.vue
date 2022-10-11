@@ -84,7 +84,7 @@ export default {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      return `${this.annotationSet.id}_${this.label.id}`;
+      return `${this.annotationSet.label_set.id}_${this.label.id}`;
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
@@ -121,7 +121,7 @@ export default {
         document: this.documentId,
         span: [this.spanSelection],
         label: this.label.id,
-        annotation_set: this.annotationSet.id,
+        label_set: this.annotationSet.label_set.id,
         is_correct: true,
         revised: true
       };

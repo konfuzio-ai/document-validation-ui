@@ -114,7 +114,7 @@ export default {
   },
   methods: {
     referenceId(annotation) {
-      let refId = `label_${this.label.id}_${this.annotationSet.id}`;
+      let refId = `label_${this.label.id}_${this.annotationSet.label_set.id}`;
       if (annotation) {
         refId = `${refId}_${annotation.id}`;
       }
@@ -123,7 +123,7 @@ export default {
     annotationId(annotation) {
       return annotation
         ? annotation.id
-        : `${this.annotationSet.id}_${this.label.id}`;
+        : `${this.annotationSet.label_set.id}_${this.label.id}`;
     },
     annotationDeleted(annotation) {
       if (annotation) {

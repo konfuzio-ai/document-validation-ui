@@ -93,7 +93,7 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
     expect(store.state.selection.selectionEnabled).toEqual(
-      `${annotationSet.id}_${label.id}`
+      `${annotationSetlabel_set.id}_${label.id}`
     );
   });
 

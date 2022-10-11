@@ -88,12 +88,15 @@ const getters = {
     let index = 0;
     state.annotationSets.map(annotationSetTemp => {
       if (
-        annotationSetTemp.label_set.name === annotationSet.label_set.name &&
-        annotationSetTemp.id !== annotationSet.id
+        annotationSetTemp.id !== annotationSet.id &&
+        annotationSetTemp.label_set.id === annotationSet.label_set.id &&
+        annotationSetTemp.label_set.name === annotationSet.label_set.name
       ) {
         found = true;
         index++;
-      } else if (annotationSetTemp.id === annotationSet.id) {
+      } else if (
+        annotationSetTemp.label_set.id === annotationSet.label_set.id
+      ) {
         value = index;
       }
     });
@@ -435,8 +438,8 @@ const mutations = {
     state.annotations.push(annotation);
     state.annotationSets.map(annotationSet => {
       if (
-        annotation.annotation_set &&
-        annotationSet.id === annotation.annotation_set
+        annotation.label_set &&
+        annotationSet.label_set.id === annotation.label_set
       ) {
         annotationSet.labels.map(label => {
           if (annotation.label && annotation.label.id === label.id) {

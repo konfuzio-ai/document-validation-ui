@@ -44,7 +44,6 @@
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
         @accept="saveAnnotationChanges"
-        :annotationSet="annotationSet"
         :label="label"
       />
     </div>
