@@ -107,7 +107,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["updatedDocument"])
+    ...mapState("edit", ["updatedDocument", "pagesArray"])
   },
   methods: {
     handleBackButton() {
