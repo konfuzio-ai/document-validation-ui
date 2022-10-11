@@ -31,7 +31,30 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["annotations", "publicView", "emptyAnnotations"])
+    ...mapState("document", [
+      "annotations",
+      "publicView",
+      "annotationSets",
+      "missingAnnotations",
+      "labels"
+    ]),
+
+    emptyAnnotations() {
+      const empty = this.annotationSets.map(annSet => {
+        const labelSetId = annSet.label_set.id;
+        const labels = annSet.labels.filter(
+          label => label.annotations.length === 0
+        );
+
+        if (labels.length > 0) {
+          return { labels: labels, labelSetId: labelSetId };
+        } else {
+          return [null];
+        }
+      });
+
+      return empty.filter(ann => ann[0] !== null);
+    }
   },
   methods: {
     handleFinishReview() {
@@ -54,32 +77,58 @@ export default {
             );
           }
         });
+    },
+    isDocumentReadyForReview(label, labelSet) {
+      // check if all annotations have been revised
+      const notRevised = this.annotations.filter(a => !a.revised);
+
+      // check that all empty annotations have been rejected
+      const rejectedAnnotations = [];
+
+      if (this.emptyAnnotations.length > 0) {
+        if (label && labelSet) {
+          this.emptyAnnotations.map(ann => {
+            if (ann.labelSetId == labelSet) {
+              const foundLabel = ann.labels.find(l => l.id === label);
+
+              if (foundLabel) {
+                rejectedAnnotations.push({
+                  labelSet: ann.labelSetId,
+                  label: foundLabel.id
+                });
+              }
+            }
+          });
+        }
+      }
+
+      if (
+        notRevised.length === 0 &&
+        rejectedAnnotations.length === this.emptyAnnotations.length
+      ) {
+        this.finishDisabled = false;
+      } else {
+        this.finishDisabled = true;
+      }
     }
   },
   watch: {
     annotations(newValue) {
       if (!newValue) return;
 
-      // Check if there are annotations that have not been revised
-      const notRevised = newValue.filter(a => !a.revised);
+      this.isDocumentReadyForReview();
+    },
+    missingAnnotations(newValue) {
+      if (!newValue) return;
 
-      if (notRevised.length === 0 && !this.emptyAnnotations) {
-        this.finishDisabled = false;
-      } else {
-        this.finishDisabled = true;
-      }
-    },
-    publicView(newValue) {
-      if (newValue) {
-        this.finishDisabled = true;
-      }
-    },
-    emptyAnnotations(newValue) {
-      if (newValue) {
-        this.finishDisabled = true;
-      } else {
-        this.finishDisabled = false;
-      }
+      const label = newValue.map(l => {
+        return l.label;
+      });
+      const labelSet = newValue.map(lSet => {
+        return lSet.label_set;
+      });
+
+      this.isDocumentReadyForReview(label[0], labelSet);
     }
   }
 };
