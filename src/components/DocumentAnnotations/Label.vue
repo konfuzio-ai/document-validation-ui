@@ -79,9 +79,6 @@ export default {
     },
     handleScroll: {
       type: Function
-    },
-    missingAnnotations: {
-      type: Array
     }
   },
   data() {

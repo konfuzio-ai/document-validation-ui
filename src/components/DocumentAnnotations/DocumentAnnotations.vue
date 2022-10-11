@@ -50,7 +50,6 @@
             :handleScroll="handleScroll"
             :indexGroup="indexGroup"
             @handle-reject="rejectAnnotation"
-            :missingAnnotations="missingAnnotations"
           />
         </div>
       </div>
