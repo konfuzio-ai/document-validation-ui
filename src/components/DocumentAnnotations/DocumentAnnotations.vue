@@ -107,7 +107,8 @@ export default {
       "editingActive",
       "annotations",
       "editAnnotation",
-      "imageLoaded"
+      "imageLoaded",
+      "acceptAnnotation"
     ]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
@@ -118,6 +119,19 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    focusOnNextAnnotation() {
+      const annotations = Array.from(
+        document.getElementsByClassName("annotation-value")
+      );
+      if (annotations[this.count]) {
+        annotations[this.count].click();
+      } else {
+        this.count = 0;
+        this.$store.dispatch("document/setEditingActive", false);
+        return;
+      }
+    },
+
     keyDownHandler(event) {
       // get out of edit mode and navigation
       if (event.key === "Escape") {
@@ -136,7 +150,6 @@ export default {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
       );
-
       // Get clicked element to get the index
       const clickedAnnotations = Array.from(
         document.getElementsByClassName("clicked")
@@ -183,22 +196,18 @@ export default {
         this.count--;
       } else {
         // Check for ENTER or DELETE
-
         // Accept annotation
         if (event.key === "Enter") {
           const currentAnn = this.annotations.find(
             a => a.id === this.editAnnotation.id
           );
 
-          if (this.editAnnotation.id !== currentAnn.id || currentAnn.revised)
-            return;
+          if (this.editAnnotation.id !== currentAnn.id) return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
-
-          // focus on same annotation after saving
-          setTimeout(() => {
-            annotations[currentAnnIndex].click();
-          }, 2000);
+          // set focus on next annotation
+          this.count = currentAnnIndex + 1;
+          this.jumpToNextAnnotation = true;
         } else if (
           event.key === "Delete" &&
           annotations[currentAnnIndex].className.includes("label-empty") &&
@@ -211,17 +220,7 @@ export default {
               this.editAnnotation.labelSet
             );
           }
-
-          // set focus on next annotation
-          setTimeout(() => {
-            if (this.jumpToNextAnnotation && annotations[this.count]) {
-              annotations[this.count].click();
-            } else {
-              this.count = 0;
-              this.$store.dispatch("document/setEditingActive", false);
-              return;
-            }
-          }, 2000);
+          this.jumpToNextAnnotation = true;
         } else {
           return;
         }
@@ -265,8 +264,14 @@ export default {
   },
   watch: {
     editingActive(newValue) {
-      if (!newValue) {
+      if (!newValue && !this.jumpToNextAnnotation) {
         this.count = 0;
+      }
+    },
+    acceptAnnotation(newValue, oldValue) {
+      if (!newValue && oldValue) {
+        this.focusOnNextAnnotation();
+        this.jumpToNextAnnotation = false;
       }
     }
   }
