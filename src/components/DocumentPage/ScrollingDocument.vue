@@ -12,7 +12,7 @@
     >
       <div class="loading-page" v-if="!imageLoaded">
         <div v-for="n in docPagePlaceholder" :key="n">
-          <b-skeleton width="97%" height="700px"></b-skeleton>
+          <b-skeleton width="97%" height="1000px"></b-skeleton>
         </div>
       </div>
 

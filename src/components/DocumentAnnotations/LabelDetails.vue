@@ -15,7 +15,7 @@
       />
       <b-icon
         v-else-if="created"
-        :class="[animate ? 'animated-ripple' : '', 'green']"
+        :class="[animate ? 'animated-ripple' : '']"
         icon="user"
         size="is-small"
       />
@@ -50,8 +50,8 @@
             }}
           </div>
           <div class="created" v-else-if="created">
-            <b-icon icon="user" size="is-small" />{{
-              user ? `${$t("edited_by")} ${user}` : $t("edited")
+            <b-icon icon="user" size="is-small" class="grey" />{{
+              user ? `${$t("created_by")} ${user}` : $t("created")
             }}
           </div>
           <div class="accepted" v-else-if="accepted">
@@ -89,7 +89,7 @@ export default {
       if (this.annotation) {
         return (
           this.annotation.created_by &&
-          this.annotation.revised &&
+          !this.annotation.revised &&
           this.annotation.is_correct
         );
       } else {

@@ -19,11 +19,24 @@
           closable
           aria-close-label="Close tag"
           @close="removeRejectedLabel(missingAnnotation.id)"
+          :class="[
+            isLoading && closedTag === missingAnnotation.id && 'loading-active'
+          ]"
         >
-          <span class="label-name">
+          <span
+            :class="[
+              'label-name',
+              isLoading && closedTag === missingAnnotation.id && 'loading'
+            ]"
+          >
             {{ getLabelName(missingAnnotation.label) }}
           </span>
         </b-tag>
+        <div class="tag-loading-container">
+          <ActionButtons
+            :isLoading="isLoading && closedTag === missingAnnotation.id"
+          />
+        </div>
       </b-taglist>
     </section>
   </div>
@@ -31,6 +44,7 @@
 
 <script>
 import { mapState } from "vuex";
+import ActionButtons from "./ActionButtons.vue";
 
 export default {
   name: "RejectedLabels",
@@ -39,11 +53,20 @@ export default {
       type: Array
     }
   },
+  data() {
+    return {
+      isLoading: false,
+      closedTag: null
+    };
+  },
   computed: {
     ...mapState("document", ["labels"])
   },
   methods: {
     removeRejectedLabel(id) {
+      this.isLoading = true;
+      this.closedTag = id;
+
       this.$store
         .dispatch("document/deleteMissingAnnotation", id)
         .then(response => {
@@ -55,17 +78,20 @@ export default {
               this.$t("ann_exists")
             );
           }
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.closedTag = null;
         });
     },
     getLabelName(label) {
       if (!this.labels) return;
-
       const found = this.labels.find(l => l.id === label);
-
       if (found) {
         return found.name;
       }
     }
-  }
+  },
+  components: { ActionButtons }
 };
 </script>

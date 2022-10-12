@@ -5,54 +5,34 @@ const HTTP = myImports.HTTP;
 const state = {
   editMode: false,
   splitOverview: false,
-  pagesFrontend: [],
   pagesArray: [],
   selectedPages: [],
   updatedDocument: []
 };
 
 const actions = {
-  enableEditMode: ({
-    commit
-  }) => {
+  enableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", true);
   },
 
-  disableEditMode: ({
-    commit
-  }) => {
+  disableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", false);
     commit("SET_SPLIT_OVERVIEW", false);
   },
 
-  setSplitOverview: ({
-    commit
-  }, overview) => {
+  setSplitOverview: ({ commit }, overview) => {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
-  setPagesFrontend: ({
-    commit
-  }, pagesFrontend) => {
-    commit("SET_PAGES_FRONTEND", pagesFrontend);
-  },
-
-  setPagesArray: ({
-    commit
-  }, pages) => {
+  setPagesArray: ({ commit }, pages) => {
     commit("SET_PAGES_ARRAY", pages);
   },
 
-  setUpdatedDocument: ({
-    commit
-  }, updatedDocument) => {
+  setUpdatedDocument: ({ commit }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
   },
 
-  setSelectedPages: ({
-    state,
-    commit
-  }, selectedPage) => {
+  setSelectedPages: ({ state, commit }, selectedPage) => {
     if (!selectedPage) {
       state.selectedPages.pop();
       return;
@@ -71,93 +51,42 @@ const actions = {
     }
   },
 
-  rotatePage: ({
-    state,
-    commit
-  }, {
-    page,
-    direction
-  }) => {
-    // If the item already exists in the array and matches the clicked one,
-    // update it to the new rotation
-    if (state.pagesFrontend.find(p => p.id === page[0].id)) {
-      const array = state.pagesFrontend.map(p => {
-        if (p.id === page[0].id) {
-          if (direction === "left")
+  rotatePage: ({ state, commit }, { page, direction }) => {
+    if (state.pagesArray.find(p => p.id === page[0].id)) {
+      const pagesArray = state.pagesArray.map(p => {
+        let rotatedAngle;
+        if (direction === "left") {
+          rotatedAngle = p.angle - 90;
+          if (p.id === page[0].id) {
+            if (rotatedAngle === -270) {
+              rotatedAngle = 90;
+            }
             return {
               ...p,
-              angle: p.angle - 90
-            };
-          if (direction === "right") {
-            return {
-              ...p,
-              angle: p.angle + 90
+              angle: rotatedAngle
             };
           }
+          return p;
         }
-        return p;
+        if (direction === "right") {
+          rotatedAngle = p.angle + 90;
+          if (p.id === page[0].id) {
+            if (rotatedAngle === 270) {
+              rotatedAngle = -90;
+            }
+            return {
+              ...p,
+              angle: rotatedAngle
+            };
+          }
+          return p;
+        }
       });
 
-      commit("SET_PAGES_FRONTEND", array);
-
-      // Rotations to send to the backend
-      // due to only allowing -90 to 180 angles
-      if (state.pagesArray.find(p => p.id === page[0].id)) {
-        const pagesArray = state.pagesArray.map(p => {
-          let rotatedAngle;
-          if (direction === "left") {
-            rotatedAngle = p.angle - 90;
-            if (p.id === page[0].id) {
-              if (rotatedAngle === -270) {
-                rotatedAngle = 90;
-              }
-              return {
-                ...p,
-                angle: rotatedAngle
-              };
-            }
-            return p;
-          }
-          if (direction === "right") {
-            rotatedAngle = p.angle + 90;
-            if (p.id === page[0].id) {
-              if (rotatedAngle === 270) {
-                rotatedAngle = -90;
-              }
-              return {
-                ...p,
-                angle: rotatedAngle
-              };
-            }
-            return p;
-          }
-        });
-
-        commit("SET_PAGES_ARRAY", pagesArray);
-      } else {
-        if (direction === "left") {
-          state.pagesArray.push({
-            id: page.id,
-            page_number: page.number,
-            angle: -90,
-            thumbnail_url: page.thumbnail_url,
-            updated_at: page.updated_at
-          });
-        }
-
-        if (direction === "right") {
-          state.pagesArray.push({
-            id: page.id,
-            page_number: page.number,
-            angle: 90,
-            thumbnail_url: page.thumbnail_url,
-            updated_at: page.updated_at
-          });
-        }
-      }
+      commit("SET_PAGES_ARRAY", pagesArray);
     } else {
       if (direction === "left") {
-        state.pagesFrontend.push({
+        state.pagesArray.push({
           id: page.id,
           page_number: page.number,
           angle: -90,
@@ -167,7 +96,7 @@ const actions = {
       }
 
       if (direction === "right") {
-        state.pagesFrontend.push({
+        state.pagesArray.push({
           id: page.id,
           page_number: page.number,
           angle: 90,
@@ -178,20 +107,7 @@ const actions = {
     }
   },
 
-  updateRotationToTheLeft: ({
-    state,
-    commit
-  }) => {
-    // update the angles to rotate pages in the frontend
-    const pages = state.pagesFrontend.map(p => {
-      return {
-        ...p,
-        angle: p.angle - 90
-      };
-    });
-
-    commit("SET_PAGES_FRONTEND", pages);
-
+  updateRotationToTheLeft: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
     const array = state.pagesArray.map(p => {
       let rotatedAngle = p.angle - 90;
@@ -207,20 +123,7 @@ const actions = {
     commit("SET_PAGES_ARRAY", array);
   },
 
-  updateRotationToTheRight: ({
-    state,
-    commit
-  }) => {
-    // update the angles to rotate pages in the frontend
-    const pages = state.pagesFrontend.map(p => {
-      return {
-        ...p,
-        angle: p.angle + 90
-      };
-    });
-
-    commit("SET_PAGES_FRONTEND", pages);
-
+  updateRotationToTheRight: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
     const array = state.pagesArray.map(p => {
       let rotatedAngle = p.angle + 90;
@@ -236,15 +139,12 @@ const actions = {
     commit("SET_PAGES_ARRAY", array);
   },
 
-  editDocument: ({
-    rootState,
-    dispatch
-  }, editedDocument) => {
+  editDocument: ({ rootState, dispatch }, editedDocument) => {
     return new Promise(resolve => {
       HTTP.post(
-          `/documents/${rootState.document.documentId}/postprocess/`,
-          editedDocument
-        )
+        `/documents/${rootState.document.documentId}/postprocess/`,
+        editedDocument
+      )
         .then(async response => {
           if (response.status === 200) {
             const newDocument = response.data[0];
@@ -269,10 +169,6 @@ const actions = {
 const mutations = {
   SET_EDIT_MODE: (state, option) => {
     state.editMode = option;
-  },
-
-  SET_PAGES_FRONTEND: (state, pagesFrontend) => {
-    state.pagesFrontend = pagesFrontend;
   },
 
   SET_SPLIT_OVERVIEW: (state, overview) => {

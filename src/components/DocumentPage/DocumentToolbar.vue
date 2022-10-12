@@ -60,7 +60,6 @@ export default {
       defaultScale: null,
       currentPercentage: 100,
       defaultPercentage: 0.25,
-      currentPercentageDifference: 0.25, // this mutates and shows how much we will zoom in or out
       fitPercentage: 0.5,
       toolbarModalOpen: true,
       editModeDisabled: false,
@@ -80,102 +79,24 @@ export default {
       this.$store.dispatch("edit/enableEditMode");
     },
     zoomIn() {
-      let scale;
-      let percentageChange;
-
-      switch (true) {
-        case this.currentPercentage === 25:
-          this.currentPercentageDifference = this.defaultPercentage * 2;
-          scale = this.defaultScale - this.currentPercentageDifference;
-          percentageChange =
-            this.currentPercentageDifference - this.defaultPercentage;
-          break;
-        case this.currentPercentage === 50:
-          this.currentPercentageDifference = this.defaultPercentage;
-          scale = this.defaultScale - this.currentPercentageDifference;
-          percentageChange =
-            this.currentPercentageDifference - this.defaultPercentage;
-          break;
-        case this.currentPercentage === 75:
-          scale = this.defaultScale;
-          percentageChange = this.defaultPercentage;
-          break;
-        case this.currentPercentage >= 100:
-          scale = this.defaultScale + this.currentPercentageDifference;
-          percentageChange =
-            this.currentPercentageDifference + this.defaultPercentage;
-          break;
-        case this.currentPercentage < 100:
-          scale = this.defaultScale - this.currentPercentageDifference;
-          percentageChange =
-            this.currentPercentageDifference - this.defaultPercentage;
-          break;
-        default:
-          break;
-      }
-
-      this.updateScale(scale);
-
-      // Update how much to zoom in/out next
-      this.currentPercentageDifference = percentageChange;
-
       this.currentPercentage += this.defaultPercentage * 100;
+      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
     },
     zoomOut() {
       if (this.currentPercentage === 25) {
-        this.currentPercentageDifference = this.defaultPercentage * 3;
         return;
       }
 
-      let scale;
-      let percentageChange;
-
-      switch (true) {
-        case this.currentPercentage === 50:
-          scale = this.defaultScale - this.defaultPercentage * 3;
-          percentageChange =
-            this.currentPercentageDifference + this.defaultPercentage;
-          break;
-        case this.currentPercentage === 125:
-          scale = this.defaultScale;
-          percentageChange = this.defaultPercentage;
-          break;
-        case this.currentPercentage <= 100:
-          scale = this.defaultScale - this.currentPercentageDifference;
-          percentageChange =
-            this.currentPercentageDifference + this.defaultPercentage;
-          break;
-        case this.currentPercentage > 100:
-          scale =
-            this.defaultScale +
-            this.currentPercentageDifference -
-            this.fitPercentage;
-          percentageChange =
-            this.currentPercentageDifference - this.defaultPercentage;
-          break;
-        default:
-          break;
-      }
-
-      this.updateScale(scale);
-
-      // Update how much to zoom in/out next
-      if (percentageChange === 0) {
-        percentageChange = this.defaultPercentage;
-      }
-
-      this.currentPercentageDifference = percentageChange;
-
       this.currentPercentage -= this.defaultPercentage * 100;
+      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
     },
     fitAuto() {
       if (this.currentPercentage === 50 || !this.defaultScale) return;
 
       // Always set to 50%
-      this.updateScale(this.defaultScale - this.fitPercentage);
+      this.updateScale(this.defaultScale * this.fitPercentage);
 
       this.currentPercentage = this.fitPercentage * 100;
-      this.currentPercentageDifference = this.fitPercentage;
     },
     updateScale(scale) {
       this.$store.dispatch("display/updateScale", { scale });

@@ -21,7 +21,6 @@ const state = {
     label_set: null
   },
   missingAnnotations: [],
-  // TODO: remove this after the reject label endpoint is merged in testing
   currentUser: null,
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
   editingActive: false,
@@ -29,7 +28,8 @@ const state = {
   errorMessage: null,
   acceptAnnotation: false,
   showDocumentError: false,
-  imageLoaded: false
+  imageLoaded: false,
+  rejectAnnotation: null
 };
 
 const getters = {
@@ -191,6 +191,9 @@ const actions = {
   },
   setImageLoaded: ({ commit }, value) => {
     commit("SET_IMAGE_LOADED", value);
+  },
+  setRejectAnnotation: ({ commit }, annotation) => {
+    commit("SET_REJECT_ANNOTATION", annotation);
   },
 
   /**
@@ -540,6 +543,9 @@ const mutations = {
   },
   SET_IMAGE_LOADED: (state, value) => {
     state.imageLoaded = value;
+  },
+  SET_REJECT_ANNOTATION: (state, annotation) => {
+    state.rejectAnnotation = annotation;
   }
 };
 

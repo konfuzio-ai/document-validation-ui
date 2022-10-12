@@ -107,7 +107,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["updatedDocument", "pagesFrontend"])
+    ...mapState("edit", ["updatedDocument", "pagesArray"])
   },
   methods: {
     handleBackButton() {
@@ -157,11 +157,11 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
-      if (!this.pagesFrontend || !this.pages || !page) return;
+      if (!this.pagesArray || !this.pages || !page) return;
 
       // returns the first thumbnail in the pages array
       // for each new document
-      const image = this.pagesFrontend.find(
+      const image = this.pagesArray.find(
         p => p.page_number === page.pages[0].page_number
       );
 
@@ -169,7 +169,7 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesFrontend?.find(p => p.id === pageId)?.angle;
+      return this.pagesArray?.find(p => p.id === pageId)?.angle;
     }
   }
 };
