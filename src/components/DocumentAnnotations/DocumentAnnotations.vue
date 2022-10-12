@@ -247,6 +247,8 @@ export default {
         label_set: labelSet
       };
 
+      this.$store.dispatch("document/setRejectAnnotation", rejected);
+
       this.$store
         .dispatch("document/addMissingAnnotation", rejected)
         .then(response => {
@@ -260,6 +262,9 @@ export default {
             );
             this.jumpToNextAnnotation = false;
           }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/setRejectAnnotation", null);
         });
     }
   },

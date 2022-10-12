@@ -15,7 +15,7 @@
       />
       <b-icon
         v-else-if="created"
-        :class="[animate ? 'animated-ripple' : '', 'green']"
+        :class="[animate ? 'animated-ripple' : '']"
         icon="user"
         size="is-small"
       />
@@ -89,7 +89,7 @@ export default {
       if (this.annotation) {
         return (
           this.annotation.created_by &&
-          this.annotation.revised &&
+          !this.annotation.revised &&
           this.annotation.is_correct
         );
       } else {

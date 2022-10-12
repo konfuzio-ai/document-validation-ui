@@ -71,7 +71,8 @@ export default {
       "editAnnotation",
       "editingActive",
       "publicView",
-      "documentId"
+      "documentId",
+      "rejectAnnotation"
     ])
   },
   methods: {
@@ -204,6 +205,17 @@ export default {
     editingActive(newValue) {
       if (!newValue) {
         this.cancelEmptyAnnotation();
+      }
+    },
+    rejectAnnotation(newValue) {
+      if (
+        newValue &&
+        newValue.label === this.label.id &&
+        newValue.label_set === this.annotationSet.label_set.id
+      ) {
+        this.isLoading = true;
+      } else {
+        this.isLoading = false;
       }
     }
   }
