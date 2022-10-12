@@ -50,8 +50,8 @@
             }}
           </div>
           <div class="created" v-else-if="created">
-            <b-icon icon="user" size="is-small" />{{
-              user ? `${$t("edited_by")} ${user}` : $t("edited")
+            <b-icon icon="user" size="is-small" class="grey" />{{
+              user ? `${$t("created_by")} ${user}` : $t("created")
             }}
           </div>
           <div class="accepted" v-else-if="accepted">
