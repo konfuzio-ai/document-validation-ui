@@ -220,7 +220,6 @@
       }
 
       @keyframes shake {
-
         10%,
         90% {
           transform: translate3d(-1px, 0, 0);
@@ -275,6 +274,22 @@
         max-height: 60px;
         padding-left: 15px;
         padding-right: 35px;
+
+        .label-name {
+          &.loading {
+            margin-right: 24px;
+          }
+        }
+
+        .tag-loading-container {
+          position: relative;
+          right: 25px;
+          width: 20px;
+
+          .loading-background {
+            padding: 12px;
+          }
+        }
       }
     }
   }
