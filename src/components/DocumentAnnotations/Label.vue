@@ -93,7 +93,8 @@ export default {
   computed: {
     ...mapState("document", [
       "documentFocusedAnnotation",
-      "sidebarAnnotationSelected"
+      "sidebarAnnotationSelected",
+      "editAnnotation"
     ]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     labelHasAnnotations() {
@@ -214,6 +215,11 @@ export default {
             this.handleScroll(false);
           }, 1500);
         }
+      }
+    },
+    documentFocusedAnnotation(newValue) {
+      if (newValue && this.editAnnotation.id === newValue.id) {
+        this.onLabelClick();
       }
     }
   }
