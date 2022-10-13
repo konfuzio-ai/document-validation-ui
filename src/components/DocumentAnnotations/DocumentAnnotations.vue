@@ -84,9 +84,6 @@ export default {
     LoadingAnnotations
   },
   props: {
-    scroll: {
-      type: Boolean
-    },
     handleScroll: {
       type: Function
     }
@@ -174,6 +171,19 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
+        // set focused annotation to scroll in the document page
+        if (
+          annotations[this.count] &&
+          !annotations[this.count].className.includes("label-empty")
+        ) {
+          this.$store.dispatch(
+            "document/setDocumentFocusedAnnotation",
+            this.annotations[this.count - 1]
+          );
+        } else {
+          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
+        }
+
         annotations[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
@@ -190,6 +200,19 @@ export default {
         // Update count to avoid restarting the navigation
         if (clickedAnnotations[0]) {
           this.count = currentAnnIndex - 1;
+        }
+
+        // set focused annotation to scroll in the document page
+        if (
+          annotations[this.count] &&
+          !annotations[this.count].className.includes("label-empty")
+        ) {
+          this.$store.dispatch(
+            "document/setDocumentFocusedAnnotation",
+            this.annotations[this.count - 1]
+          );
+        } else {
+          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
         }
 
         annotations[this.count].click();
