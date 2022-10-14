@@ -119,16 +119,16 @@ export default {
       this.isDocumentReadyForReview();
     },
     missingAnnotations(newValue) {
-      if (!newValue) return;
+      if (newValue) {
+        const label = newValue.map(l => {
+          return l.label;
+        });
+        const labelSet = newValue.map(lSet => {
+          return lSet.label_set;
+        });
 
-      const label = newValue.map(l => {
-        return l.label;
-      });
-      const labelSet = newValue.map(lSet => {
-        return lSet.label_set;
-      });
-
-      this.isDocumentReadyForReview(label[0], labelSet);
+        this.isDocumentReadyForReview(label[0], labelSet);
+      }
     }
   }
 };
