@@ -91,7 +91,8 @@ export default {
     ...mapState("document", [
       "documentFocusedAnnotation",
       "sidebarAnnotationSelected",
-      "editAnnotation"
+      "editAnnotation",
+      "annotationSets"
     ]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     labelHasAnnotations() {
@@ -110,8 +111,13 @@ export default {
     }
   },
   methods: {
+    annotationSetIndex() {
+      return this.annotationSets.indexOf(this.annotationSet);
+    },
     referenceId(annotation) {
-      let refId = `label_${this.label.id}_${this.annotationSet.label_set.id}`;
+      let refId = `label_${this.label.id}_${
+        this.annotationSet.label_set.id
+      }_${this.annotationSetIndex()}`;
       if (annotation) {
         refId = `${refId}_${annotation.id}`;
       }
@@ -120,7 +126,9 @@ export default {
     annotationId(annotation) {
       return annotation
         ? annotation.id
-        : `${this.annotationSet.label_set.id}_${this.label.id}`;
+        : `${this.annotationSet.label_set.id}_${
+            this.label.id
+          }_${this.annotationSetIndex()}`;
     },
     annotationDeleted(annotation) {
       if (annotation) {
