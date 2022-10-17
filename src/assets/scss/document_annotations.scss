@@ -313,6 +313,10 @@
 
       &.finish-review-btn {
         height: 40px;
+
+        .icon:last-child:not(:first-child) {
+          margin: 0;
+        }
       }
 
       &.text-btn {

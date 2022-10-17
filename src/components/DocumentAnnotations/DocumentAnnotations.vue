@@ -244,7 +244,8 @@ export default {
             a => a.id === this.editAnnotation.id
           );
 
-          if (this.editAnnotation.id !== currentAnn.id) return;
+          if (!this.editAnnotation && this.editAnnotation.id !== currentAnn.id)
+            return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
           // set focus on next annotation
