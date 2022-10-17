@@ -77,5 +77,6 @@
   "document_error_info": "Es tut uns leid, das Dokument ist auf ein Problem gestoßen und seine Daten können nicht wiederhergestellt werden.",
   "contact_support": "Support kontaktieren",
   "finish-review": "Finish review",
-  "review_error": "Something went wrong finishing the review. Please try again later."
+  "review_error": "Something went wrong finishing the review. Please try again later.",
+  "document_reviewed": "Editing is no longer possible since the document has already been reviewed."
 }

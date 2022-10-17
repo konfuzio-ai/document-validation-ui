@@ -79,6 +79,8 @@ describe("Document Annotations Component", () => {
   it("Click should trigger edit mode in empty annotation", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
+    const annSetIndex =
+      store.state.document.annotationSets.indexOf(annotationSet);
 
     const wrapper = mount(EmptyAnnotation, {
       store,
@@ -93,7 +95,7 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
     expect(store.state.selection.selectionEnabled).toEqual(
-      `${annotationSetlabel_set.id}_${label.id}`
+      `${annotationSet.label_set.id}_${label.id}_${annSetIndex}`
     );
   });
 
@@ -313,5 +315,39 @@ describe("Document Annotations Component", () => {
         .at(0)
         .text()
     ).toBe("Anrede");
+  });
+
+  it("Finish review button should be always visible", async () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("If document has been reviewed, document should be in public mode and button disabled", async () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .attributes("disabled")
+    ).not.toBe("undefined");
   });
 });

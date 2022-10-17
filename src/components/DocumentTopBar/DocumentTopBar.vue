@@ -27,8 +27,14 @@
             {{ $t("lite_mode")
             }}<b-icon class="info-icon is-small" icon="circle-info" />
             <template v-slot:content>
-              <div class="public-mode-details">
+              <div
+                v-if="!selectedDocument.is_reviewed"
+                class="public-mode-details"
+              >
                 {{ $t("limited_functionalities") }}
+              </div>
+              <div v-else class="public-mode-details">
+                {{ $t("document_reviewed") }}
               </div>
             </template>
           </b-tooltip>

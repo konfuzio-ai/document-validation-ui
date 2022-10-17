@@ -6,8 +6,13 @@
 
 <template>
   <b-dropdown
-    :class="['category-chooser', splitMode && 'split-mode']"
+    :class="[
+      'category-chooser',
+      splitMode && 'split-mode',
+      publicView && 'disabled'
+    ]"
     aria-role="list"
+    :disabled="publicView"
   >
     <template #trigger>
       <div class="category-drop-down">
@@ -78,7 +83,8 @@ export default {
       categoryName: "categoryName"
     }),
     ...mapState("category", ["categories"]),
-    ...mapState("edit", ["updatedDocument"])
+    ...mapState("edit", ["updatedDocument"]),
+    ...mapState("document", ["publicView"])
   },
   methods: {
     // The current category name will change

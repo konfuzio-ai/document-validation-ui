@@ -63,12 +63,16 @@ export default {
       fitPercentage: 0.5,
       toolbarModalOpen: true,
       editModeDisabled: false,
-      tooltipInfo: this.$t("edit_not_available")
+      tooltipInfo: null
     };
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
+    ...mapState("document", [
+      "selectedDocument",
+      "recalculatingAnnotations",
+      "publicView"
+    ])
   },
   created() {
     window.addEventListener("resize", this.handleDefaultScale);
@@ -119,7 +123,8 @@ export default {
       if (
         newValue.dataset_status === 1 ||
         newValue.dataset_status === 2 ||
-        newValue.dataset_status === 3
+        newValue.dataset_status === 3 ||
+        newValue.is_reviewed
       ) {
         this.editModeDisabled = true;
       }
@@ -132,10 +137,18 @@ export default {
       if (
         this.selectedDocument.dataset_status === 1 ||
         this.selectedDocument.dataset_status === 2 ||
-        this.selectedDocument.dataset_status === 3
+        this.selectedDocument.dataset_status === 3 ||
+        this.selectedDocument.is_reviewed
       ) {
         this.editModeDisabled = true;
       }
+    }
+  },
+  updated() {
+    if (this.selectedDocument.is_reviewed) {
+      this.tooltipInfo = this.$t("document_reviewed");
+    } else {
+      this.tooltipInfo = this.$t("edit_not_available");
     }
   }
 };
