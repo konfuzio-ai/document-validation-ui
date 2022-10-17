@@ -213,8 +213,7 @@ export default {
       if (
         newValue &&
         newValue.label === this.label.id &&
-        newValue.label_set === this.annotationSet.label_set.id &&
-        newValue.id === this.emptyAnnotationId()
+        newValue.label_set === this.annotationSet.label_set.id
       ) {
         this.isLoading = true;
       } else {
