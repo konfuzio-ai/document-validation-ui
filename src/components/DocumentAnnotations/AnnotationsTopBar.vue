@@ -115,7 +115,8 @@ export default {
 
       // if all annotations have been revised AND all empty ones have been rejected
       // we enable the button to finish the document review
-      if (!this.emptyAnnotations || !this.missingAnnotations) return;
+      if (!this.emptyAnnotations || !this.missingAnnotations || !notRevised)
+        return;
 
       if (
         notRevised.length === 0 &&
