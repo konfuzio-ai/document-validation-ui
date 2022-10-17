@@ -92,6 +92,8 @@ export default {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
+      if (this.publicView) return;
+
       if (
         !this.publicView &&
         !this.isLoading &&
@@ -111,6 +113,8 @@ export default {
       }
     },
     saveEmptyAnnotation(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -176,6 +180,8 @@ export default {
       this.$refs.emptyAnnotation.textContent = text;
     },
     handleShowReject() {
+      if (this.publicView) return;
+
       if (!this.isAnnotationBeingEdited()) {
         this.showReject = true;
       }

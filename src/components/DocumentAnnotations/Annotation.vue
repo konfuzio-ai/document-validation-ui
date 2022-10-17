@@ -118,6 +118,8 @@ export default {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -179,6 +181,8 @@ export default {
       event.preventDefault();
     },
     saveAnnotationChanges(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -250,12 +254,16 @@ export default {
         });
     },
     showButton() {
+      if (this.publicView) return;
+
       if (this.isAnnotationBeingEdited && this.spanSelection) {
         return true;
       }
       return false;
     },
     handleAcceptButton(annotation) {
+      if (this.publicView) return;
+
       if (!annotation.revised) {
         this.showAcceptButton = true;
       } else {

@@ -9,10 +9,10 @@
     :class="[
       'category-chooser',
       splitMode && 'split-mode',
-      publicView && 'disabled'
+      selectedDocument.is_reviewed && 'disabled'
     ]"
     aria-role="list"
-    :disabled="publicView"
+    :disabled="selectedDocument.is_reviewed"
   >
     <template #trigger>
       <div class="category-drop-down">
@@ -83,8 +83,7 @@ export default {
       categoryName: "categoryName"
     }),
     ...mapState("category", ["categories"]),
-    ...mapState("edit", ["updatedDocument"]),
-    ...mapState("document", ["publicView"])
+    ...mapState("edit", ["updatedDocument"])
   },
   methods: {
     // The current category name will change
