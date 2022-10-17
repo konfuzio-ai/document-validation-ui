@@ -10,11 +10,16 @@
       :finishReviewBtn="finishReviewBtn"
       :finishDisabled="finishDisabled"
       @finish-review="handleFinishReview"
+      :isLoading="isLoading"
     />
   </div>
 </template>
 
 <script>
+/**
+ * This component is the container for annotations top bar actions
+ */
+
 import { mapState } from "vuex";
 import ActionButtons from "./ActionButtons";
 
@@ -27,7 +32,8 @@ export default {
     return {
       finishReviewBtn: true,
       finishDisabled: true,
-      emptyLabels: null
+      emptyLabels: null,
+      isLoading: false
     };
   },
   computed: {
@@ -40,20 +46,25 @@ export default {
     ]),
 
     emptyAnnotations() {
-      const empty = this.annotationSets.map(annSet => {
-        const labelSetId = annSet.label_set.id;
-        const labels = annSet.labels.filter(
-          label => label.annotations.length === 0
-        );
+      const empty = [];
 
-        if (labels.length > 0) {
-          return { labels: labels, labelSetId: labelSetId };
-        } else {
-          return [null];
-        }
+      this.annotationSets.map(annSet => {
+        annSet.labels.map(label => {
+          // return only labels with empty annotations
+          if (label.annotations.length === 0) {
+            empty.push({ label: label.id, label_set: annSet.label_set.id });
+          }
+        });
       });
 
-      return empty.filter(ann => ann[0] !== null);
+      // Remove duplicated values
+      const filtered = empty.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(i => JSON.stringify(i) === JSON.stringify(item))
+      );
+
+      return filtered;
     }
   },
   methods: {
@@ -62,6 +73,8 @@ export default {
       const updatedDocumentReviewStatus = {
         is_reviewed: true
       };
+
+      this.isLoading = true;
 
       this.$store
         .dispatch("document/updateDocument", updatedDocumentReviewStatus)
@@ -76,35 +89,27 @@ export default {
               this.$t("review_error")
             );
           }
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
     },
-    isDocumentReadyForReview(label, labelSet) {
+    isDocumentReadyForReview() {
       // check if all annotations have been revised
       const notRevised = this.annotations.filter(a => !a.revised);
 
-      // check that all empty annotations have been rejected
-      const rejectedAnnotations = [];
+      // Return missing annotations array without the id,
+      // to compare with the empty annotations
+      const missingObjects = JSON.parse(
+        JSON.stringify(this.missingAnnotations)
+      );
 
-      if (this.emptyAnnotations.length > 0) {
-        if (label && labelSet) {
-          this.emptyAnnotations.map(ann => {
-            if (ann.labelSetId == labelSet) {
-              const foundLabel = ann.labels.find(l => l.id === label);
-
-              if (foundLabel) {
-                rejectedAnnotations.push({
-                  labelSet: ann.labelSetId,
-                  label: foundLabel.id
-                });
-              }
-            }
-          });
-        }
-      }
-
+      // if all annotations have been revised AND all empty ones have been rejected
+      // we enable the button to finish the document review
       if (
         notRevised.length === 0 &&
-        rejectedAnnotations.length === this.emptyAnnotations.length
+        missingObjects.length === this.emptyAnnotations.length &&
+        !this.publicView
       ) {
         this.finishDisabled = false;
       } else {
@@ -119,16 +124,9 @@ export default {
       this.isDocumentReadyForReview();
     },
     missingAnnotations(newValue) {
-      if (newValue) {
-        const label = newValue.map(l => {
-          return l.label;
-        });
-        const labelSet = newValue.map(lSet => {
-          return lSet.label_set;
-        });
+      if (!newValue) return;
 
-        this.isDocumentReadyForReview(label[0], labelSet);
-      }
+      this.isDocumentReadyForReview();
     }
   }
 };

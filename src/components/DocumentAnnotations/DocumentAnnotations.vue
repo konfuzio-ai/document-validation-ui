@@ -44,7 +44,7 @@
         </div>
         <div v-for="label in annotationSet.labels" :key="label.id">
           <Label
-            v-if="label.id === labelNotRejected(label)"
+            v-if="labelNotRejected(label, annotationSet.label_set)"
             :label="label"
             :annotationSet="annotationSet"
             :handleScroll="handleScroll"
@@ -268,16 +268,19 @@ export default {
         }
       }
     },
-    labelNotRejected(label) {
+    labelNotRejected(label, labelSet) {
+      // Check if the combined label and label set have been rejected
       if (this.missingAnnotations.length === 0) {
-        return label.id;
+        return true;
       } else {
-        const found = this.missingAnnotations.find(l => l.label === label.id);
+        const found = this.missingAnnotations.filter(
+          el => el.label === label.id && el.label_set === labelSet.id
+        );
 
-        if (found) {
-          return 0;
+        if (found.length !== 0) {
+          return false;
         } else {
-          return label.id;
+          return true;
         }
       }
     },
