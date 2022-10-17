@@ -137,6 +137,9 @@ export default {
     },
 
     keyDownHandler(event) {
+      // only allow keyboard navigation if we are not in public view mode
+      if (this.publicView) return;
+
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;

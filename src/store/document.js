@@ -390,6 +390,10 @@ const actions = {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
+
+        if (response.data.is_reviewed === true) {
+          state.publicView = true;
+        }
       })
       .catch(error => {
         console.log(error);

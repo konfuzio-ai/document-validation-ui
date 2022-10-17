@@ -48,14 +48,16 @@ export default {
     emptyAnnotations() {
       const empty = [];
 
-      this.annotationSets.map(annSet => {
-        annSet.labels.map(label => {
-          // return only labels with empty annotations
-          if (label.annotations.length === 0) {
-            empty.push({ label: label.id, label_set: annSet.label_set.id });
-          }
+      if (this.annotationSets) {
+        this.annotationSets.map(annSet => {
+          annSet.labels.map(label => {
+            // return only labels with empty annotations
+            if (label.annotations.length === 0) {
+              empty.push({ label: label.id, label_set: annSet.label_set.id });
+            }
+          });
         });
-      });
+      }
 
       // Remove duplicated values
       const filtered = empty.filter(
@@ -96,20 +98,25 @@ export default {
     },
     isDocumentReadyForReview() {
       // check if all annotations have been revised
-      const notRevised = this.annotations.filter(a => !a.revised);
+      let notRevised;
+
+      if (this.annotations) {
+        notRevised = this.annotations.filter(a => !a.revised);
+      }
 
       // Return missing annotations array without the id,
       // to compare with the empty annotations
-      const missingObjects = JSON.parse(
-        JSON.stringify(this.missingAnnotations)
-      );
+      let missingObjects;
+
+      if (this.missingAnnotations) {
+        missingObjects = JSON.parse(JSON.stringify(this.missingAnnotations));
+      }
 
       // if all annotations have been revised AND all empty ones have been rejected
       // we enable the button to finish the document review
       if (
         notRevised.length === 0 &&
-        missingObjects.length === this.emptyAnnotations.length &&
-        !this.publicView
+        missingObjects.length === this.emptyAnnotations.length
       ) {
         this.finishDisabled = false;
       } else {
@@ -127,6 +134,11 @@ export default {
       if (!newValue) return;
 
       this.isDocumentReadyForReview();
+    },
+    publicView(newValue) {
+      if (newValue) {
+        this.finishDisabled = true;
+      }
     }
   }
 };
