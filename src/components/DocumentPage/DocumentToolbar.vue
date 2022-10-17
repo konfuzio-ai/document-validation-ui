@@ -68,11 +68,7 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", [
-      "selectedDocument",
-      "recalculatingAnnotations",
-      "publicView"
-    ])
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
   },
   created() {
     window.addEventListener("resize", this.handleDefaultScale);
