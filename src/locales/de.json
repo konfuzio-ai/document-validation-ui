@@ -76,7 +76,7 @@
   "document_error_title": "Dokumentenfehler",
   "document_error_info": "Es tut uns leid, das Dokument ist auf ein Problem gestoßen und seine Daten können nicht wiederhergestellt werden.",
   "contact_support": "Support kontaktieren",
-  "finish-review": "Finish review",
-  "review_error": "Something went wrong finishing the review. Please try again later.",
-  "document_reviewed": "Editing is no longer possible since the document has already been reviewed."
+  "finish-review": "Nachprüfung beenden",
+  "review_error": "Beim Abschluss der Überprüfung ist etwas schief gelaufen. Bitte versuchen Sie es später erneut.",
+  "document_reviewed": "Eine Bearbeitung ist nicht mehr möglich, da das Dokument bereits geprüft wurde."
 }
