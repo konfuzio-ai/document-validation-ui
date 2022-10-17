@@ -88,12 +88,15 @@ const getters = {
     let index = 0;
     state.annotationSets.map(annotationSetTemp => {
       if (
-        annotationSetTemp.label_set.name === annotationSet.label_set.name &&
-        annotationSetTemp.id !== annotationSet.id
+        annotationSetTemp.id !== annotationSet.id &&
+        annotationSetTemp.label_set.id === annotationSet.label_set.id &&
+        annotationSetTemp.label_set.name === annotationSet.label_set.name
       ) {
         found = true;
         index++;
-      } else if (annotationSetTemp.id === annotationSet.id) {
+      } else if (
+        annotationSetTemp.label_set.id === annotationSet.label_set.id
+      ) {
         value = index;
       }
     });
@@ -322,6 +325,9 @@ const actions = {
         .then(response => {
           if (response.status === 200) {
             commit("SET_SELECTED_DOCUMENT", response.data);
+            if (response.data.is_reviewed === true) {
+              state.publicView = true;
+            }
             resolve(true);
           }
         })
@@ -384,6 +390,10 @@ const actions = {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
+
+        if (response.data.is_reviewed === true) {
+          state.publicView = true;
+        }
       })
       .catch(error => {
         console.log(error);
@@ -432,8 +442,8 @@ const mutations = {
     state.annotations.push(annotation);
     state.annotationSets.map(annotationSet => {
       if (
-        annotation.annotation_set &&
-        annotationSet.id === annotation.annotation_set
+        annotation.label_set &&
+        annotationSet.label_set.id === annotation.label_set
       ) {
         annotationSet.labels.map(label => {
           if (annotation.label && annotation.label.id === label.id) {
@@ -454,7 +464,8 @@ const mutations = {
       existingAnnotation => existingAnnotation.id === annotation.id
     );
     if (annotationToEdit) {
-      annotationToEdit.span = annotation.span;
+      const index = state.annotations.indexOf(annotationToEdit);
+      state.annotations.splice(index, 1, annotation);
     }
   },
   DELETE_ANNOTATION: (state, annotationId) => {

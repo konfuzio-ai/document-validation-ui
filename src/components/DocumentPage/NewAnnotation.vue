@@ -20,8 +20,8 @@
       </template>
       <b-dropdown-item
         aria-role="listitem"
-        v-for="annotationSet in annotationSets"
-        :key="annotationSet.id"
+        v-for="(annotationSet, index) in annotationSets"
+        :key="`${annotationSet.label_set.id}_${index}`"
         :value="annotationSet"
       >
         <span>{{
@@ -171,7 +171,7 @@ export default {
         document: this.documentId,
         span: [span],
         label: this.selectedLabel.id,
-        annotation_set: this.selectedAnnotationSet.id,
+        label_set: this.selectedAnnotationSet.label_set.id,
         is_correct: true,
         revised: false
       };

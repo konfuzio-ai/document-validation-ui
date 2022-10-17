@@ -6,8 +6,13 @@
 
 <template>
   <b-dropdown
-    :class="['category-chooser', splitMode && 'split-mode']"
+    :class="[
+      'category-chooser',
+      splitMode && 'split-mode',
+      selectedDocument.is_reviewed && 'disabled'
+    ]"
     aria-role="list"
+    :disabled="selectedDocument.is_reviewed"
   >
     <template #trigger>
       <div class="category-drop-down">

@@ -5,6 +5,10 @@
 ></style>
 <template>
   <div class="labels-sidebar">
+    <div class="labels-top-bar">
+      <AnnotationsTopBar />
+    </div>
+
     <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations">
       <ExtractingData />
@@ -40,13 +44,12 @@
         </div>
         <div v-for="label in annotationSet.labels" :key="label.id">
           <Label
-            v-if="label.id === labelNotRejected(label)"
+            v-if="labelNotRejected(label, annotationSet.label_set)"
             :label="label"
             :annotationSet="annotationSet"
             :handleScroll="handleScroll"
             :indexGroup="indexGroup"
             @handle-reject="rejectAnnotation"
-            :missingAnnotations="missingAnnotations"
           />
         </div>
       </div>
@@ -70,6 +73,8 @@ import ActionButtons from "./ActionButtons";
 import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
+import AnnotationsTopBar from "./AnnotationsTopBar";
+
 /**
  * This component loads all annotations in a label set
  */
@@ -81,7 +86,8 @@ export default {
     ActionButtons,
     Label,
     RejectedLabels,
-    LoadingAnnotations
+    LoadingAnnotations,
+    AnnotationsTopBar
   },
   props: {
     handleScroll: {
@@ -98,6 +104,7 @@ export default {
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
+      "annotations",
       "annotationSets",
       "missingAnnotations",
       "publicView",
@@ -130,6 +137,9 @@ export default {
     },
 
     keyDownHandler(event) {
+      // only allow keyboard navigation if we are not in public view mode
+      if (this.publicView) return;
+
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
@@ -160,6 +170,18 @@ export default {
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
         if (this.count >= annotations.length) {
+          const finishBtn = Array.from(
+            document.getElementsByClassName("finish-review-btn")
+          );
+          finishBtn[0].focus();
+          this.$store.dispatch("document/setEditAnnotation", {
+            id: null,
+            index: null
+          });
+          this.count = 0;
+          if (event.key === "Enter" && !finishBtn.disabled) {
+            finishBtn.click();
+          }
           return;
         }
 
@@ -225,7 +247,8 @@ export default {
             a => a.id === this.editAnnotation.id
           );
 
-          if (this.editAnnotation.id !== currentAnn.id) return;
+          if (!this.editAnnotation && this.editAnnotation.id !== currentAnn.id)
+            return;
 
           this.$store.dispatch("document/setAcceptAnnotation", true);
           // set focus on next annotation
@@ -249,16 +272,19 @@ export default {
         }
       }
     },
-    labelNotRejected(label) {
+    labelNotRejected(label, labelSet) {
+      // Check if the combined label and label set have been rejected
       if (this.missingAnnotations.length === 0) {
-        return label.id;
+        return true;
       } else {
-        const found = this.missingAnnotations.find(l => l.label === label.id);
+        const found = this.missingAnnotations.filter(
+          el => el.label === label.id && el.label_set === labelSet.id
+        );
 
-        if (found) {
-          return 0;
+        if (found.length !== 0) {
+          return false;
         } else {
-          return label.id;
+          return true;
         }
       }
     },

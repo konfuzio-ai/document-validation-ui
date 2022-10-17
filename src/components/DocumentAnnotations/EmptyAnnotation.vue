@@ -72,7 +72,8 @@ export default {
       "editingActive",
       "publicView",
       "documentId",
-      "rejectAnnotation"
+      "rejectAnnotation",
+      "annotationSets"
     ])
   },
   methods: {
@@ -84,12 +85,15 @@ export default {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      return `${this.annotationSet.id}_${this.label.id}`;
+      const annSetIndex = this.annotationSets.indexOf(this.annotationSet);
+      return `${this.annotationSet.label_set.id}_${this.label.id}_${annSetIndex}`;
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
+      if (this.publicView) return;
+
       if (
         !this.publicView &&
         !this.isLoading &&
@@ -109,6 +113,8 @@ export default {
       }
     },
     saveEmptyAnnotation(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -121,7 +127,7 @@ export default {
         document: this.documentId,
         span: [this.spanSelection],
         label: this.label.id,
-        annotation_set: this.annotationSet.id,
+        label_set: this.annotationSet.label_set.id,
         is_correct: true,
         revised: true
       };
@@ -174,6 +180,8 @@ export default {
       this.$refs.emptyAnnotation.textContent = text;
     },
     handleShowReject() {
+      if (this.publicView) return;
+
       if (!this.isAnnotationBeingEdited()) {
         this.showReject = true;
       }

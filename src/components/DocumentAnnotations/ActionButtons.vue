@@ -5,7 +5,7 @@
 ></style>
 <template>
   <div class="action-buttons">
-    <div v-if="isLoading">
+    <div v-if="isLoading && !finishReviewBtn">
       <b-notification :closable="false" class="loading-background">
         <b-loading :is-full-page="isFullPage" v-model="isLoading">
           <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
@@ -16,7 +16,7 @@
 
     <b-button
       v-if="saveBtn && !isLoading"
-      :class="[isActive && 'annotation-save-btn']"
+      :class="[isActive && 'annotation-save-btn', 'text-btn']"
       type="is-primary"
       @click.stop="save"
     >
@@ -46,6 +46,27 @@
         {{ $t("reject_label") }}
       </b-button>
     </div>
+
+    <b-button
+      v-if="finishReviewBtn"
+      :class="['finish-review-btn', 'text-btn']"
+      type="is-primary"
+      :disabled="finishDisabled"
+      @click.stop="finishReview"
+    >
+      <span v-if="!isLoading">
+        {{ $t("finish-review") }}
+      </span>
+
+      <div v-else>
+        <b-notification :closable="false" :class="['loading-background']">
+          <b-loading :is-full-page="isFullPage" v-model="isLoading">
+            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
+            </b-icon>
+          </b-loading>
+        </b-notification>
+      </div>
+    </b-button>
   </div>
 </template>
 
@@ -76,6 +97,12 @@ export default {
     },
     acceptBtn: {
       type: Boolean
+    },
+    finishReviewBtn: {
+      type: Boolean
+    },
+    finishDisabled: {
+      type: Boolean
     }
   },
   computed: {
@@ -94,6 +121,9 @@ export default {
     },
     reject() {
       this.$parent.$emit("reject");
+    },
+    finishReview() {
+      this.$emit("finish-review");
     }
   }
 };

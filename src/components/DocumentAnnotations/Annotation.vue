@@ -44,7 +44,6 @@
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
         @accept="saveAnnotationChanges"
-        :annotationSet="annotationSet"
         :label="label"
       />
     </div>
@@ -97,7 +96,8 @@ export default {
       "editAnnotation",
       "editingActive",
       "publicView",
-      "acceptAnnotation"
+      "acceptAnnotation",
+      "annotations"
     ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
@@ -118,6 +118,8 @@ export default {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -170,7 +172,6 @@ export default {
       this.$store.dispatch("document/setEditingActive", false);
       this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
-
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
       }
@@ -180,6 +181,8 @@ export default {
       event.preventDefault();
     },
     saveAnnotationChanges(event) {
+      if (this.publicView) return;
+
       if (event) {
         event.preventDefault();
       }
@@ -251,12 +254,16 @@ export default {
         });
     },
     showButton() {
+      if (this.publicView) return;
+
       if (this.isAnnotationBeingEdited && this.spanSelection) {
         return true;
       }
       return false;
     },
     handleAcceptButton(annotation) {
+      if (this.publicView) return;
+
       if (!annotation.revised) {
         this.showAcceptButton = true;
       } else {
