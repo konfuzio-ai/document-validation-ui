@@ -105,7 +105,16 @@ export default {
     },
     user() {
       if (this.annotation) {
-        return this.annotation.created_by || this.annotation.revised_by;
+        if (this.annotation.created_by && !this.annotation.revised) {
+          // If the annotation was created but not yet revised
+          // we show who created it
+          return this.annotation.created_by;
+        } else if (this.annotation.revised && this.annotation.revised_by) {
+          return this.annotation.revised_by;
+        } else {
+          // If both revised_by and created_by are null, we don't show any user
+          return null;
+        }
       } else {
         return null;
       }
