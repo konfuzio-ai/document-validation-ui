@@ -17,23 +17,37 @@
       <DocumentName :dataFileName="selectedDocument.data_file_name" />
 
       <div class="right-bar-components">
-        <div class="public-mode-info" v-if="publicView && !editMode">
+        <div
+          class="read-only-info"
+          v-if="!editMode && (publicView || selectedDocument.is_reviewed)"
+        >
           <b-tooltip
             type="is-dark"
             :animated="false"
             position="is-bottom"
             class="right-aligned width-184"
           >
-            {{ $t("lite_mode")
-            }}<b-icon class="info-icon is-small" icon="circle-info" />
+            <span v-if="publicView && !selectedDocument.is_reviewed">
+              {{ $t("lite_mode") }}
+            </span>
+            <span v-else class="doc-reviewed">
+              {{ $t("reviewed_mode") }}
+            </span>
+            <b-icon
+              :class="[
+                'info-icon is-small',
+                selectedDocument.is_reviewed && 'info-reviewed'
+              ]"
+              icon="circle-info"
+            />
             <template v-slot:content>
               <div
                 v-if="!selectedDocument.is_reviewed"
-                class="public-mode-details"
+                class="read-only-details"
               >
                 {{ $t("limited_functionalities") }}
               </div>
-              <div v-else class="public-mode-details">
+              <div v-else class="read-only-details">
                 {{ $t("document_reviewed") }}
               </div>
             </template>

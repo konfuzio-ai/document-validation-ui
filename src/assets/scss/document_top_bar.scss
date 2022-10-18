@@ -38,7 +38,7 @@
         padding-right: 16px;
       }
 
-      .public-mode-info {
+      .read-only-info {
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -52,9 +52,17 @@
         .info-icon {
           margin-left: 14px;
           vertical-align: text-top;
+
+          &.info-reviewed {
+            color: $primary;
+          }
         }
 
-        .public-mode-details {
+        .doc-reviewed {
+          color: $primary;
+        }
+
+        .read-only-details {
           white-space: pre-line;
           font-size: 12px;
         }
