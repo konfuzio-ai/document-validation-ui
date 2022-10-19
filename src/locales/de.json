@@ -79,5 +79,5 @@
   "finish_review": "Nachprüfung beenden",
   "review_error": "Beim Abschluss der Überprüfung ist etwas schief gelaufen. Bitte versuchen Sie es später erneut.",
   "document_reviewed": "Eine Bearbeitung ist nicht mehr möglich, da das Dokument bereits geprüft wurde.",
-  "reviewed_mode": "Reviewed"
+  "reviewed_mode": "Geprüft"
 }
