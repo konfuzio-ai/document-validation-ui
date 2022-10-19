@@ -80,5 +80,5 @@
   "review_error": "Beim Abschluss der Überprüfung ist etwas schief gelaufen. Bitte versuchen Sie es später erneut.",
   "document_reviewed": "Eine Bearbeitung ist nicht mehr möglich, da das Dokument bereits geprüft wurde.",
   "reviewed_mode": "Geprüft",
-  "error_creating_annotation": "Die Annotation konnte nicht erzeugt werden. Bitte versuchen Sie es später."
+  "error_creating_annotation": "Die Annotation konnte nicht erzeugt werden. Bitte versuchen Sie es später erneut."
 }
