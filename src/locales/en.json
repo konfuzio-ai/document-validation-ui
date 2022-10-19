@@ -80,5 +80,6 @@
   "finish_review": "Finish review",
   "review_error": "Something went wrong finishing the review. Please try again later.",
   "document_reviewed": "Editing is no longer possible since the document has already been reviewed.",
-  "reviewed_mode": "Reviewed"
+  "reviewed_mode": "Reviewed",
+  "error_creating_annotation": "The annotation could not be created. Please try again later."
 }

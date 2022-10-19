@@ -28,7 +28,11 @@
       <DocumentEdit ref="editView" v-else />
 
       <transition name="slide-fade">
-        <div v-if="showError" class="error-message">
+        <div
+          v-if="showError"
+          class="error-message"
+          :style="{ width: `${errorMessageWidth}px` }"
+        >
           <ErrorMessage />
         </div>
       </transition>
@@ -97,7 +101,8 @@ export default {
       "pages",
       "showError",
       "showDocumentError",
-      "imageLoaded"
+      "imageLoaded",
+      "errorMessageWidth"
     ]),
     ...mapState("edit", ["editMode"])
   },
@@ -115,6 +120,8 @@ export default {
       "display/updateOptimalResolution",
       this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
     );
+
+    console.log(this.errorMessageWidth);
   },
   destroyed() {
     if (this.$refs.scrollingDocument) {

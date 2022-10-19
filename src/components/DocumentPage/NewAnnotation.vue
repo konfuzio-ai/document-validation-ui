@@ -177,7 +177,16 @@ export default {
       };
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(() => {
+        .then(response => {
+          console.log(response);
+          if (!response) {
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("error_creating_annotation")
+            );
+          }
+        })
+        .finally(() => {
           this.close();
           this.loading = false;
         });

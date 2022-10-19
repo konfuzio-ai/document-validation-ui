@@ -1,7 +1,11 @@
 <style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
 
 <template>
-  <div class="document-top-bar-component" v-if="selectedDocument">
+  <div
+    class="document-top-bar-component"
+    v-if="selectedDocument"
+    ref="documentTopBar"
+  >
     <div class="document-top-bar">
       <div class="left-bar-components">
         <DocumentCategory
@@ -99,6 +103,27 @@ export default {
     ...mapState("document", ["selectedDocument", "publicView"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"])
+  },
+  created() {
+    window.addEventListener("resize", this.handleResize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
+  },
+  mounted() {
+    if (this.$refs.documentTopBar) {
+      this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
+    }
+  },
+  methods: {
+    setComponentWidth(width) {
+      // set width for the error messages to match the width
+      // and avoid going over the Dashboard
+      this.$store.dispatch("document/setErrorMessageWidth", width);
+    },
+    handleResize() {
+      this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
+    }
   }
 };
 </script>
