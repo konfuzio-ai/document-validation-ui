@@ -73,7 +73,7 @@ $documents-list-height: 52px;
   .documents-list-bottom {
     display: flex;
     flex-direction: row;
-    border-bottom: 1px solid $detail;
+    border-bottom: $component-border;
 
     .documents-list-thumbnail {
       cursor: pointer;

@@ -22,7 +22,7 @@
     height: 100%;
     align-items: center;
     padding: 0 8px 0 16px;
-    border-right: 1px solid $detail;
+    border-right: $component-border;
 
     &:hover {
       background-color: $background;
@@ -63,7 +63,7 @@
         display: flex;
         align-items: center;
         justify-content: space-evenly;
-        border-right: 1px solid $detail;
+        border-right: $component-border;
 
         .category-info {
           p {

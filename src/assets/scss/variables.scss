@@ -59,6 +59,8 @@ $light-red: #fdf4f4;
 $input-shadow: none;
 $top-bar-height: 56px;
 
+$component-border: 1px solid $detail;
+
 button {
   &.is-primary {
     background-color: $primary !important;
