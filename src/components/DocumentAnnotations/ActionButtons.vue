@@ -55,7 +55,7 @@
       @click.stop="finishReview"
     >
       <span v-if="!isLoading">
-        {{ $t("finish-review") }}
+        {{ $t("finish_review") }}
       </span>
 
       <div v-else>

@@ -77,7 +77,8 @@
   "document_error_title": "Document error",
   "document_error_info": "We’re sorry, the document ran into a problem and its data can’t be restored.",
   "contact_support": "Contact support",
-  "finish-review": "Finish review",
+  "finish_review": "Finish review",
   "review_error": "Something went wrong finishing the review. Please try again later.",
-  "document_reviewed": "Editing is no longer possible since the document has already been reviewed."
+  "document_reviewed": "Editing is no longer possible since the document has already been reviewed.",
+  "reviewed_mode": "Reviewed"
 }
