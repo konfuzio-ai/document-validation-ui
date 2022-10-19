@@ -29,7 +29,8 @@ const state = {
   acceptAnnotation: false,
   showDocumentError: false,
   imageLoaded: false,
-  rejectAnnotation: null
+  rejectAnnotation: null,
+  errorMessageWidth: null
 };
 
 const getters = {
@@ -198,6 +199,9 @@ const actions = {
   setRejectAnnotation: ({ commit }, annotation) => {
     commit("SET_REJECT_ANNOTATION", annotation);
   },
+  setErrorMessageWidth: ({ commit }, width) => {
+    commit("SET_ERROR_MESSAGE_WIDTH", width);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -279,8 +283,12 @@ const actions = {
     return new Promise(resolve => {
       HTTP.post(`/annotations/`, annotation)
         .then(response => {
-          commit("ADD_ANNOTATION", response.data);
-          resolve(response.data);
+          if (response.status === 200) {
+            commit("ADD_ANNOTATION", response.data);
+            resolve(response.data);
+          } else {
+            resolve(null);
+          }
         })
         .catch(error => {
           resolve(null);
@@ -557,6 +565,9 @@ const mutations = {
   },
   SET_REJECT_ANNOTATION: (state, annotation) => {
     state.rejectAnnotation = annotation;
+  },
+  SET_ERROR_MESSAGE_WIDTH: (state, width) => {
+    state.errorMessageWidth = width;
   }
 };
 

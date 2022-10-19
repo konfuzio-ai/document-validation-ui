@@ -73,6 +73,9 @@ export default {
   created() {
     window.addEventListener("resize", this.handleDefaultScale);
   },
+  destroyed() {
+    window.removeEventListener("resize", this.handleDefaultScale);
+  },
   methods: {
     handleEdit() {
       if (this.editModeDisabled) return;
