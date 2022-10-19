@@ -13,8 +13,8 @@
   .pages-section {
     width: 100%;
     overflow-y: scroll;
-    border-right: 1px solid $detail;
-    border-left: 1px solid $detail;
+    border-right: $component-border;
+    border-left: $component-border;
 
     .document-grid {
       padding: 42px;
@@ -35,7 +35,7 @@
           }
 
           .img-thumbnail {
-            border: 1px solid $detail;
+            border: $component-border;
             border-radius: 2px;
           }
 
@@ -325,7 +325,7 @@
                   justify-content: center;
 
                   img {
-                    border: 1px solid $detail;
+                    border: $component-border;
                     border-radius: 2px;
                     height: auto;
                     width: 60%;

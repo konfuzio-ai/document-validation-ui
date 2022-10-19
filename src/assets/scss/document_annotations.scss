@@ -40,7 +40,7 @@
   .top-bar {
     height: 56px;
     width: 100%;
-    border-bottom: 1px solid $detail;
+    border-bottom: $component-border;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -260,7 +260,7 @@
     background-color: $background;
     max-height: 120px;
     min-width: 50%;
-    border-top: 1px solid $detail;
+    border-top: $component-border;
 
     .rejected-label-container {
       margin-top: 15px;
