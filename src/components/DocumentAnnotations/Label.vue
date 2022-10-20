@@ -6,7 +6,7 @@
 <template>
   <div class="labels">
     <div
-      v-for="annotation in annotations"
+      v-for="annotation in groupedAnnotations(annotations)"
       :key="annotationId(annotation)"
       :ref="referenceId(annotation)"
     >
@@ -26,6 +26,16 @@
             :description="label.description"
             :annotation="annotation"
           />
+          <b-button
+            v-if="annotation.groupedAnnotations"
+            @click="
+              () => {
+                annotation.groupedAnnotationsOpen =
+                  !annotation.groupedAnnotationsOpen;
+              }
+            "
+            >Open</b-button
+          >
           <div class="label-property-name">
             <span class="label-property-text">{{ label.name }} </span>
           </div>
@@ -51,6 +61,50 @@
               @handle-data-changes="handleDataChanges"
               @reject="handleReject"
             />
+          </div>
+        </div>
+      </div>
+      <div v-if="annotation.groupedAnnotationsOpen">
+        <div
+          v-for="groupedAnnotation in annotation.groupedAnnotations"
+          :key="annotationId(groupedAnnotation)"
+          style="background-color: red"
+        >
+          <div
+            v-if="!annotationDeleted(groupedAnnotation)"
+            :class="[
+              'label-properties',
+              isAnnotationSelected(groupedAnnotation) && 'selected',
+              isAnnotationInEditMode(annotationId(groupedAnnotation)) &&
+                'editing'
+            ]"
+            @click="onLabelClick"
+            @mouseenter="onLabelHover(groupedAnnotation)"
+            @mouseleave="onLabelHover"
+          >
+            <div class="label-property-left">
+              <LabelDetails
+                :description="label.description"
+                :annotation="groupedAnnotation"
+              />
+              <div class="label-property-name">
+                <span class="label-property-text">{{ label.name }} </span>
+              </div>
+            </div>
+            <div class="label-property-right">
+              <div class="label-property-annotation">
+                <Annotation
+                  v-for="(span, index) in annotation.span"
+                  :key="index"
+                  :annotation="annotation"
+                  :span="span"
+                  :spanIndex="index"
+                  :label="label"
+                  :annotationSet="annotationSet"
+                  @handle-data-changes="handleDataChanges"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -94,7 +148,7 @@ export default {
       "editAnnotation",
       "annotationSets"
     ]),
-    ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("document", ["isAnnotationInEditMode", "groupedAnnotations"]),
     labelHasAnnotations() {
       return (
         this.label &&
