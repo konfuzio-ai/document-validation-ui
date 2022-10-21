@@ -8,8 +8,8 @@
           <div class="error-icon">
             <ErrorIcon class="icon" />
           </div>
-          <div @click="closeModal" class="btn-container">
-            <b-icon icon="xmark" class="close-btn" />
+          <div @click="closeModal" class="btn-container" type="button">
+            <b-icon icon="xmark" class="close-btn" size="is-small" />
           </div>
         </div>
         <div class="content">

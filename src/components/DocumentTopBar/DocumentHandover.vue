@@ -25,7 +25,7 @@
                 @click="open = false"
                 class="close-icon-container modal-btn"
               >
-                <b-icon icon="xmark" class="close-btn" />
+                <b-icon icon="xmark" class="close-btn" size="is-small" />
               </div>
             </div>
             <div class="input-container">

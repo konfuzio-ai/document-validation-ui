@@ -30,7 +30,7 @@
           </div>
         </div>
         <div :class="['caret', splitMode && 'split-mode-caret']">
-          <CaretDown />
+          <b-icon icon="angle-down" size="is-small" class="caret"></b-icon>
         </div>
       </div>
     </template>
@@ -50,7 +50,6 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import CategoryIcon from "../../assets/images/CategoryIconImg";
-import CaretDown from "../../assets/images/TopBarCaretDownImg";
 
 export default {
   name: "DocumentCategory",
@@ -75,8 +74,7 @@ export default {
     }
   },
   components: {
-    CategoryIcon,
-    CaretDown
+    CategoryIcon
   },
   computed: {
     ...mapGetters("category", {

@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="caret">
-          <CaretDown />
+          <b-icon icon="angle-down" size="is-small" class="caret"></b-icon>
         </div>
       </div>
     </template>
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import CaretDown from "../../assets/images/TopBarCaretDownImg";
 import StatusIcon from "../../assets/images/StatusImg";
 
 export default {
@@ -60,7 +59,6 @@ export default {
     }
   },
   components: {
-    CaretDown,
     StatusIcon
   },
   methods: {
