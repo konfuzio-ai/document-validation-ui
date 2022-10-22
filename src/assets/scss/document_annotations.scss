@@ -143,6 +143,23 @@
           display: flex;
           gap: 8px;
         }
+
+        .label-group-info {
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          padding: 0 8px;
+          color: $text-lighter;
+
+          .group-number {
+            background-color: $grey-lighter-low-opacity;
+            border-radius: 4px;
+            padding: 0px 6px;
+            line-height: 20px;
+            margin-right: 4px;
+          }
+        }
       }
 
       .annotation-value {
@@ -230,6 +247,7 @@
       }
 
       @keyframes shake {
+
         10%,
         90% {
           transform: translate3d(-1px, 0, 0);

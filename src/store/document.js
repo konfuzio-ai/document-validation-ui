@@ -79,31 +79,88 @@ const getters = {
     }
     return labels;
   },
+
+  /* Checks if annotation is in deleted state */
+  isAnnotationDeleted: state => annotation => {
+    if (annotation) {
+      return annotation.revised && !annotation.is_correct;
+    }
+    return false;
+  },
+
+  /* Checks if the label has annotations to show */
+  labelHasAnnotations: (_, getters) => label => {
+    const annotations = label.annotations.filter(annotation => {
+      return !getters.isAnnotationDeleted(annotation);
+    });
+    return annotations.length > 0;
+  },
+
   /**
    * Groups annotations in the same label that have the same content by accuracy
    */
-  groupedAnnotations: state => annotationsInLabel => {
+  groupedAnnotations: (_, getters) => annotationsInLabel => {
     const annotations = [];
     let addedAnnotation;
+
+    const pushAnnotation = (annotation, array) => {
+      if (annotation && !getters.isAnnotationDeleted(annotation)) {
+        // clone annotation so we don't mess with existing objects
+        array.push({
+          ...annotation
+        });
+      }
+    };
+
+    const createAnnotationGroup = (annotation) => {
+      annotation.groupedAnnotations = [annotation];
+    }
+
+    const moveAnnotationGroup = (from, to) => {
+      to.groupedAnnotations = from.groupedAnnotations;
+      delete from.groupedAnnotations;
+    }
+
     if (annotationsInLabel) {
-      annotationsInLabel.map(annotation => {
+      annotationsInLabel.map((annotation) => {
         addedAnnotation = false;
-        annotations.map(annotationToCompare => {
+        annotations.map((annotationToCompare) => {
+          // compare if the annotations have the same content
           if (annotation.offset_string === annotationToCompare.offset_string) {
             if (annotationToCompare.groupedAnnotations) {
-              annotationToCompare.groupedAnnotations.push(annotation);
+              pushAnnotation(annotation, annotationToCompare.groupedAnnotations);
             } else {
-              annotationToCompare.groupedAnnotations = [annotationToCompare];
+              createAnnotationGroup(annotationToCompare);
+              pushAnnotation(annotation, annotationToCompare.groupedAnnotations);
             }
             addedAnnotation = true;
           }
         });
         if (!addedAnnotation) {
-          annotations.push(annotation);
+          pushAnnotation(annotation, annotations);
         }
       });
     }
-    return annotations;
+
+    // order annotation groups by confidence
+    const orderedAnnotations = annotations.map((annotation) => {
+      if (annotation.groupedAnnotations) {
+        // sort array
+        annotation.groupedAnnotations.sort((a, b) =>
+          b.confidence - a.confidence
+        );
+        // remove first element
+        const firstAnnotation = annotation.groupedAnnotations.shift();
+        if (annotation.id !== firstAnnotation.id) {
+          moveAnnotationGroup(annotation, firstAnnotation);
+        }
+        return firstAnnotation;
+      } else {
+        return annotation;
+      }
+    });
+
+    return orderedAnnotations;
   },
 
   /**

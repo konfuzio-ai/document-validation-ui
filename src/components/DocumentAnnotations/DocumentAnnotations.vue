@@ -43,14 +43,63 @@
           }}
         </div>
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <Label
+          <div
+            class="labels"
             v-if="labelNotRejected(label, annotationSet.label_set)"
-            :label="label"
-            :annotationSet="annotationSet"
-            :handleScroll="handleScroll"
-            :indexGroup="indexGroup"
-            @handle-reject="rejectAnnotation"
-          />
+          >
+            <div v-if="labelHasAnnotations(label)">
+              <!-- Label Annotations -->
+              <Label
+                v-for="annotation in groupedAnnotations(label.annotations)"
+                :key="annotationId(annotationSet, label, annotation)"
+                :label="label"
+                :annotationSet="annotationSet"
+                :annotation="annotation"
+                :editing="
+                  isAnnotationInEditMode(
+                    annotationId(annotationSet, label, annotation)
+                  )
+                "
+                :indexGroup="indexGroup"
+                @handle-scroll="handleScroll"
+                @handle-reject="rejectAnnotation"
+              >
+                <!-- Label Grouped Annotations -->
+                <template v-slot:groupedAnnotations>
+                  <Label
+                    v-for="groupedAnnotation in annotation.groupedAnnotations"
+                    :key="annotationId(annotationSet, label, groupedAnnotation)"
+                    :label="label"
+                    :annotationSet="annotationSet"
+                    :annotation="groupedAnnotation"
+                    :editing="
+                      isAnnotationInEditMode(
+                        annotationId(annotationSet, label, groupedAnnotation)
+                      )
+                    "
+                    :indexGroup="indexGroup"
+                    :parentGroupAnnotation="annotation"
+                    @handle-scroll="handleScroll"
+                    @handle-reject="rejectAnnotation"
+                  />
+                </template>
+              </Label>
+            </div>
+            <div v-else>
+              <!-- Empty Label -->
+              <Label
+                :label="label"
+                :annotationSet="annotationSet"
+                :editing="
+                  isAnnotationInEditMode(
+                    annotationId(annotationSet, label, null)
+                  )
+                "
+                :indexGroup="indexGroup"
+                @handle-reject="rejectAnnotation"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +125,7 @@ import LoadingAnnotations from "./LoadingAnnotations";
 import AnnotationsTopBar from "./AnnotationsTopBar";
 
 /**
- * This component loads all annotations in a label set
+ * This component loads all annotations for one document
  */
 export default {
   components: {
@@ -112,9 +161,15 @@ export default {
       "annotations",
       "editAnnotation",
       "imageLoaded",
-      "acceptAnnotation"
+      "acceptAnnotation",
+      "sidebarAnnotationSelected"
     ]),
-    ...mapGetters("document", ["numberOfAnnotationSetGroup"])
+    ...mapGetters("document", [
+      "numberOfAnnotationSetGroup",
+      "groupedAnnotations",
+      "labelHasAnnotations",
+      "isAnnotationInEditMode"
+    ])
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -123,6 +178,9 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    annotationId(annotationSet, label, annotation) {
+      return annotation ? annotation.id : `${annotationSet.id}_${label.id}`;
+    },
     focusOnNextAnnotation() {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
