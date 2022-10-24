@@ -4,15 +4,20 @@ import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
 import App from "./components/App";
 import * as Sentry from "@sentry/vue";
-import { Integrations } from "@sentry/tracing";
+import {
+  Integrations
+} from "@sentry/tracing";
 import i18n from "./i18n";
 
-import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  library
+} from "@fortawesome/fontawesome-svg-core";
 // internal icons
 import {
   faArrowUp,
   faAngleRight,
   faAngleLeft,
+  faAngleUp,
   faAngleDown,
   faFile,
   faSpinner,
@@ -28,12 +33,15 @@ import {
   faEye,
   faArrowLeft
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {
+  FontAwesomeIcon
+} from "@fortawesome/vue-fontawesome";
 
 library.add(
   faArrowUp,
   faAngleRight,
   faAngleLeft,
+  faAngleUp,
   faAngleDown,
   faCheck,
   faFile,

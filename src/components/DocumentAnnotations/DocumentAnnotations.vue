@@ -22,7 +22,9 @@
     </div>
 
     <!-- When there's no annotations in the label -->
-    <div v-else-if="!annotationSets || annotationSets.length === 0">
+    <div
+      v-else-if="!sidebarAnnotationSets || sidebarAnnotationSets.length === 0"
+    >
       <EmptyState />
     </div>
 
@@ -31,7 +33,7 @@
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
     >
       <div
-        v-for="(annotationSet, indexGroup) in annotationSets"
+        v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
         v-bind:key="indexGroup"
         class="labelset-group"
       >
@@ -43,14 +45,63 @@
           }}
         </div>
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <Label
+          <div
+            class="labels"
             v-if="labelNotRejected(label, annotationSet.label_set)"
-            :label="label"
-            :annotationSet="annotationSet"
-            :handleScroll="handleScroll"
-            :indexGroup="indexGroup"
-            @handle-reject="rejectAnnotation"
-          />
+          >
+            <div v-if="labelHasAnnotations(label)">
+              <!-- Label Annotations -->
+              <Label
+                v-for="annotation in label.annotations"
+                :key="annotationId(annotationSet, label, annotation)"
+                :label="label"
+                :annotationSet="annotationSet"
+                :annotation="annotation"
+                :editing="
+                  isAnnotationInEditMode(
+                    annotationId(annotationSet, label, annotation)
+                  )
+                "
+                :indexGroup="indexGroup"
+                @handle-scroll="handleScroll"
+                @handle-reject="rejectAnnotation"
+              >
+                <!-- Label Grouped Annotations -->
+                <template v-slot:groupedAnnotations>
+                  <Label
+                    v-for="groupedAnnotation in annotation.groupedAnnotations"
+                    :key="annotationId(annotationSet, label, groupedAnnotation)"
+                    :label="label"
+                    :annotationSet="annotationSet"
+                    :annotation="groupedAnnotation"
+                    :editing="
+                      isAnnotationInEditMode(
+                        annotationId(annotationSet, label, groupedAnnotation)
+                      )
+                    "
+                    :indexGroup="indexGroup"
+                    :parentGroupAnnotation="annotation"
+                    @handle-scroll="handleScroll"
+                    @handle-reject="rejectAnnotation"
+                  />
+                </template>
+              </Label>
+            </div>
+            <div v-else>
+              <!-- Empty Label -->
+              <Label
+                :label="label"
+                :annotationSet="annotationSet"
+                :editing="
+                  isAnnotationInEditMode(
+                    annotationId(annotationSet, label, null)
+                  )
+                "
+                :indexGroup="indexGroup"
+                @handle-reject="rejectAnnotation"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +127,7 @@ import LoadingAnnotations from "./LoadingAnnotations";
 import AnnotationsTopBar from "./AnnotationsTopBar";
 
 /**
- * This component loads all annotations in a label set
+ * This component loads all annotations for one document
  */
 export default {
   components: {
@@ -104,17 +155,21 @@ export default {
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
-      "annotations",
-      "annotationSets",
       "missingAnnotations",
       "publicView",
       "editingActive",
       "annotations",
       "editAnnotation",
       "imageLoaded",
-      "acceptAnnotation"
+      "acceptAnnotation",
+      "sidebarAnnotationSelected",
+      "sidebarAnnotationSets"
     ]),
-    ...mapGetters("document", ["numberOfAnnotationSetGroup"])
+    ...mapGetters("document", [
+      "numberOfAnnotationSetGroup",
+      "labelHasAnnotations",
+      "isAnnotationInEditMode"
+    ])
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -123,6 +178,9 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    annotationId(annotationSet, label, annotation) {
+      return annotation ? annotation.id : `${annotationSet.id}_${label.id}`;
+    },
     focusOnNextAnnotation() {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
@@ -143,7 +201,6 @@ export default {
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
-        this.$store.dispatch("document/setEditingActive", false);
         return;
       }
 
@@ -193,19 +250,6 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
-        // set focused annotation to scroll in the document page
-        if (
-          annotations[this.count] &&
-          !annotations[this.count].className.includes("label-empty")
-        ) {
-          this.$store.dispatch(
-            "document/setDocumentFocusedAnnotation",
-            this.annotations[this.count - 1]
-          );
-        } else {
-          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
-        }
-
         annotations[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
@@ -224,19 +268,6 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
-        // set focused annotation to scroll in the document page
-        if (
-          annotations[this.count] &&
-          !annotations[this.count].className.includes("label-empty")
-        ) {
-          this.$store.dispatch(
-            "document/setDocumentFocusedAnnotation",
-            this.annotations[this.count - 1]
-          );
-        } else {
-          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
-        }
-
         annotations[this.count].click();
         this.count--;
       } else {
@@ -249,8 +280,6 @@ export default {
 
           if (!this.editAnnotation && this.editAnnotation.id !== currentAnn.id)
             return;
-
-          this.$store.dispatch("document/setAcceptAnnotation", true);
           // set focus on next annotation
           this.count = currentAnnIndex + 1;
           this.jumpToNextAnnotation = true;
