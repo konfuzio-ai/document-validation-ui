@@ -50,7 +50,7 @@
           @click.stop="showAnnotationsGroup = !showAnnotationsGroup"
         >
           <span class="group-number">{{
-            annotation.groupedAnnotations.length
+            annotation.groupedAnnotations.length + 1
           }}</span>
           <b-icon
             :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
