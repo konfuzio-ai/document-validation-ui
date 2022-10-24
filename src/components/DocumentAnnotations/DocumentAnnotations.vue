@@ -179,7 +179,17 @@ export default {
   },
   methods: {
     annotationId(annotationSet, label, annotation) {
-      return annotation ? annotation.id : `${annotationSet.id}_${label.id}`;
+      if (!annotationSet || !label) return;
+
+      let emptyAnnotationId;
+
+      if (annotationSet.id) {
+        emptyAnnotationId = `${annotationSet.id}_${label.id}`;
+      } else {
+        emptyAnnotationId = `${annotationSet.label_set.id}_${label.id}`;
+      }
+
+      return annotation ? annotation.id : emptyAnnotationId;
     },
     focusOnNextAnnotation() {
       const annotations = Array.from(

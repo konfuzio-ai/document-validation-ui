@@ -85,8 +85,11 @@ export default {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      const annSetIndex = this.annotationSets.indexOf(this.annotationSet);
-      return `${this.annotationSet.label_set.id}_${this.label.id}_${annSetIndex}`;
+      if (this.annotationSet.id) {
+        return `${this.annotationSet.id}_${this.label.id}`;
+      } else {
+        return `${this.annotationSet.label_set.id}_${this.label.id}`;
+      }
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
@@ -123,14 +126,29 @@ export default {
       this.spanSelection.offset_string_original =
         this.$refs.emptyAnnotation.textContent;
 
-      const annotationToCreate = {
-        document: this.documentId,
-        span: [this.spanSelection],
-        label: this.label.id,
-        label_set: this.annotationSet.label_set.id,
-        is_correct: true,
-        revised: true
-      };
+      let annotationToCreate;
+
+      if (this.annotationSet.id) {
+        annotationToCreate = {
+          document: this.documentId,
+          span: [this.spanSelection],
+          label: this.label.id,
+          annotation_set: this.annotationSet.id,
+          is_correct: true,
+          revised: true
+        };
+      } else {
+        // if annotation set id is null
+        annotationToCreate = {
+          document: this.documentId,
+          span: [this.spanSelection],
+          label: this.label.id,
+          label_set: this.annotationSet.label_set.id,
+          is_correct: true,
+          revised: true
+        };
+      }
+
       this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
