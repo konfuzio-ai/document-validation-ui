@@ -229,6 +229,9 @@ const actions = {
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
+  setSidebarAnnotationSets: ({ commit }, annotationSets) => {
+    commit("SET_SIDEBAR_ANNOTATION_SETS", annotationSets);
+  },
   setEditMode: ({ commit }, option) => {
     commit("SET_EDIT_MODE", option);
   },

@@ -19,6 +19,10 @@ describe("Document Annotations Component", () => {
         require("../mock/document.json").annotation_sets
       ),
       store.dispatch("document/setImageLoaded", true),
+      store.dispatch(
+        "document/setSidebarAnnotationSets",
+        require("../mock/document.json").annotation_sets
+      ),
     ]);
   });
 
@@ -69,7 +73,9 @@ describe("Document Annotations Component", () => {
         $t,
       },
     });
-    const element = wrapper.findAll(".label-property-left .b-tooltip").at(0);
+    const element = wrapper
+      .findAll(".labels .label-properties .label-property-left .left-aligned")
+      .at(0);
     await element.find(".tooltip-trigger").trigger("mouseenter");
     requestAnimationFrame(() => {
       expect(element.find(".tooltip-content").isVisible()).toBe(true);
@@ -79,8 +85,13 @@ describe("Document Annotations Component", () => {
   it("Click should trigger edit mode in empty annotation", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
-    const annSetIndex =
-      store.state.document.annotationSets.indexOf(annotationSet);
+    let emptyAnnotationId;
+
+    if (annotationSet.id) {
+      emptyAnnotationId = `${annotationSet.id}_${label.id}`;
+    } else {
+      emptyAnnotationId = `${annotationSet.label_set.id}_${label.id}`;
+    }
 
     const wrapper = mount(EmptyAnnotation, {
       store,
@@ -94,9 +105,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(store.state.selection.selectionEnabled).toEqual(
-      `${annotationSet.label_set.id}_${label.id}_${annSetIndex}`
-    );
+    expect(store.state.selection.selectionEnabled).toEqual(emptyAnnotationId);
   });
 
   it("Action buttons should appear when bbox is created in empty annotation", async () => {
