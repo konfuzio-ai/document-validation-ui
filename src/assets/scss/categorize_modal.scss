@@ -1,0 +1,24 @@
+@import "./imports.scss";
+
+.categorize-modal {
+    .content {
+        h3 {
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 28px;
+            color: $grey-darker;
+        }
+
+        p {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            color: $text-strong;
+        }
+
+        .categorize-dropdown {
+            width: 100%;
+        }
+    }
+
+}

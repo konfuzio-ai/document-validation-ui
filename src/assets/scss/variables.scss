@@ -234,6 +234,46 @@ button {
 .modal {
   z-index: 999;
 
+  &.modal-text-center {
+    text-align: center;
+  }
+
+  &.modal-400 {
+    .modal-content {
+      max-width: 400px !important;
+    }
+  }
+
+  &.is-active {
+    .modal-content {
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+
+      .modal-close {
+        display: none !important;
+      }
+
+      .modal-card-body {
+        background: $white;
+        border-radius: 16px 16px 0 0 !important;
+      }
+
+      .modal-card-foot {
+        display: flex;
+        justify-content: center;
+        border: none;
+        background: $white;
+        border-radius: 0 0 16px 16px;
+      }
+    }
+
+  }
+
+  &.modal-absolute {
+    position: absolute;
+  }
+
   .modal-background {
     background-color: $full-black;
     opacity: 0.5;

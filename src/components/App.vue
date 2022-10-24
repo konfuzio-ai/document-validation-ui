@@ -10,11 +10,9 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
-import store from "../store";
 import { mapState } from "vuex";
 
 export default {
-  store,
   name: "App",
   components: {
     DocumentsList,
@@ -36,10 +34,6 @@ export default {
       this.$i18n.locale = this.locale;
     }
     this.documentLoading();
-    if (!this.publicView) {
-      this.categoryLoading();
-      this.documentsListLoading();
-    }
   },
   computed: {
     ...mapState("document", {
@@ -74,15 +68,23 @@ export default {
       }
     },
     selectedDocument(newValue, oldValue) {
-      if (
-        newValue.labeling_available == 1 &&
-        newValue.status_data === 2 &&
-        this.categoryId !== newValue.category &&
-        oldValue &&
-        oldValue.category !== null
-      ) {
-        this.categoryLoading();
-        this.documentsListLoading();
+      if (!this.publicView) {
+        if (oldValue === null && newValue) {
+          // first time
+          this.categoryLoading(newValue.project);
+          this.documentsListLoading();
+        }
+        // TODO: this business validations should be done on the store
+        else if (
+          newValue.labeling_available == 1 &&
+          newValue.status_data === 2 &&
+          this.categoryId !== newValue.category &&
+          oldValue &&
+          oldValue.category !== null
+        ) {
+          this.categoryLoading(newValue.project);
+          this.documentsListLoading();
+        }
       }
     }
   },
@@ -99,8 +101,10 @@ export default {
         this.$store.dispatch("document/endLoading");
       });
     },
-    categoryLoading() {
-      Promise.all([this.$store.dispatch("category/fetchCategories")]);
+    categoryLoading(projectId) {
+      Promise.all([
+        this.$store.dispatch("category/fetchCategories", projectId)
+      ]);
     },
     documentsListLoading() {
       if (this.categoryId) {

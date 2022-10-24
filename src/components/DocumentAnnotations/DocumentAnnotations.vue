@@ -32,6 +32,10 @@
       v-else
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
     >
+      <CategorizeModal
+        :show="showCategorizeModal"
+        :document="selectedDocument"
+      />
       <div
         v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
         v-bind:key="indexGroup"
@@ -124,6 +128,7 @@ import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
 import AnnotationsTopBar from "./AnnotationsTopBar";
+import CategorizeModal from "./CategorizeModal";
 
 /**
  * This component loads all annotations for one document
@@ -136,7 +141,8 @@ export default {
     Label,
     RejectedLabels,
     LoadingAnnotations,
-    AnnotationsTopBar
+    AnnotationsTopBar,
+    CategorizeModal
   },
   props: {
     handleScroll: {
@@ -147,7 +153,8 @@ export default {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3
+      numberOfLoadingAnnotations: 3,
+      showCategorizeModal: true
     };
   },
   computed: {
@@ -161,7 +168,8 @@ export default {
       "imageLoaded",
       "acceptAnnotation",
       "sidebarAnnotationSelected",
-      "sidebarAnnotationSets"
+      "sidebarAnnotationSets",
+      "selectedDocument"
     ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",

@@ -31,27 +31,41 @@ const getters = {
 };
 
 const actions = {
-  setDocuments: ({ commit }, documents) => {
+  setDocuments: ({
+    commit
+  }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
-  setAvailableDocumentsList: ({ commit }, availableDocumentsList) => {
+  setAvailableDocumentsList: ({
+    commit
+  }, availableDocumentsList) => {
     commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
   },
-  setCategoryId: ({ commit }, categoryId) => {
+  setCategoryId: ({
+    commit
+  }, categoryId) => {
     commit("SET_CATEGORIES", null);
     commit("SET_CATEGORY_ID", categoryId);
   },
-  setCategories: ({ commit }, categories) => {
+  setCategories: ({
+    commit
+  }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
-  setSelectedCategory: ({ commit }, category) => {
+  setSelectedCategory: ({
+    commit
+  }, category) => {
     commit("SET_SELECTED_CATEGORY", category);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit, state, rootState }) => {
+  fetchDocumentList: ({
+    commit,
+    state,
+    rootState
+  }) => {
     // TODO: add lazy loading
     return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
       .then(response => {
@@ -73,7 +87,10 @@ const actions = {
       });
   },
 
-  createAvailableDocumentsList: ({ state, dispatch }) => {
+  createAvailableDocumentsList: ({
+    state,
+    dispatch
+  }) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -118,7 +135,7 @@ const actions = {
         if (
           state.documents.length !== state.availableDocumentsList.length &&
           state.availableDocumentsList.length + errors !==
-            state.documents.length
+          state.documents.length
         ) {
           if (count >= 10) return true;
 
@@ -152,8 +169,11 @@ const actions = {
     }
   },
 
-  fetchCategories: ({ commit, state }) => {
-    return HTTP.get(`categories/?limit=100`)
+  fetchCategories: ({
+    commit,
+    state
+  }, projectId) => {
+    return HTTP.get(`categories/?limit=100&project=${projectId}`)
       .then(async response => {
         if (response.data && response.data.results) {
           commit("SET_CATEGORIES", response.data.results);
