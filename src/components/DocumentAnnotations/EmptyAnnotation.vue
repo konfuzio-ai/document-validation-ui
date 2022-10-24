@@ -135,11 +135,7 @@ export default {
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(annotationCreated => {
-          if (annotationCreated) {
-            this.$emit("handle-data-changes", {
-              annotation: annotationCreated
-            });
-          } else {
+          if (!annotationCreated) {
             this.error = true;
             this.$store.dispatch(
               "document/setErrorMessage",

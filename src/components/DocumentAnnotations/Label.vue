@@ -35,14 +35,12 @@
               :spanIndex="index"
               :label="label"
               :annotationSet="annotationSet"
-              @handle-data-changes="handleDataChanges"
             />
           </div>
           <EmptyAnnotation
             v-else
             :label="label"
             :annotationSet="annotationSet"
-            @handle-data-changes="handleDataChanges"
             @reject="handleReject"
           />
         </div>
@@ -131,51 +129,6 @@ export default {
     }
   },
   methods: {
-    annotationSetIndex() {
-      return this.annotationSets.indexOf(this.annotationSet);
-    },
-    referenceId(annotation) {
-      let refId = `label_${this.label.id}_${
-        this.annotationSet.label_set.id
-      }_${this.annotationSetIndex()}`;
-      if (annotation) {
-        refId = `${refId}_${annotation.id}`;
-      }
-      return refId;
-    },
-    annotationId(annotation) {
-      return annotation
-        ? annotation.id
-        : `${this.annotationSet.label_set.id}_${
-            this.label.id
-          }_${this.annotationSetIndex()}`;
-    },
-    annotationDeleted(annotation) {
-      if (annotation) {
-        return annotation.revised && !annotation.is_correct;
-      }
-      return false;
-    },
-    handleDataChanges({ annotation, isToDelete }) {
-      if (annotation !== null) {
-        if (isToDelete) {
-          // deleted annotation
-          const indexOfAnnotationToDelete = this.label.annotations.findIndex(
-            existingAnnotation => existingAnnotation.id === annotation.id
-          );
-          if (indexOfAnnotationToDelete > -1) {
-            this.label.annotations.splice(indexOfAnnotationToDelete, 1);
-          }
-        } else if (!this.labelHasAnnotations) {
-          this.label.annotations = [annotation];
-        } else {
-          const index = this.label.annotations.findIndex(
-            existingAnnotation => existingAnnotation.id === annotation.id
-          );
-          this.label.annotations[index] = annotation;
-        }
-      }
-    },
     onLabelHoverEnter() {
       if (this.annotation) {
         this.$emit("handle-scroll", false);

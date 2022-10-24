@@ -7,6 +7,7 @@ const state = {
   loading: true,
   pages: [],
   annotationSets: null,
+  sidebarAnnotationSets: null, // this should be only used for displaying annotations in sidebar
   annotations: null,
   labels: [],
   documentId: null,
@@ -327,7 +328,9 @@ const actions = {
   }, annotation) => {
     commit("SET_REJECT_ANNOTATION", annotation);
   },
-  setErrorMessageWidth: ({ commit }, width) => {
+  setErrorMessageWidth: ({
+    commit
+  }, width) => {
     commit("SET_ERROR_MESSAGE_WIDTH", width);
   },
 
@@ -337,23 +340,41 @@ const actions = {
    */
   fetchAnnotations: ({
     commit,
-    state
+    state,
+    getters
   }) => {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
         if (response.data.annotation_sets) {
-          // set annotation sets
-          commit("SET_ANNOTATION_SETS", response.data.annotation_sets);
 
-          // set annotations & labels
+          const annotationSets = response.data.annotation_sets;
           const annotations = [];
           const labels = [];
-          response.data.annotation_sets.map(annotationSet => {
-            annotationSet.labels.map(label => {
+
+          // group annotations for sidebar
+          const sidebarAnnotationSets = annotationSets.map(annotationSet => {
+            const sidebarLabels = annotationSet.labels.map(label => {
+              // add annotations to the document array
               annotations.push(...label.annotations);
+              // add labels to the labels array
               labels.push(label);
+              // get grouped annotations
+              const annotationsGrouped = getters.groupedAnnotations(label.annotations);
+              const labelGrouped = {
+                ...label,
+                annotations: annotationsGrouped
+              };
+              return labelGrouped;
             });
+            const annotationSetGrouped = {
+              ...annotationSet,
+              labels: sidebarLabels
+            }
+            return annotationSetGrouped;
           });
+          // set information on the store
+          commit("SET_SIDEBAR_ANNOTATION_SETS", sidebarAnnotationSets);
+          commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
 
@@ -631,15 +652,77 @@ const mutations = {
         });
       }
     });
+    state.sidebarAnnotationSets.forEach(annotationSet => {
+      if (
+        annotation.annotation_set &&
+        annotationSet.id === annotation.annotation_set
+      ) {
+        annotationSet.labels.map(label => {
+          if (annotation.label && annotation.label.id === label.id) {
+            const exists = label.annotations.find(
+              existingAnnotation => existingAnnotation.id === annotation.id
+            );
+            if (!exists) {
+              label.annotations.push(annotation);
+              return;
+            }
+          }
+        });
+      }
+    });
   },
   UPDATE_ANNOTATION: (state, annotation) => {
-    const annotationToEdit = state.annotations.find(
+    const indexOfAnnotationInAnnotations = state.annotations.findIndex(
       existingAnnotation => existingAnnotation.id === annotation.id
     );
-    if (annotationToEdit) {
-      const index = state.annotations.indexOf(annotationToEdit);
-      state.annotations.splice(index, 1, annotation);
+    if (indexOfAnnotationInAnnotations > -1) {
+      state.annotations[indexOfAnnotationInAnnotations] = annotation;
     }
+    state.annotationSets.map(annotationSet => {
+      annotationSet.labels.map(label => {
+        const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
+          existingAnnotation => existingAnnotation.id === annotation.id
+        );
+        if (indexOfAnnotationAnnotationSets > -1) {
+          label.annotations[indexOfAnnotationAnnotationSets] = annotation;
+          return;
+        }
+      });
+    });
+
+    let updatedAnnotation = false;
+    state.sidebarAnnotationSets.forEach(annotationSet => {
+      if (updatedAnnotation) {
+        return;
+      }
+      annotationSet.labels.forEach(label => {
+        if (updatedAnnotation) {
+          return;
+        }
+        const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
+          existingAnnotation => existingAnnotation.id === annotation.id
+        );
+        if (indexOfAnnotationAnnotationSets > -1) {
+          label.annotations[indexOfAnnotationAnnotationSets] = annotation;
+          updatedAnnotation = true;
+          return;
+        } else {
+          // find in grouped annotations
+          label.annotations.forEach((annotationInLabel) => {
+            if (annotationInLabel.groupedAnnotations) {
+              const indexOfAnnotationInGroups = annotationInLabel.groupedAnnotations.findIndex(
+                existingAnnotation => existingAnnotation.id === annotation.id
+              );
+              if (indexOfAnnotationInGroups > -1) {
+                annotationInLabel.groupedAnnotations[indexOfAnnotationInGroups] = annotation;
+                updatedAnnotation = true;
+                return;
+              }
+            }
+          });
+        }
+      });
+    });
   },
   DELETE_ANNOTATION: (state, annotationId) => {
     const indexOfAnnotationToDelete = state.annotations.findIndex(
@@ -659,12 +742,39 @@ const mutations = {
         }
       });
     });
+    state.sidebarAnnotationSets.forEach(annotationSet => {
+      annotationSet.labels.map(label => {
+        const indexOfAnnotationInLabelToDelete = label.annotations.findIndex(
+          existingAnnotation => existingAnnotation.id === annotationId
+        );
+        if (indexOfAnnotationInLabelToDelete > -1) {
+          label.annotations.splice(indexOfAnnotationInLabelToDelete, 1);
+          return;
+        } else {
+          // find in grouped annotations
+          label.annotations.forEach((annotationInLabel) => {
+            if (annotationInLabel.groupedAnnotations) {
+              const indexOfAnnotationInGroups = annotationInLabel.groupedAnnotations.findIndex(
+                existingAnnotation => existingAnnotation.id === annotationId
+              );
+              if (indexOfAnnotationInGroups > -1) {
+                annotationInLabel.groupedAnnotations.splice(indexOfAnnotationInGroups, 1);
+                return;
+              }
+            }
+          });
+        }
+      });
+    });
   },
   SET_ANNOTATIONS: (state, annotations) => {
     state.annotations = annotations;
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
+  },
+  SET_SIDEBAR_ANNOTATION_SETS: (state, annotationSets) => {
+    state.sidebarAnnotationSets = annotationSets;
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;

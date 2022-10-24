@@ -22,7 +22,9 @@
     </div>
 
     <!-- When there's no annotations in the label -->
-    <div v-else-if="!annotationSets || annotationSets.length === 0">
+    <div
+      v-else-if="!sidebarAnnotationSets || sidebarAnnotationSets.length === 0"
+    >
       <EmptyState />
     </div>
 
@@ -31,7 +33,7 @@
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
     >
       <div
-        v-for="(annotationSet, indexGroup) in annotationSets"
+        v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
         v-bind:key="indexGroup"
         class="labelset-group"
       >
@@ -50,7 +52,7 @@
             <div v-if="labelHasAnnotations(label)">
               <!-- Label Annotations -->
               <Label
-                v-for="annotation in groupedAnnotations(label.annotations)"
+                v-for="annotation in label.annotations"
                 :key="annotationId(annotationSet, label, annotation)"
                 :label="label"
                 :annotationSet="annotationSet"
@@ -153,8 +155,6 @@ export default {
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
-      "annotations",
-      "annotationSets",
       "missingAnnotations",
       "publicView",
       "editingActive",
@@ -162,11 +162,11 @@ export default {
       "editAnnotation",
       "imageLoaded",
       "acceptAnnotation",
-      "sidebarAnnotationSelected"
+      "sidebarAnnotationSelected",
+      "sidebarAnnotationSets"
     ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
-      "groupedAnnotations",
       "labelHasAnnotations",
       "isAnnotationInEditMode"
     ])
@@ -201,7 +201,6 @@ export default {
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
-        this.$store.dispatch("document/setEditingActive", false);
         return;
       }
 
@@ -251,19 +250,6 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
-        // set focused annotation to scroll in the document page
-        if (
-          annotations[this.count] &&
-          !annotations[this.count].className.includes("label-empty")
-        ) {
-          this.$store.dispatch(
-            "document/setDocumentFocusedAnnotation",
-            this.annotations[this.count - 1]
-          );
-        } else {
-          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
-        }
-
         annotations[this.count].click();
         this.count++;
       } else if (event.key === "ArrowUp") {
@@ -282,19 +268,6 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
-        // set focused annotation to scroll in the document page
-        if (
-          annotations[this.count] &&
-          !annotations[this.count].className.includes("label-empty")
-        ) {
-          this.$store.dispatch(
-            "document/setDocumentFocusedAnnotation",
-            this.annotations[this.count - 1]
-          );
-        } else {
-          this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
-        }
-
         annotations[this.count].click();
         this.count--;
       } else {
@@ -307,8 +280,6 @@ export default {
 
           if (!this.editAnnotation && this.editAnnotation.id !== currentAnn.id)
             return;
-
-          this.$store.dispatch("document/setAcceptAnnotation", true);
           // set focus on next annotation
           this.count = currentAnnIndex + 1;
           this.jumpToNextAnnotation = true;

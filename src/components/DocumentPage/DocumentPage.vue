@@ -54,6 +54,7 @@
                   annotationRect(
                     bbox,
                     documentFocusedAnnotation &&
+                      !isSelectionEnabled &&
                       annotation.id === documentFocusedAnnotation.id
                   )
                 "
@@ -66,7 +67,7 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation">
+      <v-layer v-if="showFocusedAnnotation && !isSelectionEnabled">
         <template>
           <v-label
             :key="`label${documentFocusedAnnotation.id}`"
@@ -471,6 +472,7 @@ export default {
     },
     selectLabelAnnotation(annotation) {
       this.closeNewAnnotation();
+      this.$store.dispatch("document/setEditingActive", false);
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
