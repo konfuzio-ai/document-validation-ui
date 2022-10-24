@@ -120,8 +120,6 @@ export default {
       "display/updateOptimalResolution",
       this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
     );
-
-    console.log(this.errorMessageWidth);
   },
   destroyed() {
     if (this.$refs.scrollingDocument) {
