@@ -193,7 +193,6 @@ export default {
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(response => {
-          console.log(response);
           if (!response) {
             this.$store.dispatch(
               "document/setErrorMessage",
