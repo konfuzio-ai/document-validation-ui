@@ -111,22 +111,7 @@ export default {
       "sidebarAnnotationSelected",
       "editAnnotation",
       "annotationSets"
-    ]),
-    ...mapGetters("document", ["isAnnotationInEditMode", "groupedAnnotations"]),
-    labelHasAnnotations() {
-      return (
-        this.label &&
-        this.label.annotations &&
-        this.label.annotations.length > 0
-      );
-    },
-    annotations() {
-      if (this.labelHasAnnotations) {
-        return this.label.annotations;
-      } else {
-        return [null];
-      }
-    }
+    ])
   },
   methods: {
     onLabelHoverEnter() {
