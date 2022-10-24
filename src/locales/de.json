@@ -15,7 +15,7 @@
   "test": "Test",
   "excluded": "Ausgenommen",
   "set_status": "Setzen Sie bitte einen Status",
-  "category_error": "Die Kategorie kann nicht geändert werden, da es bereits akzeptierte Annotationen für dieses Dokument gibt.",
+  "category_error": "Category cannot be changed because there are already accepted annotations or manually created annotations on this document.",
   "status_error": "Wir konnten den Status nicht ändern. Bitte versuchen Sie es später erneut.",
   "edit": "Bearbeiten",
   "save": "Speichern",

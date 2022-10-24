@@ -108,16 +108,25 @@ export default {
         this.$store
           .dispatch("document/updateDocument", updatedCategory)
           .then(response => {
-            if (response) {
+            if (response === 200) {
               // Poll document data until the status_data is 111 (error) or
               // 2 and labeling is available (done)
               this.$store.dispatch("document/pollDocumentEndpoint", 5000);
             } else {
+              const resp = JSON.stringify(response);
+
               this.$store.dispatch("document/endRecalculatingAnnotations");
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("category_error")
-              );
+              if (resp.includes("500")) {
+                this.$store.dispatch(
+                  "document/setErrorMessage",
+                  this.$t("category_server_error")
+                );
+              } else {
+                this.$store.dispatch(
+                  "document/setErrorMessage",
+                  this.$t("category_error")
+                );
+              }
             }
           });
 
