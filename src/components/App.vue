@@ -74,11 +74,12 @@ export default {
         this.documentLoading();
       }
     },
-    selectedDocument(newValue) {
+    selectedDocument(newValue, oldValue) {
       if (
         newValue.labeling_available == 1 &&
         newValue.status_data === 2 &&
-        this.categoryId !== newValue.category
+        this.categoryId !== newValue.category &&
+        oldValue.category !== null
       ) {
         this.categoryLoading();
         this.documentsListLoading();
