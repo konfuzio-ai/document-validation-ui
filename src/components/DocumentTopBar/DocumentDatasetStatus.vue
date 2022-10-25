@@ -73,7 +73,7 @@ export default {
         .dispatch("document/updateDocument", updatedDatasetStatus)
         .then(response => {
           // Check if the response is successfull or not
-          if (response) {
+          if (response === 200) {
             this.currentStatus = this.statusList[index];
           } else {
             this.$store.dispatch(

@@ -82,7 +82,7 @@ export default {
       this.$store
         .dispatch("document/updateDocument", updatedDocumentReviewStatus)
         .then(response => {
-          if (response) {
+          if (response === 200) {
             // Poll document data until the status_data is 111 (error) or
             // 2 and labeling is available (done)
             this.$store.dispatch("document/pollDocumentEndpoint", 5000);

@@ -447,11 +447,11 @@ const actions = {
             if (response.data.is_reviewed === true) {
               state.publicView = true;
             }
-            resolve(true);
+            resolve(response.status);
           }
         })
         .catch(error => {
-          resolve(false);
+          resolve(error);
           console.log(error);
         });
     });
