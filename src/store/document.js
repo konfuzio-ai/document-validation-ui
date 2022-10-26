@@ -13,6 +13,8 @@ const state = {
   documentId: null,
   sidebarAnnotationSelected: null,
   selectedDocument: null,
+  documentIsReady: false,
+  documentHasError: false,
   recalculatingAnnotations: false,
   editAnnotation: {
     id: null,
@@ -176,21 +178,23 @@ const getters = {
     let found = false;
     let value = 0;
     let index = 0;
-    state.annotationSets.map(annotationSetTemp => {
-      if (
-        annotationSetTemp.id !== annotationSet.id &&
-        annotationSetTemp.label_set.id === annotationSet.label_set.id &&
-        annotationSetTemp.label_set.name === annotationSet.label_set.name
-      ) {
-        found = true;
-        index++;
-      } else if (
-        annotationSetTemp.label_set.id === annotationSet.label_set.id
-      ) {
-        value = index;
-      }
-    });
-    return found ? `${value + 1}` : "";
+    if (state.annotationSets) {
+      state.annotationSets.map(annotationSetTemp => {
+        if (
+          annotationSetTemp.id !== annotationSet.id &&
+          annotationSetTemp.label_set.id === annotationSet.label_set.id &&
+          annotationSetTemp.label_set.name === annotationSet.label_set.name
+        ) {
+          found = true;
+          index++;
+        } else if (
+          annotationSetTemp.label_set.id === annotationSet.label_set.id
+        ) {
+          value = index;
+        }
+      });
+      return found ? `${value + 1}` : "";
+    }
   },
 
   /**
@@ -497,6 +501,27 @@ const actions = {
     });
   },
 
+  fetchDocumentStatus: ({ state }) => {
+    return HTTP.get(
+      `documents/${state.documentId}/?fields=status_data,labeling_available`
+    )
+      .then(response => {
+        if (
+          response.data.status_data === 2 &&
+          response.data.labeling_available === 1
+        ) {
+          state.documentIsReady = true;
+        }
+
+        if (response.data.status_data === 111) {
+          state.documentHasError = true;
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },
+
   // Get document data
   fetchDocumentData: ({ commit, state }) => {
     return HTTP.get(`documents/${state.documentId}/`)
@@ -523,15 +548,10 @@ const actions = {
   },
 
   pollDocumentEndpoint: ({ state, dispatch }, duration) => {
-    return dispatch("fetchDocumentData").then(async () => {
-      if (
-        state.selectedDocument.status_data === 2 &&
-        state.selectedDocument.labeling_available === 1
-      ) {
-        await dispatch("fetchAnnotations");
-        await dispatch("endRecalculatingAnnotations");
+    return dispatch("fetchDocumentStatus").then(async () => {
+      if (state.documentIsReady) {
         return true;
-      } else if (state.selectedDocument.status_data === 111) {
+      } else if (state.documentHasError) {
         dispatch("setDocumentError", true);
         return false;
       } else {

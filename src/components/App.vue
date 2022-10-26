@@ -43,10 +43,10 @@ export default {
   },
   computed: {
     ...mapState("document", {
-      documentIdLoaded: "documentId",
       publicView: "publicView",
       selectedDocument: "selectedDocument",
-      recalculatingAnnotations: "recalculatingAnnotations"
+      recalculatingAnnotations: "recalculatingAnnotations",
+      documentIsReady: "documentIsReady"
     }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {
@@ -68,9 +68,8 @@ export default {
     }
   },
   watch: {
-    documentIdLoaded(newId, oldId) {
-      // if oldId is null, then it's the first time
-      if (oldId !== null && newId !== oldId) {
+    documentIsReady(newValue) {
+      if (newValue) {
         this.documentLoading();
       }
     },
