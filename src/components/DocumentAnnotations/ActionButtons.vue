@@ -16,7 +16,7 @@
 
     <b-button
       v-if="saveBtn && !isLoading"
-      :class="[isActive && 'annotation-save-btn', 'text-btn']"
+      class="annotation-save-btn text-btn"
       type="is-primary"
       @click.stop="save"
     >
@@ -25,14 +25,14 @@
 
     <b-button
       v-if="cancelBtn && !isLoading"
-      :class="['is-small', isActive && 'annotation-cancel-btn']"
+      class="is-small annotation-cancel-btn"
       icon-left="xmark"
       @click.stop="cancel"
     />
 
     <b-button
       v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
-      :class="[isActive && 'annotation-accept-btn']"
+      class="annotation-accept-btn"
       type="is-primary"
       @click.stop="accept"
       >{{ $t("accept") }}</b-button
@@ -90,9 +90,6 @@ export default {
       type: Boolean
     },
     isLoading: {
-      type: Boolean
-    },
-    isActive: {
       type: Boolean
     },
     acceptBtn: {

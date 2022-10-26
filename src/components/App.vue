@@ -79,6 +79,7 @@ export default {
         newValue.labeling_available == 1 &&
         newValue.status_data === 2 &&
         this.categoryId !== newValue.category &&
+        oldValue &&
         oldValue.category !== null
       ) {
         this.categoryLoading();

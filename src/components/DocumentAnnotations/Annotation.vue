@@ -37,7 +37,6 @@
       <ActionButtons
         :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
-        :isActive="!isLoading"
         :isLoading="isLoading"
         :menu="!isAnnotationBeingEdited"
         :acceptBtn="showAcceptButton"

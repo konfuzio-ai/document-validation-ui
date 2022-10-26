@@ -14,7 +14,6 @@ const state = {
   sidebarAnnotationSelected: null,
   selectedDocument: null,
   recalculatingAnnotations: false,
-  editMode: false,
   editAnnotation: {
     id: null,
     index: 0,
@@ -231,12 +230,6 @@ const actions = {
   },
   setSidebarAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_SIDEBAR_ANNOTATION_SETS", annotationSets);
-  },
-  setEditMode: ({ commit }, option) => {
-    commit("SET_EDIT_MODE", option);
-  },
-  disableEditMode: ({ commit }) => {
-    commit("SET_EDIT_MODE", null);
   },
   setEditAnnotation: ({ commit }, values) => {
     commit("SET_EDIT_ANNOTATION", values);
@@ -713,9 +706,6 @@ const mutations = {
   },
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
-  },
-  SET_EDIT_MODE: (state, option) => {
-    state.editMode = option;
   },
   SET_EDIT_ANNOTATION: (state, { id, index, label, labelSet }) => {
     state.editAnnotation = {

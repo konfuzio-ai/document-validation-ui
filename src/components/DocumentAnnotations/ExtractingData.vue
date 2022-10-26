@@ -6,7 +6,6 @@
         :isLoading="true"
         :saveBtn="false"
         :cancelBtn="false"
-        :isActive="false"
         :menu="false"
       />
     </div>
