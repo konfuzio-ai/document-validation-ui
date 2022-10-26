@@ -23,6 +23,18 @@ const getters = {
     return "";
   },
 
+  /**
+   * Get the category for a given category ID
+   */
+  category: state => categoryId => {
+    if (categoryId && state.categories) {
+      return state.categories.find(
+        tempCategory => tempCategory.id == categoryId
+      );
+    }
+    return null;
+  },
+
   documentListForUser: () => currentUser => {
     return state.availableDocumentsList.filter(
       document => document.assignee === currentUser

@@ -34,7 +34,8 @@
     >
       <CategorizeModal
         :show="showCategorizeModal"
-        :document="selectedDocument"
+        :category="category(selectedDocument.category)"
+        @close="showCategorizeModal = false"
       />
       <div
         v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
@@ -171,6 +172,7 @@ export default {
       "sidebarAnnotationSets",
       "selectedDocument"
     ]),
+    ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelHasAnnotations",

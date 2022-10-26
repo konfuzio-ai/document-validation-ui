@@ -244,7 +244,17 @@ button {
     }
   }
 
+
+
   &.is-active {
+    &.modal-no-footer {
+      .modal-content {
+        .modal-card-body {
+          border-radius: 16px 16px 16px 16px !important;
+        }
+      }
+    }
+
     .modal-content {
       height: auto;
       margin-left: auto;

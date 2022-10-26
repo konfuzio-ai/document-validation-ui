@@ -1,18 +1,17 @@
 <style scoped lang="scss" src="../../assets/scss/categorize_modal.scss"></style>
 
 <template>
-  <section class="categorize-modal" v-if="document">
+  <section class="categorize-modal" v-if="category">
     <b-modal
       v-model="show"
       :can-cancel="['x']"
-      class="modal-absolute modal-400"
+      class="modal-absolute modal-400 modal-no-footer"
     >
       <section class="modal-card-body">
         <div class="content">
           <h3>{{ $t("categorize_document_title") }}</h3>
           <p>
-            {{ $t("categorized_as")
-            }}<strong>{{ categoryName(document.category) }}</strong
+            {{ $t("categorized_as") }}<strong>{{ category.name }}</strong
             >.&nbsp;{{ $t("categorized_error") }}
           </p>
           <b-dropdown
@@ -24,25 +23,30 @@
               <div class="category-dropdown">
                 <div>
                   <span>{{ categoryName(selectedCategoryId) }}</span>
-                  <CaretDown />
                 </div>
               </div>
             </template>
             <b-dropdown-item
-              v-for="category in categories"
-              :key="category.id"
+              v-for="categoryItem in categories"
+              :key="categoryItem.id"
               aria-role="listitem"
+              :value="categoryItem.id"
             >
-              <span>{{ category.name }}</span>
+              <span>{{ categoryItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
+          <div class="category-description">
+            {{
+              category.description
+                ? category.description
+                : $t("categorize_document_no_category_description")
+            }}
+          </div>
+          <b-button class="submit-category" type="is-primary" @click="submit">
+            {{ $t("submit") }}
+          </b-button>
         </div>
       </section>
-      <footer class="modal-card-foot">
-        <b-button type="is-primary" @click="submit">
-          {{ $t("submit") }}
-        </b-button>
-      </footer>
     </b-modal>
   </section>
 </template>
@@ -58,13 +62,10 @@ export default {
       required: true,
       default: false
     },
-    document: {
+    category: {
       required: true,
       default: null
     }
-  },
-  components: {
-    CaretDown
   },
   computed: {
     ...mapGetters("category", ["categoryName"]),
@@ -72,13 +73,39 @@ export default {
   },
   data() {
     return {
-      selectedCategoryId: document ? document.category : 0
+      selectedCategoryId: this.category ? this.category.id : 0
     };
   },
   methods: {
     submit() {
-      if (selectedCategoryId !== document.category) {
-        // TODO: Implement
+      if (this.selectedCategoryId !== this.category.id) {
+        const updatedCategory = {
+          category: this.selectedCategoryId,
+          is_category_accepted: true
+        };
+        this.$store.dispatch("document/startRecalculatingAnnotations");
+
+        this.$store
+          .dispatch("document/updateDocument", updatedCategory)
+          .then(response => {
+            if (response) {
+              // TODO: this should be done on the update document endpoint
+              // Poll document data until the status_data is 111 (error) or
+              // 2 and labeling is available (done)
+              this.$store.dispatch("document/pollDocumentEndpoint", 5000);
+            } else {
+              this.$store.dispatch("document/endRecalculatingAnnotations");
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("category_error")
+              );
+            }
+          });
+      } else {
+        // if same category, then just accept it
+        this.$store.dispatch("document/updateDocument", {
+          is_category_accepted: true
+        });
       }
       this.$emit("close");
     }
