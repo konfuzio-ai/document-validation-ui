@@ -29,8 +29,12 @@
             }}
           </div>
         </div>
-        <div :class="['caret', splitMode && 'split-mode-caret']">
-          <b-icon icon="angle-down" size="is-small" class="caret"></b-icon>
+        <div :class="[!splitMode && 'caret-section']">
+          <b-icon
+            icon="angle-down"
+            size="is-small"
+            :class="['caret', splitMode && 'split-mode-caret']"
+          ></b-icon>
         </div>
       </div>
     </template>

@@ -199,7 +199,7 @@ button {
 .dropdown {
   height: 100%;
 
-  +.dropdown {
+  + .dropdown {
     margin-left: 0;
   }
 
@@ -370,7 +370,13 @@ button {
 
   &.caret {
     svg {
-      height: 10px;
+      height: 12px;
+    }
+
+    &.split-mode-caret {
+      svg {
+        color: $grey;
+      }
     }
   }
 
