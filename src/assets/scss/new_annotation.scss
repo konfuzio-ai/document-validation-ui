@@ -1,60 +1,60 @@
 @import "./imports.scss";
 
 .annotation-popup {
-    border-radius: 12px;
+  border-radius: 12px;
+  background-color: $dark-blue;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  width: 205px;
+  height: 192px;
+  z-index: 999;
+  color: $white;
+  padding: 8px;
+
+  .popup-input {
     background-color: $dark-blue;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: absolute;
-    width: 205px;
-    height: 192px;
-    z-index: 999;
     color: $white;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    outline: none;
+    box-shadow: none;
     padding: 8px;
+    border-radius: 12px;
+    border: 1px solid $grey-low-opacity;
+    width: 100%;
+    justify-content: space-between;
+    position: relative;
 
-    .popup-input {
-        background-color: $dark-blue;
-        color: $white;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 20px;
-        outline: none;
-        box-shadow: none;
-        padding: 8px;
-        border-radius: 12px;
+    .caret-icon {
+      position: absolute;
+      right: 18px;
+      padding-top: 1px;
+    }
+  }
+
+  .not-selected {
+    color: $grey-detail;
+  }
+
+  .annotation-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    gap: 2px;
+
+    .cancel-button {
+      color: $white;
+
+      &:hover {
         border: 1px solid $grey-low-opacity;
-        width: 100%;
-        justify-content: space-between;
-        position: relative;
-
-        .caret-icon {
-            position: absolute;
-            right: 12px;
-        }
+      }
     }
 
-    .not-selected {
-        color: $grey-detail;
+    .popup-button {
+      font-size: 14px;
     }
-
-    .annotation-buttons {
-        display: flex;
-        justify-content: flex-end;
-        flex-direction: row;
-        gap: 2px;
-
-
-        .cancel-button {
-            color: $white;
-
-            &:hover {
-                border: 1px solid $grey-low-opacity;
-            }
-        }
-
-        .popup-button {
-            font-size: 14px;
-        }
-    }
+  }
 }
