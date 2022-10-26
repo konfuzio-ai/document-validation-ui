@@ -8,10 +8,7 @@
   >
     <div class="document-top-bar">
       <div class="left-bar-components">
-        <DocumentCategory
-          v-if="categories && !editMode"
-          :selectedDocument="selectedDocument"
-        />
+        <DocumentCategory v-if="categories && !editMode" />
         <DocumentDatasetStatus
           v-if="showDatasetDropdown && !editMode"
           :datasetStatus="selectedDocument.dataset_status"
@@ -73,7 +70,7 @@
 <script>
 import { mapState } from "vuex";
 import DocumentDatasetStatus from "./DocumentDatasetStatus";
-import DocumentCategory from "./DocumentCategory";
+import DocumentCategory from "../DocumentCategory";
 import DocumentName from "./DocumentName";
 import DocumentHandover from "./DocumentHandover";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
