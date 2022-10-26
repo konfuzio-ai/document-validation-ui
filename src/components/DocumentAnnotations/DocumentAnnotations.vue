@@ -119,7 +119,6 @@
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
-import CaretDown from "../../assets/images/CaretDownImg";
 import ActionButtons from "./ActionButtons";
 import Label from "./Label";
 import RejectedLabels from "./RejectedLabels";
@@ -133,7 +132,6 @@ export default {
   components: {
     EmptyState,
     ExtractingData,
-    CaretDown,
     ActionButtons,
     Label,
     RejectedLabels,

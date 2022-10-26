@@ -1,8 +1,4 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_category.scss"
-></style>
+<style scoped lang="scss" src="../assets/scss/document_category.scss"></style>
 
 <template>
   <b-dropdown
@@ -53,7 +49,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import CategoryIcon from "../../assets/images/CategoryIconImg";
+import CategoryIcon from "../assets/images/CategoryIconImg";
 
 export default {
   name: "DocumentCategory",
