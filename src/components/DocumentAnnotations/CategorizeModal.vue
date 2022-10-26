@@ -53,7 +53,6 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import CaretDown from "../../assets/images/TopBarCaretDownImg";
 
 export default {
   name: "CategorizeModal",
