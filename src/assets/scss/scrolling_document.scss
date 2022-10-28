@@ -1,8 +1,7 @@
 @import "./imports.scss";
 
 .scrolling-document {
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
   height: 100%;
   scroll-behavior: smooth;
 
