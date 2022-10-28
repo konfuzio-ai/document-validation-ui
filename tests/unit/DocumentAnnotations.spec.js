@@ -198,7 +198,7 @@ describe("Document Annotations Component", () => {
   it("Should only show the Rejected title when there are rejected labels", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
-    const handleReject = jest.fn().mockName("rejectAnnotation");
+    const handleReject = jest.fn().mockName("rejectMissingAnnotations");
 
     const wrapper = mount(DocumentAnnotations, {
       store,

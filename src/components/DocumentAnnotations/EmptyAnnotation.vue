@@ -68,7 +68,7 @@ export default {
       "editAnnotation",
       "publicView",
       "documentId",
-      "rejectAnnotation",
+      "rejectedMissingAnnotations",
       "annotationSets"
     ])
   },
@@ -207,7 +207,7 @@ export default {
         this.cancelEmptyAnnotation(true);
       }
     },
-    rejectAnnotation(newValue) {
+    rejectedMissingAnnotations(newValue) {
       if (
         newValue &&
         newValue.label === this.label.id &&

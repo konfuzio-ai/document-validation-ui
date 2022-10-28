@@ -111,8 +111,9 @@ export default {
 
       const labelId = this.label.id;
       const labelSetId = this.annotationSet.label_set.id;
+      const annotationSetId = this.annotationSet.id;
 
-      this.$emit("handle-reject", labelId, labelSetId);
+      this.$emit("handle-reject", labelId, labelSetId, annotationSetId, false);
     },
     toggleGroup() {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;

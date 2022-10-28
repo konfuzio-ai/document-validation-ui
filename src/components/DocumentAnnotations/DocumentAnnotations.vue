@@ -54,7 +54,10 @@
               :showReject="false"
               :acceptBtn="false"
               :rejectAllEmptyBtn="showRejectAllEmptyBtn"
-              @reject-all-empty="rejectAllEmpty(annotationSet)"
+              :annotationSet="annotationSet"
+              @reject-all-empty="
+                rejectMissingAnnotations(null, null, annotationSet, true)
+              "
               @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
               @leave-empty-labels="hoveredLabelSet = null"
             />
@@ -70,7 +73,7 @@
               :label="label"
               :annotationSet="annotationSet"
               :indexGroup="indexGroup"
-              @handle-reject="rejectAnnotation"
+              @handle-reject="rejectMissingAnnotations"
             />
           </div>
         </div>
@@ -122,6 +125,7 @@ export default {
   },
   computed: {
     ...mapState("document", [
+      "documentId",
       "recalculatingAnnotations",
       "missingAnnotations",
       "publicView",
@@ -247,10 +251,7 @@ export default {
         ) {
           // Reject annotation
           if (this.editAnnotation.id === annotations[currentAnnIndex].id) {
-            this.rejectAnnotation(
-              this.editAnnotation.label,
-              this.editAnnotation.labelSet
-            );
+            this.rejectMissingAnnotations();
           }
           this.jumpToNextAnnotation = true;
         } else {
@@ -275,16 +276,48 @@ export default {
       }
     },
 
-    rejectAnnotation(label, labelSet) {
-      const rejected = {
-        label: label,
-        label_set: labelSet
-      };
+    rejectMissingAnnotations(label, labelSet, annotationSet, rejectAll) {
+      let rejected;
 
-      this.$store.dispatch("document/setRejectAnnotation", rejected);
+      if (label && labelSet && !rejectAll) {
+        // if single rejection is triggered by clicking the button
+
+        rejected = {
+          document: this.documentId,
+          label: label,
+          label_set: labelSet,
+          annotation_set: annotationSet
+        };
+      } else if (this.editAnnotation && this.editAnnotation.id !== null) {
+        // if single rejection is triggered from "delete" key
+
+        rejected = {
+          document: this.documentId,
+          label: this.editAnnotation.label,
+          label_set: this.editAnnotation.labelSet,
+          annotation_set: this.editAnnotation.annotationSet
+        };
+      } else if (annotationSet && rejectAll) {
+        // reject all labels in annotation set
+
+        const emptyLabels = annotationSet.labels.filter(
+          label => label.annotations.length === 0
+        );
+
+        rejected = emptyLabels.map(label => {
+          return {
+            document: this.documentId,
+            label: label.id,
+            label_set: annotationSet.label_set.id,
+            annotation_set: annotationSet.id
+          };
+        });
+      }
+
+      this.$store.dispatch("document/setRejectedMissingAnnotations", rejected);
 
       this.$store
-        .dispatch("document/addMissingAnnotation", rejected)
+        .dispatch("document/addMissingAnnotations", rejected)
         .then(response => {
           if (response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
@@ -298,7 +331,7 @@ export default {
           }
         })
         .finally(() => {
-          this.$store.dispatch("document/setRejectAnnotation", null);
+          this.$store.dispatch("document/setRejectedMissingAnnotations", null);
         });
     },
 
@@ -306,18 +339,6 @@ export default {
       if (!annotationSet) return;
 
       this.hoveredLabelSet = annotationSet;
-    },
-
-    rejectAllEmpty(annotationSet) {
-      const labelsToReject = [];
-
-      annotationSet.labels.map(label => {
-        if (label.annotations.length === 0) {
-          labelsToReject.push(label.id);
-        }
-      });
-
-      console.log(labelsToReject);
     }
   },
   watch: {

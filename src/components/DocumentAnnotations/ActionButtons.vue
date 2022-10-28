@@ -60,7 +60,7 @@
       @mouseleave="leaveEmptyLabels"
     >
       <b-button type="is-ghost" class="reject-btn" @click.stop="rejectAllEmpty">
-        {{ $t("reject_group") }}
+        {{ $t("reject_all_empty") }} ({{ emptyLabelsLength }})
       </b-button>
     </div>
 
@@ -125,10 +125,20 @@ export default {
     },
     rejectAllEmptyBtn: {
       type: Boolean
+    },
+    annotationSet: {
+      type: Object
     }
   },
   computed: {
-    ...mapState("document", ["publicView"])
+    ...mapState("document", ["publicView"]),
+    emptyLabelsLength() {
+      const labels = this.annotationSet.labels.filter(
+        label => label.annotations.length === 0
+      );
+
+      return labels.length;
+    }
   },
   methods: {
     save() {
