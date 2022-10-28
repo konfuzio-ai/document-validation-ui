@@ -32,7 +32,6 @@
         :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
         :isLoading="isLoading"
-        :menu="!isAnnotationBeingEdited"
         :acceptBtn="showAcceptButton"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
