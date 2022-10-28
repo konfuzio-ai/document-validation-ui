@@ -20,6 +20,12 @@
         size="is-small"
       />
       <b-icon
+        v-else-if="accepted && edited"
+        :class="[animate ? 'animated-ripple' : 'green']"
+        icon="user"
+        size="is-small"
+      />
+      <b-icon
         v-else-if="accepted"
         :class="[animate ? 'animated-ripple' : '', 'green']"
         icon="check"
@@ -91,6 +97,16 @@ export default {
           this.annotation.created_by &&
           !this.annotation.revised &&
           this.annotation.is_correct
+        );
+      } else {
+        return null;
+      }
+    },
+    edited() {
+      if (this.annotation) {
+        return (
+          this.annotation.offset_string !==
+          this.annotation.offset_string_original
         );
       } else {
         return null;
