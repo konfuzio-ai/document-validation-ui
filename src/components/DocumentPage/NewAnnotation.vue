@@ -174,28 +174,15 @@ export default {
         offset_string: this.selectedContent
       };
 
-      let annotationToCreate;
+      const annotationToCreate = {
+        document: this.documentId,
+        span: [span],
+        label: this.selectedLabel.id,
+        annotation_set: this.selectedAnnotationSet.id,
+        is_correct: true,
+        revised: false
+      };
 
-      if (this.annotationSet.id) {
-        annotationToCreate = {
-          document: this.documentId,
-          span: [span],
-          label: this.selectedLabel.id,
-          annotation_set: this.annotationSet.id,
-          is_correct: true,
-          revised: false
-        };
-      } else {
-        // if annotation set id is null
-        annotationToCreate = {
-          document: this.documentId,
-          span: [span],
-          label: this.selectedLabel.id,
-          label_set: this.selectedAnnotationSet.label_set.id,
-          is_correct: true,
-          revised: false
-        };
-      }
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then(response => {
