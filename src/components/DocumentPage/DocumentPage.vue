@@ -420,7 +420,7 @@ export default {
     entityRect(entity) {
       return {
         stroke: "#ccc",
-        strokeWidth: 2,
+        strokeWidth: 1,
         dash: [5, 2],
         fill:
           this.newAnnotation && this.newAnnotation.entity === entity
@@ -532,6 +532,9 @@ export default {
       if (newValue.labeling_available === 1) {
         this.drawPage(true);
       }
+    },
+    scale() {
+      this.closeNewAnnotation();
     }
   },
   mounted() {
