@@ -39,11 +39,7 @@
         v-bind:key="indexGroup"
         class="annotation-set-group"
       >
-        <div
-          class="label-set-header"
-          @mouseenter="handleShowRejectGroup(annotationSet.id)"
-          @mouseleave="handleShowRejectGroup(null)"
-        >
+        <div class="label-set-header">
           <div class="label-set-name">
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
@@ -51,14 +47,18 @@
               )}`
             }}
           </div>
-          <ActionButtons
-            :saveBtn="false"
-            :cancelBtn="false"
-            :showReject="false"
-            :acceptBtn="false"
-            :rejectGroupBtn="showRejectGroup && hovered === annotationSet.id"
-            @reject-group="rejectGroup(annotationSet)"
-          />
+          <div class="labelset-action-buttons">
+            <ActionButtons
+              :saveBtn="false"
+              :cancelBtn="false"
+              :showReject="false"
+              :acceptBtn="false"
+              :rejectAllEmptyBtn="showRejectAllEmptyBtn"
+              @reject-all-empty="rejectAllEmpty(annotationSet)"
+              @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
+              @leave-empty-labels="hoveredLabelSet = null"
+            />
+          </div>
         </div>
 
         <div v-for="label in annotationSet.labels" :key="label.id">
@@ -116,8 +116,8 @@ export default {
       count: 0,
       jumpToNextAnnotation: false,
       numberOfLoadingAnnotations: 3,
-      showRejectGroup: false,
-      hovered: null
+      showRejectAllEmptyBtn: true,
+      hoveredLabelSet: null
     };
   },
   computed: {
@@ -302,16 +302,13 @@ export default {
         });
     },
 
-    handleShowRejectGroup(setId) {
-      if (!setId) {
-        this.showRejectGroup = false;
-        this.hovered = null;
-      } else {
-        this.showRejectGroup = true;
-        this.hovered = setId;
-      }
+    handleHoverEmptylabelsInSet(annotationSet) {
+      if (!annotationSet) return;
+
+      this.hoveredLabelSet = annotationSet;
     },
-    rejectGroup(annotationSet) {
+
+    rejectAllEmpty(annotationSet) {
       const labelsToReject = [];
 
       annotationSet.labels.map(label => {

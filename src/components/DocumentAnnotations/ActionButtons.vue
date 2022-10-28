@@ -5,6 +5,7 @@
 ></style>
 <template>
   <div class="action-buttons">
+    <!-- loading -->
     <div v-if="isLoading && !finishReviewBtn">
       <b-notification :closable="false" class="loading-background">
         <b-loading :is-full-page="isFullPage" v-model="isLoading">
@@ -14,6 +15,7 @@
       </b-notification>
     </div>
 
+    <!-- save button -->
     <b-button
       v-if="saveBtn && !isLoading"
       class="annotation-save-btn text-btn"
@@ -23,6 +25,7 @@
       {{ $t("save") }}
     </b-button>
 
+    <!-- cancel button -->
     <b-button
       v-if="cancelBtn && !isLoading"
       class="is-small annotation-cancel-btn"
@@ -30,6 +33,7 @@
       @click.stop="cancel"
     />
 
+    <!-- accept button -->
     <b-button
       v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
       class="annotation-accept-btn"
@@ -38,6 +42,7 @@
       >{{ $t("accept") }}</b-button
     >
 
+    <!-- reject button -->
     <div
       class="reject-button-container"
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
@@ -47,15 +52,19 @@
       </b-button>
     </div>
 
+    <!-- reject all labels -->
     <div
       class="reject-button-container"
-      v-if="rejectGroupBtn && !isLoading && !cancelBtn && !saveBtn"
+      v-if="rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn"
+      @mouseenter="hoverEmptyLabels"
+      @mouseleave="leaveEmptyLabels"
     >
-      <b-button type="is-ghost" class="reject-btn" @click.stop="rejectGroup">
+      <b-button type="is-ghost" class="reject-btn" @click.stop="rejectAllEmpty">
         {{ $t("reject_group") }}
       </b-button>
     </div>
 
+    <!-- finish review button -->
     <b-button
       v-if="finishReviewBtn"
       :class="['finish-review-btn', 'text-btn']"
@@ -114,7 +123,7 @@ export default {
     handleReject: {
       type: Function
     },
-    rejectGroupBtn: {
+    rejectAllEmptyBtn: {
       type: Boolean
     }
   },
@@ -134,8 +143,14 @@ export default {
     reject() {
       this.$parent.$emit("reject");
     },
-    rejectGroup() {
-      this.$emit("reject-group");
+    hoverEmptyLabels() {
+      this.$emit("hover-empty-labels");
+    },
+    leaveEmptyLabels() {
+      this.$emit("leave-empty-labels");
+    },
+    rejectAllEmpty() {
+      this.$emit("reject-all-empty");
     },
     finishReview() {
       this.$emit("finish-review");

@@ -2,12 +2,7 @@
 <template>
   <div class="data-extraction-container">
     <div class="loading-container">
-      <ActionButtons
-        :isLoading="true"
-        :saveBtn="false"
-        :cancelBtn="false"
-        :menu="false"
-      />
+      <ActionButtons :isLoading="true" :saveBtn="false" :cancelBtn="false" />
     </div>
     <div class="data-extraction-text">
       <p class="title">{{ $t("data_being_extracted") }}</p>

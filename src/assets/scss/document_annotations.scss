@@ -402,24 +402,6 @@
         width: 32px;
       }
     }
-
-    .menu-buttons {
-      .dropdown {
-        border: none;
-
-        &:hover {
-          background: none;
-          cursor: pointer;
-        }
-
-        .dropdown-trigger {
-          .menu-icon {
-            width: 3px;
-            color: $action-grey;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -435,27 +417,6 @@
 
   .btn-container {
     display: flex;
-
-    .menu {
-      width: 18px;
-
-      .dropdown {
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        width: 100%;
-
-        &:hover {
-          background-color: $grey-lighter;
-        }
-      }
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 }
 
