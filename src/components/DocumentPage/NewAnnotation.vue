@@ -15,7 +15,12 @@
                 } ${numberOfAnnotationSetGroup(selectedAnnotationSet)}`
               : $t("select_annotation_set")
           }}
-          <span class="caret-icon"><CaretDownWhite /></span
+          <span class="caret-icon">
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              class="caret"
+            ></b-icon> </span
         ></b-button>
       </template>
       <b-dropdown-item
@@ -42,7 +47,12 @@
           type="is-text"
         >
           {{ selectedLabel ? selectedLabel.name : $t("select_label") }}
-          <span class="caret-icon"><CaretDownWhite /></span
+          <span class="caret-icon">
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              class="caret"
+            ></b-icon> </span
         ></b-button>
       </template>
       <b-dropdown-item
@@ -83,12 +93,8 @@ const margin = 12;
 const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
-import CaretDownWhite from "../../assets/images/CaretDownWhiteImg";
 
 export default {
-  components: {
-    CaretDownWhite
-  },
   props: {
     entity: {
       type: Object,

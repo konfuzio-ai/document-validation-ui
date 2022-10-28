@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="caret">
-          <CaretDown />
+          <b-icon icon="angle-down" size="is-small" class="caret"></b-icon>
         </div>
       </div>
     </template>
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import CaretDown from "../../assets/images/TopBarCaretDownImg";
 import StatusIcon from "../../assets/images/StatusImg";
 
 export default {
@@ -60,7 +59,6 @@ export default {
     }
   },
   components: {
-    CaretDown,
     StatusIcon
   },
   methods: {
@@ -73,7 +71,7 @@ export default {
         .dispatch("document/updateDocument", updatedDatasetStatus)
         .then(response => {
           // Check if the response is successfull or not
-          if (response) {
+          if (response === 200) {
             this.currentStatus = this.statusList[index];
           } else {
             this.$store.dispatch(

@@ -181,7 +181,7 @@ export default {
         .dispatch("document/updateDocument", updatedFileName)
         .then(response => {
           // Check if the response is successfull or not
-          if (response) {
+          if (response === 200) {
             // if successful, set the old name to be the new name
             this.changed = true;
             this.oldFileName = this.fileName;

@@ -82,7 +82,7 @@
  */
 
 import { mapState } from "vuex";
-import DocumentCategory from "../DocumentTopBar/DocumentCategory";
+import DocumentCategory from "../DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
 
 export default {

@@ -3,7 +3,6 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  loading: true,
   selectedCategory: null,
   categoryId: null,
   documents: null,
@@ -32,12 +31,6 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({ commit }) => {
-    commit("SET_LOADING", true);
-  },
-  endLoading: ({ commit }) => {
-    commit("SET_LOADING", false);
-  },
   setDocuments: ({ commit }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
@@ -179,9 +172,6 @@ const actions = {
 };
 
 const mutations = {
-  SET_LOADING: (state, loading) => {
-    state.loading = loading;
-  },
   SET_SELECTED_CATEGORY: (state, category) => {
     state.selectedCategory = category;
   },

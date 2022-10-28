@@ -25,7 +25,7 @@
                 @click="open = false"
                 class="close-icon-container modal-btn"
               >
-                <b-icon icon="xmark" class="close-btn" />
+                <b-icon icon="xmark" class="close-btn" size="is-small" />
               </div>
             </div>
             <div class="input-container">
@@ -158,40 +158,6 @@ export default {
       } else {
         assignee = { email: `${this.selected}`, role: "annotator" };
       }
-
-      /** IF EXISTING MEMBER
-       * function already exists in store
-       */
-      // this.$store.dispatch("document/updateDocument", assignee)
-      // .then(response => {
-      //     // Check if the response is successfull or not
-      //     if (response) {
-      //       this.snackbar();
-      //       this.selected = null;
-      //     } else {
-      //     }
-      //   })
-      //   .finally(() => {
-      //     this.isLoading = false;
-      //   });
-
-      /** IF MEMBER
-       * Create new function in store
-       * POST request
-       * /api/v3/projects/ID/members/
-       */
-      // this.$store.dispatch("document/updateMembers", assignee)
-      // .then(response => {
-      //     // Check if the response is successfull or not
-      //     if (response) {
-      //       this.snackbar();
-      //       this.selected = null;
-      //     } else {
-      //     }
-      //   })
-      //   .finally(() => {
-      //     this.isLoading = false;
-      //   });
 
       setTimeout(() => {
         this.isLoading = false;

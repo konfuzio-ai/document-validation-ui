@@ -25,7 +25,7 @@
       :contenteditable="isAnnotationBeingEdited"
       @click="handleEditAnnotation"
       @paste="handlePaste"
-      @keypress.enter="event => event.preventDefault()"
+      @keypress.enter="saveAnnotationChanges"
       :id="annotation.id"
     >
       {{ this.span.offset_string }}
@@ -37,7 +37,6 @@
       <ActionButtons
         :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
-        :isActive="!isLoading"
         :isLoading="isLoading"
         :menu="!isAnnotationBeingEdited"
         :acceptBtn="showAcceptButton"

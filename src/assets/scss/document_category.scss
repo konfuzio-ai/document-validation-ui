@@ -7,10 +7,6 @@
     border: 1px solid $grey-detail;
     border-radius: 4px;
     background-color: $white;
-
-    .category-drop-down {
-      gap: 5px;
-    }
   }
 
   &.disabled {
@@ -21,27 +17,34 @@
     display: flex;
     height: 100%;
     align-items: center;
-    padding: 0 8px 0 16px;
+    padding: 0 8px 0 14px;
     border-right: $component-border;
 
     &:hover {
       background-color: $background;
     }
 
+    .caret-section {
+      padding-top: 5px;
+    }
+
     .caret,
     .icon {
       text-align: center;
-      margin-right: 8px;
+      margin-right: 4px;
 
       &.split-mode-caret {
         padding-left: 8px;
-        padding-bottom: 2px;
+        padding-right: 8px;
+        padding-top: 10px;
       }
     }
 
     .category-info {
       min-width: 100px;
       width: 100px;
+      margin-left: 5px;
+      margin-right: 5px;
 
       .category-title {
         font-size: 12px;

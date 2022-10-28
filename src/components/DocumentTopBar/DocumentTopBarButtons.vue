@@ -66,42 +66,10 @@ export default {
           .dispatch("edit/editDocument", this.updatedDocument)
           .then(async response => {
             await this.$store.dispatch("document/setPages", []);
-            const sleep = duration =>
-              new Promise(resolve => setTimeout(resolve, duration));
-            // Poll document data until the status_data is 111 (error) or
-            // 2 and labeling is available (done)
-            const pollUntilLabelingAvailable = duration => {
-              return this.$store
-                .dispatch("document/fetchDocumentData")
-                .then(async () => {
-                  if (
-                    this.selectedDocument.status_data === 2 &&
-                    this.selectedDocument.labeling_available === 1
-                  ) {
-                    // set to null so DocumentLabelSets can reset it when watching
-                    // the new groupedAnnotationSets
-                    setTimeout(async () => {
-                      await this.$store.dispatch(
-                        "document/setAnnotationSets",
-                        null
-                      );
-                      await this.$store.dispatch("document/fetchAnnotations");
-                      return true;
-                    }, 5000);
-                  } else if (this.selectedDocument.status_data === 111) {
-                    this.$store.dispatch("document/setDocumentError", true);
-                    return false;
-                  } else {
-                    return sleep(duration).then(() =>
-                      pollUntilLabelingAvailable(duration)
-                    );
-                  }
-                });
-            };
 
             // Check if the response is successfull or not
             if (response) {
-              pollUntilLabelingAvailable(5000);
+              this.$store.dispatch("document/pollDocumentEndpoint", 1000);
             } else {
               this.showError();
             }

@@ -5,8 +5,8 @@
     <div class="message-container">
       {{ errorMessage }}
     </div>
-    <div @click="handleErrorClose" class="btn-container">
-      <b-icon icon="xmark" class="close-btn error-icon" />
+    <div @click="handleErrorClose" class="btn-container" type="button">
+      <b-icon icon="xmark" class="close-btn error-icon" size="is-small" />
     </div>
   </b-message>
 </template>

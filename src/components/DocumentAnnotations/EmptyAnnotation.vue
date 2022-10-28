@@ -33,7 +33,6 @@
       :cancelBtn="isAnnotationBeingEdited()"
       :showReject="showReject"
       :isLoading="isLoading"
-      :isActive="!isLoading"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
     />
