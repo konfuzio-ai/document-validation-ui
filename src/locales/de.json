@@ -91,5 +91,5 @@
   "categorize_document_no_category_description": "Ask the Project Manager to add a description of this Category to know more about this category.",
   "annotations_pending": "pending",
   "annotations_accepted": "accepted",
-  "reject_group": "Reject all empty"
+  "reject_all_empty": "Reject all empty"
 }
