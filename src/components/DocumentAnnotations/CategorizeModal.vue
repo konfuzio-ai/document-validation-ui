@@ -98,7 +98,7 @@ export default {
       this.show = !this.categorizationIsConfirmed;
     },
     submit() {
-      if (this.selectedCategory.id !== this.category.id) {
+      if (this.selectedCategory.id !== this.documentCategory.id) {
         const updatedCategory = {
           category: this.selectedCategory.id,
           is_category_accepted: true
@@ -127,7 +127,7 @@ export default {
           is_category_accepted: true
         });
       }
-      this.$emit("close");
+      this.show = false;
     }
   },
   watch: {

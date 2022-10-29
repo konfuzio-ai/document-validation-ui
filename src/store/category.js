@@ -41,8 +41,7 @@ const getters = {
     let isCurrentDocumentInTheList = false;
     const availableDocuments = state.availableDocumentsList.map(
       document => {
-        if (document) {
-          // if (document.assignee === user) {
+        if (document.assignee === user) {
           if (currentDocument && document.id === currentDocument.id) {
             isCurrentDocumentInTheList = true;
           }
@@ -107,9 +106,7 @@ const actions = {
       let errors = 0;
       count += 1;
 
-      // TODO: refactor this to not make two requests
       return dispatch("fetchDocumentList", categoryId).then(() => {
-        console.log("docs", state.documents)
         for (let i = 0; i < state.documents.length; i++) {
           const found = state.availableDocumentsList.find(
             doc => doc.id === state.documents[i].id

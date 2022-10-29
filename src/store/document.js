@@ -528,6 +528,11 @@ const actions = {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
           if (response.status === 200) {
+            // TODO: remove this after implementation in backend for is_category_accepted
+            if (updatedDocument.is_category_accepted) {
+              response.data.is_category_accepted = true;
+            }
+
             commit("SET_SELECTED_DOCUMENT", response.data);
             resolve(response.status);
           }
