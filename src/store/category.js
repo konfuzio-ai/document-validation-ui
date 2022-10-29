@@ -3,9 +3,8 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  selectedCategory: null,
-  categoryId: null,
-  documents: null,
+  // TODO: change name of variables to be easier to understand 
+  documents: [],
   availableDocumentsList: [],
   categories: null
 };
@@ -23,49 +22,69 @@ const getters = {
     return "";
   },
 
-  documentListForUser: () => currentUser => {
-    return state.availableDocumentsList.filter(
-      document => document.assignee === currentUser
+  /**
+   * Get the category for a given category ID
+   */
+  category: state => categoryId => {
+    if (categoryId && state.categories) {
+      return state.categories.find(
+        tempCategory => tempCategory.id == categoryId
+      );
+    }
+    return null;
+  },
+
+  /**
+   * Documents assigned to a given user
+   */
+  documentListForUser: () => (user, currentDocument) => {
+    let isCurrentDocumentInTheList = false;
+    const availableDocuments = state.availableDocumentsList.map(
+      document => {
+        if (document.assignee === user) {
+          if (currentDocument && document.id === currentDocument.id) {
+            isCurrentDocumentInTheList = true;
+          }
+          return document;
+        }
+      }
     );
+    // if the current document is not in the list and the list has documents to show, then add it to the first index
+    if (!isCurrentDocumentInTheList && currentDocument && availableDocuments.length > 0) {
+      availableDocuments.unshift(currentDocument);
+    }
+    return availableDocuments;
   }
 };
 
 const actions = {
-  setDocuments: ({ commit }, documents) => {
+  setDocuments: ({
+    commit
+  }, documents) => {
     commit("SET_DOCUMENTS", documents);
   },
-  setAvailableDocumentsList: ({ commit }, availableDocumentsList) => {
+  setAvailableDocumentsList: ({
+    commit
+  }, availableDocumentsList) => {
     commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
   },
-  setCategoryId: ({ commit }, categoryId) => {
-    commit("SET_CATEGORIES", null);
-    commit("SET_CATEGORY_ID", categoryId);
-  },
-  setCategories: ({ commit }, categories) => {
+  setCategories: ({
+    commit
+  }, categories) => {
     commit("SET_CATEGORIES", categories);
-  },
-  setSelectedCategory: ({ commit }, category) => {
-    commit("SET_SELECTED_CATEGORY", category);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit, state, rootState }) => {
-    // TODO: add lazy loading
-    return HTTP.get(`documents/?category=${state.categoryId}&limit=100`)
+  fetchDocumentList: ({
+    commit
+  }, categoryId) => {
+    // TODO: we should filter by user and remove the limit
+    return HTTP.get(`documents/?category=${categoryId}&limit=100`)
       .then(response => {
         if (response.data.results) {
-          const documents = response.data.results;
-          // set selected document in first position
-          documents.forEach((document, i) => {
-            if (document.id == rootState.document.documentId) {
-              documents.splice(i, 1);
-              documents.unshift(document);
-              return;
-            }
-          });
-          commit("SET_DOCUMENTS", documents);
+          commit("SET_DOCUMENTS", response.data.results);
         }
       })
       .catch(error => {
@@ -73,7 +92,10 @@ const actions = {
       });
   },
 
-  createAvailableDocumentsList: ({ state, dispatch }) => {
+  createAvailableDocumentsList: ({
+    state,
+    dispatch
+  }, categoryId) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -84,7 +106,7 @@ const actions = {
       let errors = 0;
       count += 1;
 
-      return dispatch("fetchDocumentList").then(() => {
+      return dispatch("fetchDocumentList", categoryId).then(() => {
         for (let i = 0; i < state.documents.length; i++) {
           const found = state.availableDocumentsList.find(
             doc => doc.id === state.documents[i].id
@@ -94,11 +116,14 @@ const actions = {
             // If the document is already in the available docs array
             // we go to the next item
             continue;
-          } else if (
+          }
+          // TODO: this business logic should be a method on the document store
+          else if (
             state.documents[i].status_data === 2 &&
             state.documents[i].labeling_available === 1
           ) {
             // add available doc to the end of the array
+            // TODO: this should be done on a mutation like COMMIT("add document") 
             state.availableDocumentsList.push(state.documents[i]);
           } else if (state.documents[i].status_data === 111) {
             dispatch("document/setDocumentError", true);
@@ -118,7 +143,7 @@ const actions = {
         if (
           state.documents.length !== state.availableDocumentsList.length &&
           state.availableDocumentsList.length + errors !==
-            state.documents.length
+          state.documents.length
         ) {
           if (count >= 10) return true;
 
@@ -134,7 +159,7 @@ const actions = {
 
     // Poll as long as the lengths are different
     if (
-      state.documents &&
+      state.documents.length === 0 ||
       state.documents.length !== state.availableDocumentsList.length
     ) {
       let duration;
@@ -145,24 +170,19 @@ const actions = {
       } else {
         duration = 10000;
       }
-
       pollUntilLabelingAvailable(duration);
     } else {
       return;
     }
   },
 
-  fetchCategories: ({ commit, state }) => {
-    return HTTP.get(`categories/?limit=100`)
+  fetchCategories: ({
+    commit
+  }, projectId) => {
+    return HTTP.get(`categories/?limit=100&project=${projectId}`)
       .then(async response => {
         if (response.data && response.data.results) {
           commit("SET_CATEGORIES", response.data.results);
-          if (state.categoryId) {
-            const selectedCategory = response.data.results.find(
-              category => category.id == state.categoryId
-            );
-            commit("SET_SELECTED_CATEGORY", selectedCategory);
-          }
         }
       })
       .catch(error => {
@@ -172,9 +192,6 @@ const actions = {
 };
 
 const mutations = {
-  SET_SELECTED_CATEGORY: (state, category) => {
-    state.selectedCategory = category;
-  },
   SET_DOCUMENTS: (state, documents) => {
     state.documents = documents;
   },
@@ -183,9 +200,6 @@ const mutations = {
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;
-  },
-  SET_CATEGORY_ID: (state, categoryId) => {
-    state.categoryId = categoryId;
   }
 };
 

@@ -81,13 +81,17 @@ export default {
   data() {
     return {
       showCategoryInfo: false,
+      selectedCategory: null,
       documentsList: null
     };
   },
   computed: {
     ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
-    ...mapState("category", ["documents", "selectedCategory"]),
-    ...mapGetters("category", { documentListForUser: "documentListForUser" })
+    ...mapState("category", ["documents"]),
+    ...mapGetters("category", {
+      documentListForUser: "documentListForUser",
+      category: "category"
+    })
   },
   methods: {
     changeDocument(documentId) {
@@ -100,7 +104,11 @@ export default {
   watch: {
     documents(newValue) {
       if (newValue) {
-        this.documentsList = this.documentListForUser(this.currentUser);
+        this.selectedCategory = this.category(this.selectedDocument.category);
+        this.documentsList = this.documentListForUser(
+          this.currentUser,
+          this.selectedDocument
+        );
       }
     }
   }

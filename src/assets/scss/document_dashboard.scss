@@ -9,6 +9,7 @@
   .dashboard-viewer {
     display: flex;
     min-height: 0;
+    height: 100%;
 
     &.loading-skeleton {
       overflow: hidden;
