@@ -32,11 +32,7 @@
       v-else
       :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
     >
-      <CategorizeModal
-        :show="showCategorizeModal"
-        :category="category(selectedDocument.category)"
-        @close="showCategorizeModal = false"
-      />
+      <CategorizeModal />
       <div
         v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
         v-bind:key="indexGroup"
@@ -154,8 +150,7 @@ export default {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3,
-      showCategorizeModal: true
+      numberOfLoadingAnnotations: 3
     };
   },
   computed: {
@@ -169,8 +164,7 @@ export default {
       "imageLoaded",
       "acceptAnnotation",
       "sidebarAnnotationSelected",
-      "sidebarAnnotationSets",
-      "selectedDocument"
+      "sidebarAnnotationSets"
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [

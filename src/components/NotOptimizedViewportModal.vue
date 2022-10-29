@@ -6,12 +6,7 @@
 
 <template>
   <section class="viewport-modal">
-    <b-modal
-      class="modal-text-center"
-      :width="500"
-      v-model="isModalActive"
-      :can-cancel="['x']"
-    >
+    <b-modal class="modal-text-center" :width="500" v-model="isModalActive">
       <section class="modal-card-body">
         <div class="image">
           <Illustration />

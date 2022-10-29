@@ -199,7 +199,7 @@ button {
 .dropdown {
   height: 100%;
 
-  + .dropdown {
+  +.dropdown {
     margin-left: 0;
   }
 
@@ -259,9 +259,15 @@ button {
       height: auto;
       margin-left: auto;
       margin-right: auto;
+      position: relative;
 
       .modal-close {
-        display: none !important;
+        position: absolute;
+
+        &::before,
+        &::after {
+          background-color: $grey;
+        }
       }
 
       .modal-card-body {
@@ -287,10 +293,6 @@ button {
   .modal-background {
     background-color: $full-black;
     opacity: 0.5;
-  }
-
-  .modal-close {
-    display: none !important;
   }
 }
 

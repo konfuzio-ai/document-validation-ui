@@ -1,28 +1,34 @@
 <style scoped lang="scss" src="../../assets/scss/categorize_modal.scss"></style>
 
 <template>
-  <section class="categorize-modal" v-if="category">
+  <section class="categorize-modal">
     <b-modal
+      ref="modal"
       v-model="show"
-      :can-cancel="['x']"
+      :can-cancel="documentCategory !== null"
       class="modal-absolute modal-400 modal-no-footer"
     >
       <section class="modal-card-body">
         <div class="content">
           <h3>{{ $t("categorize_document_title") }}</h3>
-          <p>
-            {{ $t("categorized_as") }}<strong>{{ category.name }}</strong
+          <p v-if="documentCategory">
+            {{ $t("categorized_as")
+            }}<strong>{{ documentCategory.name }}</strong
             >.&nbsp;{{ $t("categorized_error") }}
           </p>
+          <p v-else>{{ $t("not_categorized") }}</p>
           <b-dropdown
             aria-role="list"
-            v-model="selectedCategoryId"
+            v-model="selectedCategory"
             class="categorize-dropdown"
           >
             <template #trigger>
               <div class="category-dropdown">
                 <div>
-                  <span>{{ categoryName(selectedCategoryId) }}</span>
+                  <span v-if="selectedCategory">{{
+                    selectedCategory.name
+                  }}</span>
+                  <span v-else>{{ $t("choose_category") }}</span>
                 </div>
               </div>
             </template>
@@ -30,19 +36,27 @@
               v-for="categoryItem in categories"
               :key="categoryItem.id"
               aria-role="listitem"
-              :value="categoryItem.id"
+              :value="categoryItem"
             >
               <span>{{ categoryItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
-          <div class="category-description">
+          <div class="category-description" v-if="selectedCategory">
             {{
-              category.description
-                ? category.description
+              selectedCategory.description
+                ? selectedCategory.description
                 : $t("categorize_document_no_category_description")
             }}
           </div>
-          <b-button class="submit-category" type="is-primary" @click="submit">
+          <div class="category-description" v-else>
+            {{ $t("select_category") }}
+          </div>
+          <b-button
+            class="submit-category"
+            type="is-primary"
+            @click="submit"
+            :disabled="!selectedCategory"
+          >
             {{ $t("submit") }}
           </b-button>
         </div>
@@ -52,34 +66,46 @@
 </template>
 
 <script>
+/**
+ * This component shows a modal to categorize a document
+ */
+
 import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "CategorizeModal",
-  props: {
-    show: {
-      required: true,
-      default: false
-    },
-    category: {
-      required: true,
-      default: null
-    }
-  },
   computed: {
-    ...mapGetters("category", ["categoryName"]),
-    ...mapState("category", ["categories"])
+    ...mapState("category", ["categories"]),
+    ...mapState("document", ["selectedDocument"]),
+    ...mapGetters("category", ["category"]),
+    ...mapGetters("document", ["categorizationIsConfirmed"])
   },
   data() {
     return {
-      selectedCategoryId: this.category ? this.category.id : 0
+      show: false,
+      selectedCategory: null, // category selected in dropdown
+      documentCategory: null // category associated to document
     };
   },
+  mounted() {
+    this.setDocumentValues();
+  },
   methods: {
+    setDocumentValues() {
+      const category = this.category(this.selectedDocument.category);
+      // if (this.selectedDocument.category && category === null) {
+      //   // the document has a category but the categories from the project were not loaded
+      //   return;
+      // }
+
+      this.selectedCategory = category;
+      this.documentCategory = category;
+      this.show = !this.categorizationIsConfirmed;
+    },
     submit() {
-      if (this.selectedCategoryId !== this.category.id) {
+      if (this.selectedCategory.id !== this.category.id) {
         const updatedCategory = {
-          category: this.selectedCategoryId,
+          category: this.selectedCategory.id,
           is_category_accepted: true
         };
         this.$store.dispatch("document/startRecalculatingAnnotations");
@@ -107,6 +133,13 @@ export default {
         });
       }
       this.$emit("close");
+    }
+  },
+  watch: {
+    selectedDocument(newValue) {
+      if (newValue) {
+        this.setDocumentValues();
+      }
     }
   }
 };
