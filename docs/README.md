@@ -39,7 +39,7 @@ This component is responsible for creating a list to interact with each annotati
 
 ![DocumentsList](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/documents_list.gif)
 
-This is an optional component that is only loaded if a category ID is provided under the environment file. You also need to add add an [authentication token](https://dev.konfuzio.com/web/api_v3.html#authentication). Is responsible for loading the documents list for a given category and that are assigned to the currently authenticated user. You can then select which document will appear on the dashboard.
+This is an optional component that is only loaded if a category ID is obtained from the document and the user has documents assigned. Is responsible for loading the documents list for a given category and that are assigned to the currently authenticated user. You can then select which document will appear on the dashboard.
 
 ### **Tests**
 
@@ -61,6 +61,6 @@ Login to [Konfuzio](https://app.konfuzio.com/) and upload a document to the plat
 
 ## Creating a .env
 
-You can create an environment variables file `.env` on the root of the project based on the `.env.example` for specifying various options, specially the API endpoint, the user token, the document/category to load and the default language of the app.
+You can create an environment variables file `.env` on the root of the project based on the `.env.example` for specifying various options, specially the API endpoint, the user token, the document to load and the default language of the app.
 
 Please be aware that any variable in the `.env` will have priority from the variables defined in the `index.html`.

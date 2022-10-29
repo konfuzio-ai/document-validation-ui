@@ -93,11 +93,6 @@ export default {
   methods: {
     setDocumentValues() {
       const category = this.category(this.selectedDocument.category);
-      // if (this.selectedDocument.category && category === null) {
-      //   // the document has a category but the categories from the project were not loaded
-      //   return;
-      // }
-
       this.selectedCategory = category;
       this.documentCategory = category;
       this.show = !this.categorizationIsConfirmed;

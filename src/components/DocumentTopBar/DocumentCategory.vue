@@ -138,18 +138,6 @@ export default {
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
     }
-  },
-  watch: {
-    selectedDocument(newValue, oldValue) {
-      // TODO: this business validations should be done on the store
-      if (
-        newValue.labeling_available == 1 &&
-        newValue.status_data === 2 &&
-        newValue.category !== oldValue.category
-      ) {
-        this.$store.dispatch("category/setCategoryId", newValue.category);
-      }
-    }
   }
 };
 </script>

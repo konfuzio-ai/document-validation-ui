@@ -529,9 +529,6 @@ const actions = {
         .then(response => {
           if (response.status === 200) {
             commit("SET_SELECTED_DOCUMENT", response.data);
-            if (response.data.is_reviewed === true) {
-              state.publicView = true;
-            }
             resolve(response.status);
           }
         })
@@ -607,10 +604,12 @@ const actions = {
           response.data.status_data === 2 &&
           response.data.labeling_available === 1
         ) {
+          // TODO: use commit to mutate store
           state.documentIsReady = true;
         }
 
         if (response.data.status_data === 111) {
+          // TODO: use commit to mutate store
           state.documentHasError = true;
         }
       })
@@ -627,10 +626,6 @@ const actions = {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
-
-        if (response.data.is_reviewed === true) {
-          state.publicView = true;
-        }
       })
       .catch(error => {
         console.log(error);
@@ -861,6 +856,9 @@ const mutations = {
     state.documentFocusedAnnotation = documentFocusedAnnotation;
   },
   SET_SELECTED_DOCUMENT: (state, document) => {
+    if (document.is_reviewed === true) {
+      state.publicView = true;
+    }
     state.selectedDocument = document;
   },
   SET_RECALCULATING_ANNOTATIONS: (state, recalculatingAnnotations) => {
@@ -895,6 +893,9 @@ const mutations = {
   },
   SET_ERROR_MESSAGE_WIDTH: (state, width) => {
     state.errorMessageWidth = width;
+  },
+  SET_PUBLIC_VIEW: (state, value) => {
+    state.publicView = value;
   }
 };
 

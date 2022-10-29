@@ -28,7 +28,6 @@ export default {
   },
   created() {
     this.$store.dispatch("document/setDocId", this.documentId);
-    this.$store.dispatch("category/setCategoryId", this.categoryId);
 
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
@@ -40,7 +39,8 @@ export default {
       publicView: "publicView",
       selectedDocument: "selectedDocument",
       recalculatingAnnotations: "recalculatingAnnotations",
-      documentIsReady: "documentIsReady"
+      documentIsReady: "documentIsReady",
+      documentChanged: "documentId"
     }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {
@@ -50,18 +50,15 @@ export default {
       } else {
         return null;
       }
-    },
-    categoryId() {
-      if (process.env.VUE_APP_CATEGORY_ID) {
-        return process.env.VUE_APP_CATEGORY_ID;
-      } else if (this.category) {
-        return this.category;
-      } else {
-        return null;
-      }
     }
   },
   watch: {
+    documentChanged(newValue, oldValue) {
+      // check if it's not first time (we already fetch the document on the created function)
+      if (oldValue !== null && newValue !== oldValue) {
+        this.documentLoading();
+      }
+    },
     documentIsReady(newValue) {
       if (newValue) {
         this.documentLoading();
@@ -72,18 +69,17 @@ export default {
         if (oldValue === null && newValue) {
           // first time
           this.categoryLoading(newValue.project);
-          this.documentsListLoading();
+          this.documentsListLoading(newValue.category);
         }
         // TODO: this business validations should be done on the store
         else if (
           newValue.labeling_available == 1 &&
           newValue.status_data === 2 &&
-          this.categoryId !== newValue.category &&
           oldValue &&
           oldValue.category !== null
         ) {
           this.categoryLoading(newValue.project);
-          this.documentsListLoading();
+          this.documentsListLoading(newValue.category);
         }
       }
     }
@@ -106,13 +102,14 @@ export default {
         this.$store.dispatch("category/fetchCategories", projectId)
       ]);
     },
-    documentsListLoading() {
-      if (this.categoryId) {
-        Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
-          () => {
-            this.$store.dispatch("category/createAvailableDocumentsList");
-          }
-        );
+    documentsListLoading(categoryId) {
+      if (categoryId) {
+        Promise.all([
+          this.$store.dispatch(
+            "category/createAvailableDocumentsList",
+            categoryId
+          )
+        ]);
       }
     }
   }
