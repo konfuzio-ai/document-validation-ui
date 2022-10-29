@@ -178,10 +178,16 @@
         }
 
         &.label-empty {
-          font-weight: 400;
+          font-weight: 500;
           font-size: 14px;
-          color: $text-lighter;
+          color: $primary;
+
+          &.clicked {
+            font-weight: 400;
+            color: $text-lighter;
+          }
         }
+
       }
 
       .action-buttons {

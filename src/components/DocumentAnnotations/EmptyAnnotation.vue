@@ -20,7 +20,6 @@
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotation"
       ref="emptyAnnotation"
-      @input="isEmpty"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
       :id="emptyAnnotationId()"
@@ -48,7 +47,6 @@ export default {
   name: "EmptyAnnotation",
   data() {
     return {
-      empty: false,
       isLoading: false,
       error: false,
       showReject: false
@@ -76,11 +74,6 @@ export default {
     ])
   },
   methods: {
-    isEmpty() {
-      this.empty =
-        this.$refs.emptyAnnotation &&
-        this.$refs.emptyAnnotation.textContent.trim() === "";
-    },
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
@@ -101,7 +94,9 @@ export default {
         !this.isLoading &&
         this.selectionEnabled !== this.emptyAnnotationId()
       ) {
-        this.setText(this.$t("draw_box_document"));
+        this.setText(
+          this.$t("draw_box_document", { label_name: this.label.name })
+        );
         this.$store.dispatch(
           "selection/enableSelection",
           this.emptyAnnotationId()
@@ -121,9 +116,9 @@ export default {
         event.preventDefault();
       }
       // update the bbox text with the one from the input
-      this.spanSelection.offset_string = this.$refs.emptyAnnotation.textContent;
+      this.spanSelection.offset_string = this.$refs.emptyAnnotation.innerHTML;
       this.spanSelection.offset_string_original =
-        this.$refs.emptyAnnotation.textContent;
+        this.$refs.emptyAnnotation.innerHTML;
 
       let annotationToCreate;
 
@@ -190,7 +185,7 @@ export default {
       );
     },
     setText(text) {
-      this.$refs.emptyAnnotation.textContent = text;
+      this.$refs.emptyAnnotation.innerHTML = text;
     },
     handleShowReject() {
       if (this.publicView) return;
