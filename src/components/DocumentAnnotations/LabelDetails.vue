@@ -9,8 +9,8 @@
     <div class="label-icon">
       <b-icon
         v-if="notFound"
-        :class="[animate ? 'animated-ripple' : '', 'red']"
-        icon="xmark"
+        :class="[animate ? 'animated-ripple' : '']"
+        icon="question"
         size="is-small"
       />
       <b-icon
