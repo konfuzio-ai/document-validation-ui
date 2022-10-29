@@ -31,7 +31,8 @@ import {
   faScissors,
   faRepeat,
   faEye,
-  faArrowLeft
+  faArrowLeft,
+  faQuestion
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -55,7 +56,8 @@ library.add(
   faScissors,
   faRepeat,
   faEye,
-  faArrowLeft
+  faArrowLeft,
+  faQuestion
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 Vue.component("App", App);
