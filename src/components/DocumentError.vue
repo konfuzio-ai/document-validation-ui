@@ -2,7 +2,7 @@
 
 <template>
   <section class="document-error-modal">
-    <b-modal :width="400" v-model="isModalActive" :can-cancel="['x']">
+    <b-modal :width="400" v-model="isModalActive">
       <section class="modal-card-body">
         <div class="header">
           <div class="error-icon">

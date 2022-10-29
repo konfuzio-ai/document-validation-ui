@@ -10,11 +10,9 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
-import store from "../store";
 import { mapState } from "vuex";
 
 export default {
-  store,
   name: "App",
   components: {
     DocumentsList,
@@ -30,23 +28,19 @@ export default {
   },
   created() {
     this.$store.dispatch("document/setDocId", this.documentId);
-    this.$store.dispatch("category/setCategoryId", this.categoryId);
 
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
     }
     this.documentLoading();
-    if (!this.publicView) {
-      this.categoryLoading();
-      this.documentsListLoading();
-    }
   },
   computed: {
     ...mapState("document", {
       publicView: "publicView",
       selectedDocument: "selectedDocument",
       recalculatingAnnotations: "recalculatingAnnotations",
-      documentIsReady: "documentIsReady"
+      documentIsReady: "documentIsReady",
+      documentChanged: "documentId"
     }),
     documentId() {
       if (process.env.VUE_APP_DOCUMENT_ID) {
@@ -56,33 +50,37 @@ export default {
       } else {
         return null;
       }
-    },
-    categoryId() {
-      if (process.env.VUE_APP_CATEGORY_ID) {
-        return process.env.VUE_APP_CATEGORY_ID;
-      } else if (this.category) {
-        return this.category;
-      } else {
-        return null;
-      }
     }
   },
   watch: {
+    documentChanged(newValue, oldValue) {
+      // check if it's not first time (we already fetch the document on the created function)
+      if (oldValue !== null && newValue !== oldValue) {
+        this.documentLoading();
+      }
+    },
     documentIsReady(newValue) {
       if (newValue) {
         this.documentLoading();
       }
     },
     selectedDocument(newValue, oldValue) {
-      if (
-        newValue.labeling_available == 1 &&
-        newValue.status_data === 2 &&
-        this.categoryId !== newValue.category &&
-        oldValue &&
-        oldValue.category !== null
-      ) {
-        this.categoryLoading();
-        this.documentsListLoading();
+      if (!this.publicView) {
+        if (oldValue === null && newValue) {
+          // first time
+          this.categoryLoading(newValue.project);
+          this.documentsListLoading(newValue.category);
+        }
+        // TODO: this business validations should be done on the store
+        else if (
+          newValue.labeling_available == 1 &&
+          newValue.status_data === 2 &&
+          oldValue &&
+          oldValue.category !== null
+        ) {
+          this.categoryLoading(newValue.project);
+          this.documentsListLoading(newValue.category);
+        }
       }
     }
   },
@@ -99,16 +97,19 @@ export default {
         this.$store.dispatch("document/endLoading");
       });
     },
-    categoryLoading() {
-      Promise.all([this.$store.dispatch("category/fetchCategories")]);
+    categoryLoading(projectId) {
+      Promise.all([
+        this.$store.dispatch("category/fetchCategories", projectId)
+      ]);
     },
-    documentsListLoading() {
-      if (this.categoryId) {
-        Promise.all([this.$store.dispatch("category/fetchDocumentList")]).then(
-          () => {
-            this.$store.dispatch("category/createAvailableDocumentsList");
-          }
-        );
+    documentsListLoading(categoryId) {
+      if (categoryId) {
+        Promise.all([
+          this.$store.dispatch(
+            "category/createAvailableDocumentsList",
+            categoryId
+          )
+        ]);
       }
     }
   }

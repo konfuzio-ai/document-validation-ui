@@ -40,7 +40,7 @@
     </template>
 
     <b-dropdown-item
-      v-for="category in currentProjectCategories"
+      v-for="category in categories"
       v-bind:key="category.id"
       aria-role="listitem"
       v-on:click="handleChangeCategory(category)"
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+// TODO: since this component is used outside the topbar, then should be moved to another folder
+
 import { mapGetters, mapState } from "vuex";
 import CategoryIcon from "../../assets/images/CategoryIconImg";
 
@@ -59,7 +61,6 @@ export default {
   name: "DocumentCategory",
   data() {
     return {
-      currentProjectCategories: [],
       categoryError: false
     };
   },
@@ -136,43 +137,6 @@ export default {
       // Send the category ID to the split overview
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
-    }
-  },
-  watch: {
-    categories(newValue) {
-      newValue.map(category => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
-          );
-          if (found) return;
-
-          this.currentProjectCategories.push(category);
-        }
-      });
-    },
-    selectedDocument(newValue, oldValue) {
-      if (
-        newValue.labeling_available == 1 &&
-        newValue.status_data === 2 &&
-        newValue.category !== oldValue.category
-      ) {
-        this.$store.dispatch("category/setCategoryId", newValue.category);
-      }
-    }
-  },
-  mounted() {
-    if (this.categories) {
-      this.categories.map(category => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
-          );
-          if (found) return;
-
-          this.currentProjectCategories.push(category);
-        }
-      });
     }
   }
 };

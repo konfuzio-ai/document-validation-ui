@@ -8,7 +8,7 @@ import {
   Integrations
 } from "@sentry/tracing";
 import i18n from "./i18n";
-
+import store from "./store";
 import {
   library
 } from "@fortawesome/fontawesome-svg-core";
@@ -91,5 +91,6 @@ if (process.env.NODE_ENV != "development") {
  */
 new Vue({
   i18n,
+  store,
   el: "#app"
 });
