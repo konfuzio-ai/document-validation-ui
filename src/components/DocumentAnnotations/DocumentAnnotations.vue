@@ -22,21 +22,22 @@
     </div>
 
     <!-- When there's no annotations in the label -->
-    <div
-      v-else-if="!sidebarAnnotationSets || sidebarAnnotationSets.length === 0"
-    >
+    <div v-else-if="!annotationSets || annotationSets.length === 0">
       <EmptyState />
     </div>
 
     <div
       v-else
-      :class="['labels-list', missingAnnotations.length && 'showing-rejected']"
+      :class="[
+        'annotation-set-list',
+        missingAnnotations.length && 'showing-rejected'
+      ]"
     >
       <CategorizeModal />
       <div
-        v-for="(annotationSet, indexGroup) in sidebarAnnotationSets"
+        v-for="(annotationSet, indexGroup) in annotationSets"
         v-bind:key="indexGroup"
-        class="labelset-group"
+        class="annotation-set-group"
       >
         <div class="label-set-name">
           {{
@@ -50,58 +51,13 @@
             class="labels"
             v-if="labelNotRejected(label, annotationSet.label_set)"
           >
-            <div v-if="labelHasAnnotations(label)">
-              <!-- Label Annotations -->
-              <Label
-                v-for="annotation in label.annotations"
-                :key="annotationId(annotationSet, label, annotation)"
-                :label="label"
-                :annotationSet="annotationSet"
-                :annotation="annotation"
-                :editing="
-                  isAnnotationInEditMode(
-                    annotationId(annotationSet, label, annotation)
-                  )
-                "
-                :indexGroup="indexGroup"
-                @handle-scroll="handleScroll"
-                @handle-reject="rejectAnnotation"
-              >
-                <!-- Label Grouped Annotations -->
-                <template v-slot:groupedAnnotations>
-                  <Label
-                    v-for="groupedAnnotation in annotation.groupedAnnotations"
-                    :key="annotationId(annotationSet, label, groupedAnnotation)"
-                    :label="label"
-                    :annotationSet="annotationSet"
-                    :annotation="groupedAnnotation"
-                    :editing="
-                      isAnnotationInEditMode(
-                        annotationId(annotationSet, label, groupedAnnotation)
-                      )
-                    "
-                    :indexGroup="indexGroup"
-                    :parentGroupAnnotation="annotation"
-                    @handle-scroll="handleScroll"
-                    @handle-reject="rejectAnnotation"
-                  />
-                </template>
-              </Label>
-            </div>
-            <div v-else>
-              <!-- Empty Label -->
-              <Label
-                :label="label"
-                :annotationSet="annotationSet"
-                :editing="
-                  isAnnotationInEditMode(
-                    annotationId(annotationSet, label, null)
-                  )
-                "
-                :indexGroup="indexGroup"
-                @handle-reject="rejectAnnotation"
-              />
-            </div>
+            <Label
+              :label="label"
+              :annotationSet="annotationSet"
+              :indexGroup="indexGroup"
+              :handleScroll="handleScroll"
+              @handle-reject="rejectAnnotation"
+            />
           </div>
         </div>
       </div>
@@ -164,14 +120,10 @@ export default {
       "imageLoaded",
       "acceptAnnotation",
       "sidebarAnnotationSelected",
-      "sidebarAnnotationSets"
+      "annotationSets"
     ]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", [
-      "numberOfAnnotationSetGroup",
-      "labelHasAnnotations",
-      "isAnnotationInEditMode"
-    ])
+    ...mapGetters("document", ["numberOfAnnotationSetGroup"])
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -180,19 +132,6 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
-    annotationId(annotationSet, label, annotation) {
-      if (!annotationSet || !label) return;
-
-      let emptyAnnotationId;
-
-      if (annotationSet.id) {
-        emptyAnnotationId = `${annotationSet.id}_${label.id}`;
-      } else {
-        emptyAnnotationId = `${annotationSet.label_set.id}_${label.id}`;
-      }
-
-      return annotation ? annotation.id : emptyAnnotationId;
-    },
     focusOnNextAnnotation() {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")

@@ -1,4 +1,8 @@
-<style scoped lang="scss" src="../../assets/scss/label_details.scss"></style>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/annotation_details.scss"
+></style>
 <template>
   <b-tooltip
     type="is-dark"
@@ -75,7 +79,7 @@
 </template>
 <script>
 export default {
-  name: "LabelDetails",
+  name: "AnnotationDetails",
   computed: {
     accuracy() {
       if (this.annotation) {
@@ -151,6 +155,7 @@ export default {
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
+      // TODO: fix animation
       const accepted = ann => {
         return ann && ann.id && ann.revised && ann.is_correct;
       };

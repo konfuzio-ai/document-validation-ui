@@ -28,7 +28,7 @@
     </span>
 
     <ActionButtons
-      :saveBtn="!empty && isEmptyAnnotationEditable()"
+      :saveBtn="isEmptyAnnotationEditable()"
       :cancelBtn="isAnnotationBeingEdited()"
       :showReject="showReject"
       :isLoading="isLoading"
