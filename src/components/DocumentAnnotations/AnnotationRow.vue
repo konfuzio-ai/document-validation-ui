@@ -78,7 +78,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["documentFocusedAnnotation", "editAnnotation"]),
+    ...mapState("document", [
+      "documentFocusedAnnotation",
+      "editAnnotation",
+      "sidebarAnnotationSelected"
+    ]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
   },
   methods: {

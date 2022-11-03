@@ -117,6 +117,14 @@ const getters = {
     return annotations.length > 0;
   },
 
+  /* Returns the number of accepted annotations in a label */
+  numberOfAcceptedAnnotationsInLabel: (_) => label => {
+    const annotations = label.annotations.filter(annotation => {
+      return annotation.revised && annotation.is_correct
+    });
+    return annotations.length;
+  },
+
   /**
    * Checks if theres a group of annotation sets and add an index number to them
    */

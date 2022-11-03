@@ -48,16 +48,6 @@
     padding-right: 16px;
   }
 
-  .label-group {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-
-    .label-group-left {}
-
-    .label-group-right {}
-  }
-
   .annotation-set-list {
     padding-bottom: 16px;
     overflow: auto;
@@ -69,7 +59,7 @@
 
     .label-set-name {
       margin: 24px 16px 8px 16px;
-      font-weight: 400;
+      font-weight: 600;
       font-size: 14px;
       line-height: 20px;
       color: $text;
@@ -80,25 +70,56 @@
         .label-group {
           display: flex;
           flex-direction: row;
+          justify-content: space-between;
           align-items: center;
           border-bottom: 1px solid $grey-lightest;
           min-height: 44px;
+          cursor: pointer;
 
           .label-group-left {
             display: flex;
             flex-direction: row;
             padding-left: 28px;
+            color: $text-lighter;
+            align-items: center;
 
             .label-name {
               padding-left: 20px;
             }
           }
 
-          .label-group-right {}
+          .label-group-right {
+            display: flex;
+            flex-direction: row;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            padding-right: 16px;
+            cursor: default;
+
+            .label-annotations-pending {
+              padding: 0px 8px;
+              border-radius: 20px;
+              background: $grey-lighter-low-opacity;
+              color: $text-lighter;
+              margin-right: 4px;
+            }
+
+            .label-annotations-accepted {
+              padding: 0px 8px;
+              border-radius: 20px;
+              background: $green-low-opacity;
+              color: $green;
+            }
+          }
         }
 
         .label-group-annotation-list {
-          padding-left: 12px;
+          background-color: $grey-hover;
+
+          .annotation-row {
+            padding-left: 16px;
+          }
         }
 
         .label-name {
