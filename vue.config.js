@@ -1,7 +1,4 @@
-const {
-  defineConfig
-} = require("@vue/cli-service");
-module.exports = defineConfig({
+module.exports = {
   runtimeCompiler: true,
   pluginOptions: {
     i18n: {
@@ -13,4 +10,4 @@ module.exports = defineConfig({
       enableBridge: true,
     },
   },
-});
+};
