@@ -112,7 +112,6 @@ const actions = {
       count += 1;
 
       return dispatch("fetchDocumentList", categoryId).then(() => {
-        console.log(state.documents);
         for (let i = 0; i < state.documents.length; i++) {
           const found = state.availableDocumentsList.find(
             doc => doc.id === state.documents[i].id
