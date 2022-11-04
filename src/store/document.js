@@ -7,7 +7,6 @@ const state = {
   loading: true,
   pages: [],
   annotationSets: null,
-  sidebarAnnotationSets: null, // this should be only used for displaying annotations in sidebar
   annotations: null,
   labels: [],
   documentId: null,
@@ -118,77 +117,12 @@ const getters = {
     return annotations.length > 0;
   },
 
-  /**
-   * Groups annotations in the same label that have the same content by accuracy
-   */
-  groupedAnnotations: (_, getters) => annotationsInLabel => {
-    const annotations = [];
-    let addedAnnotation;
-
-    const pushAnnotation = (annotation, array) => {
-      if (annotation && !getters.isAnnotationDeleted(annotation)) {
-        // clone annotation so we don't mess with existing objects
-        array.push({
-          ...annotation
-        });
-      }
-    };
-
-    const createAnnotationGroup = annotation => {
-      annotation.groupedAnnotations = [annotation];
-    };
-
-    const moveAnnotationGroup = (from, to) => {
-      to.groupedAnnotations = from.groupedAnnotations;
-      delete from.groupedAnnotations;
-    };
-
-    if (annotationsInLabel) {
-      annotationsInLabel.map(annotation => {
-        addedAnnotation = false;
-        annotations.map(annotationToCompare => {
-          // compare if the annotations have the same content
-          if (annotation.offset_string === annotationToCompare.offset_string) {
-            if (annotationToCompare.groupedAnnotations) {
-              pushAnnotation(
-                annotation,
-                annotationToCompare.groupedAnnotations
-              );
-            } else {
-              createAnnotationGroup(annotationToCompare);
-              pushAnnotation(
-                annotation,
-                annotationToCompare.groupedAnnotations
-              );
-            }
-            addedAnnotation = true;
-          }
-        });
-        if (!addedAnnotation) {
-          pushAnnotation(annotation, annotations);
-        }
-      });
-    }
-
-    // order annotation groups by confidence
-    const orderedAnnotations = annotations.map(annotation => {
-      if (annotation.groupedAnnotations) {
-        // sort array
-        annotation.groupedAnnotations.sort(
-          (a, b) => b.confidence - a.confidence
-        );
-        // remove first element
-        const firstAnnotation = annotation.groupedAnnotations.shift();
-        if (annotation.id !== firstAnnotation.id) {
-          moveAnnotationGroup(annotation, firstAnnotation);
-        }
-        return firstAnnotation;
-      } else {
-        return annotation;
-      }
+  /* Returns the number of accepted annotations in a label */
+  numberOfAcceptedAnnotationsInLabel: (_) => label => {
+    const annotations = label.annotations.filter(annotation => {
+      return annotation.revised && annotation.is_correct
     });
-
-    return orderedAnnotations;
+    return annotations.length;
   },
 
   /**
@@ -260,11 +194,6 @@ const actions = {
     commit
   }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
-  },
-  setSidebarAnnotationSets: ({
-    commit
-  }, annotationSets) => {
-    commit("SET_SIDEBAR_ANNOTATION_SETS", annotationSets);
   },
   setEditAnnotation: ({
     commit
@@ -375,30 +304,23 @@ const actions = {
           const labels = [];
 
           // group annotations for sidebar
-          const sidebarAnnotationSets = annotationSets.map(annotationSet => {
-            const sidebarLabels = annotationSet.labels.map(label => {
+          annotationSets.forEach(annotationSet => {
+            annotationSet.labels.forEach(label => {
               // add annotations to the document array
               annotations.push(...label.annotations);
               // add labels to the labels array
               labels.push(label);
               // get grouped annotations
-              const annotationsGrouped = getters.groupedAnnotations(
-                label.annotations
-              );
-              const labelGrouped = {
-                ...label,
-                annotations: annotationsGrouped
-              };
-              return labelGrouped;
+              // const annotationsGrouped = getters.groupedAnnotations(
+              //   label.annotations
+              // );
+              // const labelGrouped = {
+              //   ...label,
+              //   annotations: annotationsGrouped
+              // };
             });
-            const annotationSetGrouped = {
-              ...annotationSet,
-              labels: sidebarLabels
-            };
-            return annotationSetGrouped;
           });
           // set information on the store
-          commit("SET_SIDEBAR_ANNOTATION_SETS", sidebarAnnotationSets);
           commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
@@ -695,24 +617,6 @@ const mutations = {
         });
       }
     });
-    state.sidebarAnnotationSets.forEach(annotationSet => {
-      if (
-        annotation.annotation_set &&
-        annotationSet.id === annotation.annotation_set
-      ) {
-        annotationSet.labels.map(label => {
-          if (annotation.label && annotation.label.id === label.id) {
-            const exists = label.annotations.find(
-              existingAnnotation => existingAnnotation.id === annotation.id
-            );
-            if (!exists) {
-              label.annotations.push(annotation);
-              return;
-            }
-          }
-        });
-      }
-    });
   },
   UPDATE_ANNOTATION: (state, annotation) => {
     const indexOfAnnotationInAnnotations = state.annotations.findIndex(
@@ -721,23 +625,8 @@ const mutations = {
     if (indexOfAnnotationInAnnotations > -1) {
       state.annotations[indexOfAnnotationInAnnotations] = annotation;
     }
-    state.annotationSets.map(annotationSet => {
-      annotationSet.labels.map(label => {
-        const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
-          existingAnnotation => existingAnnotation.id === annotation.id
-        );
-        if (indexOfAnnotationAnnotationSets > -1) {
-          label.annotations[indexOfAnnotationAnnotationSets] = annotation;
-          return;
-        }
-      });
-    });
-
     let updatedAnnotation = false;
-    state.sidebarAnnotationSets.forEach(annotationSet => {
-      if (updatedAnnotation) {
-        return;
-      }
+    state.annotationSets.forEach(annotationSet => {
       annotationSet.labels.forEach(label => {
         if (updatedAnnotation) {
           return;
@@ -749,23 +638,6 @@ const mutations = {
           label.annotations[indexOfAnnotationAnnotationSets] = annotation;
           updatedAnnotation = true;
           return;
-        } else {
-          // find in grouped annotations
-          label.annotations.forEach(annotationInLabel => {
-            if (annotationInLabel.groupedAnnotations) {
-              const indexOfAnnotationInGroups =
-                annotationInLabel.groupedAnnotations.findIndex(
-                  existingAnnotation => existingAnnotation.id === annotation.id
-                );
-              if (indexOfAnnotationInGroups > -1) {
-                annotationInLabel.groupedAnnotations[
-                  indexOfAnnotationInGroups
-                ] = annotation;
-                updatedAnnotation = true;
-                return;
-              }
-            }
-          });
         }
       });
     });
@@ -777,42 +649,19 @@ const mutations = {
     if (indexOfAnnotationToDelete > -1) {
       state.annotations.splice(indexOfAnnotationToDelete, 1);
     }
-    state.annotationSets.map(annotationSet => {
-      annotationSet.labels.map(label => {
+    let deleted = false;
+    state.annotationSets.forEach(annotationSet => {
+      if (deleted) {
+        return;
+      }
+      annotationSet.labels.forEach(label => {
         const indexOfAnnotationInLabelToDelete = label.annotations.findIndex(
           existingAnnotation => existingAnnotation.id === annotationId
         );
         if (indexOfAnnotationInLabelToDelete > -1) {
           label.annotations.splice(indexOfAnnotationInLabelToDelete, 1);
+          deleted = true;
           return;
-        }
-      });
-    });
-    state.sidebarAnnotationSets.forEach(annotationSet => {
-      annotationSet.labels.map(label => {
-        const indexOfAnnotationInLabelToDelete = label.annotations.findIndex(
-          existingAnnotation => existingAnnotation.id === annotationId
-        );
-        if (indexOfAnnotationInLabelToDelete > -1) {
-          label.annotations.splice(indexOfAnnotationInLabelToDelete, 1);
-          return;
-        } else {
-          // find in grouped annotations
-          label.annotations.forEach(annotationInLabel => {
-            if (annotationInLabel.groupedAnnotations) {
-              const indexOfAnnotationInGroups =
-                annotationInLabel.groupedAnnotations.findIndex(
-                  existingAnnotation => existingAnnotation.id === annotationId
-                );
-              if (indexOfAnnotationInGroups > -1) {
-                annotationInLabel.groupedAnnotations.splice(
-                  indexOfAnnotationInGroups,
-                  1
-                );
-                return;
-              }
-            }
-          });
         }
       });
     });
@@ -822,9 +671,6 @@ const mutations = {
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
-  },
-  SET_SIDEBAR_ANNOTATION_SETS: (state, annotationSets) => {
-    state.sidebarAnnotationSets = annotationSets;
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;

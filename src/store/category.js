@@ -37,16 +37,17 @@ const getters = {
   /**
    * Documents assigned to a given user
    */
-  documentListForUser: () => (user, currentDocument) => {
+  documentListForUser: state => (user, currentDocument) => {
     let isCurrentDocumentInTheList = false;
-    const availableDocuments = state.availableDocumentsList.map(
-      document => {
-        if (document.assignee === user) {
-          if (currentDocument && document.id === currentDocument.id) {
+    const availableDocuments = state.availableDocumentsList.filter(
+      doc => {
+        if (doc.assignee === user) {
+          if (currentDocument && doc.id === currentDocument.id) {
             isCurrentDocumentInTheList = true;
           }
-          return document;
+          return true;
         }
+        return false;
       }
     );
     // if the current document is not in the list and the list has documents to show, then add it to the first index
@@ -93,9 +94,13 @@ const actions = {
   },
 
   createAvailableDocumentsList: ({
+    commit,
     state,
-    dispatch
-  }, categoryId) => {
+    dispatch,
+  }, {
+    categoryId,
+    poll
+  }) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -123,8 +128,7 @@ const actions = {
             state.documents[i].labeling_available === 1
           ) {
             // add available doc to the end of the array
-            // TODO: this should be done on a mutation like COMMIT("add document") 
-            state.availableDocumentsList.push(state.documents[i]);
+            commit("ADD_AVAILABLE_DOCUMENT", state.documents[i]);
           } else if (state.documents[i].status_data === 111) {
             dispatch("document/setDocumentError", true);
             // If error, add 1
@@ -134,13 +138,14 @@ const actions = {
           } else {
             // Some other situation, such as labeling not yet available
             // go to next item
+            // TODO: we should only poll the documents that are not yet available
             continue;
           }
         }
-
         // After looping, check if length of both arrays is different
         // And if the difference is due to errors or to docs not ready
         if (
+          poll &&
           state.documents.length !== state.availableDocumentsList.length &&
           state.availableDocumentsList.length + errors !==
           state.documents.length
@@ -197,6 +202,9 @@ const mutations = {
   },
   SET_AVAILABLE_DOCUMENTS: (state, availableDocumentsList) => {
     state.availableDocumentsList = availableDocumentsList;
+  },
+  ADD_AVAILABLE_DOCUMENT: (state, availableDocument) => {
+    state.availableDocumentsList.push(availableDocument);
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;
