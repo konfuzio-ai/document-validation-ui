@@ -69,7 +69,7 @@ export default {
         if (oldValue === null && newValue) {
           // first time
           this.categoryLoading(newValue.project);
-          this.documentsListLoading(newValue.category);
+          this.documentsListLoading(newValue.category, false);
         }
         // TODO: this business validations should be done on the store
         else if (
@@ -102,13 +102,13 @@ export default {
         this.$store.dispatch("category/fetchCategories", projectId)
       ]);
     },
-    documentsListLoading(categoryId) {
+    documentsListLoading(categoryId, poll = true) {
       if (categoryId) {
         Promise.all([
-          this.$store.dispatch(
-            "category/createAvailableDocumentsList",
-            categoryId
-          )
+          this.$store.dispatch("category/createAvailableDocumentsList", {
+            categoryId,
+            poll
+          })
         ]);
       }
     }
