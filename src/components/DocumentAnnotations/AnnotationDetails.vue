@@ -55,7 +55,7 @@
         </div>
         <div class="revision">
           <div class="not-found" v-if="notFound">
-            <b-icon icon="xmark" size="is-small" />{{
+            <b-icon icon="question" size="is-small" />{{
               $t("not_found_in_document")
             }}
           </div>
