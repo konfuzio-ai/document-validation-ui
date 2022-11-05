@@ -1,12 +1,11 @@
 <style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
 
 <template>
-  <div
-    class="document-top-bar-component"
-    v-if="selectedDocument"
-    ref="documentTopBar"
-  >
-    <div class="document-top-bar">
+  <div class="document-top-bar-component" ref="documentTopBar">
+    <div
+      class="document-top-bar"
+      v-if="selectedDocument && selectedDocument.pages.length > 0"
+    >
       <div class="left-bar-components">
         <DocumentCategory v-if="categories && !editMode" />
         <DocumentDatasetStatus
@@ -63,6 +62,9 @@
           <DocumentHandover />
         </div>
       </div>
+    </div>
+    <div class="loading-top-bar" v-else>
+      <b-skeleton position="is-centered" width="25%" height="60%" />
     </div>
   </div>
 </template>

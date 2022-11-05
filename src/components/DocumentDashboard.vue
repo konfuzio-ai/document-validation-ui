@@ -2,12 +2,7 @@
 
 <template>
   <div class="dashboard">
-    <div
-      class="dashboard-top-bar"
-      v-if="selectedDocument && selectedDocument.pages.length > 0"
-    >
-      <DocumentTopBar />
-    </div>
+    <DocumentTopBar />
     <div
       :class="[
         'dashboard-viewer',

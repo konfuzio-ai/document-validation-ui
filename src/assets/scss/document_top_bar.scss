@@ -3,6 +3,13 @@
 .document-top-bar-component {
   width: 100%;
   height: $top-bar-height;
+  border-bottom: $component-border;
+
+  .loading-top-bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
 
   .document-top-bar {
     width: 100%;
@@ -12,7 +19,7 @@
     z-index: 99;
     display: flex;
     justify-content: space-between;
-    border-bottom: $component-border;
+
     flex: 1;
     top: 0;
     font-size: 14px;
