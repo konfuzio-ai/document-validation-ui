@@ -470,16 +470,3 @@ button {
     align-items: center;
   }
 }
-
-.scrolling-document {
-  .loading-page {
-    overflow: hidden;
-
-    .b-skeleton {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-top: 7px;
-    }
-  }
-}

@@ -1,5 +1,8 @@
 <template>
-  <img ref="imgTag" />
+  <div style="display: flex">
+    <img :height="height" ref="imgTag" v-show="loaded" />
+    <slot v-if="!loaded"></slot>
+  </div>
 </template>
 
 <script>
@@ -11,15 +14,27 @@ export default {
   props: {
     imageUrl: {
       required: true
+    },
+    height: {
+      default: null
+    },
+    width: {
+      default: null
     }
   },
   computed: {
     ...mapState("document", ["selectedDocument"])
   },
+  data() {
+    return {
+      loaded: false
+    };
+  },
   methods: {
     loadImage() {
       if (!this.imageUrl) return;
 
+      // TODO: this validation should be called from store
       if (
         this.selectedDocument &&
         this.selectedDocument.labeling_available === 1
@@ -29,9 +44,14 @@ export default {
             return response.data;
           })
           .then(myBlob => {
-            // stop loading images
-            this.$store.dispatch("document/setImageLoaded", true);
             this.$refs.imgTag.src = URL.createObjectURL(myBlob);
+            if (this.height) {
+              this.$refs.imgTag.style.height = this.height;
+            }
+            if (this.width) {
+              this.$refs.imgTag.style.width = this.width;
+            }
+            this.loaded = true;
           });
       }
     }
@@ -41,9 +61,6 @@ export default {
   },
   watch: {
     imageUrl() {
-      this.loadImage();
-    },
-    selectedDocument() {
       this.loadImage();
     }
   }

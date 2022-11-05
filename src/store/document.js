@@ -29,7 +29,6 @@ const state = {
   errorMessage: null,
   acceptAnnotation: false,
   showDocumentError: false,
-  imageLoaded: false,
   rejectAnnotation: null,
   errorMessageWidth: null
 };
@@ -38,9 +37,20 @@ const getters = {
   /**
    * Number of pages. If the pages array doesn't exist yet, return 0.
    */
+  defaultPageSize: state => {
+    if (state.pages && state.pages.length > 0) {
+      return state.pages[0].size;
+    }
+    return [0, 0];
+  },
+
+
+  /**
+   * Number of pages. If the pages array doesn't exist yet, return 0.
+   */
   pageCount: state => {
-    if (state.pages) {
-      return state.pages.length;
+    if (state.selectedDocument.pages) {
+      return state.selectedDocument.pages.length;
     }
     return 0;
   },
@@ -271,11 +281,6 @@ const actions = {
   }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
   },
-  setImageLoaded: ({
-    commit
-  }, value) => {
-    commit("SET_IMAGE_LOADED", value);
-  },
   setRejectAnnotation: ({
     commit
   }, annotation) => {
@@ -294,11 +299,11 @@ const actions = {
   fetchAnnotations: ({
     commit,
     state,
-    getters
+    dispatch
   }) => {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
-        if (response.data.annotation_sets) {
+        if (response.data) {
           const annotationSets = response.data.annotation_sets;
           const annotations = [];
           const labels = [];
@@ -310,57 +315,38 @@ const actions = {
               annotations.push(...label.annotations);
               // add labels to the labels array
               labels.push(label);
-              // get grouped annotations
-              // const annotationsGrouped = getters.groupedAnnotations(
-              //   label.annotations
-              // );
-              // const labelGrouped = {
-              //   ...label,
-              //   annotations: annotationsGrouped
-              // };
             });
           });
+
+          // load first page
+          if (response.data.pages.length > 0) {
+            await dispatch("fetchDocumentPage", 1);
+          }
+
           // set information on the store
           commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
-
-          // commit("SET_PAGES", []);
-
-          const documentId = state.documentId;
-          // fetch pages
-          for (let i = 1; i <= response.data.number_of_pages; i++) {
-            if (documentId === state.documentId) {
-              // check if the document was not changed
-              await HTTP.get(`documents/${documentId}/pages/${i}/`)
-                .then(response => {
-                  if (response.data && documentId === state.documentId) {
-                    // if we already have the page in the state, update it in
-                    // the pages array instead of creating a new one
-                    const existingPageIndex = state.pages.findIndex(
-                      p => p.number === i
-                    );
-                    if (existingPageIndex === -1) {
-                      commit("ADD_PAGE", response.data);
-                    } else {
-                      let newPages = state.pages.slice(0);
-                      newPages[i - 1] = response.data;
-                      commit("SET_PAGES", newPages);
-                    }
-                  }
-                })
-                .catch(error => {
-                  console.log(error, "Could not fetch pages from the backend");
-                });
-            } else {
-              break;
-            }
-          }
+          commit("SET_SELECTED_DOCUMENT", response.data);
         }
       })
       .catch(error => {
         console.log(error, "Could not fetch document details from the backend");
       });
+  },
+
+  // Get document page data
+  fetchDocumentPage: ({
+    commit,
+    state
+  }, page) => {
+    return HTTP.get(`documents/${state.documentId}/pages/${page}/`)
+      .then(response => {
+        commit("ADD_PAGE", response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
   },
 
   setDocumentFocusedAnnotation: ({
@@ -698,7 +684,16 @@ const mutations = {
     };
   },
   ADD_PAGE: (state, page) => {
-    state.pages.push(page);
+    // if we already have the page in the state, update it in
+    // the pages array instead of creating a new one
+    const existingPageIndex = state.pages.findIndex(
+      p => p.number === page.number
+    );
+    if (existingPageIndex === -1) {
+      state.pages.push(page);
+    } else {
+      state.pages[existingPageIndex] = page;
+    }
   },
   SET_PAGES: (state, pages) => {
     state.pages = pages;
@@ -735,9 +730,6 @@ const mutations = {
   },
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
-  },
-  SET_IMAGE_LOADED: (state, value) => {
-    state.imageLoaded = value;
   },
   SET_REJECT_ANNOTATION: (state, annotation) => {
     state.rejectAnnotation = annotation;

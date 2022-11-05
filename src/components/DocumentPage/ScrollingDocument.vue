@@ -6,17 +6,15 @@
 <template>
   <div>
     <div
-      :class="['scrolling-document', !imageLoaded && 'loading-pages']"
+      class="scrolling-document"
       v-scroll.immediate="updateScrollBounds"
       ref="scrollingDocument"
     >
-      <div class="loading-page" v-if="!imageLoaded">
-        <div v-for="n in docPagePlaceholder" :key="n">
-          <b-skeleton width="97%" height="1000px"></b-skeleton>
-        </div>
-      </div>
-
-      <div :class="[recalculatingAnnotations && 'blur']" v-else>
+      <!-- TODO: change blur to be skeleton, no need to have multiple loading states (in all places, not only here)-->
+      <div
+        :class="[recalculatingAnnotations && 'blur']"
+        v-if="selectedDocument"
+      >
         <ScrollingPage
           v-for="page in editMode ? pagesArray : pages"
           :key="page.number"
@@ -28,8 +26,11 @@
           :scroll="scroll"
         />
       </div>
+      <div class="loading-page" v-else>
+        <b-skeleton width="100%" height="1000px" />
+      </div>
     </div>
-    <Toolbar v-if="!editMode && pages && pages.length > 0" />
+    <Toolbar v-if="!editMode && pages.length > 0" />
   </div>
 </template>
 
@@ -58,18 +59,20 @@ export default {
   data() {
     return {
       scrollTop: 0,
-      clientHeight: 0,
-      docPagePlaceholder: 2
+      clientHeight: 0
     };
   },
 
   computed: {
-    ...mapState("document", [
-      "recalculatingAnnotations",
-      "pages",
-      "imageLoaded"
-    ]),
-    ...mapState("edit", ["editMode", "pagesArray"])
+    ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
+    ...mapState("edit", ["editMode", "pagesArray"]),
+    pages() {
+      if (this.selectedDocument) {
+        return this.selectedDocument.pages;
+      } else {
+        return [];
+      }
+    }
   },
 
   methods: {
@@ -87,14 +90,6 @@ export default {
       this.$refs.scrollingDocument.scrollTop =
         // the 4 comes from the margin between pages
         actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
-    }
-  },
-  watch: {
-    pages(pages) {
-      // if pages change
-      if (pages.length > 0) {
-        this.$emit("pages-reset");
-      }
     }
   }
 };

@@ -9,8 +9,9 @@
       :containerHeight="scaledViewport.height"
       @close="closeNewAnnotation"
     />
+
     <v-stage
-      v-if="scale"
+      v-if="image && scale"
       ref="stage"
       :config="scaledViewport"
       :style="canvasStyle"
@@ -22,7 +23,6 @@
     >
       <v-layer>
         <v-image
-          v-if="image"
           :config="{
             image,
             width: scaledViewport.width,
@@ -30,7 +30,6 @@
             listening: false
           }"
         />
-
         <template v-if="pageInVisibleRange && !editMode">
           <v-group ref="entities" v-if="!publicView && !isSelectionEnabled">
             <v-rect
@@ -113,6 +112,12 @@
         />
       </v-layer>
     </v-stage>
+    <b-skeleton
+      v-else
+      position="is-centered"
+      :width="scaledViewport.width"
+      :height="scaledViewport.height"
+    />
   </div>
 </template>
 
@@ -409,7 +414,6 @@ export default {
           image.onload = () => {
             // set image only when it is loaded
             this.image = image;
-            this.$store.dispatch("document/setImageLoaded", true);
           };
         });
     },

@@ -20,7 +20,6 @@ describe("Document Annotations Component", () => {
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
-      store.dispatch("document/setImageLoaded", true),
       store.dispatch(
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets

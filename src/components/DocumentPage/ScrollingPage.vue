@@ -1,8 +1,8 @@
 <template>
-  <keep-alive>
-    <DummyPage v-if="!pageInVisibleRange(page)" :page="page" />
-    <DocumentPage v-else :page="page" />
-  </keep-alive>
+  <div>
+    <DummyPage v-if="!loadedPage || !pageInVisibleRange(page)" />
+    <DocumentPage v-else :page="loadedPage" />
+  </div>
 </template>
 
 <script>
@@ -48,6 +48,17 @@ export default {
 
   computed: {
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+
+    loadedPage() {
+      let loadedPage = null;
+      if (this.page && this.pages) {
+        loadedPage = this.pages.find(p => p.number === this.page.number);
+      }
+      if (!loadedPage && this.pageInVisibleRange(this.page)) {
+        this.$store.dispatch("document/fetchDocumentPage", this.page.number);
+      }
+      return loadedPage;
+    },
 
     isElementFocused() {
       const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =

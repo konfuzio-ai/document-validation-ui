@@ -9,8 +9,12 @@
     margin: 8px 0;
   }
 
-  &.loading-pages {
+  .loading-page {
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
   }
 
   .blur {

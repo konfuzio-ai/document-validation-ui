@@ -15,14 +15,14 @@
     </div>
 
     <!-- When document data is still loading -->
-    <div v-else-if="!imageLoaded && !recalculatingAnnotations">
+    <div v-else-if="!annotationSets">
       <div v-for="n in numberOfLoadingAnnotations" :key="n">
         <LoadingAnnotations />
       </div>
     </div>
 
     <!-- When there's no annotations in the label -->
-    <div v-else-if="!annotationSets || annotationSets.length === 0">
+    <div v-else-if="annotationSets.length === 0">
       <EmptyState />
     </div>
 
@@ -64,7 +64,7 @@
     </div>
 
     <div
-      v-if="!publicView && missingAnnotations.length && imageLoaded"
+      v-if="!publicView && missingAnnotations.length"
       class="rejected-labels-list"
     >
       <RejectedLabels :missingAnnotations="missingAnnotations" />
@@ -117,7 +117,6 @@ export default {
       "editingActive",
       "annotations",
       "editAnnotation",
-      "imageLoaded",
       "acceptAnnotation",
       "sidebarAnnotationSelected",
       "annotationSets"

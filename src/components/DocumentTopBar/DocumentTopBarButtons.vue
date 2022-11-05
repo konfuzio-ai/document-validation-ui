@@ -82,9 +82,6 @@ export default {
             // Stop document loading state and recalculating annotations
             await this.$store.dispatch("document/endLoading");
             await this.$store.dispatch("document/endRecalculatingAnnotations");
-
-            // set loading for images
-            this.$store.dispatch("document/setImageLoaded", false);
           });
       }
 

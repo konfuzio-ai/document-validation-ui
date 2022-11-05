@@ -2,7 +2,10 @@
 
 <template>
   <div class="dashboard">
-    <div class="dashboard-top-bar" v-if="pages && pages.length > 0">
+    <div
+      class="dashboard-top-bar"
+      v-if="selectedDocument && selectedDocument.pages.length > 0"
+    >
       <DocumentTopBar />
     </div>
     <div
@@ -49,7 +52,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
@@ -86,25 +89,29 @@ export default {
     DocumentError
   },
   computed: {
+    ...mapState("display", ["scale", "fit", "optimalResolution"]),
+    ...mapState("document", [
+      "showError",
+      "showDocumentError",
+      "imageLoaded",
+      "errorMessageWidth",
+      "selectedDocument"
+    ]),
+    ...mapState("edit", ["editMode"]),
+    ...mapGetters("document", ["defaultPageSize"]),
+
     defaultViewport() {
-      if (!this.pages.length)
+      if (!this.defaultPageSize) {
         return {
           width: 0,
           height: 0
         };
-      const [page] = this.pages;
-
-      return { width: page.size[0], height: page.size[1] };
-    },
-    ...mapState("display", ["scale", "fit", "optimalResolution"]),
-    ...mapState("document", [
-      "pages",
-      "showError",
-      "showDocumentError",
-      "imageLoaded",
-      "errorMessageWidth"
-    ]),
-    ...mapState("edit", ["editMode"])
+      }
+      return {
+        width: this.defaultPageSize[0],
+        height: this.defaultPageSize[1]
+      };
+    }
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(() => {
