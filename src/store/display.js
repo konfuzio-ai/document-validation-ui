@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
 import {
-  PIXEL_RATIO
+  PIXEL_RATIO,
+  VIEWPORT_RATIO,
+  MINIMUM_APP_WIDTH,
+  MINIMUM_OPTIMIZED_APP_WIDTH
 } from "../constants";
 const debounce = (cb, duration) => {
   let timer;
@@ -26,6 +29,21 @@ const state = {
 };
 
 const getters = {
+  isMinimumWidth: (state) => (width) => {
+    return width >= MINIMUM_APP_WIDTH;
+  },
+  pageWidthScale: (state) => (elementsWidth, clientWidth, viewportWidth) => {
+    return (
+      ((clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /
+      viewportWidth
+    );
+  },
+  pageHeightScale: (state) => (clientHeight, viewportHeight) => {
+    return (
+      (clientHeight * PIXEL_RATIO * VIEWPORT_RATIO) /
+      viewportHeight
+    );
+  },
   visiblePageRange: (state, getters, rootState, rootGetters) => {
     const pageCount = rootGetters.pageCount;
     const previousPage = state.currentPage - 1 < 1 ? 1 : state.currentPage - 1;
@@ -43,7 +61,6 @@ const getters = {
       .div(page.original_size[0])
       .toNumber();
   },
-
   bboxToRect: (state, getters) => (page, bbox, hasOffset = false) => {
     const imageScale = getters.imageScale(page);
     const {
@@ -142,21 +159,53 @@ const getters = {
 
 const actions = {
   updateScale({
-    commit
+    commit,
+    getters
   }, {
-    scale,
-    isOptimal = false
+    elementsWidth,
+    client,
+    viewport,
+    scale
   }) {
-    const roundedScale = floor(scale, 2);
-    if (isOptimal) {
-      commit("SET_OPTIMAL_SCALE", roundedScale);
+    /**
+     * Determine an ideal scale using viewport of document's first page, the pixel ratio
+     * from the browser and a subjective scale factor based on the screen size.
+     */
+    switch (state.fit) {
+      case "width":
+        commit("SET_SCALE", getters.pageWidthScale(
+          elementsWidth,
+          client.width,
+          viewport.width
+        ));
+        break;
+      case "auto":
+        const pageWidthScale = getters.pageWidthScale(
+          elementsWidth,
+          client.width,
+          viewport.width
+        );
+        const pageHeightScale = getters.pageWidthScale(client.height, viewport.height);
+        const autoScale = Math.min(pageWidthScale, pageHeightScale);
+        commit("SET_SCALE", autoScale);
+        break;
+      case "custom": {
+        if (scale) {
+          commit("SET_SCALE", scale);
+        }
+        break;
+      }
+      default:
+        console.log("No fit defined");
+        break;
     }
-    commit("SET_SCALE", roundedScale);
   },
 
   updateFit({
-    commit
-  }, fit) {
+      commit,
+    },
+    fit
+  ) {
     commit("SET_FIT", fit);
   },
 
@@ -174,18 +223,14 @@ const actions = {
   },
   updateOptimalResolution({
     commit
-  }, isOptimal) {
-    commit("SET_OPTIMAL_RESOLUTION", isOptimal);
+  }, width) {
+    commit("SET_OPTIMAL_RESOLUTION", width >= MINIMUM_OPTIMIZED_APP_WIDTH);
   }
 };
 
 const mutations = {
   SET_SCALE: (state, scale) => {
-    state.scale = scale;
-  },
-
-  SET_OPTIMAL_SCALE: (state, optimalScale) => {
-    state.optimalScale = optimalScale;
+    state.scale = floor(scale, 2);
   },
 
   SET_FIT: (state, fit) => {

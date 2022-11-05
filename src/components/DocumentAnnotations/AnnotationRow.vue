@@ -102,17 +102,18 @@ export default {
     },
     onAnnotationHoverEnter() {
       if (this.annotation) {
-        this.$emit("handle-scroll", false);
         const focusedAnnotation = { ...this.annotation };
         focusedAnnotation.label_name = this.label.name;
-        this.$store.dispatch(
-          "document/setDocumentFocusedAnnotation",
-          focusedAnnotation
-        );
+        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
+          annotation: focusedAnnotation,
+          scroll: false
+        });
       }
     },
     onAnnotationHoverLeave() {
-      this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
+      this.$store.dispatch("document/setDocumentFocusedAnnotation", {
+        annotation: null
+      });
     },
     handleReject() {
       // TODO: this should be dispatched here and not in document annotations
@@ -121,7 +122,9 @@ export default {
     onAnnotationClick() {
       // TODO: this should be refactored to a store dispatch
       if (this.documentFocusedAnnotation && this.annotation) {
-        this.$emit("handle-scroll", true);
+        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
+          scroll: true
+        });
       }
     }
   },
@@ -150,7 +153,6 @@ export default {
           this.annotationAnimationTimeout = setTimeout(() => {
             this.$store.dispatch("document/setSidebarAnnotationSelected", null);
             this.isSelected = false;
-            this.$emit("handle-scroll", false);
           }, 1500);
         };
         runAnimation();

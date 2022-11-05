@@ -55,7 +55,6 @@
               :label="label"
               :annotationSet="annotationSet"
               :indexGroup="indexGroup"
-              :handleScroll="handleScroll"
               @handle-reject="rejectAnnotation"
             />
           </div>
@@ -96,11 +95,6 @@ export default {
     LoadingAnnotations,
     AnnotationsTopBar,
     CategorizeModal
-  },
-  props: {
-    handleScroll: {
-      type: Function
-    }
   },
   data() {
     return {

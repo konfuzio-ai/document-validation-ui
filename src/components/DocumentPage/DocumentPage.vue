@@ -489,10 +489,10 @@ export default {
           ? "crosshair"
           : "default";
         // Set the id back to null so that the annotation doesn't stay selected
-        this.$store.dispatch(
-          "document/setDocumentFocusedAnnotation",
-          annotation
-        );
+        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
+          annotation,
+          scroll: false
+        });
       }
     },
 

@@ -30,9 +30,6 @@ export default {
     clientHeight: {
       type: Number,
       required: true
-    },
-    scroll: {
-      type: Boolean
     }
   },
 
@@ -40,7 +37,6 @@ export default {
     return {
       elementTop: 0,
       elementHeight: 0,
-      scrollToAnnotation: true,
       previousFocusedAnnotation: null,
       previousY: null
     };
@@ -81,10 +77,6 @@ export default {
       return this.scrollTop + this.clientHeight;
     },
 
-    focusedAnnotationAndScroll() {
-      return [this.documentFocusedAnnotation, this.scroll];
-    },
-
     ...mapState("display", ["scale", "currentPage"]),
     ...mapState("document", ["documentFocusedAnnotation", "pages"]),
     ...mapState("edit", ["editMode"])
@@ -120,7 +112,7 @@ export default {
      * from the page object).
      */
     getYForBbox(bbox) {
-      return this.bboxToRect(this.page, bbox).y;
+      return this.bboxToRect(this.loadedPage, bbox).y;
     },
 
     /**
@@ -139,15 +131,14 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    focusedAnnotationAndScroll(newValue) {
-      const focusedAnn = newValue[0];
-      const scroll = newValue[1];
-
+    documentFocusedAnnotation(newValue) {
+      const focusedAnn = newValue.annotation;
+      const scroll = newValue.scroll;
       if (
+        scroll &&
         focusedAnn &&
         focusedAnn.span &&
-        focusedAnn.span[0].page_index + 1 === this.page.number &&
-        scroll
+        focusedAnn.span[0].page_index + 1 === this.page.number
       ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.

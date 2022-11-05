@@ -13,7 +13,7 @@
       <!-- TODO: change blur to be skeleton, no need to have multiple loading states (in all places, not only here)-->
       <div
         :class="[recalculatingAnnotations && 'blur']"
-        v-if="selectedDocument"
+        v-if="selectedDocument && scale"
       >
         <ScrollingPage
           v-for="page in editMode ? pagesArray : pages"
@@ -23,14 +23,13 @@
           :scrollTop="scrollTop"
           @page-jump="onPageJump"
           class="scrolling-page"
-          :scroll="scroll"
         />
       </div>
       <div class="loading-page" v-else>
         <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
-    <Toolbar v-if="!editMode && pages.length > 0" />
+    <Toolbar v-if="!editMode && pages.length > 0 && scale" />
   </div>
 </template>
 
@@ -45,15 +44,8 @@ export default {
     ScrollingPage,
     Toolbar
   },
-
   directives: {
     scroll
-  },
-
-  props: {
-    scroll: {
-      type: Boolean
-    }
   },
 
   data() {
@@ -66,6 +58,8 @@ export default {
   computed: {
     ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
     ...mapState("edit", ["editMode", "pagesArray"]),
+    ...mapState("display", ["scale"]),
+
     pages() {
       if (this.selectedDocument) {
         return this.selectedDocument.pages;

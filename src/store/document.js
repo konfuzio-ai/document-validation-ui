@@ -3,7 +3,10 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  documentFocusedAnnotation: null,
+  documentFocusedAnnotation: {
+    scroll: false,
+    annotation: null
+  },
   loading: true,
   pages: [],
   annotationSets: null,
@@ -41,7 +44,7 @@ const getters = {
     if (state.pages && state.pages.length > 0) {
       return state.pages[0].size;
     }
-    return [0, 0];
+    return null;
   },
 
 
@@ -352,21 +355,26 @@ const actions = {
   setDocumentFocusedAnnotation: ({
     commit,
     state
-  }, annotation) => {
-    if (
-      !state.documentFocusedAnnotation ||
-      (annotation && state.documentFocusedAnnotation.id !== annotation.id)
-    ) {
-      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", annotation);
-    } else {
-      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", null);
-    }
-  },
-
-  resetDocumentFocusedAnnotation: ({
-    commit
+  }, {
+    annotation,
+    scroll
   }) => {
-    commit("SET_DOCUMENT_FOCUSED_ANNOTATION", null);
+    if (scroll) {
+      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
+        annotation: state.documentFocusedAnnotation.annotation,
+        scroll
+      })
+    } else if (!annotation) {
+      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
+        annotation: null,
+        scroll: false
+      });
+    } else {
+      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
+        annotation,
+        scroll
+      })
+    }
   },
 
   createAnnotation: ({

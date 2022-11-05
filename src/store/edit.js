@@ -5,7 +5,7 @@ const HTTP = myImports.HTTP;
 const state = {
   editMode: false,
   splitOverview: false,
-  pagesArray: [],
+  pagesArray: [], // TODO: change name
   selectedPages: [],
   updatedDocument: []
 };
