@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
@@ -54,11 +54,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", [
-      "pages",
-      "recalculatingAnnotations",
-      "selectedDocument"
-    ]),
+    ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
@@ -66,36 +62,33 @@ export default {
       "updatedDocument",
       "splitOverview",
       "selectedPages"
-    ])
+    ]),
+    ...mapGetters("document", ["defaultPageSize"])
   },
   methods: {
     setPages() {
       if (!this.selectedDocument) {
         return;
       }
-
-      if (
-        this.pages.length &&
-        this.pages.length === this.selectedDocument.number_of_pages
-      ) {
-        // set array of pages only with the data we need
-        const pages = this.createPagesArray();
-        this.$store.dispatch("edit/setPagesArray", pages);
-        // create array to handle the splitting
-        // length - 1 because of how many lines to split we need (last one not necessary)
-        this.activeSplittingLines = new Array(this.pages.length - 1);
-      }
+      // set array of pages only with the data we need
+      const pages = this.createPagesArray();
+      this.$store.dispatch("edit/setPagesArray", pages);
+      // create array to handle the splitting
+      // length - 1 because of how many lines to split we need (last one not necessary)
+      this.activeSplittingLines = new Array(
+        this.selectedDocument.pages.length - 1
+      );
     },
     createPagesArray() {
-      return this.pages.map(page => {
+      return this.selectedDocument.pages.map(page => {
+        //TODO: fix pages size
         return {
           id: page.id,
           angle: 0,
           page_number: page.number,
           thumbnail_url: page.thumbnail_url,
-          updated_at: page.updated_at,
           image_url: page.image_url,
-          size: page.size
+          size: this.defaultPageSize
         };
       });
     },

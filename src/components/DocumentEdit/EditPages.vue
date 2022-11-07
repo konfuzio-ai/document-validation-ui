@@ -28,12 +28,14 @@
                 ]"
               >
                 <ServerImage
-                  :class="['img-thumbnail']"
-                  :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+                  class="img-thumbnail"
+                  :imageUrl="`${page.thumbnail_url}`"
                   :style="{
                     transform: 'rotate(' + getRotation(page.id) + 'deg)'
                   }"
-                />
+                >
+                  <b-skeleton width="57px" height="57px"></b-skeleton>
+                </ServerImage>
               </div>
               <div class="icon-container">
                 <div class="action-icon">
@@ -139,8 +141,7 @@ export default {
       const selectedPage = {
         id: page.id,
         number: page.page_number,
-        thumbnail_url: page.thumbnail_url,
-        updated_at: page.updated_at
+        thumbnail_url: page.thumbnail_url
       };
 
       this.selected = true;

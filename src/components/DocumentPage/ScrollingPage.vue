@@ -1,6 +1,7 @@
 <template>
   <div>
-    <DummyPage v-if="!loadedPage || !pageInVisibleRange(page)" />
+    <DocumentPage v-if="editMode" :page="page" />
+    <DummyPage v-else-if="!loadedPage || !pageInVisibleRange(page)" />
     <DocumentPage v-else :page="loadedPage" />
   </div>
 </template>

@@ -42,8 +42,7 @@ export default {
       "publicView",
       "annotationSets",
       "missingAnnotations",
-      "labels",
-      "imageLoaded"
+      "labels"
     ]),
 
     emptyAnnotations() {
@@ -120,8 +119,7 @@ export default {
 
       if (
         notRevised.length === 0 &&
-        missingObjects.length === this.emptyAnnotations.length &&
-        this.imageLoaded
+        missingObjects.length === this.emptyAnnotations.length
       ) {
         this.finishDisabled = false;
       } else {

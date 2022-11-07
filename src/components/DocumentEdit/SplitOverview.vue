@@ -165,7 +165,7 @@ export default {
         p => p.page_number === page.pages[0].page_number
       );
 
-      return `${image.thumbnail_url}?${image.updated_at}`;
+      return `${image.thumbnail_url}`;
     },
     getRotation(pageId) {
       // rotate page
