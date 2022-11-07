@@ -4,11 +4,7 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div
-    class="empty-annotation"
-    @mouseenter="handleShowReject"
-    @mouseleave="showReject = false"
-  >
+  <div class="empty-annotation">
     <span
       v-if="!publicView"
       :class="[
@@ -41,7 +37,7 @@
 import { mapState, mapGetters } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
- * This component is responsible for managing empty annotations.
+ * This component is responsible for managing empty annotations (labels with no annotations).
  */
 export default {
   name: "EmptyAnnotation",
@@ -59,6 +55,10 @@ export default {
     },
     annotationSet: {
       required: true
+    },
+    isHovered: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -186,13 +186,6 @@ export default {
     },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;
-    },
-    handleShowReject() {
-      if (this.publicView) return;
-
-      if (!this.isAnnotationBeingEdited()) {
-        this.showReject = true;
-      }
     }
   },
   watch: {
@@ -233,6 +226,10 @@ export default {
       } else {
         this.isLoading = false;
       }
+    },
+    isHovered(newValue) {
+      if (this.publicView) return;
+      this.showReject = newValue && !this.isAnnotationBeingEdited();
     }
   }
 };

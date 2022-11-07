@@ -5,13 +5,7 @@
 ></style>
 
 <template>
-  <div
-    class="annotation"
-    ref="annotation"
-    :id="annotation.id"
-    @mouseenter="handleAcceptButton(annotation)"
-    @mouseleave="showAcceptButton = false"
-  >
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       v-if="!publicView"
       :class="[
@@ -75,6 +69,10 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    isHovered: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -95,7 +93,6 @@ export default {
       "editAnnotation",
       "editingActive",
       "publicView",
-      "acceptAnnotation",
       "annotations"
     ]),
     annotationText() {
@@ -169,7 +166,6 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("document/endLoading");
       this.$store.dispatch("document/setEditingActive", false);
-      this.$store.dispatch("document/setAcceptAnnotation", false);
       this.isLoading = false;
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
@@ -255,15 +251,6 @@ export default {
         return true;
       }
       return false;
-    },
-    handleAcceptButton(annotation) {
-      if (this.publicView) return;
-
-      if (!annotation.revised) {
-        this.showAcceptButton = true;
-      } else {
-        this.showAcceptButton = false;
-      }
     }
   },
   watch: {
@@ -295,10 +282,9 @@ export default {
         this.handleCancel();
       }
     },
-    acceptAnnotation(newValue) {
-      if (newValue && this.annotation.id === this.editAnnotation.id) {
-        this.saveAnnotationChanges();
-      }
+    isHovered(newValue) {
+      if (this.publicView) return;
+      this.showAcceptButton = newValue && !this.annotation.revised;
     }
   }
 };

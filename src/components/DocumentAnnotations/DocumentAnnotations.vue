@@ -111,7 +111,6 @@ export default {
       "editingActive",
       "annotations",
       "editAnnotation",
-      "acceptAnnotation",
       "sidebarAnnotationSelected",
       "annotationSets"
     ]),
@@ -296,6 +295,7 @@ export default {
       }
     },
     acceptAnnotation(newValue, oldValue) {
+      // TODO: rework this to be more generic
       if (!newValue && oldValue) {
         this.focusOnNextAnnotation();
         this.jumpToNextAnnotation = false;

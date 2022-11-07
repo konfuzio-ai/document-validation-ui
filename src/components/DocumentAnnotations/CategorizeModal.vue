@@ -87,9 +87,6 @@ export default {
       documentCategory: null // category associated to document
     };
   },
-  mounted() {
-    this.setDocumentValues();
-  },
   methods: {
     setDocumentValues() {
       const category = this.category(this.selectedDocument.category);
@@ -133,6 +130,11 @@ export default {
   watch: {
     selectedDocument(newValue) {
       if (newValue) {
+        this.setDocumentValues();
+      }
+    },
+    categories(newCategories, oldCategories) {
+      if (newCategories && oldCategories === null) {
         this.setDocumentValues();
       }
     }

@@ -34,12 +34,14 @@
             :spanIndex="index"
             :label="label"
             :annotationSet="annotationSet"
+            :isHovered="isHovered"
           />
         </div>
         <div v-else>
           <EmptyAnnotation
             :label="label"
             :annotationSet="annotationSet"
+            :isHovered="isHovered"
             @reject="handleReject"
           />
         </div>
@@ -74,7 +76,8 @@ export default {
     return {
       isLoading: false,
       isSelected: false,
-      annotationAnimationTimeout: null
+      annotationAnimationTimeout: null,
+      isHovered: false
     };
   },
   computed: {
@@ -109,14 +112,16 @@ export default {
           scroll: false
         });
       }
+      this.isHovered = true;
     },
     onAnnotationHoverLeave() {
       this.$store.dispatch("document/setDocumentFocusedAnnotation", {
         annotation: null
       });
+      this.isHovered = false;
     },
     handleReject() {
-      // TODO: this should be dispatched here and not in document annotations
+      // TODO: this should be dispatched here to the store and not in document annotations because it's going back and forward in a lot of components
       this.$emit("handle-reject");
     },
     onAnnotationClick() {

@@ -76,6 +76,7 @@ export default {
   name: "ActionButtons",
   data() {
     return {
+      // TODO: improve variable name, not sure what's related to
       isFullPage: false
     };
   },
@@ -113,7 +114,6 @@ export default {
       this.$emit("cancel");
     },
     accept() {
-      this.$store.dispatch("document/setAcceptAnnotation", true);
       this.$emit("accept");
     },
     reject() {

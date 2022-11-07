@@ -118,7 +118,7 @@ export default {
     },
     accepted() {
       if (this.annotation) {
-        return this.annotation.revised && this.annotation.is_correct;
+        return this.annotation.revised;
       } else {
         return null;
       }
@@ -155,7 +155,7 @@ export default {
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
-      // TODO: fix animation
+      // TODO: add this accepted check to store
       const accepted = ann => {
         return ann && ann.id && ann.revised && ann.is_correct;
       };

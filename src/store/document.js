@@ -30,9 +30,8 @@ const state = {
   editingActive: false,
   showError: false,
   errorMessage: null,
-  acceptAnnotation: false,
   showDocumentError: false,
-  rejectAnnotation: null,
+  rejectAnnotation: null, // TODO: is this necessary?
   errorMessageWidth: null
 };
 
@@ -273,11 +272,6 @@ const actions = {
     }
 
     commit("SET_ERROR_MESSAGE", message);
-  },
-  setAcceptAnnotation: ({
-    commit
-  }, value) => {
-    commit("SET_ACCEPT_ANNOTATION", value);
   },
   setDocumentError: ({
     commit
@@ -621,15 +615,16 @@ const mutations = {
     }
     let updatedAnnotation = false;
     state.annotationSets.forEach(annotationSet => {
+      if (updatedAnnotation) {
+        return;
+      }
       annotationSet.labels.forEach(label => {
-        if (updatedAnnotation) {
-          return;
-        }
+
         const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
           existingAnnotation => existingAnnotation.id === annotation.id
         );
         if (indexOfAnnotationAnnotationSets > -1) {
-          label.annotations[indexOfAnnotationAnnotationSets] = annotation;
+          label.annotations.splice(indexOfAnnotationAnnotationSets, 1, annotation);;
           updatedAnnotation = true;
           return;
         }
@@ -732,9 +727,6 @@ const mutations = {
   },
   SET_ERROR_MESSAGE: (state, message) => {
     state.errorMessage = message;
-  },
-  SET_ACCEPT_ANNOTATION: (state, value) => {
-    state.acceptAnnotation = value;
   },
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
