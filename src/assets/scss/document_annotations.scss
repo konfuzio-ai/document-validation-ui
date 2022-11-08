@@ -323,12 +323,12 @@
     bottom: 0;
     background-color: $background;
     max-height: 120px;
-    min-width: 50%;
+    width: 100%;
     border-top: $component-border;
 
     .rejected-label-container {
       margin-top: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 5px;
 
       .title {
         font-weight: 400;
@@ -348,6 +348,7 @@
         max-height: 60px;
         padding-left: 15px;
         padding-right: 35px;
+        padding-bottom: 15px;
 
         .label-name {
           &.loading {

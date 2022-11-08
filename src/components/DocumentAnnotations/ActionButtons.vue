@@ -59,7 +59,12 @@
       @mouseenter="hoverEmptyLabels"
       @mouseleave="leaveEmptyLabels"
     >
-      <b-button type="is-ghost" class="reject-btn" @click.stop="rejectAllEmpty">
+      <b-button
+        type="is-ghost"
+        class="reject-btn"
+        @click.stop="rejectAllEmpty"
+        :disabled="emptyLabelsLength === 0"
+      >
         {{ $t("reject_all_empty") }} ({{ emptyLabelsLength }})
       </b-button>
     </div>
