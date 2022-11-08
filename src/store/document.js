@@ -237,6 +237,11 @@ const actions = {
   }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
+  setPublicView: ({
+    commit
+  }, publicView) => {
+    commit("SET_PUBLIC_VIEW", publicView);
+  },
   startRecalculatingAnnotations: ({
     commit
   }) => {

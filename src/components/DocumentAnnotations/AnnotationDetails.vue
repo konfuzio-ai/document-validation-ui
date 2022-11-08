@@ -8,7 +8,7 @@
     type="is-dark"
     :animated="false"
     position="is-bottom"
-    class="left-aligned"
+    class="left-aligned annotation-details"
   >
     <div class="label-icon">
       <b-icon

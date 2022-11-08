@@ -64,10 +64,10 @@ describe("Document Annotations Component", () => {
         label,
       },
     });
-    expect(wrapper.find(".label-property-text").text()).toContain(label.name);
+    expect(wrapper.find(".annotation-row .label-name").text()).toContain(label.name);
   });
 
-  it("check if label info appears when hovering", async () => {
+  it("check if annotation info appears when hovering", async () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -75,7 +75,7 @@ describe("Document Annotations Component", () => {
       },
     });
     const element = wrapper
-      .findAll(".labels .label-properties .label-property-left .left-aligned")
+      .findAll(".annotation-row .annotation-details")
       .at(0);
     await element.find(".tooltip-trigger").trigger("mouseenter");
     requestAnimationFrame(() => {
@@ -281,7 +281,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       wrapper
-      .findAll(".label-properties .label-property-name .label-property-text")
+      .findAll(".annotation-row .label-name span")
       .at(0)
       .text()
     ).not.toBe(
@@ -321,7 +321,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       wrapper
-      .findAll(".label-properties .label-property-name .label-property-text")
+      .findAll(".annotation-row .label-name span")
       .at(0)
       .text()
     ).toBe("Anrede");
