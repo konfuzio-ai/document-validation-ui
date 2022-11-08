@@ -57,12 +57,26 @@
       padding-bottom: 130px;
     }
 
-    .label-set-name {
-      margin: 24px 16px 8px 16px;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
-      color: $text;
+    .annotation-set-group {
+      .label-set-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 32px;
+        margin: 24px 16px 8px 16px;
+
+        &:hover {
+          background-color: $background;
+        }
+
+        .label-set-name {
+          // margin: 24px 16px 8px 16px;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 20px;
+          color: $text;
+        }
+      }
     }
 
     .labels {
@@ -247,23 +261,6 @@
 
             .reject-button-container {
               background-color: transparent;
-
-              .reject-btn {
-                color: $grey-blue !important;
-                font-size: 14px !important;
-                font-weight: 500;
-                background-color: transparent !important;
-                width: auto;
-
-                &:hover {
-                  text-decoration: none !important;
-                  color: $dark-blue !important;
-                }
-
-                &:focus {
-                  box-shadow: none !important;
-                }
-              }
             }
           }
 
