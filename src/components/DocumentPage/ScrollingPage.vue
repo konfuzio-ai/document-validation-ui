@@ -105,7 +105,9 @@ export default {
       } else {
         number = page.number;
       }
-      return this.visiblePageRange.includes(number);
+      return (
+        this.currentPage === number || this.visiblePageRange.includes(number)
+      );
     },
     updateElementBounds() {
       const { offsetTop, offsetHeight } = this.$el;
@@ -182,11 +184,6 @@ export default {
       }
     }
   },
-
-  created() {
-    this.$on("update-visibility", this.updateElementBounds);
-  },
-
   mounted() {
     this.updateElementBounds();
   }

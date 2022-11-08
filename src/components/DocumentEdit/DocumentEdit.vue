@@ -102,19 +102,6 @@ export default {
       }
     },
 
-    closeEditMode() {
-      this.$store.dispatch("edit/disableEditMode");
-
-      // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.pagesArray) {
-        const pages = this.createPagesArray();
-        this.$store.dispatch("edit/setPagesArray", pages);
-      }
-
-      this.$store.dispatch("edit/setUpdatedDocument", null);
-      this.$store.dispatch("edit/setSelectedPages", null);
-    },
-
     /** ROTATE */
     rotatePage(direction) {
       const page = this.selectedPages.map(page => {

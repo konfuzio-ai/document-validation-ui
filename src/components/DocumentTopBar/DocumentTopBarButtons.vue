@@ -44,6 +44,11 @@ export default {
       this.$store.dispatch("edit/setSplitOverview", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
+
+      this.$nextTick(() => {
+        // reset to first page
+        this.$store.dispatch("display/updateCurrentPage", 1);
+      });
     },
     handleButton() {
       // Check if we are not in the split overview

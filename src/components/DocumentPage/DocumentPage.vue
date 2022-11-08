@@ -253,7 +253,7 @@ export default {
       "selectionFromBbox",
       "spanSelection"
     ]),
-    ...mapState("display", ["currentPage", "scale", "optimalScale"]),
+    ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
       "documentFocusedAnnotation",
       "recalculatingAnnotations",
