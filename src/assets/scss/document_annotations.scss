@@ -274,7 +274,8 @@
           }
 
           &:hover,
-          &.selected {
+          &.selected,
+          &.hovered-empty-labels {
             background-color: $grey-lightest;
           }
 

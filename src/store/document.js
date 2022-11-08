@@ -439,7 +439,7 @@ const actions = {
 
   fetchMissingAnnotations: ({ commit, state }) => {
     return HTTP.get(
-      `documents/${state.documentId}/missing-annotations/?limit=100`
+      `/missing-annotations/?document=${state.documentId}&limit=100`
     )
       .then(response => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
@@ -449,12 +449,9 @@ const actions = {
       });
   },
 
-  addMissingAnnotations: ({ state }, missingAnnotations) => {
+  addMissingAnnotations: ({}, missingAnnotations) => {
     return new Promise(resolve => {
-      return HTTP.post(
-        `documents/${state.documentId}/missing-annotations/`,
-        missingAnnotations
-      )
+      return HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then(response => {
           if (response.status === 201) {
             resolve(true);
@@ -467,11 +464,9 @@ const actions = {
     });
   },
 
-  deleteMissingAnnotation: ({ state }, id) => {
+  deleteMissingAnnotation: ({}, id) => {
     return new Promise(resolve => {
-      return HTTP.delete(
-        `documents/${state.documentId}/missing-annotations/${id}/`
-      )
+      return HTTP.delete(`/missing-annotations/${id}/`)
         .then(response => {
           if (response.status === 204) {
             resolve(true);
