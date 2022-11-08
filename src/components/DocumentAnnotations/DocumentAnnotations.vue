@@ -284,7 +284,7 @@ export default {
         // if single rejection is triggered by clicking the button
 
         rejected = {
-          document: this.documentId,
+          document: parseInt(this.documentId),
           label: label,
           label_set: labelSet,
           annotation_set: annotationSet
@@ -293,7 +293,7 @@ export default {
         // if single rejection is triggered from "delete" key
 
         rejected = {
-          document: this.documentId,
+          document: parseInt(this.documentId),
           label: this.editAnnotation.label,
           label_set: this.editAnnotation.labelSet,
           annotation_set: this.editAnnotation.annotationSet
@@ -307,7 +307,7 @@ export default {
 
         rejected = emptyLabels.map(label => {
           return {
-            document: this.documentId,
+            document: parseInt(this.documentId),
             label: label.id,
             label_set: annotationSet.label_set.id,
             annotation_set: annotationSet.id
