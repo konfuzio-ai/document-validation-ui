@@ -74,6 +74,7 @@
               :annotationSet="annotationSet"
               :indexGroup="indexGroup"
               @handle-reject="rejectMissingAnnotations"
+              :hoveredLabelSet="hoveredLabelSet"
             />
           </div>
         </div>
