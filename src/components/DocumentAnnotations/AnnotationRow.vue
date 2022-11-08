@@ -137,7 +137,7 @@ export default {
         return JSON.parse(JSON.stringify(label));
       });
       const found = labels.find(l => l.id === this.label.id);
-      if (found) return found.id;
+      if (found && found.annotations.length === 0) return found.id;
       return null;
     },
     isEmptyAnnotationInHoveredLabelSet() {
