@@ -84,9 +84,19 @@ button {
     background-color: transparent;
     width: auto;
 
-    &:hover {
-      text-decoration: none;
-      color: $dark-blue !important;
+    &[disabled] {
+      border: none;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:not([disabled]) {
+      &:hover {
+        text-decoration: none;
+        color: $dark-blue !important;
+      }
     }
 
     &:focus {
