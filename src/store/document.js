@@ -700,9 +700,6 @@ const mutations = {
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
   },
-  SET_IMAGE_LOADED: (state, value) => {
-    state.imageLoaded = value;
-  },
   SET_REJECTED_MISSING_ANNOTATIONS: (state, annotations) => {
     state.rejectedMissingAnnotations = annotations;
   },
