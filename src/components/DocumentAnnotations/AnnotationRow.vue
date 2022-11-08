@@ -125,7 +125,6 @@ export default {
       this.$emit("handle-reject");
     },
     onAnnotationClick() {
-      // TODO: this should be refactored to a store dispatch
       if (this.documentFocusedAnnotation && this.annotation) {
         this.$store.dispatch("document/setDocumentFocusedAnnotation", {
           scroll: true

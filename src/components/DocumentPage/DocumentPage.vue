@@ -405,7 +405,7 @@ export default {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(`${this.page.image_url}?${this.page.updated_at}`)
+      api.IMG_REQUEST.get(`${this.page.image_url}`)
         .then(response => {
           return response.data;
         })

@@ -52,7 +52,7 @@ export default {
         loadedPage = this.pages.find(p => p.number === this.page.number);
       }
       if (!loadedPage && this.pageInVisibleRange(this.page)) {
-        this.$store.dispatch("document/fetchDocumentPage", this.page.number);
+        this.loadPage();
       }
       return loadedPage;
     },
@@ -84,6 +84,12 @@ export default {
   },
 
   methods: {
+    loadPage() {
+      return this.$store.dispatch(
+        "document/fetchDocumentPage",
+        this.page.number
+      );
+    },
     changePage(pageNumber) {
       if (pageNumber !== this.currentPage) {
         this.$store.dispatch(
@@ -132,7 +138,7 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    documentFocusedAnnotation(newValue) {
+    async documentFocusedAnnotation(newValue) {
       const focusedAnn = newValue.annotation;
       const scroll = newValue.scroll;
       if (
@@ -143,6 +149,13 @@ export default {
       ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
+
+        // load page first if not loaded
+        // TODO: this should be removed once we have the size on page property from document
+        if (!this.loadedPage) {
+          await this.loadPage();
+        }
+
         this.$nextTick(() => {
           // Scroll to the annotation
           this.scrollTo(this.getYForBbox(focusedAnn.span[0]));
