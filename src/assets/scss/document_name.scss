@@ -22,7 +22,7 @@
 
     &.is-editable {
       display: inline-block;
-      overflow-x: scroll;
+      overflow-x: hidden;
       white-space: nowrap;
       border-radius: 8px;
       padding: 6px 14px 6px 14px;
