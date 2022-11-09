@@ -39,7 +39,8 @@ export default {
       elementTop: 0,
       elementHeight: 0,
       previousFocusedAnnotation: null,
-      previousY: null
+      previousY: null,
+      pageBeingLoaded: false
     };
   },
 
@@ -52,7 +53,11 @@ export default {
         loadedPage = this.pages.find(p => p.number === this.page.number);
       }
       if (!loadedPage && this.pageInVisibleRange(this.page)) {
-        this.loadPage();
+        if (!this.pageBeingLoaded) {
+          this.loadPage().then(() => {
+            this.pageBeingLoaded = false;
+          });
+        }
       }
       return loadedPage;
     },
@@ -85,6 +90,7 @@ export default {
 
   methods: {
     loadPage() {
+      this.pageBeingLoaded = true;
       return this.$store.dispatch(
         "document/fetchDocumentPage",
         this.page.number
