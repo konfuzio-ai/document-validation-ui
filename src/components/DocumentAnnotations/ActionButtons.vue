@@ -54,7 +54,7 @@
 
     <!-- reject all labels -->
     <div
-      class="reject-button-container"
+      :class="['reject-button-container', 'reject-all']"
       v-if="rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn"
       @mouseenter="hoverEmptyLabels"
       @mouseleave="leaveEmptyLabels"
@@ -136,13 +136,23 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["publicView"]),
+    ...mapState("document", ["publicView", "missingAnnotations"]),
     emptyLabelsLength() {
       const labels = this.annotationSet.labels.filter(
         label => label.annotations.length === 0
       );
 
-      return labels.length;
+      const pendingEmpty = [];
+
+      labels.map(label => {
+        const found = this.missingAnnotations.find(l => l.label === label.id);
+
+        if (!found) {
+          pendingEmpty.push(label);
+        }
+      });
+
+      return pendingEmpty.length;
     }
   },
   methods: {

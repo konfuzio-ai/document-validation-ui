@@ -208,8 +208,11 @@ export default {
       }
     },
     rejectedMissingAnnotations(newValue) {
+      if (!newValue) return;
+
       if (
-        newValue &&
+        newValue.label &&
+        newValue.annotationSet &&
         newValue.label === this.label.id &&
         newValue.label_set === this.annotationSet.label_set.id
       ) {

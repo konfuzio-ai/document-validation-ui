@@ -301,11 +301,23 @@ export default {
       } else if (annotationSet && rejectAll) {
         // reject all labels in annotation set
 
-        const emptyLabels = annotationSet.labels.filter(
+        const allEmptyLabels = annotationSet.labels.filter(
           label => label.annotations.length === 0
         );
 
-        rejected = emptyLabels.map(label => {
+        // Check if any of the empty annotations was already rejected individually
+        // and remove them
+        const toReject = [];
+
+        allEmptyLabels.map(label => {
+          const found = this.missingAnnotations.find(l => l.label === label.id);
+
+          if (!found) {
+            toReject.push(label);
+          }
+        });
+
+        rejected = toReject.map(label => {
           return {
             document: parseInt(this.documentId),
             label: label.id,

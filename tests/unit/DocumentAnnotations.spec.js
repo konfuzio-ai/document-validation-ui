@@ -1,12 +1,9 @@
-import {
-  mount
-} from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import {
   DocumentAnnotations,
   Label,
   EmptyAnnotation,
   Annotation,
-  RejectedLabels,
 } from "../../src/components/DocumentAnnotations";
 import store from "../../src/store";
 
@@ -16,10 +13,6 @@ const $t = () => {};
 describe("Document Annotations Component", () => {
   beforeEach(() => {
     Promise.all([
-      store.dispatch(
-        "document/setAnnotationSets",
-        require("../mock/document.json").annotation_sets
-      ),
       store.dispatch(
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
@@ -66,7 +59,9 @@ describe("Document Annotations Component", () => {
         label,
       },
     });
-    expect(wrapper.find(".annotation-row .label-name").text()).toContain(label.name);
+    expect(wrapper.find(".annotation-row .label-name").text()).toContain(
+      label.name
+    );
   });
 
   it("check if annotation info appears when hovering", async () => {
@@ -174,24 +169,24 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("mouseover");
     await wrapper.setData({
-      showAcceptButton: true
+      showAcceptButton: true,
     });
 
     expect(
       await wrapper
-      .find(".buttons-container .action-buttons .annotation-accept-btn")
-      .isVisible()
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .isVisible()
     ).toBe(true);
 
     await wrapper.findComponent(".annotation-value").trigger("mouseout");
     await wrapper.setData({
-      showAcceptButton: false
+      showAcceptButton: false,
     });
 
     expect(
       await wrapper
-      .find(".buttons-container .action-buttons .annotation-accept-btn")
-      .exists()
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .exists()
     ).toBe(false);
   });
 
@@ -224,18 +219,21 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: require("../mock/document.json").annotation_sets[0].label_set
-        .id,
-      label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: annotationSet.label_set.id,
+        label: label.id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet,
+      },
+    ];
 
     expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
 
     await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
 
     await wrapper2.setData({
-      showReject: true
+      showReject: true,
     });
 
     await wrapper2
@@ -250,8 +248,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       wrapper
-      .findAll(".rejected-labels-list .rejected-label-container .title")
-      .isVisible()
+        .findAll(".rejected-labels-list .rejected-label-container .title")
+        .isVisible()
     ).toBe(true);
 
     await wrapper
@@ -273,19 +271,18 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: require("../mock/document.json").annotation_sets[0].label_set
-        .id,
-      label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
     expect(
-      wrapper
-      .findAll(".annotation-row .label-name span")
-      .at(0)
-      .text()
+      wrapper.findAll(".annotation-row .label-name span").at(0).text()
     ).not.toBe(
       require("../mock/document.json").annotation_sets[0].labels[0].name
     );
@@ -305,11 +302,13 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: require("../mock/document.json").annotation_sets[0].label_set
-        .id,
-      label: require("../mock/document.json").annotation_sets[0].labels[0].id,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: require("../mock/document.json").annotation_sets[0].label_set
+          .id,
+        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+      },
+    ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
@@ -322,10 +321,7 @@ describe("Document Annotations Component", () => {
     await store.dispatch("document/setMissingAnnotations", []);
 
     expect(
-      wrapper
-      .findAll(".annotation-row .label-name span")
-      .at(0)
-      .text()
+      wrapper.findAll(".annotation-row .label-name span").at(0).text()
     ).toBe("Anrede");
   });
 
@@ -339,10 +335,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .findComponent(
-        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-      )
-      .isVisible()
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .isVisible()
     ).toBe(true);
   });
 
@@ -356,10 +352,64 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .findComponent(
-        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-      )
-      .attributes("disabled")
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .attributes("disabled")
     ).not.toBe("undefined");
+  });
+
+  it("Reject all empty button should always be visible", () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      wrapper.find(".action-buttons .reject-all .reject-btn").isVisible()
+    ).toBe(true);
+  });
+
+  it("Reject all button should show how many empty labels are in the annotation set", () => {
+    const annotationSet = store.state.document.annotationSets[0];
+
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const emptyLabels = annotationSet.labels.filter(
+      (label) => label.annotations.length === 0
+    );
+
+    expect(
+      wrapper
+        .find(".action-buttons .reject-all .reject-btn")
+        .text()
+        .includes(emptyLabels.length)
+    ).toBe(true);
+  });
+
+  it("Clicking the 'reject all empty' button should send the request to the endpoint", async () => {
+    const handleReject = jest.fn().mockName("rejectMissingAnnotations");
+
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper
+      .find(".action-buttons .reject-all .reject-btn")
+      .trigger("click");
+
+    await handleReject();
+
+    expect(handleReject).toHaveBeenCalledTimes(1);
   });
 });
