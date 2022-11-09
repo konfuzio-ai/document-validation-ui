@@ -14,17 +14,24 @@
  * full page canvas when it's not needed (unfocused pages).
  */
 
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 
 export default {
+  props: {
+    width: {
+      default: 0
+    },
+    height: {
+      default: 0
+    }
+  },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapGetters("document", ["defaultPageSize"]),
     actualSizeViewport() {
       return {
-        width: this.defaultPageSize[0] * this.scale,
-        height: this.defaultPageSize[1] * this.scale
+        width: this.width * this.scale,
+        height: this.height * this.scale
       };
     },
 

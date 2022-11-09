@@ -69,7 +69,6 @@ const getters = {
       y0,
       y1
     } = bbox;
-
     const pageHeight = new BigNumber(page.original_size[1]);
     const rect = {
       // left

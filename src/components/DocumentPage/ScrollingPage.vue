@@ -1,7 +1,11 @@
 <template>
   <div>
     <DocumentPage v-if="editMode" :page="page" />
-    <DummyPage v-else-if="!loadedPage || !pageInVisibleRange(page)" />
+    <DummyPage
+      v-else-if="!loadedPage || !pageInVisibleRange(page)"
+      :width="page.size[0]"
+      :height="page.size[1]"
+    />
     <DocumentPage v-else :page="loadedPage" />
   </div>
 </template>
@@ -127,7 +131,7 @@ export default {
      * from the page object).
      */
     getYForBbox(bbox) {
-      return this.bboxToRect(this.loadedPage, bbox).y;
+      return this.bboxToRect(this.page, bbox).y;
     },
 
     /**

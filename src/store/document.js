@@ -39,17 +39,6 @@ const getters = {
   /**
    * Number of pages. If the pages array doesn't exist yet, return 0.
    */
-  defaultPageSize: state => {
-    if (state.pages && state.pages.length > 0) {
-      return state.pages[0].size;
-    }
-    return null;
-  },
-
-
-  /**
-   * Number of pages. If the pages array doesn't exist yet, return 0.
-   */
   pageCount: state => {
     if (state.selectedDocument.pages) {
       return state.selectedDocument.pages.length;

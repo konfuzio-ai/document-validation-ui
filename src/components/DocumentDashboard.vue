@@ -66,7 +66,8 @@ export default {
       "scale",
       "fit",
       "optimalResolution",
-      "pageWidthScale"
+      "pageWidthScale",
+      "currentPage"
     ]),
     ...mapState("document", [
       "showError",
@@ -75,7 +76,6 @@ export default {
       "selectedDocument"
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("document", ["defaultPageSize"]),
     ...mapGetters("display", ["isMinimumWidth"]),
     elementsWidth() {
       let elementsWidth = 1;
@@ -111,7 +111,6 @@ export default {
         "display/updateOptimalResolution",
         this.$el.offsetWidth
       );
-      // TODO: change page size
       this.$store.dispatch("display/updateScale", {
         elementsWidth: this.elementsWidth,
         client: {
@@ -119,8 +118,8 @@ export default {
           height: this.$el.clientHeight
         },
         viewport: {
-          width: this.defaultPageSize[0],
-          height: this.defaultPageSize[1]
+          width: this.selectedDocument.pages[this.currentPage].size[0],
+          height: this.selectedDocument.pages[this.currentPage].size[1]
         }
       });
     }

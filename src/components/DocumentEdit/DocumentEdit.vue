@@ -62,8 +62,7 @@ export default {
       "updatedDocument",
       "splitOverview",
       "selectedPages"
-    ]),
-    ...mapGetters("document", ["defaultPageSize"])
+    ])
   },
   methods: {
     setPages() {
@@ -81,14 +80,13 @@ export default {
     },
     createPagesArray() {
       return this.selectedDocument.pages.map(page => {
-        //TODO: fix pages size
         return {
           id: page.id,
           angle: 0,
           page_number: page.number,
           thumbnail_url: page.thumbnail_url,
           image_url: page.image_url,
-          size: this.defaultPageSize
+          size: page.size
         };
       });
     },
