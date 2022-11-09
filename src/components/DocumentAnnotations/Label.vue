@@ -73,10 +73,9 @@ export default {
   },
   data() {
     return {
-      isMultipleAnnotations:
-        this.label.annotations && this.label.annotations.length > 1,
-      showAnnotationsGroup: false,
-      acceptedAnnotationsGroupCounter: 0
+      isMultipleAnnotations: false,
+      acceptedAnnotationsGroupCounter: 0,
+      showAnnotationsGroup: false
     };
   },
   computed: {
@@ -90,10 +89,7 @@ export default {
     }
   },
   mounted() {
-    if (this.isMultipleAnnotations) {
-      this.acceptedAnnotationsGroupCounter =
-        this.numberOfAcceptedAnnotationsInLabel(this.label);
-    }
+    this.updateValues();
   },
   methods: {
     handleReject() {
@@ -106,7 +102,17 @@ export default {
     },
     toggleGroup() {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;
+    },
+    updateValues() {
+      this.isMultipleAnnotations = this.label.annotations.length > 1;
+      if (this.isMultipleAnnotations) {
+        this.acceptedAnnotationsGroupCounter =
+          this.numberOfAcceptedAnnotationsInLabel(this.label);
+      }
     }
+  },
+  updated() {
+    this.updateValues();
   },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {

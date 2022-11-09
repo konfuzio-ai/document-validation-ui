@@ -595,7 +595,7 @@ const mutations = {
     state.annotationSets.map(annotationSet => {
       if (
         annotation.label_set &&
-        annotationSet.label_set.id === annotation.label_set
+        annotationSet.label_set.id === annotation.label_set.id
       ) {
         annotationSet.labels.map(label => {
           if (annotation.label && annotation.label.id === label.id) {
