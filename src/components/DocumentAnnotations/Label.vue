@@ -38,7 +38,6 @@
           :annotation="annotation"
           :label="label"
           :annotationSet="annotationSet"
-          @handle-scroll="handleScroll"
           @handle-reject="handleReject"
         />
       </div>
@@ -48,7 +47,6 @@
         :annotation="singleAnnotation"
         :label="label"
         :annotationSet="annotationSet"
-        @handle-scroll="handleScroll"
         @handle-reject="handleReject"
       />
     </div>
@@ -71,9 +69,6 @@ export default {
     },
     annotationSet: {
       required: true
-    },
-    handleScroll: {
-      type: Function
     }
   },
   data() {

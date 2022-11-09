@@ -1,7 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  PIXEL_RATIO
-} from "../constants";
+import { PIXEL_RATIO } from "../constants";
 const debounce = (cb, duration) => {
   let timer;
   return (...args) => {
@@ -20,9 +18,10 @@ const floor = (value, precision) => {
 const state = {
   scale: undefined,
   optimalScale: undefined,
-  fit: 'width',
+  fit: "width",
   currentPage: 1,
   optimalResolution: true,
+  scroll: false
 };
 
 const getters = {
@@ -39,53 +38,48 @@ const getters = {
    * image rendering.
    */
   imageScale: state => page => {
-    return new BigNumber(page.size[0])
-      .div(page.original_size[0])
-      .toNumber();
+    return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
   },
 
-  bboxToRect: (state, getters) => (page, bbox, hasOffset = false) => {
-    const imageScale = getters.imageScale(page);
-    const {
-      x0,
-      x1,
-      y0,
-      y1
-    } = bbox;
+  bboxToRect:
+    (state, getters) =>
+    (page, bbox, hasOffset = false) => {
+      const imageScale = getters.imageScale(page);
+      const { x0, x1, y0, y1 } = bbox;
 
-    const pageHeight = new BigNumber(page.original_size[1]);
-    const rect = {
-      // left
-      x: new BigNumber(x0)
-        .minus(hasOffset ? 1 : 0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      // top
-      y: pageHeight
-        .minus(new BigNumber(y1))
-        .minus(hasOffset ? 17.1 : 0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      width: new BigNumber(x1)
-        .minus(x0)
-        .abs()
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      height: new BigNumber(y1)
-        .minus(y0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber()
-    };
-    return rect;
-  },
+      const pageHeight = new BigNumber(page.original_size[1]);
+      const rect = {
+        // left
+        x: new BigNumber(x0)
+          .minus(hasOffset ? 1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        // top
+        y: pageHeight
+          .minus(new BigNumber(y1))
+          .minus(hasOffset ? 17.1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        width: new BigNumber(x1)
+          .minus(x0)
+          .abs()
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        height: new BigNumber(y1)
+          .minus(y0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber()
+      };
+      return rect;
+    },
   clientToBbox: (state, getters) => (page, start, end) => {
     /**
      * The backend bbox's `y0` and `y1` attributes depend on knowing the
@@ -122,10 +116,7 @@ const getters = {
       .times(PIXEL_RATIO)
       .dp(3)
       .toNumber();
-    const y0 = pageHeight
-      .minus(bottom)
-      .dp(3, BigNumber.ROUND_DOWN)
-      .toNumber();
+    const y0 = pageHeight.minus(bottom).dp(3, BigNumber.ROUND_DOWN).toNumber();
     const y1 = pageHeight.minus(top).dp(3, BigNumber.ROUND_UP).toNumber();
 
     const bbox = {
@@ -137,16 +128,11 @@ const getters = {
     };
 
     return bbox;
-  },
+  }
 };
 
 const actions = {
-  updateScale({
-    commit
-  }, {
-    scale,
-    isOptimal = false
-  }) {
+  updateScale({ commit }, { scale, isOptimal = false }) {
     const roundedScale = floor(scale, 2);
     if (isOptimal) {
       commit("SET_OPTIMAL_SCALE", roundedScale);
@@ -154,28 +140,22 @@ const actions = {
     commit("SET_SCALE", roundedScale);
   },
 
-  updateFit({
-    commit
-  }, fit) {
+  updateFit({ commit }, fit) {
     commit("SET_FIT", fit);
   },
 
-  debounceUpdateCurrentPage: debounce(({
-    commit,
-    dispatch
-  }, pageNumber) => {
+  debounceUpdateCurrentPage: debounce(({ commit, dispatch }, pageNumber) => {
     dispatch("updateCurrentPage", pageNumber);
   }, 300),
 
-  updateCurrentPage({
-    commit
-  }, pageNumber) {
+  updateCurrentPage({ commit }, pageNumber) {
     commit("SET_CURRENT_PAGE", pageNumber);
   },
-  updateOptimalResolution({
-    commit
-  }, isOptimal) {
+  updateOptimalResolution({ commit }, isOptimal) {
     commit("SET_OPTIMAL_RESOLUTION", isOptimal);
+  },
+  setScroll({ commit }, value) {
+    commit("SET_SCROLL", value);
   }
 };
 
@@ -198,6 +178,10 @@ const mutations = {
 
   SET_CURRENT_PAGE: (state, currentPage) => {
     state.currentPage = currentPage;
+  },
+
+  SET_SCROLL: (state, value) => {
+    state.scroll = value;
   }
 };
 

@@ -30,9 +30,6 @@ export default {
     clientHeight: {
       type: Number,
       required: true
-    },
-    scroll: {
-      type: Boolean
     }
   },
 
@@ -48,6 +45,7 @@ export default {
 
   computed: {
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+    ...mapState("display", ["scroll"]),
 
     isElementFocused() {
       const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =

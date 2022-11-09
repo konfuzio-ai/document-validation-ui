@@ -55,7 +55,6 @@
               :label="label"
               :annotationSet="annotationSet"
               :indexGroup="indexGroup"
-              :handleScroll="handleScroll"
               @handle-reject="rejectAnnotation"
             />
           </div>
@@ -96,11 +95,6 @@ export default {
     LoadingAnnotations,
     AnnotationsTopBar,
     CategorizeModal
-  },
-  props: {
-    handleScroll: {
-      type: Function
-    }
   },
   data() {
     return {
@@ -203,6 +197,19 @@ export default {
         }
 
         annotations[this.count].click();
+
+        // scroll to current annotation if not empty
+        const currentAnnotation = this.annotations.find(
+          ann => ann.id === this.editAnnotation.id
+        );
+
+        if (currentAnnotation) {
+          this.$store.dispatch(
+            "document/setDocumentFocusedAnnotation",
+            currentAnnotation
+          );
+        }
+
         this.count++;
       } else if (event.key === "ArrowUp") {
         // Check if the event happened on the first element from the array
@@ -221,6 +228,19 @@ export default {
         }
 
         annotations[this.count].click();
+
+        // scroll to current annotation if not empty
+        const currentAnnotation = this.annotations.find(
+          ann => ann.id === this.editAnnotation.id
+        );
+
+        if (currentAnnotation) {
+          this.$store.dispatch(
+            "document/setDocumentFocusedAnnotation",
+            currentAnnotation
+          );
+        }
+
         this.count--;
       } else {
         // Check for ENTER or DELETE

@@ -176,7 +176,7 @@ export default {
 
   updated() {
     if (this.members.length > 3) {
-      this.scroll = true;
+      this.$store.dispatch("display/setScroll", true);
     }
   }
 };

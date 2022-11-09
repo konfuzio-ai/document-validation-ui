@@ -17,14 +17,8 @@
         class="dashboard-document"
         ref="scrollingDocument"
         @pages-reset="fitWidth"
-        :scroll="scroll"
       />
-      <DocumentAnnotations
-        ref="annotations"
-        v-if="!editMode"
-        :handleScroll="handleScroll"
-        :scroll="scroll"
-      />
+      <DocumentAnnotations ref="annotations" v-if="!editMode" />
       <DocumentEdit ref="editView" v-else />
 
       <transition name="slide-fade">
@@ -129,7 +123,6 @@ export default {
   data() {
     return {
       isMinimunWidth: true,
-      scroll: false,
       resizeObserver: null
     };
   },
@@ -193,9 +186,6 @@ export default {
       this.$store.dispatch("display/updateScale", { scale, isOptimal });
     },
 
-    handleScroll(value) {
-      this.scroll = value;
-    },
     updateFit() {
       switch (this.fit) {
         case "width":
