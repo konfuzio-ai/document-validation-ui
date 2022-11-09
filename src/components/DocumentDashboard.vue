@@ -111,6 +111,7 @@ export default {
         "display/updateOptimalResolution",
         this.$el.offsetWidth
       );
+      // TODO: change page size
       this.$store.dispatch("display/updateScale", {
         elementsWidth: this.elementsWidth,
         client: {

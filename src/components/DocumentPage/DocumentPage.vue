@@ -50,12 +50,7 @@
               <v-rect
                 v-if="!isAnnotationInEditMode(annotation.id)"
                 :config="
-                  annotationRect(
-                    bbox,
-                    documentFocusedAnnotation &&
-                      !isSelectionEnabled &&
-                      annotation.id === documentFocusedAnnotation.id
-                  )
+                  annotationRect(bbox, isAnnotationFocused(annotation.id))
                 "
                 :key="'ann' + annotation.id + '-' + index"
                 @click="selectLabelAnnotation(annotation)"
@@ -69,10 +64,12 @@
       <v-layer v-if="showFocusedAnnotation && !isSelectionEnabled">
         <template>
           <v-label
-            :key="`label${documentFocusedAnnotation.id}`"
+            :key="`label${documentFocusedAnnotation.annotation.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(documentFocusedAnnotation.span[0])
+              ...annotationLabelRect(
+                documentFocusedAnnotation.annotation.span[0]
+              )
             }"
           >
             <v-tag
@@ -86,7 +83,7 @@
             <v-text
               :config="{
                 padding: 4,
-                text: documentFocusedAnnotation.label_name,
+                text: documentFocusedAnnotation.annotation.label_name,
                 fill: 'white',
                 fontSize: 12,
                 listening: false
@@ -153,13 +150,16 @@ export default {
     showFocusedAnnotation() {
       return (
         this.documentFocusedAnnotation &&
-        this.documentFocusedAnnotation.span &&
-        this.documentFocusedAnnotation.span[0].page_index + 1 ===
+        this.documentFocusedAnnotation.annotation &&
+        this.documentFocusedAnnotation.annotation.span &&
+        this.documentFocusedAnnotation.annotation.span[0].page_index + 1 ===
           this.pageNumber &&
         this.visiblePageRange.includes(
-          this.documentFocusedAnnotation.span[0].page_index + 1
+          this.documentFocusedAnnotation.annotation.span[0].page_index + 1
         ) &&
-        !this.isAnnotationInEditMode(this.documentFocusedAnnotation.id)
+        !this.isAnnotationInEditMode(
+          this.documentFocusedAnnotation.annotation.id
+        )
       );
     },
     actualSizeViewport() {
@@ -278,6 +278,14 @@ export default {
       "endSelection",
       "moveSelection"
     ]),
+    isAnnotationFocused(annotationId) {
+      return (
+        this.documentFocusedAnnotation &&
+        this.documentFocusedAnnotation.annotation &&
+        !this.isSelectionEnabled &&
+        annotationId === this.documentFocusedAnnotation.annotation.id
+      );
+    },
     /**
      * Create bounding boxes
      */

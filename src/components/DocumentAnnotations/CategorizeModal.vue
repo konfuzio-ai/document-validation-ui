@@ -5,7 +5,7 @@
     <b-modal
       ref="modal"
       v-model="show"
-      :can-cancel="documentCategory"
+      :can-cancel="documentCategory && documentCategory.id !== null"
       class="modal-absolute modal-400 modal-no-footer"
     >
       <section class="modal-card-body">

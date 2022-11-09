@@ -5,7 +5,7 @@
 ></style>
 <template>
   <div class="label">
-    <div v-if="isMultipleAnnotations">
+    <div v-if="enableGroupingFeature && isMultipleAnnotations">
       <div class="label-group" @click.stop="toggleGroup">
         <div class="label-group-left">
           <b-icon
@@ -42,6 +42,16 @@
         />
       </div>
     </div>
+    <div v-else-if="!enableGroupingFeature && hasAnnotations">
+      <AnnotationRow
+        v-for="annotation in label.annotations"
+        :key="annotation.id"
+        :annotation="annotation"
+        :label="label"
+        :annotationSet="annotationSet"
+        @handle-reject="handleReject"
+      />
+    </div>
     <div v-else>
       <AnnotationRow
         :annotation="singleAnnotation"
@@ -73,6 +83,7 @@ export default {
   },
   data() {
     return {
+      enableGroupingFeature: false, // this controls if the annotations should be grouped under the same label
       isMultipleAnnotations: false,
       acceptedAnnotationsGroupCounter: 0,
       showAnnotationsGroup: false
@@ -86,6 +97,9 @@ export default {
         return this.label.annotations[0];
       }
       return null;
+    },
+    hasAnnotations() {
+      return this.label.annotations.length > 0;
     }
   },
   mounted() {
@@ -117,7 +131,11 @@ export default {
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
       // check if annotation is inside a label group and open it
-      if (!this.showAnnotationsGroup && newSidebarAnnotationSelected) {
+      if (
+        this.enableGroupingFeature &&
+        !this.showAnnotationsGroup &&
+        newSidebarAnnotationSelected
+      ) {
         const annotation = this.label.annotations.find(
           ann => ann.id === newSidebarAnnotationSelected.id
         );
