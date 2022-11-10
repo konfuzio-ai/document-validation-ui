@@ -111,17 +111,19 @@ export default {
         "display/updateOptimalResolution",
         this.$el.offsetWidth
       );
-      this.$store.dispatch("display/updateScale", {
-        elementsWidth: this.elementsWidth,
-        client: {
-          width: this.$el.clientWidth,
-          height: this.$el.clientHeight
-        },
-        viewport: {
-          width: this.selectedDocument.pages[this.currentPage].size[0],
-          height: this.selectedDocument.pages[this.currentPage].size[1]
-        }
-      });
+      if (this.selectedDocument.pages[0]) {
+        this.$store.dispatch("display/updateScale", {
+          elementsWidth: this.elementsWidth,
+          client: {
+            width: this.$el.clientWidth,
+            height: this.$el.clientHeight
+          },
+          viewport: {
+            width: this.selectedDocument.pages[0].size[0],
+            height: this.selectedDocument.pages[0].size[1]
+          }
+        });
+      }
     }
   },
   watch: {

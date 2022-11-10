@@ -3,10 +3,6 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  documentFocusedAnnotation: {
-    scroll: false,
-    annotation: null
-  },
   loading: true,
   pages: [],
   annotationSets: null,
@@ -14,6 +10,7 @@ const state = {
   labels: [],
   documentId: null,
   sidebarAnnotationSelected: null,
+  documentAnnotationSelected: null,
   selectedDocument: null,
   documentIsReady: false,
   documentHasError: false,
@@ -60,10 +57,17 @@ const getters = {
    * Returns a page in the given index
    */
   pageAtIndex: state => index => {
-    if (state.pages) {
-      return state.pages[index];
+    if (state.selectedDocument && state.selectedDocument.pages) {
+      return state.selectedDocument.pages[index];
     }
     return null;
+  },
+
+  /**
+   * Checks if is to scroll to an annotation in the document
+   */
+  scrollDocumentToAnnotation: state => {
+    return state.documentAnnotationSelected && state.documentAnnotationSelected.scrollTo;
   },
 
   /**
@@ -340,29 +344,34 @@ const actions = {
       })
   },
 
-  setDocumentFocusedAnnotation: ({
-    commit,
-    state
+  setDocumentAnnotationSelected: ({
+    commit
   }, {
     annotation,
-    scroll
+    label,
+    span,
+    scrollTo = false
   }) => {
-    if (scroll) {
-      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
-        annotation: state.documentFocusedAnnotation.annotation,
-        scroll
-      })
-    } else if (!annotation) {
-      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
-        annotation: null,
-        scroll: false
-      });
-    } else {
-      commit("SET_DOCUMENT_FOCUSED_ANNOTATION", {
-        annotation,
-        scroll
-      })
+    const value = {
+      scrollTo,
+      id: annotation.id,
+      span,
+      page: span.page_index + 1,
+      labelName: label.name,
     }
+    commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
+  },
+
+  scrollToDocumentAnnotationSelected: ({
+    commit
+  }) => {
+    commit("SET_DOCUMENT_ANNOTATION_SCROLL", true);
+  },
+
+  disableDocumentAnnotationSelected: ({
+    commit
+  }) => {
+    commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
   createAnnotation: ({
@@ -695,8 +704,13 @@ const mutations = {
   SET_PAGES: (state, pages) => {
     state.pages = pages;
   },
-  SET_DOCUMENT_FOCUSED_ANNOTATION: (state, documentFocusedAnnotation) => {
-    state.documentFocusedAnnotation = documentFocusedAnnotation;
+  SET_DOCUMENT_ANNOTATION_SELECTED: (state, documentAnnotationSelected) => {
+    state.documentAnnotationSelected = documentAnnotationSelected;
+  },
+  SET_DOCUMENT_ANNOTATION_SCROLL: (state, scrollTo) => {
+    if (state.documentAnnotationSelected) {
+      state.documentAnnotationSelected.scrollTo = scrollTo;
+    }
   },
   SET_SELECTED_DOCUMENT: (state, document) => {
     if (document.is_reviewed === true) {

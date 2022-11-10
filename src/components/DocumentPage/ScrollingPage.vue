@@ -50,6 +50,7 @@ export default {
 
   computed: {
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+    ...mapGetters("document", ["scrollDocumentToAnnotation"]),
 
     loadedPage() {
       let loadedPage = null;
@@ -88,7 +89,7 @@ export default {
     },
 
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["documentFocusedAnnotation", "pages"]),
+    ...mapState("document", ["pages", "documentAnnotationSelected"]),
     ...mapState("edit", ["editMode"])
   },
 
@@ -150,27 +151,16 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    async documentFocusedAnnotation(newValue) {
-      const focusedAnn = newValue.annotation;
-      const scroll = newValue.scroll;
+    scrollDocumentToAnnotation(isToScroll) {
       if (
-        scroll &&
-        focusedAnn &&
-        focusedAnn.span &&
-        focusedAnn.span[0].page_index + 1 === this.page.number
+        isToScroll &&
+        this.documentAnnotationSelected.page === this.page.number
       ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
-
-        // load page first if not loaded
-        // TODO: this should be removed once we have the size on page property from document
-        if (!this.loadedPage) {
-          await this.loadPage();
-        }
-
         this.$nextTick(() => {
           // Scroll to the annotation
-          this.scrollTo(this.getYForBbox(focusedAnn.span[0]));
+          this.scrollTo(this.getYForBbox(this.documentAnnotationSelected.span));
         });
       }
     },

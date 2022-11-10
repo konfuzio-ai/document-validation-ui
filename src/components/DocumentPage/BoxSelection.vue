@@ -6,7 +6,7 @@
     @dragend="onChange"
     @transformend="onChange"
     v-on="$listeners"
-  ></v-rect>
+  />
 </template>
 
 <script>

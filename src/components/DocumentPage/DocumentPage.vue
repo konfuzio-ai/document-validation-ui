@@ -61,15 +61,13 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation && !isSelectionEnabled">
+      <v-layer v-if="showFocusedAnnotation && !isInSelectionMode">
         <template>
           <v-label
-            :key="`label${documentFocusedAnnotation.annotation.id}`"
+            :key="`label${documentAnnotationSelected.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(
-                documentFocusedAnnotation.annotation.span[0]
-              )
+              ...annotationLabelRect(documentAnnotationSelected.span)
             }"
           >
             <v-tag
@@ -83,7 +81,7 @@
             <v-text
               :config="{
                 padding: 4,
-                text: documentFocusedAnnotation.annotation.label_name,
+                text: documentAnnotationSelected.labelName,
                 fill: 'white',
                 fontSize: 12,
                 listening: false
@@ -92,12 +90,8 @@
           </v-label>
         </template>
       </v-layer>
-      <v-layer v-if="isSelectionEnabled && selection && selection.end">
-        <box-selection
-          @changed="getBoxSelectionContent"
-          @mouseenter="cursor = 'grab'"
-          @mouseleave="cursor = 'crosshair'"
-        ></box-selection>
+      <v-layer v-if="isInSelectionMode">
+        <box-selection @changed="getBoxSelectionContent" />
         <v-transformer
           ref="transformer"
           :anchorSize="6"
@@ -147,19 +141,15 @@ export default {
   },
 
   computed: {
+    isInSelectionMode() {
+      return this.isSelectionEnabled && this.selection && this.selection.end;
+    },
     showFocusedAnnotation() {
       return (
-        this.documentFocusedAnnotation &&
-        this.documentFocusedAnnotation.annotation &&
-        this.documentFocusedAnnotation.annotation.span &&
-        this.documentFocusedAnnotation.annotation.span[0].page_index + 1 ===
-          this.pageNumber &&
-        this.visiblePageRange.includes(
-          this.documentFocusedAnnotation.annotation.span[0].page_index + 1
-        ) &&
-        !this.isAnnotationInEditMode(
-          this.documentFocusedAnnotation.annotation.id
-        )
+        this.documentAnnotationSelected &&
+        this.documentAnnotationSelected.page === this.pageNumber &&
+        this.visiblePageRange.includes(this.documentAnnotationSelected.page) &&
+        !this.isAnnotationInEditMode(this.documentAnnotationSelected.id)
       );
     },
     actualSizeViewport() {
@@ -255,7 +245,7 @@ export default {
     ]),
     ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
-      "documentFocusedAnnotation",
+      "documentAnnotationSelected",
       "recalculatingAnnotations",
       "annotations",
       "editAnnotation",
@@ -280,10 +270,9 @@ export default {
     ]),
     isAnnotationFocused(annotationId) {
       return (
-        this.documentFocusedAnnotation &&
-        this.documentFocusedAnnotation.annotation &&
+        this.documentAnnotationSelected &&
         !this.isSelectionEnabled &&
-        annotationId === this.documentFocusedAnnotation.annotation.id
+        annotationId === this.documentAnnotationSelected.id
       );
     },
     /**
@@ -497,10 +486,7 @@ export default {
           ? "crosshair"
           : "default";
         // Set the id back to null so that the annotation doesn't stay selected
-        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
-          annotation,
-          scroll: false
-        });
+        this.$store.dispatch("document/disableDocumentAnnotationSelected");
       }
     },
 
@@ -528,19 +514,30 @@ export default {
         this.drawPage(true);
       }
     },
-    editAnnotation(annotation) {
-      if (annotation) {
-        setTimeout(() => {
+    // wait for the document image to be displayed to enable the selection transformer
+    image(image) {
+      if (image && this.isInSelectionMode) {
+        this.$nextTick(() => {
           this.updateTransformer();
-        }, 100);
+        });
+      }
+    },
+
+    isInSelectionMode(value) {
+      if (value) {
+        this.$nextTick(() => {
+          this.updateTransformer();
+        });
       }
     },
     page() {
+      // TODO: move validation to store
       if (this.selectedDocument.labeling_available === 1) {
         this.drawPage(true);
       }
     },
     selectedDocument(newValue) {
+      // TODO: move validation to store
       if (newValue.labeling_available === 1) {
         this.drawPage(true);
       }

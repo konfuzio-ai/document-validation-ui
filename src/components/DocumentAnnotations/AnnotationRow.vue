@@ -11,8 +11,8 @@
       isAnnotationInEditMode(annotationId()) && 'editing'
     ]"
     @click="onAnnotationClick"
-    @mouseenter="onAnnotationHoverEnter"
-    @mouseleave="onAnnotationHoverLeave"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
   >
     <div class="annotation-row-left">
       <AnnotationDetails
@@ -26,16 +26,21 @@
     <div class="annotation-row-right">
       <div class="annotation-content">
         <div v-if="annotation">
-          <Annotation
+          <div
+            @mouseenter="onAnnotationHoverEnter(span)"
+            @mouseleave="onAnnotationHoverLeave"
             v-for="(span, index) in annotation.span"
             :key="index"
-            :annotation="annotation"
-            :span="span"
-            :spanIndex="index"
-            :label="label"
-            :annotationSet="annotationSet"
-            :isHovered="isHovered"
-          />
+          >
+            <Annotation
+              :annotation="annotation"
+              :span="span"
+              :spanIndex="index"
+              :label="label"
+              :annotationSet="annotationSet"
+              :isHovered="isHovered"
+            />
+          </div>
         </div>
         <div v-else>
           <EmptyAnnotation
@@ -81,11 +86,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", [
-      "documentFocusedAnnotation",
-      "editAnnotation",
-      "sidebarAnnotationSelected"
-    ]),
+    ...mapState("document", ["editAnnotation", "sidebarAnnotationSelected"]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
   },
   methods: {
@@ -103,41 +104,28 @@ export default {
       }
       return emptyAnnotationId;
     },
-    onAnnotationHoverEnter() {
-      if (this.annotation) {
-        const focusedAnnotation = { ...this.annotation };
-        focusedAnnotation.label_name = this.label.name;
-        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
-          annotation: focusedAnnotation,
-          scroll: false
+    onAnnotationHoverEnter(span) {
+      if (span) {
+        this.$store.dispatch("document/setDocumentAnnotationSelected", {
+          annotation: this.annotation,
+          label: this.label,
+          span,
+          scrollTo: false
         });
       }
-      this.isHovered = true;
     },
     onAnnotationHoverLeave() {
-      this.$store.dispatch("document/setDocumentFocusedAnnotation", {
-        annotation: null
-      });
-      this.isHovered = false;
+      this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
     handleReject() {
       // TODO: this should be dispatched here to the store and not in document annotations because it's going back and forward in a lot of components
       this.$emit("handle-reject");
     },
     onAnnotationClick() {
-      if (this.documentFocusedAnnotation && this.annotation) {
-        this.$store.dispatch("document/setDocumentFocusedAnnotation", {
-          scroll: true
-        });
-      }
+      this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     }
   },
   watch: {
-    documentFocusedAnnotation(newValue) {
-      if (newValue && this.editAnnotation.id === newValue.id) {
-        this.onAnnotationClick();
-      }
-    },
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
       if (
         newSidebarAnnotationSelected &&
