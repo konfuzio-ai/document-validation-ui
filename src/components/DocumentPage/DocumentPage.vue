@@ -473,7 +473,7 @@ export default {
     },
     selectLabelAnnotation(annotation) {
       this.closeNewAnnotation();
-      this.$store.dispatch("document/setEditingActive", false);
+      this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 

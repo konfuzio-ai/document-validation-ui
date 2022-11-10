@@ -108,14 +108,16 @@ export default {
       "recalculatingAnnotations",
       "missingAnnotations",
       "publicView",
-      "editingActive",
       "annotations",
       "editAnnotation",
       "sidebarAnnotationSelected",
       "annotationSets"
     ]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["numberOfAnnotationSetGroup"])
+    ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
+    isAnnotationBeingEdited() {
+      return this.editAnnotation && this.editAnnotation.id;
+    }
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -132,7 +134,6 @@ export default {
         annotations[this.count].click();
       } else {
         this.count = 0;
-        this.$store.dispatch("document/setEditingActive", false);
         return;
       }
     },
@@ -148,9 +149,7 @@ export default {
       }
 
       // Not allow starting edit mode with ArrowUp key
-      if (event.key === "ArrowUp" && !this.editingActive) return;
-
-      this.$store.dispatch("document/setEditingActive", true);
+      if (event.key === "ArrowUp" && !this.isAnnotationBeingEdited) return;
 
       // Create an array from the elements selected
       // for easier management of data
@@ -174,10 +173,7 @@ export default {
             document.getElementsByClassName("finish-review-btn")
           );
           finishBtn[0].focus();
-          this.$store.dispatch("document/setEditAnnotation", {
-            id: null,
-            index: null
-          });
+          this.$store.dispatch("document/resetEditAnnotation");
           this.count = 0;
           if (event.key === "Enter" && !finishBtn.disabled) {
             finishBtn.click();
@@ -289,7 +285,7 @@ export default {
     }
   },
   watch: {
-    editingActive(newValue) {
+    editAnnotation(newValue) {
       if (!newValue && !this.jumpToNextAnnotation) {
         this.count = 0;
       }

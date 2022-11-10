@@ -87,6 +87,7 @@ export default {
   name: "AnnotationDetails",
   computed: {
     accuracy() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return this.annotation.confidence;
       } else {
@@ -94,6 +95,7 @@ export default {
       }
     },
     notFound() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return !this.annotation.span;
       } else {
@@ -101,17 +103,7 @@ export default {
       }
     },
     created() {
-      if (this.annotation) {
-        return (
-          this.annotation.created_by &&
-          !this.annotation.revised &&
-          this.annotation.is_correct
-        );
-      } else {
-        return null;
-      }
-    },
-    created() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return (
           this.annotation.created_by &&
@@ -123,6 +115,7 @@ export default {
       }
     },
     edited() {
+      // TODO: add this verification to store
       if (this.annotation) {
         if (
           this.annotation.offset_string !==
@@ -139,6 +132,7 @@ export default {
       }
     },
     accepted() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return this.annotation.revised;
       } else {
@@ -146,6 +140,7 @@ export default {
       }
     },
     user() {
+      // TODO: add this verification to store
       if (this.annotation) {
         if (this.annotation.created_by && !this.annotation.revised) {
           // If the annotation was created but not yet revised
@@ -177,6 +172,7 @@ export default {
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
+      // animate an annotation being accepted
       // TODO: add this accepted check to store
       const accepted = ann => {
         return ann && ann.id && ann.revised && ann.is_correct;

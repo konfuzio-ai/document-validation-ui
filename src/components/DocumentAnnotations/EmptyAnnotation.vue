@@ -66,7 +66,6 @@ export default {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", [
       "editAnnotation",
-      "editingActive",
       "publicView",
       "documentId",
       "rejectAnnotation",
@@ -106,7 +105,6 @@ export default {
           label: this.label.id,
           labelSet: this.annotationSet.label_set.id
         });
-        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -162,11 +160,15 @@ export default {
           }, 2000);
         });
     },
-    cancelEmptyAnnotation() {
+    cancelEmptyAnnotation(wasOutsideClick = false) {
+      if (wasOutsideClick) {
+        this.setText(this.$t("no_data_found"));
+      } else {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+      }
       this.isLoading = false;
-      this.$store.dispatch("document/resetEditAnnotation");
-      this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("document/setEditingActive", false);
+
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
@@ -201,19 +203,8 @@ export default {
     editAnnotation(newAnnotation, oldAnnotation) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
-      if (
-        oldAnnotation &&
-        newAnnotation &&
-        oldAnnotation.id === this.emptyAnnotationId() &&
-        oldAnnotation.id !== newAnnotation.id
-      ) {
-        this.$refs.emptyAnnotation.blur();
-        this.setText(this.$t("no_data_found"));
-      }
-    },
-    editingActive(newValue) {
-      if (!newValue) {
-        this.cancelEmptyAnnotation();
+      if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
+        this.cancelEmptyAnnotation(true);
       }
     },
     rejectAnnotation(newValue) {

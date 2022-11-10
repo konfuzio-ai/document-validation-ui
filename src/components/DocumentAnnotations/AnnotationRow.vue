@@ -11,7 +11,7 @@
       isAnnotationInEditMode(annotationId()) && 'editing'
     ]"
     @click="onAnnotationClick"
-    @mouseenter="isHovered = true"
+    @mouseover="isHovered = true"
     @mouseleave="isHovered = false"
   >
     <div class="annotation-row-left">

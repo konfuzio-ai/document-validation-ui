@@ -89,12 +89,7 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", [
-      "editAnnotation",
-      "editingActive",
-      "publicView",
-      "annotations"
-    ]),
+    ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -136,7 +131,6 @@ export default {
           .then(() => {
             this.$refs.contentEditable.focus();
           });
-        this.$store.dispatch("document/setEditingActive", true);
 
         const page = this.pageAtIndex(this.span.page_index);
         if (page) {
@@ -161,11 +155,15 @@ export default {
         }
       }
     },
-    handleCancel() {
-      this.$store.dispatch("document/resetEditAnnotation", null);
-      this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("document/endLoading");
-      this.$store.dispatch("document/setEditingActive", false);
+    handleCancel(wasOutsideClick = false) {
+      if (wasOutsideClick) {
+        this.setText(this.span.offset_string);
+      } else {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/endLoading");
+      }
+
       this.isLoading = false;
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
@@ -267,19 +265,13 @@ export default {
     editAnnotation(newAnnotation, oldAnnotation) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
+
       if (
+        oldAnnotation &&
         oldAnnotation.id === this.annotation.id &&
-        oldAnnotation.index === this.spanIndex &&
-        (oldAnnotation.id !== newAnnotation.id ||
-          oldAnnotation.index !== newAnnotation.index)
+        oldAnnotation.index === this.spanIndex
       ) {
-        this.setText(this.span.offset_string);
-        this.$refs.contentEditable.blur();
-      }
-    },
-    editingActive(newValue) {
-      if (!newValue) {
-        this.handleCancel();
+        this.handleCancel(true);
       }
     },
     isHovered(newValue) {
