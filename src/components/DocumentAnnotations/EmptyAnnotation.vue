@@ -210,13 +210,21 @@ export default {
     rejectedMissingAnnotations(newValue) {
       if (!newValue) return;
 
-      if (
-        newValue.label &&
-        newValue.annotationSet &&
-        newValue.label === this.label.id &&
-        newValue.label_set === this.annotationSet.label_set.id
-      ) {
-        this.isLoading = true;
+      if (newValue.label && newValue.label === this.label.id) {
+        if (
+          !newValue.annotation_set &&
+          newValue.label_set === this.annotationSet.id
+        ) {
+          this.isLoading = true;
+          return;
+        }
+
+        if (
+          newValue.annotation_set &&
+          this.annotationSet.id === newValue.annotation_set
+        ) {
+          this.isLoading = true;
+        }
       } else {
         this.isLoading = false;
       }
