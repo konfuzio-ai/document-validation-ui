@@ -79,24 +79,14 @@
       align-items: center;
     }
 
-    .not-found {
-      .icon {
-        color: $grey-detail;
-      }
-    }
-
-    .not-revised {
-      .icon {
-        color: rgba(255, 255, 255, 0.2);
-      }
-    }
-
     .icon {
       margin-right: 6px;
-      color: $green;
+      color: rgba(255, 255, 255, 0.2);
+    }
 
-      &.grey {
-        color: $grey-detail;
+    .green {
+      .icon {
+        color: $green;
       }
     }
   }

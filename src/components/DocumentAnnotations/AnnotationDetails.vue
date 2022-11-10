@@ -12,30 +12,10 @@
   >
     <div class="label-icon">
       <b-icon
-        v-if="notFound"
-        :class="[animate ? 'animated-ripple' : '']"
-        icon="question"
+        :class="[animate ? 'animated-ripple' : '', getColor()]"
+        :icon="getIcon()"
         size="is-small"
       />
-      <b-icon
-        v-else-if="created"
-        :class="[animate ? 'animated-ripple' : '']"
-        icon="user"
-        size="is-small"
-      />
-      <b-icon
-        v-else-if="accepted && edited"
-        :class="[animate ? 'animated-ripple' : 'green']"
-        icon="user"
-        size="is-small"
-      />
-      <b-icon
-        v-else-if="accepted"
-        :class="[animate ? 'animated-ripple' : '', 'green']"
-        icon="check"
-        size="is-small"
-      />
-      <b-icon v-else icon="check" size="is-small" />
     </div>
 
     <template v-slot:content>
@@ -54,28 +34,10 @@
           >
         </div>
         <div class="revision">
-          <div class="not-found" v-if="notFound">
-            <b-icon icon="question" size="is-small" />{{
+          <div :class="getColor()">
+            <b-icon :icon="getIcon()" size="is-small" />{{
               $t("not_found_in_document")
             }}
-          </div>
-          <div class="created" v-else-if="created">
-            <b-icon icon="user" size="is-small" class="grey" />{{
-              user ? `${$t("created_by")} ${user}` : $t("created")
-            }}
-          </div>
-          <div class="accepted" v-else-if="accepted && edited">
-            <b-icon icon="user" size="is-small" />{{
-              user ? `${$t("approved_by")} ${user}` : $t("approved")
-            }}
-          </div>
-          <div class="accepted" v-else-if="accepted">
-            <b-icon icon="check" size="is-small" />{{
-              user ? `${$t("approved_by")} ${user}` : $t("approved")
-            }}
-          </div>
-          <div class="not-revised" v-else>
-            <b-icon icon="check" size="is-small" />{{ $t("not_revised_yet") }}
           </div>
         </div>
       </div>
@@ -85,6 +47,24 @@
 <script>
 export default {
   name: "AnnotationDetails",
+  methods: {
+    getIcon() {
+      if (this.notFound) {
+        return "question";
+      } else if (this.created || this.edited) {
+        return "user";
+      } else {
+        return "check";
+      }
+    },
+    getColor() {
+      if (this.accepted) {
+        return "green";
+      } else {
+        return "";
+      }
+    }
+  },
   computed: {
     accuracy() {
       // TODO: add this verification to store
