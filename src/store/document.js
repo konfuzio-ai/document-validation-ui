@@ -15,16 +15,10 @@ const state = {
   documentIsReady: false,
   documentHasError: false,
   recalculatingAnnotations: false,
-  editAnnotation: {
-    id: null,
-    index: 0,
-    label: null,
-    label_set: null
-  },
+  editAnnotation: null,
   missingAnnotations: [],
   currentUser: null,
   publicView: process.env.VUE_APP_GUEST_USER_TOKEN == null,
-  editingActive: false,
   showError: false,
   errorMessage: null,
   showDocumentError: false,
@@ -202,8 +196,19 @@ const actions = {
   },
   setEditAnnotation: ({
     commit
-  }, values) => {
-    commit("SET_EDIT_ANNOTATION", values);
+  }, {
+    id,
+    index,
+    label,
+    labelSet
+  }) => {
+    const value = {
+      id,
+      index,
+      label,
+      labelSet
+    };
+    commit("SET_EDIT_ANNOTATION", value);
   },
   resetEditAnnotation: ({
     commit
@@ -254,11 +259,6 @@ const actions = {
     commit
   }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
-  },
-  setEditingActive: ({
-    commit
-  }, value) => {
-    commit("SET_EDITING_ACTIVE", value);
   },
   setErrorMessage: ({
     commit
@@ -670,24 +670,11 @@ const mutations = {
   SET_ANNOTATION_SELECTED: (state, annotation) => {
     state.sidebarAnnotationSelected = annotation;
   },
-  SET_EDIT_ANNOTATION: (state, {
-    id,
-    index,
-    label,
-    labelSet
-  }) => {
-    state.editAnnotation = {
-      id,
-      index,
-      label,
-      labelSet
-    };
+  SET_EDIT_ANNOTATION: (state, editAnnotation) => {
+    state.editAnnotation = editAnnotation;
   },
   RESET_EDIT_ANNOTATION: state => {
-    state.editAnnotation = {
-      id: null,
-      index: 0
-    };
+    state.editAnnotation = null;
   },
   ADD_PAGE: (state, page) => {
     // if we already have the page in the state, update it in
@@ -726,9 +713,6 @@ const mutations = {
   },
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
-  },
-  SET_EDITING_ACTIVE: (state, value) => {
-    state.editingActive = value;
   },
   SET_SHOW_ERROR: (state, value) => {
     state.showError = value;
