@@ -111,7 +111,6 @@ export default {
             } else {
               const resp = JSON.stringify(response);
 
-              this.$store.dispatch("document/endRecalculatingAnnotations");
               if (resp.includes("500")) {
                 this.$store.dispatch(
                   "document/setErrorMessage",
@@ -124,6 +123,9 @@ export default {
                 );
               }
             }
+          })
+          .finally(() => {
+            this.$store.dispatch("document/endRecalculatingAnnotations");
           });
 
         return;
