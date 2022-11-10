@@ -64,6 +64,11 @@
               user ? `${$t("created_by")} ${user}` : $t("created")
             }}
           </div>
+          <div class="accepted" v-else-if="accepted && edited">
+            <b-icon icon="user" size="is-small" />{{
+              user ? `${$t("approved_by")} ${user}` : $t("approved")
+            }}
+          </div>
           <div class="accepted" v-else-if="accepted">
             <b-icon icon="check" size="is-small" />{{
               user ? `${$t("approved_by")} ${user}` : $t("approved")
@@ -106,12 +111,29 @@ export default {
         return null;
       }
     },
-    edited() {
+    created() {
       if (this.annotation) {
         return (
+          this.annotation.created_by &&
+          !this.annotation.revised &&
+          this.annotation.is_correct
+        );
+      } else {
+        return null;
+      }
+    },
+    edited() {
+      if (this.annotation) {
+        if (
           this.annotation.offset_string !==
           this.annotation.offset_string_original
-        );
+        ) {
+          return true;
+        } else if (this.annotation.created_by) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return null;
       }
