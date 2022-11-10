@@ -76,20 +76,7 @@ export default {
       "selectedDocument"
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("display", ["isMinimumWidth"]),
-    elementsWidth() {
-      let elementsWidth = 1;
-      if (this.$refs.editView) {
-        elementsWidth += this.$refs.editView.$el.clientWidth;
-      }
-      if (this.$refs.documentPages) {
-        elementsWidth += this.$refs.documentPages.$el.clientWidth;
-      }
-      if (this.$refs.annotations) {
-        elementsWidth += this.$refs.annotations.$el.clientWidth;
-      }
-      return elementsWidth;
-    }
+    ...mapGetters("display", ["isMinimumWidth"])
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
@@ -106,6 +93,19 @@ export default {
     };
   },
   methods: {
+    elementsWidth() {
+      let elementsWidth = 1;
+      if (this.$refs.editView) {
+        elementsWidth += this.$refs.editView.$el.clientWidth;
+      }
+      if (this.$refs.documentPages) {
+        elementsWidth += this.$refs.documentPages.$el.clientWidth;
+      }
+      if (this.$refs.annotations) {
+        elementsWidth += this.$refs.annotations.$el.clientWidth;
+      }
+      return elementsWidth;
+    },
     onDocumentResize() {
       this.$store.dispatch(
         "display/updateOptimalResolution",
@@ -113,7 +113,7 @@ export default {
       );
       if (this.selectedDocument.pages[0]) {
         this.$store.dispatch("display/updateScale", {
-          elementsWidth: this.elementsWidth,
+          elementsWidth: this.elementsWidth(),
           client: {
             width: this.$el.clientWidth,
             height: this.$el.clientHeight
