@@ -145,7 +145,10 @@ export default {
       const pendingEmpty = [];
 
       labels.map(label => {
-        const found = this.missingAnnotations.find(l => l.label === label.id);
+        const found = this.missingAnnotations.find(
+          l =>
+            l.label === label.id && this.annotationSet.id === l.annotation_set
+        );
 
         if (!found) {
           pendingEmpty.push(label);

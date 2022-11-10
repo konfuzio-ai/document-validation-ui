@@ -53,6 +53,7 @@
               :cancelBtn="false"
               :showReject="false"
               :acceptBtn="false"
+              :isLoading="isLoading && hoveredLabelSet == annotationSet"
               :rejectAllEmptyBtn="showRejectAllEmptyBtn"
               :annotationSet="annotationSet"
               @reject-all-empty="
@@ -65,10 +66,7 @@
         </div>
 
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <div
-            class="labels"
-            v-if="labelNotRejected(label, annotationSet.label_set)"
-          >
+          <div class="labels" v-if="labelNotRejected(annotationSet, label)">
             <Label
               :label="label"
               :annotationSet="annotationSet"
@@ -121,7 +119,8 @@ export default {
       jumpToNextAnnotation: false,
       numberOfLoadingAnnotations: 3,
       showRejectAllEmptyBtn: true,
-      hoveredLabelSet: null
+      hoveredLabelSet: null,
+      isLoading: false
     };
   },
   computed: {
@@ -260,14 +259,25 @@ export default {
         }
       }
     },
-    labelNotRejected(label, labelSet) {
+    labelNotRejected(annotationSet, label) {
       // Check if the combined label and label set have been rejected
       if (this.missingAnnotations.length === 0) {
         return true;
       } else {
-        const found = this.missingAnnotations.filter(
-          el => el.label === label.id && el.label_set === labelSet.id
-        );
+        let found;
+
+        if (annotationSet && annotationSet.id) {
+          found = this.missingAnnotations.filter(
+            el =>
+              el.label === label.id && el.annotation_set === annotationSet.id
+          );
+        } else {
+          found = this.missingAnnotations.filter(
+            el =>
+              el.label === label.id &&
+              el.label_set === annotationSet.label_set.id
+          );
+        }
 
         if (found.length !== 0) {
           return false;
@@ -329,6 +339,8 @@ export default {
 
       this.$store.dispatch("document/setRejectedMissingAnnotations", rejected);
 
+      this.isLoading = true;
+
       this.$store
         .dispatch("document/addMissingAnnotations", rejected)
         .then(response => {
@@ -344,6 +356,7 @@ export default {
           }
         })
         .finally(() => {
+          this.isLoading = false;
           this.$store.dispatch("document/setRejectedMissingAnnotations", null);
         });
     },
