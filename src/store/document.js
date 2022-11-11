@@ -23,7 +23,8 @@ const state = {
   errorMessage: null,
   showDocumentError: false,
   rejectedMissingAnnotations: null,
-  errorMessageWidth: null
+  errorMessageWidth: null,
+  hoveredAnnotationSet: null
 };
 
 const getters = {
@@ -297,6 +298,9 @@ const actions = {
   },
   setErrorMessageWidth: ({ commit }, width) => {
     commit("SET_ERROR_MESSAGE_WIDTH", width);
+  },
+  setHoveredAnnotationSet: ({ commit }, annotationSet) => {
+    commit("SET_HOVERED_ANNOTATION_SET", annotationSet);
   },
 
   /**
@@ -767,6 +771,9 @@ const mutations = {
   },
   SET_DOCUMENT_HAS_ERROR: (state, value) => {
     state.documentHasError = value;
+  },
+  SET_HOVERED_ANNOTATION_SET: (state, hoveredAnnotationSet) => {
+    state.hoveredAnnotationSet = hoveredAnnotationSet;
   }
 };
 

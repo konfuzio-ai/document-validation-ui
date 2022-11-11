@@ -53,14 +53,13 @@
               :cancelBtn="false"
               :showReject="false"
               :acceptBtn="false"
-              :isLoading="isLoading && hoveredLabelSet == annotationSet"
               :rejectAllEmptyBtn="showRejectAllEmptyBtn"
               :annotationSet="annotationSet"
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
               "
               @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
-              @leave-empty-labels="hoveredLabelSet = null"
+              @leave-empty-labels="handleHoverEmptylabelsInSet(null)"
             />
           </div>
         </div>
@@ -72,7 +71,6 @@
               :annotationSet="annotationSet"
               :indexGroup="indexGroup"
               @handle-reject="rejectMissingAnnotations"
-              :hoveredLabelSet="hoveredLabelSet"
             />
           </div>
         </div>
@@ -118,9 +116,7 @@ export default {
       count: 0,
       jumpToNextAnnotation: false,
       numberOfLoadingAnnotations: 3,
-      showRejectAllEmptyBtn: true,
-      hoveredLabelSet: null,
-      isLoading: false
+      showRejectAllEmptyBtn: true
     };
   },
   computed: {
@@ -293,12 +289,14 @@ export default {
       if (label && labelSet && !rejectAll) {
         // if single rejection is triggered by clicking the button
 
-        rejected = {
-          document: parseInt(this.documentId),
-          label: label,
-          label_set: labelSet,
-          annotation_set: annotationSet
-        };
+        rejected = [
+          {
+            document: parseInt(this.documentId),
+            label: label,
+            label_set: labelSet,
+            annotation_set: annotationSet
+          }
+        ];
       } else if (this.editAnnotation && this.editAnnotation.id !== null) {
         // if single rejection is triggered from "delete" key
 
@@ -341,8 +339,6 @@ export default {
 
       this.$store.dispatch("document/setRejectedMissingAnnotations", rejected);
 
-      this.isLoading = true;
-
       this.$store
         .dispatch("document/addMissingAnnotations", rejected)
         .then(response => {
@@ -358,15 +354,17 @@ export default {
           }
         })
         .finally(() => {
-          this.isLoading = false;
           this.$store.dispatch("document/setRejectedMissingAnnotations", null);
         });
     },
 
     handleHoverEmptylabelsInSet(annotationSet) {
-      if (!annotationSet) return;
+      if (!annotationSet) {
+        this.$store.dispatch("document/setHoveredAnnotationSet", null);
+        return;
+      }
 
-      this.hoveredLabelSet = annotationSet;
+      this.$store.dispatch("document/setHoveredAnnotationSet", annotationSet);
     }
   },
   watch: {

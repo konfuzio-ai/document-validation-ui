@@ -9,7 +9,7 @@
       'annotation-row',
       isSelected && 'selected',
       isAnnotationInEditMode(annotationId()) && 'editing',
-      isEmptyAnnotationInHoveredLabelSet() &&
+      isEmptyAnnotationInHoveredAnnotationSet() &&
         hoveredEmptyLabels() === label.id &&
         'hovered-empty-labels'
     ]"
@@ -78,10 +78,6 @@ export default {
     },
     annotation: {
       default: null
-    },
-    hoveredLabelSet: {
-      required: false,
-      default: null
     }
   },
   data() {
@@ -93,7 +89,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["editAnnotation", "sidebarAnnotationSelected"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "sidebarAnnotationSelected",
+      "hoveredAnnotationSet"
+    ]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
   },
   methods: {
@@ -132,18 +132,18 @@ export default {
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     },
     hoveredEmptyLabels() {
-      if (!this.hoveredLabelSet) return;
-      const labels = this.hoveredLabelSet.labels.map(label => {
+      if (!this.hoveredAnnotationSet) return;
+      const labels = this.hoveredAnnotationSet.labels.map(label => {
         return JSON.parse(JSON.stringify(label));
       });
       const found = labels.find(l => l.id === this.label.id);
       if (found && found.annotations.length === 0) return found.id;
       return null;
     },
-    isEmptyAnnotationInHoveredLabelSet() {
-      if (!this.hoveredLabelSet || !this.annotationSet) return;
-      if (this.annotationSet.id && this.hoveredLabelSet.id) {
-        return this.annotationSet.id === this.hoveredLabelSet.id;
+    isEmptyAnnotationInHoveredAnnotationSet() {
+      if (!this.hoveredAnnotationSet || !this.annotationSet) return;
+      if (this.annotationSet.id && this.hoveredAnnotationSet.id) {
+        return this.annotationSet.id === this.hoveredAnnotationSet.id;
       } else {
         return (
           this.annotationSet.label_set.id == this.annotationSet.label_set.id
