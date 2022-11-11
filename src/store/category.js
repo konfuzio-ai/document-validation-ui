@@ -65,6 +65,7 @@ const actions = {
     commit,
     state,
     dispatch,
+    rootGetters
   }, {
     categoryId,
     user,
@@ -90,17 +91,19 @@ const actions = {
             // If the document is already in the available docs array
             // we go to the next item
             continue;
-          }
-          // TODO: this business logic should be a method on the document store
-          else if (
-            state.documentsInProject[i].status_data === 2 &&
-            state.documentsInProject[i].labeling_available === 1
+          } else if (
+            rootGetters.isDocumentReadyToReview(
+              state.documentsInProject[i].status_data,
+              state.documentsInProject[i].labeling_available
+            )
           ) {
             // add available doc to the end of the array if assigned to user
             if (state.documentsInProject[i].assignee === user) {
               commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
             }
-          } else if (state.documentsInProject[i].status_data === 111) {
+          } else if (rootGetters.documentHadErrorDuringExtraction(
+              state.documents[i].status_data
+            )) {
             dispatch("document/setDocumentError", true);
             // If error, add 1
             // Then go to next item

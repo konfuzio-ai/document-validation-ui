@@ -55,7 +55,10 @@
                   : document.data_file_name
               }}
             </div>
-            <div class="error-icon" v-if="document.status_data === 111">
+            <div
+              class="error-icon"
+              v-if="documentHadErrorDuringExtraction(document.status_data)"
+            >
               <ErrorIcon />
             </div>
           </div>
@@ -89,8 +92,9 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument"]),
-    ...mapState("category", ["availableDocumentsList"]),
-    ...mapGetters("category", ["category"])
+    ...mapState("category", ["documentsAvailableToReview"]),
+    ...mapGetters("category", ["category"]),
+    ...mapGetters("document", ["documentHadErrorDuringExtraction"])
   },
   methods: {
     changeDocument(documentId) {

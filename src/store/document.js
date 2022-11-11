@@ -194,6 +194,33 @@ const getters = {
     });
 
     return pendingEmpty.length;
+  },
+
+  /**
+   * Check if the document was extracted correctly and is ready to be reviewed
+   */
+  isDocumentReadyToReview: () => (statusData, labelingAvailable) => {
+    return statusData === 2 && labelingAvailable === 1;
+  },
+
+  /**
+   * Check if the document had an error during extraction
+   */
+  documentHadErrorDuringExtraction: () => statusData => {
+    return statusData === 111;
+  },
+
+  /**
+   * check if the document has a dataset status of 'Training', 'Test' or 'Preparation'
+   * and if so disable the option to edit the document
+   */
+  canDocumentBeEdited: () => document => {
+    return (
+      document.dataset_status === 1 ||
+      document.dataset_status === 2 ||
+      document.dataset_status === 3 ||
+      document.is_reviewed
+    );
   }
 };
 
@@ -503,7 +530,8 @@ const actions = {
   },
 
   fetchDocumentStatus: ({
-    state
+    state,
+    getters
   }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
@@ -512,12 +540,14 @@ const actions = {
         .then(response => {
           // TODO: call getter method for this validations
           if (
-            response.data.status_data === 2 &&
-            response.data.labeling_available === 1
+            getters.isDocumentReadyToReview(
+              response.data.status_data,
+              response.data.labeling_available
+            )
           ) {
             // ready
             return resolve(true)
-          } else if (response.data.status_data === 111) {
+          } else if (getters.documentHadErrorDuringExtraction(response.data.status_data)) {
             // error
             return reject();
           } else {
