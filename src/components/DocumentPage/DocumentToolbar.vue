@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
@@ -68,7 +68,8 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
+    ...mapGetters("document", ["canDocumentBeEdited"])
   },
   methods: {
     handleEdit() {
@@ -103,15 +104,7 @@ export default {
   },
   watch: {
     selectedDocument(newValue) {
-      // check if the document has a dataset status of 'Training' or 'Test'
-      // and if so disable the option to edit the document
-      // TODO: move this validations to store
-      if (
-        newValue.dataset_status === 1 ||
-        newValue.dataset_status === 2 ||
-        newValue.dataset_status === 3 ||
-        newValue.is_reviewed
-      ) {
+      if (this.canDocumentBeEdited(newValue)) {
         this.editModeDisabled = true;
       }
     }
@@ -120,13 +113,7 @@ export default {
     this.defaultScale = this.scale;
 
     if (this.selectedDocument) {
-      // TODO: move this validations to store
-      if (
-        this.selectedDocument.dataset_status === 1 ||
-        this.selectedDocument.dataset_status === 2 ||
-        this.selectedDocument.dataset_status === 3 ||
-        this.selectedDocument.is_reviewed
-      ) {
+      if (this.canDocumentBeEdited(this.selectedDocument)) {
         this.editModeDisabled = true;
       }
     }

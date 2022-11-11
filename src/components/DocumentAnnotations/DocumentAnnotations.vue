@@ -320,7 +320,9 @@ export default {
         const toReject = [];
 
         allEmptyLabels.map(label => {
-          const found = this.missingAnnotations.find(l => l.label === label.id);
+          const found = this.missingAnnotations.find(
+            l => l.label === label.id && l.annotation_set === annotationSet.id
+          );
 
           if (!found) {
             toReject.push(label);

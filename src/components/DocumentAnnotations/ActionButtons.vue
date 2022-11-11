@@ -63,7 +63,7 @@
         type="is-ghost"
         class="reject-btn"
         @click.stop="rejectAllEmpty"
-        :disabled="emptyLabelsLength === 0"
+        :disabled="emptyLabelsLength(annotationSet) === 0"
       >
         {{ $t("reject_all_empty") }} ({{ emptyLabelsLength(annotationSet) }})
       </b-button>
