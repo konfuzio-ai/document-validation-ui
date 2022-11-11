@@ -210,7 +210,7 @@ export default {
     rejectedMissingAnnotations(newValue) {
       if (!newValue) return;
 
-      if (newValue.label && newValue.label === this.label.id) {
+      if (newValue.label && this.label && newValue.label === this.label.id) {
         if (
           !newValue.annotation_set &&
           this.annotationSet &&

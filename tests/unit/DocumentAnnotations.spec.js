@@ -264,6 +264,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Rejecting should remove item from the label list, and it should show under Rejected", async () => {
+    const annotationSet = require("../mock/document.json").annotation_sets[0];
+
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -273,9 +275,10 @@ describe("Document Annotations Component", () => {
 
     const rejectedAnnotation = [
       {
-        label_set: require("../mock/document.json").annotation_sets[0].label_set
-          .id,
-        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+        label_set: annotationSet.label_set.id,
+        label: annotationSet.labels[0].id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet.id,
       },
     ];
 
@@ -295,6 +298,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Clicking the X button should remove the label from rejected and back to the labels list", async () => {
+    const annotationSet = require("../mock/document.json").annotation_sets[0];
+
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -304,9 +309,10 @@ describe("Document Annotations Component", () => {
 
     const rejectedAnnotation = [
       {
-        label_set: require("../mock/document.json").annotation_sets[0].label_set
-          .id,
-        label: require("../mock/document.json").annotation_sets[0].labels[0].id,
+        label_set: annotationSet.label_set.id,
+        label: annotationSet.labels[0].id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet.id,
       },
     ];
 
