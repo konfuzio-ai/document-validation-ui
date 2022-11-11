@@ -39,7 +39,6 @@
           :label="label"
           :annotationSet="annotationSet"
           @handle-reject="handleReject"
-          :hoveredLabelSet="hoveredLabelSet"
         />
       </div>
     </div>
@@ -59,7 +58,6 @@
         :label="label"
         :annotationSet="annotationSet"
         @handle-reject="handleReject"
-        :hoveredLabelSet="hoveredLabelSet"
       />
     </div>
   </div>
@@ -81,10 +79,6 @@ export default {
     },
     annotationSet: {
       required: true
-    },
-    hoveredLabelSet: {
-      required: false,
-      default: null
     }
   },
   data() {

@@ -69,7 +69,8 @@ export default {
       "publicView",
       "documentId",
       "rejectedMissingAnnotations",
-      "annotationSets"
+      "annotationSets",
+      "hoveredAnnotationSet"
     ])
   },
   methods: {
@@ -188,6 +189,38 @@ export default {
     },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;
+    },
+
+    enableLoading() {
+      // Check for what empty annotations we want to show the loading
+      // while waiting for it to be removed from the row
+      if (!this.rejectedMissingAnnotations) {
+        this.isLoading = false;
+        return;
+      }
+
+      this.rejectedMissingAnnotations.map(annotation => {
+        // Check if the annotation set and label are rejected
+        if (
+          annotation.label_set === this.annotationSet.label_set.id &&
+          annotation.annotation_set === this.annotationSet.id
+        ) {
+          // Check if we wanna add loading to all empty annotations
+          if (this.hoveredAnnotationSet) {
+            this.isLoading = true;
+            return;
+          }
+
+          // or we want to load a single one
+          if (
+            !this.hoveredAnnotationSet &&
+            annotation.label === this.label.id
+          ) {
+            this.isLoading = true;
+            return;
+          }
+        }
+      });
     }
   },
   watch: {
@@ -207,29 +240,8 @@ export default {
         this.cancelEmptyAnnotation(true);
       }
     },
-    rejectedMissingAnnotations(newValue) {
-      if (!newValue) return;
-
-      if (newValue.label && this.label && newValue.label === this.label.id) {
-        if (
-          !newValue.annotation_set &&
-          this.annotationSet &&
-          newValue.label_set === this.annotationSet.label_set.id
-        ) {
-          this.isLoading = true;
-          return;
-        }
-
-        if (
-          newValue.annotation_set &&
-          this.annotationSet &&
-          this.annotationSet.id === newValue.annotation_set
-        ) {
-          this.isLoading = true;
-        }
-      } else {
-        this.isLoading = false;
-      }
+    rejectedMissingAnnotations() {
+      this.enableLoading();
     },
     isHovered(newValue) {
       if (this.publicView) return;
