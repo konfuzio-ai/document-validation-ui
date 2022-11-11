@@ -199,28 +199,30 @@ export default {
         return;
       }
 
-      this.rejectedMissingAnnotations.map(annotation => {
-        // Check if the annotation set and label are rejected
-        if (
-          annotation.label_set === this.annotationSet.label_set.id &&
-          annotation.annotation_set === this.annotationSet.id
-        ) {
-          // Check if we wanna add loading to all empty annotations
-          if (this.hoveredAnnotationSet) {
-            this.isLoading = true;
-            return;
-          }
-
-          // or we want to load a single one
+      if (this.rejectedMissingAnnotations.length > 0) {
+        this.rejectedMissingAnnotations.map(annotation => {
+          // Check if the annotation set and label are rejected
           if (
-            !this.hoveredAnnotationSet &&
-            annotation.label === this.label.id
+            annotation.label_set === this.annotationSet.label_set.id &&
+            annotation.annotation_set === this.annotationSet.id
           ) {
-            this.isLoading = true;
-            return;
+            // Check if we wanna add loading to all empty annotations
+            if (this.hoveredAnnotationSet) {
+              this.isLoading = true;
+              return;
+            }
+
+            // or we want to load a single one
+            if (
+              !this.hoveredAnnotationSet &&
+              annotation.label === this.label.id
+            ) {
+              this.isLoading = true;
+              return;
+            }
           }
-        }
-      });
+        });
+      }
     }
   },
   watch: {
