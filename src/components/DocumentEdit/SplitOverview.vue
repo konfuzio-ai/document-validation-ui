@@ -82,7 +82,7 @@
  */
 
 import { mapState } from "vuex";
-import DocumentCategory from "../DocumentCategory";
+import DocumentCategory from "../../components/DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
 
 export default {
@@ -107,7 +107,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["updatedDocument", "pagesArray"])
+    ...mapState("edit", ["updatedDocument", "documentPagesListForEditMode"])
   },
   methods: {
     handleBackButton() {
@@ -157,11 +157,11 @@ export default {
       return name.split(".").slice(0, -1).join(".");
     },
     getImageUrl(page) {
-      if (!this.pagesArray || !this.pages || !page) return;
+      if (!this.documentPagesListForEditMode || !this.pages || !page) return;
 
       // returns the first thumbnail in the pages array
       // for each new document
-      const image = this.pagesArray.find(
+      const image = this.documentPagesListForEditMode.find(
         p => p.page_number === page.pages[0].page_number
       );
 
@@ -169,7 +169,8 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesArray?.find(p => p.id === pageId)?.angle;
+      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+        ?.angle;
     }
   }
 };

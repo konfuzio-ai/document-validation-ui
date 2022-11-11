@@ -213,7 +213,8 @@ export default {
       if (newValue.label && newValue.label === this.label.id) {
         if (
           !newValue.annotation_set &&
-          newValue.label_set === this.annotationSet.id
+          this.annotationSet &&
+          newValue.label_set === this.annotationSet.label_set.id
         ) {
           this.isLoading = true;
           return;
@@ -221,6 +222,7 @@ export default {
 
         if (
           newValue.annotation_set &&
+          this.annotationSet &&
           this.annotationSet.id === newValue.annotation_set
         ) {
           this.isLoading = true;

@@ -171,7 +171,30 @@ const getters = {
         }
         return state.editAnnotation.id === annotationId;
       }
-    }
+    },
+
+  /**
+   * Get number of empty labels per annotation set
+   */
+  emptyLabelsLength: state => annotationSet => {
+    const labels = annotationSet.labels.filter(
+      label => label.annotations.length === 0
+    );
+
+    const pendingEmpty = [];
+
+    labels.map(label => {
+      const found = state.missingAnnotations.find(
+        l => l.label === label.id && annotationSet.id === l.annotation_set
+      );
+
+      if (!found) {
+        pendingEmpty.push(label);
+      }
+    });
+
+    return pendingEmpty.length;
+  }
 };
 
 const actions = {
@@ -708,6 +731,12 @@ const mutations = {
   },
   SET_PUBLIC_VIEW: (state, value) => {
     state.publicView = value;
+  },
+  SET_DOCUMENT_IS_READY: (state, value) => {
+    state.documentIsReady = value;
+  },
+  SET_DOCUMENT_HAS_ERROR: (state, value) => {
+    state.documentHasError = value;
   }
 };
 

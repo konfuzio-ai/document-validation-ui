@@ -16,7 +16,7 @@
         "
       >
         <ScrollingPage
-          v-for="page in editMode ? pagesArray : pages"
+          v-for="page in editMode ? documentPagesListForEditMode : pages"
           :key="page.number"
           :page="page"
           :clientHeight="clientHeight"
@@ -61,7 +61,7 @@ export default {
       "selectedDocument",
       "loading"
     ]),
-    ...mapState("edit", ["editMode", "pagesArray"]),
+    ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
     ...mapState("display", ["scale"]),
 
     pages() {
