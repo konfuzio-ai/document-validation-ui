@@ -1,7 +1,4 @@
-import {
-  shallowMount,
-  mount
-} from "@vue/test-utils";
+import { shallowMount, mount } from "@vue/test-utils";
 import {
   DocumentEdit,
   EditPages,
@@ -29,7 +26,7 @@ describe("Document Edit Component", () => {
     Promise.all([
       store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch("document/setPages", pages),
-      store.dispatch("edit/setPagesArray", pages),
+      store.dispatch("edit/setDocumentPagesListForEditMode", pages),
       store.dispatch("edit/enableEditMode"),
     ]);
   });
@@ -42,7 +39,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
@@ -86,7 +83,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
@@ -98,10 +95,10 @@ describe("Document Edit Component", () => {
 
     expect(
       wrapper
-      .find(
-        ".document-grid .image-section .image-container .thumbnail .selected"
-      )
-      .exists()
+        .find(
+          ".document-grid .image-section .image-container .thumbnail .selected"
+        )
+        .exists()
     ).toBe(true);
   });
 
@@ -113,7 +110,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
@@ -136,7 +133,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
@@ -159,15 +156,15 @@ describe("Document Edit Component", () => {
       .trigger("click");
 
     await wrapper2.setData({
-      buttonDisabled: false
+      buttonDisabled: false,
     });
 
     expect(wrapper2.vm.buttonDisabled).toBe(false);
     expect(
       wrapper2
-      .findAll(".buttons-container .rotate-selected .rotate-button")
-      .at(0)
-      .attributes("disabled")
+        .findAll(".buttons-container .rotate-selected .rotate-button")
+        .at(0)
+        .attributes("disabled")
     ).toBeUndefined;
   });
 
@@ -179,12 +176,13 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
 
-    const subDocumentMock = [{
+    const subDocumentMock = [
+      {
         name: store.state.document.selectedDocument.name,
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
@@ -215,12 +213,13 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.pagesArray
+          editPages: store.state.edit.documentPagesListForEditMode,
         };
       },
     });
 
-    const subDocumentMock = [{
+    const subDocumentMock = [
+      {
         name: store.state.document.selectedDocument.name,
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
@@ -262,7 +261,8 @@ describe("Document Edit Component", () => {
 
     store.dispatch("edit/setSplitOverview", true);
 
-    const subDocumentMock = [{
+    const subDocumentMock = [
+      {
         name: store.state.document.selectedDocument.name,
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
@@ -295,13 +295,15 @@ describe("Document Edit Component", () => {
 
     await store.dispatch("edit/setSplitOverview", true);
 
-    const subDocumentMock = [{
+    const subDocumentMock = [
+      {
         name: store.state.document.selectedDocument.data_file_name,
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: require("../mock/document_data.json").data_file_name.split(".")[0] +
+        name:
+          require("../mock/document_data.json").data_file_name.split(".")[0] +
           "_copy",
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
@@ -317,8 +319,8 @@ describe("Document Edit Component", () => {
 
     expect(
       wrapper
-      .findAll(".document-details .doc-info .file-name-section .name-input")
-      .at(0).element.value
+        .findAll(".document-details .doc-info .file-name-section .name-input")
+        .at(0).element.value
     ).toBe("ZRU3S3");
   });
 });

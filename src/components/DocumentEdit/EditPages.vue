@@ -116,7 +116,7 @@ export default {
     ]),
     ...mapState("edit", [
       "editMode",
-      "pagesArray",
+      "documentPagesListForEditMode",
       "splitOverview",
       "selectedPages",
       "splitOverview"
@@ -163,7 +163,8 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesArray?.find(p => p.id === pageId)?.angle;
+      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+        ?.angle;
     },
     handleSplittingLines(page) {
       this.$emit("handle-splitting-lines", page);
@@ -178,24 +179,24 @@ export default {
     }
   },
   watch: {
-    pagesArray(newValue, oldValue) {
+    documentPagesListForEditMode(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.editPages = newValue;
       }
     },
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.$store.dispatch("edit/setPagesArray", newValue);
+        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
       }
     },
     splitOverview(newValue) {
       if (newValue) {
-        this.editPages = this.pagesArray;
+        this.editPages = this.documentPagesListForEditMode;
       }
     }
   },
   mounted() {
-    this.editPages = this.pagesArray;
+    this.editPages = this.documentPagesListForEditMode;
   }
 };
 </script>

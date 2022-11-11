@@ -8,7 +8,7 @@
     <!-- loading -->
     <div v-if="isLoading && !finishReviewBtn">
       <b-notification :closable="false" class="loading-background">
-        <b-loading :is-full-page="isFullPage" v-model="isLoading">
+        <b-loading :is-full-page="loadingOnFullPage" v-model="isLoading">
           <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
           </b-icon>
         </b-loading>
@@ -65,7 +65,7 @@
         @click.stop="rejectAllEmpty"
         :disabled="emptyLabelsLength === 0"
       >
-        {{ $t("reject_all_empty") }} ({{ emptyLabelsLength }})
+        {{ $t("reject_all_empty") }} ({{ emptyLabelsLength(annotationSet) }})
       </b-button>
     </div>
 
@@ -83,7 +83,7 @@
 
       <div v-else>
         <b-notification :closable="false" :class="['loading-background']">
-          <b-loading :is-full-page="isFullPage" v-model="isLoading">
+          <b-loading :is-full-page="loadingOnFullPage" v-model="isLoading">
             <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
             </b-icon>
           </b-loading>
@@ -94,13 +94,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "ActionButtons",
   data() {
     return {
-      // TODO: improve variable name, not sure what's related to
-      isFullPage: false
+      loadingOnFullPage: false
     };
   },
   props: {
@@ -137,26 +136,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
-    emptyLabelsLength() {
-      const labels = this.annotationSet.labels.filter(
-        label => label.annotations.length === 0
-      );
-
-      const pendingEmpty = [];
-
-      labels.map(label => {
-        const found = this.missingAnnotations.find(
-          l =>
-            l.label === label.id && this.annotationSet.id === l.annotation_set
-        );
-
-        if (!found) {
-          pendingEmpty.push(label);
-        }
-      });
-
-      return pendingEmpty.length;
-    }
+    ...mapGetters("document", ["emptyLabelsLength"])
   },
   methods: {
     save() {
