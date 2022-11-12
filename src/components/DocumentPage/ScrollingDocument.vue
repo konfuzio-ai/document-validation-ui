@@ -10,10 +10,10 @@
       v-scroll.immediate="updateScrollBounds"
       ref="scrollingDocument"
     >
-      <!-- TODO: change blur to be skeleton, no need to have multiple loading states (in all places, not only here)-->
       <div
-        :class="[recalculatingAnnotations && 'blur']"
-        v-if="selectedDocument && scale"
+        v-if="
+          selectedDocument && scale && !loading && !recalculatingAnnotations
+        "
       >
         <ScrollingPage
           v-for="page in editMode ? pagesArray : pages"
@@ -56,7 +56,11 @@ export default {
   },
 
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
+    ...mapState("document", [
+      "recalculatingAnnotations",
+      "selectedDocument",
+      "loading"
+    ]),
     ...mapState("edit", ["editMode", "pagesArray"]),
     ...mapState("display", ["scale"]),
 
@@ -84,6 +88,11 @@ export default {
       this.$refs.scrollingDocument.scrollTop =
         // the 4 comes from the margin between pages
         actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
+    }
+  },
+  watch: {
+    loading() {
+      this.scrollTop = 0;
     }
   }
 };

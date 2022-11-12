@@ -44,7 +44,6 @@ export default {
       this.$store.dispatch("edit/setSplitOverview", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
-
       this.$nextTick(() => {
         // reset to first page
         this.$store.dispatch("display/updateCurrentPage", 1);
@@ -57,41 +56,23 @@ export default {
         // Enable the "next" button to go to the overview
         this.$store.dispatch("edit/setSplitOverview", true);
         this.$store.dispatch("edit/setSelectedPages", null);
-        return;
       }
 
       // If we are in the overview (so more than 1 doc)
       // or in the edit mode (only 1 doc)
-      if (this.updatedDocument) {
-        this.$store.dispatch("document/startLoading");
-        this.$store.dispatch("document/startRecalculatingAnnotations");
-
+      else if (this.updatedDocument) {
         // Send update request to the backend
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
-          .then(async response => {
-            await this.$store.dispatch("document/setPages", []);
-
-            // Check if the response is successfull or not
-            if (response) {
-              this.$store.dispatch("document/pollDocumentEndpoint", 1000);
-            } else {
-              this.showError();
-            }
+          .then(response => {
+            if (!response) this.showError();
           })
           .catch(error => {
-            console.log(error);
             this.showError();
-          })
-          .finally(async () => {
-            // Stop document loading state and recalculating annotations
-            await this.$store.dispatch("document/endLoading");
-            await this.$store.dispatch("document/endRecalculatingAnnotations");
           });
+        // Close edit mode
+        this.closeEditMode();
       }
-
-      // Close edit mode
-      this.closeEditMode();
     }
   }
 };

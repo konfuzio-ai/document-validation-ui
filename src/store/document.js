@@ -2,6 +2,8 @@ import myImports from "../api";
 
 const HTTP = myImports.HTTP;
 
+const documentPollDuration = 1000;
+
 const state = {
   loading: true,
   pages: [],
@@ -12,8 +14,6 @@ const state = {
   sidebarAnnotationSelected: null,
   documentAnnotationSelected: null,
   selectedDocument: null,
-  documentIsReady: false,
-  documentHasError: false,
   recalculatingAnnotations: false,
   editAnnotation: null,
   missingAnnotations: [],
@@ -291,12 +291,23 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchAnnotations: ({
+  fetchDocument: async ({
     commit,
     state,
     dispatch
-  }) => {
-    return HTTP.get(`documents/${state.documentId}/`)
+  }, pollDocumentList = false) => {
+    let projectId = null;
+    let categoryId = null;
+    let isRecalculatingAnnotations = false;
+
+    const initialPage = 1;
+
+    dispatch('startLoading');
+    dispatch('display/updateCurrentPage', initialPage, {
+      root: true
+    });
+
+    await HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
         if (response.data) {
           const annotationSets = response.data.annotation_sets;
@@ -315,7 +326,7 @@ const actions = {
 
           // load first page
           if (response.data.pages.length > 0) {
-            await dispatch("fetchDocumentPage", 1);
+            await dispatch("fetchDocumentPage", initialPage);
           }
 
           // set information on the store
@@ -323,11 +334,42 @@ const actions = {
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
+
+          projectId = response.data.project;
+          categoryId = response.data.category;
+          // TODO: add this validation to a method
+          isRecalculatingAnnotations = response.data.labeling_available !== 1;
         }
       })
       .catch(error => {
         console.log(error, "Could not fetch document details from the backend");
+        return;
       });
+
+    if (!state.publicView) {
+      await dispatch("fetchMissingAnnotations");
+      await dispatch("fetchCurrentUser");
+
+      if (projectId) {
+        await dispatch("category/fetchCategories", projectId, {
+          root: true
+        });
+      }
+      if (categoryId) {
+        await dispatch("category/createAvailableDocumentsList", {
+          categoryId,
+          poll: pollDocumentList
+        }, {
+          root: true
+        });
+      }
+    }
+    if (isRecalculatingAnnotations) {
+      commit("SET_RECALCULATING_ANNOTATIONS", true);
+      dispatch("pollDocumentEndpoint");
+    }
+    dispatch('endLoading');
+
   },
 
   // Get document page data
@@ -514,26 +556,30 @@ const actions = {
   fetchDocumentStatus: ({
     state
   }) => {
-    return HTTP.get(
-        `documents/${state.documentId}/?fields=status_data,labeling_available`
-      )
-      .then(response => {
-        if (
-          response.data.status_data === 2 &&
-          response.data.labeling_available === 1
-        ) {
-          // TODO: use commit to mutate store
-          state.documentIsReady = true;
-        }
-
-        if (response.data.status_data === 111) {
-          // TODO: use commit to mutate store
-          state.documentHasError = true;
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    return new Promise((resolve, reject) => {
+      return HTTP.get(
+          `documents/${state.documentId}/?fields=status_data,labeling_available`
+        )
+        .then(response => {
+          // TODO: call getter method for this validations
+          if (
+            response.data.status_data === 2 &&
+            response.data.labeling_available === 1
+          ) {
+            // ready
+            return resolve(true)
+          } else if (response.data.status_data === 111) {
+            // error
+            return reject();
+          } else {
+            // not yet ready
+            return resolve(false);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    });
   },
 
   // Get document data
@@ -558,25 +604,27 @@ const actions = {
     });
   },
 
+  // TODO: this should be an util method, not an action on this document store
   sleep: duration => {
     new Promise(resolve => setTimeout(resolve, duration));
   },
 
   pollDocumentEndpoint: ({
-    state,
     dispatch
-  }, duration) => {
-    return dispatch("fetchDocumentStatus").then(async () => {
-      if (state.documentIsReady) {
-        return true;
-      } else if (state.documentHasError) {
-        dispatch("setDocumentError", true);
-        return false;
+  }) => {
+    return dispatch("fetchDocumentStatus").then((ready) => {
+      if (ready) {
+        // Stop document recalculating annotations
+        dispatch("endRecalculatingAnnotations");
+        dispatch("fetchDocument");
       } else {
-        dispatch("sleep", duration).then(() =>
-          dispatch("pollDocumentEndpoint", duration)
+        dispatch("sleep", documentPollDuration).then(() =>
+          dispatch("pollDocumentEndpoint")
         );
       }
+    }).catch((error) => {
+      console.log("catch", error);
+      dispatch("setDocumentError", true);
     });
   }
 };
@@ -586,7 +634,9 @@ const mutations = {
     state.loading = loading;
   },
   SET_DOC_ID: (state, id) => {
-    state.documentId = id;
+    if (id !== state.documentId) {
+      state.documentId = id;
+    }
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);

@@ -402,7 +402,9 @@ export default {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(`${this.page.image_url}`)
+      api.IMG_REQUEST.get(
+        `${this.page.image_url}?${this.selectedDocument.updated_at}`
+      )
         .then(response => {
           return response.data;
         })
@@ -528,18 +530,6 @@ export default {
         this.$nextTick(() => {
           this.updateTransformer();
         });
-      }
-    },
-    page() {
-      // TODO: move validation to store
-      if (this.selectedDocument.labeling_available === 1) {
-        this.drawPage(true);
-      }
-    },
-    selectedDocument(newValue) {
-      // TODO: move validation to store
-      if (newValue.labeling_available === 1) {
-        this.drawPage(true);
       }
     },
     scale() {

@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
@@ -86,7 +86,8 @@ export default {
           page_number: page.number,
           thumbnail_url: page.thumbnail_url,
           image_url: page.image_url,
-          size: page.size
+          size: page.size,
+          updated_at: this.selectedDocument.updated_at
         };
       });
     },

@@ -89,7 +89,7 @@ export default {
     },
 
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["pages", "documentAnnotationSelected"]),
+    ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
     ...mapState("edit", ["editMode"])
   },
 
@@ -100,14 +100,6 @@ export default {
         "document/fetchDocumentPage",
         this.page.number
       );
-    },
-    changePage(pageNumber) {
-      if (pageNumber !== this.currentPage) {
-        this.$store.dispatch(
-          "display/updateCurrentPage",
-          parseInt(pageNumber, 10)
-        );
-      }
     },
     pageInVisibleRange(page) {
       let number;
@@ -165,8 +157,10 @@ export default {
       }
     },
     isElementFocused(focused) {
-      if (focused) {
+      if (!this.loading && focused) {
         let pageNumber;
+
+        // TODO: have the same name for page.number in the edit mode so there's no need to do this validations
         if (this.editMode) {
           pageNumber = this.page.page_number;
         } else {

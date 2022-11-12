@@ -12,22 +12,23 @@
           currentPage == page.number && 'selected'
         ]"
         v-for="page in selectedDocument.pages"
-        v-bind:key="page.id"
-        v-on:click="changePage(page.number)"
+        :key="page.id"
+        @click="changePage(page.number)"
       >
         <div class="image-section">
           <div class="image-container">
             <ServerImage
+              v-if="!loading && !recalculatingAnnotations"
               :class="[
                 'img-thumbnail',
-                currentPage == page.number && 'selected',
-                recalculatingAnnotations && 'blur'
+                currentPage == page.number && 'selected'
               ]"
               :width="'40px'"
-              :imageUrl="page.thumbnail_url"
+              :imageUrl="`${page.thumbnail_url}?${selectedDocument.updated_at}`"
             >
               <LoadingThumbnail />
             </ServerImage>
+            <LoadingThumbnail v-else />
           </div>
         </div>
         <div class="number-thumbnail">{{ page.number }}</div>
@@ -63,13 +64,21 @@ export default {
     LoadingThumbnail
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
+    ...mapState("document", [
+      "selectedDocument",
+      "recalculatingAnnotations",
+      "loading"
+    ]),
     ...mapState("display", ["currentPage"])
   },
   methods: {
     /* Change page if not the currently open and not in modal */
     changePage(pageNumber) {
-      if (pageNumber != this.currentPage) {
+      if (
+        !this.loading &&
+        !this.recalculatingAnnotations &&
+        pageNumber != this.currentPage
+      ) {
         this.$store.dispatch(
           "display/updateCurrentPage",
           parseInt(pageNumber, 10)

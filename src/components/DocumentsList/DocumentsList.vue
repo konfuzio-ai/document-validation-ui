@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
-    ...mapState("category", ["documents"]),
+    ...mapState("category", ["availableDocumentsList"]),
     ...mapGetters("category", {
       documentListForUser: "documentListForUser",
       category: "category"
@@ -102,7 +102,7 @@ export default {
     }
   },
   watch: {
-    documents(newValue) {
+    availableDocumentsList(newValue) {
       if (newValue) {
         this.selectedCategory = this.category(this.selectedDocument.category);
         this.documentsList = this.documentListForUser(
