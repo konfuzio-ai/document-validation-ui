@@ -4,7 +4,7 @@
   <div class="document-top-bar-component" ref="documentTopBar">
     <div
       class="document-top-bar"
-      v-if="selectedDocument && selectedDocument.pages.length > 0"
+      v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
     >
       <div class="left-bar-components">
         <DocumentCategory v-if="categories && !editMode" />
@@ -99,7 +99,7 @@ export default {
     DocumentTopBarButtons
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("document", ["selectedDocument", "publicView", "loading"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"])
   },

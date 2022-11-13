@@ -15,7 +15,7 @@
     </div>
 
     <!-- When document data is still loading -->
-    <div v-else-if="!annotationSets">
+    <div v-else-if="!annotationSets || loading">
       <div v-for="n in numberOfLoadingAnnotations" :key="n">
         <LoadingAnnotations />
       </div>
@@ -111,7 +111,8 @@ export default {
       "annotations",
       "editAnnotation",
       "sidebarAnnotationSelected",
-      "annotationSets"
+      "annotationSets",
+      "loading"
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),

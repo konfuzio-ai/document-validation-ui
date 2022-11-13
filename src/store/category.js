@@ -5,7 +5,7 @@ const HTTP = myImports.HTTP;
 const state = {
   // TODO: change name of variables to be easier to understand 
   documents: [],
-  availableDocumentsList: [],
+  availableDocumentsList: [], // filtered by user
   categories: null
 };
 
@@ -32,29 +32,6 @@ const getters = {
       );
     }
     return null;
-  },
-
-  /**
-   * Documents assigned to a given user
-   */
-  documentListForUser: state => (user, currentDocument) => {
-    let isCurrentDocumentInTheList = false;
-    const availableDocuments = state.availableDocumentsList.filter(
-      doc => {
-        if (doc.assignee === user) {
-          if (currentDocument && doc.id === currentDocument.id) {
-            isCurrentDocumentInTheList = true;
-          }
-          return true;
-        }
-        return false;
-      }
-    );
-    // if the current document is not in the list and the list has documents to show, then add it to the first index
-    if (!isCurrentDocumentInTheList && currentDocument && availableDocuments.length > 0) {
-      availableDocuments.unshift(currentDocument);
-    }
-    return availableDocuments;
   }
 };
 
@@ -204,7 +181,10 @@ const mutations = {
     state.availableDocumentsList = availableDocumentsList;
   },
   ADD_AVAILABLE_DOCUMENT: (state, availableDocument) => {
-    state.availableDocumentsList.push(availableDocument);
+    const docAlreadyExists = state.availableDocumentsList.find((document) => document.id === availableDocument.id);
+    if (!docAlreadyExists && doc.assignee === user) {
+      state.availableDocumentsList.push(availableDocument);
+    }
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;

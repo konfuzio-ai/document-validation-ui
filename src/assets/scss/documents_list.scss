@@ -94,7 +94,11 @@ $documents-list-height: 52px;
       }
 
       .img-thumbnail {
-        max-height: 40px;
+        height: 100%;
+
+        img {
+          height: 100%;
+        }
 
         &.selected {
           outline: 1px solid $dark;

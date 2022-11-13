@@ -1,7 +1,10 @@
 <style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>
 <template>
-  <div class="documents-list" v-if="selectedCategory">
-    <div class="documents-list-top" v-if="showCategoryInfo">
+  <div
+    class="documents-list"
+    v-if="availableDocumentsList && availableDocumentsList.length > 0"
+  >
+    <div class="documents-list-top" v-if="showCategoryInfo && selectedCategory">
       <div class="documents-list-top-left">
         <h2>{{ selectedCategory.name }}</h2>
         <p>
@@ -20,11 +23,8 @@
         </div>
       </div>
     </div>
-    <div
-      class="documents-list-bottom"
-      v-if="documentsList && documentsList.length > 0"
-    >
-      <b-carousel-list :data="documentsList" :items-to-show="5">
+    <div class="documents-list-bottom">
+      <b-carousel-list :data="availableDocumentsList" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
@@ -38,8 +38,10 @@
                 'img-thumbnail',
                 documentId == document.id && 'selected'
               ]"
-              :imageUrl="document.thumbnail_url"
-            />
+              :imageUrl="`${document.thumbnail_url}?${document.updated_at}`"
+            >
+              <b-skeleton width="20px" height="100%" />
+            </ServerImage>
             <div
               :class="[
                 'document-name',
@@ -88,27 +90,21 @@ export default {
   computed: {
     ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
     ...mapState("category", ["availableDocumentsList"]),
-    ...mapGetters("category", {
-      documentListForUser: "documentListForUser",
-      category: "category"
-    })
+    ...mapGetters("category", ["category"])
   },
   methods: {
     changeDocument(documentId) {
       this.$store.dispatch("document/setDocId", documentId);
+      this.$store.dispatch("document/fetchDocument");
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");
     }
   },
   watch: {
-    availableDocumentsList(newValue) {
+    showCategoryInfo(newValue) {
       if (newValue) {
         this.selectedCategory = this.category(this.selectedDocument.category);
-        this.documentsList = this.documentListForUser(
-          this.currentUser,
-          this.selectedDocument
-        );
       }
     }
   }
