@@ -358,6 +358,7 @@ const actions = {
       if (categoryId) {
         await dispatch("category/createAvailableDocumentsList", {
           categoryId,
+          user: state.currentUser,
           poll: pollDocumentList
         }, {
           root: true
@@ -754,6 +755,9 @@ const mutations = {
       state.publicView = true;
     }
     state.selectedDocument = document;
+
+    // this is to handle cache when a document is edited or changed
+    state.selectedDocument.downloaded_at = Date.now();
   },
   SET_RECALCULATING_ANNOTATIONS: (state, recalculatingAnnotations) => {
     state.recalculatingAnnotations = recalculatingAnnotations;

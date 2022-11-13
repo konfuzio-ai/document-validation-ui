@@ -5,7 +5,7 @@
     <div class="document-icon">
       <ServerImage
         :height="'22px'"
-        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.updated_at}`"
+        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.downloaded_at}`"
       >
         <b-skeleton width="15px" height="22px" :rounded="false"></b-skeleton
       ></ServerImage>

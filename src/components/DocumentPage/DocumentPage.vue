@@ -403,7 +403,7 @@ export default {
       }
       const image = new Image();
       api.IMG_REQUEST.get(
-        `${this.page.image_url}?${this.selectedDocument.updated_at}`
+        `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
       )
         .then(response => {
           return response.data;

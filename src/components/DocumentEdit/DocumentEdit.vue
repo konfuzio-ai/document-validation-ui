@@ -87,7 +87,7 @@ export default {
           thumbnail_url: page.thumbnail_url,
           image_url: page.image_url,
           size: page.size,
-          updated_at: this.selectedDocument.updated_at
+          updated_at: this.selectedDocument.downloaded_at
         };
       });
     },

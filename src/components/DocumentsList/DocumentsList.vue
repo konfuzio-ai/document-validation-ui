@@ -29,14 +29,14 @@
           <div
             :class="[
               'documents-list-thumbnail',
-              documentId == document.id && 'selected'
+              selectedDocument.id == document.id && 'selected'
             ]"
-            v-on:click="changeDocument(document.id)"
+            @click="changeDocument(document.id)"
           >
             <ServerImage
               :class="[
                 'img-thumbnail',
-                documentId == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected'
               ]"
               :imageUrl="`${document.thumbnail_url}?${document.updated_at}`"
             >
@@ -45,7 +45,7 @@
             <div
               :class="[
                 'document-name',
-                documentId == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected'
               ]"
             >
               <!-- if is the current document, then we use the store variable to get the file name edits in real time -->
@@ -88,7 +88,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
+    ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["availableDocumentsList"]),
     ...mapGetters("category", ["category"])
   },

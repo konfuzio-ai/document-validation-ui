@@ -24,7 +24,7 @@
                 currentPage == page.number && 'selected'
               ]"
               :width="'40px'"
-              :imageUrl="`${page.thumbnail_url}?${selectedDocument.updated_at}`"
+              :imageUrl="`${page.thumbnail_url}?${selectedDocument.downloaded_at}`"
             >
               <LoadingThumbnail />
             </ServerImage>

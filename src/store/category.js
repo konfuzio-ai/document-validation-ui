@@ -76,6 +76,7 @@ const actions = {
     dispatch,
   }, {
     categoryId,
+    user,
     poll
   }) => {
     const sleep = duration =>
@@ -104,8 +105,10 @@ const actions = {
             state.documents[i].status_data === 2 &&
             state.documents[i].labeling_available === 1
           ) {
-            // add available doc to the end of the array
-            commit("ADD_AVAILABLE_DOCUMENT", state.documents[i]);
+            // add available doc to the end of the array if assigned to user
+            if (state.documents[i].assignee === user) {
+              commit("ADD_AVAILABLE_DOCUMENT", state.documents[i]);
+            }
           } else if (state.documents[i].status_data === 111) {
             dispatch("document/setDocumentError", true);
             // If error, add 1
@@ -182,7 +185,7 @@ const mutations = {
   },
   ADD_AVAILABLE_DOCUMENT: (state, availableDocument) => {
     const docAlreadyExists = state.availableDocumentsList.find((document) => document.id === availableDocument.id);
-    if (!docAlreadyExists && doc.assignee === user) {
+    if (!docAlreadyExists && availableDocument.assignee === user) {
       state.availableDocumentsList.push(availableDocument);
     }
   },
