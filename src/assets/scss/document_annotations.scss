@@ -70,7 +70,6 @@
         }
 
         .label-set-name {
-          // margin: 24px 16px 8px 16px;
           font-weight: 600;
           font-size: 14px;
           line-height: 20px;
@@ -292,6 +291,7 @@
           }
 
           @keyframes shake {
+
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);
