@@ -12,39 +12,28 @@ const state = {
 };
 
 const actions = {
-  enableEditMode: ({
-    commit
-  }) => {
+  enableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", true);
   },
 
-  disableEditMode: ({
-    commit
-  }) => {
+  disableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", false);
     commit("SET_SPLIT_OVERVIEW", false);
   },
 
-  setSplitOverview: ({
-    commit
-  }, overview) => {
+  setSplitOverview: ({ commit }, overview) => {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
   setDocumentPagesListForEditMode: ({ commit }, pages) => {
-    commit("SET_PAGES_ARRAY", pages);
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", pages);
   },
 
-  setUpdatedDocument: ({
-    commit
-  }, updatedDocument) => {
+  setUpdatedDocument: ({ commit }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
   },
 
-  setSelectedPages: ({
-    state,
-    commit
-  }, selectedPage) => {
+  setSelectedPages: ({ state, commit }, selectedPage) => {
     if (!selectedPage) {
       commit("SET_SELECTED_PAGES", []);
       return;
@@ -98,7 +87,7 @@ const actions = {
           }
         });
 
-      commit("SET_PAGES_ARRAY", documentPagesListForEditMode);
+      commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", documentPagesListForEditMode);
     } else {
       if (direction === "left") {
         state.documentPagesListForEditMode.push({
@@ -122,10 +111,7 @@ const actions = {
     }
   },
 
-  updateRotationToTheLeft: ({
-    state,
-    commit
-  }) => {
+  updateRotationToTheLeft: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
     const array = state.documentPagesListForEditMode.map(p => {
       let rotatedAngle = p.angle - 90;
@@ -138,13 +124,10 @@ const actions = {
       };
     });
 
-    commit("SET_PAGES_ARRAY", array);
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
   },
 
-  updateRotationToTheRight: ({
-    state,
-    commit
-  }) => {
+  updateRotationToTheRight: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
     const array = state.documentPagesListForEditMode.map(p => {
       let rotatedAngle = p.angle + 90;
@@ -157,21 +140,18 @@ const actions = {
       };
     });
 
-    commit("SET_PAGES_ARRAY", array);
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
   },
 
-  editDocument: ({
-    rootState,
-    dispatch
-  }, editedDocument) => {
+  editDocument: ({ rootState, dispatch }, editedDocument) => {
     dispatch("document/startRecalculatingAnnotations", null, {
       root: true
     });
     return new Promise(resolve => {
       HTTP.post(
-          `/documents/${rootState.document.documentId}/postprocess/`,
-          editedDocument
-        )
+        `/documents/${rootState.document.documentId}/postprocess/`,
+        editedDocument
+      )
         .then(async response => {
           if (response && response.status === 200) {
             const newDocument = response.data[0];
@@ -185,7 +165,7 @@ const actions = {
             });
             resolve(true);
           } else {
-            resolve(false)
+            resolve(false);
           }
         })
         .catch(error => {
@@ -205,7 +185,7 @@ const mutations = {
     state.splitOverview = overview;
   },
 
-  SET_PAGES_ARRAY: (state, pages) => {
+  SET_DOCUMENT_PAGES_FOR_EDIT_MODE: (state, pages) => {
     state.documentPagesListForEditMode = pages;
   },
 
