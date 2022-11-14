@@ -28,6 +28,8 @@ describe("Document Edit Component", () => {
       store.dispatch("document/setPages", pages),
       store.dispatch("edit/setDocumentPagesListForEditMode", pages),
       store.dispatch("edit/enableEditMode"),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     ]);
   });
 

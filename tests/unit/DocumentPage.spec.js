@@ -1,4 +1,7 @@
-import { mount, shallowMount } from "@vue/test-utils";
+import {
+  mount,
+  shallowMount
+} from "@vue/test-utils";
 import {
   ScrollingDocument,
   ScrollingPage,
@@ -24,6 +27,8 @@ describe("Document Page Component", () => {
         require("../mock/page_1.json"),
         require("../mock/page_2.json"),
       ]),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     ]);
   });
   it("document contains two scrolling pages", async () => {
@@ -32,7 +37,9 @@ describe("Document Page Component", () => {
       propsData: {
         pages: store.state.document.pages,
       },
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     // expect(await wrapper.findAllComponents(ScrollingPage).length).toBe(2);
@@ -43,7 +50,9 @@ describe("Document Page Component", () => {
       propsData: {
         pages: store.state.document.pages,
       },
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(store.getters["display/visiblePageRange"]).toContain(1);
@@ -52,7 +61,9 @@ describe("Document Page Component", () => {
   it("Toolbar should be visible", async () => {
     const wrapper = shallowMount(ToolBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.findComponent(".toolbar-container"));
@@ -61,7 +72,9 @@ describe("Document Page Component", () => {
   it("Toolbar should have icons and text visible", async () => {
     const wrapper = shallowMount(ToolBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.findComponent(".edit-icon").exists()).toBe(true);

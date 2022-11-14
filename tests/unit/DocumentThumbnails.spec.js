@@ -27,6 +27,8 @@ describe("Document Thumbnails Component", () => {
       store.dispatch("document/setSelectedDocument", documentData),
       store.dispatch("document/setAnnotations", annotations),
       store.dispatch("document/setPages", pages),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     ]);
   });
   it("check number of thumbnails", () => {
