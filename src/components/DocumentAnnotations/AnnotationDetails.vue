@@ -35,9 +35,7 @@
         </div>
         <div class="revision">
           <div :class="getColor()">
-            <b-icon :icon="getIcon()" size="is-small" />{{
-              $t("not_found_in_document")
-            }}
+            <b-icon :icon="getIcon()" size="is-small" />{{ getText() }}
           </div>
         </div>
       </div>
@@ -62,6 +60,21 @@ export default {
         return "green";
       } else {
         return "";
+      }
+    },
+    getText() {
+      if (this.notFound) {
+        return this.$t("not_found_in_document");
+      } else if (this.created) {
+        return this.user
+          ? `${this.$t("created_by")} ${this.user}`
+          : this.$t("created");
+      } else if (this.accepted) {
+        return this.user
+          ? `${this.$t("approved_by")} ${this.user}`
+          : this.$t("approved");
+      } else {
+        return this.$t("not_revised_yet");
       }
     }
   },
