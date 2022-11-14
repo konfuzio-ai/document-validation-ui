@@ -127,9 +127,9 @@ export default {
       "publicView",
       "annotations",
       "editAnnotation",
-      "sidebarAnnotationSelected",
       "annotationSets",
-      "loading"
+      "loading",
+      "labels"
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
@@ -153,6 +153,39 @@ export default {
       } else {
         this.count = 0;
         return;
+      }
+    },
+
+    scrollToFocusedAnnotationFromKeyHandler() {
+      if (!this.editAnnotation) return;
+
+      // Get label name for the selected annotation
+      let labelForAnnotation;
+
+      this.labels.map(label => {
+        const found = label.annotations.find(
+          ann => ann.id === this.editAnnotation.id
+        );
+
+        if (found) {
+          labelForAnnotation = label;
+          return;
+        }
+      });
+
+      const currentAnnotation = this.annotations.find(
+        ann => ann.id === this.editAnnotation.id
+      );
+
+      if (currentAnnotation) {
+        this.$store.dispatch("document/setDocumentAnnotationSelected", {
+          annotation: currentAnnotation,
+          label: labelForAnnotation,
+          span: currentAnnotation.span[0],
+          scrollTo: false
+        });
+
+        this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
       }
     },
 
@@ -208,6 +241,10 @@ export default {
         }
 
         annotations[this.count].click();
+
+        // scroll to current annotation if not empty
+        this.scrollToFocusedAnnotationFromKeyHandler();
+
         this.count++;
       } else if (event.key === "ArrowUp") {
         // Check if the event happened on the first element from the array
@@ -226,6 +263,10 @@ export default {
         }
 
         annotations[this.count].click();
+
+        // scroll to current annotation if not empty
+        this.scrollToFocusedAnnotationFromKeyHandler();
+
         this.count--;
       } else {
         // Check for ENTER or DELETE
@@ -255,6 +296,7 @@ export default {
         }
       }
     },
+
     labelNotRejected(annotationSet, label) {
       // Check if the combined label and label set have been rejected
       if (this.missingAnnotations.length === 0) {
