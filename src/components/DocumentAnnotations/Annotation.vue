@@ -182,7 +182,6 @@ export default {
       let updatedString;
 
       this.isLoading = true;
-      this.$store.dispatch("document/startLoading");
 
       let isToDelete = this.annotationText.length === 0;
       let storeAction;

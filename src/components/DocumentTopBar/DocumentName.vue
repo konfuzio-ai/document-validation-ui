@@ -169,13 +169,12 @@ export default {
       };
 
       this.showSaveBtn = false;
-      this.$store.dispatch("document/startLoading");
       this.saving = true;
 
       this.$store
         .dispatch("document/updateDocument", updatedFileName)
         .then(response => {
-          // Check if the response is successfull or not
+          // Check if the response is successful or not
           if (response === 200) {
             // if successful, set the old name to be the new name
             this.changed = true;
@@ -188,7 +187,6 @@ export default {
           }
         })
         .finally(() => {
-          this.$store.dispatch("document/endLoading");
           this.saving = false;
         });
 
