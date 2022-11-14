@@ -200,15 +200,15 @@ const getters = {
   /**
    * Check if the document was extracted correctly and is ready to be reviewed
    */
-  isDocumentReadyToReview: () => (statusData, labelingAvailable) => {
-    return statusData === 2 && labelingAvailable === 1;
+  isDocumentReadyToBeReviewed: () => document => {
+    return document.status_data === 2 && document.labeling_available === 1;
   },
 
   /**
    * Check if the document had an error during extraction
    */
-  documentHadErrorDuringExtraction: () => statusData => {
-    return statusData === 111;
+  documentHadErrorDuringExtraction: () => document => {
+    return document.status_data === 111;
   },
 
   /**
@@ -307,19 +307,18 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocument: async ({
-    commit,
-    state,
-    dispatch
-  }, pollDocumentList = false) => {
+  fetchDocument: async (
+    { commit, state, dispatch },
+    pollDocumentList = false
+  ) => {
     let projectId = null;
     let categoryId = null;
     let isRecalculatingAnnotations = false;
 
     const initialPage = 1;
 
-    dispatch('startLoading');
-    dispatch('display/updateCurrentPage', initialPage, {
+    dispatch("startLoading");
+    dispatch("display/updateCurrentPage", initialPage, {
       root: true
     });
 
@@ -372,21 +371,24 @@ const actions = {
         });
       }
       if (categoryId) {
-        await dispatch("category/createAvailableDocumentsList", {
-          categoryId,
-          user: state.currentUser,
-          poll: pollDocumentList
-        }, {
-          root: true
-        });
+        await dispatch(
+          "category/createAvailableDocumentsList",
+          {
+            categoryId,
+            user: state.currentUser,
+            poll: pollDocumentList
+          },
+          {
+            root: true
+          }
+        );
       }
     }
     if (isRecalculatingAnnotations) {
       commit("SET_RECALCULATING_ANNOTATIONS", true);
       dispatch("pollDocumentEndpoint");
     }
-    dispatch('endLoading');
-
+    dispatch("endLoading");
   },
 
   // Get document page data
@@ -533,25 +535,17 @@ const actions = {
     });
   },
 
-  fetchDocumentStatus: ({
-    state,
-    getters
-  }) => {
+  fetchDocumentStatus: ({ state, getters }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
-          `documents/${state.documentId}/?fields=status_data,labeling_available`
-        )
+        `documents/${state.documentId}/?fields=status_data,labeling_available`
+      )
         .then(response => {
           // TODO: call getter method for this validations
-          if (
-            getters.isDocumentReadyToReview(
-              response.data.status_data,
-              response.data.labeling_available
-            )
-          ) {
+          if (getters.isDocumentReadyToBeReviewed(response.data)) {
             // ready
-            return resolve(true)
-          } else if (getters.documentHadErrorDuringExtraction(response.data.status_data)) {
+            return resolve(true);
+          } else if (getters.documentHadErrorDuringExtraction(response.data)) {
             // error
             return reject();
           } else {
@@ -587,23 +581,23 @@ const actions = {
     new Promise(resolve => setTimeout(resolve, duration));
   },
 
-  pollDocumentEndpoint: ({
-    dispatch
-  }) => {
-    return dispatch("fetchDocumentStatus").then((ready) => {
-      if (ready) {
-        // Stop document recalculating annotations
-        dispatch("endRecalculatingAnnotations");
-        dispatch("fetchDocument");
-      } else {
-        dispatch("sleep", documentPollDuration).then(() =>
-          dispatch("pollDocumentEndpoint")
-        );
-      }
-    }).catch((error) => {
-      console.log("catch", error);
-      dispatch("setDocumentError", true);
-    });
+  pollDocumentEndpoint: ({ dispatch }) => {
+    return dispatch("fetchDocumentStatus")
+      .then(ready => {
+        if (ready) {
+          // Stop document recalculating annotations
+          dispatch("endRecalculatingAnnotations");
+          dispatch("fetchDocument");
+        } else {
+          dispatch("sleep", documentPollDuration).then(() =>
+            dispatch("pollDocumentEndpoint")
+          );
+        }
+      })
+      .catch(error => {
+        console.log("catch", error);
+        dispatch("setDocumentError", true);
+      });
   }
 };
 
