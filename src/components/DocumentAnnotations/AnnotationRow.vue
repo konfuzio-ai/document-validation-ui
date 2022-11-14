@@ -9,7 +9,9 @@
       'annotation-row',
       isSelected && 'selected',
       isAnnotationInEditMode(annotationId()) && 'editing',
-      isEmptyAnnotationInHoveredAnnotationSet() &&
+      hoveredAnnotationSet &&
+        annotationSet.id === hoveredAnnotationSet.id &&
+        annotationSet.label_set.id === hoveredAnnotationSet.label_set.id &&
         hoveredEmptyLabels() === label.id &&
         'hovered-empty-labels'
     ]"
@@ -139,16 +141,6 @@ export default {
       const found = labels.find(l => l.id === this.label.id);
       if (found && found.annotations.length === 0) return found.id;
       return null;
-    },
-    isEmptyAnnotationInHoveredAnnotationSet() {
-      if (!this.hoveredAnnotationSet || !this.annotationSet) return;
-      if (this.annotationSet.id && this.hoveredAnnotationSet.id) {
-        return this.annotationSet.id === this.hoveredAnnotationSet.id;
-      } else {
-        return (
-          this.annotationSet.label_set.id == this.annotationSet.label_set.id
-        );
-      }
     }
   },
   watch: {
