@@ -28,7 +28,9 @@ describe("Document Top Bar", () => {
   beforeEach(() => {
     Promise.resolve(
       store.dispatch("document/setSelectedDocument", documentData),
-      store.dispatch("document/setPublicView", false)
+      store.dispatch("document/setPublicView", false),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     );
   });
 
