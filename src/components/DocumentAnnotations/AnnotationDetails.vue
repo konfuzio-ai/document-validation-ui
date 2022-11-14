@@ -158,6 +158,7 @@ export default {
         return ann && ann.id && ann.revised && ann.is_correct;
       };
       if (
+        newAnnotation &&
         newAnnotation.id &&
         accepted(newAnnotation) &&
         !accepted(oldAnnotation)

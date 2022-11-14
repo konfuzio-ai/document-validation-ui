@@ -22,8 +22,9 @@ const state = {
   showError: false,
   errorMessage: null,
   showDocumentError: false,
-  rejectAnnotation: null, // TODO: is this necessary?
-  errorMessageWidth: null
+  rejectedMissingAnnotations: null,
+  errorMessageWidth: null,
+  hoveredAnnotationSet: null
 };
 
 const getters = {
@@ -61,7 +62,10 @@ const getters = {
    * Checks if is to scroll to an annotation in the document
    */
   scrollDocumentToAnnotation: state => {
-    return state.documentAnnotationSelected && state.documentAnnotationSelected.scrollTo;
+    return (
+      state.documentAnnotationSelected &&
+      state.documentAnnotationSelected.scrollTo
+    );
   },
 
   /**
@@ -69,13 +73,16 @@ const getters = {
    */
   categorizationIsConfirmed: state => {
     if (state.selectedDocument) {
-      if (state.selectedDocument.is_category_accepted || state.selectedDocument.is_reviewed) {
+      if (
+        state.selectedDocument.is_category_accepted ||
+        state.selectedDocument.is_reviewed
+      ) {
         return true;
       } else if (!state.selectedDocument.category) {
         return false;
       } else {
         // check if there's any annotation already approved
-        const found = state.annotations.find((annotation) => {
+        const found = state.annotations.find(annotation => {
           return annotation.revised;
         });
         return found != undefined;
@@ -117,9 +124,9 @@ const getters = {
   },
 
   /* Returns the number of accepted annotations in a label */
-  numberOfAcceptedAnnotationsInLabel: (_) => label => {
+  numberOfAcceptedAnnotationsInLabel: _ => label => {
     const annotations = label.annotations.filter(annotation => {
-      return annotation.revised && annotation.is_correct
+      return annotation.revised && annotation.is_correct;
     });
     return annotations.length;
   },
@@ -153,7 +160,8 @@ const getters = {
   /**
    * Checks if annotation is being edited
    */
-  isAnnotationInEditMode: state =>
+  isAnnotationInEditMode:
+    state =>
     (annotationId, index = null) => {
       if (state.editAnnotation && annotationId) {
         if (index != null) {
@@ -164,44 +172,77 @@ const getters = {
         }
         return state.editAnnotation.id === annotationId;
       }
-    }
+    },
+
+  /**
+   * Get number of empty labels per annotation set
+   */
+  emptyLabelsLength: state => annotationSet => {
+    const labels = annotationSet.labels.filter(
+      label => label.annotations.length === 0
+    );
+
+    const pendingEmpty = [];
+
+    labels.map(label => {
+      const found = state.missingAnnotations.find(
+        l => l.label === label.id && annotationSet.id === l.annotation_set
+      );
+
+      if (!found) {
+        pendingEmpty.push(label);
+      }
+    });
+
+    return pendingEmpty.length;
+  },
+
+  /**
+   * Check if the document was extracted correctly and is ready to be reviewed
+   */
+  isDocumentReadyToBeReviewed: () => document => {
+    return document.status_data === 2 && document.labeling_available === 1;
+  },
+
+  /**
+   * Check if the document had an error during extraction
+   */
+  documentHadErrorDuringExtraction: () => document => {
+    return document.status_data === 111;
+  },
+
+  /**
+   * check if the document has a dataset status of 'Training', 'Test' or 'Preparation'
+   * and if so disable the option to edit the document
+   */
+  canDocumentBeEdited: () => document => {
+    return (
+      document.dataset_status === 1 ||
+      document.dataset_status === 2 ||
+      document.dataset_status === 3 ||
+      document.is_reviewed
+    );
+  }
 };
 
 const actions = {
-  startLoading: ({
-    commit
-  }) => {
+  startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({
-    commit
-  }) => {
+  endLoading: ({ commit }) => {
     commit("SET_LOADING", false);
   },
-  setDocId: ({
-    commit
-  }, id) => {
+  setDocId: ({ commit }, id) => {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setSidebarAnnotationSelected: ({
-    commit
-  }, annotation) => {
+  setSidebarAnnotationSelected: ({ commit }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setAnnotationSets: ({
-    commit
-  }, annotationSets) => {
+  setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
-  setEditAnnotation: ({
-    commit
-  }, {
-    id,
-    index,
-    label,
-    labelSet
-  }) => {
+  setEditAnnotation: ({ commit }, { id, index, label, labelSet }) => {
     const value = {
       id,
       index,
@@ -210,59 +251,37 @@ const actions = {
     };
     commit("SET_EDIT_ANNOTATION", value);
   },
-  resetEditAnnotation: ({
-    commit
-  }) => {
+  resetEditAnnotation: ({ commit }) => {
     commit("RESET_EDIT_ANNOTATION");
   },
-  setAnnotations: ({
-    commit
-  }, annotations) => {
+  setAnnotations: ({ commit }, annotations) => {
     commit("SET_ANNOTATIONS", annotations);
   },
-  setLabels: ({
-    commit
-  }, labels) => {
+  setLabels: ({ commit }, labels) => {
     commit("SET_LABELS", labels);
   },
-  setPages: ({
-    commit
-  }, pages) => {
+  setPages: ({ commit }, pages) => {
     commit("SET_PAGES", pages);
   },
-  setSelectedDocument: ({
-    commit
-  }, document) => {
+  setSelectedDocument: ({ commit }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
-  setPublicView: ({
-    commit
-  }, publicView) => {
+  setPublicView: ({ commit }, publicView) => {
     commit("SET_PUBLIC_VIEW", publicView);
   },
-  startRecalculatingAnnotations: ({
-    commit
-  }) => {
+  startRecalculatingAnnotations: ({ commit }) => {
     commit("SET_RECALCULATING_ANNOTATIONS", true);
   },
-  endRecalculatingAnnotations: ({
-    commit
-  }) => {
+  endRecalculatingAnnotations: ({ commit }) => {
     commit("SET_RECALCULATING_ANNOTATIONS", false);
   },
-  setMissingAnnotations: ({
-    commit
-  }, missingAnnotations) => {
+  setMissingAnnotations: ({ commit }, missingAnnotations) => {
     commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
   },
-  setCurrentUser: ({
-    commit
-  }, currentUser) => {
+  setCurrentUser: ({ commit }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
   },
-  setErrorMessage: ({
-    commit
-  }, message) => {
+  setErrorMessage: ({ commit }, message) => {
     if (message) {
       commit("SET_SHOW_ERROR", true);
     } else {
@@ -271,39 +290,35 @@ const actions = {
 
     commit("SET_ERROR_MESSAGE", message);
   },
-  setDocumentError: ({
-    commit
-  }, value) => {
+  setDocumentError: ({ commit }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
   },
-  setRejectAnnotation: ({
-    commit
-  }, annotation) => {
-    commit("SET_REJECT_ANNOTATION", annotation);
+  setRejectedMissingAnnotations: ({ commit }, annotations) => {
+    commit("SET_REJECTED_MISSING_ANNOTATIONS", annotations);
   },
-  setErrorMessageWidth: ({
-    commit
-  }, width) => {
+  setErrorMessageWidth: ({ commit }, width) => {
     commit("SET_ERROR_MESSAGE_WIDTH", width);
+  },
+  setHoveredAnnotationSet: ({ commit }, annotationSet) => {
+    commit("SET_HOVERED_ANNOTATION_SET", annotationSet);
   },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocument: async ({
-    commit,
-    state,
-    dispatch
-  }, pollDocumentList = false) => {
+  fetchDocument: async (
+    { commit, state, dispatch },
+    pollDocumentList = false
+  ) => {
     let projectId = null;
     let categoryId = null;
     let isRecalculatingAnnotations = false;
 
     const initialPage = 1;
 
-    dispatch('startLoading');
-    dispatch('display/updateCurrentPage', initialPage, {
+    dispatch("startLoading");
+    dispatch("display/updateCurrentPage", initialPage, {
       root: true
     });
 
@@ -356,70 +371,60 @@ const actions = {
         });
       }
       if (categoryId) {
-        await dispatch("category/createAvailableDocumentsList", {
-          categoryId,
-          user: state.currentUser,
-          poll: pollDocumentList
-        }, {
-          root: true
-        });
+        await dispatch(
+          "category/createAvailableDocumentsList",
+          {
+            categoryId,
+            user: state.currentUser,
+            poll: pollDocumentList
+          },
+          {
+            root: true
+          }
+        );
       }
     }
     if (isRecalculatingAnnotations) {
       commit("SET_RECALCULATING_ANNOTATIONS", true);
       dispatch("pollDocumentEndpoint");
     }
-    dispatch('endLoading');
-
+    dispatch("endLoading");
   },
 
   // Get document page data
-  fetchDocumentPage: ({
-    commit,
-    state
-  }, page) => {
+  fetchDocumentPage: ({ commit, state }, page) => {
     return HTTP.get(`documents/${state.documentId}/pages/${page}/`)
       .then(response => {
         commit("ADD_PAGE", response.data);
       })
       .catch(error => {
         console.log(error);
-      })
+      });
   },
 
-  setDocumentAnnotationSelected: ({
-    commit
-  }, {
-    annotation,
-    label,
-    span,
-    scrollTo = false
-  }) => {
+  setDocumentAnnotationSelected: (
+    { commit },
+    { annotation, label, span, scrollTo = false }
+  ) => {
     const value = {
       scrollTo,
       id: annotation.id,
       span,
       page: span.page_index + 1,
-      labelName: label.name,
-    }
+      labelName: label.name
+    };
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
   },
 
-  scrollToDocumentAnnotationSelected: ({
-    commit
-  }) => {
+  scrollToDocumentAnnotationSelected: ({ commit }) => {
     commit("SET_DOCUMENT_ANNOTATION_SCROLL", true);
   },
 
-  disableDocumentAnnotationSelected: ({
-    commit
-  }) => {
+  disableDocumentAnnotationSelected: ({ commit }) => {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
-  createAnnotation: ({
-    commit
-  }, annotation) => {
+  createAnnotation: ({ commit }, annotation) => {
     return new Promise(resolve => {
       HTTP.post(`/annotations/`, annotation)
         .then(response => {
@@ -437,12 +442,7 @@ const actions = {
     });
   },
 
-  updateAnnotation: ({
-    commit
-  }, {
-    updatedValues,
-    annotationId
-  }) => {
+  updateAnnotation: ({ commit }, { updatedValues, annotationId }) => {
     return new Promise(resolve => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then(response => {
@@ -458,11 +458,7 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({
-    commit
-  }, {
-    annotationId
-  }) => {
+  deleteAnnotation: ({ commit }, { annotationId }) => {
     return new Promise(resolve => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(response => {
@@ -476,10 +472,7 @@ const actions = {
     });
   },
 
-  updateDocument: ({
-    commit,
-    state
-  }, updatedDocument) => {
+  updateDocument: ({ commit, state }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
@@ -500,13 +493,10 @@ const actions = {
     });
   },
 
-  fetchMissingAnnotations: ({
-    commit,
-    state
-  }) => {
+  fetchMissingAnnotations: ({ commit, state }) => {
     return HTTP.get(
-        `documents/${state.documentId}/missing-annotations/?limit=100`
-      )
+      `/missing-annotations/?document=${state.documentId}&limit=100`
+    )
       .then(response => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
       })
@@ -515,14 +505,9 @@ const actions = {
       });
   },
 
-  addMissingAnnotation: ({
-    state
-  }, missingAnnotation) => {
+  addMissingAnnotations: ({}, missingAnnotations) => {
     return new Promise(resolve => {
-      return HTTP.post(
-          `documents/${state.documentId}/missing-annotations/`,
-          missingAnnotation
-        )
+      return HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then(response => {
           if (response.status === 201) {
             resolve(true);
@@ -535,13 +520,9 @@ const actions = {
     });
   },
 
-  deleteMissingAnnotation: ({
-    state
-  }, id) => {
+  deleteMissingAnnotation: ({}, id) => {
     return new Promise(resolve => {
-      return HTTP.delete(
-          `documents/${state.documentId}/missing-annotations/${id}/`
-        )
+      return HTTP.delete(`/missing-annotations/${id}/`)
         .then(response => {
           if (response.status === 204) {
             resolve(true);
@@ -554,22 +535,17 @@ const actions = {
     });
   },
 
-  fetchDocumentStatus: ({
-    state
-  }) => {
+  fetchDocumentStatus: ({ state, getters }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
-          `documents/${state.documentId}/?fields=status_data,labeling_available`
-        )
+        `documents/${state.documentId}/?fields=status_data,labeling_available`
+      )
         .then(response => {
           // TODO: call getter method for this validations
-          if (
-            response.data.status_data === 2 &&
-            response.data.labeling_available === 1
-          ) {
+          if (getters.isDocumentReadyToBeReviewed(response.data)) {
             // ready
-            return resolve(true)
-          } else if (response.data.status_data === 111) {
+            return resolve(true);
+          } else if (getters.documentHadErrorDuringExtraction(response.data)) {
             // error
             return reject();
           } else {
@@ -584,10 +560,7 @@ const actions = {
   },
 
   // Get document data
-  fetchDocumentData: ({
-    commit,
-    state
-  }) => {
+  fetchDocumentData: ({ commit, state }) => {
     return HTTP.get(`documents/${state.documentId}/`)
       .then(response => {
         commit("SET_SELECTED_DOCUMENT", response.data);
@@ -597,9 +570,7 @@ const actions = {
       });
   },
 
-  fetchCurrentUser: ({
-    commit
-  }) => {
+  fetchCurrentUser: ({ commit }) => {
     return HTTP.get(`/auth/me/`).then(response => {
       commit("SET_CURRENT_USER", response.data.username);
     });
@@ -610,23 +581,23 @@ const actions = {
     new Promise(resolve => setTimeout(resolve, duration));
   },
 
-  pollDocumentEndpoint: ({
-    dispatch
-  }) => {
-    return dispatch("fetchDocumentStatus").then((ready) => {
-      if (ready) {
-        // Stop document recalculating annotations
-        dispatch("endRecalculatingAnnotations");
-        dispatch("fetchDocument");
-      } else {
-        dispatch("sleep", documentPollDuration).then(() =>
-          dispatch("pollDocumentEndpoint")
-        );
-      }
-    }).catch((error) => {
-      console.log("catch", error);
-      dispatch("setDocumentError", true);
-    });
+  pollDocumentEndpoint: ({ dispatch }) => {
+    return dispatch("fetchDocumentStatus")
+      .then(ready => {
+        if (ready) {
+          // Stop document recalculating annotations
+          dispatch("endRecalculatingAnnotations");
+          dispatch("fetchDocument");
+        } else {
+          dispatch("sleep", documentPollDuration).then(() =>
+            dispatch("pollDocumentEndpoint")
+          );
+        }
+      })
+      .catch(error => {
+        console.log("catch", error);
+        dispatch("setDocumentError", true);
+      });
   }
 };
 
@@ -673,12 +644,15 @@ const mutations = {
         return;
       }
       annotationSet.labels.forEach(label => {
-
         const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
           existingAnnotation => existingAnnotation.id === annotation.id
         );
         if (indexOfAnnotationAnnotationSets > -1) {
-          label.annotations.splice(indexOfAnnotationAnnotationSets, 1, annotation);;
+          label.annotations.splice(
+            indexOfAnnotationAnnotationSets,
+            1,
+            annotation
+          );
           updatedAnnotation = true;
           return;
         }
@@ -777,14 +751,23 @@ const mutations = {
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
   },
-  SET_REJECT_ANNOTATION: (state, annotation) => {
-    state.rejectAnnotation = annotation;
+  SET_REJECTED_MISSING_ANNOTATIONS: (state, annotations) => {
+    state.rejectedMissingAnnotations = annotations;
   },
   SET_ERROR_MESSAGE_WIDTH: (state, width) => {
     state.errorMessageWidth = width;
   },
   SET_PUBLIC_VIEW: (state, value) => {
     state.publicView = value;
+  },
+  SET_DOCUMENT_IS_READY: (state, value) => {
+    state.documentIsReady = value;
+  },
+  SET_DOCUMENT_HAS_ERROR: (state, value) => {
+    state.documentHasError = value;
+  },
+  SET_HOVERED_ANNOTATION_SET: (state, hoveredAnnotationSet) => {
+    state.hoveredAnnotationSet = hoveredAnnotationSet;
   }
 };
 

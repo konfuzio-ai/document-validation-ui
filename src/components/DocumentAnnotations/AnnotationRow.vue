@@ -8,7 +8,12 @@
     :class="[
       'annotation-row',
       isSelected && 'selected',
-      isAnnotationInEditMode(annotationId()) && 'editing'
+      isAnnotationInEditMode(annotationId()) && 'editing',
+      hoveredAnnotationSet &&
+        annotationSet.id === hoveredAnnotationSet.id &&
+        annotationSet.label_set.id === hoveredAnnotationSet.label_set.id &&
+        hoveredEmptyLabels() === label.id &&
+        'hovered-empty-labels'
     ]"
     @click="onAnnotationClick"
     @mouseover="isHovered = true"
@@ -86,7 +91,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["editAnnotation", "sidebarAnnotationSelected"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "sidebarAnnotationSelected",
+      "hoveredAnnotationSet"
+    ]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
   },
   methods: {
@@ -123,6 +132,15 @@ export default {
     },
     onAnnotationClick() {
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
+    },
+    hoveredEmptyLabels() {
+      if (!this.hoveredAnnotationSet) return;
+      const labels = this.hoveredAnnotationSet.labels.map(label => {
+        return JSON.parse(JSON.stringify(label));
+      });
+      const found = labels.find(l => l.id === this.label.id);
+      if (found && found.annotations.length === 0) return found.id;
+      return null;
     }
   },
   watch: {

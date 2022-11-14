@@ -1,6 +1,6 @@
 /* Theme */
 
-$green: #4BB543;
+$green: #4bb543;
 $lighter-green: #44b78b;
 $green-low-opacity: rgba(75, 181, 67, 0.11);
 $darker-green: #3a9c76;
@@ -34,7 +34,7 @@ $low-opacity-white: rgba(255, 255, 255, 0.1);
 
 $warning-yellow: #fec84b;
 
-$primary: #41AF85;
+$primary: #41af85;
 $primary-dark: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
@@ -77,7 +77,34 @@ button {
     }
   }
 
-  &:not(.is-text, .is-primary) {
+  &.reject-btn {
+    font-size: 14px;
+    color: $grey-blue !important;
+    font-weight: 500;
+    background-color: transparent;
+    width: auto;
+
+    &[disabled] {
+      border: none;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:not([disabled]) {
+      &:hover {
+        text-decoration: none;
+        color: $dark-blue !important;
+      }
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  &:not(.is-text, .is-primary, .reject-btn) {
     background-color: $white !important;
     color: $dark-blue !important;
   }
@@ -201,7 +228,7 @@ button {
 .dropdown {
   height: 100%;
 
-  +.dropdown {
+  + .dropdown {
     margin-left: 0;
   }
 
@@ -246,8 +273,6 @@ button {
     }
   }
 
-
-
   &.is-active {
     &.modal-no-footer {
       .modal-content {
@@ -285,7 +310,6 @@ button {
         border-radius: 0 0 16px 16px;
       }
     }
-
   }
 
   &.modal-absolute {

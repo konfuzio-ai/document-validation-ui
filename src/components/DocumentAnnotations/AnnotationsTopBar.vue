@@ -96,7 +96,7 @@ export default {
           this.isLoading = false;
         });
     },
-    isDocumentReadyForReview() {
+    canDocumentReviewBeFinished() {
       // check if all annotations have been revised
       let notRevised;
 
@@ -131,12 +131,12 @@ export default {
     annotations(newValue) {
       if (!newValue) return;
 
-      this.isDocumentReadyForReview();
+      this.canDocumentReviewBeFinished();
     },
     missingAnnotations(newValue) {
       if (!newValue) return;
 
-      this.isDocumentReadyForReview();
+      this.canDocumentReviewBeFinished();
     },
     publicView(newValue) {
       if (newValue) {

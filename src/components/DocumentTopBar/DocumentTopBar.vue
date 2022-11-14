@@ -72,7 +72,7 @@
 <script>
 import { mapState } from "vuex";
 import DocumentDatasetStatus from "./DocumentDatasetStatus";
-import DocumentCategory from "../DocumentCategory";
+import DocumentCategory from "../../components/DocumentCategory";
 import DocumentName from "./DocumentName";
 import DocumentHandover from "./DocumentHandover";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";

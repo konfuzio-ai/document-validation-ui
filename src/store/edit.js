@@ -6,47 +6,34 @@ const state = {
   editMode: false,
   splitOverview: false,
   isMultipleSelection: false,
-  pagesArray: [], // TODO: change name
+  documentPagesListForEditMode: [], // TODO: change name
   selectedPages: [],
   updatedDocument: []
 };
 
 const actions = {
-  enableEditMode: ({
-    commit
-  }) => {
+  enableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", true);
   },
 
-  disableEditMode: ({
-    commit
-  }) => {
+  disableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", false);
     commit("SET_SPLIT_OVERVIEW", false);
   },
 
-  setSplitOverview: ({
-    commit
-  }, overview) => {
+  setSplitOverview: ({ commit }, overview) => {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
-  setPagesArray: ({
-    commit
-  }, pages) => {
-    commit("SET_PAGES_ARRAY", pages);
+  setDocumentPagesListForEditMode: ({ commit }, pages) => {
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", pages);
   },
 
-  setUpdatedDocument: ({
-    commit
-  }, updatedDocument) => {
+  setUpdatedDocument: ({ commit }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
   },
 
-  setSelectedPages: ({
-    state,
-    commit
-  }, selectedPage) => {
+  setSelectedPages: ({ state, commit }, selectedPage) => {
     if (!selectedPage) {
       commit("SET_SELECTED_PAGES", []);
       return;
@@ -67,48 +54,43 @@ const actions = {
     }
   },
 
-  rotatePage: ({
-    state,
-    commit
-  }, {
-    page,
-    direction
-  }) => {
-    if (state.pagesArray.find(p => p.id === page[0].id)) {
-      const pagesArray = state.pagesArray.map(p => {
-        let rotatedAngle;
-        if (direction === "left") {
-          rotatedAngle = p.angle - 90;
-          if (p.id === page[0].id) {
-            if (rotatedAngle === -270) {
-              rotatedAngle = 90;
+  rotatePage: ({ state, commit }, { page, direction }) => {
+    if (state.documentPagesListForEditMode.find(p => p.id === page[0].id)) {
+      const documentPagesListForEditMode =
+        state.documentPagesListForEditMode.map(p => {
+          let rotatedAngle;
+          if (direction === "left") {
+            rotatedAngle = p.angle - 90;
+            if (p.id === page[0].id) {
+              if (rotatedAngle === -270) {
+                rotatedAngle = 90;
+              }
+              return {
+                ...p,
+                angle: rotatedAngle
+              };
             }
-            return {
-              ...p,
-              angle: rotatedAngle
-            };
+            return p;
           }
-          return p;
-        }
-        if (direction === "right") {
-          rotatedAngle = p.angle + 90;
-          if (p.id === page[0].id) {
-            if (rotatedAngle === 270) {
-              rotatedAngle = -90;
+          if (direction === "right") {
+            rotatedAngle = p.angle + 90;
+            if (p.id === page[0].id) {
+              if (rotatedAngle === 270) {
+                rotatedAngle = -90;
+              }
+              return {
+                ...p,
+                angle: rotatedAngle
+              };
             }
-            return {
-              ...p,
-              angle: rotatedAngle
-            };
+            return p;
           }
-          return p;
-        }
-      });
+        });
 
-      commit("SET_PAGES_ARRAY", pagesArray);
+      commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", documentPagesListForEditMode);
     } else {
       if (direction === "left") {
-        state.pagesArray.push({
+        state.documentPagesListForEditMode.push({
           id: page.id,
           page_number: page.number,
           angle: -90,
@@ -118,7 +100,7 @@ const actions = {
       }
 
       if (direction === "right") {
-        state.pagesArray.push({
+        state.documentPagesListForEditMode.push({
           id: page.id,
           page_number: page.number,
           angle: 90,
@@ -129,12 +111,9 @@ const actions = {
     }
   },
 
-  updateRotationToTheLeft: ({
-    state,
-    commit
-  }) => {
+  updateRotationToTheLeft: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.pagesArray.map(p => {
+    const array = state.documentPagesListForEditMode.map(p => {
       let rotatedAngle = p.angle - 90;
       if (rotatedAngle === -270) {
         rotatedAngle = 90;
@@ -145,15 +124,12 @@ const actions = {
       };
     });
 
-    commit("SET_PAGES_ARRAY", array);
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
   },
 
-  updateRotationToTheRight: ({
-    state,
-    commit
-  }) => {
+  updateRotationToTheRight: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.pagesArray.map(p => {
+    const array = state.documentPagesListForEditMode.map(p => {
       let rotatedAngle = p.angle + 90;
       if (rotatedAngle === 270) {
         rotatedAngle = -90;
@@ -164,21 +140,18 @@ const actions = {
       };
     });
 
-    commit("SET_PAGES_ARRAY", array);
+    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
   },
 
-  editDocument: ({
-    rootState,
-    dispatch
-  }, editedDocument) => {
+  editDocument: ({ rootState, dispatch }, editedDocument) => {
     dispatch("document/startRecalculatingAnnotations", null, {
       root: true
     });
     return new Promise(resolve => {
       HTTP.post(
-          `/documents/${rootState.document.documentId}/postprocess/`,
-          editedDocument
-        )
+        `/documents/${rootState.document.documentId}/postprocess/`,
+        editedDocument
+      )
         .then(async response => {
           if (response && response.status === 200) {
             const newDocument = response.data[0];
@@ -192,7 +165,7 @@ const actions = {
             });
             resolve(true);
           } else {
-            resolve(false)
+            resolve(false);
           }
         })
         .catch(error => {
@@ -212,8 +185,8 @@ const mutations = {
     state.splitOverview = overview;
   },
 
-  SET_PAGES_ARRAY: (state, pages) => {
-    state.pagesArray = pages;
+  SET_DOCUMENT_PAGES_FOR_EDIT_MODE: (state, pages) => {
+    state.documentPagesListForEditMode = pages;
   },
 
   SET_UPDATED_DOCUMENT: (state, updatedDocument) => {

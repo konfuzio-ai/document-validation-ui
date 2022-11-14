@@ -2,7 +2,7 @@
 <template>
   <div
     class="documents-list"
-    v-if="availableDocumentsList && availableDocumentsList.length > 0"
+    v-if="documentsAvailableToReview && documentsAvailableToReview.length > 0"
   >
     <div class="documents-list-top" v-if="showCategoryInfo && selectedCategory">
       <div class="documents-list-top-left">
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="documents-list-bottom">
-      <b-carousel-list :data="availableDocumentsList" :items-to-show="5">
+      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
@@ -55,7 +55,10 @@
                   : document.data_file_name
               }}
             </div>
-            <div class="error-icon" v-if="document.status_data === 111">
+            <div
+              class="error-icon"
+              v-if="documentHadErrorDuringExtraction(document)"
+            >
               <ErrorIcon />
             </div>
           </div>
@@ -89,8 +92,9 @@ export default {
   },
   computed: {
     ...mapState("document", ["selectedDocument"]),
-    ...mapState("category", ["availableDocumentsList"]),
-    ...mapGetters("category", ["category"])
+    ...mapState("category", ["documentsAvailableToReview"]),
+    ...mapGetters("category", ["category"]),
+    ...mapGetters("document", ["documentHadErrorDuringExtraction"])
   },
   methods: {
     changeDocument(documentId) {

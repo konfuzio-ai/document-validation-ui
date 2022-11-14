@@ -82,13 +82,14 @@
   "document_reviewed": "Eine Bearbeitung ist nicht mehr möglich, da das Dokument bereits geprüft wurde.",
   "reviewed_mode": "Geprüft",
   "error_creating_annotation": "Die Annotation konnte nicht erzeugt werden. Bitte versuchen Sie es später erneut.",
-  "categorize_document_title": "Categorize the document",
-  "categorized_as": "This document is currently categorized as ",
-  "not_categorized": "This document is currently not categorized. Please select a category before annotating: ",
-  "choose_category": "Choose a category",
-  "select_category": "Select the correct category.",
-  "categorized_error": "If this is not the correct category, please change it and we'll proceed with the re-extraction.",
-  "categorize_document_no_category_description": "Ask the Project Manager to add a description of this Category to know more about this category.",
-  "annotations_pending": "pending",
-  "annotations_accepted": "accepted"
+  "categorize_document_title": "Dokument kategorisieren",
+  "categorized_as": "kategorisiert als",
+  "not_categorized": "Nicht kategorisiert. Bitte wählen Sie vor dem Annotieren eine Kategorie aus: ",
+  "choose_category": "Wählen Sie bitte eine Kategorie",
+  "select_category": "Wählen Sie bitte die richtige Kategorie aus.",
+  "categorized_error": "Wenn dies nicht die richtige Kategorie ist, ändern Sie diese bitte und wir fahren mit der erneuten Extraktion fort.",
+  "categorize_document_no_category_description": "Bitten Sie den Projektmanager, eine Beschreibung dieser Kategorie hinzuzufügen, um mehr über diese Kategorie zu erfahren.",
+  "annotations_pending": "Ausstehende Annotationen",
+  "annotations_accepted": "Akzeptierte Annotationen",
+  "reject_all_empty": "Alle fehlenden Annotationen ablehnen"
 }

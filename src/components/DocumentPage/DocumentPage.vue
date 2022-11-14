@@ -259,7 +259,10 @@ export default {
       "clientToBbox"
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"])
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "isDocumentReadyToBeReviewed"
+    ])
   },
 
   methods: {
