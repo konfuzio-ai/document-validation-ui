@@ -498,9 +498,7 @@ export default {
         this.selection.start,
         this.selection.end
       );
-      this.$store.dispatch("document/startLoading");
-      await this.$store.dispatch("selection/getTextFromBboxes", box);
-      this.$store.dispatch("document/endLoading");
+      this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
     openNewAnnotation(entity) {
