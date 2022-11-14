@@ -261,7 +261,7 @@ export default {
     ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
-      "isDocumentReadyToReview"
+      "isDocumentReadyToBeReviewed"
     ])
   },
 

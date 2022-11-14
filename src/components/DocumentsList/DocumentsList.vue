@@ -57,7 +57,7 @@
             </div>
             <div
               class="error-icon"
-              v-if="documentHadErrorDuringExtraction(document.status_data)"
+              v-if="documentHadErrorDuringExtraction(document)"
             >
               <ErrorIcon />
             </div>
