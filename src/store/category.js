@@ -3,9 +3,8 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  // TODO: change name of variables to be easier to understand 
-  documents: [],
-  availableDocumentsList: [],
+  documentsInProject: [],
+  documentsAvailableToReview: [], // filtered by user
   categories: null
 };
 
@@ -32,60 +31,29 @@ const getters = {
       );
     }
     return null;
-  },
-
-  /**
-   * Documents assigned to a given user
-   */
-  documentListForUser: state => (user, currentDocument) => {
-    let isCurrentDocumentInTheList = false;
-    const availableDocuments = state.availableDocumentsList.filter(
-      doc => {
-        if (doc.assignee === user) {
-          if (currentDocument && doc.id === currentDocument.id) {
-            isCurrentDocumentInTheList = true;
-          }
-          return true;
-        }
-        return false;
-      }
-    );
-    // if the current document is not in the list and the list has documents to show, then add it to the first index
-    if (!isCurrentDocumentInTheList && currentDocument && availableDocuments.length > 0) {
-      availableDocuments.unshift(currentDocument);
-    }
-    return availableDocuments;
   }
 };
 
 const actions = {
-  setDocuments: ({
-    commit
-  }, documents) => {
-    commit("SET_DOCUMENTS", documents);
+  setDocumentsInProject: ({ commit }, documents) => {
+    commit("SET_DOCUMENTS_IN_PROJECT", documents);
   },
-  setAvailableDocumentsList: ({
-    commit
-  }, availableDocumentsList) => {
-    commit("SET_AVAILABLE_DOCUMENTS", availableDocumentsList);
+  setDocumentsAvailableToReview: ({ commit }, documentsAvailableToReview) => {
+    commit("SET_AVAILABLE_DOCUMENTS", documentsAvailableToReview);
   },
-  setCategories: ({
-    commit
-  }, categories) => {
+  setCategories: ({ commit }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({
-    commit
-  }, categoryId) => {
+  fetchDocumentList: ({ commit }, categoryId) => {
     // TODO: we should filter by user and remove the limit
     return HTTP.get(`documents/?category=${categoryId}&limit=100`)
       .then(response => {
         if (response.data.results) {
-          commit("SET_DOCUMENTS", response.data.results);
+          commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
         }
       })
       .catch(error => {
@@ -93,14 +61,10 @@ const actions = {
       });
   },
 
-  createAvailableDocumentsList: ({
-    commit,
-    state,
-    dispatch,
-  }, {
-    categoryId,
-    poll
-  }) => {
+  createAvailableDocumentsList: (
+    { commit, state, dispatch, rootGetters },
+    { categoryId, user, poll }
+  ) => {
     const sleep = duration =>
       new Promise(resolve => setTimeout(resolve, duration));
 
@@ -112,24 +76,25 @@ const actions = {
       count += 1;
 
       return dispatch("fetchDocumentList", categoryId).then(() => {
-        for (let i = 0; i < state.documents.length; i++) {
-          const found = state.availableDocumentsList.find(
-            doc => doc.id === state.documents[i].id
+        for (let i = 0; i < state.documentsInProject.length; i++) {
+          const found = state.documentsAvailableToReview.find(
+            doc => doc.id === state.documentsInProject[i].id
           );
 
           if (found) {
             // If the document is already in the available docs array
             // we go to the next item
             continue;
-          }
-          // TODO: this business logic should be a method on the document store
-          else if (
-            state.documents[i].status_data === 2 &&
-            state.documents[i].labeling_available === 1
+          } else if (
+            rootGetters.isDocumentReadyToBeReviewed(state.documentsInProject[i])
           ) {
-            // add available doc to the end of the array
-            commit("ADD_AVAILABLE_DOCUMENT", state.documents[i]);
-          } else if (state.documents[i].status_data === 111) {
+            // add available doc to the end of the array if assigned to user
+            if (state.documentsInProject[i].assignee === user) {
+              commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
+            }
+          } else if (
+            rootGetters.documentHadErrorDuringExtraction(state.documents[i])
+          ) {
             dispatch("document/setDocumentError", true);
             // If error, add 1
             // Then go to next item
@@ -146,9 +111,10 @@ const actions = {
         // And if the difference is due to errors or to docs not ready
         if (
           poll &&
-          state.documents.length !== state.availableDocumentsList.length &&
-          state.availableDocumentsList.length + errors !==
-          state.documents.length
+          state.documentsInProject.length !==
+            state.documentsAvailableToReview.length &&
+          state.documentsAvailableToReview.length + errors !==
+            state.documentsInProject.length
         ) {
           if (count >= 10) return true;
 
@@ -164,8 +130,9 @@ const actions = {
 
     // Poll as long as the lengths are different
     if (
-      state.documents.length === 0 ||
-      state.documents.length !== state.availableDocumentsList.length
+      state.documentsInProject.length === 0 ||
+      state.documentsInProject.length !==
+        state.documentsAvailableToReview.length
     ) {
       let duration;
       if (count <= 5) {
@@ -181,9 +148,7 @@ const actions = {
     }
   },
 
-  fetchCategories: ({
-    commit
-  }, projectId) => {
+  fetchCategories: ({ commit }, projectId) => {
     return HTTP.get(`categories/?limit=100&project=${projectId}`)
       .then(async response => {
         if (response.data && response.data.results) {
@@ -197,14 +162,19 @@ const actions = {
 };
 
 const mutations = {
-  SET_DOCUMENTS: (state, documents) => {
+  SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
     state.documents = documents;
   },
-  SET_AVAILABLE_DOCUMENTS: (state, availableDocumentsList) => {
-    state.availableDocumentsList = availableDocumentsList;
+  SET_AVAILABLE_DOCUMENTS: (state, documentsAvailableToReview) => {
+    state.documentsAvailableToReview = documentsAvailableToReview;
   },
   ADD_AVAILABLE_DOCUMENT: (state, availableDocument) => {
-    state.availableDocumentsList.push(availableDocument);
+    const docAlreadyExists = state.documentsAvailableToReview.find(
+      document => document.id === availableDocument.id
+    );
+    if (!docAlreadyExists) {
+      state.documentsAvailableToReview.push(availableDocument);
+    }
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;

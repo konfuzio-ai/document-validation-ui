@@ -1,8 +1,13 @@
 <template>
-  <keep-alive>
-    <DummyPage v-if="!pageInVisibleRange(page)" :page="page" />
-    <DocumentPage v-else :page="page" />
-  </keep-alive>
+  <div>
+    <DocumentPage v-if="editMode" :page="page" />
+    <DummyPage
+      v-else-if="!loadedPage || !pageInVisibleRange(page)"
+      :width="page.size[0]"
+      :height="page.size[1]"
+    />
+    <DocumentPage v-else :page="loadedPage" />
+  </div>
 </template>
 
 <script>
@@ -30,9 +35,6 @@ export default {
     clientHeight: {
       type: Number,
       required: true
-    },
-    scroll: {
-      type: Boolean
     }
   },
 
@@ -40,14 +42,30 @@ export default {
     return {
       elementTop: 0,
       elementHeight: 0,
-      scrollToAnnotation: true,
       previousFocusedAnnotation: null,
-      previousY: null
+      previousY: null,
+      pageBeingLoaded: false
     };
   },
 
   computed: {
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+    ...mapGetters("document", ["scrollDocumentToAnnotation"]),
+
+    loadedPage() {
+      let loadedPage = null;
+      if (this.page && this.pages) {
+        loadedPage = this.pages.find(p => p.number === this.page.number);
+      }
+      if (!loadedPage && this.pageInVisibleRange(this.page)) {
+        if (!this.pageBeingLoaded) {
+          this.loadPage().then(() => {
+            this.pageBeingLoaded = false;
+          });
+        }
+      }
+      return loadedPage;
+    },
 
     isElementFocused() {
       const { elementTop, bottom, elementHeight, scrollTop, clientHeight } =
@@ -70,23 +88,18 @@ export default {
       return this.scrollTop + this.clientHeight;
     },
 
-    focusedAnnotationAndScroll() {
-      return [this.documentFocusedAnnotation, this.scroll];
-    },
-
     ...mapState("display", ["scale", "currentPage"]),
-    ...mapState("document", ["documentFocusedAnnotation", "pages"]),
+    ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
     ...mapState("edit", ["editMode"])
   },
 
   methods: {
-    changePage(pageNumber) {
-      if (pageNumber !== this.currentPage) {
-        this.$store.dispatch(
-          "display/updateCurrentPage",
-          parseInt(pageNumber, 10)
-        );
-      }
+    loadPage() {
+      this.pageBeingLoaded = true;
+      return this.$store.dispatch(
+        "document/fetchDocumentPage",
+        this.page.number
+      );
     },
     pageInVisibleRange(page) {
       let number;
@@ -95,7 +108,9 @@ export default {
       } else {
         number = page.number;
       }
-      return this.visiblePageRange.includes(number);
+      return (
+        this.currentPage === number || this.visiblePageRange.includes(number)
+      );
     },
     updateElementBounds() {
       const { offsetTop, offsetHeight } = this.$el;
@@ -128,27 +143,24 @@ export default {
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
      */
-    focusedAnnotationAndScroll(newValue) {
-      const focusedAnn = newValue[0];
-      const scroll = newValue[1];
-
+    scrollDocumentToAnnotation(isToScroll) {
       if (
-        focusedAnn &&
-        focusedAnn.span &&
-        focusedAnn.span[0].page_index + 1 === this.page.number &&
-        scroll
+        isToScroll &&
+        this.documentAnnotationSelected.page === this.page.number
       ) {
         // We wait for the page to be focused before actually scrolling
         // to the focused annotation.
         this.$nextTick(() => {
           // Scroll to the annotation
-          this.scrollTo(this.getYForBbox(focusedAnn.span[0]));
+          this.scrollTo(this.getYForBbox(this.documentAnnotationSelected.span));
         });
       }
     },
     isElementFocused(focused) {
-      if (focused) {
+      if (!this.loading && focused) {
         let pageNumber;
+
+        // TODO: have the same name for page.number in the edit mode so there's no need to do this validations
         if (this.editMode) {
           pageNumber = this.page.page_number;
         } else {
@@ -166,11 +178,6 @@ export default {
       }
     }
   },
-
-  created() {
-    this.$on("update-visibility", this.updateElementBounds);
-  },
-
   mounted() {
     this.updateElementBounds();
   }

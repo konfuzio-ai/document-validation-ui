@@ -1,12 +1,11 @@
 <style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
 
 <template>
-  <div
-    class="document-top-bar-component"
-    v-if="selectedDocument"
-    ref="documentTopBar"
-  >
-    <div class="document-top-bar">
+  <div class="document-top-bar-component" ref="documentTopBar">
+    <div
+      class="document-top-bar"
+      v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
+    >
       <div class="left-bar-components">
         <DocumentCategory v-if="categories && !editMode" />
         <DocumentDatasetStatus
@@ -64,13 +63,16 @@
         </div>
       </div>
     </div>
+    <div class="loading-top-bar" v-else>
+      <b-skeleton position="is-centered" width="25%" height="60%" />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import DocumentDatasetStatus from "./DocumentDatasetStatus";
-import DocumentCategory from "../DocumentCategory";
+import DocumentCategory from "../../components/DocumentCategory";
 import DocumentName from "./DocumentName";
 import DocumentHandover from "./DocumentHandover";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
@@ -97,7 +99,7 @@ export default {
     DocumentTopBarButtons
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("document", ["selectedDocument", "publicView", "loading"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"])
   },

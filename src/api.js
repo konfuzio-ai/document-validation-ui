@@ -1,4 +1,7 @@
 import axios from "axios";
+import {
+  cacheAdapterEnhancer
+} from 'axios-extensions';
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -17,7 +20,8 @@ const HTTP = axios.create({
 
 const IMG_REQUEST = axios.create({
   baseURL: process.env.VUE_APP_DOCUMENT_IMAGES_URL || `${DEFAULT_URL}`,
-  responseType: "blob"
+  responseType: "blob",
+  adapter: cacheAdapterEnhancer(axios.defaults.adapter)
 });
 
 export default {

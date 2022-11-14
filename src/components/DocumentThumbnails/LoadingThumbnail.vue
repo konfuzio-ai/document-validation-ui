@@ -5,10 +5,8 @@
 ></style>
 
 <template>
-  <div class="skeleton-container">
+  <div>
     <b-skeleton width="40px" height="57px"></b-skeleton>
-
-    <b-skeleton width="7px" height="5px" :rounded="false"></b-skeleton>
   </div>
 </template>
 
@@ -19,6 +17,6 @@
  */
 
 export default {
-  name: "LoadingThumbnails"
+  name: "LoadingThumbnail"
 };
 </script>

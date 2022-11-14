@@ -9,17 +9,11 @@
   gap: 12px;
   line-height: 20px;
 
-
-
   .document-icon {
     display: flex;
     align-items: center;
     border: 1px solid $grey-detail;
     border-radius: 1px;
-
-    img {
-      height: 22px;
-    }
   }
 
   .document-name {
@@ -28,7 +22,7 @@
 
     &.is-editable {
       display: inline-block;
-      overflow-x: scroll;
+      overflow-x: hidden;
       white-space: nowrap;
       border-radius: 8px;
       padding: 6px 14px 6px 14px;

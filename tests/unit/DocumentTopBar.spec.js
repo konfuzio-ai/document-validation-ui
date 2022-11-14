@@ -1,4 +1,7 @@
-import { mount, shallowMount } from "@vue/test-utils";
+import {
+  mount,
+  shallowMount
+} from "@vue/test-utils";
 import {
   DocumentTopBar,
   DocumentName,
@@ -14,20 +17,29 @@ const $t = () => {};
 describe("Document Top Bar", () => {
   // Set file name
   const documentData = require("../mock/document_data.json");
-
+  const pages = [
+    require("../mock/page_1.json"),
+    require("../mock/page_2.json"),
+  ];
+  documentData.pages = pages;
   // mock axios
   jest.mock("axios");
 
   beforeEach(() => {
     Promise.resolve(
-      store.dispatch("document/setSelectedDocument", documentData)
+      store.dispatch("document/setSelectedDocument", documentData),
+      store.dispatch("document/setPublicView", false),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     );
   });
 
   it("Document Top Bar should be rendered", () => {
     const wrapper = shallowMount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.getComponent(".document-top-bar-component"));
@@ -39,7 +51,9 @@ describe("Document Top Bar", () => {
       propsData: {
         dataFileName: store.state.document.selectedDocument.data_file_name,
       },
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.getComponent(".document-name").text()).toBe(
@@ -50,7 +64,9 @@ describe("Document Top Bar", () => {
   it("Edit button should be visible when rendering the component", () => {
     const wrapper = shallowMount(DocumentName, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.findComponent(".edit-btn").exists()).toBe(true);
@@ -59,7 +75,9 @@ describe("Document Top Bar", () => {
   it("Clicking on the edit button should make it not visible and make the save one visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
@@ -70,7 +88,9 @@ describe("Document Top Bar", () => {
   it("No buttons should be visible while saving", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
@@ -83,7 +103,9 @@ describe("Document Top Bar", () => {
   it("The file name should become a content editable when clicking on the Edit button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
@@ -95,7 +117,9 @@ describe("Document Top Bar", () => {
   it("The file name should not be content editable after clicking the Save button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
@@ -108,7 +132,9 @@ describe("Document Top Bar", () => {
   it("Clicking on the save button should show the autosaving message to the user", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
@@ -119,7 +145,9 @@ describe("Document Top Bar", () => {
   it("Check if save function is called after clicking save button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     const mockFn = jest.fn().mockName("saveFunction");
@@ -134,7 +162,9 @@ describe("Document Top Bar", () => {
   it("Should render the handover button", () => {
     const wrapper = mount(Handover, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     expect(wrapper.findComponent(".handover-container").exists()).toBe(true);
@@ -143,7 +173,9 @@ describe("Document Top Bar", () => {
   it("Clicking the button should open modal", async () => {
     const wrapper = mount(Handover, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.findComponent(".handover-btn").trigger("click");
@@ -153,7 +185,9 @@ describe("Document Top Bar", () => {
   it("Clicking the X button should close modal", async () => {
     const wrapper = mount(Handover, {
       store,
-      mocks: { $t },
+      mocks: {
+        $t
+      },
     });
 
     await wrapper.findComponent(".handover-btn").trigger("click");

@@ -54,15 +54,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", [
-      "pages",
-      "recalculatingAnnotations",
-      "selectedDocument"
-    ]),
+    ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
-      "pagesArray",
+      "documentPagesListForEditMode",
       "updatedDocument",
       "splitOverview",
       "selectedPages"
@@ -73,29 +69,25 @@ export default {
       if (!this.selectedDocument) {
         return;
       }
-
-      if (
-        this.pages.length &&
-        this.pages.length === this.selectedDocument.number_of_pages
-      ) {
-        // set array of pages only with the data we need
-        const pages = this.createPagesArray();
-        this.$store.dispatch("edit/setPagesArray", pages);
-        // create array to handle the splitting
-        // length - 1 because of how many lines to split we need (last one not necessary)
-        this.activeSplittingLines = new Array(this.pages.length - 1);
-      }
+      // set array of pages only with the data we need
+      const pages = this.createDocumentPagesListForEditMode();
+      this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
+      // create array to handle the splitting
+      // length - 1 because of how many lines to split we need (last one not necessary)
+      this.activeSplittingLines = new Array(
+        this.selectedDocument.pages.length - 1
+      );
     },
-    createPagesArray() {
-      return this.pages.map(page => {
+    createDocumentPagesListForEditMode() {
+      return this.selectedDocument.pages.map(page => {
         return {
           id: page.id,
           angle: 0,
           page_number: page.number,
           thumbnail_url: page.thumbnail_url,
-          updated_at: page.updated_at,
           image_url: page.image_url,
-          size: page.size
+          size: page.size,
+          updated_at: this.selectedDocument.downloaded_at
         };
       });
     },
@@ -107,19 +99,6 @@ export default {
           parseInt(pageNumber, 10)
         );
       }
-    },
-
-    closeEditMode() {
-      this.$store.dispatch("edit/disableEditMode");
-
-      // Reset the rotation angles to 0 if rotation changes are cancelled
-      if (this.pagesArray) {
-        const pages = this.createPagesArray();
-        this.$store.dispatch("edit/setPagesArray", pages);
-      }
-
-      this.$store.dispatch("edit/setUpdatedDocument", null);
-      this.$store.dispatch("edit/setSelectedPages", null);
     },
 
     /** ROTATE */
@@ -227,12 +206,17 @@ export default {
       let pages;
 
       if (index === 0) {
-        pages = this.pagesArray.slice(0, splittingLine[index]);
+        pages = this.documentPagesListForEditMode.slice(
+          0,
+          splittingLine[index]
+        );
       } else {
         if (!splittingLine[index]) {
-          pages = this.pagesArray.slice(splittingLine[index - 1]);
+          pages = this.documentPagesListForEditMode.slice(
+            splittingLine[index - 1]
+          );
         } else {
-          pages = this.pagesArray.slice(
+          pages = this.documentPagesListForEditMode.slice(
             splittingLine[index - 1],
             splittingLine[index]
           );
@@ -244,21 +228,23 @@ export default {
     /** SORT */
     checkMove(e) {
       // Save the page placed originally where the page we are dragging will go
-      this.prevPageAtIndex = this.pagesArray.find(
-        page => this.pagesArray.indexOf(page) === e.draggedContext.futureIndex
+      this.prevPageAtIndex = this.documentPagesListForEditMode.find(
+        page =>
+          this.documentPagesListForEditMode.indexOf(page) ===
+          e.draggedContext.futureIndex
       );
     },
     handleDragEnd() {
       // Update page numbers
-      const pages = this.pagesArray.map(page => {
-        const index = this.pagesArray.indexOf(page);
+      const pages = this.documentPagesListForEditMode.map(page => {
+        const index = this.documentPagesListForEditMode.indexOf(page);
         return {
           ...page,
           page_number: index + 1
         };
       });
 
-      this.$store.dispatch("edit/setPagesArray", pages);
+      this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
     }
   },
   watch: {
@@ -271,7 +257,7 @@ export default {
         this.splitFileNameFromExtension();
       }
     },
-    pagesArray(newValue) {
+    documentPagesListForEditMode(newValue) {
       if (newValue) {
         this.saveUpdatedDocument();
       }

@@ -4,11 +4,7 @@
   src="../../assets/scss/document_annotations.scss"
 ></style>
 <template>
-  <div
-    class="empty-annotation"
-    @mouseenter="handleShowReject"
-    @mouseleave="showReject = false"
-  >
+  <div class="empty-annotation">
     <span
       v-if="!publicView"
       :class="[
@@ -41,7 +37,7 @@
 import { mapState, mapGetters } from "vuex";
 import ActionButtons from "./ActionButtons";
 /**
- * This component is responsible for managing empty annotations.
+ * This component is responsible for managing empty annotations (labels with no annotations).
  */
 export default {
   name: "EmptyAnnotation",
@@ -59,6 +55,10 @@ export default {
     },
     annotationSet: {
       required: true
+    },
+    isHovered: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -66,11 +66,11 @@ export default {
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", [
       "editAnnotation",
-      "editingActive",
       "publicView",
       "documentId",
-      "rejectAnnotation",
-      "annotationSets"
+      "rejectedMissingAnnotations",
+      "annotationSets",
+      "hoveredAnnotationSet"
     ])
   },
   methods: {
@@ -106,7 +106,6 @@ export default {
           label: this.label.id,
           labelSet: this.annotationSet.label_set.id
         });
-        this.$store.dispatch("document/setEditingActive", true);
       }
     },
     saveEmptyAnnotation(event) {
@@ -162,11 +161,15 @@ export default {
           }, 2000);
         });
     },
-    cancelEmptyAnnotation() {
+    cancelEmptyAnnotation(wasOutsideClick = false) {
+      if (wasOutsideClick) {
+        this.setText(this.$t("no_data_found"));
+      } else {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+      }
       this.isLoading = false;
-      this.$store.dispatch("document/resetEditAnnotation");
-      this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("document/setEditingActive", false);
+
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
@@ -187,11 +190,38 @@ export default {
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;
     },
-    handleShowReject() {
-      if (this.publicView) return;
 
-      if (!this.isAnnotationBeingEdited()) {
-        this.showReject = true;
+    enableLoading() {
+      // Check for what empty annotations we want to show the loading
+      // while waiting for it to be removed from the row
+      if (!this.rejectedMissingAnnotations) {
+        this.isLoading = false;
+        return;
+      }
+
+      if (this.rejectedMissingAnnotations.length > 0) {
+        this.rejectedMissingAnnotations.map(annotation => {
+          // Check if the annotation set and label are rejected
+          if (
+            annotation.label_set === this.annotationSet.label_set.id &&
+            annotation.annotation_set === this.annotationSet.id
+          ) {
+            // Check if we wanna add loading to all empty annotations
+            if (this.hoveredAnnotationSet) {
+              this.isLoading = true;
+              return;
+            }
+
+            // or we want to load a single one
+            if (
+              !this.hoveredAnnotationSet &&
+              annotation.label === this.label.id
+            ) {
+              this.isLoading = true;
+              return;
+            }
+          }
+        });
       }
     }
   },
@@ -208,31 +238,16 @@ export default {
     editAnnotation(newAnnotation, oldAnnotation) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
-      if (
-        oldAnnotation &&
-        newAnnotation &&
-        oldAnnotation.id === this.emptyAnnotationId() &&
-        oldAnnotation.id !== newAnnotation.id
-      ) {
-        this.$refs.emptyAnnotation.blur();
-        this.setText(this.$t("no_data_found"));
+      if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
+        this.cancelEmptyAnnotation(true);
       }
     },
-    editingActive(newValue) {
-      if (!newValue) {
-        this.cancelEmptyAnnotation();
-      }
+    rejectedMissingAnnotations() {
+      this.enableLoading();
     },
-    rejectAnnotation(newValue) {
-      if (
-        newValue &&
-        newValue.label === this.label.id &&
-        newValue.label_set === this.annotationSet.label_set.id
-      ) {
-        this.isLoading = true;
-      } else {
-        this.isLoading = false;
-      }
+    isHovered(newValue) {
+      if (this.publicView) return;
+      this.showReject = newValue && !this.isAnnotationBeingEdited();
     }
   }
 };

@@ -1,7 +1,10 @@
 <style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>
 <template>
-  <div class="documents-list" v-if="selectedCategory">
-    <div class="documents-list-top" v-if="showCategoryInfo">
+  <div
+    class="documents-list"
+    v-if="documentsAvailableToReview && documentsAvailableToReview.length > 0"
+  >
+    <div class="documents-list-top" v-if="showCategoryInfo && selectedCategory">
       <div class="documents-list-top-left">
         <h2>{{ selectedCategory.name }}</h2>
         <p>
@@ -20,30 +23,29 @@
         </div>
       </div>
     </div>
-    <div
-      class="documents-list-bottom"
-      v-if="documentsList && documentsList.length > 0"
-    >
-      <b-carousel-list :data="documentsList" :items-to-show="5">
+    <div class="documents-list-bottom">
+      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
               'documents-list-thumbnail',
-              documentId == document.id && 'selected'
+              selectedDocument.id == document.id && 'selected'
             ]"
-            v-on:click="changeDocument(document.id)"
+            @click="changeDocument(document.id)"
           >
             <ServerImage
               :class="[
                 'img-thumbnail',
-                documentId == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected'
               ]"
-              :imageUrl="document.thumbnail_url"
-            />
+              :imageUrl="`${document.thumbnail_url}?${document.updated_at}`"
+            >
+              <b-skeleton width="20px" height="100%" />
+            </ServerImage>
             <div
               :class="[
                 'document-name',
-                documentId == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected'
               ]"
             >
               <!-- if is the current document, then we use the store variable to get the file name edits in real time -->
@@ -53,7 +55,10 @@
                   : document.data_file_name
               }}
             </div>
-            <div class="error-icon" v-if="document.status_data === 111">
+            <div
+              class="error-icon"
+              v-if="documentHadErrorDuringExtraction(document)"
+            >
               <ErrorIcon />
             </div>
           </div>
@@ -86,29 +91,24 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["documentId", "selectedDocument", "currentUser"]),
-    ...mapState("category", ["documents"]),
-    ...mapGetters("category", {
-      documentListForUser: "documentListForUser",
-      category: "category"
-    })
+    ...mapState("document", ["selectedDocument"]),
+    ...mapState("category", ["documentsAvailableToReview"]),
+    ...mapGetters("category", ["category"]),
+    ...mapGetters("document", ["documentHadErrorDuringExtraction"])
   },
   methods: {
     changeDocument(documentId) {
       this.$store.dispatch("document/setDocId", documentId);
+      this.$store.dispatch("document/fetchDocument");
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");
     }
   },
   watch: {
-    documents(newValue) {
+    showCategoryInfo(newValue) {
       if (newValue) {
         this.selectedCategory = this.category(this.selectedDocument.category);
-        this.documentsList = this.documentListForUser(
-          this.currentUser,
-          this.selectedDocument
-        );
       }
     }
   }

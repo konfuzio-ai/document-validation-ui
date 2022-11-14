@@ -2,79 +2,78 @@
 
 <template>
   <div class="edit-pages">
-    <div>
-      <draggable
-        v-model="editPages"
-        :class="['document-grid']"
-        easing="cubic-bezier(0.37, 0, 0.63, 1)"
-        @start="dragging = true"
-        @end="handleDragEnd"
-        @move="checkMove"
+    <draggable
+      v-model="editPages"
+      class="document-grid"
+      easing="cubic-bezier(0.37, 0, 0.63, 1)"
+      @start="dragging = true"
+      @end="handleDragEnd"
+      @move="checkMove"
+    >
+      <div
+        v-for="(page, index) in editPages"
+        :key="page.id"
+        class="image-section"
+        tabindex="0"
+        @focusout="clickOutside"
       >
         <div
-          v-for="(page, index) in editPages"
-          :key="page.id"
-          :class="['image-section']"
+          class="image-container"
+          :tabindex="index"
+          @click="selectPage(page)"
         >
-          <div
-            class="image-container"
-            @click="handlePageChange(page.page_number)"
-          >
-            <div class="thumbnail" @click="selectPage(page)">
-              <div
-                :class="[
-                  'img-container',
-                  selected && isPageSelected(page.id) === page.id && 'selected'
-                ]"
+          <div class="thumbnail">
+            <div
+              :class="[
+                'img-container',
+                selected && isPageSelected(page.id) === page.id && 'selected'
+              ]"
+            >
+              <ServerImage
+                class="img-thumbnail"
+                :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+                :style="{
+                  transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                }"
               >
-                <ServerImage
-                  :class="['img-thumbnail']"
-                  :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-                  :style="{
-                    transform: 'rotate(' + getRotation(page.id) + 'deg)'
-                  }"
-                />
-              </div>
-              <div class="icon-container">
-                <div class="action-icon">
-                  <b-icon
-                    icon="eye"
-                    class="is-small"
-                    @click="handlePageChange(page.page_number)"
-                  />
-                </div>
+                <b-skeleton width="57px" height="57px" />
+              </ServerImage>
+            </div>
+            <div class="icon-container">
+              <div class="action-icon">
+                <b-icon icon="eye" class="is-small" />
               </div>
             </div>
-            <span class="page-number">{{ page.page_number }}</span>
+          </div>
+          <span class="page-number">{{ page.page_number }}</span>
+        </div>
+        <div
+          :class="[
+            'splitting-lines',
+            activeSplittingLines &&
+              activeSplittingLines[index] === page.page_number &&
+              'active-split'
+          ]"
+          @click="handleSplittingLines(page)"
+        >
+          <div class="scissors-icon">
+            <b-icon icon="scissors" class="is-small" />
           </div>
           <div
-            :class="[
-              'splitting-lines',
+            class="lines"
+            v-if="
               activeSplittingLines &&
-                activeSplittingLines[index] === page.page_number &&
-                'active-split'
-            ]"
-            @click="handleSplittingLines(page)"
+              activeSplittingLines[index] === page.page_number
+            "
           >
-            <div class="scissors-icon">
-              <b-icon icon="scissors" class="is-small" />
-            </div>
-            <div
-              class="lines"
-              v-if="
-                activeSplittingLines &&
-                activeSplittingLines[index] === page.page_number
-              "
-            >
-              <SplitZigZag />
-            </div>
-            <div class="lines" v-else>
-              <SplitLines />
-            </div>
+            <SplitZigZag />
+          </div>
+          <div class="lines" v-else>
+            <SplitLines />
           </div>
         </div>
-      </draggable>
-    </div>
+      </div>
+    </draggable>
   </div>
 </template>
 
@@ -117,7 +116,7 @@ export default {
     ]),
     ...mapState("edit", [
       "editMode",
-      "pagesArray",
+      "documentPagesListForEditMode",
       "splitOverview",
       "selectedPages",
       "splitOverview"
@@ -129,20 +128,17 @@ export default {
     },
     isPageSelected(id) {
       if (this.selectedPages.length === 0) return;
-
       const selectedPage = this.selectedPages.find(page => page.id === id);
       if (selectedPage) return selectedPage.id;
     },
     selectPage(page) {
       if (!page) return;
-
+      this.$emit("change-page", page.page_number);
       const selectedPage = {
         id: page.id,
         number: page.page_number,
-        thumbnail_url: page.thumbnail_url,
-        updated_at: page.updated_at
+        thumbnail_url: page.thumbnail_url
       };
-
       this.selected = true;
 
       this.$store.dispatch("edit/setSelectedPages", selectedPage);
@@ -153,7 +149,7 @@ export default {
       // Check if user clicks in any element other than thumbnail or buttons to deselect the thumbnail
       if (
         event.target.className.includes("button") ||
-        event.target.className.includes("thumbnail") ||
+        event.target.className.includes("image-container") ||
         event.target.className.includes("icon")
       ) {
         return;
@@ -167,7 +163,8 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.pagesArray?.find(p => p.id === pageId)?.angle;
+      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+        ?.angle;
     },
     handleSplittingLines(page) {
       this.$emit("handle-splitting-lines", page);
@@ -182,30 +179,24 @@ export default {
     }
   },
   watch: {
-    pagesArray(newValue, oldValue) {
+    documentPagesListForEditMode(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.editPages = newValue;
       }
     },
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.$store.dispatch("edit/setPagesArray", newValue);
+        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
       }
     },
     splitOverview(newValue) {
       if (newValue) {
-        this.editPages = this.pagesArray;
+        this.editPages = this.documentPagesListForEditMode;
       }
     }
   },
-  created() {
-    window.addEventListener("click", event => this.clickOutside(event));
-  },
-  destroyed() {
-    window.removeEventListener("click", this.clickOutside());
-  },
   mounted() {
-    this.editPages = this.pagesArray;
+    this.editPages = this.documentPagesListForEditMode;
   }
 };
 </script>

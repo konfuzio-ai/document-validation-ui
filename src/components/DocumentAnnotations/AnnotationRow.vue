@@ -8,11 +8,16 @@
     :class="[
       'annotation-row',
       isSelected && 'selected',
-      isAnnotationInEditMode(annotationId()) && 'editing'
+      isAnnotationInEditMode(annotationId()) && 'editing',
+      hoveredAnnotationSet &&
+        annotationSet.id === hoveredAnnotationSet.id &&
+        annotationSet.label_set.id === hoveredAnnotationSet.label_set.id &&
+        hoveredEmptyLabels() === label.id &&
+        'hovered-empty-labels'
     ]"
     @click="onAnnotationClick"
-    @mouseenter="onAnnotationHoverEnter"
-    @mouseleave="onAnnotationHoverLeave"
+    @mouseover="isHovered = true"
+    @mouseleave="isHovered = false"
   >
     <div class="annotation-row-left">
       <AnnotationDetails
@@ -26,20 +31,27 @@
     <div class="annotation-row-right">
       <div class="annotation-content">
         <div v-if="annotation">
-          <Annotation
+          <div
+            @mouseenter="onAnnotationHoverEnter(span)"
+            @mouseleave="onAnnotationHoverLeave"
             v-for="(span, index) in annotation.span"
             :key="index"
-            :annotation="annotation"
-            :span="span"
-            :spanIndex="index"
-            :label="label"
-            :annotationSet="annotationSet"
-          />
+          >
+            <Annotation
+              :annotation="annotation"
+              :span="span"
+              :spanIndex="index"
+              :label="label"
+              :annotationSet="annotationSet"
+              :isHovered="isHovered"
+            />
+          </div>
         </div>
         <div v-else>
           <EmptyAnnotation
             :label="label"
             :annotationSet="annotationSet"
+            :isHovered="isHovered"
             @reject="handleReject"
           />
         </div>
@@ -74,14 +86,15 @@ export default {
     return {
       isLoading: false,
       isSelected: false,
-      annotationAnimationTimeout: null
+      annotationAnimationTimeout: null,
+      isHovered: false
     };
   },
   computed: {
     ...mapState("document", [
-      "documentFocusedAnnotation",
       "editAnnotation",
-      "sidebarAnnotationSelected"
+      "sidebarAnnotationSelected",
+      "hoveredAnnotationSet"
     ]),
     ...mapGetters("document", ["isAnnotationInEditMode"])
   },
@@ -100,37 +113,37 @@ export default {
       }
       return emptyAnnotationId;
     },
-    onAnnotationHoverEnter() {
-      if (this.annotation) {
-        this.$emit("handle-scroll", false);
-        const focusedAnnotation = { ...this.annotation };
-        focusedAnnotation.label_name = this.label.name;
-        this.$store.dispatch(
-          "document/setDocumentFocusedAnnotation",
-          focusedAnnotation
-        );
+    onAnnotationHoverEnter(span) {
+      if (span) {
+        this.$store.dispatch("document/setDocumentAnnotationSelected", {
+          annotation: this.annotation,
+          label: this.label,
+          span,
+          scrollTo: false
+        });
       }
     },
     onAnnotationHoverLeave() {
-      this.$store.dispatch("document/setDocumentFocusedAnnotation", null);
+      this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
     handleReject() {
-      // TODO: this should be dispatched here and not in document annotations
+      // TODO: this should be dispatched here to the store and not in document annotations because it's going back and forward in a lot of components
       this.$emit("handle-reject");
     },
     onAnnotationClick() {
-      // TODO: this should be refactored to a store dispatch
-      if (this.documentFocusedAnnotation && this.annotation) {
-        this.$emit("handle-scroll", true);
-      }
+      this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
+    },
+    hoveredEmptyLabels() {
+      if (!this.hoveredAnnotationSet) return;
+      const labels = this.hoveredAnnotationSet.labels.map(label => {
+        return JSON.parse(JSON.stringify(label));
+      });
+      const found = labels.find(l => l.id === this.label.id);
+      if (found && found.annotations.length === 0) return found.id;
+      return null;
     }
   },
   watch: {
-    documentFocusedAnnotation(newValue) {
-      if (newValue && this.editAnnotation.id === newValue.id) {
-        this.onAnnotationClick();
-      }
-    },
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
       if (
         newSidebarAnnotationSelected &&
@@ -150,7 +163,6 @@ export default {
           this.annotationAnimationTimeout = setTimeout(() => {
             this.$store.dispatch("document/setSidebarAnnotationSelected", null);
             this.isSelected = false;
-            this.$emit("handle-scroll", false);
           }, 1500);
         };
         runAnimation();

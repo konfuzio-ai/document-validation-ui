@@ -8,41 +8,23 @@
   height: 100%;
   border-right: $component-border;
 
-  &.loading-pages {
-    overflow: hidden;
-  }
-
-  .skeleton-container {
-    padding: 10px;
-
-    .b-skeleton {
-      display: flex;
-      align-items: center;
-    }
-  }
-
   .document-thumbnail {
     text-align: center;
     padding: 16px 0;
     margin: 0 8px 16px 8px;
     cursor: pointer;
 
-    &.hidden {
-      display: none;
-    }
+    .image-container {
+      display: flex;
+      justify-content: center;
 
-    .img-thumbnail {
-      width: 40px;
-      text-align: center;
-      outline: 1px solid $grey-detail;
-      border-radius: 4px;
+      .img-thumbnail {
+        outline: 1px solid $grey-detail;
+        border-radius: 4px;
 
-      &.selected {
-        outline: 2px solid $lighter-green;
-      }
-
-      &.blur {
-        filter: blur(2px);
+        &.selected {
+          outline: 2px solid $lighter-green;
+        }
       }
     }
 
@@ -51,5 +33,6 @@
       font-size: 12px;
       margin-top: 4px;
     }
+
   }
 }

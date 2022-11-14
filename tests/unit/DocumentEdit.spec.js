@@ -22,12 +22,14 @@ describe("Document Edit Component", () => {
     ];
 
     const selectedDocument = require("../mock/document_data.json");
-
+    selectedDocument.pages = pages;
     Promise.all([
       store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch("document/setPages", pages),
-      store.dispatch("edit/setPagesArray", pages),
+      store.dispatch("edit/setDocumentPagesListForEditMode", pages),
       store.dispatch("edit/enableEditMode"),
+      store.dispatch("document/endRecalculatingAnnotations"),
+      store.dispatch("document/endLoading"),
     ]);
   });
 
@@ -38,7 +40,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 
@@ -80,7 +84,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 
@@ -105,7 +111,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 
@@ -126,7 +134,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 
@@ -147,7 +157,9 @@ describe("Document Edit Component", () => {
       .at(0)
       .trigger("click");
 
-    await wrapper2.setData({ buttonDisabled: false });
+    await wrapper2.setData({
+      buttonDisabled: false,
+    });
 
     expect(wrapper2.vm.buttonDisabled).toBe(false);
     expect(
@@ -165,7 +177,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 
@@ -200,7 +214,9 @@ describe("Document Edit Component", () => {
         $t,
       },
       data() {
-        return { editPages: store.state.edit.pagesArray };
+        return {
+          editPages: store.state.edit.documentPagesListForEditMode,
+        };
       },
     });
 

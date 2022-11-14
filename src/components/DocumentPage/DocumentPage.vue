@@ -9,8 +9,9 @@
       :containerHeight="scaledViewport.height"
       @close="closeNewAnnotation"
     />
+
     <v-stage
-      v-if="scale"
+      v-if="image && scale"
       ref="stage"
       :config="scaledViewport"
       :style="canvasStyle"
@@ -22,7 +23,6 @@
     >
       <v-layer>
         <v-image
-          v-if="image"
           :config="{
             image,
             width: scaledViewport.width,
@@ -30,7 +30,6 @@
             listening: false
           }"
         />
-
         <template v-if="pageInVisibleRange && !editMode">
           <v-group ref="entities" v-if="!publicView && !isSelectionEnabled">
             <v-rect
@@ -51,12 +50,7 @@
               <v-rect
                 v-if="!isAnnotationInEditMode(annotation.id)"
                 :config="
-                  annotationRect(
-                    bbox,
-                    documentFocusedAnnotation &&
-                      !isSelectionEnabled &&
-                      annotation.id === documentFocusedAnnotation.id
-                  )
+                  annotationRect(bbox, isAnnotationFocused(annotation.id))
                 "
                 :key="'ann' + annotation.id + '-' + index"
                 @click="selectLabelAnnotation(annotation)"
@@ -67,13 +61,13 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation && !isSelectionEnabled">
+      <v-layer v-if="showFocusedAnnotation && !isInSelectionMode">
         <template>
           <v-label
-            :key="`label${documentFocusedAnnotation.id}`"
+            :key="`label${documentAnnotationSelected.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(documentFocusedAnnotation.span[0])
+              ...annotationLabelRect(documentAnnotationSelected.span)
             }"
           >
             <v-tag
@@ -87,7 +81,7 @@
             <v-text
               :config="{
                 padding: 4,
-                text: documentFocusedAnnotation.label_name,
+                text: documentAnnotationSelected.labelName,
                 fill: 'white',
                 fontSize: 12,
                 listening: false
@@ -96,12 +90,8 @@
           </v-label>
         </template>
       </v-layer>
-      <v-layer v-if="isSelectionEnabled && selection && selection.end">
-        <box-selection
-          @changed="getBoxSelectionContent"
-          @mouseenter="cursor = 'grab'"
-          @mouseleave="cursor = 'crosshair'"
-        ></box-selection>
+      <v-layer v-if="isInSelectionMode">
+        <box-selection @changed="getBoxSelectionContent" />
         <v-transformer
           ref="transformer"
           :anchorSize="6"
@@ -113,6 +103,12 @@
         />
       </v-layer>
     </v-stage>
+    <b-skeleton
+      v-else
+      position="is-centered"
+      :width="scaledViewport.width"
+      :height="scaledViewport.height"
+    />
   </div>
 </template>
 
@@ -145,16 +141,15 @@ export default {
   },
 
   computed: {
+    isInSelectionMode() {
+      return this.isSelectionEnabled && this.selection && this.selection.end;
+    },
     showFocusedAnnotation() {
       return (
-        this.documentFocusedAnnotation &&
-        this.documentFocusedAnnotation.span &&
-        this.documentFocusedAnnotation.span[0].page_index + 1 ===
-          this.pageNumber &&
-        this.visiblePageRange.includes(
-          this.documentFocusedAnnotation.span[0].page_index + 1
-        ) &&
-        !this.isAnnotationInEditMode(this.documentFocusedAnnotation.id)
+        this.documentAnnotationSelected &&
+        this.documentAnnotationSelected.page === this.pageNumber &&
+        this.visiblePageRange.includes(this.documentAnnotationSelected.page) &&
+        !this.isAnnotationInEditMode(this.documentAnnotationSelected.id)
       );
     },
     actualSizeViewport() {
@@ -248,9 +243,9 @@ export default {
       "selectionFromBbox",
       "spanSelection"
     ]),
-    ...mapState("display", ["currentPage", "scale", "optimalScale"]),
+    ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
-      "documentFocusedAnnotation",
+      "documentAnnotationSelected",
       "recalculatingAnnotations",
       "annotations",
       "editAnnotation",
@@ -264,7 +259,10 @@ export default {
       "clientToBbox"
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"])
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "isDocumentReadyToBeReviewed"
+    ])
   },
 
   methods: {
@@ -273,6 +271,13 @@ export default {
       "endSelection",
       "moveSelection"
     ]),
+    isAnnotationFocused(annotationId) {
+      return (
+        this.documentAnnotationSelected &&
+        !this.isSelectionEnabled &&
+        annotationId === this.documentAnnotationSelected.id
+      );
+    },
     /**
      * Create bounding boxes
      */
@@ -400,7 +405,9 @@ export default {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(`${this.page.image_url}?${this.page.updated_at}`)
+      api.IMG_REQUEST.get(
+        `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
+      )
         .then(response => {
           return response.data;
         })
@@ -409,7 +416,6 @@ export default {
           image.onload = () => {
             // set image only when it is loaded
             this.image = image;
-            this.$store.dispatch("document/setImageLoaded", true);
           };
         });
     },
@@ -472,7 +478,7 @@ export default {
     },
     selectLabelAnnotation(annotation) {
       this.closeNewAnnotation();
-      this.$store.dispatch("document/setEditingActive", false);
+      this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
@@ -485,10 +491,7 @@ export default {
           ? "crosshair"
           : "default";
         // Set the id back to null so that the annotation doesn't stay selected
-        this.$store.dispatch(
-          "document/setDocumentFocusedAnnotation",
-          annotation
-        );
+        this.$store.dispatch("document/disableDocumentAnnotationSelected");
       }
     },
 
@@ -498,9 +501,7 @@ export default {
         this.selection.start,
         this.selection.end
       );
-      this.$store.dispatch("document/startLoading");
-      await this.$store.dispatch("selection/getTextFromBboxes", box);
-      this.$store.dispatch("document/endLoading");
+      this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
     openNewAnnotation(entity) {
@@ -516,21 +517,20 @@ export default {
         this.drawPage(true);
       }
     },
-    editAnnotation(annotation) {
-      if (annotation) {
-        setTimeout(() => {
+    // wait for the document image to be displayed to enable the selection transformer
+    image(image) {
+      if (image && this.isInSelectionMode) {
+        this.$nextTick(() => {
           this.updateTransformer();
-        }, 100);
+        });
       }
     },
-    page() {
-      if (this.selectedDocument.labeling_available === 1) {
-        this.drawPage(true);
-      }
-    },
-    selectedDocument(newValue) {
-      if (newValue.labeling_available === 1) {
-        this.drawPage(true);
+
+    isInSelectionMode(value) {
+      if (value) {
+        this.$nextTick(() => {
+          this.updateTransformer();
+        });
       }
     },
     scale() {

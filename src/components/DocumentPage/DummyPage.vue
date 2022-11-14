@@ -1,5 +1,10 @@
 <template>
-  <div :style="canvasStyle"></div>
+  <div :style="canvasStyle">
+    <b-skeleton
+      :width="`${scaledViewport.width}px`"
+      :height="`${scaledViewport.height}px`"
+    />
+  </div>
 </template>
 
 <script>
@@ -14,17 +19,19 @@ import { PIXEL_RATIO } from "../../constants";
 
 export default {
   props: {
-    page: {
-      type: Object,
-      required: true
+    width: {
+      default: 0
+    },
+    height: {
+      default: 0
     }
   },
-
   computed: {
+    ...mapState("display", ["scale"]),
     actualSizeViewport() {
       return {
-        width: this.page.size[0] * this.scale,
-        height: this.page.size[1] * this.scale
+        width: this.width * this.scale,
+        height: this.height * this.scale
       };
     },
 
@@ -40,9 +47,7 @@ export default {
     canvasStyle() {
       const { width, height } = this.scaledViewport;
       return `width: ${width}px; height: ${height}px; margin: 0 auto`;
-    },
-
-    ...mapState("display", ["scale"])
+    }
   }
 };
 </script>

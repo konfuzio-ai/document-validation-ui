@@ -3,17 +3,12 @@
 <template>
   <div class="document-name-component">
     <div class="document-icon">
-      <b-skeleton
-        width="15px"
-        height="20px"
-        :active="!imageLoaded"
-        :rounded="false"
-      ></b-skeleton>
-
       <ServerImage
-        v-if="imageLoaded"
-        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.updated_at}`"
-      />
+        :height="'22px'"
+        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.downloaded_at}`"
+      >
+        <b-skeleton width="15px" height="22px" :rounded="false"></b-skeleton
+      ></ServerImage>
     </div>
     <span class="file-name-section">
       <span
@@ -92,7 +87,7 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView", "imageLoaded"]),
+    ...mapState("document", ["selectedDocument", "publicView"]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
     textContent() {
@@ -174,13 +169,12 @@ export default {
       };
 
       this.showSaveBtn = false;
-      this.$store.dispatch("document/startLoading");
       this.saving = true;
 
       this.$store
         .dispatch("document/updateDocument", updatedFileName)
         .then(response => {
-          // Check if the response is successfull or not
+          // Check if the response is successful or not
           if (response === 200) {
             // if successful, set the old name to be the new name
             this.changed = true;
@@ -193,7 +187,6 @@ export default {
           }
         })
         .finally(() => {
-          this.$store.dispatch("document/endLoading");
           this.saving = false;
         });
 

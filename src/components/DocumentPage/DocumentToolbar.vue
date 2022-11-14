@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
@@ -68,13 +68,8 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"])
-  },
-  created() {
-    window.addEventListener("resize", this.handleDefaultScale);
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.handleDefaultScale);
+    ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
+    ...mapGetters("document", ["canDocumentBeEdited"])
   },
   methods: {
     handleEdit() {
@@ -102,29 +97,14 @@ export default {
       this.currentPercentage = this.fitPercentage * 100;
     },
     updateScale(scale) {
-      this.$store.dispatch("display/updateScale", { scale });
-      // set the update fit to undefined so it can be fired again
-      // after changing the zoom
-      this.$store.dispatch("display/updateFit", "undefined");
-    },
-    handleDefaultScale() {
-      // When resizing, the doc dimensions get recalculated to fit
-      // the dashboard document
-      // so reset the % and update the scale
-      this.currentPercentage = 100;
-      this.defaultScale = this.scale;
+      this.$store.dispatch("display/updateFit", "custom").then(() => {
+        this.$store.dispatch("display/updateScale", { scale });
+      });
     }
   },
   watch: {
     selectedDocument(newValue) {
-      // check if the document has a dataset status of 'Training' or 'Test'
-      // and if so disable the option to edit the document
-      if (
-        newValue.dataset_status === 1 ||
-        newValue.dataset_status === 2 ||
-        newValue.dataset_status === 3 ||
-        newValue.is_reviewed
-      ) {
+      if (this.canDocumentBeEdited(newValue)) {
         this.editModeDisabled = true;
       }
     }
@@ -133,12 +113,7 @@ export default {
     this.defaultScale = this.scale;
 
     if (this.selectedDocument) {
-      if (
-        this.selectedDocument.dataset_status === 1 ||
-        this.selectedDocument.dataset_status === 2 ||
-        this.selectedDocument.dataset_status === 3 ||
-        this.selectedDocument.is_reviewed
-      ) {
+      if (this.canDocumentBeEdited(this.selectedDocument)) {
         this.editModeDisabled = true;
       }
     }

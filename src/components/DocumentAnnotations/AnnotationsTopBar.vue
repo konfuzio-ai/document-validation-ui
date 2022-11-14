@@ -42,8 +42,7 @@ export default {
       "publicView",
       "annotationSets",
       "missingAnnotations",
-      "labels",
-      "imageLoaded"
+      "labels"
     ]),
 
     emptyAnnotations() {
@@ -97,7 +96,7 @@ export default {
           this.isLoading = false;
         });
     },
-    isDocumentReadyForReview() {
+    canDocumentReviewBeFinished() {
       // check if all annotations have been revised
       let notRevised;
 
@@ -120,8 +119,7 @@ export default {
 
       if (
         notRevised.length === 0 &&
-        missingObjects.length === this.emptyAnnotations.length &&
-        this.imageLoaded
+        missingObjects.length === this.emptyAnnotations.length
       ) {
         this.finishDisabled = false;
       } else {
@@ -133,12 +131,12 @@ export default {
     annotations(newValue) {
       if (!newValue) return;
 
-      this.isDocumentReadyForReview();
+      this.canDocumentReviewBeFinished();
     },
     missingAnnotations(newValue) {
       if (!newValue) return;
 
-      this.isDocumentReadyForReview();
+      this.canDocumentReviewBeFinished();
     },
     publicView(newValue) {
       if (newValue) {

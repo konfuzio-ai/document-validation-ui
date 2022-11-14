@@ -8,34 +8,14 @@
     type="is-dark"
     :animated="false"
     position="is-bottom"
-    class="left-aligned"
+    class="left-aligned annotation-details"
   >
     <div class="label-icon">
       <b-icon
-        v-if="notFound"
-        :class="[animate ? 'animated-ripple' : '']"
-        icon="question"
+        :class="[animate ? 'animated-ripple' : '', getColor()]"
+        :icon="getIcon()"
         size="is-small"
       />
-      <b-icon
-        v-else-if="created"
-        :class="[animate ? 'animated-ripple' : '']"
-        icon="user"
-        size="is-small"
-      />
-      <b-icon
-        v-else-if="accepted && edited"
-        :class="[animate ? 'animated-ripple' : 'green']"
-        icon="user"
-        size="is-small"
-      />
-      <b-icon
-        v-else-if="accepted"
-        :class="[animate ? 'animated-ripple' : '', 'green']"
-        icon="check"
-        size="is-small"
-      />
-      <b-icon v-else icon="check" size="is-small" />
     </div>
 
     <template v-slot:content>
@@ -54,23 +34,8 @@
           >
         </div>
         <div class="revision">
-          <div class="not-found" v-if="notFound">
-            <b-icon icon="question" size="is-small" />{{
-              $t("not_found_in_document")
-            }}
-          </div>
-          <div class="created" v-else-if="created">
-            <b-icon icon="user" size="is-small" class="grey" />{{
-              user ? `${$t("created_by")} ${user}` : $t("created")
-            }}
-          </div>
-          <div class="accepted" v-else-if="accepted">
-            <b-icon icon="check" size="is-small" />{{
-              user ? `${$t("approved_by")} ${user}` : $t("approved")
-            }}
-          </div>
-          <div class="not-revised" v-else>
-            <b-icon icon="check" size="is-small" />{{ $t("not_revised_yet") }}
+          <div :class="getColor()">
+            <b-icon :icon="getIcon()" size="is-small" />{{ getText() }}
           </div>
         </div>
       </div>
@@ -80,8 +45,42 @@
 <script>
 export default {
   name: "AnnotationDetails",
+  methods: {
+    getIcon() {
+      if (this.notFound) {
+        return "question";
+      } else if (this.created || this.edited) {
+        return "user";
+      } else {
+        return "check";
+      }
+    },
+    getColor() {
+      if (this.accepted) {
+        return "green";
+      } else {
+        return "";
+      }
+    },
+    getText() {
+      if (this.notFound) {
+        return this.$t("not_found_in_document");
+      } else if (this.created) {
+        return this.user
+          ? `${this.$t("created_by")} ${this.user}`
+          : this.$t("created");
+      } else if (this.accepted) {
+        return this.user
+          ? `${this.$t("approved_by")} ${this.user}`
+          : this.$t("approved");
+      } else {
+        return this.$t("not_revised_yet");
+      }
+    }
+  },
   computed: {
     accuracy() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return this.annotation.confidence;
       } else {
@@ -89,6 +88,7 @@ export default {
       }
     },
     notFound() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return !this.annotation.span;
       } else {
@@ -96,6 +96,7 @@ export default {
       }
     },
     created() {
+      // TODO: add this verification to store
       if (this.annotation) {
         return (
           this.annotation.created_by &&
@@ -107,23 +108,32 @@ export default {
       }
     },
     edited() {
+      // TODO: add this verification to store
       if (this.annotation) {
-        return (
+        if (
           this.annotation.offset_string !==
           this.annotation.offset_string_original
-        );
+        ) {
+          return true;
+        } else if (this.annotation.created_by) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return null;
       }
     },
     accepted() {
+      // TODO: add this verification to store
       if (this.annotation) {
-        return this.annotation.revised && this.annotation.is_correct;
+        return this.annotation.revised;
       } else {
         return null;
       }
     },
     user() {
+      // TODO: add this verification to store
       if (this.annotation) {
         if (this.annotation.created_by && !this.annotation.revised) {
           // If the annotation was created but not yet revised
@@ -155,11 +165,13 @@ export default {
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
-      // TODO: fix animation
+      // animate an annotation being accepted
+      // TODO: add this accepted check to store
       const accepted = ann => {
         return ann && ann.id && ann.revised && ann.is_correct;
       };
       if (
+        newAnnotation &&
         newAnnotation.id &&
         accepted(newAnnotation) &&
         !accepted(oldAnnotation)

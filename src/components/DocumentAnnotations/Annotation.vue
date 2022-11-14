@@ -5,13 +5,7 @@
 ></style>
 
 <template>
-  <div
-    class="annotation"
-    ref="annotation"
-    :id="annotation.id"
-    @mouseenter="handleAcceptButton(annotation)"
-    @mouseleave="showAcceptButton = false"
-  >
+  <div class="annotation" ref="annotation" :id="annotation.id">
     <span
       v-if="!publicView"
       :class="[
@@ -38,7 +32,6 @@
         :saveBtn="showButton()"
         :cancelBtn="isAnnotationBeingEdited"
         :isLoading="isLoading"
-        :menu="!isAnnotationBeingEdited"
         :acceptBtn="showAcceptButton"
         @cancel="handleCancel"
         @save="saveAnnotationChanges"
@@ -75,6 +68,10 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    isHovered: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -91,13 +88,7 @@ export default {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", [
-      "editAnnotation",
-      "editingActive",
-      "publicView",
-      "acceptAnnotation",
-      "annotations"
-    ]),
+    ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -139,7 +130,6 @@ export default {
           .then(() => {
             this.$refs.contentEditable.focus();
           });
-        this.$store.dispatch("document/setEditingActive", true);
 
         const page = this.pageAtIndex(this.span.page_index);
         if (page) {
@@ -164,12 +154,15 @@ export default {
         }
       }
     },
-    handleCancel() {
-      this.$store.dispatch("document/resetEditAnnotation", null);
-      this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("document/endLoading");
-      this.$store.dispatch("document/setEditingActive", false);
-      this.$store.dispatch("document/setAcceptAnnotation", false);
+    handleCancel(wasOutsideClick = false) {
+      if (wasOutsideClick) {
+        this.setText(this.span.offset_string);
+      } else {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/endLoading");
+      }
+
       this.isLoading = false;
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
@@ -189,7 +182,6 @@ export default {
       let updatedString;
 
       this.isLoading = true;
-      this.$store.dispatch("document/startLoading");
 
       let isToDelete = this.annotationText.length === 0;
       let storeAction;
@@ -255,15 +247,6 @@ export default {
         return true;
       }
       return false;
-    },
-    handleAcceptButton(annotation) {
-      if (this.publicView) return;
-
-      if (!annotation.revised) {
-        this.showAcceptButton = true;
-      } else {
-        this.showAcceptButton = false;
-      }
     }
   },
   watch: {
@@ -280,25 +263,18 @@ export default {
     editAnnotation(newAnnotation, oldAnnotation) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
+
       if (
+        oldAnnotation &&
         oldAnnotation.id === this.annotation.id &&
-        oldAnnotation.index === this.spanIndex &&
-        (oldAnnotation.id !== newAnnotation.id ||
-          oldAnnotation.index !== newAnnotation.index)
+        oldAnnotation.index === this.spanIndex
       ) {
-        this.setText(this.span.offset_string);
-        this.$refs.contentEditable.blur();
+        this.handleCancel(true);
       }
     },
-    editingActive(newValue) {
-      if (!newValue) {
-        this.handleCancel();
-      }
-    },
-    acceptAnnotation(newValue) {
-      if (newValue && this.annotation.id === this.editAnnotation.id) {
-        this.saveAnnotationChanges();
-      }
+    isHovered(newValue) {
+      if (this.publicView) return;
+      this.showAcceptButton = newValue && !this.annotation.revised;
     }
   }
 };

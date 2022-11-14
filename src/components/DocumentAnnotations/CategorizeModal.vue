@@ -5,7 +5,7 @@
     <b-modal
       ref="modal"
       v-model="show"
-      :can-cancel="documentCategory !== null"
+      :can-cancel="documentCategory && documentCategory.id !== null"
       class="modal-absolute modal-400 modal-no-footer"
     >
       <section class="modal-card-body">
@@ -87,9 +87,6 @@ export default {
       documentCategory: null // category associated to document
     };
   },
-  mounted() {
-    this.setDocumentValues();
-  },
   methods: {
     setDocumentValues() {
       const category = this.category(this.selectedDocument.category);
@@ -133,6 +130,11 @@ export default {
   watch: {
     selectedDocument(newValue) {
       if (newValue) {
+        this.setDocumentValues();
+      }
+    },
+    categories(newCategories, oldCategories) {
+      if (newCategories && oldCategories === null) {
         this.setDocumentValues();
       }
     }

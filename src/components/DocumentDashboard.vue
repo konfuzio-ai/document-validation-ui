@@ -2,29 +2,11 @@
 
 <template>
   <div class="dashboard">
-    <div class="dashboard-top-bar" v-if="pages && pages.length > 0">
-      <DocumentTopBar />
-    </div>
-    <div
-      :class="[
-        'dashboard-viewer',
-        editMode ? 'edit-mode' : '',
-        !imageLoaded && 'loading-skeleton'
-      ]"
-    >
+    <DocumentTopBar />
+    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
       <DocumentThumbnails ref="documentPages" v-if="!editMode" />
-      <ScrollingDocument
-        class="dashboard-document"
-        ref="scrollingDocument"
-        @pages-reset="fitWidth"
-        :scroll="scroll"
-      />
-      <DocumentAnnotations
-        ref="annotations"
-        v-if="!editMode"
-        :handleScroll="handleScroll"
-        :scroll="scroll"
-      />
+      <ScrollingDocument class="dashboard-document" ref="scrollingDocument" />
+      <DocumentAnnotations ref="annotations" v-if="!editMode" />
       <DocumentEdit ref="editView" v-else />
 
       <transition name="slide-fade">
@@ -43,19 +25,13 @@
     <div class="not-optimized" v-if="!optimalResolution">
       <NotOptimizedViewportModal />
     </div>
-    <div class="not-supported" v-if="!isMinimunWidth">
+    <div class="not-supported" v-if="!isMinimumWidth">
       <div class="text">{{ $t("resolution_not_supported") }}</div>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
-import {
-  PIXEL_RATIO,
-  VIEWPORT_RATIO,
-  MINIMUM_APP_WIDTH,
-  MINIMUM_OPTIMIZED_APP_WIDTH
-} from "../constants";
+import { mapGetters, mapState } from "vuex";
 import { DocumentTopBar } from "./DocumentTopBar";
 import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
@@ -86,40 +62,24 @@ export default {
     DocumentError
   },
   computed: {
-    defaultViewport() {
-      if (!this.pages.length)
-        return {
-          width: 0,
-          height: 0
-        };
-      const [page] = this.pages;
-
-      return { width: page.size[0], height: page.size[1] };
-    },
-    ...mapState("display", ["scale", "fit", "optimalResolution"]),
+    ...mapState("display", [
+      "scale",
+      "fit",
+      "optimalResolution",
+      "pageWidthScale",
+      "currentPage"
+    ]),
     ...mapState("document", [
-      "pages",
       "showError",
       "showDocumentError",
-      "imageLoaded",
-      "errorMessageWidth"
+      "errorMessageWidth",
+      "selectedDocument"
     ]),
-    ...mapState("edit", ["editMode"])
+    ...mapState("edit", ["editMode"]),
+    ...mapGetters("display", ["isMinimumWidth"])
   },
   mounted() {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.updateFit();
-    });
-
-    if (this.$refs.scrollingDocument) {
-      this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
-    }
-
-    this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
-    this.$store.dispatch(
-      "display/updateOptimalResolution",
-      this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
-    );
+    this.resizeObserver = new ResizeObserver(this.onDocumentResize);
   },
   destroyed() {
     if (this.$refs.scrollingDocument) {
@@ -128,16 +88,12 @@ export default {
   },
   data() {
     return {
-      isMinimunWidth: true,
-      scroll: false,
-      resizeObserver: null
+      resizeObserver: null,
+      unwatchSelectedDocument: null
     };
   },
   methods: {
-    pageWidthScale() {
-      const { defaultViewport, $el } = this;
-      if (!defaultViewport.width) return 0;
-
+    elementsWidth() {
       let elementsWidth = 1;
       if (this.$refs.editView) {
         elementsWidth += this.$refs.editView.$el.clientWidth;
@@ -148,74 +104,36 @@ export default {
       if (this.$refs.annotations) {
         elementsWidth += this.$refs.annotations.$el.clientWidth;
       }
-
-      return (
-        (($el.clientWidth - elementsWidth) * PIXEL_RATIO * VIEWPORT_RATIO) /
-        defaultViewport.width
-      );
+      return elementsWidth;
     },
-
-    pageHeightScale() {
-      const { defaultViewport, $el } = this;
-      if (!defaultViewport.height) return 0;
-
-      return (
-        ($el.clientHeight * PIXEL_RATIO * VIEWPORT_RATIO) /
-        defaultViewport.height
-      );
-    },
-
-    /**
-     * Determine an ideal scale using viewport of document's first page, the pixel ratio
-     * from the browser and a subjective scale factor based on the screen size.
-     */
-    fitWidth() {
-      this.isMinimunWidth = this.$el.offsetWidth >= MINIMUM_APP_WIDTH;
-      this.optimized = this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH;
+    onDocumentResize() {
       this.$store.dispatch(
         "display/updateOptimalResolution",
-        this.$el.offsetWidth >= MINIMUM_OPTIMIZED_APP_WIDTH
+        this.$el.offsetWidth
       );
-
-      const scale = this.pageWidthScale();
-      this.updateScale(scale, {
-        isOptimal: !this.optimalScale
-      });
-    },
-
-    fitAuto() {
-      const scale = Math.min(this.pageWidthScale(), this.pageHeightScale());
-      this.updateScale(scale);
-    },
-
-    updateScale(scale, { isOptimal = false } = {}) {
-      if (!scale) return;
-      this.$store.dispatch("display/updateScale", { scale, isOptimal });
-    },
-
-    handleScroll(value) {
-      this.scroll = value;
-    },
-    updateFit() {
-      switch (this.fit) {
-        case "width":
-          this.fitWidth();
-          break;
-
-        case "auto":
-          this.fitAuto();
-          break;
-
-        default:
-          console.log("undefined");
-          break;
+      if (this.selectedDocument.pages[0]) {
+        this.$store.dispatch("display/updateScale", {
+          elementsWidth: this.elementsWidth(),
+          client: {
+            width: this.$el.clientWidth,
+            height: this.$el.clientHeight
+          },
+          viewport: {
+            width: this.selectedDocument.pages[0].size[0],
+            height: this.selectedDocument.pages[0].size[1]
+          }
+        });
       }
     }
   },
-
   watch: {
-    fit() {
-      this.updateFit();
+    selectedDocument(newDocument, oldDocument) {
+      if (newDocument && !oldDocument) {
+        // first time
+        this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+      } else if (newDocument) {
+        this.onDocumentResize();
+      }
     }
   }
 };

@@ -4,37 +4,43 @@
   src="../../assets/scss/document_thumbnails.scss"
 ></style>
 <template>
-  <div :class="['document-pages', !imageLoaded && 'loading-pages']">
-    <div class="skeleton-section" v-if="!imageLoaded">
-      <div v-for="n in numberOfLoadingThumbnails" :key="n">
-        <LoadingThumbnails />
-      </div>
-    </div>
-
-    <div>
+  <div class="document-pages">
+    <div v-if="selectedDocument">
       <div
         :class="[
           'document-thumbnail',
-          currentPage == page.number && 'selected',
-          !imageLoaded && 'hidden'
+          currentPage == page.number && 'selected'
         ]"
-        v-for="page in pages"
-        v-bind:key="page.id"
-        v-on:click="changePage(page.number)"
+        v-for="page in selectedDocument.pages"
+        :key="page.id"
+        @click="changePage(page.number)"
       >
         <div class="image-section">
           <div class="image-container">
             <ServerImage
+              v-if="!loading && !recalculatingAnnotations"
               :class="[
                 'img-thumbnail',
-                currentPage == page.number && 'selected',
-                recalculatingAnnotations && 'blur'
+                currentPage == page.number && 'selected'
               ]"
-              :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
-            />
+              :width="'40px'"
+              :imageUrl="`${page.thumbnail_url}?${selectedDocument.downloaded_at}`"
+            >
+              <LoadingThumbnail />
+            </ServerImage>
+            <LoadingThumbnail v-else />
           </div>
         </div>
         <div class="number-thumbnail">{{ page.number }}</div>
+      </div>
+    </div>
+    <div v-else>
+      <div class="document-thumbnail">
+        <div class="image-section">
+          <div class="image-container">
+            <LoadingThumbnail />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +49,7 @@
 <script>
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
-import LoadingThumbnails from "./LoadingThumbnails.vue";
+import LoadingThumbnail from "./LoadingThumbnail.vue";
 
 /**
  * This component creates a vertical list of the document pages
@@ -55,38 +61,29 @@ export default {
   name: "DocumentThumbnails",
   components: {
     ServerImage,
-    LoadingThumbnails
-  },
-  data() {
-    return {
-      numberOfLoadingThumbnails: null
-    };
+    LoadingThumbnail
   },
   computed: {
     ...mapState("document", [
-      "pages",
+      "selectedDocument",
       "recalculatingAnnotations",
-      "imageLoaded"
+      "loading"
     ]),
-    ...mapState("display", ["currentPage"]),
-    ...mapState("edit", ["updatedDocument"])
+    ...mapState("display", ["currentPage"])
   },
   methods: {
     /* Change page if not the currently open and not in modal */
     changePage(pageNumber) {
-      if (pageNumber != this.currentPage) {
+      if (
+        !this.loading &&
+        !this.recalculatingAnnotations &&
+        pageNumber != this.currentPage
+      ) {
         this.$store.dispatch(
           "display/updateCurrentPage",
           parseInt(pageNumber, 10)
         );
       }
-    }
-  },
-  mounted() {
-    if (this.pages && this.pages.length !== 0) {
-      this.numberOfLoadingThumbnails = this.pages.length;
-    } else {
-      this.numberOfLoadingThumbnails = 8;
     }
   }
 };

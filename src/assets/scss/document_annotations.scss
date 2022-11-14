@@ -57,12 +57,25 @@
       padding-bottom: 130px;
     }
 
-    .label-set-name {
-      margin: 24px 16px 8px 16px;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
-      color: $text;
+    .annotation-set-group {
+      .label-set-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 32px;
+        margin: 24px 16px 8px 16px;
+
+        &:hover {
+          background-color: $background;
+        }
+
+        .label-set-name {
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 20px;
+          color: $text;
+        }
+      }
     }
 
     .labels {
@@ -218,7 +231,6 @@
                 color: $text-lighter;
               }
             }
-
           }
 
           .action-buttons {
@@ -248,23 +260,6 @@
 
             .reject-button-container {
               background-color: transparent;
-
-              .reject-btn {
-                color: $grey-blue !important;
-                font-size: 14px !important;
-                font-weight: 500;
-                background-color: transparent !important;
-                width: auto;
-
-                &:hover {
-                  text-decoration: none !important;
-                  color: $dark-blue !important;
-                }
-
-                &:focus {
-                  box-shadow: none !important;
-                }
-              }
             }
           }
 
@@ -275,7 +270,8 @@
           }
 
           &:hover,
-          &.selected {
+          &.selected,
+          &.hovered-empty-labels {
             background-color: $grey-lightest;
           }
 
@@ -318,7 +314,6 @@
             }
           }
         }
-
       }
     }
   }
@@ -328,12 +323,12 @@
     bottom: 0;
     background-color: $background;
     max-height: 120px;
-    min-width: 50%;
+    width: 100%;
     border-top: $component-border;
 
     .rejected-label-container {
       margin-top: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 5px;
 
       .title {
         font-weight: 400;
@@ -353,6 +348,7 @@
         max-height: 60px;
         padding-left: 15px;
         padding-right: 35px;
+        padding-bottom: 15px;
 
         .label-name {
           &.loading {
@@ -405,24 +401,6 @@
         width: 32px;
       }
     }
-
-    .menu-buttons {
-      .dropdown {
-        border: none;
-
-        &:hover {
-          background: none;
-          cursor: pointer;
-        }
-
-        .dropdown-trigger {
-          .menu-icon {
-            width: 3px;
-            color: $action-grey;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -438,27 +416,6 @@
 
   .btn-container {
     display: flex;
-
-    .menu {
-      width: 18px;
-
-      .dropdown {
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        width: 100%;
-
-        &:hover {
-          background-color: $grey-lighter;
-        }
-      }
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 }
 

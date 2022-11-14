@@ -6,30 +6,30 @@
 <template>
   <div>
     <div
-      :class="['scrolling-document', !imageLoaded && 'loading-pages']"
+      class="scrolling-document"
       v-scroll.immediate="updateScrollBounds"
       ref="scrollingDocument"
     >
-      <div class="loading-page" v-if="!imageLoaded">
-        <div v-for="n in docPagePlaceholder" :key="n">
-          <b-skeleton width="97%" height="1000px"></b-skeleton>
-        </div>
-      </div>
-
-      <div :class="[recalculatingAnnotations && 'blur']" v-else>
+      <div
+        v-if="
+          selectedDocument && scale && !loading && !recalculatingAnnotations
+        "
+      >
         <ScrollingPage
-          v-for="page in editMode ? pagesArray : pages"
+          v-for="page in editMode ? documentPagesListForEditMode : pages"
           :key="page.number"
           :page="page"
           :clientHeight="clientHeight"
           :scrollTop="scrollTop"
           @page-jump="onPageJump"
           class="scrolling-page"
-          :scroll="scroll"
         />
       </div>
+      <div class="loading-page" v-else>
+        <b-skeleton width="100%" height="1000px" />
+      </div>
     </div>
-    <Toolbar v-if="!editMode && pages && pages.length > 0" />
+    <Toolbar v-if="!editMode && pages.length > 0 && scale" />
   </div>
 </template>
 
@@ -44,32 +44,33 @@ export default {
     ScrollingPage,
     Toolbar
   },
-
   directives: {
     scroll
-  },
-
-  props: {
-    scroll: {
-      type: Boolean
-    }
   },
 
   data() {
     return {
       scrollTop: 0,
-      clientHeight: 0,
-      docPagePlaceholder: 2
+      clientHeight: 0
     };
   },
 
   computed: {
     ...mapState("document", [
       "recalculatingAnnotations",
-      "pages",
-      "imageLoaded"
+      "selectedDocument",
+      "loading"
     ]),
-    ...mapState("edit", ["editMode", "pagesArray"])
+    ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
+    ...mapState("display", ["scale"]),
+
+    pages() {
+      if (this.selectedDocument) {
+        return this.selectedDocument.pages;
+      } else {
+        return [];
+      }
+    }
   },
 
   methods: {
@@ -90,11 +91,8 @@ export default {
     }
   },
   watch: {
-    pages(pages) {
-      // if pages change
-      if (pages.length > 0) {
-        this.$emit("pages-reset");
-      }
+    loading() {
+      this.scrollTop = 0;
     }
   }
 };
