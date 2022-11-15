@@ -10,10 +10,17 @@
       isSelected && 'selected',
       isAnnotationInEditMode(annotationId()) && 'editing',
       hoveredAnnotationSet &&
-        annotationSet.id === hoveredAnnotationSet.id &&
-        annotationSet.label_set.id === hoveredAnnotationSet.label_set.id &&
+        hoveredAnnotationSet.type == 'reject' &&
+        annotationSet.id === hoveredAnnotationSet.annotationSet.id &&
+        annotationSet.label_set.id ===
+          hoveredAnnotationSet.annotationSet.label_set.id &&
         hoveredEmptyLabels() === label.id &&
-        'hovered-empty-labels'
+        'hovered-empty-labels',
+      hoveredAnnotationSet &&
+        hoveredAnnotationSet.type == 'accept' &&
+        annotation &&
+        hoveredPendingAnnotations() === annotation.id &&
+        'hovered-pending-annotations'
     ]"
     @click="onAnnotationClick"
     @mouseover="isHovered = true"
@@ -113,7 +120,8 @@ export default {
     ...mapState("document", [
       "editAnnotation",
       "sidebarAnnotationSelected",
-      "hoveredAnnotationSet"
+      "hoveredAnnotationSet",
+      "enableGroupingFeature"
     ]),
     ...mapState("selection", ["spanSelection"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
@@ -173,12 +181,40 @@ export default {
     },
     hoveredEmptyLabels() {
       if (!this.hoveredAnnotationSet) return;
-      const labels = this.hoveredAnnotationSet.labels.map(label => {
-        return JSON.parse(JSON.stringify(label));
-      });
+
+      const labels = this.hoveredAnnotationSet.annotationSet.labels.map(
+        label => {
+          return JSON.parse(JSON.stringify(label));
+        }
+      );
       const found = labels.find(l => l.id === this.label.id);
       if (found && found.annotations.length === 0) return found.id;
       return null;
+    },
+    hoveredPendingAnnotations() {
+      if (!this.hoveredAnnotationSet) return;
+
+      const annotations =
+        this.hoveredAnnotationSet.annotationSet.labels.flatMap(label => {
+          return label.annotations;
+        });
+
+      // Check if there are no annotations OR if there are annotations for the same label (grouped)
+      if (
+        annotations.length === 0 ||
+        (this.label.annotations.length > 1 && this.enableGroupingFeature)
+      )
+        return;
+
+      const found = annotations.find(
+        ann => ann.id === this.annotation.id && !ann.revised
+      );
+
+      if (found) {
+        return found.id;
+      } else {
+        return null;
+      }
     }
   },
   watch: {

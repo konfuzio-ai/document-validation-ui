@@ -61,10 +61,16 @@
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
               "
-              @hover-empty-labels="handleHoverEmptylabelsInSet(annotationSet)"
-              @leave-empty-labels="handleHoverEmptylabelsInSet(null)"
+              @hover-annotation-set-to-reject="
+                handleHoverAnnotationSet(annotationSet, 'reject')
+              "
+              @leave-annotation-set-to-reject="handleHoverAnnotationSet(null)"
               :acceptAllBtn="true"
               @accept-group="acceptGroup(annotationSet)"
+              @hover-annotation-set-to-accept="
+                handleHoverAnnotationSet(annotationSet, 'accept')
+              "
+              @leave-annotation-set-to-accept="handleHoverAnnotationSet(null)"
             />
           </div>
         </div>
@@ -425,13 +431,19 @@ export default {
         });
     },
 
-    handleHoverEmptylabelsInSet(annotationSet) {
-      if (!annotationSet) {
-        this.$store.dispatch("document/setHoveredAnnotationSet", null);
-        return;
+    handleHoverAnnotationSet(annotationSet, type) {
+      let hovered;
+
+      if (!type && !annotationSet) {
+        hovered = null;
+      } else {
+        hovered = {
+          annotationSet: annotationSet,
+          type: type
+        };
       }
 
-      this.$store.dispatch("document/setHoveredAnnotationSet", annotationSet);
+      this.$store.dispatch("document/setHoveredAnnotationSet", hovered);
     },
 
     acceptGroup(annotationSet) {

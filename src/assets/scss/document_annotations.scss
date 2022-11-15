@@ -206,30 +206,30 @@
               display: flex;
               gap: 8px;
             }
-          }
 
-          .annotation-value {
-            display: inline-block;
-            color: $text;
-            padding: 0 8px;
-            border: none;
-            background-color: transparent;
-            inline-size: 100%;
-            overflow-wrap: break-word;
-            word-break: break-all;
+            .annotation-value {
+              display: inline-block;
+              color: $text;
+              padding: 0 8px;
+              border: none;
+              background-color: transparent;
+              inline-size: 100%;
+              overflow-wrap: break-word;
+              word-break: break-all;
 
-            &:focus {
-              outline: none;
-            }
+              &:focus {
+                outline: none;
+              }
 
-            &.label-empty {
-              font-weight: 500;
-              font-size: 14px;
-              color: $primary;
+              &.label-empty {
+                font-weight: 500;
+                font-size: 14px;
+                color: $primary;
 
-              &.clicked {
-                font-weight: 400;
-                color: $text-lighter;
+                &.clicked {
+                  font-weight: 400;
+                  color: $text-lighter;
+                }
               }
             }
           }
@@ -276,6 +276,12 @@
             background-color: $grey-lightest;
           }
 
+          &.hovered-pending-annotations {
+            background-color: $green-hover-background;
+            outline: 1px solid $green-border;
+            margin-top: 1px;
+          }
+
           &.editing {
             background-color: $background;
             border-bottom: 1px solid $lighter-green;
@@ -292,7 +298,6 @@
           }
 
           @keyframes shake {
-
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);

@@ -58,8 +58,8 @@
       v-if="
         !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
       "
-      @mouseenter="hoverEmptyLabels"
-      @mouseleave="leaveEmptyLabels"
+      @mouseenter="mouseenterAnnotationSet('reject')"
+      @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
@@ -72,16 +72,22 @@
     </div>
 
     <!-- accept all pending annotations -->
-    <b-button
-      v-if="acceptAllBtn && !isLoading"
-      type="is-ghost"
-      class="accept-all-btn"
-      @click.stop="acceptGroup"
-      :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
-      >{{ $t("accept_group") }} ({{
-        annotationsWithPendingReviewLength(annotationSet)
-      }})</b-button
+    <div
+      class="accept-all"
+      v-if="!publicView && acceptAllBtn && !isLoading"
+      @mouseenter="mouseenterAnnotationSet('accept')"
+      @mouseleave="mouseleaveAnnotationSet"
     >
+      <b-button
+        type="is-ghost"
+        class="accept-all-btn"
+        @click.stop="acceptGroup"
+        :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
+        >{{ $t("accept_group") }} ({{
+          annotationsWithPendingReviewLength(annotationSet)
+        }})</b-button
+      >
+    </div>
 
     <!-- finish review button -->
     <b-button
@@ -171,11 +177,18 @@ export default {
     reject() {
       this.$parent.$emit("reject");
     },
-    hoverEmptyLabels() {
-      this.$emit("hover-empty-labels");
+    mouseenterAnnotationSet(type) {
+      if (type == "reject") {
+        this.$emit("hover-annotation-set-to-reject");
+      }
+
+      if (type == "accept") {
+        this.$emit("hover-annotation-set-to-accept");
+      }
     },
-    leaveEmptyLabels() {
-      this.$emit("leave-empty-labels");
+    mouseleaveAnnotationSet() {
+      this.$emit("leave-annotation-set-to-accept");
+      this.$emit("leave-annotation-set-to-reject");
     },
     rejectAllEmpty() {
       this.$emit("reject-all-empty");

@@ -309,6 +309,11 @@ const getters = {
       }
     });
 
+    // Check if we have grouped annotations by same label
+    if (state.enableGroupingFeature && label.annotations.length < 2) {
+      return annotationsWithPendingReview.length - label.annotations.length;
+    }
+
     return annotationsWithPendingReview.length;
   },
 
