@@ -271,15 +271,36 @@
           }
 
           &:hover,
-          &.selected,
+          &.selected {
+            background-color: $grey-lightest;
+          }
+
           &.hovered-empty-labels {
             background-color: $grey-lightest;
+            outline: 1px solid $grey-detail;
+            margin-bottom: 1px;
           }
 
           &.hovered-pending-annotations {
             background-color: $green-hover-background;
             outline: 1px solid $green-border;
-            margin-top: 1px;
+            margin-bottom: 1px;
+
+            .annotation-row-right {
+              .annotation-content {
+                .annotation {
+                  min-height: 43px;
+                  padding-top: 1px;
+                }
+              }
+            }
+
+            .annotation-row-left {
+              .annotation-details,
+              .label-name {
+                margin-bottom: -1px;
+              }
+            }
           }
 
           &.editing {
