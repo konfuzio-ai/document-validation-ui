@@ -55,7 +55,9 @@
     <!-- reject all labels -->
     <div
       :class="['reject-button-container', 'reject-all']"
-      v-if="rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn"
+      v-if="
+        !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
+      "
       @mouseenter="hoverEmptyLabels"
       @mouseleave="leaveEmptyLabels"
     >

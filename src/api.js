@@ -3,29 +3,47 @@ import {
   cacheAdapterEnhancer
 } from 'axios-extensions';
 
+let HTTP, IMG_REQUEST, authToken;
+const DEFAULT_URL = "https://app.konfuzio.com";
+
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
-const DEFAULT_URL = "https://app.konfuzio.com";
-
-if (process.env.VUE_APP_GUEST_USER_TOKEN) {
-  axios.defaults.headers.common[
-    "Authorization"
-  ] = `Token ${process.env.VUE_APP_GUEST_USER_TOKEN}`;
-}
-
-const HTTP = axios.create({
+HTTP = axios.create({
   baseURL: process.env.VUE_APP_API_URL || `${DEFAULT_URL}/api/v3/`
 });
 
-const IMG_REQUEST = axios.create({
+IMG_REQUEST = axios.create({
   baseURL: process.env.VUE_APP_DOCUMENT_IMAGES_URL || `${DEFAULT_URL}`,
   responseType: "blob",
   adapter: cacheAdapterEnhancer(axios.defaults.adapter)
 });
 
+const setAuthToken = (token) => {
+  authToken = token;
+}
+
+const getInterceptorConfig = (config) => {
+  if (authToken) {
+    config.headers['Authorization'] = `Token ${authToken}`;
+  }
+  return config;
+}
+
+HTTP.interceptors.request.use(getInterceptorConfig,
+  error => {
+    return Promise.reject(error);
+  }
+);
+
+IMG_REQUEST.interceptors.request.use(getInterceptorConfig,
+  error => {
+    return Promise.reject(error);
+  }
+);
+
 export default {
-  axios,
   HTTP,
-  IMG_REQUEST
+  IMG_REQUEST,
+  setAuthToken
 };

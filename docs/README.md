@@ -55,7 +55,7 @@ You can access the [Konfuzio API version 3 Auth Request](https://app.konfuzio.co
 
 ## Upload Document & Get Document ID
 
-Login to [Konfuzio](https://app.konfuzio.com/) and upload a document to the platform. After successfully uploading, if you want to show it on this app you need to set it as public in the document details page and copy the document id.
+Login to [Konfuzio](https://app.konfuzio.com/) and upload a document to the platform. After successfully uploading, if you want to show it on this app without authentication, you need to set it as public in the document details page and copy the document id.
 
 ![Screenshot](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/docs/doc_info.png)
 

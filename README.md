@@ -32,7 +32,7 @@ In this mode, you will have a sample document with annotations that you can only
 
 #### Full Mode
 
-If you want to run the widget in full mode to be able to interact with the document by editing annotations, document pages and other functionalities, you will need to have an [user account created](docs/README.md#create-an-user-account). Then, you should [generate a user token](docs/README.md#generate-user-token).
+If you want to run the widget in full mode to be able to interact with the document by editing annotations, document pages and other functionalities, you will need to have an [user account created](docs/README.md#create-an-user-account). Then, you should [generate an user token](docs/README.md#generate-user-token).
 [You will also need a document uploaded and a document id](docs/README.md#upload-document--get-document-id).
 
 With the user token and the document id, you can create a `.env` file with those 2 variables. [More information on how to create this file](docs/README.md#creating-a-env).
@@ -107,11 +107,11 @@ module.exports = {
 
 ### HTML
 
-In the html we should load the script we created with the webpack and customize the variables we want:
+In the html we should load the script we created with the webpack and customize the variables we want. Only the document one should be required but if you want to make changes on the document, the user token should also be necessary. As stated previously, you should [generate an user token](docs/README.md#generate-user-token).
 
 ```html
   <div id="app">
-    <App document="DOCUMENT_ID" category="CATEGORY_ID" locale="LOCALE"></App>
+    <App document="DOCUMENT_ID" project="PROJECT_ID" user_token="USER_TOKEN" locale="LOCALE"></App>
   </div>
 
   <script src="/server/bundle/capture_vue.js"></script>

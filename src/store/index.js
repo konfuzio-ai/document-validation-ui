@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import display from "./display";
 import document from "./document";
 import category from "./category";
+import project from "./project";
 import selection from "./selection";
 import edit from "./edit";
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     display,
     document,
     category,
+    project,
     selection,
     edit
   }

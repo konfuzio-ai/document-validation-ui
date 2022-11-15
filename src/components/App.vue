@@ -9,6 +9,7 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
+import API from "../api";
 
 export default {
   name: "App",
@@ -21,16 +22,33 @@ export default {
       type: String,
       required: false
     },
-    category: { type: String, required: false },
+    project: {
+      type: String,
+      required: false
+    },
+    user_token: {
+      type: String,
+      required: false
+    },
     locale: { type: String, required: false }
   },
   created() {
-    this.$store.dispatch("document/setDocId", this.documentId);
-
+    // locale config
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
     }
-    this.documentLoading();
+
+    // user token config
+    API.setAuthToken(this.userToken);
+
+    // document and project config
+    Promise.all([
+      this.$store.dispatch("project/setProjectId", this.projectId),
+      this.$store.dispatch("document/setDocId", this.documentId),
+      this.$store.dispatch("document/setPublicView", !this.userToken)
+    ]).finally(() => {
+      this.$store.dispatch("document/fetchDocument");
+    });
   },
   computed: {
     documentId() {
@@ -41,11 +59,24 @@ export default {
       } else {
         return null;
       }
-    }
-  },
-  methods: {
-    documentLoading() {
-      this.$store.dispatch("document/fetchDocument");
+    },
+    projectId() {
+      if (process.env.VUE_APP_PROJECT_ID) {
+        return process.env.VUE_APP_PROJECT_ID;
+      } else if (this.project) {
+        return this.project;
+      } else {
+        return null;
+      }
+    },
+    userToken() {
+      if (process.env.VUE_APP_GUEST_USER_TOKEN) {
+        return process.env.VUE_APP_GUEST_USER_TOKEN;
+      } else if (this.user_token) {
+        return this.user_token;
+      } else {
+        return null;
+      }
     }
   }
 };
