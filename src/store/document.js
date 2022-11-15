@@ -290,6 +290,29 @@ const getters = {
   },
 
   /**
+   * Get number of annotations pending review per annotation set
+   */
+  annotationsWithPendingReviewLength: () => annotationSet => {
+    const labels = annotationSet.labels.filter(
+      label => label.annotations.length > 0
+    );
+
+    const annotationsWithPendingReview = [];
+
+    labels.map(label => {
+      const foundPendingAnnotation = label.annotations.find(
+        ann => !ann.revised
+      );
+
+      if (foundPendingAnnotation) {
+        annotationsWithPendingReview.push(foundPendingAnnotation);
+      }
+    });
+
+    return annotationsWithPendingReview.length;
+  },
+
+  /**
    * Check if the document was extracted correctly and is ready to be reviewed
    */
   isDocumentReadyToBeReviewed: () => document => {

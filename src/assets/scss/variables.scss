@@ -84,14 +84,6 @@ button {
     background-color: transparent;
     width: auto;
 
-    &[disabled] {
-      border: none;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
     &:not([disabled]) {
       &:hover {
         text-decoration: none;
@@ -123,6 +115,23 @@ button {
         width: 15px !important;
         height: 15px !important;
       }
+    }
+  }
+
+  &.accept-all-btn {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  &.reject-all-btn {
+    padding-right: 4px;
+  }
+
+  &[disabled] {
+    border: none;
+
+    &:hover {
+      text-decoration: none;
     }
   }
 }

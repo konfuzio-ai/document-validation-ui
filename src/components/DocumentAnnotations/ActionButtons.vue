@@ -63,7 +63,7 @@
     >
       <b-button
         type="is-ghost"
-        class="reject-btn"
+        :class="['reject-btn', 'reject-all-btn']"
         @click.stop="rejectAllEmpty"
         :disabled="emptyLabelsLength(annotationSet) === 0"
       >
@@ -73,11 +73,14 @@
 
     <!-- accept all pending annotations -->
     <b-button
-      v-if="acceptGroupBtn && !isLoading"
+      v-if="acceptAllBtn && !isLoading"
       type="is-ghost"
       class="accept-all-btn"
       @click.stop="acceptGroup"
-      >{{ $t("accept_group") }}</b-button
+      :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
+      >{{ $t("accept_group") }} ({{
+        annotationsWithPendingReviewLength(annotationSet)
+      }})</b-button
     >
 
     <!-- finish review button -->
@@ -144,13 +147,16 @@ export default {
     annotationSet: {
       type: Object
     },
-    acceptGroupBtn: {
+    acceptAllBtn: {
       type: Boolean
     }
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
-    ...mapGetters("document", ["emptyLabelsLength"])
+    ...mapGetters("document", [
+      "emptyLabelsLength",
+      "annotationsWithPendingReviewLength"
+    ])
   },
   methods: {
     save() {
