@@ -87,12 +87,17 @@ export default {
       documentCategory: null // category associated to document
     };
   },
+  mounted() {
+    this.setDocumentValues();
+  },
   methods: {
     setDocumentValues() {
-      const category = this.category(this.selectedDocument.category);
-      this.selectedCategory = category;
-      this.documentCategory = category;
-      this.show = !this.categorizationIsConfirmed;
+      if (this.selectedDocument) {
+        const category = this.category(this.selectedDocument.category);
+        this.selectedCategory = category;
+        this.documentCategory = category;
+        this.show = !this.categorizationIsConfirmed;
+      }
     },
     submit() {
       if (this.selectedCategory.id !== this.documentCategory.id) {
