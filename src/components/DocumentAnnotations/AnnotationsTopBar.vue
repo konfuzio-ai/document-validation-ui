@@ -59,14 +59,7 @@ export default {
         });
       }
 
-      // Remove duplicated values
-      const filtered = empty.filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(i => JSON.stringify(i) === JSON.stringify(item))
-      );
-
-      return filtered;
+      return empty;
     }
   },
   methods: {
@@ -105,7 +98,7 @@ export default {
       }
 
       // Return missing annotations array without the id,
-      // to compare with the empty annotations
+      // to compare length with the empty annotations
       let missingObjects;
 
       if (this.missingAnnotations) {
@@ -121,6 +114,7 @@ export default {
         notRevised.length === 0 &&
         missingObjects.length === this.emptyAnnotations.length
       ) {
+        console.log("can review");
         this.finishDisabled = false;
       } else {
         this.finishDisabled = true;
