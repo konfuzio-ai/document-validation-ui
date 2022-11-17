@@ -39,14 +39,20 @@
     <b-dropdown
       v-model="selectedLabel"
       aria-role="list"
-      :disabled="!selectedAnnotationSet"
+      :disabled="!labels || labels.length === 0"
     >
       <template #trigger>
         <b-button
           :class="['popup-input', selectedLabel ? '' : 'not-selected']"
           type="is-text"
         >
-          {{ selectedLabel ? selectedLabel.name : $t("select_label") }}
+          {{
+            selectedLabel
+              ? selectedLabel.name
+              : labels && labels.length === 0
+              ? $t("no_labels_to_choose")
+              : $t("select_label")
+          }}
           <span class="caret-icon">
             <b-icon
               icon="angle-down"
@@ -57,7 +63,7 @@
       </template>
       <b-dropdown-item
         aria-role="listitem"
-        v-for="label in labelsInAnnotationSet(selectedAnnotationSet)"
+        v-for="label in labels"
         :key="label.id"
         :value="label"
       >
@@ -117,7 +123,7 @@ export default {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
-      "labelsInAnnotationSet"
+      "labelsInLabelSetForNewAnnotation"
     ]),
     top() {
       const top = this.entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
@@ -145,6 +151,7 @@ export default {
     return {
       selectedLabel: null,
       selectedAnnotationSet: null,
+      labels: null,
       selectedContent: this.content,
       loading: false
     };
@@ -197,6 +204,19 @@ export default {
           this.close();
           this.loading = false;
         });
+    }
+  },
+  watch: {
+    selectedAnnotationSet(newValue) {
+      if (newValue) {
+        this.$store
+          .dispatch("document/fetchLabelSetDetails", newValue.label_set.id)
+          .then(labelSet => {
+            if (labelSet) {
+              this.labels = this.labelsInLabelSetForNewAnnotation(labelSet);
+            }
+          });
+      }
     }
   }
 };

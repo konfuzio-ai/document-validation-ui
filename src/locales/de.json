@@ -91,5 +91,6 @@
   "categorize_document_no_category_description": "Bitten Sie den Projektmanager, eine Beschreibung dieser Kategorie hinzuzufügen, um mehr über diese Kategorie zu erfahren.",
   "annotations_pending": "Ausstehende Annotationen",
   "annotations_accepted": "Akzeptierte Annotationen",
-  "reject_all_empty": "Alle fehlenden Annotationen ablehnen"
+  "reject_all_empty": "Alle fehlenden Annotationen ablehnen",
+  "no_labels_to_choose": "No Labels"
 }
