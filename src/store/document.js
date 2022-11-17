@@ -373,8 +373,9 @@ const actions = {
         return;
       });
 
+    await dispatch("fetchMissingAnnotations");
+
     if (!state.publicView) {
-      await dispatch("fetchMissingAnnotations");
       await dispatch("fetchCurrentUser");
 
       if (projectId) {

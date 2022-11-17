@@ -114,7 +114,6 @@ export default {
         notRevised.length === 0 &&
         missingObjects.length === this.emptyAnnotations.length
       ) {
-        console.log("can review");
         this.finishDisabled = false;
       } else {
         this.finishDisabled = true;
