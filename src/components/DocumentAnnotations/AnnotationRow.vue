@@ -19,7 +19,11 @@
     @mouseover="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <div class="annotation-row-left">
+    <div
+      class="annotation-row-left"
+      @mouseenter="onAnnotationHoverEnter(defaultSpan)"
+      @mouseleave="onAnnotationHoverLeave"
+    >
       <AnnotationDetails
         :description="label.description"
         :annotation="annotation"
@@ -96,7 +100,17 @@ export default {
       "sidebarAnnotationSelected",
       "hoveredAnnotationSet"
     ]),
-    ...mapGetters("document", ["isAnnotationInEditMode"])
+    ...mapGetters("document", ["isAnnotationInEditMode"]),
+    defaultSpan() {
+      if (
+        this.annotation &&
+        this.annotation.span &&
+        this.annotation.span.length > 0
+      ) {
+        return this.annotation.span[0];
+      }
+      return null;
+    }
   },
   methods: {
     annotationId() {
