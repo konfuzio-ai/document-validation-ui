@@ -17,6 +17,7 @@ describe("Document Annotations Component", () => {
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
+      store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
     ]);
