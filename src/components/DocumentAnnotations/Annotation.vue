@@ -125,7 +125,8 @@ export default {
             id: this.annotation.id,
             index: this.spanIndex,
             label: this.label.id,
-            labelSet: this.annotationSet.label_set.id
+            labelSet: this.annotationSet.label_set.id,
+            annotationSet: this.annotationSet.id
           })
           .then(() => {
             this.$refs.contentEditable.focus();
