@@ -208,7 +208,7 @@ export default {
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
-        this.$store.dispatch("document/setEditingActive", false);
+        this.$store.dispatch("document/resetEditAnnotation");
         return;
       }
 
