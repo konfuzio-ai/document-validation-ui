@@ -147,7 +147,9 @@ export default {
   methods: {
     showMissingAnnotations() {
       if (
-        (this.publicView && this.selectedDocument.is_reviewed) ||
+        (this.publicView &&
+          this.selectedDocument &&
+          this.selectedDocument.is_reviewed) ||
         !this.publicView
       ) {
         return true;
