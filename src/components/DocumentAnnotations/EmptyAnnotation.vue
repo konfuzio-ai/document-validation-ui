@@ -103,8 +103,10 @@ export default {
         );
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
+          index: null,
           label: this.label.id,
-          labelSet: this.annotationSet.label_set.id
+          labelSet: this.annotationSet.label_set.id,
+          annotationSet: this.annotationSet.id
         });
       }
     },

@@ -6,7 +6,7 @@
 <template>
   <div class="labels-sidebar">
     <div class="labels-top-bar">
-      <AnnotationsTopBar />
+      <AnnotationsTopBar v-if="!publicView" />
     </div>
 
     <!-- When extracting annotations after editing -->
@@ -30,7 +30,7 @@
       v-else
       :class="[
         'annotation-set-list',
-        missingAnnotations.length && 'showing-rejected'
+        missingAnnotations.length && !publicView && 'showing-rejected'
       ]"
     >
       <CategorizeModal />
@@ -129,7 +129,8 @@ export default {
       "editAnnotation",
       "annotationSets",
       "loading",
-      "labels"
+      "labels",
+      "selectedDocument"
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
@@ -144,6 +145,19 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    showMissingAnnotations() {
+      if (
+        (this.publicView &&
+          this.selectedDocument &&
+          this.selectedDocument.is_reviewed) ||
+        !this.publicView
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     focusOnNextAnnotation() {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
@@ -196,7 +210,7 @@ export default {
       // get out of edit mode and navigation
       if (event.key === "Escape") {
         this.count = 0;
-        this.$store.dispatch("document/setEditingActive", false);
+        this.$store.dispatch("document/resetEditAnnotation");
         return;
       }
 
@@ -300,7 +314,11 @@ export default {
 
     labelNotRejected(annotationSet, label) {
       // Check if the combined label and label set have been rejected
-      if (this.missingAnnotations.length === 0) {
+      // or if the document is in public mode
+      if (
+        this.missingAnnotations.length === 0 ||
+        !this.showMissingAnnotations()
+      ) {
         return true;
       } else {
         let found;

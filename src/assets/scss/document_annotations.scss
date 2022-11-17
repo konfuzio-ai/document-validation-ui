@@ -51,9 +51,10 @@
   .annotation-set-list {
     padding-bottom: 16px;
     overflow: auto;
-    height: calc(100% - 56px);
+    height: 100%;
 
     &.showing-rejected {
+      height: calc(100% - 56px);
       padding-bottom: 130px;
     }
 
@@ -291,7 +292,6 @@
           }
 
           @keyframes shake {
-
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);
