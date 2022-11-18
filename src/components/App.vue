@@ -30,6 +30,10 @@ export default {
       type: String,
       required: false
     },
+    full_mode: {
+      type: String,
+      required: false
+    },
     locale: { type: String, required: false }
   },
   created() {
@@ -45,7 +49,7 @@ export default {
     Promise.all([
       this.$store.dispatch("project/setProjectId", this.projectId),
       this.$store.dispatch("document/setDocId", this.documentId),
-      this.$store.dispatch("document/setPublicView", !this.userToken)
+      this.$store.dispatch("document/setPublicView", this.isPublicView)
     ]).finally(() => {
       this.$store.dispatch("document/fetchDocument");
     });
@@ -76,6 +80,17 @@ export default {
         return this.user_token;
       } else {
         return null;
+      }
+    },
+    isPublicView() {
+      if (
+        process.env.VUE_APP_GUEST_USER_TOKEN ||
+        this.user_token ||
+        this.full_mode === "true"
+      ) {
+        return false;
+      } else {
+        return true;
       }
     }
   }
