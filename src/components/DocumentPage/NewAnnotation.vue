@@ -192,8 +192,11 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(response => {
-          if (!response) {
+
+        .catch(error => {
+          if (error) {
+            this.$store.dispatch("document/setErrorMessage", error);
+          } else {
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("error_creating_annotation")
@@ -208,6 +211,7 @@ export default {
   },
   watch: {
     selectedAnnotationSet(newValue) {
+      this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue.labels);
     }
   }

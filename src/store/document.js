@@ -554,18 +554,20 @@ const actions = {
   createAnnotation: ({
     commit
   }, annotation) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(response => {
           if (response.status === 201) {
             commit("ADD_ANNOTATION", response.data);
             resolve(response.data);
-          } else {
-            resolve(null);
           }
         })
-        .catch(error => {
-          resolve(null);
+        .catch((error) => {
+          if (error.response && error.response.data && error.response.data.length > 0) {
+            reject(error.response.data[0]);
+          } else {
+            reject(null)
+          }
           console.log(error);
         });
     });
