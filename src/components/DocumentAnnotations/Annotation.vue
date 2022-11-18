@@ -191,7 +191,7 @@ export default {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
-        const spans = this.annotation.span;
+        const spans = [...this.annotation.span];
         if (this.spanSelection) {
           spans[this.spanIndex] = {
             ...spans[this.spanIndex],
@@ -223,8 +223,12 @@ export default {
           // Check if the response is successful or not
           if (updatedAnnotation) {
             this.showAcceptButton = false;
+          }
+        })
+        .catch(error => {
+          if (error) {
+            this.$store.dispatch("document/setErrorMessage", error);
           } else {
-            this.error = true;
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("editing_error")

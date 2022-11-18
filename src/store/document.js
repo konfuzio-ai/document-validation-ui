@@ -579,7 +579,7 @@ const actions = {
     updatedValues,
     annotationId
   }) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then(response => {
           if (response.status === 200) {
@@ -588,7 +588,11 @@ const actions = {
           }
         })
         .catch(error => {
-          resolve(false);
+          if (error.response && error.response.data && error.response.data.length > 0) {
+            reject(error.response.data[0]);
+          } else {
+            reject(null)
+          }
           console.log(error);
         });
     });
@@ -788,6 +792,7 @@ const mutations = {
     });
   },
   UPDATE_ANNOTATION: (state, annotation) => {
+    console.log("update annotation")
     const indexOfAnnotationInAnnotations = state.annotations.findIndex(
       existingAnnotation => existingAnnotation.id === annotation.id
     );
