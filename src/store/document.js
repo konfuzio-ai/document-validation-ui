@@ -92,25 +92,26 @@ const getters = {
   },
 
   /**
-   * Gets labels for an annotation set
+   * Gets labels for an annotation creation
    */
-  labelsInLabelSetForNewAnnotation: state => labelSet => {
-    let labels = [];
-    if (labelSet && labelSet.labels) {
-      labels = labelSet.labels.filter(label => {
+  labelsFilteredForAnnotationCreation: state => (labels) => {
+    let returnLabels = [];
+    if (labels) {
+      returnLabels = labels.filter(label => {
         // check if label has multiple and if not, if there's already an annotation created
         if (!label.has_multiple_top_candidates) {
           const existingLabel = state.labels.find(documentLabel => {
             return documentLabel.id === label.id;
           });
           return (
-            existingLabel.annotations && existingLabel.annotations.length === 0
+            existingLabel && existingLabel.annotations && existingLabel.annotations.length === 0
           );
+        } else {
+          return true;
         }
-        return true;
       });
     }
-    return labels;
+    return returnLabels;
   },
 
   /* Checks if annotation is in deleted state */
@@ -417,17 +418,17 @@ const actions = {
 
           // group annotations for sidebar
           const annotationSets = response.data.annotation_sets.map(annotationSet => {
-            labels = annotationSet.labels.map(label => {
+            const annotationSetLabels = annotationSet.labels.map(label => {
               // filter label
               const filteredLabel = getters.annotationsInLabelFiltered(label);
 
               // add annotations to the document array
               annotations.push(...filteredLabel.annotations);
-
+              labels.push(filteredLabel);
               // add labels to the labels array
               return filteredLabel;
             });
-            annotationSet.labels = labels;
+            annotationSet.labels = annotationSetLabels;
             return annotationSet
           });
 
@@ -435,7 +436,6 @@ const actions = {
           if (response.data.pages.length > 0) {
             await dispatch("fetchDocumentPage", initialPage);
           }
-
           // set information on the store
           commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);

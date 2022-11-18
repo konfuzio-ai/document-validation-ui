@@ -123,7 +123,7 @@ export default {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
-      "labelsInLabelSetForNewAnnotation"
+      "labelsFilteredForAnnotationCreation"
     ]),
     top() {
       const top = this.entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
@@ -208,15 +208,7 @@ export default {
   },
   watch: {
     selectedAnnotationSet(newValue) {
-      if (newValue) {
-        this.$store
-          .dispatch("document/fetchLabelSetDetails", newValue.label_set.id)
-          .then(labelSet => {
-            if (labelSet) {
-              this.labels = this.labelsInLabelSetForNewAnnotation(labelSet);
-            }
-          });
-      }
+      this.labels = this.labelsFilteredForAnnotationCreation(newValue.labels);
     }
   }
 };

@@ -6,7 +6,9 @@
 <template>
   <div class="labels-sidebar">
     <div class="labels-top-bar">
-      <AnnotationsTopBar v-if="!publicView" />
+      <AnnotationsTopBar
+        v-if="!publicView && annotationSets && annotationSets.length > 0"
+      />
     </div>
 
     <!-- When extracting annotations after editing -->
