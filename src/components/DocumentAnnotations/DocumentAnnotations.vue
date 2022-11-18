@@ -212,6 +212,8 @@ export default {
       if (event.key === "Escape") {
         this.count = 0;
         this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/endLoading");
         return;
       }
 
