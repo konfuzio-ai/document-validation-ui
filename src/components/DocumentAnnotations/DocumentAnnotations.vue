@@ -55,7 +55,7 @@
               :cancelBtn="false"
               :showReject="false"
               :acceptBtn="false"
-              :rejectAllEmptyBtn="showRejectAllEmptyBtn"
+              :rejectAllEmptyBtn="false"
               :annotationSet="annotationSet"
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
@@ -117,8 +117,7 @@ export default {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3,
-      showRejectAllEmptyBtn: true
+      numberOfLoadingAnnotations: 3
     };
   },
   computed: {

@@ -83,7 +83,7 @@
   "document_reviewed": "Editing is no longer possible since the document has already been reviewed.",
   "reviewed_mode": "Reviewed",
   "error_creating_annotation": "The annotation could not be created. Please try again later.",
-  "categorize_document_title": "Categorize the document",
+  "categorize_document_title": "Categorize the Document",
   "categorized_as": "This document is currently categorized as",
   "not_categorized": "This document is currently not categorized. Please select a category before annotating: ",
   "choose_category": "Choose a category",
