@@ -13,7 +13,7 @@
           <h3>{{ $t("categorize_document_title") }}</h3>
           <p v-if="documentCategory">
             {{ $t("categorized_as")
-            }}<strong>{{ documentCategory.name }}</strong
+            }}<strong>&nbsp;{{ documentCategory.name }}</strong
             >.&nbsp;{{ $t("categorized_error") }}
           </p>
           <p v-else>{{ $t("not_categorized") }}</p>

@@ -84,7 +84,7 @@
   "reviewed_mode": "Reviewed",
   "error_creating_annotation": "The annotation could not be created. Please try again later.",
   "categorize_document_title": "Categorize the document",
-  "categorized_as": "This document is currently categorized as ",
+  "categorized_as": "This document is currently categorized as",
   "not_categorized": "This document is currently not categorized. Please select a category before annotating: ",
   "choose_category": "Choose a category",
   "select_category": "Select the correct category.",
