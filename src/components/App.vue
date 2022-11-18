@@ -86,7 +86,7 @@ export default {
       if (
         process.env.VUE_APP_GUEST_USER_TOKEN ||
         this.user_token ||
-        this.full_mode === "true"
+        (this.full_mode && this.full_mode === "true")
       ) {
         return false;
       } else {
