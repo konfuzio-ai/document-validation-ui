@@ -70,7 +70,7 @@
   "edit_early_access": "You are one of the users who have access to these functionalities before the release date.",
   "selected": "selected",
   "rotate_selected": "Rotate selected",
-  "edit_not_available": "Editing is not possible for documents with a status of 'preparation', 'training' or 'test'",
+  "edit_not_available": "Editing is not possible for documents with a status of 'Preparation', 'Training' or 'Test', or documents that are 'Read Only' or 'Reviewed'",
   "back_to_edit": "Back to edit",
   "split_document": "Split document",
   "select_label": "Select Label",
