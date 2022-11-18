@@ -192,7 +192,9 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-
+        .then(() => {
+          this.$store.dispatch("document/fetchMissingAnnotations");
+        })
         .catch(error => {
           if (error) {
             this.$store.dispatch("document/setErrorMessage", error);
