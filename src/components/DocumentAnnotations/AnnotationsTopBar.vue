@@ -37,30 +37,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", [
-      "annotations",
-      "publicView",
-      "annotationSets",
-      "missingAnnotations",
-      "labels"
-    ]),
-
-    emptyAnnotations() {
-      const empty = [];
-
-      if (this.annotationSets) {
-        this.annotationSets.map(annSet => {
-          annSet.labels.map(label => {
-            // return only labels with empty annotations
-            if (label.annotations.length === 0) {
-              empty.push({ label: label.id, label_set: annSet.label_set.id });
-            }
-          });
-        });
-      }
-
-      return empty;
-    }
+    ...mapState("document", ["publicView", "finishedReview"])
+  },
+  mounted() {
+    this.finishDisabled = !this.finishedReview;
   },
   methods: {
     handleFinishReview() {
@@ -88,48 +68,13 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
-    },
-    canDocumentReviewBeFinished() {
-      // check if all annotations have been revised
-      let notRevised;
-
-      if (this.annotations) {
-        notRevised = this.annotations.filter(a => !a.revised);
-      }
-
-      // Return missing annotations array without the id,
-      // to compare length with the empty annotations
-      let missingObjects;
-
-      if (this.missingAnnotations) {
-        missingObjects = JSON.parse(JSON.stringify(this.missingAnnotations));
-      }
-
-      // if all annotations have been revised AND all empty ones have been rejected
-      // we enable the button to finish the document review
-      if (!this.emptyAnnotations || !this.missingAnnotations || !notRevised)
-        return;
-
-      if (
-        notRevised.length === 0 &&
-        missingObjects.length === this.emptyAnnotations.length
-      ) {
-        this.finishDisabled = false;
-      } else {
-        this.finishDisabled = true;
-      }
     }
   },
   watch: {
-    annotations(newValue) {
-      if (!newValue) return;
-
-      this.canDocumentReviewBeFinished();
-    },
-    missingAnnotations(newValue) {
-      if (!newValue) return;
-
-      this.canDocumentReviewBeFinished();
+    finishedReview(newValue) {
+      if (newValue) {
+        this.finishDisabled = false;
+      }
     },
     publicView(newValue) {
       if (newValue) {

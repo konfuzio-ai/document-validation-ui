@@ -24,7 +24,8 @@ const state = {
   showDocumentError: false,
   rejectedMissingAnnotations: null,
   errorMessageWidth: null,
-  hoveredAnnotationSet: null
+  hoveredAnnotationSet: null,
+  finishedReview: false
 };
 
 const getters = {
@@ -227,6 +228,54 @@ const getters = {
     });
 
     return pendingEmpty.length;
+  },
+
+  // Check if document is ready to be finished
+  isDocumentReviewFinished: state => () => {
+    console.log("canDocumentReviewBeFinished");
+    // check if all annotations have been revised
+    let notRevised;
+
+    const emptyAnnotations = [];
+    if (state.annotationSets) {
+      state.annotationSets.forEach(annSet => {
+        annSet.labels.map(label => {
+          // return only labels with empty annotations
+          if (label.annotations.length === 0) {
+            emptyAnnotations.push({
+              label: label.id,
+              label_set: annSet.label_set.id
+            });
+          }
+        });
+      });
+    }
+
+    if (state.annotations) {
+      notRevised = state.annotations.filter(a => !a.revised);
+    }
+
+    // Return missing annotations array without the id,
+    // to compare length with the empty annotations
+    let missingObjects;
+
+    if (state.missingAnnotations) {
+      missingObjects = JSON.parse(JSON.stringify(state.missingAnnotations));
+    }
+
+    // if all annotations have been revised AND all empty ones have been rejected
+    // we enable the button to finish the document review
+    if (!emptyAnnotations || !state.missingAnnotations || !notRevised)
+      return true;
+
+    if (
+      notRevised.length === 0 &&
+      missingObjects.length === emptyAnnotations.length
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   },
 
   /**
@@ -441,6 +490,7 @@ const actions = {
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
+          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
           if (rootState.project.projectId) {
             projectId = rootState.project.projectId;
@@ -552,13 +602,15 @@ const actions = {
   },
 
   createAnnotation: ({
-    commit
+    commit,
+    getters
   }, annotation) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(response => {
           if (response.status === 201) {
             commit("ADD_ANNOTATION", response.data);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(response.data);
           }
         })
@@ -574,7 +626,8 @@ const actions = {
   },
 
   updateAnnotation: ({
-    commit
+    commit,
+    getters
   }, {
     updatedValues,
     annotationId
@@ -584,6 +637,7 @@ const actions = {
         .then(response => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(response.data);
           }
         })
@@ -599,7 +653,8 @@ const actions = {
   },
 
   deleteAnnotation: ({
-    commit
+    commit,
+    getters
   }, {
     annotationId
   }) => {
@@ -607,6 +662,7 @@ const actions = {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(response => {
           commit("DELETE_ANNOTATION", annotationId);
+          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
           resolve(true);
         })
         .catch(error => {
@@ -618,7 +674,8 @@ const actions = {
 
   updateDocument: ({
     commit,
-    state
+    state,
+    getters
   }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
@@ -630,6 +687,7 @@ const actions = {
             }
 
             commit("SET_SELECTED_DOCUMENT", response.data);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(response.status);
           }
         })
@@ -642,13 +700,15 @@ const actions = {
 
   fetchMissingAnnotations: ({
     commit,
-    state
+    state,
+    getters
   }) => {
     return HTTP.get(
         `/missing-annotations/?document=${state.documentId}&limit=100`
       )
       .then(response => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
+        commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
       })
       .catch(error => {
         console.log(error);
@@ -694,7 +754,6 @@ const actions = {
           `documents/${state.documentId}/?fields=status_data,labeling_available`
         )
         .then(response => {
-          // TODO: call getter method for this validations
           if (getters.isDocumentReadyToBeReviewed(response.data)) {
             // ready
             return resolve(true);
@@ -792,7 +851,6 @@ const mutations = {
     });
   },
   UPDATE_ANNOTATION: (state, annotation) => {
-    console.log("update annotation")
     const indexOfAnnotationInAnnotations = state.annotations.findIndex(
       existingAnnotation => existingAnnotation.id === annotation.id
     );
@@ -858,6 +916,9 @@ const mutations = {
   },
   SET_EDIT_ANNOTATION: (state, editAnnotation) => {
     state.editAnnotation = editAnnotation;
+  },
+  SET_FINISHED_REVIEW: (state, finishedReview) => {
+    state.finishedReview = finishedReview;
   },
   RESET_EDIT_ANNOTATION: state => {
     state.editAnnotation = null;
