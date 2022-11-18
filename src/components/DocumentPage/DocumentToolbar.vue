@@ -69,7 +69,7 @@ export default {
   computed: {
     ...mapState("display", ["scale"]),
     ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
-    ...mapGetters("document", ["canDocumentBeEdited"])
+    ...mapGetters("document", ["documentCannotBeEdited"])
   },
   methods: {
     handleEdit() {
@@ -104,7 +104,7 @@ export default {
   },
   watch: {
     selectedDocument(newValue) {
-      if (this.canDocumentBeEdited(newValue)) {
+      if (this.documentCannotBeEdited(newValue)) {
         this.editModeDisabled = true;
       }
     }
@@ -113,7 +113,7 @@ export default {
     this.defaultScale = this.scale;
 
     if (this.selectedDocument) {
-      if (this.canDocumentBeEdited(this.selectedDocument)) {
+      if (this.documentCannotBeEdited(this.selectedDocument)) {
         this.editModeDisabled = true;
       }
     }
