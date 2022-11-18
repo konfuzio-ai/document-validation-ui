@@ -186,7 +186,6 @@ const getters = {
           ...label
         };
       }
-      console.log("label", labelToReturn);
       return labelToReturn;
     },
 
