@@ -2,14 +2,14 @@
 
 (Under active development)
 
-White-label app that lets you preview and interact with documents uploaded to [Konfuzio](https://konfuzio.com). Chrome, Firefox, Edge and Safari supported.
+White-label app that lets you preview and interact with documents uploaded to [Konfuzio Server](https://konfuzio.com).
 
 ![Screenshot](http://raw.githubusercontent.com/konfuzio-ai/konfuzio-capture-vue/main/screenshot.png)
 
 ## Documentation
 
-The documentation for this app is in the docs directory. [Take a look here](docs/README.md).
-Also, you can browse the Konfuzio [documentation](https://dev.konfuzio.com/) and [support](https://help.konfuzio.com/).
+The source code documentation for this app is in the docs directory. [Take a look here](docs/README.md).
+Also, you can browse the full Konfuzio [developer documentation](https://dev.konfuzio.com/) and [guide](https://help.konfuzio.com/).
 
 ## Installation
 
