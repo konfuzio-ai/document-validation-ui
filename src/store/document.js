@@ -347,7 +347,6 @@ const actions = {
       labelSet,
       annotationSet
     };
-    console.log(value);
     commit("SET_EDIT_ANNOTATION", value);
   },
   resetEditAnnotation: ({ commit }) => {
