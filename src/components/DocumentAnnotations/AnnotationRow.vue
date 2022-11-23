@@ -52,7 +52,20 @@
           </div>
         </div>
         <div v-else>
+          <div v-if="spanSelection && isAnnotationInEditMode(annotationId())">
+            <EmptyAnnotation
+              v-for="(span, index) in spanSelection"
+              :key="index"
+              :span="span"
+              :spanIndex="index"
+              :label="label"
+              :annotationSet="annotationSet"
+              :isHovered="isHovered"
+              @reject="handleReject"
+            />
+          </div>
           <EmptyAnnotation
+            v-else
             :label="label"
             :annotationSet="annotationSet"
             :isHovered="isHovered"
@@ -100,6 +113,7 @@ export default {
       "sidebarAnnotationSelected",
       "hoveredAnnotationSet"
     ]),
+    ...mapState("selection", ["spanSelection"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     defaultSpan() {
       if (

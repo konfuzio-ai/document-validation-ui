@@ -191,19 +191,21 @@ export default {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
-        const spans = [...this.annotation.span];
+
+        let spans;
+
         if (this.spanSelection) {
-          spans[this.spanIndex] = {
-            ...spans[this.spanIndex],
-            offset_string: this.annotationText,
-            page_index: this.spanSelection.page_index,
-            x0: this.spanSelection.x0,
-            x1: this.spanSelection.x1,
-            y0: this.spanSelection.y0,
-            y1: this.spanSelection.y1,
-            start_offset: this.spanSelection.start_offset,
-            end_offset: this.spanSelection.end_offset
-          };
+          spans = this.spanSelection.map(span => {
+            return {
+              page_index: span.page_index,
+              x0: span.x0,
+              x1: span.x1,
+              y0: span.y0,
+              y1: span.y1,
+              start_offset: span.start_offset,
+              end_offset: span.end_offset
+            };
+          });
         }
 
         updatedString = {
@@ -255,14 +257,23 @@ export default {
     }
   },
   watch: {
-    spanSelection(span) {
-      if (
-        this.isAnnotationBeingEdited &&
-        span &&
-        span.offset_string &&
-        span.offset_string !== this.span.offset_string
-      ) {
-        this.setText(span.offset_string);
+    spanSelection(newValue) {
+      if (this.isAnnotationBeingEdited && newValue) {
+        if (Array.isArray(newValue)) {
+          newValue.map(span => {
+            if (
+              span.offset_string &&
+              span.offset_string !== this.span.offset_string
+            )
+              this.setText(span.offset_string);
+          });
+        } else {
+          if (
+            newValue.offset_string &&
+            newValue.offset_string !== this.span.offset_string
+          )
+            this.setText(newValue.offset_string);
+        }
       }
     },
     editAnnotation(newAnnotation, oldAnnotation) {
