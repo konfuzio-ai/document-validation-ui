@@ -22,10 +22,10 @@
       @keypress.enter="saveAnnotationChanges"
       :id="annotation.id"
     >
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <span v-else class="annotation-value">
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
@@ -56,7 +56,6 @@ export default {
       required: true
     },
     span: {
-      type: Object,
       required: true
     },
     spanIndex: {
@@ -257,7 +256,7 @@ export default {
     }
   },
   watch: {
-    spanSelection(newValue) {
+    span(newValue) {
       if (this.isAnnotationBeingEdited && newValue) {
         if (Array.isArray(newValue)) {
           newValue.map(span => {

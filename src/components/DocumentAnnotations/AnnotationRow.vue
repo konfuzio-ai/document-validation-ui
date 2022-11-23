@@ -38,7 +38,9 @@
           <div
             @mouseenter="onAnnotationHoverEnter(span)"
             @mouseleave="onAnnotationHoverLeave"
-            v-for="(span, index) in annotation.span"
+            v-for="(span, index) in spanForEditing
+              ? spanSelection
+              : annotation.span"
             :key="index"
           >
             <Annotation
@@ -124,6 +126,13 @@ export default {
         return this.annotation.span[0];
       }
       return null;
+    },
+    spanForEditing() {
+      return (
+        this.spanSelection &&
+        Array.isArray(this.spanSelection) &&
+        this.isAnnotationInEditMode(this.annotationId())
+      );
     }
   },
   methods: {
