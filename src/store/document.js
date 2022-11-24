@@ -760,6 +760,7 @@ const mutations = {
     state.annotations.push(annotation);
     state.annotationSets.map(annotationSet => {
       if (
+        annotation.annotation_set === annotationSet.id &&
         annotation.label_set &&
         annotationSet.label_set.id === annotation.label_set.id
       ) {

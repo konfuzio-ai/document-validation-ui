@@ -193,7 +193,7 @@ export default {
 
         let spans;
 
-        if (this.spanSelection) {
+        if (this.spanSelection && Array.isArray(this.spanSelection)) {
           spans = this.spanSelection.map(span => {
             return {
               page_index: span.page_index,
@@ -205,6 +205,18 @@ export default {
               end_offset: span.end_offset
             };
           });
+        } else {
+          spans = [
+            {
+              page_index: this.span.page_index,
+              x0: this.span.x0,
+              x1: this.span.x1,
+              y0: this.span.y0,
+              y1: this.span.y1,
+              start_offset: this.span.start_offset,
+              end_offset: this.span.end_offset
+            }
+          ];
         }
 
         updatedString = {
