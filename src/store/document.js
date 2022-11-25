@@ -717,9 +717,13 @@ const actions = {
   },
 
   fetchCurrentUser: ({ commit }) => {
-    return HTTP.get(`/auth/me/`).then(response => {
-      commit("SET_CURRENT_USER", response.data.username);
-    });
+    return HTTP.get(`/auth/me/`)
+      .then(response => {
+        commit("SET_CURRENT_USER", response.data.username);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   },
 
   // TODO: this should be an util method, not an action on this document store

@@ -5,10 +5,7 @@ import {
   EditSidebar,
   SplitOverview,
 } from "../../src/components/DocumentEdit";
-import {
-  DocumentTopBar,
-  DocumentTopBarButtons,
-} from "../../src/components/DocumentTopBar";
+import { DocumentTopBarButtons } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library

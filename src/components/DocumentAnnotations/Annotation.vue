@@ -130,6 +130,9 @@ export default {
           })
           .then(() => {
             this.$refs.contentEditable.focus();
+          })
+          .catch(error => {
+            console.log(error);
           });
 
         const page = this.pageAtIndex(this.span.page_index);
