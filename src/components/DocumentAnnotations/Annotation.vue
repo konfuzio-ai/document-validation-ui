@@ -187,6 +187,7 @@ export default {
 
       this.isLoading = true;
 
+      // Check if we are deleting a single annotation that it's not multi-lined
       let isToDelete =
         this.annotationText.length === 0 &&
         (!this.isValueArray(this.annotation.span) ||
@@ -201,31 +202,36 @@ export default {
 
         let spans = [...this.annotation.span];
 
+        // Validations to consider span as an array (multiline annotations) or object
         if (
           this.annotationText.length === 0 &&
           this.isValueArray(this.annotation.span)
         ) {
+          // if the annotation content in one row was deleted
+          // check if it it part of an array
+          // to only remove that string
           spans.splice(this.spanIndex, 1);
         } else if (
           this.spanSelection &&
           this.isValueArray(this.spanSelection)
         ) {
-          if (this.spanSelection.length > 1) {
-            spans = [...this.spanSelection];
-          } else {
-            spans[this.spanIndex] = {
-              ...spans[this.spanIndex],
-              offset_string: this.annotationText,
-              page_index: this.spanSelection[this.spanIndex].page_index,
-              x0: this.spanSelection[this.spanIndex].x0,
-              x1: this.spanSelection[this.spanIndex].x1,
-              y0: this.spanSelection[this.spanIndex].y0,
-              y1: this.spanSelection[this.spanIndex].y1,
-              start_offset: this.spanSelection[this.spanIndex].start_offset,
-              end_offset: this.spanSelection[this.spanIndex].end_offset
-            };
-          }
+          spans = [...this.spanSelection];
+
+          // span is array, only update current one
+          spans[this.spanIndex] = {
+            ...spans[this.spanIndex],
+            offset_string: this.annotationText,
+            page_index: this.spanSelection[this.spanIndex].page_index,
+            x0: this.spanSelection[this.spanIndex].x0,
+            x1: this.spanSelection[this.spanIndex].x1,
+            y0: this.spanSelection[this.spanIndex].y0,
+            y1: this.spanSelection[this.spanIndex].y1,
+            start_offset: this.spanSelection[this.spanIndex].start_offset,
+            end_offset: this.spanSelection[this.spanIndex].end_offset
+          };
+          // }
         } else {
+          // if span is NOT an array, but an object
           spans[this.spanIndex] = {
             ...spans[this.spanIndex],
             offset_string: this.annotationText,
