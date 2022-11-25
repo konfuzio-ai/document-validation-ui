@@ -191,6 +191,7 @@ export default {
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
+        this.spanSelection[this.spanIndex] &&
         this.spanSelection[this.spanIndex].offset_string != null &&
         !this.isLoading
       );
