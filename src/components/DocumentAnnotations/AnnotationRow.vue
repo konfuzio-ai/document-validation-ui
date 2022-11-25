@@ -117,6 +117,7 @@ export default {
     ]),
     ...mapState("selection", ["spanSelection"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
       if (
         this.annotation &&
@@ -130,7 +131,7 @@ export default {
     spanForEditing() {
       return (
         this.spanSelection &&
-        Array.isArray(this.spanSelection) &&
+        this.isValueArray(this.spanSelection) &&
         this.isAnnotationInEditMode(this.annotationId())
       );
     }

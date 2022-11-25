@@ -24,6 +24,9 @@ const getters = {
       return state.selection;
     }
     return null;
+  },
+  isValueArray: () => value => {
+    return Array.isArray(value);
   }
 };
 

@@ -76,6 +76,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", [
       "editAnnotation",
@@ -240,7 +241,7 @@ export default {
   watch: {
     span(newValue) {
       if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
-        if (Array.isArray(newValue))
+        if (this.isValueArray(newValue))
           newValue.map(span => {
             if (span.offset_string) {
               span.offset_string =

@@ -86,6 +86,7 @@ export default {
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
+    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
     annotationText() {
@@ -183,7 +184,11 @@ export default {
 
       this.isLoading = true;
 
-      let isToDelete = this.annotationText.length === 0;
+      let isToDelete =
+        this.annotationText.length === 0 &&
+        (!this.isValueArray(this.annotation.span) ||
+          this.annotation.span.length === 1);
+
       let storeAction;
 
       if (isToDelete) {
@@ -191,32 +196,40 @@ export default {
       } else {
         storeAction = "document/updateAnnotation";
 
-        let spans;
+        const spans = [...this.annotation.span];
 
-        if (this.spanSelection && Array.isArray(this.spanSelection)) {
-          spans = this.spanSelection.map(span => {
-            return {
-              page_index: span.page_index,
-              x0: span.x0,
-              x1: span.x1,
-              y0: span.y0,
-              y1: span.y1,
-              start_offset: span.start_offset,
-              end_offset: span.end_offset
-            };
-          });
+        if (
+          this.annotationText.length === 0 &&
+          this.isValueArray(this.annotation.span)
+        ) {
+          spans.splice(this.annotation.span[this.spanIndex], 1);
+        } else if (
+          this.spanSelection &&
+          this.isValueArray(this.spanSelection)
+        ) {
+          spans[this.spanIndex] = {
+            ...spans[this.spanIndex],
+            offset_string: this.annotationText,
+            page_index: this.spanSelection[this.spanIndex].page_index,
+            x0: this.spanSelection[this.spanIndex].x0,
+            x1: this.spanSelection[this.spanIndex].x1,
+            y0: this.spanSelection[this.spanIndex].y0,
+            y1: this.spanSelection[this.spanIndex].y1,
+            start_offset: this.spanSelection[this.spanIndex].start_offset,
+            end_offset: this.spanSelection[this.spanIndex].end_offset
+          };
         } else {
-          spans = [
-            {
-              page_index: this.span.page_index,
-              x0: this.span.x0,
-              x1: this.span.x1,
-              y0: this.span.y0,
-              y1: this.span.y1,
-              start_offset: this.span.start_offset,
-              end_offset: this.span.end_offset
-            }
-          ];
+          spans[this.spanIndex] = {
+            ...spans[this.spanIndex],
+            offset_string: this.annotationText,
+            page_index: this.spanSelection.page_index,
+            x0: this.spanSelection.x0,
+            x1: this.spanSelection.x1,
+            y0: this.spanSelection.y0,
+            y1: this.spanSelection.y1,
+            start_offset: this.spanSelection.start_offset,
+            end_offset: this.spanSelection.end_offset
+          };
         }
 
         updatedString = {
@@ -270,7 +283,7 @@ export default {
   watch: {
     span(newValue) {
       if (this.isAnnotationBeingEdited && newValue) {
-        if (Array.isArray(newValue)) {
+        if (this.isValueArray(newValue)) {
           newValue.map(span => {
             if (
               span.offset_string &&
