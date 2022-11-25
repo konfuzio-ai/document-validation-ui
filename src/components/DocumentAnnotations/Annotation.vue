@@ -196,28 +196,32 @@ export default {
       } else {
         storeAction = "document/updateAnnotation";
 
-        const spans = [...this.annotation.span];
+        let spans = [...this.annotation.span];
 
         if (
           this.annotationText.length === 0 &&
           this.isValueArray(this.annotation.span)
         ) {
-          spans.splice(this.annotation.span[this.spanIndex], 1);
+          spans.splice(this.spanIndex, 1);
         } else if (
           this.spanSelection &&
           this.isValueArray(this.spanSelection)
         ) {
-          spans[this.spanIndex] = {
-            ...spans[this.spanIndex],
-            offset_string: this.annotationText,
-            page_index: this.spanSelection[this.spanIndex].page_index,
-            x0: this.spanSelection[this.spanIndex].x0,
-            x1: this.spanSelection[this.spanIndex].x1,
-            y0: this.spanSelection[this.spanIndex].y0,
-            y1: this.spanSelection[this.spanIndex].y1,
-            start_offset: this.spanSelection[this.spanIndex].start_offset,
-            end_offset: this.spanSelection[this.spanIndex].end_offset
-          };
+          if (this.spanSelection.length > 1) {
+            spans = [...this.spanSelection];
+          } else {
+            spans[this.spanIndex] = {
+              ...spans[this.spanIndex],
+              offset_string: this.annotationText,
+              page_index: this.spanSelection[this.spanIndex].page_index,
+              x0: this.spanSelection[this.spanIndex].x0,
+              x1: this.spanSelection[this.spanIndex].x1,
+              y0: this.spanSelection[this.spanIndex].y0,
+              y1: this.spanSelection[this.spanIndex].y1,
+              start_offset: this.spanSelection[this.spanIndex].start_offset,
+              end_offset: this.spanSelection[this.spanIndex].end_offset
+            };
+          }
         } else {
           spans[this.spanIndex] = {
             ...spans[this.spanIndex],

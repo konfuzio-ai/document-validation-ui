@@ -501,6 +501,7 @@ export default {
         this.selection.start,
         this.selection.end
       );
+
       this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
