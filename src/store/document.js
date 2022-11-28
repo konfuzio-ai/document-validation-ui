@@ -710,14 +710,17 @@ const actions = {
     });
   },
 
-  updateMultipleAnnotations: ({ state }, annotations) => {
-    console.log("update annotations", annotations);
-
+  updateMultipleAnnotations: ({ state, commit }, annotations) => {
     return new Promise(resolve => {
-      return HTTP.patch(`documents/${state.documentId}/update-annotations/`)
+      return HTTP.patch(
+        `documents/${state.documentId}/update-annotations/`,
+        annotations
+      )
         .then(response => {
-          console.log(response);
           if (response.status === 200) {
+            response.data.map(annotation => {
+              commit("UPDATE_ANNOTATION", annotation);
+            });
             resolve(true);
           }
         })

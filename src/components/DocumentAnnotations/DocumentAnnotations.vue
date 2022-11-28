@@ -452,7 +452,7 @@ export default {
       annotationSet.labels.map(label => {
         if (label.annotations.length !== 0) {
           label.annotations.map(ann => {
-            if (!ann.is_correct) {
+            if (!ann.revised) {
               annotationsToAccept.push(ann.id);
             }
           });
