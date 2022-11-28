@@ -25,7 +25,8 @@ const state = {
   rejectedMissingAnnotations: null,
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
-  finishedReview: false
+  finishedReview: false,
+  newAcceptedAnnotations: null
 };
 
 const getters = {
@@ -428,6 +429,9 @@ const actions = {
   setHoveredAnnotationSet: ({ commit }, annotationSet) => {
     commit("SET_HOVERED_ANNOTATION_SET", annotationSet);
   },
+  setNewAcceptedAnnotations: ({ commit }, annotations) => {
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -711,6 +715,8 @@ const actions = {
   },
 
   updateMultipleAnnotations: ({ state, commit }, annotations) => {
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
+
     return new Promise(resolve => {
       return HTTP.patch(
         `documents/${state.documentId}/update-annotations/`,
@@ -721,6 +727,7 @@ const actions = {
             response.data.map(annotation => {
               commit("UPDATE_ANNOTATION", annotation);
             });
+            commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
             resolve(true);
           }
         })
@@ -971,6 +978,9 @@ const mutations = {
   },
   SET_HOVERED_ANNOTATION_SET: (state, hoveredAnnotationSet) => {
     state.hoveredAnnotationSet = hoveredAnnotationSet;
+  },
+  SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
+    state.newAcceptedAnnotations = annotations;
   }
 };
 

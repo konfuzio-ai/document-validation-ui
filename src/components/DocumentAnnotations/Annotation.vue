@@ -88,7 +88,12 @@ export default {
     ...mapGetters("display", ["bboxToRect"]),
     ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "publicView",
+      "annotations",
+      "newAcceptedAnnotations"
+    ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
         return this.$refs.contentEditable.textContent.trim();
@@ -291,6 +296,19 @@ export default {
         return true;
       }
       return false;
+    },
+    enableLoading(annotations) {
+      if (annotations) {
+        const found = annotations.ids.find(
+          annotation => annotation === this.annotation.id
+        );
+
+        if (found) {
+          this.isLoading = true;
+        }
+      } else {
+        this.isLoading = false;
+      }
     }
   },
   watch: {
@@ -328,6 +346,14 @@ export default {
     isHovered(newValue) {
       if (this.publicView) return;
       this.showAcceptButton = newValue && !this.annotation.revised;
+    },
+    newAcceptedAnnotations(newValue) {
+      if (!newValue) {
+        this.isLoading = false;
+        return;
+      }
+
+      this.enableLoading(newValue);
     }
   }
 };
