@@ -320,6 +320,6 @@ describe("Document Edit Component", () => {
       wrapper
         .findAll(".document-details .doc-info .file-name-section .name-input")
         .at(0).element.value
-    ).toBe("ZRU3S3");
+    ).toBe("3AVAWS");
   });
 });
