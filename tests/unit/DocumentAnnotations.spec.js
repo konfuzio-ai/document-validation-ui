@@ -23,7 +23,7 @@ describe("Document Annotations Component", () => {
     ]);
   });
 
-  it("sidebar has group of label sets", () => {
+  it("sidebar has group of label sets", async () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -31,22 +31,24 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    expect(wrapper.findAll(".annotation-set-group").length).toBeGreaterThan(0);
+    expect(
+      await wrapper.findAll(".annotation-set-group").length
+    ).toBeGreaterThan(0);
   });
 
-  it("label set name appears", () => {
+  it("label set name appears", async () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
         $t,
       },
     });
-    expect(wrapper.findAll(".label-set-name").at(2).text()).toContain(
+    expect(await wrapper.findAll(".label-set-name").at(2).text()).toContain(
       store.state.document.annotationSets[1].label_set.name
     );
   });
 
-  it("label name appears", () => {
+  it("label name appears", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
 
@@ -60,7 +62,7 @@ describe("Document Annotations Component", () => {
         label,
       },
     });
-    expect(wrapper.find(".annotation-row .label-name").text()).toContain(
+    expect(await wrapper.find(".annotation-row .label-name").text()).toContain(
       label.name
     );
   });
@@ -139,7 +141,7 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
     await store.dispatch("selection/setSpanSelection", sampleBbox);
-    expect(wrapper.findAll(".action-buttons").length).toEqual(1);
+    expect(await wrapper.findAll(".action-buttons").length).toEqual(1);
   });
 
   it("Only show 'accept' button on hover on filled annotations", async () => {
@@ -229,7 +231,7 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
+    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
 
     await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
 
@@ -245,7 +247,9 @@ describe("Document Annotations Component", () => {
 
     expect(store.state.document.missingAnnotations.length).toEqual(1);
 
-    expect(wrapper.findComponent(".rejected-labels-list").exists()).toBe(true);
+    expect(await wrapper.findComponent(".rejected-labels-list").exists()).toBe(
+      true
+    );
 
     expect(
       wrapper
@@ -261,7 +265,7 @@ describe("Document Annotations Component", () => {
 
     await store.dispatch("document/setMissingAnnotations", []);
 
-    expect(wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
+    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
   });
 
   it("Rejecting should remove item from the label list, and it should show under Rejected", async () => {
@@ -286,7 +290,7 @@ describe("Document Annotations Component", () => {
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
     expect(
-      wrapper.findAll(".annotation-row .label-name span").at(0).text()
+      await wrapper.findAll(".annotation-row .label-name span").at(0).text()
     ).not.toBe(
       require("../mock/document.json").annotation_sets[0].labels[0].name
     );
@@ -328,7 +332,7 @@ describe("Document Annotations Component", () => {
     await store.dispatch("document/setMissingAnnotations", []);
 
     expect(
-      wrapper.findAll(".annotation-row .label-name span").at(0).text()
+      await wrapper.findAll(".annotation-row .label-name span").at(0).text()
     ).toBe("Anrede");
   });
 
@@ -366,7 +370,7 @@ describe("Document Annotations Component", () => {
     ).not.toBe("undefined");
   });
 
-  it("Reject all empty button should always be visible", () => {
+  it("Reject all empty button should always be visible", async () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -375,11 +379,11 @@ describe("Document Annotations Component", () => {
     });
 
     expect(
-      wrapper.find(".action-buttons .reject-all .reject-btn").isVisible()
+      await wrapper.find(".action-buttons .reject-all .reject-btn").isVisible()
     ).toBe(true);
   });
 
-  it("Reject all button should show how many empty labels are in the annotation set", () => {
+  it("Reject all button should show how many empty labels are in the annotation set", async () => {
     const annotationSet = store.state.document.annotationSets[0];
 
     const wrapper = mount(DocumentAnnotations, {
@@ -394,7 +398,7 @@ describe("Document Annotations Component", () => {
     );
 
     expect(
-      wrapper
+      await wrapper
         .find(".action-buttons .reject-all .reject-btn")
         .text()
         .includes(emptyLabels.length)
@@ -418,5 +422,65 @@ describe("Document Annotations Component", () => {
     await handleReject();
 
     expect(handleReject).toHaveBeenCalledTimes(1);
+  });
+
+  it("Accept all empty button should always be visible", async () => {
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .find(".action-buttons .accept-all .accept-all-btn")
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("Accept all button should show how many unrevised/unaccepted annotations are in the annotation set", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const labels = annotationSet.labels;
+    const annotations = labels.flatMap((label) => {
+      return label.annotations;
+    });
+
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const pendingAnnotations = annotations.filter(
+      (ann) => !ann.revised && !ann.is_correct
+    );
+
+    expect(
+      await wrapper
+        .find(".action-buttons .accept-all .accept-all-btn")
+        .text()
+        .includes(pendingAnnotations.length)
+    ).toBe(true);
+  });
+
+  it("Clicking the 'accept all empty' button should send the request to the endpoint", async () => {
+    const updateAnnotations = jest.fn().mockName("updateMultipleAnnotations");
+
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper
+      .find(".action-buttons .accept-all .accept-all-btn")
+      .trigger("click");
+
+    await updateAnnotations();
+
+    expect(updateAnnotations).toHaveBeenCalledTimes(1);
   });
 });

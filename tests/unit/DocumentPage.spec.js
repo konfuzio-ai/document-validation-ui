@@ -1,7 +1,4 @@
-import {
-  mount,
-  shallowMount
-} from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import {
   ScrollingDocument,
   ScrollingPage,
@@ -38,7 +35,7 @@ describe("Document Page Component", () => {
         pages: store.state.document.pages,
       },
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -51,7 +48,7 @@ describe("Document Page Component", () => {
         pages: store.state.document.pages,
       },
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -62,25 +59,25 @@ describe("Document Page Component", () => {
     const wrapper = shallowMount(ToolBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
-    expect(wrapper.findComponent(".toolbar-container"));
+    expect(await wrapper.findComponent(".toolbar-container"));
   });
 
   it("Toolbar should have icons and text visible", async () => {
     const wrapper = shallowMount(ToolBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
-    expect(wrapper.findComponent(".edit-icon").exists()).toBe(true);
-    expect(wrapper.findComponent(".edit-text").exists()).toBe(true);
-    expect(wrapper.findComponent(".fit-zoom").exists()).toBe(true);
-    expect(wrapper.findComponent(".zoom-in").exists()).toBe(true);
-    expect(wrapper.findComponent(".zoom-out").exists()).toBe(true);
+    expect(await wrapper.findComponent(".edit-icon").exists()).toBe(true);
+    expect(await wrapper.findComponent(".edit-text").exists()).toBe(true);
+    expect(await wrapper.findComponent(".fit-zoom").exists()).toBe(true);
+    expect(await wrapper.findComponent(".zoom-in").exists()).toBe(true);
+    expect(await wrapper.findComponent(".zoom-out").exists()).toBe(true);
   });
 });

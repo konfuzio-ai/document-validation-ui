@@ -1,7 +1,4 @@
-import {
-  mount,
-  shallowMount
-} from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentTopBar,
   DocumentName,
@@ -30,7 +27,7 @@ describe("Document Top Bar", () => {
       store.dispatch("document/setSelectedDocument", documentData),
       store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
-      store.dispatch("document/endLoading"),
+      store.dispatch("document/endLoading")
     );
   });
 
@@ -38,7 +35,7 @@ describe("Document Top Bar", () => {
     const wrapper = shallowMount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -52,7 +49,7 @@ describe("Document Top Bar", () => {
         dataFileName: store.state.document.selectedDocument.data_file_name,
       },
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -61,50 +58,50 @@ describe("Document Top Bar", () => {
     );
   });
 
-  it("Edit button should be visible when rendering the component", () => {
+  it("Edit button should be visible when rendering the component", async () => {
     const wrapper = shallowMount(DocumentName, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
-    expect(wrapper.findComponent(".edit-btn").exists()).toBe(true);
+    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(true);
   });
 
   it("Clicking on the edit button should make it not visible and make the save one visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
-    expect(wrapper.findComponent(".edit-btn").exists()).toBe(false);
-    expect(wrapper.findComponent(".save-btn").exists()).toBe(true);
+    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(false);
+    expect(await wrapper.findComponent(".save-btn").exists()).toBe(true);
   });
 
   it("No buttons should be visible while saving", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
-    expect(wrapper.findComponent(".edit-btn").exists()).toBe(false);
+    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(false);
 
     await wrapper.getComponent(".save-btn").trigger("click");
-    expect(wrapper.findComponent(".save-btn").exists()).toBe(false);
+    expect(await wrapper.findComponent(".save-btn").exists()).toBe(false);
   });
 
   it("The file name should become a content editable when clicking on the Edit button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -118,35 +115,37 @@ describe("Document Top Bar", () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
     await wrapper.getComponent(".save-btn").trigger("click");
-    expect(wrapper.findComponent(".document-name").classes()).not.toContain(
-      "is-editable"
-    );
+    expect(
+      await wrapper.findComponent(".document-name").classes()
+    ).not.toContain("is-editable");
   });
 
   it("Clicking on the save button should show the autosaving message to the user", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.getComponent(".edit-btn").trigger("click");
     await wrapper.getComponent(".save-btn").trigger("click");
-    expect(wrapper.findComponent(".loading-container").exists()).toBe(true);
+    expect(await wrapper.findComponent(".loading-container").exists()).toBe(
+      true
+    );
   });
 
   it("Check if save function is called after clicking save button", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
@@ -159,39 +158,43 @@ describe("Document Top Bar", () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it("Should render the handover button", () => {
+  it("Should render the handover button", async () => {
     const wrapper = mount(Handover, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
-    expect(wrapper.findComponent(".handover-container").exists()).toBe(true);
+    expect(await wrapper.findComponent(".handover-container").exists()).toBe(
+      true
+    );
   });
 
   it("Clicking the button should open modal", async () => {
     const wrapper = mount(Handover, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.findComponent(".handover-btn").trigger("click");
-    expect(wrapper.findComponent(".notification").isVisible()).toBe(true);
+    expect(await wrapper.findComponent(".notification").isVisible()).toBe(true);
   });
 
   it("Clicking the X button should close modal", async () => {
     const wrapper = mount(Handover, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
 
     await wrapper.findComponent(".handover-btn").trigger("click");
     await wrapper.findComponent(".modal-btn").trigger("click");
-    expect(wrapper.findComponent(".notification").isVisible()).toBe(false);
+    expect(await wrapper.findComponent(".notification").isVisible()).toBe(
+      false
+    );
   });
 });
