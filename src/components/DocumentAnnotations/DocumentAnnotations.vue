@@ -55,7 +55,7 @@
               :cancelBtn="false"
               :showReject="false"
               :acceptBtn="false"
-              :rejectAllEmptyBtn="false"
+              :rejectAllEmptyBtn="true"
               :annotationSet="annotationSet"
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)

@@ -38,7 +38,9 @@
           <div
             @mouseenter="onAnnotationHoverEnter(span)"
             @mouseleave="onAnnotationHoverLeave"
-            v-for="(span, index) in annotation.span"
+            v-for="(span, index) in spanForEditing
+              ? spanSelection
+              : annotation.span"
             :key="index"
           >
             <Annotation
@@ -52,7 +54,20 @@
           </div>
         </div>
         <div v-else>
+          <div v-if="spanSelection && isAnnotationInEditMode(annotationId())">
+            <EmptyAnnotation
+              v-for="(span, index) in spanSelection"
+              :key="index"
+              :span="span"
+              :spanIndex="index"
+              :label="label"
+              :annotationSet="annotationSet"
+              :isHovered="isHovered"
+              @reject="handleReject"
+            />
+          </div>
           <EmptyAnnotation
+            v-else
             :label="label"
             :annotationSet="annotationSet"
             :isHovered="isHovered"
@@ -100,7 +115,9 @@ export default {
       "sidebarAnnotationSelected",
       "hoveredAnnotationSet"
     ]),
+    ...mapState("selection", ["spanSelection"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
       if (
         this.annotation &&
@@ -110,6 +127,13 @@ export default {
         return this.annotation.span[0];
       }
       return null;
+    },
+    spanForEditing() {
+      return (
+        this.spanSelection &&
+        this.isValueArray(this.spanSelection) &&
+        this.isAnnotationInEditMode(this.annotationId())
+      );
     }
   },
   methods: {

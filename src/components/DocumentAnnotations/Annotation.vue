@@ -22,10 +22,10 @@
       @keypress.enter="saveAnnotationChanges"
       :id="annotation.id"
     >
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <span v-else class="annotation-value">
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
@@ -56,7 +56,6 @@ export default {
       required: true
     },
     span: {
-      type: Object,
       required: true
     },
     spanIndex: {
@@ -87,6 +86,7 @@ export default {
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
+    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
     annotationText() {
@@ -130,6 +130,9 @@ export default {
           })
           .then(() => {
             this.$refs.contentEditable.focus();
+          })
+          .catch(error => {
+            console.log(error);
           });
 
         const page = this.pageAtIndex(this.span.page_index);
@@ -184,15 +187,51 @@ export default {
 
       this.isLoading = true;
 
-      let isToDelete = this.annotationText.length === 0;
+      // Check if we are deleting a single annotation that it's not multi-lined
+      let isToDelete =
+        this.annotationText.length === 0 &&
+        (!this.isValueArray(this.annotation.span) ||
+          this.annotation.span.length === 1);
+
       let storeAction;
 
       if (isToDelete) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
-        const spans = [...this.annotation.span];
-        if (this.spanSelection) {
+
+        let spans = [...this.annotation.span];
+
+        // Validations to consider span as an array (multiline annotations) or object
+        if (
+          this.annotationText.length === 0 &&
+          this.isValueArray(this.annotation.span)
+        ) {
+          // if the annotation content in one row was deleted
+          // check if it it part of an array
+          // to only remove that string
+          spans.splice(this.spanIndex, 1);
+        } else if (
+          this.spanSelection &&
+          this.isValueArray(this.spanSelection)
+        ) {
+          spans = [...this.spanSelection];
+
+          // span is array, only update current one
+          spans[this.spanIndex] = {
+            ...spans[this.spanIndex],
+            offset_string: this.annotationText,
+            page_index: this.spanSelection[this.spanIndex].page_index,
+            x0: this.spanSelection[this.spanIndex].x0,
+            x1: this.spanSelection[this.spanIndex].x1,
+            y0: this.spanSelection[this.spanIndex].y0,
+            y1: this.spanSelection[this.spanIndex].y1,
+            start_offset: this.spanSelection[this.spanIndex].start_offset,
+            end_offset: this.spanSelection[this.spanIndex].end_offset
+          };
+          // }
+        } else {
+          // if span is NOT an array, but an object
           spans[this.spanIndex] = {
             ...spans[this.spanIndex],
             offset_string: this.annotationText,
@@ -255,14 +294,23 @@ export default {
     }
   },
   watch: {
-    spanSelection(span) {
-      if (
-        this.isAnnotationBeingEdited &&
-        span &&
-        span.offset_string &&
-        span.offset_string !== this.span.offset_string
-      ) {
-        this.setText(span.offset_string);
+    span(newValue) {
+      if (this.isAnnotationBeingEdited && newValue) {
+        if (this.isValueArray(newValue)) {
+          newValue.map(span => {
+            if (
+              span.offset_string &&
+              span.offset_string !== this.span.offset_string
+            )
+              this.setText(span.offset_string);
+          });
+        } else {
+          if (
+            newValue.offset_string &&
+            newValue.offset_string !== this.span.offset_string
+          )
+            this.setText(newValue.offset_string);
+        }
       }
     },
     editAnnotation(newAnnotation, oldAnnotation) {

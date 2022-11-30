@@ -5,10 +5,7 @@ import {
   EditSidebar,
   SplitOverview,
 } from "../../src/components/DocumentEdit";
-import {
-  DocumentTopBar,
-  DocumentTopBarButtons,
-} from "../../src/components/DocumentTopBar";
+import { DocumentTopBarButtons } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -323,6 +320,6 @@ describe("Document Edit Component", () => {
       wrapper
         .findAll(".document-details .doc-info .file-name-section .name-input")
         .at(0).element.value
-    ).toBe("ZRU3S3");
+    ).toBe("3AVAWS");
   });
 });
