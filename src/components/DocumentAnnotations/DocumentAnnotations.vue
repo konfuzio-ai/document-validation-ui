@@ -25,6 +25,7 @@
 
     <!-- When there's no annotations in the label -->
     <div v-else-if="annotationSets.length === 0">
+      <CategorizeModal />
       <EmptyState />
     </div>
 
