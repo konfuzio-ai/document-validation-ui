@@ -101,11 +101,7 @@ export default {
       }
     },
     canCloseModal() {
-      if (this.documentCategory) {
-        if (this.documentCategory.id !== null) return true;
-      }
-
-      return false;
+      return !!this.documentCategory && this.documentCategory.id !== null;
     },
     setSelectedCategory(category) {
       this.selectedCategory = category;
