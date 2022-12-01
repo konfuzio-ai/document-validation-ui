@@ -206,30 +206,30 @@
               display: flex;
               gap: 8px;
             }
-          }
 
-          .annotation-value {
-            display: inline-block;
-            color: $text;
-            padding: 0 8px;
-            border: none;
-            background-color: transparent;
-            inline-size: 100%;
-            overflow-wrap: break-word;
-            word-break: break-all;
+            .annotation-value {
+              display: inline-block;
+              color: $text;
+              padding: 0 8px;
+              border: none;
+              background-color: transparent;
+              inline-size: 100%;
+              overflow-wrap: break-word;
+              word-break: break-all;
 
-            &:focus {
-              outline: none;
-            }
+              &:focus {
+                outline: none;
+              }
 
-            &.label-empty {
-              font-weight: 500;
-              font-size: 14px;
-              color: $primary;
+              &.label-empty {
+                font-weight: 500;
+                font-size: 14px;
+                color: $primary;
 
-              &.clicked {
-                font-weight: 400;
-                color: $text-lighter;
+                &.clicked {
+                  font-weight: 400;
+                  color: $text-lighter;
+                }
               }
             }
           }
@@ -271,9 +271,36 @@
           }
 
           &:hover,
-          &.selected,
+          &.selected {
+            background-color: $grey-lightest;
+          }
+
           &.hovered-empty-labels {
             background-color: $grey-lightest;
+            outline: 1px solid $grey-detail;
+            margin-bottom: 1px;
+          }
+
+          &.hovered-pending-annotations {
+            background-color: $green-hover-background;
+            outline: 1px solid $green-border;
+            margin-bottom: 1px;
+
+            .annotation-row-right {
+              .annotation-content {
+                .annotation {
+                  min-height: 43px;
+                  padding-top: 1px;
+                }
+              }
+            }
+
+            .annotation-row-left {
+              .annotation-details,
+              .label-name {
+                margin-bottom: -1px;
+              }
+            }
           }
 
           &.editing {
@@ -292,7 +319,6 @@
           }
 
           @keyframes shake {
-
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);
@@ -314,6 +340,70 @@
               transform: translate3d(4px, 0, 0);
             }
           }
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+
+    button {
+      height: 32px;
+
+      &.annotation-save-btn,
+      &.annotation-accept-btn {
+        padding: 6px 14px 6px 14px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        width: auto;
+      }
+
+      &.annotation-cancel-btn {
+        padding-top: 8px !important;
+        border: none !important;
+        background-color: transparent !important;
+        width: 32px;
+      }
+
+      &.accept-all-btn {
+        color: $lighter-green !important;
+        font-size: 14px !important;
+        font-weight: 500;
+        background-color: transparent !important;
+        width: auto;
+
+        &:hover {
+          text-decoration: none !important;
+          color: $primary-dark !important;
+        }
+
+        &:focus {
+          box-shadow: none !important;
+        }
+      }
+    }
+
+    .reject-button-container {
+      background-color: transparent;
+
+      .reject-btn {
+        color: $grey-blue !important;
+        font-size: 14px !important;
+        font-weight: 500;
+        background-color: transparent !important;
+        width: auto;
+
+        &:hover {
+          text-decoration: none !important;
+          color: $dark-blue !important;
+        }
+
+        &:focus {
+          box-shadow: none !important;
         }
       }
     }

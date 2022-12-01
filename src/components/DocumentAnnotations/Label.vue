@@ -83,14 +83,16 @@ export default {
   },
   data() {
     return {
-      enableGroupingFeature: false, // this controls if the annotations should be grouped under the same label
       isMultipleAnnotations: false,
       acceptedAnnotationsGroupCounter: 0,
       showAnnotationsGroup: false
     };
   },
   computed: {
-    ...mapState("document", ["sidebarAnnotationSelected"]),
+    ...mapState("document", [
+      "sidebarAnnotationSelected",
+      "enableGroupingFeature"
+    ]),
     ...mapGetters("document", ["numberOfAcceptedAnnotationsInLabel"]),
     singleAnnotation() {
       if (this.label.annotations.length > 0) {
@@ -109,11 +111,13 @@ export default {
     handleReject() {
       if (!this.label || !this.annotationSet) return;
 
-      const labelId = this.label.id;
-      const labelSetId = this.annotationSet.label_set.id;
-      const annotationSetId = this.annotationSet.id;
-
-      this.$emit("handle-reject", labelId, labelSetId, annotationSetId, false);
+      this.$emit(
+        "handle-reject",
+        this.label.id,
+        this.annotationSet.label_set.id,
+        this.annotationSet.id,
+        false
+      );
     },
     toggleGroup() {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;

@@ -120,7 +120,7 @@ describe("Document Edit Component", () => {
       .trigger("hover");
 
     expect(
-      wrapper.find(".thumbnail .icon-container .action-icon").exists()
+      await wrapper.find(".thumbnail .icon-container .action-icon").exists()
     ).toBe(true);
   });
 
@@ -276,12 +276,12 @@ describe("Document Edit Component", () => {
     await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     expect(
-      wrapper.findAll(".document-details .overview-thumbnails").length
+      await wrapper.findAll(".document-details .overview-thumbnails").length
     ).toBe(2);
-    expect(wrapper.findAll(".document-details .file-name-section").length).toBe(
-      2
-    );
-    expect(wrapper.findAll(".document-details .category").length).toBe(2);
+    expect(
+      await wrapper.findAll(".document-details .file-name-section").length
+    ).toBe(2);
+    expect(await wrapper.findAll(".document-details .category").length).toBe(2);
   });
 
   it("First subdocument should have original file name", async () => {

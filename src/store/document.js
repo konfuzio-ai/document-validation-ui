@@ -25,7 +25,8 @@ const state = {
   rejectedMissingAnnotations: null,
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
-  finishedReview: false
+  finishedReview: false,
+  newAcceptedAnnotations: null
 };
 
 const getters = {
@@ -290,6 +291,34 @@ const getters = {
   },
 
   /**
+   * Get number of annotations pending review per annotation set
+   */
+  annotationsWithPendingReviewLength: () => annotationSet => {
+    const labels = annotationSet.labels.filter(
+      label => label.annotations.length > 0
+    );
+
+    const annotationsWithPendingReview = [];
+
+    labels.map(label => {
+      const foundPendingAnnotation = label.annotations.find(
+        ann => !ann.revised
+      );
+
+      if (foundPendingAnnotation) {
+        annotationsWithPendingReview.push(foundPendingAnnotation);
+      }
+    });
+
+    // Check if we have grouped annotations by same label
+    if (state.enableGroupingFeature && label.annotations.length < 2) {
+      return annotationsWithPendingReview.length - label.annotations.length;
+    }
+
+    return annotationsWithPendingReview.length;
+  },
+
+  /**
    * Check if the document was extracted correctly and is ready to be reviewed
    */
   isDocumentReadyToBeReviewed: () => document => {
@@ -399,6 +428,9 @@ const actions = {
   },
   setHoveredAnnotationSet: ({ commit }, annotationSet) => {
     commit("SET_HOVERED_ANNOTATION_SET", annotationSet);
+  },
+  setNewAcceptedAnnotations: ({ commit }, annotations) => {
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
   },
 
   /**
@@ -682,6 +714,30 @@ const actions = {
     });
   },
 
+  updateMultipleAnnotations: ({ state, commit }, annotations) => {
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
+
+    return new Promise(resolve => {
+      return HTTP.patch(
+        `documents/${state.documentId}/update-annotations/`,
+        annotations
+      )
+        .then(response => {
+          if (response.status === 200) {
+            response.data.map(annotation => {
+              commit("UPDATE_ANNOTATION", annotation);
+            });
+            commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
+            resolve(true);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          resolve(false);
+        });
+    });
+  },
+
   fetchDocumentStatus: ({ state, getters }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
@@ -922,6 +978,9 @@ const mutations = {
   },
   SET_HOVERED_ANNOTATION_SET: (state, hoveredAnnotationSet) => {
     state.hoveredAnnotationSet = hoveredAnnotationSet;
+  },
+  SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
+    state.newAcceptedAnnotations = annotations;
   }
 };
 
