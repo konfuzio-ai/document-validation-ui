@@ -36,8 +36,8 @@
               v-for="(entity, index) in scaledEntities"
               :key="index"
               :config="entityRect(entity)"
-              @mouseenter="cursor = 'pointer'"
-              @mouseleave="cursor = 'crosshair'"
+              @mouseenter="e => getCursor(e)"
+              @mouseleave="getCursor()"
               @click="handleClickedEntity(entity)"
             ></v-rect>
           </v-group>
@@ -366,7 +366,6 @@ export default {
         return;
       }
       this.$refs.stage.$el.style.cursor = "auto";
-      // document.getElementById("cursor").removeAttribute("style");
     },
 
     updateTransformer() {
@@ -507,12 +506,24 @@ export default {
       this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
+    getCursor(e) {
+      if (e) {
+        const container = e.target.getStage().container();
+        container.style.cursor = "pointer";
+      } else {
+        this.$refs.stage.$el.style.cursor = "crosshair";
+      }
+    },
+
     handleClickedEntity(entity) {
       // Check if we are creating a new Annotation
       // or if we are ediitng an existing or empty one
       if (!this.isSelectionEnabled) {
         this.newAnnotation = { entity, content: entity.original.offset_string };
-      } else {
+        return;
+      }
+
+      if (!this.isSelecting) {
         this.$store.dispatch("document/setSelectedEntity", entity.original);
       }
     },

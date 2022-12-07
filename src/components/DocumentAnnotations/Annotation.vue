@@ -350,8 +350,10 @@ export default {
           });
         } else {
           if (
-            newValue.offset_string &&
-            newValue.offset_string !== this.span.offset_string
+            (newValue.offset_string &&
+              newValue.offset_string !== this.span.offset_string) ||
+            newValue.offset_string !==
+              this.$refs.contentEditable.textContent.trim()
           )
             this.setText(newValue.offset_string);
         }
@@ -385,7 +387,7 @@ export default {
       if (!newValue) return;
 
       if (this.annotation.id === this.editAnnotation.id) {
-        this.$refs.contentEditable.textContent = this.annotationText;
+        this.setText(newValue.offset_string);
       }
     }
   }

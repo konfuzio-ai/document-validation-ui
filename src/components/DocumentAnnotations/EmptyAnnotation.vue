@@ -142,8 +142,6 @@ export default {
         span = this.spanSelection;
       }
 
-      console.log(span);
-
       if (this.annotationSet.id) {
         annotationToCreate = {
           document: this.documentId,
