@@ -31,14 +31,14 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group ref="entities" v-if="!publicView && !isSelectionEnabled">
+          <v-group ref="entities" v-if="!publicView">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
               :config="entityRect(entity)"
               @mouseenter="cursor = 'pointer'"
               @mouseleave="cursor = 'crosshair'"
-              @click="openNewAnnotation(entity)"
+              @click="handleClickedEntity(entity)"
             ></v-rect>
           </v-group>
           <template v-for="annotation in pageAnnotations">
@@ -250,7 +250,8 @@ export default {
       "annotations",
       "editAnnotation",
       "selectedDocument",
-      "publicView"
+      "publicView",
+      "selectedEntity"
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
@@ -429,7 +430,8 @@ export default {
         strokeWidth: 1,
         dash: [5, 2],
         fill:
-          this.newAnnotation && this.newAnnotation.entity === entity
+          (this.newAnnotation && this.newAnnotation.entity === entity) ||
+          (this.selectedEntity && this.selectedEntity === entity.original)
             ? "#67E9B7"
             : "transparent",
         globalCompositeOperation: "multiply",
@@ -505,8 +507,14 @@ export default {
       this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
-    openNewAnnotation(entity) {
-      this.newAnnotation = { entity, content: entity.original.offset_string };
+    handleClickedEntity(entity) {
+      // Check if we are creating a new Annotation
+      // or if we are ediitng an existing or empty one
+      if (!this.isSelectionEnabled) {
+        this.newAnnotation = { entity, content: entity.original.offset_string };
+      } else {
+        this.$store.dispatch("document/setSelectedEntity", entity.original);
+      }
     },
     closeNewAnnotation() {
       this.newAnnotation = null;

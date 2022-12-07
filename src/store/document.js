@@ -26,7 +26,8 @@ const state = {
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
   finishedReview: false,
-  newAcceptedAnnotations: null
+  newAcceptedAnnotations: null,
+  selectedEntity: null
 };
 
 const getters = {
@@ -431,6 +432,9 @@ const actions = {
   },
   setNewAcceptedAnnotations: ({ commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
+  },
+  setSelectedEntity: ({ commit }, entity) => {
+    commit("SET_SELECTED_ENTITY", entity);
   },
 
   /**
@@ -981,6 +985,9 @@ const mutations = {
   },
   SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
     state.newAcceptedAnnotations = annotations;
+  },
+  SET_SELECTED_ENTITY: (state, entity) => {
+    state.selectedEntity = entity;
   }
 };
 

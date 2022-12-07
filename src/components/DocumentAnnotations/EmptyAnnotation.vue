@@ -84,7 +84,8 @@ export default {
       "documentId",
       "rejectedMissingAnnotations",
       "annotationSets",
-      "hoveredAnnotationSet"
+      "hoveredAnnotationSet",
+      "selectedEntity"
     ])
   },
   methods: {
@@ -133,11 +134,20 @@ export default {
       // update the bbox text with the one from the input
 
       let annotationToCreate;
+      let span;
+
+      if (this.selectedEntity) {
+        span = [this.selectedEntity];
+      } else {
+        span = this.spanSelection;
+      }
+
+      console.log(span);
 
       if (this.annotationSet.id) {
         annotationToCreate = {
           document: this.documentId,
-          span: this.spanSelection,
+          span: span,
           label: this.label.id,
           annotation_set: this.annotationSet.id,
           is_correct: true,
@@ -147,7 +157,7 @@ export default {
         // if annotation set id is null
         annotationToCreate = {
           document: this.documentId,
-          span: this.spanSelection,
+          span: span,
           label: this.label.id,
           label_set: this.annotationSet.label_set.id,
           is_correct: true,
@@ -186,8 +196,16 @@ export default {
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
+
+      this.$store.dispatch("document/setSelectedEntity", null);
     },
     isEmptyAnnotationEditable() {
+      if (this.selectedEntity) {
+        return (
+          this.selectionEnabled === this.emptyAnnotationId() && !this.isLoading
+        );
+      }
+
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
@@ -268,6 +286,13 @@ export default {
     isHovered(newValue) {
       if (this.publicView) return;
       this.showReject = newValue && !this.isAnnotationBeingEdited();
+    },
+    selectedEntity(newValue) {
+      if (!newValue) return;
+
+      if (this.emptyAnnotationId() === this.editAnnotation.id) {
+        this.setText(newValue.offset_string);
+      }
     }
   }
 };
