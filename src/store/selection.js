@@ -43,11 +43,13 @@ const actions = {
     commit("SET_SPAN_SELECTION", null);
   },
 
-  startSelection: ({ commit }, { pageNumber, start }) => {
+  startSelection: ({ commit, dispatch }, { pageNumber, start }) => {
     commit("START_SELECTION", {
       pageNumber,
       start
     });
+
+    dispatch("document/setSelectedEntity", null, { root: true });
   },
 
   moveSelection: ({ commit, state }, points) => {
