@@ -23,6 +23,8 @@ $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
 $grey-hover: #fafafa;
 $green-hover: #3a9c76;
+$green-border: #67d19f;
+$green-hover-background: rgba(18, 183, 106, 0.05);
 $grey-blue: #667085;
 $action-grey: #5f5d59;
 
@@ -84,14 +86,6 @@ button {
     background-color: transparent;
     width: auto;
 
-    &[disabled] {
-      border: none;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
     &:not([disabled]) {
       &:hover {
         text-decoration: none;
@@ -123,6 +117,23 @@ button {
         width: 15px !important;
         height: 15px !important;
       }
+    }
+  }
+
+  &.accept-all-btn {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  &.reject-all-btn {
+    padding-right: 4px;
+  }
+
+  &[disabled] {
+    border: none;
+
+    &:hover {
+      text-decoration: none;
     }
   }
 }

@@ -92,5 +92,6 @@
   "annotations_pending": "Ausstehende Annotationen",
   "annotations_accepted": "Akzeptierte Annotationen",
   "reject_all_empty": "Alle fehlenden Annotationen ablehnen",
-  "no_labels_to_choose": "No Labels"
+  "no_labels_to_choose": "Keine Labels",
+  "accept_group": "Alle akzeptieren"
 }

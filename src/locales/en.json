@@ -93,5 +93,6 @@
   "annotations_pending": "pending",
   "annotations_accepted": "accepted",
   "reject_all_empty": "Reject all empty",
-  "no_labels_to_choose": "No Labels"
+  "no_labels_to_choose": "No Labels",
+  "accept_group": "Accept all"
 }

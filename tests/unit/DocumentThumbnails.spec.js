@@ -1,9 +1,5 @@
-import {
-  shallowMount
-} from "@vue/test-utils";
-import {
-  DocumentThumbnails
-} from "../../src/components/DocumentThumbnails";
+import { shallowMount } from "@vue/test-utils";
+import { DocumentThumbnails } from "../../src/components/DocumentThumbnails";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -31,24 +27,24 @@ describe("Document Thumbnails Component", () => {
       store.dispatch("document/endLoading"),
     ]);
   });
-  it("check number of thumbnails", () => {
+  it("check number of thumbnails", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
-    expect(wrapper.findAll(".document-thumbnail").length).toEqual(2);
+    expect(await wrapper.findAll(".document-thumbnail").length).toEqual(2);
   });
 
   it("check if first thumbnail is selected", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
-    expect(wrapper.findAll(".img-thumbnail").at(0).classes()).toContain(
+    expect(await wrapper.findAll(".img-thumbnail").at(0).classes()).toContain(
       "selected"
     );
   });
@@ -57,21 +53,21 @@ describe("Document Thumbnails Component", () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
-    expect(wrapper.findAll(".img-thumbnail").at(1).classes()).not.toContain(
-      "selected"
-    );
+    expect(
+      await wrapper.findAll(".img-thumbnail").at(1).classes()
+    ).not.toContain("selected");
   });
 
   it("check if second thumbnail has text 2", async () => {
     const wrapper = shallowMount(DocumentThumbnails, {
       store,
       mocks: {
-        $t
+        $t,
       },
     });
-    expect(wrapper.findAll(".number-thumbnail").at(1).text()).toBe("2");
+    expect(await wrapper.findAll(".number-thumbnail").at(1).text()).toBe("2");
   });
 });

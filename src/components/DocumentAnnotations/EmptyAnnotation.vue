@@ -20,7 +20,14 @@
       @focus="handleEditEmptyAnnotation"
       :id="emptyAnnotationId()"
     >
-      {{ $t("no_data_found") }}
+      <span
+        v-if="span && span.offset_string && this.isEmptyAnnotationEditable()"
+      >
+        {{ span.offset_string }}
+      </span>
+      <span v-else>
+        {{ $t("no_data_found") }}
+      </span>
     </span>
 
     <ActionButtons
@@ -59,10 +66,17 @@ export default {
     isHovered: {
       type: Boolean,
       default: false
+    },
+    span: {
+      required: false
+    },
+    spanIndex: {
+      required: false
     }
   },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapState("document", [
       "editAnnotation",
@@ -70,7 +84,8 @@ export default {
       "documentId",
       "rejectedMissingAnnotations",
       "annotationSets",
-      "hoveredAnnotationSet"
+      "hoveredAnnotationSet",
+      "selectedEntity"
     ])
   },
   methods: {
@@ -117,16 +132,20 @@ export default {
         event.preventDefault();
       }
       // update the bbox text with the one from the input
-      this.spanSelection.offset_string = this.$refs.emptyAnnotation.innerHTML;
-      this.spanSelection.offset_string_original =
-        this.$refs.emptyAnnotation.innerHTML;
 
       let annotationToCreate;
+      let span;
+
+      if (this.selectedEntity) {
+        span = [this.selectedEntity];
+      } else {
+        span = this.spanSelection;
+      }
 
       if (this.annotationSet.id) {
         annotationToCreate = {
           document: this.documentId,
-          span: [this.spanSelection],
+          span: span,
           label: this.label.id,
           annotation_set: this.annotationSet.id,
           is_correct: true,
@@ -136,7 +155,7 @@ export default {
         // if annotation set id is null
         annotationToCreate = {
           document: this.documentId,
-          span: [this.spanSelection],
+          span: span,
           label: this.label.id,
           label_set: this.annotationSet.label_set.id,
           is_correct: true,
@@ -175,12 +194,21 @@ export default {
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
+
+      this.$store.dispatch("document/setSelectedEntity", null);
     },
     isEmptyAnnotationEditable() {
+      if (this.selectedEntity) {
+        return (
+          this.selectionEnabled === this.emptyAnnotationId() && !this.isLoading
+        );
+      }
+
       return (
         this.selectionEnabled === this.emptyAnnotationId() &&
         this.spanSelection &&
-        this.spanSelection.offset_string != null &&
+        this.spanSelection[this.spanIndex] &&
+        this.spanSelection[this.spanIndex].offset_string != null &&
         !this.isLoading
       );
     },
@@ -228,13 +256,19 @@ export default {
     }
   },
   watch: {
-    spanSelection(span) {
-      if (
-        this.selectionEnabled === this.emptyAnnotationId() &&
-        span &&
-        span.offset_string
-      ) {
-        this.setText(span.offset_string);
+    span(newValue) {
+      if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
+        if (this.isValueArray(newValue))
+          newValue.map(span => {
+            if (span.offset_string) {
+              span.offset_string =
+                this.$refs.emptyAnnotation.textContent.trim();
+              span.offset_string_original =
+                this.$refs.emptyAnnotation.textContent.trim();
+
+              this.setText(span.offset_string);
+            }
+          });
       }
     },
     editAnnotation(newAnnotation, oldAnnotation) {
@@ -250,6 +284,13 @@ export default {
     isHovered(newValue) {
       if (this.publicView) return;
       this.showReject = newValue && !this.isAnnotationBeingEdited();
+    },
+    selectedEntity(newValue) {
+      if (!newValue) return;
+
+      if (this.emptyAnnotationId() === this.editAnnotation.id) {
+        this.setText(newValue.offset_string);
+      }
     }
   }
 };

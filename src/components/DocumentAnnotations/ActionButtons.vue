@@ -58,17 +58,35 @@
       v-if="
         !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
       "
-      @mouseenter="hoverEmptyLabels"
-      @mouseleave="leaveEmptyLabels"
+      @mouseenter="mouseenterAnnotationSet('reject')"
+      @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
-        class="reject-btn"
+        :class="['reject-btn', 'reject-all-btn']"
         @click.stop="rejectAllEmpty"
         :disabled="emptyLabelsLength(annotationSet) === 0"
       >
         {{ $t("reject_all_empty") }} ({{ emptyLabelsLength(annotationSet) }})
       </b-button>
+    </div>
+
+    <!-- accept all pending annotations -->
+    <div
+      class="accept-all"
+      v-if="!publicView && acceptAllBtn && !isLoading"
+      @mouseenter="mouseenterAnnotationSet('accept')"
+      @mouseleave="mouseleaveAnnotationSet"
+    >
+      <b-button
+        type="is-ghost"
+        class="accept-all-btn"
+        @click.stop="acceptGroup"
+        :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
+        >{{ $t("accept_group") }} ({{
+          annotationsWithPendingReviewLength(annotationSet)
+        }})</b-button
+      >
     </div>
 
     <!-- finish review button -->
@@ -134,11 +152,17 @@ export default {
     },
     annotationSet: {
       type: Object
+    },
+    acceptAllBtn: {
+      type: Boolean
     }
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
-    ...mapGetters("document", ["emptyLabelsLength"])
+    ...mapGetters("document", [
+      "emptyLabelsLength",
+      "annotationsWithPendingReviewLength"
+    ])
   },
   methods: {
     save() {
@@ -153,17 +177,27 @@ export default {
     reject() {
       this.$parent.$emit("reject");
     },
-    hoverEmptyLabels() {
-      this.$emit("hover-empty-labels");
+    mouseenterAnnotationSet(type) {
+      if (type == "reject") {
+        this.$emit("hover-annotation-set-to-reject");
+      }
+
+      if (type == "accept") {
+        this.$emit("hover-annotation-set-to-accept");
+      }
     },
-    leaveEmptyLabels() {
-      this.$emit("leave-empty-labels");
+    mouseleaveAnnotationSet() {
+      this.$emit("leave-annotation-set-to-accept");
+      this.$emit("leave-annotation-set-to-reject");
     },
     rejectAllEmpty() {
       this.$emit("reject-all-empty");
     },
     finishReview() {
       this.$emit("finish-review");
+    },
+    acceptGroup() {
+      this.$emit("accept-group");
     }
   }
 };

@@ -5,10 +5,7 @@ import {
   EditSidebar,
   SplitOverview,
 } from "../../src/components/DocumentEdit";
-import {
-  DocumentTopBar,
-  DocumentTopBarButtons,
-} from "../../src/components/DocumentTopBar";
+import { DocumentTopBarButtons } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -123,7 +120,7 @@ describe("Document Edit Component", () => {
       .trigger("hover");
 
     expect(
-      wrapper.find(".thumbnail .icon-container .action-icon").exists()
+      await wrapper.find(".thumbnail .icon-container .action-icon").exists()
     ).toBe(true);
   });
 
@@ -279,12 +276,12 @@ describe("Document Edit Component", () => {
     await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     expect(
-      wrapper.findAll(".document-details .overview-thumbnails").length
+      await wrapper.findAll(".document-details .overview-thumbnails").length
     ).toBe(2);
-    expect(wrapper.findAll(".document-details .file-name-section").length).toBe(
-      2
-    );
-    expect(wrapper.findAll(".document-details .category").length).toBe(2);
+    expect(
+      await wrapper.findAll(".document-details .file-name-section").length
+    ).toBe(2);
+    expect(await wrapper.findAll(".document-details .category").length).toBe(2);
   });
 
   it("First subdocument should have original file name", async () => {
@@ -323,6 +320,6 @@ describe("Document Edit Component", () => {
       wrapper
         .findAll(".document-details .doc-info .file-name-section .name-input")
         .at(0).element.value
-    ).toBe("ZRU3S3");
+    ).toBe("3AVAWS");
   });
 });

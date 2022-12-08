@@ -22,10 +22,10 @@
       @keypress.enter="saveAnnotationChanges"
       :id="annotation.id"
     >
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <span v-else class="annotation-value">
-      {{ this.span.offset_string }}
+      {{ span.offset_string }}
     </span>
     <div class="buttons-container">
       <ActionButtons
@@ -56,7 +56,6 @@ export default {
       required: true
     },
     span: {
-      type: Object,
       required: true
     },
     spanIndex: {
@@ -87,10 +86,20 @@ export default {
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
     ...mapGetters("display", ["bboxToRect"]),
+    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
-    ...mapState("document", ["editAnnotation", "publicView", "annotations"]),
+    ...mapState("document", [
+      "editAnnotation",
+      "publicView",
+      "annotations",
+      "newAcceptedAnnotations",
+      "selectedEntity"
+    ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
+        if (this.selectedEntity) {
+          return this.selectedEntity.offset_string;
+        }
         return this.$refs.contentEditable.textContent.trim();
       } else {
         return this.span.offset_string;
@@ -130,6 +139,9 @@ export default {
           })
           .then(() => {
             this.$refs.contentEditable.focus();
+          })
+          .catch(error => {
+            console.log(error);
           });
 
         const page = this.pageAtIndex(this.span.page_index);
@@ -168,6 +180,8 @@ export default {
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
       }
+
+      this.$store.dispatch("document/setSelectedEntity", null);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
@@ -184,26 +198,70 @@ export default {
 
       this.isLoading = true;
 
-      let isToDelete = this.annotationText.length === 0;
+      // Check if we are deleting a single annotation that it's not multi-lined
+      let isToDelete =
+        this.annotationText.length === 0 &&
+        (!this.isValueArray(this.annotation.span) ||
+          this.annotation.span.length === 1);
+
       let storeAction;
 
       if (isToDelete) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
-        const spans = [...this.annotation.span];
-        if (this.spanSelection) {
+
+        let spans = [...this.annotation.span];
+
+        // Validations to consider span as an array (multiline annotations) or object
+        if (
+          this.annotationText.length === 0 &&
+          this.isValueArray(this.annotation.span)
+        ) {
+          // if the annotation content in one row was deleted
+          // check if it it part of an array
+          // to only remove that string
+          spans.splice(this.spanIndex, 1);
+        } else if (
+          this.spanSelection &&
+          this.isValueArray(this.spanSelection)
+        ) {
+          let span;
+
+          // Check if editing was from selecting an entity
+          if (this.selectedEntity) {
+            span = this.selectedEntity;
+          } else {
+            spans = [...this.spanSelection];
+            span = this.createSpan(this.spanSelection[this.spanIndex]);
+          }
+
+          // span is array, only update current one
           spans[this.spanIndex] = {
             ...spans[this.spanIndex],
-            offset_string: this.annotationText,
-            page_index: this.spanSelection.page_index,
-            x0: this.spanSelection.x0,
-            x1: this.spanSelection.x1,
-            y0: this.spanSelection.y0,
-            y1: this.spanSelection.y1,
-            start_offset: this.spanSelection.start_offset,
-            end_offset: this.spanSelection.end_offset
+            span
           };
+        } else {
+          // if span is NOT an array, but an object
+          let span;
+
+          if (this.selectedEntity) {
+            spans[this.spanIndex] = { ...this.selectedEntity };
+          } else if (this.spanSelection) {
+            span = this.createSpan(this.spanSelection);
+
+            spans[this.spanIndex] = {
+              ...spans[this.spanIndex],
+              span
+            };
+          } else {
+            span = this.createSpan(this.span);
+
+            spans[this.spanIndex] = {
+              ...spans[this.spanIndex],
+              span
+            };
+          }
         }
 
         updatedString = {
@@ -245,6 +303,18 @@ export default {
           }
         });
     },
+    createSpan(span) {
+      return {
+        offset_string: this.annotationText,
+        page_index: span.page_index,
+        x0: span.x0,
+        x1: span.x1,
+        y0: span.y0,
+        y1: span.y1,
+        start_offset: span.start_offset,
+        end_offset: span.end_offset
+      };
+    },
     showButton() {
       if (this.publicView) return;
 
@@ -252,17 +322,41 @@ export default {
         return true;
       }
       return false;
+    },
+    enableLoading(annotations) {
+      if (annotations) {
+        const found = annotations.ids.find(
+          annotation => annotation === this.annotation.id
+        );
+
+        if (found) {
+          this.isLoading = true;
+        }
+      } else {
+        this.isLoading = false;
+      }
     }
   },
   watch: {
-    spanSelection(span) {
-      if (
-        this.isAnnotationBeingEdited &&
-        span &&
-        span.offset_string &&
-        span.offset_string !== this.span.offset_string
-      ) {
-        this.setText(span.offset_string);
+    span(newValue) {
+      if (this.isAnnotationBeingEdited && newValue) {
+        if (this.isValueArray(newValue)) {
+          newValue.map(span => {
+            if (
+              span.offset_string &&
+              span.offset_string !== this.span.offset_string
+            )
+              this.setText(span.offset_string);
+          });
+        } else {
+          if (
+            (newValue.offset_string &&
+              newValue.offset_string !== this.span.offset_string) ||
+            newValue.offset_string !==
+              this.$refs.contentEditable.textContent.trim()
+          )
+            this.setText(newValue.offset_string);
+        }
       }
     },
     editAnnotation(newAnnotation, oldAnnotation) {
@@ -280,6 +374,21 @@ export default {
     isHovered(newValue) {
       if (this.publicView) return;
       this.showAcceptButton = newValue && !this.annotation.revised;
+    },
+    newAcceptedAnnotations(newValue) {
+      if (!newValue) {
+        this.isLoading = false;
+        return;
+      }
+
+      this.enableLoading(newValue);
+    },
+    selectedEntity(newValue) {
+      if (!newValue) return;
+
+      if (this.annotation.id === this.editAnnotation.id) {
+        this.setText(newValue.offset_string);
+      }
     }
   }
 };

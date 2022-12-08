@@ -5,7 +5,7 @@
     <b-modal
       ref="modal"
       v-model="show"
-      :can-cancel="documentCategory && documentCategory.id !== null"
+      :can-cancel="canCloseModal()"
       class="modal-absolute modal-400 modal-no-footer"
     >
       <section class="modal-card-body">
@@ -37,6 +37,7 @@
               :key="categoryItem.id"
               aria-role="listitem"
               :value="categoryItem"
+              @click="setSelectedCategory(categoryItem)"
             >
               <span>{{ categoryItem.name }}</span>
             </b-dropdown-item>
@@ -99,12 +100,24 @@ export default {
         this.show = !this.categorizationIsConfirmed;
       }
     },
+    canCloseModal() {
+      return !!this.documentCategory && this.documentCategory.id !== null;
+    },
+    setSelectedCategory(category) {
+      this.selectedCategory = category;
+    },
     submit() {
-      if (this.selectedCategory.id !== this.documentCategory.id) {
+      if (
+        (this.selectedCategory &&
+          this.documentCategory &&
+          this.selectedCategory.id !== this.documentCategory.id) ||
+        (this.selectedCategory && !this.documentCategory)
+      ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
           is_category_accepted: true
         };
+
         this.$store.dispatch("document/startRecalculatingAnnotations");
 
         this.$store
