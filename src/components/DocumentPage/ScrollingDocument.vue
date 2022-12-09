@@ -29,7 +29,7 @@
         <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
-    <Toolbar v-if="!editMode && pages.length > 0 && scale" />
+    <Toolbar v-if="pages.length > 0 && scale" />
   </div>
 </template>
 
