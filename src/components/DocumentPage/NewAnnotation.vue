@@ -264,6 +264,7 @@ export default {
         trapFocus: true,
         canCancel: false,
         onCancel: this.disableLabelSetModalShowing,
+        customClass: "invisible-parent-modal",
         events: {
           labelSet: this.chooseLabelSet,
           close: this.disableLabelSetModalShowing

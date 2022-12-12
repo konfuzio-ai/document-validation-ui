@@ -346,6 +346,19 @@ button {
   }
 }
 
+.invisible-parent-modal {
+  background-color: transparent;
+
+  .modal-content {
+    height: 100vh !important;
+    top: 25%;
+
+    .modal-card-body {
+      overflow: visible;
+    }
+  }
+}
+
 .loading-background {
   background-color: transparent !important;
 }

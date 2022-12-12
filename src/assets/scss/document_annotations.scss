@@ -5,6 +5,8 @@
   flex: 1;
   background-color: $background;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   .annotations-skeleton {
     .label-set-name-skeleton {
@@ -296,6 +298,7 @@
             }
 
             .annotation-row-left {
+
               .annotation-details,
               .label-name {
                 margin-bottom: -1px;
@@ -319,6 +322,7 @@
           }
 
           @keyframes shake {
+
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);
