@@ -86,14 +86,18 @@ const actions = {
             // we go to the next item
             continue;
           } else if (
-            rootGetters.isDocumentReadyToBeReviewed(state.documentsInProject[i])
+            rootGetters["document/isDocumentReadyToBeReviewed"](
+              state.documentsInProject[i]
+            )
           ) {
             // add available doc to the end of the array if assigned to user
             if (state.documentsInProject[i].assignee === user) {
               commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
             }
           } else if (
-            rootGetters.documentHadErrorDuringExtraction(state.documents[i])
+            rootGetters["document/documentHadErrorDuringExtraction"](
+              state.documentsInProject[i]
+            )
           ) {
             dispatch("document/setDocumentError", true);
             // If error, add 1
@@ -163,7 +167,7 @@ const actions = {
 
 const mutations = {
   SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
-    state.documents = documents;
+    state.documentsInProject = documents;
   },
   SET_AVAILABLE_DOCUMENTS: (state, documentsAvailableToReview) => {
     state.documentsAvailableToReview = documentsAvailableToReview;
