@@ -5,6 +5,31 @@ const state = {
   projectId: null
 };
 
+const getters = {
+  /**
+   * Gets label sets for an annotation set creation
+   */
+  labelSetsFilteredForAnnotationSetCreation: state => (labelsSet, annotationSets) => {
+    let returnLabels = [];
+    if (labelsSet) {
+      returnLabels = labelsSet.filter(labelSet => {
+        // check if label set has multiple and if not, if there's already an annotation set created
+        if (!labelSet.has_multiple_annotation_sets) {
+          const existingAnnotationSet = annotationSets.find(annSet => {
+            return annSet.id === labelSet.id;
+          });
+          return (
+            existingAnnotationSet
+          );
+        } else {
+          return true;
+        }
+      });
+    }
+    return returnLabels;
+  },
+}
+
 const actions = {
   setProjectId: ({
     commit
@@ -55,5 +80,6 @@ export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
+  getters
 };

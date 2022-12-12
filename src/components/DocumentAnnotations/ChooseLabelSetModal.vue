@@ -9,8 +9,9 @@
     <b-modal
       ref="modal"
       v-model="show"
-      :can-cancel="['outside']"
+      :can-cancel="['x', 'outside']"
       class="modal-absolute modal-400 modal-no-footer"
+      :on-cancel="close"
     >
       <section class="modal-card-body">
         <div class="content">
@@ -59,8 +60,11 @@
             @click="submit"
             :disabled="!selectedLabelSet"
           >
-            {{ $t("submit") }}
+            {{ $t("continue") }}
           </b-button>
+          <p v-if="selectedLabelSet" class="next-step-description">
+            {{ $t("new_ann_set_hint") }}
+          </p>
         </div>
       </section>
     </b-modal>
@@ -77,8 +81,8 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "CreateAnnotationSetModal",
   computed: {
-    ...mapState("document", [""]),
-    ...mapGetters("document", [""])
+    ...mapState("document", ["annotationSets"]),
+    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"])
   },
   data() {
     return {
@@ -89,16 +93,22 @@ export default {
   },
   mounted() {
     this.$store.dispatch("project/fetchLabelSets").then(data => {
-      this.labelSets = data;
+      this.labelSets = this.labelSetsFilteredForAnnotationSetCreation(
+        data,
+        this.annotationSets
+      );
     });
   },
   methods: {
     submit() {
       this.$emit("labelSet", this.selectedLabelSet);
-      this.$parent.close();
+      this.close();
     },
     setSelectedLabelSet(labelSet) {
       this.selectedLabelSet = labelSet;
+    },
+    close() {
+      this.$emit("close");
     }
   }
 };

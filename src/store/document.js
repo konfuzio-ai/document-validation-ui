@@ -95,12 +95,13 @@ const getters = {
   },
 
   /**
-   * Gets labels for an annotation creation
+   * Gets labels for an annotation creation from a label/annotation set
    */
-  labelsFilteredForAnnotationCreation: state => labels => {
+  labelsFilteredForAnnotationCreation: state => (set) => {
     let returnLabels = [];
-    if (labels) {
-      returnLabels = labels.filter(label => {
+    if (set.id && set.labels) {
+      // if existing ann set, check for multiple
+      returnLabels = set.labels.filter(label => {
         // check if label has multiple and if not, if there's already an annotation created
         if (!label.has_multiple_top_candidates) {
           const existingLabel = state.labels.find(documentLabel => {
@@ -115,6 +116,9 @@ const getters = {
           return true;
         }
       });
+    } else if (set.labels) {
+      // if not existing ann set, then return all labels
+      returnLabels = set.labels;
     }
     return returnLabels;
   },

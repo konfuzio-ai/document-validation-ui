@@ -2,7 +2,14 @@
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
     <input class="popup-input" type="text" v-model="selectedContent" />
-    <b-dropdown v-model="selectedSet" aria-role="list">
+    <b-dropdown
+      v-model="selectedSet"
+      aria-role="list"
+      :class="[
+        'no-padding-bottom',
+        setsList.length === 0 ? 'no-padding-top' : ''
+      ]"
+    >
       <template #trigger>
         <b-button
           :class="['popup-input', selectedSet ? '' : 'not-selected']"
@@ -18,12 +25,9 @@
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            ></b-icon> </span
-        ></b-button>
+            <b-icon icon="angle-down" size="is-small" class="caret" />
+          </span>
+        </b-button>
       </template>
       <b-dropdown-item
         aria-role="listitem"
@@ -37,6 +41,19 @@
           }`
         }}</span>
       </b-dropdown-item>
+      <b-button
+        type="is-ghost"
+        :class="[
+          'add-ann-set',
+          'dropdown-item',
+          'no-icon-margin',
+          setsList.length > 0 ? 'has-border' : ''
+        ]"
+        icon-left="plus"
+        @click="openAnnotationSetCreation"
+      >
+        {{ $t("new_ann_set_title") }}
+      </b-button>
     </b-dropdown>
     <b-dropdown
       v-model="selectedLabel"
@@ -72,11 +89,6 @@
         <span>{{ label.name }}</span>
       </b-dropdown-item>
     </b-dropdown>
-    <div>
-      <button @click="openAnnotationSetCreation">
-        Create new annotation set
-      </button>
-    </div>
     <div class="annotation-buttons">
       <b-button
         type="is-text"
@@ -162,7 +174,7 @@ export default {
       labels: null,
       selectedContent: this.content,
       loading: false,
-      isLabelSetModalShowing: false,
+      isAnnSetModalShowing: false,
       setsList: []
     };
   },
@@ -178,7 +190,7 @@ export default {
   },
   methods: {
     clickOutside(event) {
-      if (!this.isLabelSetModalShowing) {
+      if (!this.isAnnSetModalShowing) {
         if (!(this.$el == event.target || this.$el.contains(event.target))) {
           this.close();
         }
@@ -228,7 +240,7 @@ export default {
     disableLabelSetModalShowing() {
       // timeout to stop propagation of click event
       setTimeout(() => {
-        this.isLabelSetModalShowing = false;
+        this.isAnnSetModalShowing = false;
       }, 500);
     },
     chooseLabelSet(labelSet) {
@@ -243,18 +255,18 @@ export default {
       this.selectedSet = newSet;
     },
     openAnnotationSetCreation() {
-      this.isLabelSetModalShowing = true;
+      this.isAnnSetModalShowing = true;
 
       this.$buefy.modal.open({
         parent: this.$parent,
         component: ChooseLabelSetModal,
         hasModalCard: true,
         trapFocus: true,
-        onCancel: () => {
-          this.disableLabelSetModalShowing();
-        },
+        canCancel: false,
+        onCancel: this.disableLabelSetModalShowing,
         events: {
-          labelSet: this.chooseLabelSet
+          labelSet: this.chooseLabelSet,
+          close: this.disableLabelSetModalShowing
         }
       });
     }
@@ -262,7 +274,7 @@ export default {
   watch: {
     selectedSet(newValue) {
       this.selectedLabel = null;
-      this.labels = this.labelsFilteredForAnnotationCreation(newValue.labels);
+      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
     }
   }
 };

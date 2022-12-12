@@ -239,7 +239,19 @@ button {
 .dropdown {
   height: 100%;
 
-  + .dropdown {
+  &.no-padding-bottom {
+    .dropdown-content {
+      padding-bottom: 0;
+    }
+  }
+
+  &.no-padding-top {
+    .dropdown-content {
+      padding-top: 0;
+    }
+  }
+
+  +.dropdown {
     margin-left: 0;
   }
 
@@ -301,6 +313,7 @@ button {
 
       .modal-close {
         position: absolute;
+        top: 14px;
 
         &::before,
         &::after {
@@ -453,9 +466,19 @@ button {
   }
 }
 
-.icon.is-small {
+.no-icon-margin .icon {
+  margin: 0 !important;
+}
+
+.icon.is-small,
+.button .icon.is-small {
   width: 14px;
   height: 14px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 
   &.caret {
     svg {

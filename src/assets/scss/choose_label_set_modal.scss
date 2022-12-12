@@ -26,6 +26,22 @@
             margin-bottom: 4px;
         }
 
+        .labels-list {
+            color: $grey-blue;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+        }
+
+        .next-step-description {
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 18px;
+            text-align: center;
+            color: $dark-blue;
+            margin-top: 8px;
+        }
+
         .submit-ann-set {
             margin-top: 16px;
             width: 100%;
