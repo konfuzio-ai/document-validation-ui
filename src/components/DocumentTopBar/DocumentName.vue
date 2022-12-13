@@ -22,7 +22,9 @@
       >
     </span>
     <div
-      v-if="!publicView && showEditBtn && !editMode"
+      v-if="
+        !publicView && showEditBtn && !editMode && !recalculatingAnnotations
+      "
       class="edit-btn btn"
       @click="handleEdit"
     >
@@ -87,7 +89,11 @@ export default {
     FileNameNotSaved
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("document", [
+      "selectedDocument",
+      "publicView",
+      "recalculatingAnnotations"
+    ]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
     textContent() {
