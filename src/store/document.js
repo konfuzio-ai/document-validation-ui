@@ -19,7 +19,7 @@ const state = {
   missingAnnotations: [],
   currentUser: null, // TODO: move this to project store
   publicView: true,
-  showError: false,
+  showActionError: false,
   errorMessage: null,
   showDocumentError: false,
   rejectedMissingAnnotations: null,
@@ -411,9 +411,9 @@ const actions = {
   },
   setErrorMessage: ({ commit }, message) => {
     if (message) {
-      commit("SET_SHOW_ERROR", true);
+      commit("SET_SHOW_ACTION_ERROR", true);
     } else {
-      commit("SET_SHOW_ERROR", false);
+      commit("SET_SHOW_ACTION_ERROR", false);
     }
 
     commit("SET_ERROR_MESSAGE", message);
@@ -589,25 +589,17 @@ const actions = {
   },
 
   createAnnotation: ({ commit, getters }, annotation) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       HTTP.post(`/annotations/`, annotation)
         .then(response => {
           if (response.status === 201) {
             commit("ADD_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-            resolve(response.data);
+            resolve(true);
           }
         })
         .catch(error => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.length > 0
-          ) {
-            reject(error.response.data[0]);
-          } else {
-            reject(null);
-          }
+          resolve(error.response);
           console.log(error);
         });
     });
@@ -631,9 +623,9 @@ const actions = {
           ) {
             reject(error.response.data[0]);
           } else {
+            console.log(error);
             reject(null);
           }
-          console.log(error);
         });
     });
   },
@@ -805,9 +797,15 @@ const actions = {
         }
       })
       .catch(error => {
-        console.log("catch", error);
         dispatch("setDocumentError", true);
+        console.log(error);
       });
+  },
+
+  closeErrorMessage: ({ commit }) => {
+    setTimeout(() => {
+      commit("SET_ERROR_MESSAGE", null);
+    }, 2000);
   }
 };
 
@@ -956,8 +954,8 @@ const mutations = {
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
   },
-  SET_SHOW_ERROR: (state, value) => {
-    state.showError = value;
+  SET_SHOW_ACTION_ERROR: (state, value) => {
+    state.showActionError = value;
   },
   SET_ERROR_MESSAGE: (state, message) => {
     state.errorMessage = message;

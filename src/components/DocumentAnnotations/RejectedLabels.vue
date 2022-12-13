@@ -60,7 +60,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["labels"])
+    ...mapState("document", ["labels", "showActionError"])
   },
   methods: {
     removeRejectedLabel(id) {
@@ -82,6 +82,9 @@ export default {
         .finally(() => {
           this.isLoading = false;
           this.closedTag = null;
+          if (this.showActionError) {
+            this.$store.dispatch("document/closeErrorMessage");
+          }
         });
     },
     getLabelName(label) {

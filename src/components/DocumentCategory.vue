@@ -77,7 +77,7 @@ export default {
     ...mapGetters("category", {
       categoryName: "categoryName"
     }),
-    ...mapState("document", ["selectedDocument"]),
+    ...mapState("document", ["selectedDocument", "showActionError"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["updatedDocument"])
   },
@@ -126,6 +126,9 @@ export default {
           })
           .finally(() => {
             this.$store.dispatch("document/endRecalculatingAnnotations");
+            if (this.showActionError) {
+              this.$store.dispatch("document/closeErrorMessage");
+            }
           });
 
         return;
