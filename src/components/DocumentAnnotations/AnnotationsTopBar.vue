@@ -37,7 +37,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["publicView", "finishedReview"])
+    ...mapState("document", ["publicView", "finishedReview", "showActionError"])
   },
   mounted() {
     this.finishDisabled = !this.finishedReview;
@@ -67,6 +67,9 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
+          if (this.showActionError) {
+            this.$store.dispatch("document/closeErrorMessage");
+          }
         });
     }
   },

@@ -77,7 +77,7 @@ export default {
   name: "CategorizeModal",
   computed: {
     ...mapState("category", ["categories"]),
-    ...mapState("document", ["selectedDocument"]),
+    ...mapState("document", ["selectedDocument", "showActionError"]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["categorizationIsConfirmed"])
   },
@@ -134,6 +134,11 @@ export default {
                 "document/setErrorMessage",
                 this.$t("category_error")
               );
+            }
+          })
+          .finally(() => {
+            if (this.showActionError) {
+              this.$store.dispatch("document/closeErrorMessage");
             }
           });
       } else {

@@ -140,7 +140,11 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["annotationSets", "documentId"]),
+    ...mapState("document", [
+      "annotationSets",
+      "documentId",
+      "showActionError"
+    ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation"
@@ -222,9 +226,9 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .catch(error => {
-          if (error) {
-            this.$store.dispatch("document/setErrorMessage", error);
+        .then(response => {
+          if (response && !response.data) {
+            this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.$store.dispatch(
               "document/setErrorMessage",
@@ -235,6 +239,9 @@ export default {
         .finally(() => {
           this.close();
           this.loading = false;
+          if (this.showActionError) {
+            this.$store.dispatch("document/closeErrorMessage");
+          }
         });
     },
     disableLabelSetModalShowing() {

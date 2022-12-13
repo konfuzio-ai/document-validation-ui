@@ -174,6 +174,10 @@ export default {
         this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/endLoading");
+
+        if (this.showActionError) {
+          this.$store.dispatch("document/closeErrorMessage");
+        }
       }
 
       this.isLoading = false;
@@ -295,12 +299,6 @@ export default {
         })
         .finally(() => {
           this.handleCancel();
-
-          if (this.error) {
-            setTimeout(() => {
-              this.error = false;
-            }, 2000);
-          }
         });
     },
     createSpan(span) {
