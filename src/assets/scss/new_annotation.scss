@@ -9,7 +9,7 @@
   position: absolute;
   width: 205px;
   height: 192px;
-  z-index: 999;
+  z-index: 40;
   color: $white;
   padding: 8px;
 
@@ -37,6 +37,31 @@
 
   .not-selected {
     color: $grey-detail;
+  }
+
+  .add-ann-set {
+    &.has-border {
+      border-top: 1px solid $grey-detail;
+    }
+
+    width: 100%;
+    color: $primary !important;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 500;
+  }
+
+  .add-ann-set-modal {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+  }
+
+  .annotation-dropdowns {
+    display: flex;
+    flex-direction: column;
   }
 
   .annotation-buttons {

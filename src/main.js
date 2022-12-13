@@ -32,7 +32,8 @@ import {
   faRepeat,
   faEye,
   faArrowLeft,
-  faQuestion
+  faQuestion,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FontAwesomeIcon
@@ -57,7 +58,8 @@ library.add(
   faRepeat,
   faEye,
   faArrowLeft,
-  faQuestion
+  faQuestion,
+  faPlus
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 Vue.component("App", App);

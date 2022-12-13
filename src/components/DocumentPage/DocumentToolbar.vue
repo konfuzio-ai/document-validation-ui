@@ -11,6 +11,7 @@
         size="is-large"
       >
         <div
+          v-if="!editMode"
           :class="[
             'icons icons-left',
             editModeDisabled && 'edit-mode-disabled'
@@ -23,7 +24,7 @@
           <span class="edit-text">{{ $t("edit") }}</span>
         </div>
       </b-tooltip>
-      <div class="toolbar-divider"></div>
+      <div class="toolbar-divider" v-if="!editMode"></div>
       <div class="icons icons-right">
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
@@ -68,6 +69,7 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
+    ...mapState("edit", ["editMode"]),
     ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
     ...mapGetters("document", ["documentCannotBeEdited"])
   },

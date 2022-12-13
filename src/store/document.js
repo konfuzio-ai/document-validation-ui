@@ -95,12 +95,13 @@ const getters = {
   },
 
   /**
-   * Gets labels for an annotation creation
+   * Gets labels for an annotation creation from a label/annotation set
    */
-  labelsFilteredForAnnotationCreation: state => labels => {
+  labelsFilteredForAnnotationCreation: state => (set) => {
     let returnLabels = [];
-    if (labels) {
-      returnLabels = labels.filter(label => {
+    if (set.id && set.labels) {
+      // if existing ann set, check for multiple
+      returnLabels = set.labels.filter(label => {
         // check if label has multiple and if not, if there's already an annotation created
         if (!label.has_multiple_top_candidates) {
           const existingLabel = state.labels.find(documentLabel => {
@@ -115,6 +116,9 @@ const getters = {
           return true;
         }
       });
+    } else if (set.labels) {
+      // if not existing ann set, then return all labels
+      returnLabels = set.labels;
     }
     return returnLabels;
   },
@@ -133,6 +137,40 @@ const getters = {
       return !getters.isAnnotationDeleted(annotation);
     });
     return annotations.length > 0;
+  },
+
+  /* Checks if the document has an annotation set */
+  annotationSetExists: state => (annotationSetId) => {
+    return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
+  },
+
+  /* Process annotations and extract labels and sets */
+  processAnnotationSets: (state, getters) => (annotationSets) => {
+    // group annotations for sidebar
+    const annotations = [];
+    const labels = [];
+    const processedAnnotationSets = annotationSets.map(
+      annotationSet => {
+        const annotationSetLabels = annotationSet.labels.map(label => {
+          // filter label
+          const filteredLabel = getters.annotationsInLabelFiltered(label);
+
+          // add annotations to the document array
+          annotations.push(...filteredLabel.annotations);
+          labels.push(filteredLabel);
+          // add labels to the labels array
+          return filteredLabel;
+        });
+        annotationSet.labels = annotationSetLabels;
+        return annotationSet;
+      }
+    );
+
+    return {
+      annotationSets: processedAnnotationSets,
+      labels,
+      annotations
+    }
   },
 
   /* Returns the number of accepted annotations in a label */
@@ -184,7 +222,7 @@ const getters = {
         // check which one has more confidence or if it's the same, then check if one is revised or not
         if (
           highestConfidenceAnnotation.confidence <
-            label.annotations[i].confidence ||
+          label.annotations[i].confidence ||
           (highestConfidenceAnnotation.confidence ===
             label.annotations[i].confidence &&
             label.annotations[i].revised)
@@ -207,8 +245,7 @@ const getters = {
   /**
    * Checks if annotation is being edited
    */
-  isAnnotationInEditMode:
-    state =>
+  isAnnotationInEditMode: state =>
     (annotationId, index = null) => {
       if (state.editAnnotation && annotationId) {
         if (index != null) {
@@ -350,26 +387,41 @@ const getters = {
 };
 
 const actions = {
-  startLoading: ({ commit }) => {
+  startLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", true);
   },
-  endLoading: ({ commit }) => {
+  endLoading: ({
+    commit
+  }) => {
     commit("SET_LOADING", false);
   },
-  setDocId: ({ commit }, id) => {
+  setDocId: ({
+    commit
+  }, id) => {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setSidebarAnnotationSelected: ({ commit }, annotation) => {
+  setSidebarAnnotationSelected: ({
+    commit
+  }, annotation) => {
     commit("SET_ANNOTATION_SELECTED", annotation);
   },
-  setAnnotationSets: ({ commit }, annotationSets) => {
+  setAnnotationSets: ({
+    commit
+  }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
-  setEditAnnotation: (
-    { commit },
-    { id, index, label, labelSet, annotationSet }
-  ) => {
+  setEditAnnotation: ({
+    commit
+  }, {
+    id,
+    index,
+    label,
+    labelSet,
+    annotationSet
+  }) => {
     const value = {
       id,
       index,
@@ -379,37 +431,59 @@ const actions = {
     };
     commit("SET_EDIT_ANNOTATION", value);
   },
-  resetEditAnnotation: ({ commit }) => {
+  resetEditAnnotation: ({
+    commit
+  }) => {
     commit("RESET_EDIT_ANNOTATION");
   },
-  setAnnotations: ({ commit }, annotations) => {
+  setAnnotations: ({
+    commit
+  }, annotations) => {
     commit("SET_ANNOTATIONS", annotations);
   },
-  setLabels: ({ commit }, labels) => {
+  setLabels: ({
+    commit
+  }, labels) => {
     commit("SET_LABELS", labels);
   },
-  setPages: ({ commit }, pages) => {
+  setPages: ({
+    commit
+  }, pages) => {
     commit("SET_PAGES", pages);
   },
-  setSelectedDocument: ({ commit }, document) => {
+  setSelectedDocument: ({
+    commit
+  }, document) => {
     commit("SET_SELECTED_DOCUMENT", document);
   },
-  setPublicView: ({ commit }, publicView) => {
+  setPublicView: ({
+    commit
+  }, publicView) => {
     commit("SET_PUBLIC_VIEW", publicView);
   },
-  startRecalculatingAnnotations: ({ commit }) => {
+  startRecalculatingAnnotations: ({
+    commit
+  }) => {
     commit("SET_RECALCULATING_ANNOTATIONS", true);
   },
-  endRecalculatingAnnotations: ({ commit }) => {
+  endRecalculatingAnnotations: ({
+    commit
+  }) => {
     commit("SET_RECALCULATING_ANNOTATIONS", false);
   },
-  setMissingAnnotations: ({ commit }, missingAnnotations) => {
+  setMissingAnnotations: ({
+    commit
+  }, missingAnnotations) => {
     commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
   },
-  setCurrentUser: ({ commit }, currentUser) => {
+  setCurrentUser: ({
+    commit
+  }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
   },
-  setErrorMessage: ({ commit }, message) => {
+  setErrorMessage: ({
+    commit
+  }, message) => {
     if (message) {
       commit("SET_SHOW_ERROR", true);
     } else {
@@ -418,22 +492,34 @@ const actions = {
 
     commit("SET_ERROR_MESSAGE", message);
   },
-  setDocumentError: ({ commit }, value) => {
+  setDocumentError: ({
+    commit
+  }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
   },
-  setRejectedMissingAnnotations: ({ commit }, annotations) => {
+  setRejectedMissingAnnotations: ({
+    commit
+  }, annotations) => {
     commit("SET_REJECTED_MISSING_ANNOTATIONS", annotations);
   },
-  setErrorMessageWidth: ({ commit }, width) => {
+  setErrorMessageWidth: ({
+    commit
+  }, width) => {
     commit("SET_ERROR_MESSAGE_WIDTH", width);
   },
-  setHoveredAnnotationSet: ({ commit }, annotationSet) => {
+  setHoveredAnnotationSet: ({
+    commit
+  }, annotationSet) => {
     commit("SET_HOVERED_ANNOTATION_SET", annotationSet);
   },
-  setNewAcceptedAnnotations: ({ commit }, annotations) => {
+  setNewAcceptedAnnotations: ({
+    commit
+  }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
   },
-  setSelectedEntity: ({ commit }, entity) => {
+  setSelectedEntity: ({
+    commit
+  }, entity) => {
     commit("SET_SELECTED_ENTITY", entity);
   },
 
@@ -441,8 +527,13 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocument: async (
-    { commit, state, dispatch, rootState, getters },
+  fetchDocument: async ({
+      commit,
+      state,
+      dispatch,
+      rootState,
+      getters
+    },
     pollDocumentList = false
   ) => {
     let projectId = null;
@@ -459,26 +550,11 @@ const actions = {
     await HTTP.get(`documents/${state.documentId}/`)
       .then(async response => {
         if (response.data) {
-          const annotations = [];
-          let labels = [];
-
-          // group annotations for sidebar
-          const annotationSets = response.data.annotation_sets.map(
-            annotationSet => {
-              const annotationSetLabels = annotationSet.labels.map(label => {
-                // filter label
-                const filteredLabel = getters.annotationsInLabelFiltered(label);
-
-                // add annotations to the document array
-                annotations.push(...filteredLabel.annotations);
-                labels.push(filteredLabel);
-                // add labels to the labels array
-                return filteredLabel;
-              });
-              annotationSet.labels = annotationSetLabels;
-              return annotationSet;
-            }
-          );
+          const {
+            labels,
+            annotations,
+            annotationSets
+          } = getters.processAnnotationSets(response.data.annotation_sets);
 
           // load first page
           if (response.data.pages.length > 0) {
@@ -522,13 +598,11 @@ const actions = {
       }
       if (categoryId) {
         await dispatch(
-          "category/createAvailableDocumentsList",
-          {
+          "category/createAvailableDocumentsList", {
             categoryId,
             user: state.currentUser,
             poll: pollDocumentList
-          },
-          {
+          }, {
             root: true
           }
         );
@@ -542,7 +616,10 @@ const actions = {
   },
 
   // Get document page data
-  fetchDocumentPage: ({ commit, state }, page) => {
+  fetchDocumentPage: ({
+    commit,
+    state
+  }, page) => {
     return HTTP.get(`documents/${state.documentId}/pages/${page}/`)
       .then(response => {
         commit("ADD_PAGE", response.data);
@@ -552,24 +629,14 @@ const actions = {
       });
   },
 
-  // Get label details
-  fetchLabelSetDetails: ({ commit, state }, labelSetId) => {
-    return new Promise((resolve, reject) => {
-      HTTP.get(`label-sets/${labelSetId}/`)
-        .then(response => {
-          return resolve(response.data);
-        })
-        .catch(error => {
-          reject(error);
-          console.log(error);
-        });
-    });
-  },
-
-  setDocumentAnnotationSelected: (
-    { commit },
-    { annotation, label, span, scrollTo = false }
-  ) => {
+  setDocumentAnnotationSelected: ({
+    commit
+  }, {
+    annotation,
+    label,
+    span,
+    scrollTo = false
+  }) => {
     const value = {
       scrollTo,
       id: annotation.id,
@@ -580,21 +647,46 @@ const actions = {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
   },
 
-  scrollToDocumentAnnotationSelected: ({ commit }) => {
+  scrollToDocumentAnnotationSelected: ({
+    commit
+  }) => {
     commit("SET_DOCUMENT_ANNOTATION_SCROLL", true);
   },
 
-  disableDocumentAnnotationSelected: ({ commit }) => {
+  disableDocumentAnnotationSelected: ({
+    commit
+  }) => {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
-  createAnnotation: ({ commit, getters }, annotation) => {
+  createAnnotation: ({
+    commit,
+    getters,
+    dispatch
+  }, annotation) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
-        .then(response => {
+        .then(async response => {
           if (response.status === 201) {
-            commit("ADD_ANNOTATION", response.data);
+            dispatch("fetchMissingAnnotations");
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+
+            if (!getters.annotationSetExists(response.data.annotation_set)) {
+              const documentData = await dispatch('fetchDocumentData');
+              if (documentData && documentData.annotation_sets) {
+                const {
+                  labels,
+                  annotations,
+                  annotationSets
+                } = getters.processAnnotationSets(documentData.annotation_sets);
+                commit("SET_ANNOTATION_SETS", annotationSets);
+                commit("SET_ANNOTATIONS", annotations);
+                commit("SET_LABELS", labels);
+              }
+            } else {
+              commit("ADD_ANNOTATION", response.data);
+
+            }
             resolve(response.data);
           }
         })
@@ -613,7 +705,13 @@ const actions = {
     });
   },
 
-  updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
+  updateAnnotation: ({
+    commit,
+    getters
+  }, {
+    updatedValues,
+    annotationId
+  }) => {
     return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then(response => {
@@ -638,7 +736,12 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters }, { annotationId }) => {
+  deleteAnnotation: ({
+    commit,
+    getters
+  }, {
+    annotationId
+  }) => {
     return new Promise(resolve => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(response => {
@@ -653,7 +756,11 @@ const actions = {
     });
   },
 
-  updateDocument: ({ commit, state, getters }, updatedDocument) => {
+  updateDocument: ({
+    commit,
+    state,
+    getters
+  }, updatedDocument) => {
     return new Promise(resolve => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then(response => {
@@ -675,10 +782,14 @@ const actions = {
     });
   },
 
-  fetchMissingAnnotations: ({ commit, state, getters }) => {
+  fetchMissingAnnotations: ({
+    commit,
+    state,
+    getters
+  }) => {
     return HTTP.get(
-      `/missing-annotations/?document=${state.documentId}&limit=100`
-    )
+        `/missing-annotations/?document=${state.documentId}&limit=100`
+      )
       .then(response => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
         commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
@@ -718,14 +829,17 @@ const actions = {
     });
   },
 
-  updateMultipleAnnotations: ({ state, commit }, annotations) => {
+  updateMultipleAnnotations: ({
+    state,
+    commit
+  }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
 
     return new Promise(resolve => {
       return HTTP.patch(
-        `documents/${state.documentId}/update-annotations/`,
-        annotations
-      )
+          `documents/${state.documentId}/update-annotations/`,
+          annotations
+        )
         .then(response => {
           if (response.status === 200) {
             response.data.map(annotation => {
@@ -742,11 +856,14 @@ const actions = {
     });
   },
 
-  fetchDocumentStatus: ({ state, getters }) => {
+  fetchDocumentStatus: ({
+    state,
+    getters
+  }) => {
     return new Promise((resolve, reject) => {
       return HTTP.get(
-        `documents/${state.documentId}/?fields=status_data,labeling_available`
-      )
+          `documents/${state.documentId}/?fields=status_data,labeling_available`
+        )
         .then(response => {
           if (getters.isDocumentReadyToBeReviewed(response.data)) {
             // ready
@@ -766,17 +883,24 @@ const actions = {
   },
 
   // Get document data
-  fetchDocumentData: ({ commit, state }) => {
-    return HTTP.get(`documents/${state.documentId}/`)
-      .then(response => {
-        commit("SET_SELECTED_DOCUMENT", response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  fetchDocumentData: ({
+    state
+  }) => {
+    return new Promise((resolve, reject) => {
+      HTTP.get(`documents/${state.documentId}/`)
+        .then(response => {
+          return resolve(response.data);
+        })
+        .catch(error => {
+          reject(error);
+          console.log(error);
+        });
+    });
   },
 
-  fetchCurrentUser: ({ commit }) => {
+  fetchCurrentUser: ({
+    commit
+  }) => {
     return HTTP.get(`/auth/me/`)
       .then(response => {
         commit("SET_CURRENT_USER", response.data.username);
@@ -791,7 +915,9 @@ const actions = {
     new Promise(resolve => setTimeout(resolve, duration));
   },
 
-  pollDocumentEndpoint: ({ dispatch }) => {
+  pollDocumentEndpoint: ({
+    dispatch
+  }) => {
     return dispatch("fetchDocumentStatus")
       .then(ready => {
         if (ready) {
