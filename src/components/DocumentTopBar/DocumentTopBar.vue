@@ -7,9 +7,11 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
     >
       <div class="left-bar-components">
-        <DocumentCategory v-if="categories && !editMode" />
+        <DocumentCategory
+          v-if="categories && !editMode && !recalculatingAnnotations"
+        />
         <DocumentDatasetStatus
-          v-if="showDatasetDropdown && !editMode"
+          v-if="showDatasetDropdown && !editMode && !recalculatingAnnotations"
           :datasetStatus="selectedDocument.dataset_status"
         />
       </div>
@@ -99,7 +101,12 @@ export default {
     DocumentTopBarButtons
   },
   computed: {
-    ...mapState("document", ["selectedDocument", "publicView", "loading"]),
+    ...mapState("document", [
+      "selectedDocument",
+      "publicView",
+      "loading",
+      "recalculatingAnnotations"
+    ]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"])
   },
