@@ -2,7 +2,7 @@
 
 ## Source Code
 
-This app is built using Vue.js version 2. The `src` folder is the root of the project and is divided into:
+This app is built using [Vue.js version 2](https://v2.vuejs.org/). The `src` folder is the root of the project and is divided into:
 
 `assets` - contains all the images and styles. Each component has it's styles under the `scss` folder. The app uses the [Buefy](https://buefy.org) library, so if you want to edit the app theme you can go to the file `scss/variables.scss` and edit all the colors and variables to match the desired design.
 The app uses FontAwesome for the icons. If you need to add new ones, you can do so on the `main.js` file on the icon library setup.
@@ -12,6 +12,8 @@ The app uses FontAwesome for the icons. If you need to add new ones, you can do 
 `directives` - directives for manipulating the elements in the HTML.
 
 `locales` - translations files, which consist of key-value pairs. There can be as many files as languages needed. Translations are implemented using the library [Vue I18n](https://vue-i18n.intlify.dev/), and the expected value is rendered by using the `$t` translation API and passing the key as an argument.
+
+You are also welcome to create a new locales file for a language not currently provided by us, considering the data from our existing files, and share it with us via a [Support Ticket](https://konfuzio.com/en/support/) or create a Pull Request to add it to the repository.
 
 `store` - the store is implemented using [Vuex](https://vuex.vuejs.org/). It is responsible for saving all information coming from the API and local information regarding the use of the app, like the display scale. Most of the information is obtained, filtered, grouped and processed in the store files which are separated by their concept.
 
