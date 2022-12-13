@@ -2,39 +2,58 @@
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
     <input class="popup-input" type="text" v-model="selectedContent" />
-    <b-dropdown v-model="selectedAnnotationSet" aria-role="list">
+    <b-dropdown
+      v-model="selectedSet"
+      aria-role="list"
+      :class="[
+        'no-padding-bottom',
+        setsList.length === 0 ? 'no-padding-top' : ''
+      ]"
+    >
       <template #trigger>
         <b-button
-          :class="['popup-input', selectedAnnotationSet ? '' : 'not-selected']"
+          :class="['popup-input', selectedSet ? '' : 'not-selected']"
           type="is-text"
         >
           {{
-            selectedAnnotationSet
-              ? `${
-                  selectedAnnotationSet.label_set.name
-                } ${numberOfAnnotationSetGroup(selectedAnnotationSet)}`
+            selectedSet
+              ? `${selectedSet.label_set.name} ${
+                  selectedSet.id
+                    ? numberOfAnnotationSetGroup(selectedSet)
+                    : `(${$t("new")})`
+                }`
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            ></b-icon> </span
-        ></b-button>
+            <b-icon icon="angle-down" size="is-small" class="caret" />
+          </span>
+        </b-button>
       </template>
       <b-dropdown-item
         aria-role="listitem"
-        v-for="(annotationSet, index) in annotationSets"
-        :key="`${annotationSet.label_set.id}_${index}`"
-        :value="annotationSet"
+        v-for="(set, index) in setsList"
+        :key="`${set.label_set.id}_${index}`"
+        :value="set"
       >
         <span>{{
-          `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
-            annotationSet
-          )}`
+          `${set.label_set.name} ${
+            set.id ? numberOfAnnotationSetGroup(set) : `(${$t("new")})`
+          }`
         }}</span>
       </b-dropdown-item>
+      <b-button
+        type="is-ghost"
+        :class="[
+          'add-ann-set',
+          'dropdown-item',
+          'no-icon-margin',
+          setsList.length > 0 ? 'has-border' : ''
+        ]"
+        icon-left="plus"
+        @click="openAnnotationSetCreation"
+      >
+        {{ $t("new_ann_set_title") }}
+      </b-button>
     </b-dropdown>
     <b-dropdown
       v-model="selectedLabel"
@@ -99,6 +118,7 @@ const margin = 12;
 const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
+import { ChooseLabelSetModal } from "../DocumentAnnotations";
 
 export default {
   props: {
@@ -150,13 +170,16 @@ export default {
   data() {
     return {
       selectedLabel: null,
-      selectedAnnotationSet: null,
+      selectedSet: null,
       labels: null,
       selectedContent: this.content,
-      loading: false
+      loading: false,
+      isAnnSetModalShowing: false,
+      setsList: []
     };
   },
   mounted() {
+    this.setsList = [...this.annotationSets];
     setTimeout(() => {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
@@ -167,8 +190,10 @@ export default {
   },
   methods: {
     clickOutside(event) {
-      if (!(this.$el == event.target || this.$el.contains(event.target))) {
-        this.close();
+      if (!this.isAnnSetModalShowing) {
+        if (!(this.$el == event.target || this.$el.contains(event.target))) {
+          this.close();
+        }
       }
     },
     close() {
@@ -185,16 +210,18 @@ export default {
         document: this.documentId,
         span: [span],
         label: this.selectedLabel.id,
-        annotation_set: this.selectedAnnotationSet.id,
         is_correct: true,
         revised: false
       };
 
+      if (this.selectedSet.id) {
+        annotationToCreate.annotation_set = this.selectedSet.id;
+      } else {
+        annotationToCreate.label_set = this.selectedSet.label_set.id;
+      }
+
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(() => {
-          this.$store.dispatch("document/fetchMissingAnnotations");
-        })
         .catch(error => {
           if (error) {
             this.$store.dispatch("document/setErrorMessage", error);
@@ -209,12 +236,46 @@ export default {
           this.close();
           this.loading = false;
         });
+    },
+    disableLabelSetModalShowing() {
+      // timeout to stop propagation of click event
+      setTimeout(() => {
+        this.isAnnSetModalShowing = false;
+      }, 500);
+    },
+    chooseLabelSet(labelSet) {
+      this.disableLabelSetModalShowing();
+
+      const newSet = {
+        label_set: labelSet,
+        labels: labelSet.labels,
+        id: null
+      };
+      this.setsList.push(newSet);
+      this.selectedSet = newSet;
+    },
+    openAnnotationSetCreation() {
+      this.isAnnSetModalShowing = true;
+
+      this.$buefy.modal.open({
+        parent: this.$parent,
+        component: ChooseLabelSetModal,
+        hasModalCard: true,
+        trapFocus: true,
+        canCancel: false,
+        onCancel: this.disableLabelSetModalShowing,
+        customClass: "invisible-parent-modal",
+        events: {
+          labelSet: this.chooseLabelSet,
+          close: this.disableLabelSetModalShowing
+        }
+      });
     }
   },
   watch: {
-    selectedAnnotationSet(newValue) {
+    selectedSet(newValue) {
       this.selectedLabel = null;
-      this.labels = this.labelsFilteredForAnnotationCreation(newValue.labels);
+      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
     }
   }
 };

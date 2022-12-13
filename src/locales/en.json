@@ -94,5 +94,11 @@
   "annotations_accepted": "accepted",
   "reject_all_empty": "Reject all empty",
   "no_labels_to_choose": "No Labels",
-  "accept_group": "Accept all"
+  "accept_group": "Accept all",
+  "new_ann_set_title": "New annotation set",
+  "new_ann_set_description": "Select a data model from the existing ones. The new annotation set will contain the same labels.",
+  "select_label_set": "Select label-set model",
+  "new_ann_set_hint": "The new set will only be created in the moment you save your annotation.",
+  "new": "New",
+  "continue": "Continue"
 }
