@@ -214,6 +214,7 @@ export default {
         document: this.documentId,
         span: [span],
         label: this.selectedLabel.id,
+        annotation_set: this.selectedAnnotationSet.id,
         is_correct: true,
         revised: false
       };
