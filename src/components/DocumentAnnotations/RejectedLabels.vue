@@ -70,9 +70,7 @@ export default {
       this.$store
         .dispatch("document/deleteMissingAnnotation", id)
         .then(response => {
-          if (response) {
-            this.$store.dispatch("document/fetchMissingAnnotations");
-          } else {
+          if (!response) {
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("ann_exists")

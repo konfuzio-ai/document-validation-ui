@@ -286,6 +286,7 @@ const getters = {
     let notRevised;
 
     const emptyAnnotations = [];
+
     if (state.annotationSets) {
       state.annotationSets.forEach(annSet => {
         annSet.labels.map(label => {
@@ -304,27 +305,21 @@ const getters = {
       notRevised = state.annotations.filter(a => !a.revised);
     }
 
-    // Return missing annotations array without the id,
-    // to compare length with the empty annotations
-    let missingObjects;
-
-    if (state.missingAnnotations) {
-      missingObjects = JSON.parse(JSON.stringify(state.missingAnnotations));
-    }
-
-    // if all annotations have been revised AND all empty ones have been rejected
-    // we enable the button to finish the document review
-    if (!emptyAnnotations || !state.missingAnnotations || !notRevised)
-      return true;
-
+    // if all annotations have been revised
+    // and if there are no empty annotations or
+    // all empty annotations were rejected,
+    // we can finish the review
     if (
-      notRevised.length === 0 &&
-      missingObjects.length === emptyAnnotations.length
+      !emptyAnnotations ||
+      !state.missingAnnotations ||
+      !notRevised ||
+      (notRevised.length === 0 &&
+        state.missingAnnotations.length === emptyAnnotations.length)
     ) {
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   },
 
   /**
@@ -714,12 +709,13 @@ const actions = {
     });
   },
 
-  deleteMissingAnnotation: ({}, id) => {
+  deleteMissingAnnotation: ({ commit, getters, dispatch }, id) => {
     return new Promise(resolve => {
       return HTTP.delete(`/missing-annotations/${id}/`)
         .then(response => {
           if (response.status === 204) {
             resolve(true);
+            dispatch("fetchMissingAnnotations");
           }
         })
         .catch(error => {
