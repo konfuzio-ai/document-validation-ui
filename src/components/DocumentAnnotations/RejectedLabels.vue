@@ -82,9 +82,6 @@ export default {
         .finally(() => {
           this.isLoading = false;
           this.closedTag = null;
-          if (this.showActionError) {
-            this.$store.dispatch("document/closeErrorMessage");
-          }
         });
     },
     getLabelName(label) {

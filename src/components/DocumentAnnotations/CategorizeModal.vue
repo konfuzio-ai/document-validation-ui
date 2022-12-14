@@ -135,11 +135,6 @@ export default {
                 this.$t("category_error")
               );
             }
-          })
-          .finally(() => {
-            if (this.showActionError) {
-              this.$store.dispatch("document/closeErrorMessage");
-            }
           });
       } else {
         // if same category, then just accept it

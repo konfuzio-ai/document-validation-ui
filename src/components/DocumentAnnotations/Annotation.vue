@@ -174,10 +174,6 @@ export default {
         this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/endLoading");
-
-        if (this.showActionError) {
-          this.$store.dispatch("document/closeErrorMessage");
-        }
       }
 
       this.isLoading = false;

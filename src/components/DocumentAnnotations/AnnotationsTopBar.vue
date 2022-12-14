@@ -67,9 +67,6 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
-          if (this.showActionError) {
-            this.$store.dispatch("document/closeErrorMessage");
-          }
         });
     }
   },

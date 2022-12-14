@@ -239,9 +239,6 @@ export default {
         .finally(() => {
           this.close();
           this.loading = false;
-          if (this.showActionError) {
-            this.$store.dispatch("document/closeErrorMessage");
-          }
         });
     },
     disableLabelSetModalShowing() {

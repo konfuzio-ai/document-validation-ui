@@ -126,9 +126,6 @@ export default {
           })
           .finally(() => {
             this.$store.dispatch("document/endRecalculatingAnnotations");
-            if (this.showActionError) {
-              this.$store.dispatch("document/closeErrorMessage");
-            }
           });
 
         return;
