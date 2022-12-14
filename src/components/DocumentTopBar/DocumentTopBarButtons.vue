@@ -31,7 +31,7 @@ import { mapState } from "vuex";
 export default {
   name: "DocumentTopBarButtons",
   computed: {
-    ...mapState("document", ["selectedDocument", "showActionError"]),
+    ...mapState("document", ["selectedDocument"]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"])
   },
   methods: {

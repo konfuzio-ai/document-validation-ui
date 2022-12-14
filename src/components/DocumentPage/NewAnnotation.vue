@@ -140,11 +140,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", [
-      "annotationSets",
-      "documentId",
-      "showActionError"
-    ]),
+    ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation"

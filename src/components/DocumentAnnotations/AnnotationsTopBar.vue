@@ -37,7 +37,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["publicView", "finishedReview", "showActionError"])
+    ...mapState("document", ["publicView", "finishedReview"])
   },
   mounted() {
     this.finishDisabled = !this.finishedReview;

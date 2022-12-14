@@ -60,7 +60,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["labels", "showActionError"])
+    ...mapState("document", ["labels"])
   },
   methods: {
     removeRejectedLabel(id) {

@@ -140,8 +140,7 @@ export default {
       "annotationSets",
       "loading",
       "labels",
-      "selectedDocument",
-      "showActionError"
+      "selectedDocument"
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),

@@ -77,7 +77,7 @@ export default {
     ...mapGetters("category", {
       categoryName: "categoryName"
     }),
-    ...mapState("document", ["selectedDocument", "showActionError"]),
+    ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["updatedDocument"])
   },

@@ -77,7 +77,7 @@ export default {
   name: "CategorizeModal",
   computed: {
     ...mapState("category", ["categories"]),
-    ...mapState("document", ["selectedDocument", "showActionError"]),
+    ...mapState("document", ["selectedDocument"]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["categorizationIsConfirmed"])
   },
