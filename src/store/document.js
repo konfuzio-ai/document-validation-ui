@@ -409,7 +409,7 @@ const actions = {
   setCurrentUser: ({ commit }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
   },
-  setErrorMessage: ({ commit }, message) => {
+  setErrorMessage: ({ commit, dispatch }, message) => {
     if (message) {
       commit("SET_SHOW_ACTION_ERROR", true);
     } else {
@@ -417,6 +417,8 @@ const actions = {
     }
 
     commit("SET_ERROR_MESSAGE", message);
+
+    dispatch("closeErrorMessage");
   },
   setDocumentError: ({ commit }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
@@ -805,7 +807,8 @@ const actions = {
   closeErrorMessage: ({ commit }) => {
     setTimeout(() => {
       commit("SET_ERROR_MESSAGE", null);
-    }, 2000);
+      commit("SET_SHOW_ACTION_ERROR", false);
+    }, 4000);
   }
 };
 

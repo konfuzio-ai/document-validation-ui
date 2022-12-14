@@ -182,9 +182,6 @@ export default {
         })
         .finally(() => {
           this.cancelEmptyAnnotation();
-          if (this.showActionError) {
-            this.$store.dispatch("document/closeErrorMessage");
-          }
         });
     },
     cancelEmptyAnnotation(wasOutsideClick = false) {

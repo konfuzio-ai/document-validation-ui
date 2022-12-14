@@ -429,9 +429,6 @@ export default {
         })
         .finally(() => {
           this.$store.dispatch("document/setRejectedMissingAnnotations", null);
-          if (this.showActionError) {
-            this.$store.dispatch("document/closeErrorMessage");
-          }
         });
     },
 
@@ -478,11 +475,6 @@ export default {
                 "document/setErrorMessage",
                 this.$t("editing_error")
               );
-            }
-          })
-          .finally(() => {
-            if (this.showActionError) {
-              this.$store.dispatch("document/closeErrorMessage");
             }
           });
       }

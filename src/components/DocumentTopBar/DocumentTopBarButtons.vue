@@ -44,9 +44,6 @@ export default {
       this.$store.dispatch("edit/setSplitOverview", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
-      if (this.showActionError) {
-        this.$store.dispatch("document/closeErrorMessage");
-      }
       this.$nextTick(() => {
         // reset to first page
         this.$store.dispatch("display/updateCurrentPage", 1);
