@@ -74,6 +74,8 @@ export default {
     finishedReview(newValue) {
       if (newValue) {
         this.finishDisabled = false;
+      } else {
+        this.finishDisabled = true;
       }
     },
     publicView(newValue) {
