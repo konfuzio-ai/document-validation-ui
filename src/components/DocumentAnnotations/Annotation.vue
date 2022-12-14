@@ -295,12 +295,6 @@ export default {
         })
         .finally(() => {
           this.handleCancel();
-
-          if (this.error) {
-            setTimeout(() => {
-              this.error = false;
-            }, 2000);
-          }
         });
     },
     createSpan(span) {

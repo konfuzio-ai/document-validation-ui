@@ -11,7 +11,7 @@
 
       <transition name="slide-fade">
         <div
-          v-if="showError"
+          v-if="showActionError"
           class="error-message"
           :style="{ width: `${errorMessageWidth}px` }"
         >
@@ -70,7 +70,7 @@ export default {
       "currentPage"
     ]),
     ...mapState("document", [
-      "showError",
+      "showActionError",
       "showDocumentError",
       "errorMessageWidth",
       "selectedDocument"

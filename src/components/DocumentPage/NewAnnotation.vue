@@ -222,9 +222,9 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .catch(error => {
-          if (error) {
-            this.$store.dispatch("document/setErrorMessage", error);
+        .then(response => {
+          if (response && !response.data) {
+            this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.$store.dispatch(
               "document/setErrorMessage",

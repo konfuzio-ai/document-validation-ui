@@ -9,7 +9,7 @@
       v-if="!publicView"
       :class="[
         'annotation-value',
-        error && 'error-editing',
+        showActionError && 'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked'
       ]"
@@ -51,7 +51,6 @@ export default {
   data() {
     return {
       isLoading: false,
-      error: false,
       showReject: false
     };
   },
@@ -85,7 +84,8 @@ export default {
       "rejectedMissingAnnotations",
       "annotationSets",
       "hoveredAnnotationSet",
-      "selectedEntity"
+      "selectedEntity",
+      "showActionError"
     ])
   },
   methods: {
@@ -166,9 +166,14 @@ export default {
       this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(annotationCreated => {
-          if (!annotationCreated) {
-            this.error = true;
+        .then(response => {
+          if (response.data) {
+            if (response.data.length > 0)
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                response.data[0]
+              );
+          } else {
             this.$store.dispatch(
               "document/setErrorMessage",
               this.$t("editing_error")
@@ -177,9 +182,6 @@ export default {
         })
         .finally(() => {
           this.cancelEmptyAnnotation();
-          setTimeout(() => {
-            this.error = false;
-          }, 2000);
         });
     },
     cancelEmptyAnnotation(wasOutsideClick = false) {
@@ -202,15 +204,20 @@ export default {
         return (
           this.selectionEnabled === this.emptyAnnotationId() && !this.isLoading
         );
-      }
-
-      return (
-        this.selectionEnabled === this.emptyAnnotationId() &&
+      } else if (
         this.spanSelection &&
-        this.spanSelection[this.spanIndex] &&
-        this.spanSelection[this.spanIndex].offset_string != null &&
-        !this.isLoading
-      );
+        this.spanSelection[this.spanIndex] === 0
+      ) {
+        return false;
+      } else {
+        return (
+          this.selectionEnabled === this.emptyAnnotationId() &&
+          this.spanSelection &&
+          this.spanSelection[this.spanIndex] &&
+          this.spanSelection[this.spanIndex].offset_string != null &&
+          !this.isLoading
+        );
+      }
     },
     showActionButtons() {
       return (
