@@ -828,7 +828,7 @@ const actions = {
     setTimeout(() => {
       commit("SET_ERROR_MESSAGE", null);
       commit("SET_SHOW_ACTION_ERROR", false);
-    }, 4000);
+    }, 5000);
   }
 };
 
