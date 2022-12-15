@@ -17,7 +17,6 @@ const state = {
   recalculatingAnnotations: false,
   editAnnotation: null,
   missingAnnotations: [],
-  currentUser: null, // TODO: move this to project store
   publicView: true,
   showActionError: false,
   errorMessage: null,
@@ -437,9 +436,6 @@ const actions = {
   setMissingAnnotations: ({ commit }, missingAnnotations) => {
     commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
   },
-  setCurrentUser: ({ commit }, currentUser) => {
-    commit("SET_CURRENT_USER", currentUser);
-  },
   setErrorMessage: ({ commit, dispatch }, message) => {
     if (message) {
       commit("SET_SHOW_ACTION_ERROR", true);
@@ -528,7 +524,9 @@ const actions = {
     await dispatch("fetchMissingAnnotations");
 
     if (!state.publicView) {
-      await dispatch("fetchCurrentUser");
+      await dispatch("project/fetchCurrentUser", null, {
+        root: true
+      });
 
       if (projectId) {
         await dispatch("category/fetchCategories", projectId, {
@@ -540,7 +538,7 @@ const actions = {
           "category/createAvailableDocumentsList",
           {
             categoryId,
-            user: state.currentUser,
+            user: rootState.project.currentUser,
             poll: pollDocumentList
           },
           {
@@ -786,16 +784,6 @@ const actions = {
     });
   },
 
-  fetchCurrentUser: ({ commit }) => {
-    return HTTP.get(`/auth/me/`)
-      .then(response => {
-        commit("SET_CURRENT_USER", response.data.username);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  },
-
   // TODO: this should be an util method, not an action on this document store
   sleep: duration => {
     new Promise(resolve => setTimeout(resolve, duration));
@@ -969,9 +957,6 @@ const mutations = {
   },
   SET_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
     state.missingAnnotations = missingAnnotations;
-  },
-  SET_CURRENT_USER: (state, currentUser) => {
-    state.currentUser = currentUser;
   },
   SET_SHOW_ACTION_ERROR: (state, value) => {
     state.showActionError = value;
