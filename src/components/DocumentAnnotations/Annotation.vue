@@ -252,14 +252,14 @@ export default {
 
             spans[this.spanIndex] = {
               ...spans[this.spanIndex],
-              span
+              ...span
             };
           } else {
             span = this.createSpan(this.span);
 
             spans[this.spanIndex] = {
               ...spans[this.spanIndex],
-              span
+              ...span
             };
           }
         }
