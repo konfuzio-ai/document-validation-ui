@@ -72,7 +72,6 @@
  */
 
 import { mapGetters, mapState } from "vuex";
-import pollDocumentEndpoint from "../../utils/utils";
 
 export default {
   name: "CategorizeModal",
@@ -128,7 +127,7 @@ export default {
               // TODO: this should be done on the update document endpoint
               // Poll document data until the status_data is 111 (error) or
               // 2 and labeling is available (done)
-              pollDocumentEndpoint();
+              this.$store.dispatch("document/pollDocumentEndpoint");
             } else {
               this.$store.dispatch("document/endRecalculatingAnnotations");
               this.$store.dispatch(

@@ -1,5 +1,4 @@
 import myImports from "../api";
-import pollDocumentEndpoint from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 
@@ -161,7 +160,9 @@ const actions = {
             await dispatch("document/setDocId", newId, {
               root: true
             });
-            pollDocumentEndpoint();
+            dispatch("document/pollDocumentEndpoint", null, {
+              root: true
+            });
             resolve(true);
           } else {
             resolve(false);

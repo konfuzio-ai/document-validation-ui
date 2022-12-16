@@ -1,7 +1,8 @@
 import myImports from "../api";
-import pollDocumentEndpoint from "../utils/utils";
+import sleep from "../utils/utils";
 
 const HTTP = myImports.HTTP;
+const documentPollDuration = 1000;
 
 const state = {
   loading: true,
@@ -548,7 +549,7 @@ const actions = {
     }
     if (isRecalculatingAnnotations) {
       commit("SET_RECALCULATING_ANNOTATIONS", true);
-      pollDocumentEndpoint();
+      dispatch("pollDocumentEndpoint");
     }
     dispatch("endLoading");
   },
@@ -781,6 +782,26 @@ const actions = {
           console.log(error);
         });
     });
+  },
+
+  // Poll Document endpoint to know if the Document is ready to be reviewed
+  // or even if there was an error during the extraction
+  pollDocumentEndpoint: ({ dispatch }) => {
+    return dispatch("fetchDocumentStatus")
+      .then(ready => {
+        if (ready) {
+          // Stop document recalculating annotations
+          dispatch("endRecalculatingAnnotations");
+          dispatch("fetchDocument");
+        } else {
+          sleep(documentPollDuration);
+          dispatch("pollDocumentEndpoint");
+        }
+      })
+      .catch(error => {
+        dispatch("setDocumentError", true);
+        console.log(error);
+      });
   },
 
   closeErrorMessage: ({ commit }) => {
