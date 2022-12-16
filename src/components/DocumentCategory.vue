@@ -107,7 +107,7 @@ export default {
             if (response === 200) {
               // Poll document data until the status_data is 111 (error) or
               // 2 and labeling is available (done)
-              this.$store.dispatch("document/pollDocumentEndpoint", 1000);
+              this.$store.dispatch("document/pollDocumentEndpoint");
             } else {
               const resp = JSON.stringify(response);
 
