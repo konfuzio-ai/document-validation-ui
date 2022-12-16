@@ -1,8 +1,7 @@
 import myImports from "../api";
+import pollDocumentEndpoint from "../utils/utils";
 
 const HTTP = myImports.HTTP;
-
-const documentPollDuration = 1000;
 
 const state = {
   loading: true,
@@ -549,7 +548,7 @@ const actions = {
     }
     if (isRecalculatingAnnotations) {
       commit("SET_RECALCULATING_ANNOTATIONS", true);
-      dispatch("pollDocumentEndpoint");
+      pollDocumentEndpoint();
     }
     dispatch("endLoading");
   },
@@ -784,30 +783,6 @@ const actions = {
     });
   },
 
-  // TODO: this should be an util method, not an action on this document store
-  sleep: duration => {
-    new Promise(resolve => setTimeout(resolve, duration));
-  },
-
-  pollDocumentEndpoint: ({ dispatch }) => {
-    return dispatch("fetchDocumentStatus")
-      .then(ready => {
-        if (ready) {
-          // Stop document recalculating annotations
-          dispatch("endRecalculatingAnnotations");
-          dispatch("fetchDocument");
-        } else {
-          dispatch("sleep", documentPollDuration).then(() =>
-            dispatch("pollDocumentEndpoint")
-          );
-        }
-      })
-      .catch(error => {
-        dispatch("setDocumentError", true);
-        console.log(error);
-      });
-  },
-
   closeErrorMessage: ({ commit }) => {
     setTimeout(() => {
       commit("SET_ERROR_MESSAGE", null);
@@ -958,6 +933,7 @@ const mutations = {
   SET_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
     state.missingAnnotations = missingAnnotations;
   },
+
   SET_SHOW_ACTION_ERROR: (state, value) => {
     state.showActionError = value;
   },
