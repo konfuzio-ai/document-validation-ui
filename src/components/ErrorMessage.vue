@@ -1,12 +1,18 @@
-<style scoped lang="scss" src="../assets/scss/variables.scss"></style>
-
 <template>
   <b-message>
     <div class="message-container">
       {{ errorMessage }}
     </div>
-    <div @click="handleErrorClose" class="btn-container" type="button">
-      <b-icon icon="xmark" class="close-btn error-icon" size="is-small" />
+    <div
+      class="btn-container"
+      type="button"
+      @click="handleErrorClose"
+    >
+      <b-icon
+        icon="xmark"
+        class="close-btn error-icon"
+        size="is-small"
+      />
     </div>
   </b-message>
 </template>
@@ -26,3 +32,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../assets/scss/variables.scss"></style>

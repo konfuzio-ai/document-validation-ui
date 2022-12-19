@@ -1,5 +1,3 @@
-<style scoped lang="scss" src="../assets/scss/document_category.scss"></style>
-
 <template>
   <b-dropdown
     :class="[
@@ -16,7 +14,12 @@
           <CategoryIcon />
         </div>
         <div class="category-info">
-          <p class="category-title" v-if="!splitMode">{{ $t("category") }}</p>
+          <p
+            v-if="!splitMode"
+            class="category-title"
+          >
+            {{ $t("category") }}
+          </p>
           <div class="category-name">
             {{
               !splitMode
@@ -30,17 +33,17 @@
             icon="angle-down"
             size="is-small"
             :class="['caret', splitMode && 'split-mode-caret']"
-          ></b-icon>
+          />
         </div>
       </div>
     </template>
 
     <b-dropdown-item
       v-for="category in currentProjectCategories"
-      v-bind:key="category.id"
+      :key="category.id"
       aria-role="listitem"
-      v-on:click="handleChangeCategory(category)"
       :disabled="handleOptionInDropdownDisabled(category)"
+      @click="handleChangeCategory(category)"
     >
       <span>{{ category.name }}</span>
     </b-dropdown-item>
@@ -53,11 +56,8 @@ import CategoryIcon from "../assets/images/CategoryIconImg";
 
 export default {
   name: "DocumentCategory",
-  data() {
-    return {
-      currentProjectCategories: [],
-      categoryError: false
-    };
+  components: {
+    CategoryIcon
   },
   props: {
     splitMode: {
@@ -70,8 +70,11 @@ export default {
       type: Number
     }
   },
-  components: {
-    CategoryIcon
+  data() {
+    return {
+      currentProjectCategories: [],
+      categoryError: false
+    };
   },
   computed: {
     ...mapGetters("category", {
@@ -80,6 +83,34 @@ export default {
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["updatedDocument"])
+  },
+  watch: {
+    categories(newValue) {
+      newValue.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
+          this.currentProjectCategories.push(category);
+        }
+      });
+    }
+  },
+  mounted() {
+    if (this.categories) {
+      this.categories.map(category => {
+        if (category.project === this.selectedDocument.project) {
+          const found = this.currentProjectCategories.find(
+            cat => cat.id === category.id
+          );
+          if (found) return;
+
+          this.currentProjectCategories.push(category);
+        }
+      });
+    }
   },
   methods: {
     // The current category name will change
@@ -135,34 +166,8 @@ export default {
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
     }
-  },
-  watch: {
-    categories(newValue) {
-      newValue.map(category => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
-          );
-          if (found) return;
-
-          this.currentProjectCategories.push(category);
-        }
-      });
-    }
-  },
-  mounted() {
-    if (this.categories) {
-      this.categories.map(category => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
-          );
-          if (found) return;
-
-          this.currentProjectCategories.push(category);
-        }
-      });
-    }
   }
 };
 </script>
+
+<style scoped lang="scss" src="../assets/scss/document_category.scss"></style>

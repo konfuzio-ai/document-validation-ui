@@ -1,9 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
-
 <template>
   <div class="rejected-label-container">
     <p class="title">
@@ -18,10 +12,10 @@
           attached
           closable
           aria-close-label="Close tag"
-          @close="removeRejectedLabel(missingAnnotation.id)"
           :class="[
             isLoading && closedTag === missingAnnotation.id && 'loading-active'
           ]"
+          @close="removeRejectedLabel(missingAnnotation.id)"
         >
           <span
             :class="[
@@ -34,7 +28,7 @@
         </b-tag>
         <div class="tag-loading-container">
           <ActionButtons
-            :isLoading="isLoading && closedTag === missingAnnotation.id"
+            :is-loading="isLoading && closedTag === missingAnnotation.id"
           />
         </div>
       </b-taglist>
@@ -93,3 +87,9 @@ export default {
   components: { ActionButtons }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

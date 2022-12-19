@@ -1,5 +1,3 @@
-<style scoped lang="scss" src="../../assets/scss/categorize_modal.scss"></style>
-
 <template>
   <section class="categorize-modal">
     <b-modal
@@ -13,13 +11,14 @@
           <h3>{{ $t("categorize_document_title") }}</h3>
           <p v-if="documentCategory">
             {{ $t("categorized_as")
-            }}<strong>&nbsp;{{ documentCategory.name }}</strong
-            >.&nbsp;{{ $t("categorized_error") }}
+            }}<strong>&nbsp;{{ documentCategory.name }}</strong>.&nbsp;{{ $t("categorized_error") }}
           </p>
-          <p v-else>{{ $t("not_categorized") }}</p>
+          <p v-else>
+            {{ $t("not_categorized") }}
+          </p>
           <b-dropdown
-            aria-role="list"
             v-model="selectedCategory"
+            aria-role="list"
             class="categorize-dropdown"
           >
             <template #trigger>
@@ -42,21 +41,27 @@
               <span>{{ categoryItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
-          <div class="category-description" v-if="selectedCategory">
+          <div
+            v-if="selectedCategory"
+            class="category-description"
+          >
             {{
               selectedCategory.description
                 ? selectedCategory.description
                 : $t("categorize_document_no_category_description")
             }}
           </div>
-          <div class="category-description" v-else>
+          <div
+            v-else
+            class="category-description"
+          >
             {{ $t("select_category") }}
           </div>
           <b-button
             class="submit-category"
             type="is-primary"
-            @click="submit"
             :disabled="!selectedCategory"
+            @click="submit"
           >
             {{ $t("submit") }}
           </b-button>
@@ -87,6 +92,18 @@ export default {
       selectedCategory: null, // category selected in dropdown
       documentCategory: null // category associated to document
     };
+  },
+  watch: {
+    selectedDocument(newValue) {
+      if (newValue) {
+        this.setDocumentValues();
+      }
+    },
+    categories(newCategories, oldCategories) {
+      if (newCategories && oldCategories === null) {
+        this.setDocumentValues();
+      }
+    }
   },
   mounted() {
     this.setDocumentValues();
@@ -144,18 +161,8 @@ export default {
       }
       this.show = false;
     }
-  },
-  watch: {
-    selectedDocument(newValue) {
-      if (newValue) {
-        this.setDocumentValues();
-      }
-    },
-    categories(newCategories, oldCategories) {
-      if (newCategories && oldCategories === null) {
-        this.setDocumentValues();
-      }
-    }
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/categorize_modal.scss"></style>

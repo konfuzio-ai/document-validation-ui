@@ -1,8 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/annotation_details.scss"
-></style>
 <template>
   <b-tooltip
     type="is-dark"
@@ -17,7 +12,7 @@
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
-            'user-icon'
+            'user-icon',
           ]"
         >
           <AcceptedUser />
@@ -27,7 +22,7 @@
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
-            'user-icon'
+            'user-icon',
           ]"
         >
           <User />
@@ -38,7 +33,7 @@
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
-          'question-icon'
+          'question-icon',
         ]"
       >
         <QuestionMark />
@@ -59,17 +54,17 @@
       </div>
     </div>
 
-    <template v-slot:content>
+    <template #content>
       <div class="label-details">
-        <div class="label-description" v-if="description">
+        <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div class="accuracy" v-if="accuracy">
+        <div v-if="accuracy" class="accuracy">
           <span>{{ $t("accuracy") }}</span
           ><span
             :class="[
               'value',
-              accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : ''
+              accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : '',
             ]"
             >{{ Math.floor(accuracy * 100) / 100 }}</span
           >
@@ -82,7 +77,7 @@
                 :class="[
                   'annotation-details-icon',
                   animate ? 'animated-ripple' : '',
-                  'user-icon'
+                  'user-icon',
                 ]"
               >
                 <AcceptedUser />
@@ -92,7 +87,7 @@
                 :class="[
                   'annotation-details-icon',
                   animate ? 'animated-ripple' : '',
-                  'user-icon'
+                  'user-icon',
                 ]"
               >
                 <User />
@@ -103,7 +98,7 @@
               :class="[
                 'annotation-details-icon',
                 animate ? 'animated-ripple' : '',
-                'question-icon'
+                'question-icon',
               ]"
             >
               <QuestionMark />
@@ -113,7 +108,7 @@
                 v-if="accepted"
                 :class="[
                   'annotation-details-icon',
-                  animate ? 'animated-ripple' : ''
+                  animate ? 'animated-ripple' : '',
                 ]"
               >
                 <AcceptedCheckMark />
@@ -122,7 +117,7 @@
                 v-else
                 :class="[
                   'annotation-details-icon',
-                  animate ? 'animated-ripple' : ''
+                  animate ? 'animated-ripple' : '',
                 ]"
               >
                 <CheckMark />
@@ -159,7 +154,12 @@ export default {
       } else {
         return this.$t("not_revised_yet");
       }
-    }
+    },
+  },
+  data() {
+    return {
+      animate: false,
+    };
   },
   computed: {
     accuracy() {
@@ -231,33 +231,33 @@ export default {
       } else {
         return null;
       }
-    }
+    },
   },
   props: {
     description: {
-      required: true
+      required: true,
     },
     annotation: {
-      default: null
-    }
+      default: null,
+    },
   },
   components: {
     CheckMark,
     QuestionMark,
     AcceptedCheckMark,
     AcceptedUser,
-    User
+    User,
   },
   data() {
     return {
-      animate: false
+      animate: false,
     };
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
       // animate an annotation being accepted
       // TODO: add this accepted check to store
-      const accepted = ann => {
+      const accepted = (ann) => {
         return ann && ann.id && ann.revised && ann.is_correct;
       };
       if (
@@ -271,7 +271,45 @@ export default {
           this.animate = false;
         }, 2000);
       }
-    }
-  }
+    },
+  },
+  methods: {
+    getIcon() {
+      if (this.notFound) {
+        return "question";
+      } else if (this.created || this.edited) {
+        return "user";
+      } else {
+        return "check";
+      }
+    },
+    getColor() {
+      if (this.accepted) {
+        return "green";
+      } else {
+        return "";
+      }
+    },
+    getText() {
+      if (this.notFound) {
+        return this.$t("not_found_in_document");
+      } else if (this.created) {
+        return this.user
+          ? `${this.$t("created_by")} ${this.user}`
+          : this.$t("created");
+      } else if (this.accepted) {
+        return this.user
+          ? `${this.$t("approved_by")} ${this.user}`
+          : this.$t("approved");
+      } else {
+        return this.$t("not_revised_yet");
+      }
+    },
+  },
 };
 </script>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/annotation_details.scss"
+></style>

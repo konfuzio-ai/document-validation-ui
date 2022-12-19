@@ -1,9 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_handover.scss"
-></style>
-
 <template>
   <div class="handover-container">
     <b-button
@@ -15,17 +9,27 @@
     />
 
     <div class="handover-collapse">
-      <b-collapse :open="open" aria-id="handover" class="is-bottom">
+      <b-collapse
+        :open="open"
+        aria-id="handover"
+        class="is-bottom"
+      >
         <div class="notification">
           <div class="content">
             <div class="header container">
-              <p class="title">{{ $t("handover_document") }}</p>
+              <p class="title">
+                {{ $t("handover_document") }}
+              </p>
               <div
                 type="button"
-                @click="open = false"
                 class="close-icon-container modal-btn"
+                @click="open = false"
               >
-                <b-icon icon="xmark" class="close-btn" size="is-small" />
+                <b-icon
+                  icon="xmark"
+                  class="close-btn"
+                  size="is-small"
+                />
               </div>
             </div>
             <div class="input-container">
@@ -34,23 +38,22 @@
               >
                 <b-field type="input">
                   <b-input
-                    :placeholder="$t('type_email')"
                     id="input"
-                    autocomplete="off"
                     v-model="selected"
+                    :placeholder="$t('type_email')"
+                    autocomplete="off"
                     @input="invalidEmail = false"
                   />
                 </b-field>
                 <b-loading
-                  :is-full-page="isFullPage"
-                  v-model="isLoading"
                   v-if="isLoading"
+                  v-model="isLoading"
+                  :is-full-page="isFullPage"
                 >
                   <b-icon
                     icon="spinner"
                     class="fa-spin loading-icon-size spinner"
-                  >
-                  </b-icon>
+                  />
                 </b-loading>
                 <b-button
                   v-else
@@ -59,18 +62,28 @@
                   @click.prevent="handleHandover"
                 />
               </section>
-              <div v-if="invalidEmail" class="invalid-email-msg">
+              <div
+                v-if="invalidEmail"
+                class="invalid-email-msg"
+              >
                 <p>{{ $t("invalid_email") }}</p>
               </div>
             </div>
             <div class="members-section">
               <div class="members-title">
-                <h3 class="title">{{ $t("members") }}</h3>
+                <h3 class="title">
+                  {{ $t("members") }}
+                </h3>
               </div>
               <div :class="['member-list', scroll && 'scroll']">
-                <div v-for="member in members" :key="member.id">
+                <div
+                  v-for="member in members"
+                  :key="member.id"
+                >
                   <div class="member container">
-                    <p class="email">{{ member.email }}</p>
+                    <p class="email">
+                      {{ member.email }}
+                    </p>
                     <b-button
                       :label="$t('select')"
                       class="select-btn"
@@ -114,6 +127,12 @@ export default {
   },
   computed: {
     // TODO: map members from store
+  },
+
+  updated() {
+    if (this.members.length > 3) {
+      this.scroll = true;
+    }
   },
   methods: {
     emailValidation(email) {
@@ -172,12 +191,12 @@ export default {
         actionText: null
       });
     }
-  },
-
-  updated() {
-    if (this.members.length > 3) {
-      this.scroll = true;
-    }
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_handover.scss"
+></style>

@@ -1,5 +1,3 @@
-<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
-
 <template>
   <div class="edit-pages">
     <draggable
@@ -26,14 +24,14 @@
             <div
               :class="[
                 'img-container',
-                selected && isPageSelected(page.id) === page.id && 'selected'
+                selected && isPageSelected(page.id) === page.id && 'selected',
               ]"
             >
               <ServerImage
                 class="img-thumbnail"
-                :imageUrl="`${page.thumbnail_url}?${page.updated_at}`"
+                :image-url="`${page.thumbnail_url}?${page.updated_at}`"
                 :style="{
-                  transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                  transform: 'rotate(' + getRotation(page.id) + 'deg)',
                 }"
               >
                 <b-skeleton width="57px" height="57px" />
@@ -52,7 +50,7 @@
             'splitting-lines',
             activeSplittingLines &&
               activeSplittingLines[index] === page.page_number &&
-              'active-split'
+              'active-split',
           ]"
           @click="handleSplittingLines(page)"
         >
@@ -60,15 +58,15 @@
             <b-icon icon="scissors" class="is-small" />
           </div>
           <div
-            class="lines"
             v-if="
               activeSplittingLines &&
               activeSplittingLines[index] === page.page_number
             "
+            class="lines"
           >
             <SplitZigZag />
           </div>
-          <div class="lines" v-else>
+          <div v-else class="lines">
             <SplitLines />
           </div>
         </div>
@@ -97,32 +95,52 @@ export default {
     SplitLines,
     SplitZigZag,
     EyeIcon,
-    draggable
+    draggable,
   },
   props: {
     activeSplittingLines: {
-      type: Array
-    }
+      type: Array,
+    },
   },
   data() {
     return {
       editPages: null,
-      selected: null
+      selected: null,
     };
   },
   computed: {
     ...mapState("document", [
       "pages",
       "recalculatingAnnotations",
-      "selectedDocument"
+      "selectedDocument",
     ]),
     ...mapState("edit", [
       "editMode",
       "documentPagesListForEditMode",
       "splitOverview",
       "selectedPages",
-      "splitOverview"
-    ])
+      "splitOverview",
+    ]),
+  },
+  watch: {
+    documentPagesListForEditMode(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.editPages = newValue;
+      }
+    },
+    editPages(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
+      }
+    },
+    splitOverview(newValue) {
+      if (newValue) {
+        this.editPages = this.documentPagesListForEditMode;
+      }
+    },
+  },
+  mounted() {
+    this.editPages = this.documentPagesListForEditMode;
   },
   methods: {
     handlePageChange(pageNumber) {
@@ -130,7 +148,7 @@ export default {
     },
     isPageSelected(id) {
       if (this.selectedPages.length === 0) return;
-      const selectedPage = this.selectedPages.find(page => page.id === id);
+      const selectedPage = this.selectedPages.find((page) => page.id === id);
       if (selectedPage) return selectedPage.id;
     },
     selectPage(page) {
@@ -139,7 +157,7 @@ export default {
       const selectedPage = {
         id: page.id,
         number: page.page_number,
-        thumbnail_url: page.thumbnail_url
+        thumbnail_url: page.thumbnail_url,
       };
       this.selected = true;
 
@@ -165,7 +183,7 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+      return this.documentPagesListForEditMode?.find((p) => p.id === pageId)
         ?.angle;
     },
     handleSplittingLines(page) {
@@ -178,27 +196,9 @@ export default {
       this.draggable = false;
 
       this.$emit("handle-drag-end");
-    }
-  },
-  watch: {
-    documentPagesListForEditMode(newValue, oldValue) {
-      if (newValue !== oldValue) {
-        this.editPages = newValue;
-      }
     },
-    editPages(newValue, oldValue) {
-      if (newValue !== oldValue) {
-        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
-      }
-    },
-    splitOverview(newValue) {
-      if (newValue) {
-        this.editPages = this.documentPagesListForEditMode;
-      }
-    }
   },
-  mounted() {
-    this.editPages = this.documentPagesListForEditMode;
-  }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>

@@ -1,12 +1,9 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
 <template>
   <div class="empty-annotation">
     <span
       v-if="!publicView"
+      :id="emptyAnnotationId()"
+      ref="emptyAnnotation"
       :class="[
         'annotation-value',
         showActionError && 'error-editing',
@@ -15,13 +12,11 @@
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotation"
-      ref="emptyAnnotation"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
-      :id="emptyAnnotationId()"
     >
       <span
-        v-if="span && span.offset_string && this.isEmptyAnnotationEditable()"
+        v-if="span && span.offset_string && isEmptyAnnotationEditable()"
       >
         {{ span.offset_string }}
       </span>
@@ -31,10 +26,10 @@
     </span>
 
     <ActionButtons
-      :saveBtn="isEmptyAnnotationEditable()"
-      :cancelBtn="isAnnotationBeingEdited()"
-      :showReject="showReject"
-      :isLoading="isLoading"
+      :save-btn="isEmptyAnnotationEditable()"
+      :cancel-btn="isAnnotationBeingEdited()"
+      :show-reject="showReject"
+      :is-loading="isLoading"
       @save="saveEmptyAnnotation"
       @cancel="cancelEmptyAnnotation"
     />
@@ -48,12 +43,6 @@ import ActionButtons from "./ActionButtons";
  */
 export default {
   name: "EmptyAnnotation",
-  data() {
-    return {
-      isLoading: false,
-      showReject: false
-    };
-  },
   components: { ActionButtons },
   props: {
     label: {
@@ -73,6 +62,12 @@ export default {
       required: false
     }
   },
+  data() {
+    return {
+      isLoading: false,
+      showReject: false
+    };
+  },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapGetters("selection", ["isValueArray"]),
@@ -87,6 +82,44 @@ export default {
       "selectedEntity",
       "showActionError"
     ])
+  },
+  watch: {
+    span(newValue) {
+      if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
+        if (this.isValueArray(newValue))
+          newValue.map(span => {
+            if (span.offset_string) {
+              span.offset_string =
+                this.$refs.emptyAnnotation.textContent.trim();
+              span.offset_string_original =
+                this.$refs.emptyAnnotation.textContent.trim();
+
+              this.setText(span.offset_string);
+            }
+          });
+      }
+    },
+    editAnnotation(newAnnotation, oldAnnotation) {
+      // verify if new annotation in edit mode is not this one and if this
+      // one was selected before so we set the state to the previous one (like a cancel)
+      if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
+        this.cancelEmptyAnnotation(true);
+      }
+    },
+    rejectedMissingAnnotations() {
+      this.enableLoading();
+    },
+    isHovered(newValue) {
+      if (this.publicView) return;
+      this.showReject = newValue && !this.isAnnotationBeingEdited();
+    },
+    selectedEntity(newValue) {
+      if (!newValue) return;
+
+      if (this.emptyAnnotationId() === this.editAnnotation.id) {
+        this.setText(newValue.offset_string);
+      }
+    }
   },
   methods: {
     emptyAnnotationId() {
@@ -261,44 +294,11 @@ export default {
         });
       }
     }
-  },
-  watch: {
-    span(newValue) {
-      if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
-        if (this.isValueArray(newValue))
-          newValue.map(span => {
-            if (span.offset_string) {
-              span.offset_string =
-                this.$refs.emptyAnnotation.textContent.trim();
-              span.offset_string_original =
-                this.$refs.emptyAnnotation.textContent.trim();
-
-              this.setText(span.offset_string);
-            }
-          });
-      }
-    },
-    editAnnotation(newAnnotation, oldAnnotation) {
-      // verify if new annotation in edit mode is not this one and if this
-      // one was selected before so we set the state to the previous one (like a cancel)
-      if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
-        this.cancelEmptyAnnotation(true);
-      }
-    },
-    rejectedMissingAnnotations() {
-      this.enableLoading();
-    },
-    isHovered(newValue) {
-      if (this.publicView) return;
-      this.showReject = newValue && !this.isAnnotationBeingEdited();
-    },
-    selectedEntity(newValue) {
-      if (!newValue) return;
-
-      if (this.emptyAnnotationId() === this.editAnnotation.id) {
-        this.setText(newValue.offset_string);
-      }
-    }
   }
 };
 </script>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

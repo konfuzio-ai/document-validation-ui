@@ -1,23 +1,31 @@
-<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
 <template>
   <div :class="['document-edit', splitOverview && 'split-overview-component']">
-    <div class="pages-section" v-if="!splitOverview">
+    <div
+      v-if="!splitOverview"
+      class="pages-section"
+    >
       <EditPages
-        :activeSplittingLines="activeSplittingLines"
+        :active-splitting-lines="activeSplittingLines"
         @change-page="changePage"
         @handle-splitting-lines="handleSplittingLines"
         @check-move="checkMove"
         @handle-drag-end="handleDragEnd"
       />
     </div>
-    <div v-else class="split-overview-section">
+    <div
+      v-else
+      class="split-overview-section"
+    >
       <SplitOverview
-        :fileName="fileName"
-        :fileExtension="fileExtension"
+        :file-name="fileName"
+        :file-extension="fileExtension"
         @change-page="changePage"
       />
     </div>
-    <div class="sidebar" v-if="!splitOverview">
+    <div
+      v-if="!splitOverview"
+      class="sidebar"
+    >
       <EditSidebar
         @rotate-left="rotatePage"
         @rotate-right="rotatePage"
@@ -27,7 +35,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapState } from "vuex";
 import EditSidebar from "./EditSidebar";
@@ -63,6 +70,25 @@ export default {
       "splitOverview",
       "selectedPages"
     ])
+  },
+  watch: {
+    pages() {
+      if (!this.selectedDocument) return;
+      this.setPages();
+    },
+    splitOverview(newValue) {
+      if (newValue) {
+        this.splitFileNameFromExtension();
+      }
+    },
+    documentPagesListForEditMode(newValue) {
+      if (newValue) {
+        this.saveUpdatedDocument();
+      }
+    }
+  },
+  mounted() {
+    this.setPages();
   },
   methods: {
     setPages() {
@@ -246,25 +272,8 @@ export default {
 
       this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
     }
-  },
-  watch: {
-    pages() {
-      if (!this.selectedDocument) return;
-      this.setPages();
-    },
-    splitOverview(newValue) {
-      if (newValue) {
-        this.splitFileNameFromExtension();
-      }
-    },
-    documentPagesListForEditMode(newValue) {
-      if (newValue) {
-        this.saveUpdatedDocument();
-      }
-    }
-  },
-  mounted() {
-    this.setPages();
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>

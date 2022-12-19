@@ -1,17 +1,17 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
-
 <template>
   <div class="annotations-skeleton">
     <div class="label-set-name-skeleton">
-      <b-skeleton width="20%" height="8px"></b-skeleton>
+      <b-skeleton
+        width="20%"
+        height="8px"
+      />
     </div>
 
     <!-- Label rows -->
-    <div v-for="n in numberOfLabelRows" :key="n">
+    <div
+      v-for="n in numberOfLabelRows"
+      :key="n"
+    >
       <LoadingLabels />
     </div>
   </div>
@@ -35,3 +35,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

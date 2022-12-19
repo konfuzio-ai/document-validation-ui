@@ -1,12 +1,10 @@
-<style
-  scoped
-  lang="scss"
-  src="../assets/scss/document_viewport_modal.scss"
-></style>
-
 <template>
   <section class="viewport-modal">
-    <b-modal class="modal-text-center" :width="500" v-model="isModalActive">
+    <b-modal
+      v-model="isModalActive"
+      class="modal-text-center"
+      :width="500"
+    >
       <section class="modal-card-body">
         <div class="image">
           <Illustration />
@@ -17,7 +15,10 @@
         </div>
       </section>
       <footer class="modal-card-foot">
-        <b-button type="is-primary" @click="handleNotOptimizedModal">
+        <b-button
+          type="is-primary"
+          @click="handleNotOptimizedModal"
+        >
           {{ $t("ok") }}
         </b-button>
       </footer>
@@ -30,13 +31,13 @@ import Illustration from "../assets/images/NotOptimizedIllustration";
 
 export default {
   name: "NotOptimizedViewportModal",
+  components: {
+    Illustration
+  },
   data() {
     return {
       isModalActive: true
     };
-  },
-  components: {
-    Illustration
   },
   methods: {
     handleNotOptimizedModal() {
@@ -45,3 +46,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../assets/scss/document_viewport_modal.scss"
+></style>

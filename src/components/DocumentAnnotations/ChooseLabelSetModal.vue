@@ -1,9 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/choose_label_set_modal.scss"
-></style>
-
 <template>
   <section class="choose-label-set-modal">
     <b-modal
@@ -18,8 +12,8 @@
           <h3>{{ $t("new_ann_set_title") }}</h3>
           <p>{{ $t("new_ann_set_description") }}</p>
           <b-dropdown
-            aria-role="list"
             v-model="selectedLabelSet"
+            aria-role="list"
             :disabled="labelSets.length === 0"
             class="label-set-dropdown"
           >
@@ -43,26 +37,31 @@
               <span>{{ labelSetItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
-          <div class="labels-list" v-if="selectedLabelSet">
+          <div
+            v-if="selectedLabelSet"
+            class="labels-list"
+          >
             <span
               v-for="(label, index) in selectedLabelSet.labels"
               :key="label.id"
-              >{{
-                `${label.name}${
-                  index + 1 !== selectedLabelSet.labels.length ? ", " : ""
-                }`
-              }}</span
-            >
+            >{{
+              `${label.name}${
+                index + 1 !== selectedLabelSet.labels.length ? ", " : ""
+              }`
+            }}</span>
           </div>
           <b-button
             class="submit-ann-set"
             type="is-primary"
-            @click="submit"
             :disabled="!selectedLabelSet"
+            @click="submit"
           >
             {{ $t("continue") }}
           </b-button>
-          <p v-if="selectedLabelSet" class="next-step-description">
+          <p
+            v-if="selectedLabelSet"
+            class="next-step-description"
+          >
             {{ $t("new_ann_set_hint") }}
           </p>
         </div>
@@ -113,3 +112,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/choose_label_set_modal.scss"
+></style>

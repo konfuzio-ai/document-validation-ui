@@ -1,12 +1,18 @@
 <template>
   <div>
-    <DocumentPage v-if="editMode" :page="page" />
+    <DocumentPage
+      v-if="editMode"
+      :page="page"
+    />
     <DummyPage
       v-else-if="!loadedPage || !pageInVisibleRange(page)"
       :width="page.size[0]"
       :height="page.size[1]"
     />
-    <DocumentPage v-else :page="loadedPage" />
+    <DocumentPage
+      v-else
+      :page="loadedPage"
+    />
   </div>
 </template>
 
@@ -59,9 +65,7 @@ export default {
       }
       if (!loadedPage && this.pageInVisibleRange(this.page)) {
         if (!this.pageBeingLoaded) {
-          this.loadPage().then(() => {
-            this.pageBeingLoaded = false;
-          });
+          this.loadPage();
         }
       }
       return loadedPage;
@@ -91,49 +95,6 @@ export default {
     ...mapState("display", ["scale", "currentPage"]),
     ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
     ...mapState("edit", ["editMode"])
-  },
-
-  methods: {
-    loadPage() {
-      this.pageBeingLoaded = true;
-      return this.$store.dispatch(
-        "document/fetchDocumentPage",
-        this.page.number
-      );
-    },
-    pageInVisibleRange(page) {
-      let number;
-      if (this.editMode) {
-        number = page.page_number;
-      } else {
-        number = page.number;
-      }
-      return (
-        this.currentPage === number || this.visiblePageRange.includes(number)
-      );
-    },
-    updateElementBounds() {
-      const { offsetTop, offsetHeight } = this.$el;
-      this.elementTop = offsetTop;
-      this.elementHeight = offsetHeight;
-    },
-
-    /**
-     * Calculate the y-position of this bbox on the page
-     * from its top, the scale and the image scale (calculated
-     * from the page object).
-     */
-    getYForBbox(bbox) {
-      return this.bboxToRect(this.page, bbox).y;
-    },
-
-    /**
-     * Scroll to a relative position in the page. It gets added
-     * the page's element top and a padding margin.
-     */
-    scrollTo(y) {
-      this.$emit("page-jump", this.elementTop + y - 80);
-    }
   },
 
   watch: {
@@ -180,6 +141,50 @@ export default {
   },
   mounted() {
     this.updateElementBounds();
+  },
+
+  methods: {
+    loadPage() {
+      this.pageBeingLoaded = true;
+      this.$store
+        .dispatch("document/fetchDocumentPage", this.page.number)
+        .then(() => {
+          this.pageBeingLoaded = false;
+        });
+    },
+    pageInVisibleRange(page) {
+      let number;
+      if (this.editMode) {
+        number = page.page_number;
+      } else {
+        number = page.number;
+      }
+      return (
+        this.currentPage === number || this.visiblePageRange.includes(number)
+      );
+    },
+    updateElementBounds() {
+      const { offsetTop, offsetHeight } = this.$el;
+      this.elementTop = offsetTop;
+      this.elementHeight = offsetHeight;
+    },
+
+    /**
+     * Calculate the y-position of this bbox on the page
+     * from its top, the scale and the image scale (calculated
+     * from the page object).
+     */
+    getYForBbox(bbox) {
+      return this.bboxToRect(this.page, bbox).y;
+    },
+
+    /**
+     * Scroll to a relative position in the page. It gets added
+     * the page's element top and a padding margin.
+     */
+    scrollTo(y) {
+      this.$emit("page-jump", this.elementTop + y - 80);
+    }
   }
 };
 </script>

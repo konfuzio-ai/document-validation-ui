@@ -1,5 +1,3 @@
-<style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
-
 <template>
   <div class="buttons">
     <b-button
@@ -11,9 +9,9 @@
     <b-button
       :label="
         editMode &&
-        updatedDocument &&
-        updatedDocument.length > 1 &&
-        !splitOverview
+          updatedDocument &&
+          updatedDocument.length > 1 &&
+          !splitOverview
           ? $t('next')
           : $t('submit')
       "
@@ -77,3 +75,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
