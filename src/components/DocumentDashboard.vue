@@ -1,13 +1,23 @@
-<style scoped lang="scss" src="../assets/scss/document_dashboard.scss"></style>
-
 <template>
   <div class="dashboard">
     <DocumentTopBar />
     <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
-      <DocumentThumbnails ref="documentPages" v-if="!editMode" />
-      <ScrollingDocument class="dashboard-document" ref="scrollingDocument" />
-      <DocumentAnnotations ref="annotations" v-if="!editMode" />
-      <DocumentEdit ref="editView" v-else />
+      <DocumentThumbnails
+        v-if="!editMode"
+        ref="documentPages"
+      />
+      <ScrollingDocument
+        ref="scrollingDocument"
+        class="dashboard-document"
+      />
+      <DocumentAnnotations
+        v-if="!editMode"
+        ref="annotations"
+      />
+      <DocumentEdit
+        v-else
+        ref="editView"
+      />
 
       <transition name="slide-fade">
         <div
@@ -19,24 +29,35 @@
         </div>
       </transition>
     </div>
-    <div class="error-modal" v-if="showDocumentError">
+    <div
+      v-if="showDocumentError"
+      class="error-modal"
+    >
       <DocumentError />
     </div>
-    <div class="not-optimized" v-if="!optimalResolution">
+    <div
+      v-if="!optimalResolution"
+      class="not-optimized"
+    >
       <NotOptimizedViewportModal />
     </div>
-    <div class="not-supported" v-if="!isMinimumWidth">
-      <div class="text">{{ $t("resolution_not_supported") }}</div>
+    <div
+      v-if="!isMinimumWidth"
+      class="not-supported"
+    >
+      <div class="text">
+        {{ $t("resolution_not_supported") }}
+      </div>
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters, mapState } from "vuex";
 import { DocumentTopBar } from "./DocumentTopBar";
-import { DocumentPage, DummyPage, ScrollingDocument } from "./DocumentPage";
+import { ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
-import { DocumentsList } from "./DocumentsList";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
@@ -50,12 +71,9 @@ export default {
   name: "DocumentDashboard",
   components: {
     DocumentTopBar,
-    DummyPage,
     ScrollingDocument,
-    DocumentPage,
     DocumentThumbnails,
     DocumentAnnotations,
-    DocumentsList,
     DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal,
@@ -77,6 +95,16 @@ export default {
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["isMinimumWidth"])
+  },
+  watch: {
+    selectedDocument(newDocument, oldDocument) {
+      if (newDocument && !oldDocument) {
+        // first time
+        this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
+      } else if (newDocument) {
+        this.onDocumentResize();
+      }
+    }
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
@@ -125,16 +153,7 @@ export default {
         });
       }
     }
-  },
-  watch: {
-    selectedDocument(newDocument, oldDocument) {
-      if (newDocument && !oldDocument) {
-        // first time
-        this.resizeObserver.observe(this.$refs.scrollingDocument.$el);
-      } else if (newDocument) {
-        this.onDocumentResize();
-      }
-    }
   }
 };
 </script>
+<style scoped lang="scss" src="../assets/scss/document_dashboard.scss"></style>

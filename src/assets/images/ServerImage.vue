@@ -1,7 +1,11 @@
 <template>
   <div style="display: flex">
-    <img :height="height" ref="imgTag" v-show="loaded" />
-    <slot v-if="!loaded"></slot>
+    <img
+      v-show="loaded"
+      ref="imgTag"
+      :height="height"
+    >
+    <slot v-if="!loaded" />
   </div>
 </template>
 
@@ -26,6 +30,14 @@ export default {
       loaded: false
     };
   },
+  watch: {
+    imageUrl() {
+      this.loadImage();
+    }
+  },
+  mounted() {
+    this.loadImage();
+  },
   methods: {
     loadImage() {
       if (!this.imageUrl) return;
@@ -43,14 +55,6 @@ export default {
           }
           this.loaded = true;
         });
-    }
-  },
-  mounted() {
-    this.loadImage();
-  },
-  watch: {
-    imageUrl() {
-      this.loadImage();
     }
   }
 };

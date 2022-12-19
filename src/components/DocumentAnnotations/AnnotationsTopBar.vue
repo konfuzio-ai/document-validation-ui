@@ -1,16 +1,10 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
-
 <template>
   <div class="top-bar">
     <ActionButtons
-      :finishReviewBtn="finishReviewBtn"
-      :finishDisabled="finishDisabled"
+      :finish-review-btn="finishReviewBtn"
+      :finish-disabled="finishDisabled"
+      :is-loading="isLoading"
       @finish-review="handleFinishReview"
-      :isLoading="isLoading"
     />
   </div>
 </template>
@@ -38,6 +32,20 @@ export default {
   },
   computed: {
     ...mapState("document", ["publicView", "finishedReview"])
+  },
+  watch: {
+    finishedReview(newValue) {
+      if (newValue) {
+        this.finishDisabled = false;
+      } else {
+        this.finishDisabled = true;
+      }
+    },
+    publicView(newValue) {
+      if (newValue) {
+        this.finishDisabled = true;
+      }
+    }
   },
   mounted() {
     this.finishDisabled = !this.finishedReview;
@@ -69,20 +77,12 @@ export default {
           this.isLoading = false;
         });
     }
-  },
-  watch: {
-    finishedReview(newValue) {
-      if (newValue) {
-        this.finishDisabled = false;
-      } else {
-        this.finishDisabled = true;
-      }
-    },
-    publicView(newValue) {
-      if (newValue) {
-        this.finishDisabled = true;
-      }
-    }
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

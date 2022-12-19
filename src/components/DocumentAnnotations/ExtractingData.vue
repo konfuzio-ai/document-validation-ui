@@ -1,11 +1,16 @@
-<style scoped lang="scss" src="../../assets/scss/extracting_data.scss"></style>
 <template>
   <div class="data-extraction-container">
     <div class="loading-container">
-      <ActionButtons :isLoading="true" :saveBtn="false" :cancelBtn="false" />
+      <ActionButtons
+        :is-loading="true"
+        :save-btn="false"
+        :cancel-btn="false"
+      />
     </div>
     <div class="data-extraction-text">
-      <p class="title">{{ $t("data_being_extracted") }}</p>
+      <p class="title">
+        {{ $t("data_being_extracted") }}
+      </p>
       <div class="description">
         <p>{{ $t("analysing_document") }}</p>
         <p>{{ $t("few_minutes") }}</p>
@@ -21,3 +26,4 @@ export default {
   components: { ActionButtons }
 };
 </script>
+<style scoped lang="scss" src="../../assets/scss/extracting_data.scss"></style>

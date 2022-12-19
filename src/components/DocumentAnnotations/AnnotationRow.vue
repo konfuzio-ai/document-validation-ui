@@ -1,8 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
 <template>
   <div
     :class="[
@@ -13,14 +8,14 @@
         hoveredAnnotationSet.type == 'reject' &&
         annotationSet.id === hoveredAnnotationSet.annotationSet.id &&
         annotationSet.label_set.id ===
-          hoveredAnnotationSet.annotationSet.label_set.id &&
+        hoveredAnnotationSet.annotationSet.label_set.id &&
         hoveredEmptyLabels() === label.id &&
         'hovered-empty-labels',
       hoveredAnnotationSet &&
         hoveredAnnotationSet.type == 'accept' &&
         annotation &&
         hoveredPendingAnnotations() === annotation.id &&
-        'hovered-pending-annotations'
+        'hovered-pending-annotations',
     ]"
     @click="onAnnotationClick"
     @mouseover="isHovered = true"
@@ -43,20 +38,20 @@
       <div class="annotation-content">
         <div v-if="annotation">
           <div
-            @mouseenter="onAnnotationHoverEnter(span)"
-            @mouseleave="onAnnotationHoverLeave"
             v-for="(span, index) in spanForEditing
               ? spanSelection
               : annotation.span"
             :key="index"
+            @mouseenter="onAnnotationHoverEnter(span)"
+            @mouseleave="onAnnotationHoverLeave"
           >
-            <Annotation
+            <AnnotationContent
               :annotation="annotation"
               :span="span"
-              :spanIndex="index"
+              :span-index="index"
               :label="label"
-              :annotationSet="annotationSet"
-              :isHovered="isHovered"
+              :annotation-set="annotationSet"
+              :is-hovered="isHovered"
             />
           </div>
         </div>
@@ -66,18 +61,18 @@
               v-for="(span, index) in spanSelection"
               :key="index"
               :span="span"
-              :spanIndex="index"
+              :span-index="index"
               :label="label"
-              :annotationSet="annotationSet"
-              :isHovered="isHovered"
+              :annotation-set="annotationSet"
+              :is-hovered="isHovered"
               @reject="handleReject"
             />
           </div>
           <EmptyAnnotation
             v-else
             :label="label"
-            :annotationSet="annotationSet"
-            :isHovered="isHovered"
+            :annotation-set="annotationSet"
+            :is-hovered="isHovered"
             @reject="handleReject"
           />
         </div>
@@ -88,32 +83,32 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
-import Annotation from "./Annotation";
+import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
 export default {
   name: "AnnotationRow",
   components: {
     AnnotationDetails,
-    Annotation,
-    EmptyAnnotation
+    AnnotationContent,
+    EmptyAnnotation,
   },
   props: {
     annotationSet: {
-      required: true
+      required: true,
     },
     label: {
-      required: true
+      required: true,
     },
     annotation: {
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       isLoading: false,
       isSelected: false,
       annotationAnimationTimeout: null,
-      isHovered: false
+      isHovered: false,
     };
   },
   computed: {
@@ -121,7 +116,7 @@ export default {
       "editAnnotation",
       "sidebarAnnotationSelected",
       "hoveredAnnotationSet",
-      "enableGroupingFeature"
+      "enableGroupingFeature",
     ]),
     ...mapState("selection", ["spanSelection"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
@@ -142,7 +137,33 @@ export default {
         this.isValueArray(this.spanSelection) &&
         this.isAnnotationInEditMode(this.annotationId())
       );
-    }
+    },
+  },
+  watch: {
+    sidebarAnnotationSelected(newSidebarAnnotationSelected) {
+      if (
+        newSidebarAnnotationSelected &&
+        this.annotation &&
+        this.annotation.id === newSidebarAnnotationSelected.id
+      ) {
+        clearTimeout(this.annotationAnimationTimeout);
+
+        const runAnimation = () => {
+          this.$el.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest",
+          });
+          this.isSelected = true;
+          // remove annotation selection after some time
+          this.annotationAnimationTimeout = setTimeout(() => {
+            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+            this.isSelected = false;
+          }, 1500);
+        };
+        runAnimation();
+      }
+    },
   },
   methods: {
     annotationId() {
@@ -165,7 +186,7 @@ export default {
           annotation: this.annotation,
           label: this.label,
           span,
-          scrollTo: false
+          scrollTo: false,
         });
       }
     },
@@ -183,11 +204,11 @@ export default {
       if (!this.hoveredAnnotationSet) return;
 
       const labels = this.hoveredAnnotationSet.annotationSet.labels.map(
-        label => {
+        (label) => {
           return JSON.parse(JSON.stringify(label));
         }
       );
-      const found = labels.find(l => l.id === this.label.id);
+      const found = labels.find((l) => l.id === this.label.id);
       if (found && found.annotations.length === 0) return found.id;
       return null;
     },
@@ -195,7 +216,7 @@ export default {
       if (!this.hoveredAnnotationSet) return;
 
       const annotations =
-        this.hoveredAnnotationSet.annotationSet.labels.flatMap(label => {
+        this.hoveredAnnotationSet.annotationSet.labels.flatMap((label) => {
           return label.annotations;
         });
 
@@ -207,7 +228,7 @@ export default {
         return;
 
       const found = annotations.find(
-        ann => ann.id === this.annotation.id && !ann.revised
+        (ann) => ann.id === this.annotation.id && !ann.revised
       );
 
       if (found) {
@@ -215,33 +236,12 @@ export default {
       } else {
         return null;
       }
-    }
+    },
   },
-  watch: {
-    sidebarAnnotationSelected(newSidebarAnnotationSelected) {
-      if (
-        newSidebarAnnotationSelected &&
-        this.annotation &&
-        this.annotation.id === newSidebarAnnotationSelected.id
-      ) {
-        clearTimeout(this.annotationAnimationTimeout);
-
-        const runAnimation = () => {
-          this.$el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest"
-          });
-          this.isSelected = true;
-          // remove annotation selection after some time
-          this.annotationAnimationTimeout = setTimeout(() => {
-            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-            this.isSelected = false;
-          }, 1500);
-        };
-        runAnimation();
-      }
-    }
-  }
 };
 </script>
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

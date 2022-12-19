@@ -1,10 +1,11 @@
-<style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
-
 <template>
-  <div class="document-top-bar-component" ref="documentTopBar">
+  <div
+    ref="documentTopBar"
+    class="document-top-bar-component"
+  >
     <div
-      class="document-top-bar"
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
+      class="document-top-bar"
     >
       <div class="left-bar-components">
         <DocumentCategory
@@ -12,16 +13,16 @@
         />
         <DocumentDatasetStatus
           v-if="showDatasetDropdown && !editMode && !recalculatingAnnotations"
-          :datasetStatus="selectedDocument.dataset_status"
+          :dataset-status="selectedDocument.dataset_status"
         />
       </div>
 
-      <DocumentName :dataFileName="selectedDocument.data_file_name" />
+      <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
       <div class="right-bar-components">
         <div
-          class="read-only-info"
           v-if="!editMode && (publicView || selectedDocument.is_reviewed)"
+          class="read-only-info"
         >
           <b-tooltip
             type="is-dark"
@@ -32,7 +33,10 @@
             <span v-if="publicView && !selectedDocument.is_reviewed">
               {{ $t("lite_mode") }}
             </span>
-            <span v-else class="doc-reviewed">
+            <span
+              v-else
+              class="doc-reviewed"
+            >
               {{ $t("reviewed_mode") }}
             </span>
             <b-icon
@@ -42,31 +46,47 @@
               ]"
               icon="circle-info"
             />
-            <template v-slot:content>
+            <template #content>
               <div
                 v-if="!selectedDocument.is_reviewed"
                 class="read-only-details"
               >
                 {{ $t("limited_functionalities") }}
               </div>
-              <div v-else class="read-only-details">
+              <div
+                v-else
+                class="read-only-details"
+              >
                 {{ $t("document_reviewed") }}
               </div>
             </template>
           </b-tooltip>
         </div>
 
-        <div class="edit-mode-buttons" v-if="editMode">
+        <div
+          v-if="editMode"
+          class="edit-mode-buttons"
+        >
           <DocumentTopBarButtons />
         </div>
 
-        <div class="handover" v-if="showHandoverButton && !editMode">
+        <div
+          v-if="showHandoverButton && !editMode"
+          class="handover"
+        >
           <DocumentHandover />
         </div>
       </div>
     </div>
-    <div class="loading-top-bar" v-else>
-      <b-skeleton position="is-centered" width="25%" height="60%" />
+    <div
+      v-else
+      class="loading-top-bar"
+    >
+      <b-skeleton
+        position="is-centered"
+        width="25%"
+        height="60%"
+      />
     </div>
   </div>
 </template>
@@ -86,19 +106,19 @@ import DocumentTopBarButtons from "./DocumentTopBarButtons";
 
 export default {
   name: "DocumentTopBar",
-  data() {
-    return {
-      categoryError: false,
-      showDatasetDropdown: false,
-      showHandoverButton: false
-    };
-  },
   components: {
     DocumentCategory,
     DocumentDatasetStatus,
     DocumentName,
     DocumentHandover,
     DocumentTopBarButtons
+  },
+  data() {
+    return {
+      categoryError: false,
+      showDatasetDropdown: false,
+      showHandoverButton: false
+    };
   },
   computed: {
     ...mapState("document", [
@@ -133,3 +153,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>
