@@ -156,6 +156,20 @@ export default {
       }
     },
   },
+  watch: {
+    editAnnotation(newValue) {
+      if (!newValue && !this.jumpToNextAnnotation) {
+        this.count = 0;
+      }
+    },
+    acceptAnnotation(newValue, oldValue) {
+      // TODO: rework this to be more generic
+      if (!newValue && oldValue) {
+        this.focusOnNextAnnotation();
+        this.jumpToNextAnnotation = false;
+      }
+    },
+  },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
   },
