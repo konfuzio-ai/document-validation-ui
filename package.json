@@ -11,6 +11,10 @@
     "prepublishOnly": "npm run test:unit && npm run lint",
     "version": "npm run test:unit && npm run lint"
   },
+  "pre-commit": [
+    "test:unit",
+    "lint"
+  ],
   "files": [
     "dist/*",
     "src/*",
@@ -48,6 +52,7 @@
     "babel-jest": "^27.0.6",
     "eslint": "^8.30.0",
     "eslint-plugin-vue": "^9.8.0",
-    "jest": "^27.0.5"
+    "jest": "^27.0.5",
+    "pre-commit": "^1.2.2"
   }
 }

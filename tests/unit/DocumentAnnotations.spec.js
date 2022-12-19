@@ -1,9 +1,11 @@
-import { mount } from "@vue/test-utils";
+import {
+  mount
+} from "@vue/test-utils";
 import {
   DocumentAnnotations,
-  Label,
+  DocumentLabel,
   EmptyAnnotation,
-  Annotation,
+  AnnotationContent,
 } from "../../src/components/DocumentAnnotations";
 import store from "../../src/store";
 
@@ -52,7 +54,7 @@ describe("Document Annotations Component", () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
 
-    const wrapper = mount(Label, {
+    const wrapper = mount(DocumentLabel, {
       store,
       mocks: {
         $t,
@@ -151,7 +153,7 @@ describe("Document Annotations Component", () => {
     const spanIndex = 0;
     const span = annotation.span[spanIndex];
 
-    const wrapper = mount(Annotation, {
+    const wrapper = mount(AnnotationContent, {
       store,
       propsData: {
         annotation,
@@ -177,8 +179,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .annotation-accept-btn")
-        .isVisible()
+      .find(".buttons-container .action-buttons .annotation-accept-btn")
+      .isVisible()
     ).toBe(true);
 
     await wrapper.findComponent(".annotation-value").trigger("mouseout");
@@ -188,8 +190,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .annotation-accept-btn")
-        .exists()
+      .find(".buttons-container .action-buttons .annotation-accept-btn")
+      .exists()
     ).toBe(false);
   });
 
@@ -222,14 +224,12 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [
-      {
-        label_set: annotationSet.label_set.id,
-        label: label.id,
-        document: store.state.document.documentId,
-        annotation_set: annotationSet,
-      },
-    ];
+    const rejectedAnnotation = [{
+      label_set: annotationSet.label_set.id,
+      label: label.id,
+      document: store.state.document.documentId,
+      annotation_set: annotationSet,
+    }, ];
 
     expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
 
@@ -253,8 +253,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       wrapper
-        .findAll(".rejected-labels-list .rejected-label-container .title")
-        .isVisible()
+      .findAll(".rejected-labels-list .rejected-label-container .title")
+      .isVisible()
     ).toBe(true);
 
     await wrapper
@@ -278,14 +278,12 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [
-      {
-        label_set: annotationSet.label_set.id,
-        label: annotationSet.labels[0].id,
-        document: store.state.document.documentId,
-        annotation_set: annotationSet.id,
-      },
-    ];
+    const rejectedAnnotation = [{
+      label_set: annotationSet.label_set.id,
+      label: annotationSet.labels[0].id,
+      document: store.state.document.documentId,
+      annotation_set: annotationSet.id,
+    }, ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
@@ -312,14 +310,12 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [
-      {
-        label_set: annotationSet.label_set.id,
-        label: annotationSet.labels[0].id,
-        document: store.state.document.documentId,
-        annotation_set: annotationSet.id,
-      },
-    ];
+    const rejectedAnnotation = [{
+      label_set: annotationSet.label_set.id,
+      label: annotationSet.labels[0].id,
+      document: store.state.document.documentId,
+      annotation_set: annotationSet.id,
+    }, ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
@@ -346,10 +342,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .findComponent(
-          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-        )
-        .isVisible()
+      .findComponent(
+        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+      )
+      .isVisible()
     ).toBe(true);
   });
 
@@ -363,10 +359,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .findComponent(
-          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-        )
-        .attributes("disabled")
+      .findComponent(
+        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+      )
+      .attributes("disabled")
     ).not.toBe("undefined");
   });
 
@@ -399,9 +395,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .reject-all .reject-btn")
-        .text()
-        .includes(emptyLabels.length)
+      .find(".action-buttons .reject-all .reject-btn")
+      .text()
+      .includes(emptyLabels.length)
     ).toBe(true);
   });
 
@@ -434,8 +430,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .accept-all .accept-all-btn")
-        .isVisible()
+      .find(".action-buttons .accept-all .accept-all-btn")
+      .isVisible()
     ).toBe(true);
   });
 
@@ -459,9 +455,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .accept-all .accept-all-btn")
-        .text()
-        .includes(pendingAnnotations.length)
+      .find(".action-buttons .accept-all .accept-all-btn")
+      .text()
+      .includes(pendingAnnotations.length)
     ).toBe(true);
   });
 
