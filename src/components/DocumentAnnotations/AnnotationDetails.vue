@@ -6,38 +6,124 @@
     class="left-aligned annotation-details"
   >
     <div class="label-icon">
-      <b-icon
-        :class="[animate ? 'animated-ripple' : '', getColor()]"
-        :icon="getIcon()"
-        size="is-small"
-      />
+      <div v-if="created || edited">
+        <div
+          v-if="accepted"
+          :class="[
+            'annotation-details-icon',
+            animate ? 'animated-ripple' : '',
+            'user-icon',
+          ]"
+        >
+          <AcceptedUser />
+        </div>
+        <div
+          v-else
+          :class="[
+            'annotation-details-icon',
+            animate ? 'animated-ripple' : '',
+            'user-icon',
+          ]"
+        >
+          <User />
+        </div>
+      </div>
+      <div
+        v-else-if="notFound"
+        :class="[
+          'annotation-details-icon',
+          animate ? 'animated-ripple' : '',
+          'question-icon',
+        ]"
+      >
+        <QuestionMark />
+      </div>
+      <div v-else>
+        <div
+          v-if="accepted"
+          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+        >
+          <AcceptedCheckMark />
+        </div>
+        <div
+          v-else
+          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+        >
+          <CheckMark />
+        </div>
+      </div>
     </div>
 
     <template #content>
       <div class="label-details">
-        <div
-          v-if="description"
-          class="label-description"
-        >
+        <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div
-          v-if="accuracy"
-          class="accuracy"
-        >
-          <span>{{ $t("accuracy") }}</span><span
+        <div v-if="accuracy" class="accuracy">
+          <span>{{ $t("accuracy") }}</span
+          ><span
             :class="[
               'value',
-              accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : ''
+              accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : '',
             ]"
-          >{{ Math.floor(accuracy * 100) / 100 }}</span>
+            >{{ Math.floor(accuracy * 100) / 100 }}</span
+          >
         </div>
         <div class="revision">
-          <div :class="getColor()">
-            <b-icon
-              :icon="getIcon()"
-              size="is-small"
-            />{{ getText() }}
+          <div class="detail-icons">
+            <div v-if="created || edited">
+              <div
+                v-if="accepted"
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                  'user-icon',
+                ]"
+              >
+                <AcceptedUser />
+              </div>
+              <div
+                v-else
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                  'user-icon',
+                ]"
+              >
+                <User />
+              </div>
+            </div>
+            <div
+              v-else-if="notFound"
+              :class="[
+                'annotation-details-icon',
+                animate ? 'animated-ripple' : '',
+                'question-icon',
+              ]"
+            >
+              <QuestionMark />
+            </div>
+            <div v-else>
+              <div
+                v-if="accepted"
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                ]"
+              >
+                <AcceptedCheckMark />
+              </div>
+              <div
+                v-else
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                ]"
+              >
+                <CheckMark />
+              </div>
+            </div>
+            {{ getText() }}
           </div>
         </div>
       </div>
@@ -45,19 +131,34 @@
   </b-tooltip>
 </template>
 <script>
+import CheckMark from "../../assets/images/CheckMark";
+import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
+import QuestionMark from "../../assets/images/QuestionMark";
+import AcceptedUser from "../../assets/images/AcceptedUser";
+import User from "../../assets/images/User";
+
 export default {
   name: "AnnotationDetails",
-  props: {
-    description: {
-      required: true
+  methods: {
+    getText() {
+      if (this.notFound) {
+        return this.$t("not_found_in_document");
+      } else if (this.created) {
+        return this.user
+          ? `${this.$t("created_by")} ${this.user}`
+          : this.$t("created");
+      } else if (this.accepted) {
+        return this.user
+          ? `${this.$t("approved_by")} ${this.user}`
+          : this.$t("approved");
+      } else {
+        return this.$t("not_revised_yet");
+      }
     },
-    annotation: {
-      default: null
-    }
   },
   data() {
     return {
-      animate: false
+      animate: false,
     };
   },
   computed: {
@@ -130,13 +231,33 @@ export default {
       } else {
         return null;
       }
-    }
+    },
+  },
+  props: {
+    description: {
+      required: true,
+    },
+    annotation: {
+      default: null,
+    },
+  },
+  components: {
+    CheckMark,
+    QuestionMark,
+    AcceptedCheckMark,
+    AcceptedUser,
+    User,
+  },
+  data() {
+    return {
+      animate: false,
+    };
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
       // animate an annotation being accepted
       // TODO: add this accepted check to store
-      const accepted = ann => {
+      const accepted = (ann) => {
         return ann && ann.id && ann.revised && ann.is_correct;
       };
       if (
@@ -150,7 +271,7 @@ export default {
           this.animate = false;
         }, 2000);
       }
-    }
+    },
   },
   methods: {
     getIcon() {
@@ -183,8 +304,8 @@ export default {
       } else {
         return this.$t("not_revised_yet");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style
