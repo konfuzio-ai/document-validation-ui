@@ -11,11 +11,52 @@
     class="left-aligned annotation-details"
   >
     <div class="label-icon">
-      <b-icon
-        :class="[animate ? 'animated-ripple' : '', getColor()]"
-        :icon="getIcon()"
-        size="is-small"
-      />
+      <div v-if="created || edited">
+        <div
+          v-if="accepted"
+          :class="[
+            'annotation-details-icon',
+            animate ? 'animated-ripple' : '',
+            'user-icon'
+          ]"
+        >
+          <AcceptedUser />
+        </div>
+        <div
+          v-else
+          :class="[
+            'annotation-details-icon',
+            animate ? 'animated-ripple' : '',
+            'user-icon'
+          ]"
+        >
+          <User />
+        </div>
+      </div>
+      <div
+        v-else-if="notFound"
+        :class="[
+          'annotation-details-icon',
+          animate ? 'animated-ripple' : '',
+          'question-icon'
+        ]"
+      >
+        <QuestionMark />
+      </div>
+      <div v-else>
+        <div
+          v-if="accepted"
+          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+        >
+          <AcceptedCheckMark />
+        </div>
+        <div
+          v-else
+          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+        >
+          <CheckMark />
+        </div>
+      </div>
     </div>
 
     <template v-slot:content>
@@ -34,8 +75,60 @@
           >
         </div>
         <div class="revision">
-          <div :class="getColor()">
-            <b-icon :icon="getIcon()" size="is-small" />{{ getText() }}
+          <div class="detail-icons">
+            <div v-if="created || edited">
+              <div
+                v-if="accepted"
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                  'user-icon'
+                ]"
+              >
+                <AcceptedUser />
+              </div>
+              <div
+                v-else
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                  'user-icon'
+                ]"
+              >
+                <User />
+              </div>
+            </div>
+            <div
+              v-else-if="notFound"
+              :class="[
+                'annotation-details-icon',
+                animate ? 'animated-ripple' : '',
+                'question-icon'
+              ]"
+            >
+              <QuestionMark />
+            </div>
+            <div v-else>
+              <div
+                v-if="accepted"
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : ''
+                ]"
+              >
+                <AcceptedCheckMark />
+              </div>
+              <div
+                v-else
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : ''
+                ]"
+              >
+                <CheckMark />
+              </div>
+            </div>
+            {{ getText() }}
           </div>
         </div>
       </div>
@@ -43,25 +136,15 @@
   </b-tooltip>
 </template>
 <script>
+import CheckMark from "../../assets/images/CheckMark";
+import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
+import QuestionMark from "../../assets/images/QuestionMark";
+import AcceptedUser from "../../assets/images/AcceptedUser";
+import User from "../../assets/images/User";
+
 export default {
   name: "AnnotationDetails",
   methods: {
-    getIcon() {
-      if (this.notFound) {
-        return "question";
-      } else if (this.created || this.edited) {
-        return "user";
-      } else {
-        return "check";
-      }
-    },
-    getColor() {
-      if (this.accepted) {
-        return "green";
-      } else {
-        return "";
-      }
-    },
     getText() {
       if (this.notFound) {
         return this.$t("not_found_in_document");
@@ -157,6 +240,13 @@ export default {
     annotation: {
       default: null
     }
+  },
+  components: {
+    CheckMark,
+    QuestionMark,
+    AcceptedCheckMark,
+    AcceptedUser,
+    User
   },
   data() {
     return {
