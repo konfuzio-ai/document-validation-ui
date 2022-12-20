@@ -139,6 +139,10 @@
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
+
+                svg {
+                  height: 21px;
+                }
               }
             }
           }
@@ -327,9 +331,7 @@
                   border-radius: 2px;
 
                   &.page-stack {
-                    box-shadow: 2px 2px $white,
-                      3px 3px $detail,
-                      5px 5px $white,
+                    box-shadow: 2px 2px $white, 3px 3px $detail, 5px 5px $white,
                       6px 6px $detail;
                   }
                 }
@@ -342,13 +344,17 @@
                 .action-icon {
                   border-radius: 60px;
                   background-color: $dark-blue;
-                  width: 25px;
-                  height: 25px;
+                  width: 28px;
+                  height: 28px;
                   color: $white;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   cursor: pointer;
+
+                  svg {
+                    height: 21px;
+                  }
                 }
               }
 

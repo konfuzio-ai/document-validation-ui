@@ -24,28 +24,22 @@
             <div
               :class="[
                 'img-container',
-                selected && isPageSelected(page.id) === page.id && 'selected'
+                selected && isPageSelected(page.id) === page.id && 'selected',
               ]"
             >
               <ServerImage
                 class="img-thumbnail"
                 :image-url="`${page.thumbnail_url}?${page.updated_at}`"
                 :style="{
-                  transform: 'rotate(' + getRotation(page.id) + 'deg)'
+                  transform: 'rotate(' + getRotation(page.id) + 'deg)',
                 }"
               >
-                <b-skeleton
-                  width="57px"
-                  height="57px"
-                />
+                <b-skeleton width="57px" height="57px" />
               </ServerImage>
             </div>
             <div class="icon-container">
               <div class="action-icon">
-                <b-icon
-                  icon="eye"
-                  class="is-small"
-                />
+                <EyeIcon />
               </div>
             </div>
           </div>
@@ -56,29 +50,23 @@
             'splitting-lines',
             activeSplittingLines &&
               activeSplittingLines[index] === page.page_number &&
-              'active-split'
+              'active-split',
           ]"
           @click="handleSplittingLines(page)"
         >
           <div class="scissors-icon">
-            <b-icon
-              icon="scissors"
-              class="is-small"
-            />
+            <b-icon icon="scissors" class="is-small" />
           </div>
           <div
             v-if="
               activeSplittingLines &&
-                activeSplittingLines[index] === page.page_number
+              activeSplittingLines[index] === page.page_number
             "
             class="lines"
           >
             <SplitZigZag />
           </div>
-          <div
-            v-else
-            class="lines"
-          >
+          <div v-else class="lines">
             <SplitLines />
           </div>
         </div>
@@ -97,6 +85,7 @@ import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitLines from "../../assets/images/SplitLines";
 import SplitZigZag from "../../assets/images/SplitZigZag";
+import EyeIcon from "../../assets/images/EyeIcon";
 import draggable from "vuedraggable";
 
 export default {
@@ -105,32 +94,33 @@ export default {
     ServerImage,
     SplitLines,
     SplitZigZag,
-    draggable
+    EyeIcon,
+    draggable,
   },
   props: {
     activeSplittingLines: {
-      type: Array
-    }
+      type: Array,
+    },
   },
   data() {
     return {
       editPages: null,
-      selected: null
+      selected: null,
     };
   },
   computed: {
     ...mapState("document", [
       "pages",
       "recalculatingAnnotations",
-      "selectedDocument"
+      "selectedDocument",
     ]),
     ...mapState("edit", [
       "editMode",
       "documentPagesListForEditMode",
       "splitOverview",
       "selectedPages",
-      "splitOverview"
-    ])
+      "splitOverview",
+    ]),
   },
   watch: {
     documentPagesListForEditMode(newValue, oldValue) {
@@ -147,7 +137,7 @@ export default {
       if (newValue) {
         this.editPages = this.documentPagesListForEditMode;
       }
-    }
+    },
   },
   mounted() {
     this.editPages = this.documentPagesListForEditMode;
@@ -158,7 +148,7 @@ export default {
     },
     isPageSelected(id) {
       if (this.selectedPages.length === 0) return;
-      const selectedPage = this.selectedPages.find(page => page.id === id);
+      const selectedPage = this.selectedPages.find((page) => page.id === id);
       if (selectedPage) return selectedPage.id;
     },
     selectPage(page) {
@@ -167,7 +157,7 @@ export default {
       const selectedPage = {
         id: page.id,
         number: page.page_number,
-        thumbnail_url: page.thumbnail_url
+        thumbnail_url: page.thumbnail_url,
       };
       this.selected = true;
 
@@ -193,7 +183,7 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+      return this.documentPagesListForEditMode?.find((p) => p.id === pageId)
         ?.angle;
     },
     handleSplittingLines(page) {
@@ -206,8 +196,8 @@ export default {
       this.draggable = false;
 
       this.$emit("handle-drag-end");
-    }
-  }
+    },
+  },
 };
 </script>
 

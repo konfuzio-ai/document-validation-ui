@@ -1,9 +1,6 @@
 <template>
   <div class="split-overview">
-    <div
-      class="back-section"
-      @click="handleBackButton"
-    >
+    <div class="back-section" @click="handleBackButton">
       <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
@@ -38,15 +35,12 @@
                   :image-url="getImageUrl(page)"
                   :style="{
                     transform:
-                      'rotate(' + getRotation(page.pages[0].id) + 'deg)'
+                      'rotate(' + getRotation(page.pages[0].id) + 'deg)',
                   }"
                 />
                 <div class="icon-container">
                   <div class="action-icon">
-                    <b-icon
-                      icon="eye"
-                      class="is-small"
-                    />
+                    <EyeIcon />
                   </div>
                 </div>
               </div>
@@ -62,7 +56,7 @@
               @input="handleInput"
               @paste="handlePaste"
               @blur="handleChanges(page)"
-            >
+            />
             <div class="file-extension-container">
               <span>{{ `.${fileExtension}` }}</span>
             </div>
@@ -90,30 +84,32 @@
 import { mapState } from "vuex";
 import DocumentCategory from "../../components/DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
+import EyeIcon from "../../assets/images/EyeIcon";
 
 export default {
   name: "SplitOverview",
   components: {
     DocumentCategory,
-    ServerImage
+    ServerImage,
+    EyeIcon,
   },
   props: {
     fileName: {
-      type: String
+      type: String,
     },
     fileExtension: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
       splitMode: true,
-      updatedFileName: null
+      updatedFileName: null,
     };
   },
   computed: {
     ...mapState("document", ["selectedDocument", "pages"]),
-    ...mapState("edit", ["updatedDocument", "documentPagesListForEditMode"])
+    ...mapState("edit", ["updatedDocument", "documentPagesListForEditMode"]),
   },
   methods: {
     handleBackButton() {
@@ -128,17 +124,17 @@ export default {
     },
     handleChanges(page, category) {
       // This function handles file name or category changes
-      const updatedPages = this.updatedDocument.map(splitPage => {
+      const updatedPages = this.updatedDocument.map((splitPage) => {
         if (splitPage.pages[0].id === page.pages[0].id) {
           if (this.updatedFileName) {
             return {
               ...splitPage,
-              name: `${this.updatedFileName}.${this.fileExtension}`
+              name: `${this.updatedFileName}.${this.fileExtension}`,
             };
           } else if (category) {
             return {
               ...splitPage,
-              category: category
+              category: category,
             };
           } else {
             return splitPage;
@@ -168,17 +164,17 @@ export default {
       // returns the first thumbnail in the pages array
       // for each new document
       const image = this.documentPagesListForEditMode.find(
-        p => p.page_number === page.pages[0].page_number
+        (p) => p.page_number === page.pages[0].page_number
       );
 
       return `${image.thumbnail_url}?${image.updated_at}`;
     },
     getRotation(pageId) {
       // rotate page
-      return this.documentPagesListForEditMode?.find(p => p.id === pageId)
+      return this.documentPagesListForEditMode?.find((p) => p.id === pageId)
         ?.angle;
-    }
-  }
+    },
+  },
 };
 </script>
 

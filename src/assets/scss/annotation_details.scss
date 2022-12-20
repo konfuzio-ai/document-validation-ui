@@ -3,24 +3,27 @@
 .label-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 40px;
-  padding: 0 20px;
 
-  .icon {
-    color: $grey-detail;
-    position: relative;
-
-    &.red {
-      color: $error-red;
-    }
-
-    &.green {
-      color: $green;
-    }
+  .annotation-details-icon {
+    display: flex;
+    padding: 0 15px;
 
     &.animated-ripple {
       animation: bounce 0.4s 0.1s;
       transform: scale(1);
+    }
+
+    svg {
+      width: 25px;
+    }
+
+    &.user-icon {
+      padding: 0 18px;
+      svg {
+        width: 20px;
+      }
     }
   }
 }
@@ -74,19 +77,24 @@
     line-height: 18px;
     color: $white;
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
     }
 
-    .icon {
-      margin-right: 6px;
-      color: rgba(255, 255, 255, 0.2);
-    }
+    .annotation-details-icon {
+      display: flex;
 
-    .green {
-      .icon {
-        color: $green;
+      svg {
+        width: 25px;
+      }
+
+      &.user-icon {
+        padding-right: 5px;
+
+        svg {
+          width: 20px;
+        }
       }
     }
   }
