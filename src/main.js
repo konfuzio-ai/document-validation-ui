@@ -4,14 +4,10 @@ import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
 import App from "./components/App";
 import * as Sentry from "@sentry/vue";
-import {
-  Integrations
-} from "@sentry/tracing";
+import { Integrations } from "@sentry/tracing";
 import i18n from "./i18n";
 import store from "./store";
-import {
-  library
-} from "@fortawesome/fontawesome-svg-core";
+import { library } from "@fortawesome/fontawesome-svg-core";
 // internal icons
 import {
   faArrowUp,
@@ -24,7 +20,6 @@ import {
   faCheck,
   faXmark,
   faEllipsisVertical,
-  faUser,
   faCircleInfo,
   faArrowRotateLeft,
   faArrowRotateRight,
@@ -33,11 +28,9 @@ import {
   faEye,
   faArrowLeft,
   faQuestion,
-  faPlus
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  FontAwesomeIcon
-} from "@fortawesome/vue-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faArrowUp,
@@ -50,7 +43,6 @@ library.add(
   faSpinner,
   faXmark,
   faEllipsisVertical,
-  faUser,
   faCircleInfo,
   faArrowRotateLeft,
   faArrowRotateRight,
@@ -66,7 +58,7 @@ Vue.component("App", App);
 Vue.use(VueKonva);
 Vue.use(Buefy, {
   defaultIconPack: "fas",
-  defaultIconComponent: "vue-fontawesome"
+  defaultIconComponent: "vue-fontawesome",
 });
 
 // Sentry config
@@ -85,8 +77,8 @@ if (process.env.NODE_ENV != "development") {
     logErrors: true,
 
     tracingOptions: {
-      trackComponents: true
-    }
+      trackComponents: true,
+    },
   });
 }
 
@@ -96,5 +88,5 @@ if (process.env.NODE_ENV != "development") {
 new Vue({
   i18n,
   store,
-  el: "#app"
+  el: "#app",
 });

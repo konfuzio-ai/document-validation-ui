@@ -25,7 +25,7 @@
             'user-icon',
           ]"
         >
-          <User />
+          <UserIcon />
         </div>
       </div>
       <div
@@ -90,7 +90,7 @@
                   'user-icon',
                 ]"
               >
-                <User />
+                <UserIcon />
               </div>
             </div>
             <div
@@ -135,25 +135,25 @@ import CheckMark from "../../assets/images/CheckMark";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import QuestionMark from "../../assets/images/QuestionMark";
 import AcceptedUser from "../../assets/images/AcceptedUser";
-import User from "../../assets/images/User";
+import UserIcon from "../../assets/images/UserIcon";
 
 export default {
   name: "AnnotationDetails",
-  methods: {
-    getText() {
-      if (this.notFound) {
-        return this.$t("not_found_in_document");
-      } else if (this.created) {
-        return this.user
-          ? `${this.$t("created_by")} ${this.user}`
-          : this.$t("created");
-      } else if (this.accepted) {
-        return this.user
-          ? `${this.$t("approved_by")} ${this.user}`
-          : this.$t("approved");
-      } else {
-        return this.$t("not_revised_yet");
-      }
+  components: {
+    CheckMark,
+    QuestionMark,
+    AcceptedCheckMark,
+    AcceptedUser,
+    UserIcon,
+  },
+  props: {
+    description: {
+      type: String,
+      required: true,
+    },
+    annotation: {
+      type: Object,
+      default: null,
     },
   },
   data() {
@@ -233,26 +233,6 @@ export default {
       }
     },
   },
-  props: {
-    description: {
-      required: true,
-    },
-    annotation: {
-      default: null,
-    },
-  },
-  components: {
-    CheckMark,
-    QuestionMark,
-    AcceptedCheckMark,
-    AcceptedUser,
-    User,
-  },
-  data() {
-    return {
-      animate: false,
-    };
-  },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
       // animate an annotation being accepted
@@ -274,22 +254,6 @@ export default {
     },
   },
   methods: {
-    getIcon() {
-      if (this.notFound) {
-        return "question";
-      } else if (this.created || this.edited) {
-        return "user";
-      } else {
-        return "check";
-      }
-    },
-    getColor() {
-      if (this.accepted) {
-        return "green";
-      } else {
-        return "";
-      }
-    },
     getText() {
       if (this.notFound) {
         return this.$t("not_found_in_document");
