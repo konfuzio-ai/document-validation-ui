@@ -1,8 +1,9 @@
-<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>
-
 <template>
   <div class="split-overview">
-    <div class="back-section" @click="handleBackButton">
+    <div
+      class="back-section"
+      @click="handleBackButton"
+    >
       <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
@@ -14,7 +15,9 @@
         {{ $t("back_to_edit") }}
       </div>
     </div>
-    <div class="overview-title">{{ $t("split_document") }}</div>
+    <div class="overview-title">
+      {{ $t("split_document") }}
+    </div>
     <div class="new-documents-container">
       <div
         v-for="(page, index) in updatedDocument"
@@ -31,8 +34,8 @@
                 :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
               >
                 <ServerImage
-                  :imageUrl="getImageUrl(page)"
                   ref="image"
+                  :image-url="getImageUrl(page)"
                   :style="{
                     transform:
                       'rotate(' + getRotation(page.pages[0].id) + 'deg)'
@@ -40,7 +43,10 @@
                 />
                 <div class="icon-container">
                   <div class="action-icon">
-                    <b-icon icon="eye" class="is-small" />
+                    <b-icon
+                      icon="eye"
+                      class="is-small"
+                    />
                   </div>
                 </div>
               </div>
@@ -52,22 +58,22 @@
             <input
               type="text"
               class="name-input"
+              :value="getFileName(page.name)"
               @input="handleInput"
               @paste="handlePaste"
               @blur="handleChanges(page)"
-              :value="getFileName(page.name)"
-            />
+            >
             <div class="file-extension-container">
               <span>{{ `.${fileExtension}` }}</span>
             </div>
           </div>
           <div class="category">
             <DocumentCategory
-              :selectedDocument="selectedDocument"
-              :splitMode="splitMode"
+              :selected-document="selectedDocument"
+              :split-mode="splitMode"
               :page="page"
-              @category-change="handleChanges"
               :index="index"
+              @category-change="handleChanges"
             />
           </div>
         </div>
@@ -175,3 +181,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_edit.scss"></style>

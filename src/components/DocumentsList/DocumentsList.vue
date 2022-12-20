@@ -1,10 +1,12 @@
-<style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>
 <template>
   <div
-    class="documents-list"
     v-if="documentsAvailableToReview && documentsAvailableToReview.length > 0"
+    class="documents-list"
   >
-    <div class="documents-list-top" v-if="showCategoryInfo && selectedCategory">
+    <div
+      v-if="showCategoryInfo && selectedCategory"
+      class="documents-list-top"
+    >
       <div class="documents-list-top-left">
         <h2>{{ selectedCategory.name }}</h2>
         <p>
@@ -18,13 +20,17 @@
             class="action-button"
             type="is-primary"
             @click="requestTrialAccess"
-            >{{ $t("request_trial") }}</b-button
           >
+            {{ $t("request_trial") }}
+          </b-button>
         </div>
       </div>
     </div>
     <div class="documents-list-bottom">
-      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
+      <b-carousel-list
+        :data="documentsAvailableToReview"
+        :items-to-show="5"
+      >
         <template #item="document">
           <div
             :class="[
@@ -38,9 +44,12 @@
                 'img-thumbnail',
                 selectedDocument.id == document.id && 'selected'
               ]"
-              :imageUrl="`${document.thumbnail_url}?${document.updated_at}`"
+              :image-url="`${document.thumbnail_url}?${document.updated_at}`"
             >
-              <b-skeleton width="20px" height="100%" />
+              <b-skeleton
+                width="20px"
+                height="100%"
+              />
             </ServerImage>
             <div
               :class="[
@@ -56,8 +65,8 @@
               }}
             </div>
             <div
-              class="error-icon"
               v-if="documentHadErrorDuringExtraction(document)"
+              class="error-icon"
             >
               <ErrorIcon />
             </div>
@@ -96,6 +105,13 @@ export default {
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["documentHadErrorDuringExtraction"])
   },
+  watch: {
+    showCategoryInfo(newValue) {
+      if (newValue) {
+        this.selectedCategory = this.category(this.selectedDocument.category);
+      }
+    }
+  },
   methods: {
     changeDocument(documentId) {
       this.$store.dispatch("document/setDocId", documentId);
@@ -104,13 +120,7 @@ export default {
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");
     }
-  },
-  watch: {
-    showCategoryInfo(newValue) {
-      if (newValue) {
-        this.selectedCategory = this.category(this.selectedDocument.category);
-      }
-    }
   }
 };
 </script>
+<style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>

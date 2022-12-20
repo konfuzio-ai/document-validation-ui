@@ -1,8 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
 <template>
   <div class="labels-sidebar">
     <div class="labels-top-bar">
@@ -25,7 +20,7 @@
 
     <!-- When there's no annotations in the label -->
     <div v-else-if="annotationSets.length === 0">
-      <CategorizeModal />
+      <CategorizeModal v-if="!publicView" />
       <EmptyState />
     </div>
 
@@ -33,13 +28,13 @@
       v-else
       :class="[
         'annotation-set-list',
-        missingAnnotations.length && !publicView && 'showing-rejected'
+        missingAnnotations.length && !publicView && 'showing-rejected',
       ]"
     >
-      <CategorizeModal />
+      <CategorizeModal v-if="!publicView" />
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
-        v-bind:key="indexGroup"
+        :key="indexGroup"
         class="annotation-set-group"
       >
         <div class="label-set-header">
@@ -52,12 +47,13 @@
           </div>
           <div class="labelset-action-buttons">
             <ActionButtons
-              :saveBtn="false"
-              :cancelBtn="false"
-              :showReject="false"
-              :acceptBtn="false"
-              :rejectAllEmptyBtn="true"
-              :annotationSet="annotationSet"
+              :save-btn="false"
+              :cancel-btn="false"
+              :show-reject="false"
+              :accept-btn="false"
+              :reject-all-empty-btn="true"
+              :annotation-set="annotationSet"
+              :accept-all-btn="true"
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
               "
@@ -65,7 +61,6 @@
                 handleHoverAnnotationSet(annotationSet, 'reject')
               "
               @leave-annotation-set-to-reject="handleHoverAnnotationSet(null)"
-              :acceptAllBtn="true"
               @accept-group="acceptGroup(annotationSet)"
               @hover-annotation-set-to-accept="
                 handleHoverAnnotationSet(annotationSet, 'accept')
@@ -76,11 +71,11 @@
         </div>
 
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <div class="labels" v-if="labelNotRejected(annotationSet, label)">
-            <Label
+          <div v-if="labelNotRejected(annotationSet, label)" class="labels">
+            <DocumentLabel
               :label="label"
-              :annotationSet="annotationSet"
-              :indexGroup="indexGroup"
+              :annotation-set="annotationSet"
+              :index-group="indexGroup"
               @handle-reject="rejectMissingAnnotations"
             />
           </div>
@@ -92,17 +87,16 @@
       v-if="!publicView && missingAnnotations.length"
       class="rejected-labels-list"
     >
-      <RejectedLabels :missingAnnotations="missingAnnotations" />
+      <RejectedLabels :missing-annotations="missingAnnotations" />
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import ActionButtons from "./ActionButtons";
-import Label from "./Label";
+import DocumentLabel from "./DocumentLabel";
 import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
 import AnnotationsTopBar from "./AnnotationsTopBar";
@@ -116,17 +110,17 @@ export default {
     EmptyState,
     ExtractingData,
     ActionButtons,
-    Label,
+    DocumentLabel,
     RejectedLabels,
     LoadingAnnotations,
     AnnotationsTopBar,
-    CategorizeModal
+    CategorizeModal,
   },
   data() {
     return {
       count: 0,
       jumpToNextAnnotation: false,
-      numberOfLoadingAnnotations: 3
+      numberOfLoadingAnnotations: 3,
     };
   },
   computed: {
@@ -140,13 +134,27 @@ export default {
       "annotationSets",
       "loading",
       "labels",
-      "selectedDocument"
+      "selectedDocument",
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
-    }
+    },
+  },
+  watch: {
+    editAnnotation(newValue) {
+      if (!newValue && !this.jumpToNextAnnotation) {
+        this.count = 0;
+      }
+    },
+    acceptAnnotation(newValue, oldValue) {
+      // TODO: rework this to be more generic
+      if (!newValue && oldValue) {
+        this.focusOnNextAnnotation();
+        this.jumpToNextAnnotation = false;
+      }
+    },
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -186,9 +194,9 @@ export default {
       // Get label name for the selected annotation
       let labelForAnnotation;
 
-      this.labels.map(label => {
+      this.labels.map((label) => {
         const found = label.annotations.find(
-          ann => ann.id === this.editAnnotation.id
+          (ann) => ann.id === this.editAnnotation.id
         );
 
         if (found) {
@@ -198,7 +206,7 @@ export default {
       });
 
       const currentAnnotation = this.annotations.find(
-        ann => ann.id === this.editAnnotation.id
+        (ann) => ann.id === this.editAnnotation.id
       );
 
       if (currentAnnotation) {
@@ -206,7 +214,7 @@ export default {
           annotation: currentAnnotation,
           label: labelForAnnotation,
           span: currentAnnotation.span[0],
-          scrollTo: false
+          scrollTo: false,
         });
 
         this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
@@ -241,7 +249,7 @@ export default {
 
       // get index of currently active element
       const currentAnnIndex = annotations.findIndex(
-        el => el === clickedAnnotations[0]
+        (el) => el === clickedAnnotations[0]
       );
 
       // navigate with the arrow up or down keys
@@ -300,7 +308,7 @@ export default {
         // Accept annotation
         if (event.key === "Enter") {
           const currentAnn = this.annotations.find(
-            a => a.id === this.editAnnotation.id
+            (a) => a.id === this.editAnnotation.id
           );
 
           if (!this.editAnnotation && this.editAnnotation.id !== currentAnn.id)
@@ -337,12 +345,12 @@ export default {
 
         if (annotationSet && annotationSet.id) {
           found = this.missingAnnotations.filter(
-            el =>
+            (el) =>
               el.label === label.id && el.annotation_set === annotationSet.id
           );
         } else {
           found = this.missingAnnotations.filter(
-            el =>
+            (el) =>
               el.label === label.id &&
               el.label_set === annotationSet.label_set.id
           );
@@ -367,8 +375,8 @@ export default {
             document: parseInt(this.documentId),
             label: label,
             label_set: labelSet,
-            annotation_set: annotationSet
-          }
+            annotation_set: annotationSet,
+          },
         ];
       } else if (this.editAnnotation && this.editAnnotation.id !== null) {
         // if single rejection is triggered from "delete" key
@@ -377,22 +385,22 @@ export default {
           document: parseInt(this.documentId),
           label: this.editAnnotation.label,
           label_set: this.editAnnotation.labelSet,
-          annotation_set: this.editAnnotation.annotationSet
+          annotation_set: this.editAnnotation.annotationSet,
         };
       } else if (annotationSet && rejectAll) {
         // reject all labels in annotation set
 
         const allEmptyLabels = annotationSet.labels.filter(
-          label => label.annotations.length === 0
+          (label) => label.annotations.length === 0
         );
 
         // Check if any of the empty annotations was already rejected individually
         // and remove them
         const toReject = [];
 
-        allEmptyLabels.map(label => {
+        allEmptyLabels.map((label) => {
           const found = this.missingAnnotations.find(
-            l => l.label === label.id && l.annotation_set === annotationSet.id
+            (l) => l.label === label.id && l.annotation_set === annotationSet.id
           );
 
           if (!found) {
@@ -400,12 +408,12 @@ export default {
           }
         });
 
-        rejected = toReject.map(label => {
+        rejected = toReject.map((label) => {
           return {
             document: parseInt(this.documentId),
             label: label.id,
             label_set: annotationSet.label_set.id,
-            annotation_set: annotationSet.id
+            annotation_set: annotationSet.id,
           };
         });
       }
@@ -414,7 +422,7 @@ export default {
 
       this.$store
         .dispatch("document/addMissingAnnotations", rejected)
-        .then(response => {
+        .then((response) => {
           if (response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
             this.jumpToNextAnnotation = true;
@@ -439,7 +447,7 @@ export default {
       } else {
         hovered = {
           annotationSet: annotationSet,
-          type: type
+          type: type,
         };
       }
 
@@ -449,9 +457,9 @@ export default {
     acceptGroup(annotationSet) {
       const annotationsToAccept = [];
 
-      annotationSet.labels.map(label => {
+      annotationSet.labels.map((label) => {
         if (label.annotations.length !== 0) {
-          label.annotations.map(ann => {
+          label.annotations.map((ann) => {
             if (!ann.revised) {
               annotationsToAccept.push(ann.id);
             }
@@ -463,12 +471,12 @@ export default {
         const acceptedAnnotations = {
           ids: annotationsToAccept,
           is_correct: true,
-          revised: true
+          revised: true,
         };
 
         this.$store
           .dispatch("document/updateMultipleAnnotations", acceptedAnnotations)
-          .then(response => {
+          .then((response) => {
             if (!response) {
               this.$store.dispatch(
                 "document/setErrorMessage",
@@ -477,21 +485,13 @@ export default {
             }
           });
       }
-    }
-  },
-  watch: {
-    editAnnotation(newValue) {
-      if (!newValue && !this.jumpToNextAnnotation) {
-        this.count = 0;
-      }
     },
-    acceptAnnotation(newValue, oldValue) {
-      // TODO: rework this to be more generic
-      if (!newValue && oldValue) {
-        this.focusOnNextAnnotation();
-        this.jumpToNextAnnotation = false;
-      }
-    }
-  }
+  },
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

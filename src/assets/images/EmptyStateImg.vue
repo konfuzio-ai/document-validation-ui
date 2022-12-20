@@ -6,9 +6,21 @@
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle cx="61" cy="61" r="61" fill="#F7F7F7" />
+    <circle
+      cx="61"
+      cy="61"
+      r="61"
+      fill="#F7F7F7"
+    />
     <g filter="url(#filter0_d_2720_20884)">
-      <rect x="22" y="29" width="77.8605" height="108" rx="4" fill="white" />
+      <rect
+        x="22"
+        y="29"
+        width="77.8605"
+        height="108"
+        rx="4"
+        fill="white"
+      />
     </g>
     <rect
       opacity="0.7"
@@ -75,7 +87,10 @@
         filterUnits="userSpaceOnUse"
         color-interpolation-filters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood
+          flood-opacity="0"
+          result="BackgroundImageFix"
+        />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -84,7 +99,10 @@
         />
         <feOffset dy="8" />
         <feGaussianBlur stdDeviation="10" />
-        <feComposite in2="hardAlpha" operator="out" />
+        <feComposite
+          in2="hardAlpha"
+          operator="out"
+        />
         <feColorMatrix
           type="matrix"
           values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0"

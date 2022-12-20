@@ -1,12 +1,9 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_thumbnails.scss"
-></style>
-
 <template>
   <div>
-    <b-skeleton width="40px" height="57px"></b-skeleton>
+    <b-skeleton
+      width="40px"
+      height="57px"
+    />
   </div>
 </template>
 
@@ -20,3 +17,9 @@ export default {
   name: "LoadingThumbnail"
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_thumbnails.scss"
+></style>

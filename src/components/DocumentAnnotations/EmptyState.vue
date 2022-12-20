@@ -1,9 +1,10 @@
-<style scoped lang="scss" src="../../assets/scss/empty_state.scss"></style>
 <template>
   <div class="empty-container">
     <EmptyStateImg />
     <div class="empty-text">
-      <p class="title">{{ $t("no_label_sets_found") }}</p>
+      <p class="title">
+        {{ $t("no_label_sets_found") }}
+      </p>
       <p class="description">
         {{ $t("no_label_sets_found_description") }}
       </p>
@@ -17,3 +18,4 @@ export default {
   components: { EmptyStateImg }
 };
 </script>
+<style scoped lang="scss" src="../../assets/scss/empty_state.scss"></style>

@@ -1,12 +1,14 @@
-<style scoped lang="scss" src="../../assets/scss/document_page.scss"></style>
 <template>
-  <div class="pdf-page-container" ref="pdfContainer">
+  <div
+    ref="pdfContainer"
+    class="pdf-page-container"
+  >
     <NewAnnotation
       v-if="!publicView && newAnnotation"
       :entity="newAnnotation.entity"
       :content="newAnnotation.content"
-      :containerWidth="scaledViewport.width"
-      :containerHeight="scaledViewport.height"
+      :container-width="scaledViewport.width"
+      :container-height="scaledViewport.height"
       @close="closeNewAnnotation"
     />
 
@@ -31,7 +33,10 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group ref="entities" v-if="!publicView">
+          <v-group
+            v-if="!publicView"
+            ref="entities"
+          >
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
@@ -39,7 +44,7 @@
               @mouseenter="e => getCursor(e)"
               @mouseleave="getCursor()"
               @click="handleClickedEntity(entity)"
-            ></v-rect>
+            />
           </v-group>
           <template v-for="annotation in pageAnnotations">
             <template
@@ -49,14 +54,14 @@
             >
               <v-rect
                 v-if="!isAnnotationInEditMode(annotation.id)"
+                :key="'ann' + annotation.id + '-' + index"
                 :config="
                   annotationRect(bbox, isAnnotationFocused(annotation.id))
                 "
-                :key="'ann' + annotation.id + '-' + index"
                 @click="selectLabelAnnotation(annotation)"
                 @mouseenter="onAnnotationHover(annotation)"
                 @mouseleave="onAnnotationHover()"
-              ></v-rect>
+              />
             </template>
           </template>
         </template>
@@ -77,7 +82,7 @@
                 hitStrokeWidth: 0,
                 listening: false
               }"
-            ></v-tag>
+            />
             <v-text
               :config="{
                 padding: 4,
@@ -86,7 +91,7 @@
                 fontSize: 12,
                 listening: false
               }"
-            ></v-text>
+            />
           </v-label>
         </template>
       </v-layer>
@@ -94,12 +99,12 @@
         <box-selection @changed="getBoxSelectionContent" />
         <v-transformer
           ref="transformer"
-          :anchorSize="6"
-          anchorStroke="#7B61FF"
-          :borderEnabled="false"
-          :rotateEnabled="false"
-          :ignoreStroke="true"
-          :keepRatio="false"
+          :anchor-size="6"
+          anchor-stroke="#7B61FF"
+          :border-enabled="false"
+          :rotate-enabled="false"
+          :ignore-stroke="true"
+          :keep-ratio="false"
         />
       </v-layer>
     </v-stage>
@@ -111,7 +116,6 @@
     />
   </div>
 </template>
-
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
@@ -567,3 +571,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_page.scss"></style>

@@ -1,7 +1,13 @@
-<style scoped lang="scss" src="../../assets/scss/new_annotation.scss"></style>
 <template>
-  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <input class="popup-input" type="text" v-model="selectedContent" />
+  <div
+    class="annotation-popup"
+    :style="{ left: `${left}px`, top: `${top}px` }"
+  >
+    <input
+      v-model="selectedContent"
+      class="popup-input"
+      type="text"
+    >
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
@@ -18,21 +24,25 @@
           {{
             selectedSet
               ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `(${$t("new")})`
-                }`
+                selectedSet.id
+                  ? numberOfAnnotationSetGroup(selectedSet)
+                  : `(${$t("new")})`
+              }`
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon icon="angle-down" size="is-small" class="caret" />
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              class="caret"
+            />
           </span>
         </b-button>
       </template>
       <b-dropdown-item
-        aria-role="listitem"
         v-for="(set, index) in setsList"
         :key="`${set.label_set.id}_${index}`"
+        aria-role="listitem"
         :value="set"
       >
         <span>{{
@@ -69,21 +79,21 @@
             selectedLabel
               ? selectedLabel.name
               : labels && labels.length === 0
-              ? $t("no_labels_to_choose")
-              : $t("select_label")
+                ? $t("no_labels_to_choose")
+                : $t("select_label")
           }}
           <span class="caret-icon">
             <b-icon
               icon="angle-down"
               size="is-small"
               class="caret"
-            ></b-icon> </span
-        ></b-button>
+            /> </span>
+        </b-button>
       </template>
       <b-dropdown-item
-        aria-role="listitem"
         v-for="label in labels"
         :key="label.id"
+        aria-role="listitem"
         :value="label"
       >
         <span>{{ label.name }}</span>
@@ -107,7 +117,6 @@
     </div>
   </div>
 </template>
-
 <script>
 /**
  * This component is used to show a popup
@@ -177,6 +186,12 @@ export default {
       isAnnSetModalShowing: false,
       setsList: []
     };
+  },
+  watch: {
+    selectedSet(newValue) {
+      this.selectedLabel = null;
+      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
+    }
   },
   mounted() {
     this.setsList = [...this.annotationSets];
@@ -271,12 +286,8 @@ export default {
         }
       });
     }
-  },
-  watch: {
-    selectedSet(newValue) {
-      this.selectedLabel = null;
-      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
-    }
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/new_annotation.scss"></style>

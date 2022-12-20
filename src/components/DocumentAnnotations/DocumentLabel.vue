@@ -1,12 +1,10 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
 <template>
   <div class="label">
     <div v-if="enableGroupingFeature && isMultipleAnnotations">
-      <div class="label-group" @click.stop="toggleGroup">
+      <div
+        class="label-group"
+        @click.stop="toggleGroup"
+      >
         <div class="label-group-left">
           <b-icon
             :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
@@ -31,13 +29,16 @@
           </div>
         </div>
       </div>
-      <div v-if="showAnnotationsGroup" class="label-group-annotation-list">
+      <div
+        v-if="showAnnotationsGroup"
+        class="label-group-annotation-list"
+      >
         <AnnotationRow
           v-for="annotation in label.annotations"
           :key="annotation.id"
           :annotation="annotation"
           :label="label"
-          :annotationSet="annotationSet"
+          :annotation-set="annotationSet"
           @handle-reject="handleReject"
         />
       </div>
@@ -48,7 +49,7 @@
         :key="annotation.id"
         :annotation="annotation"
         :label="label"
-        :annotationSet="annotationSet"
+        :annotation-set="annotationSet"
         @handle-reject="handleReject"
       />
     </div>
@@ -56,13 +57,12 @@
       <AnnotationRow
         :annotation="singleAnnotation"
         :label="label"
-        :annotationSet="annotationSet"
+        :annotation-set="annotationSet"
         @handle-reject="handleReject"
       />
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters, mapState } from "vuex";
 import AnnotationRow from "./AnnotationRow";
@@ -71,7 +71,7 @@ import AnnotationRow from "./AnnotationRow";
  * This component shows each label and its annotations
  */
 export default {
-  name: "Label",
+  name: "DocumentLabel",
   components: { AnnotationRow },
   props: {
     label: {
@@ -104,35 +104,6 @@ export default {
       return this.label.annotations.length > 0;
     }
   },
-  mounted() {
-    this.updateValues();
-  },
-  methods: {
-    handleReject() {
-      if (!this.label || !this.annotationSet) return;
-
-      this.$emit(
-        "handle-reject",
-        this.label.id,
-        this.annotationSet.label_set.id,
-        this.annotationSet.id,
-        false
-      );
-    },
-    toggleGroup() {
-      this.showAnnotationsGroup = !this.showAnnotationsGroup;
-    },
-    updateValues() {
-      this.isMultipleAnnotations = this.label.annotations.length > 1;
-      if (this.isMultipleAnnotations) {
-        this.acceptedAnnotationsGroupCounter =
-          this.numberOfAcceptedAnnotationsInLabel(this.label);
-      }
-    }
-  },
-  updated() {
-    this.updateValues();
-  },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
       // check if annotation is inside a label group and open it
@@ -157,6 +128,41 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    this.updateValues();
+  },
+  updated() {
+    this.updateValues();
+  },
+  methods: {
+    handleReject() {
+      if (!this.label || !this.annotationSet) return;
+
+      this.$emit(
+        "handle-reject",
+        this.label.id,
+        this.annotationSet.label_set.id,
+        this.annotationSet.id,
+        false
+      );
+    },
+    toggleGroup() {
+      this.showAnnotationsGroup = !this.showAnnotationsGroup;
+    },
+    updateValues() {
+      this.isMultipleAnnotations = this.label.annotations.length > 1;
+      if (this.isMultipleAnnotations) {
+        this.acceptedAnnotationsGroupCounter =
+          this.numberOfAcceptedAnnotationsInLabel(this.label);
+      }
+    }
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>

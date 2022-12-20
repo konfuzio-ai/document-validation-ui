@@ -1,14 +1,16 @@
-<style scoped lang="scss" src="../../assets/scss/document_name.scss"></style>
-
 <template>
   <div class="document-name-component">
     <div class="document-icon">
       <ServerImage
         :height="'22px'"
-        :imageUrl="`${selectedDocument.thumbnail_url}?${selectedDocument.downloaded_at}`"
+        :image-url="`${selectedDocument.thumbnail_url}?${selectedDocument.downloaded_at}`"
       >
-        <b-skeleton width="15px" height="22px" :rounded="false"></b-skeleton
-      ></ServerImage>
+        <b-skeleton
+          width="15px"
+          height="22px"
+          :rounded="false"
+        />
+      </ServerImage>
     </div>
     <span class="file-name-section">
       <span
@@ -18,8 +20,7 @@
         @paste="handlePaste"
         @keydown.enter="handleSave"
         @blur="handleSave"
-        >{{ textContent }}</span
-      >
+      >{{ textContent }}</span>
     </span>
     <div
       v-if="
@@ -37,20 +38,40 @@
     >
       {{ $t("save") }}
     </div>
-    <div v-if="saving" class="message-container">
+    <div
+      v-if="saving"
+      class="message-container"
+    >
       <span class="loading-container">
-        <b-notification :closable="false" class="loading-background">
-          <b-loading :is-full-page="isFullPage" v-model="saving">
-            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
-            </b-icon>
+        <b-notification
+          :closable="false"
+          class="loading-background"
+        >
+          <b-loading
+            v-model="saving"
+            :is-full-page="isFullPage"
+          >
+            <b-icon
+              icon="spinner"
+              class="fa-spin loading-icon-size spinner"
+            />
           </b-loading>
         </b-notification>
       </span>
       <span>{{ $t("autosaving") }}</span>
     </div>
-    <div v-if="changed" class="message-container">
-      <span v-if="saved" class="cloud-icon"><FileNameSaved /></span>
-      <span v-else class="cloud-icon"><FileNameNotSaved /></span>
+    <div
+      v-if="changed"
+      class="message-container"
+    >
+      <span
+        v-if="saved"
+        class="cloud-icon"
+      ><FileNameSaved /></span>
+      <span
+        v-else
+        class="cloud-icon"
+      ><FileNameNotSaved /></span>
       <span>{{ saved ? $t("saved") : $t("not_saved") }}</span>
     </div>
   </div>
@@ -64,6 +85,16 @@ import { mapState } from "vuex";
 
 export default {
   name: "DocumentName",
+  components: {
+    ServerImage,
+    FileNameSaved,
+    FileNameNotSaved
+  },
+  props: {
+    dataFileName: {
+      type: String
+    }
+  },
   data() {
     return {
       isEditable: false,
@@ -77,16 +108,6 @@ export default {
       changed: false,
       saved: false
     };
-  },
-  props: {
-    dataFileName: {
-      type: String
-    }
-  },
-  components: {
-    ServerImage,
-    FileNameSaved,
-    FileNameNotSaved
   },
   computed: {
     ...mapState("document", [
@@ -106,6 +127,23 @@ export default {
       } else {
         return this.shortFilenameIfNeeded(this.dataFileName);
       }
+    }
+  },
+  updated() {
+    const contentEditable = document.querySelector(".document-name");
+    if (this.isEditable && contentEditable) {
+      contentEditable.focus();
+      this.handleCaretPlacing(contentEditable);
+    }
+
+    if (this.changed) {
+      const that = this;
+      setTimeout(function () {
+        that.saved = false;
+        that.changed = false;
+        that.showEditBtn = true;
+        this.showSaveBtn = false;
+      }, 4000);
     }
   },
   methods: {
@@ -202,23 +240,8 @@ export default {
         contentNotEditable.blur();
       }
     }
-  },
-  updated() {
-    const contentEditable = document.querySelector(".document-name");
-    if (this.isEditable && contentEditable) {
-      contentEditable.focus();
-      this.handleCaretPlacing(contentEditable);
-    }
-
-    if (this.changed) {
-      const that = this;
-      setTimeout(function () {
-        that.saved = false;
-        that.changed = false;
-        that.showEditBtn = true;
-        this.showSaveBtn = false;
-      }, 4000);
-    }
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_name.scss"></style>

@@ -1,16 +1,19 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_annotations.scss"
-></style>
 <template>
   <div class="action-buttons">
     <!-- loading -->
     <div v-if="isLoading && !finishReviewBtn">
-      <b-notification :closable="false" class="loading-background">
-        <b-loading :is-full-page="loadingOnFullPage" v-model="isLoading">
-          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
-          </b-icon>
+      <b-notification
+        :closable="false"
+        class="loading-background"
+      >
+        <b-loading
+          :active="isLoading"
+          :is-full-page="loadingOnFullPage"
+        >
+          <b-icon
+            icon="spinner"
+            class="fa-spin loading-icon-size spinner"
+          />
         </b-loading>
       </b-notification>
     </div>
@@ -39,33 +42,38 @@
       class="annotation-accept-btn"
       type="is-primary"
       @click.stop="accept"
-      >{{ $t("accept") }}</b-button
     >
+      {{ $t("accept") }}
+    </b-button>
 
     <!-- reject button -->
     <div
-      class="reject-button-container"
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
+      class="reject-button-container"
     >
-      <b-button type="is-ghost" class="reject-btn" @click.stop="reject">
+      <b-button
+        type="is-ghost"
+        class="reject-btn"
+        @click.stop="reject"
+      >
         {{ $t("reject_label") }}
       </b-button>
     </div>
 
     <!-- reject all labels -->
     <div
-      :class="['reject-button-container', 'reject-all']"
       v-if="
         !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
       "
+      :class="['reject-button-container', 'reject-all']"
       @mouseenter="mouseenterAnnotationSet('reject')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
         :class="['reject-btn', 'reject-all-btn']"
-        @click.stop="rejectAllEmpty"
         :disabled="emptyLabelsLength(annotationSet) === 0"
+        @click.stop="rejectAllEmpty"
       >
         {{ $t("reject_all_empty") }} ({{ emptyLabelsLength(annotationSet) }})
       </b-button>
@@ -73,20 +81,21 @@
 
     <!-- accept all pending annotations -->
     <div
-      class="accept-all"
       v-if="!publicView && acceptAllBtn && !isLoading"
+      class="accept-all"
       @mouseenter="mouseenterAnnotationSet('accept')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
         class="accept-all-btn"
-        @click.stop="acceptGroup"
         :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
-        >{{ $t("accept_group") }} ({{
-          annotationsWithPendingReviewLength(annotationSet)
-        }})</b-button
+        @click.stop="acceptGroup"
       >
+        {{ $t("accept_group") }} ({{
+          annotationsWithPendingReviewLength(annotationSet)
+        }})
+      </b-button>
     </div>
 
     <!-- finish review button -->
@@ -102,26 +111,28 @@
       </span>
 
       <div v-else>
-        <b-notification :closable="false" :class="['loading-background']">
-          <b-loading :is-full-page="loadingOnFullPage" v-model="isLoading">
-            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner">
-            </b-icon>
+        <b-notification
+          :closable="false"
+          :class="['loading-background']"
+        >
+          <b-loading
+            :active="isLoading"
+            :is-full-page="loadingOnFullPage"
+          >
+            <b-icon
+              icon="spinner"
+              class="fa-spin loading-icon-size spinner"
+            />
           </b-loading>
         </b-notification>
       </div>
     </b-button>
   </div>
 </template>
-
 <script>
 import { mapState, mapGetters } from "vuex";
 export default {
   name: "ActionButtons",
-  data() {
-    return {
-      loadingOnFullPage: false
-    };
-  },
   props: {
     saveBtn: {
       type: Boolean
@@ -156,6 +167,11 @@ export default {
     acceptAllBtn: {
       type: Boolean
     }
+  },
+  data() {
+    return {
+      loadingOnFullPage: false
+    };
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
@@ -202,3 +218,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_annotations.scss"
+></style>
