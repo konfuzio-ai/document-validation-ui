@@ -8,8 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "lint": "vue-cli-service lint",
-    "prepublishOnly": "npm run test:unit && npm run lint",
-    "version": "npm run test:unit && npm run lint"
+    "prepublishOnly": "npm run test:unit && npm run lint && npm run build"
   },
   "pre-commit": [
     "test:unit",
