@@ -1,19 +1,12 @@
 <template>
-  <div
-    class="annotation-popup"
-    :style="{ left: `${left}px`, top: `${top}px` }"
-  >
-    <input
-      v-model="selectedContent"
-      class="popup-input"
-      type="text"
-    >
+  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
+    <input v-model="selectedContent" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
       :class="[
         'no-padding-bottom',
-        setsList.length === 0 ? 'no-padding-top' : ''
+        setsList.length === 0 ? 'no-padding-top' : '',
       ]"
     >
       <template #trigger>
@@ -24,18 +17,14 @@
           {{
             selectedSet
               ? `${selectedSet.label_set.name} ${
-                selectedSet.id
-                  ? numberOfAnnotationSetGroup(selectedSet)
-                  : `(${$t("new")})`
-              }`
+                  selectedSet.id
+                    ? numberOfAnnotationSetGroup(selectedSet)
+                    : `(${$t("new")})`
+                }`
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            />
+            <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
         </b-button>
       </template>
@@ -57,7 +46,7 @@
           'add-ann-set',
           'dropdown-item',
           'no-icon-margin',
-          setsList.length > 0 ? 'has-border' : ''
+          setsList.length > 0 ? 'has-border' : '',
         ]"
         icon-left="plus"
         @click="openAnnotationSetCreation"
@@ -79,15 +68,12 @@
             selectedLabel
               ? selectedLabel.name
               : labels && labels.length === 0
-                ? $t("no_labels_to_choose")
-                : $t("select_label")
+              ? $t("no_labels_to_choose")
+              : $t("select_label")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            /> </span>
+            <b-icon icon="angle-down" size="is-small" class="caret" />
+          </span>
         </b-button>
       </template>
       <b-dropdown-item
@@ -133,26 +119,26 @@ export default {
   props: {
     entity: {
       type: Object,
-      required: true
+      required: true,
     },
     content: {
       type: String,
-      required: true
+      required: true,
     },
     containerWidth: {
       type: Number,
-      required: true
+      required: true,
     },
     containerHeight: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
-      "labelsFilteredForAnnotationCreation"
+      "labelsFilteredForAnnotationCreation",
     ]),
     top() {
       const top = this.entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
@@ -174,7 +160,7 @@ export default {
         // on the left side
         return left > 0 ? left : 0;
       }
-    }
+    },
   },
   data() {
     return {
@@ -184,14 +170,14 @@ export default {
       selectedContent: this.content,
       loading: false,
       isAnnSetModalShowing: false,
-      setsList: []
+      setsList: [],
     };
   },
   watch: {
     selectedSet(newValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
-    }
+    },
   },
   mounted() {
     this.setsList = [...this.annotationSets];
@@ -218,7 +204,7 @@ export default {
       this.loading = true;
       const span = {
         ...this.entity.original,
-        offset_string: this.selectedContent
+        offset_string: this.selectedContent,
       };
 
       const annotationToCreate = {
@@ -226,7 +212,7 @@ export default {
         span: [span],
         label: this.selectedLabel.id,
         is_correct: true,
-        revised: false
+        revised: false,
       };
 
       if (this.selectedSet.id) {
@@ -237,8 +223,8 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(response => {
-          if (response && !response.data) {
+        .then((response) => {
+          if (!response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.$store.dispatch(
@@ -264,7 +250,7 @@ export default {
       const newSet = {
         label_set: labelSet,
         labels: labelSet.labels,
-        id: null
+        id: null,
       };
       this.setsList.push(newSet);
       this.selectedSet = newSet;
@@ -282,11 +268,11 @@ export default {
         customClass: "invisible-parent-modal",
         events: {
           labelSet: this.chooseLabelSet,
-          close: this.disableLabelSetModalShowing
-        }
+          close: this.disableLabelSetModalShowing,
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

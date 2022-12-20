@@ -26,14 +26,14 @@ const state = {
   hoveredAnnotationSet: null,
   finishedReview: false,
   newAcceptedAnnotations: null,
-  selectedEntity: null
+  selectedEntity: null,
 };
 
 const getters = {
   /**
    * Number of pages. If the pages array doesn't exist yet, return 0.
    */
-  pageCount: state => {
+  pageCount: (state) => {
     if (state.selectedDocument.pages) {
       return state.selectedDocument.pages.length;
     }
@@ -53,7 +53,7 @@ const getters = {
   /**
    * Returns a page in the given index
    */
-  pageAtIndex: state => index => {
+  pageAtIndex: (state) => (index) => {
     if (state.selectedDocument && state.selectedDocument.pages) {
       return state.selectedDocument.pages[index];
     }
@@ -63,7 +63,7 @@ const getters = {
   /**
    * Checks if is to scroll to an annotation in the document
    */
-  scrollDocumentToAnnotation: state => {
+  scrollDocumentToAnnotation: (state) => {
     return (
       state.documentAnnotationSelected &&
       state.documentAnnotationSelected.scrollTo
@@ -73,7 +73,7 @@ const getters = {
   /**
    * Checks if the document is categorized and ready to start the review
    */
-  categorizationIsConfirmed: state => {
+  categorizationIsConfirmed: (state) => {
     if (state.selectedDocument) {
       if (
         state.selectedDocument.is_category_accepted ||
@@ -84,7 +84,7 @@ const getters = {
         return false;
       } else {
         // check if there's any annotation already approved
-        const found = state.annotations.find(annotation => {
+        const found = state.annotations.find((annotation) => {
           return annotation.revised;
         });
         return found != undefined;
@@ -96,14 +96,14 @@ const getters = {
   /**
    * Gets labels for an annotation creation from a label/annotation set
    */
-  labelsFilteredForAnnotationCreation: state => set => {
+  labelsFilteredForAnnotationCreation: (state) => (set) => {
     let returnLabels = [];
     if (set.id && set.labels) {
       // if existing ann set, check for multiple
-      returnLabels = set.labels.filter(label => {
+      returnLabels = set.labels.filter((label) => {
         // check if label has multiple and if not, if there's already an annotation created
         if (!label.has_multiple_top_candidates) {
-          const existingLabel = state.labels.find(documentLabel => {
+          const existingLabel = state.labels.find((documentLabel) => {
             return documentLabel.id === label.id;
           });
           return (
@@ -123,7 +123,7 @@ const getters = {
   },
 
   /* Checks if annotation is in deleted state */
-  isAnnotationDeleted: state => annotation => {
+  isAnnotationDeleted: (state) => (annotation) => {
     if (annotation) {
       return annotation.revised && !annotation.is_correct;
     }
@@ -131,25 +131,25 @@ const getters = {
   },
 
   /* Checks if the label has annotations to show */
-  labelHasAnnotations: (_, getters) => label => {
-    const annotations = label.annotations.filter(annotation => {
+  labelHasAnnotations: (_, getters) => (label) => {
+    const annotations = label.annotations.filter((annotation) => {
       return !getters.isAnnotationDeleted(annotation);
     });
     return annotations.length > 0;
   },
 
   /* Checks if the document has an annotation set */
-  annotationSetExists: state => annotationSetId => {
-    return state.annotationSets.find(annSet => annSet.id === annotationSetId);
+  annotationSetExists: (state) => (annotationSetId) => {
+    return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: (state, getters) => annotationSets => {
+  processAnnotationSets: (state, getters) => (annotationSets) => {
     // group annotations for sidebar
     const annotations = [];
     const labels = [];
-    const processedAnnotationSets = annotationSets.map(annotationSet => {
-      const annotationSetLabels = annotationSet.labels.map(label => {
+    const processedAnnotationSets = annotationSets.map((annotationSet) => {
+      const annotationSetLabels = annotationSet.labels.map((label) => {
         // filter label
         const filteredLabel = getters.annotationsInLabelFiltered(label);
 
@@ -166,13 +166,13 @@ const getters = {
     return {
       annotationSets: processedAnnotationSets,
       labels,
-      annotations
+      annotations,
     };
   },
 
   /* Returns the number of accepted annotations in a label */
-  numberOfAcceptedAnnotationsInLabel: _ => label => {
-    const annotations = label.annotations.filter(annotation => {
+  numberOfAcceptedAnnotationsInLabel: (_) => (label) => {
+    const annotations = label.annotations.filter((annotation) => {
       return annotation.revised && annotation.is_correct;
     });
     return annotations.length;
@@ -181,12 +181,12 @@ const getters = {
   /**
    * Checks if theres a group of annotation sets and add an index number to them
    */
-  numberOfAnnotationSetGroup: state => annotationSet => {
+  numberOfAnnotationSetGroup: (state) => (annotationSet) => {
     let found = false;
     let value = 0;
     let index = 0;
     if (state.annotationSets) {
-      state.annotationSets.map(annotationSetTemp => {
+      state.annotationSets.map((annotationSetTemp) => {
         if (
           annotationSetTemp.id !== annotationSet.id &&
           annotationSetTemp.label_set.id === annotationSet.label_set.id &&
@@ -207,7 +207,7 @@ const getters = {
   /**
    * Get label with annotations filtered if the label supports multiple or not
    */
-  annotationsInLabelFiltered: state => label => {
+  annotationsInLabelFiltered: (state) => (label) => {
     let labelToReturn;
     if (
       label.has_multiple_top_candidates === false &&
@@ -229,11 +229,11 @@ const getters = {
       }
       labelToReturn = {
         ...label,
-        annotations: [highestConfidenceAnnotation]
+        annotations: [highestConfidenceAnnotation],
       };
     } else {
       labelToReturn = {
-        ...label
+        ...label,
       };
     }
     return labelToReturn;
@@ -243,7 +243,7 @@ const getters = {
    * Checks if annotation is being edited
    */
   isAnnotationInEditMode:
-    state =>
+    (state) =>
     (annotationId, index = null) => {
       if (state.editAnnotation && annotationId) {
         if (index != null) {
@@ -259,16 +259,16 @@ const getters = {
   /**
    * Get number of empty labels per annotation set
    */
-  emptyLabelsLength: state => annotationSet => {
+  emptyLabelsLength: (state) => (annotationSet) => {
     const labels = annotationSet.labels.filter(
-      label => label.annotations.length === 0
+      (label) => label.annotations.length === 0
     );
 
     const pendingEmpty = [];
 
-    labels.map(label => {
+    labels.map((label) => {
       const found = state.missingAnnotations.find(
-        l => l.label === label.id && annotationSet.id === l.annotation_set
+        (l) => l.label === label.id && annotationSet.id === l.annotation_set
       );
 
       if (!found) {
@@ -280,20 +280,20 @@ const getters = {
   },
 
   // Check if document is ready to be finished
-  isDocumentReviewFinished: state => () => {
+  isDocumentReviewFinished: (state) => () => {
     // check if all annotations have been revised
     let notRevised;
 
     const emptyAnnotations = [];
 
     if (state.annotationSets) {
-      state.annotationSets.forEach(annSet => {
-        annSet.labels.map(label => {
+      state.annotationSets.forEach((annSet) => {
+        annSet.labels.map((label) => {
           // return only labels with empty annotations
           if (label.annotations.length === 0) {
             emptyAnnotations.push({
               label: label.id,
-              label_set: annSet.label_set.id
+              label_set: annSet.label_set.id,
             });
           }
         });
@@ -301,7 +301,7 @@ const getters = {
     }
 
     if (state.annotations) {
-      notRevised = state.annotations.filter(a => !a.revised);
+      notRevised = state.annotations.filter((a) => !a.revised);
     }
 
     // if all annotations have been revised
@@ -324,16 +324,16 @@ const getters = {
   /**
    * Get number of annotations pending review per annotation set
    */
-  annotationsWithPendingReviewLength: () => annotationSet => {
+  annotationsWithPendingReviewLength: () => (annotationSet) => {
     const labels = annotationSet.labels.filter(
-      label => label.annotations.length > 0
+      (label) => label.annotations.length > 0
     );
 
     const annotationsWithPendingReview = [];
 
-    labels.map(label => {
+    labels.map((label) => {
       const foundPendingAnnotation = label.annotations.find(
-        ann => !ann.revised
+        (ann) => !ann.revised
       );
 
       if (foundPendingAnnotation) {
@@ -352,14 +352,14 @@ const getters = {
   /**
    * Check if the document was extracted correctly and is ready to be reviewed
    */
-  isDocumentReadyToBeReviewed: () => document => {
+  isDocumentReadyToBeReviewed: () => (document) => {
     return document.status_data === 2 && document.labeling_available === 1;
   },
 
   /**
    * Check if the document had an error during extraction
    */
-  documentHadErrorDuringExtraction: () => document => {
+  documentHadErrorDuringExtraction: () => (document) => {
     return document.status_data === 111;
   },
 
@@ -368,7 +368,7 @@ const getters = {
    * or if it is Ready Only / Reviewed
    * and if so disable the option to edit the document
    */
-  documentCannotBeEdited: state => document => {
+  documentCannotBeEdited: (state) => (document) => {
     return (
       document.dataset_status === 1 ||
       document.dataset_status === 2 ||
@@ -376,7 +376,7 @@ const getters = {
       document.is_reviewed ||
       state.publicView
     );
-  }
+  },
 };
 
 const actions = {
@@ -405,7 +405,7 @@ const actions = {
       index,
       label,
       labelSet,
-      annotationSet
+      annotationSet,
     };
     commit("SET_EDIT_ANNOTATION", value);
   },
@@ -482,11 +482,11 @@ const actions = {
 
     dispatch("startLoading");
     dispatch("display/updateCurrentPage", initialPage, {
-      root: true
+      root: true,
     });
 
     await HTTP.get(`documents/${state.documentId}/`)
-      .then(async response => {
+      .then(async (response) => {
         if (response.data) {
           const { labels, annotations, annotationSets } =
             getters.processAnnotationSets(response.data.annotation_sets);
@@ -507,7 +507,7 @@ const actions = {
           } else {
             projectId = response.data.project;
             dispatch("project/setProjectId", response.data.project, {
-              root: true
+              root: true,
             });
           }
 
@@ -516,7 +516,7 @@ const actions = {
           isRecalculatingAnnotations = response.data.labeling_available !== 1;
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error, "Could not fetch document details from the backend");
         return;
       });
@@ -525,12 +525,12 @@ const actions = {
 
     if (!state.publicView) {
       await dispatch("project/fetchCurrentUser", null, {
-        root: true
+        root: true,
       });
 
       if (projectId) {
         await dispatch("category/fetchCategories", projectId, {
-          root: true
+          root: true,
         });
       }
       if (categoryId) {
@@ -539,10 +539,10 @@ const actions = {
           {
             categoryId,
             user: rootState.project.currentUser,
-            poll: pollDocumentList
+            poll: pollDocumentList,
           },
           {
-            root: true
+            root: true,
           }
         );
       }
@@ -557,10 +557,10 @@ const actions = {
   // Get document page data
   fetchDocumentPage: ({ commit, state }, page) => {
     return HTTP.get(`documents/${state.documentId}/pages/${page}/`)
-      .then(response => {
+      .then((response) => {
         commit("ADD_PAGE", response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   },
@@ -574,7 +574,7 @@ const actions = {
       id: annotation.id,
       span,
       page: span.page_index + 1,
-      labelName: label.name
+      labelName: label.name,
     };
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
   },
@@ -588,9 +588,9 @@ const actions = {
   },
 
   createAnnotation: ({ commit, getters, dispatch }, annotation) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       HTTP.post(`/annotations/`, annotation)
-        .then(async response => {
+        .then(async (response) => {
           if (response.status === 201) {
             dispatch("fetchMissingAnnotations");
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
@@ -607,10 +607,12 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
-            resolve(response.data);
+            resolve(null);
+          } else {
+            resolve(response);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           resolve(error.response);
           console.log(error);
         });
@@ -620,14 +622,14 @@ const actions = {
   updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
     return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(response.data);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (
             error.response &&
             error.response.data &&
@@ -643,14 +645,14 @@ const actions = {
   },
 
   deleteAnnotation: ({ commit, getters }, { annotationId }) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       HTTP.delete(`/annotations/${annotationId}/`)
-        .then(response => {
+        .then((response) => {
           commit("DELETE_ANNOTATION", annotationId);
           commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
           resolve(true);
         })
-        .catch(error => {
+        .catch((error) => {
           resolve(false);
           console.log(error);
         });
@@ -658,9 +660,9 @@ const actions = {
   },
 
   updateDocument: ({ commit, state, getters }, updatedDocument) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             // TODO: remove this after implementation in backend for is_category_accepted
             if (updatedDocument.is_category_accepted) {
@@ -672,7 +674,7 @@ const actions = {
             resolve(response.status);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           resolve(error);
           console.log(error);
         });
@@ -683,24 +685,24 @@ const actions = {
     return HTTP.get(
       `/missing-annotations/?document=${state.documentId}&limit=100`
     )
-      .then(response => {
+      .then((response) => {
         commit("SET_MISSING_ANNOTATIONS", response.data.results);
         commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   },
 
   addMissingAnnotations: ({}, missingAnnotations) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       return HTTP.post(`/missing-annotations/`, missingAnnotations)
-        .then(response => {
+        .then((response) => {
           if (response.status === 201) {
             resolve(true);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           resolve(false);
         });
@@ -708,15 +710,15 @@ const actions = {
   },
 
   deleteMissingAnnotation: ({ commit, getters, dispatch }, id) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       return HTTP.delete(`/missing-annotations/${id}/`)
-        .then(response => {
+        .then((response) => {
           if (response.status === 204) {
             resolve(true);
             dispatch("fetchMissingAnnotations");
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           resolve(false);
         });
@@ -726,21 +728,21 @@ const actions = {
   updateMultipleAnnotations: ({ state, commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       return HTTP.patch(
         `documents/${state.documentId}/update-annotations/`,
         annotations
       )
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
-            response.data.map(annotation => {
+            response.data.map((annotation) => {
               commit("UPDATE_ANNOTATION", annotation);
             });
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
             resolve(true);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           resolve(false);
         });
@@ -752,7 +754,7 @@ const actions = {
       return HTTP.get(
         `documents/${state.documentId}/?fields=status_data,labeling_available`
       )
-        .then(response => {
+        .then((response) => {
           if (getters.isDocumentReadyToBeReviewed(response.data)) {
             // ready
             return resolve(true);
@@ -764,7 +766,7 @@ const actions = {
             return resolve(false);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     });
@@ -774,10 +776,10 @@ const actions = {
   fetchDocumentData: ({ state }) => {
     return new Promise((resolve, reject) => {
       HTTP.get(`documents/${state.documentId}/`)
-        .then(response => {
+        .then((response) => {
           return resolve(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
           console.log(error);
         });
@@ -788,7 +790,7 @@ const actions = {
   // or even if there was an error during the extraction
   pollDocumentEndpoint: ({ dispatch }) => {
     return dispatch("fetchDocumentStatus")
-      .then(ready => {
+      .then((ready) => {
         if (ready) {
           // Stop document recalculating annotations
           dispatch("endRecalculatingAnnotations");
@@ -798,7 +800,7 @@ const actions = {
           dispatch("pollDocumentEndpoint");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch("setDocumentError", true);
         console.log(error);
       });
@@ -809,7 +811,7 @@ const actions = {
       commit("SET_ERROR_MESSAGE", null);
       commit("SET_SHOW_ACTION_ERROR", false);
     }, 5000);
-  }
+  },
 };
 
 const mutations = {
@@ -823,16 +825,16 @@ const mutations = {
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);
-    state.annotationSets.map(annotationSet => {
+    state.annotationSets.map((annotationSet) => {
       if (
         annotation.annotation_set === annotationSet.id &&
         annotation.label_set &&
         annotationSet.label_set.id === annotation.label_set.id
       ) {
-        annotationSet.labels.map(label => {
+        annotationSet.labels.map((label) => {
           if (annotation.label && annotation.label.id === label.id) {
             const exists = label.annotations.find(
-              existingAnnotation => existingAnnotation.id === annotation.id
+              (existingAnnotation) => existingAnnotation.id === annotation.id
             );
             if (!exists) {
               label.annotations.push(annotation);
@@ -845,19 +847,19 @@ const mutations = {
   },
   UPDATE_ANNOTATION: (state, annotation) => {
     const indexOfAnnotationInAnnotations = state.annotations.findIndex(
-      existingAnnotation => existingAnnotation.id === annotation.id
+      (existingAnnotation) => existingAnnotation.id === annotation.id
     );
     if (indexOfAnnotationInAnnotations > -1) {
       state.annotations[indexOfAnnotationInAnnotations] = annotation;
     }
     let updatedAnnotation = false;
-    state.annotationSets.forEach(annotationSet => {
+    state.annotationSets.forEach((annotationSet) => {
       if (updatedAnnotation) {
         return;
       }
-      annotationSet.labels.forEach(label => {
+      annotationSet.labels.forEach((label) => {
         const indexOfAnnotationAnnotationSets = label.annotations.findIndex(
-          existingAnnotation => existingAnnotation.id === annotation.id
+          (existingAnnotation) => existingAnnotation.id === annotation.id
         );
         if (indexOfAnnotationAnnotationSets > -1) {
           label.annotations.splice(
@@ -873,19 +875,19 @@ const mutations = {
   },
   DELETE_ANNOTATION: (state, annotationId) => {
     const indexOfAnnotationToDelete = state.annotations.findIndex(
-      existingAnnotation => existingAnnotation.id === annotationId
+      (existingAnnotation) => existingAnnotation.id === annotationId
     );
     if (indexOfAnnotationToDelete > -1) {
       state.annotations.splice(indexOfAnnotationToDelete, 1);
     }
     let deleted = false;
-    state.annotationSets.forEach(annotationSet => {
+    state.annotationSets.forEach((annotationSet) => {
       if (deleted) {
         return;
       }
-      annotationSet.labels.forEach(label => {
+      annotationSet.labels.forEach((label) => {
         const indexOfAnnotationInLabelToDelete = label.annotations.findIndex(
-          existingAnnotation => existingAnnotation.id === annotationId
+          (existingAnnotation) => existingAnnotation.id === annotationId
         );
         if (indexOfAnnotationInLabelToDelete > -1) {
           label.annotations.splice(indexOfAnnotationInLabelToDelete, 1);
@@ -913,14 +915,14 @@ const mutations = {
   SET_FINISHED_REVIEW: (state, finishedReview) => {
     state.finishedReview = finishedReview;
   },
-  RESET_EDIT_ANNOTATION: state => {
+  RESET_EDIT_ANNOTATION: (state) => {
     state.editAnnotation = null;
   },
   ADD_PAGE: (state, page) => {
     // if we already have the page in the state, update it in
     // the pages array instead of creating a new one
     const existingPageIndex = state.pages.findIndex(
-      p => p.number === page.number
+      (p) => p.number === page.number
     );
     if (existingPageIndex === -1) {
       state.pages.push(page);
@@ -987,7 +989,7 @@ const mutations = {
   },
   SET_SELECTED_ENTITY: (state, entity) => {
     state.selectedEntity = entity;
-  }
+  },
 };
 
 export default {
@@ -995,5 +997,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

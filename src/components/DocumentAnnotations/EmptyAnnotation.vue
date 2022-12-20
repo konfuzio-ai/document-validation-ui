@@ -8,16 +8,14 @@
         'annotation-value',
         showActionError && 'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
-        isAnnotationBeingEdited() && 'clicked'
+        isAnnotationBeingEdited() && 'clicked',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotation"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
     >
-      <span
-        v-if="span && span.offset_string && isEmptyAnnotationEditable()"
-      >
+      <span v-if="span && span.offset_string && isEmptyAnnotationEditable()">
         {{ span.offset_string }}
       </span>
       <span v-else>
@@ -46,26 +44,26 @@ export default {
   components: { ActionButtons },
   props: {
     label: {
-      required: true
+      required: true,
     },
     annotationSet: {
-      required: true
+      required: true,
     },
     isHovered: {
       type: Boolean,
-      default: false
+      default: false,
     },
     span: {
-      required: false
+      required: false,
     },
     spanIndex: {
-      required: false
-    }
+      required: false,
+    },
   },
   data() {
     return {
       isLoading: false,
-      showReject: false
+      showReject: false,
     };
   },
   computed: {
@@ -80,14 +78,14 @@ export default {
       "annotationSets",
       "hoveredAnnotationSet",
       "selectedEntity",
-      "showActionError"
-    ])
+      "showActionError",
+    ]),
   },
   watch: {
     span(newValue) {
       if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
         if (this.isValueArray(newValue))
-          newValue.map(span => {
+          newValue.map((span) => {
             if (span.offset_string) {
               span.offset_string =
                 this.$refs.emptyAnnotation.textContent.trim();
@@ -119,7 +117,7 @@ export default {
       if (this.emptyAnnotationId() === this.editAnnotation.id) {
         this.setText(newValue.offset_string);
       }
-    }
+    },
   },
   methods: {
     emptyAnnotationId() {
@@ -154,7 +152,7 @@ export default {
           index: null,
           label: this.label.id,
           labelSet: this.annotationSet.label_set.id,
-          annotationSet: this.annotationSet.id
+          annotationSet: this.annotationSet.id,
         });
       }
     },
@@ -182,7 +180,7 @@ export default {
           label: this.label.id,
           annotation_set: this.annotationSet.id,
           is_correct: true,
-          revised: true
+          revised: true,
         };
       } else {
         // if annotation set id is null
@@ -192,25 +190,26 @@ export default {
           label: this.label.id,
           label_set: this.annotationSet.label_set.id,
           is_correct: true,
-          revised: true
+          revised: true,
         };
       }
 
       this.isLoading = true;
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then(response => {
-          if (response.data) {
-            if (response.data.length > 0)
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.length > 0) {
               this.$store.dispatch(
                 "document/setErrorMessage",
                 response.data[0]
               );
-          } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("editing_error")
-            );
+            } else {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("editing_error")
+              );
+            }
           }
         })
         .finally(() => {
@@ -270,7 +269,7 @@ export default {
       }
 
       if (this.rejectedMissingAnnotations.length > 0) {
-        this.rejectedMissingAnnotations.map(annotation => {
+        this.rejectedMissingAnnotations.map((annotation) => {
           // Check if the annotation set and label are rejected
           if (
             annotation.label_set === this.annotationSet.label_set.id &&
@@ -293,8 +292,8 @@ export default {
           }
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style
