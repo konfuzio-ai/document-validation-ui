@@ -1,14 +1,12 @@
 # Konfuzio Document Validation UI
 
-(Under active development)
-
-White-label app that lets you preview and interact with documents uploaded to [Konfuzio Server](https://konfuzio.com).
+White-label application that lets you preview and interact with documents uploaded to [Konfuzio Server](https://konfuzio.com).
 
 ![dvui.png](dvui.png)
 
 ## Documentation
 
-The source code documentation for this app is in the docs directory. [Take a look here](docs/README.md).
+The source code documentation can be found in the `docs` directory. [Take a look here](docs/README.md).
 
 For a full guide on how to install or integrate the application, visit our [Document Validation UI Developer Guide](https://dev.konfuzio.com/dvui/index.html).
 
