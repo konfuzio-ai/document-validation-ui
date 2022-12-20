@@ -1,15 +1,24 @@
-<style scoped lang="scss" src="../assets/scss/document_error.scss"></style>
-
 <template>
   <section class="document-error-modal">
-    <b-modal :width="400" v-model="isModalActive">
+    <b-modal
+      v-model="isModalActive"
+      :width="400"
+    >
       <section class="modal-card-body">
         <div class="header">
           <div class="error-icon">
             <ErrorIcon class="icon" />
           </div>
-          <div @click="closeModal" class="btn-container" type="button">
-            <b-icon icon="xmark" class="close-btn" size="is-small" />
+          <div
+            class="btn-container"
+            type="button"
+            @click="closeModal"
+          >
+            <b-icon
+              icon="xmark"
+              class="close-btn"
+              size="is-small"
+            />
           </div>
         </div>
         <div class="content">
@@ -18,7 +27,10 @@
         </div>
       </section>
       <footer class="modal-card-foot">
-        <b-button type="is-primary" @click="handleContactSupport">
+        <b-button
+          type="is-primary"
+          @click="handleContactSupport"
+        >
           {{ $t("contact_support") }}
         </b-button>
       </footer>
@@ -32,13 +44,13 @@ import ErrorIcon from "../assets/images/ErrorIcon";
 
 export default {
   name: "DocumentError",
+  components: {
+    ErrorIcon
+  },
   data() {
     return {
       isModalActive: true
     };
-  },
-  components: {
-    ErrorIcon
   },
   computed: {
     ...mapState("document", ["selectedDocument", "currentUser"])
@@ -63,3 +75,5 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss" src="../assets/scss/document_error.scss"></style>

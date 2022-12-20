@@ -1,5 +1,3 @@
-<style scoped lang="scss" src="../../assets/scss/document_toolbar.scss"></style>
-
 <template>
   <div class="toolbar-container">
     <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
@@ -24,18 +22,32 @@
           <span class="edit-text">{{ $t("edit") }}</span>
         </div>
       </b-tooltip>
-      <div class="toolbar-divider" v-if="!editMode"></div>
+      <div
+        v-if="!editMode"
+        class="toolbar-divider"
+      />
       <div class="icons icons-right">
-        <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
+        <div
+          class="fit-zoom icon"
+          @click.prevent.stop="fitAuto"
+        >
           <FitZoomIcon />
         </div>
-        <div class="zoom-in icon" @click.prevent.stop="zoomIn">
+        <div
+          class="zoom-in icon"
+          @click.prevent.stop="zoomIn"
+        >
           <PlusIcon />
         </div>
-        <div class="zoom-out icon" @click.prevent.stop="zoomOut">
+        <div
+          class="zoom-out icon"
+          @click.prevent.stop="zoomOut"
+        >
           <MinusIcon />
         </div>
-        <div class="percentage">{{ `${currentPercentage}%` }}</div>
+        <div class="percentage">
+          {{ `${currentPercentage}%` }}
+        </div>
       </div>
     </div>
   </div>
@@ -49,7 +61,7 @@ import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
 
 export default {
-  name: "Toolbar",
+  name: "DocumentToolbar",
   components: {
     FitZoomIcon,
     PlusIcon,
@@ -72,6 +84,29 @@ export default {
     ...mapState("edit", ["editMode"]),
     ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
     ...mapGetters("document", ["documentCannotBeEdited"])
+  },
+  watch: {
+    selectedDocument(newValue) {
+      if (this.documentCannotBeEdited(newValue)) {
+        this.editModeDisabled = true;
+      }
+    }
+  },
+  mounted() {
+    this.defaultScale = this.scale;
+
+    if (this.selectedDocument) {
+      if (this.documentCannotBeEdited(this.selectedDocument)) {
+        this.editModeDisabled = true;
+      }
+    }
+  },
+  updated() {
+    if (this.selectedDocument.is_reviewed) {
+      this.tooltipInfo = this.$t("document_reviewed");
+    } else {
+      this.tooltipInfo = this.$t("edit_not_available");
+    }
   },
   methods: {
     handleEdit() {
@@ -103,29 +138,8 @@ export default {
         this.$store.dispatch("display/updateScale", { scale });
       });
     }
-  },
-  watch: {
-    selectedDocument(newValue) {
-      if (this.documentCannotBeEdited(newValue)) {
-        this.editModeDisabled = true;
-      }
-    }
-  },
-  mounted() {
-    this.defaultScale = this.scale;
-
-    if (this.selectedDocument) {
-      if (this.documentCannotBeEdited(this.selectedDocument)) {
-        this.editModeDisabled = true;
-      }
-    }
-  },
-  updated() {
-    if (this.selectedDocument.is_reviewed) {
-      this.tooltipInfo = this.$t("document_reviewed");
-    } else {
-      this.tooltipInfo = this.$t("edit_not_available");
-    }
   }
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_toolbar.scss"></style>

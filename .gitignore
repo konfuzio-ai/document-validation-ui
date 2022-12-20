@@ -3,7 +3,7 @@ node_modules/
 dist/
 
 # Environments
-.env
+.env*
 .venv
 .npmrc
 env/

@@ -61,7 +61,7 @@ library.add(
   faQuestion,
   faPlus
 );
-Vue.component("vue-fontawesome", FontAwesomeIcon);
+Vue.component("VueFontawesome", FontAwesomeIcon);
 Vue.component("App", App);
 Vue.use(VueKonva);
 Vue.use(Buefy, {

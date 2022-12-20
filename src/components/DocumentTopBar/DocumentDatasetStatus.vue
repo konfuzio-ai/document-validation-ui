@@ -1,9 +1,3 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_dataset_status.scss"
-></style>
-
 <template>
   <b-dropdown class="dataset-status-chooser">
     <template #trigger>
@@ -12,28 +6,37 @@
           <StatusIcon />
         </div>
         <div class="dataset-status-info">
-          <p class="dataset-status-title">{{ $t("status") }}</p>
+          <p class="dataset-status-title">
+            {{ $t("status") }}
+          </p>
           <div class="dataset-status-name">
             {{ datasetStatus === 0 ? $t("set_status") : handleStatus() }}
           </div>
         </div>
         <div class="caret">
-          <b-icon icon="angle-down" size="is-small" class="caret"></b-icon>
+          <b-icon
+            icon="angle-down"
+            size="is-small"
+            class="caret"
+          />
         </div>
       </div>
     </template>
 
-    <p class="dropdown-menu-title">{{ $t("status") }}</p>
+    <p class="dropdown-menu-title">
+      {{ $t("status") }}
+    </p>
 
     <b-dropdown-item
-      class="dropdown-item"
       v-for="(status, index) in statusList"
       :key="index"
+      class="dropdown-item"
       aria-role="listitem"
-      @click="handleChangeStatus(index)"
       :disabled="disable(status)"
-      >{{ status }}</b-dropdown-item
+      @click="handleChangeStatus(index)"
     >
+      {{ status }}
+    </b-dropdown-item>
   </b-dropdown>
 </template>
 
@@ -42,6 +45,14 @@ import StatusIcon from "../../assets/images/StatusImg";
 
 export default {
   name: "DatasetStatus",
+  components: {
+    StatusIcon
+  },
+  props: {
+    datasetStatus: {
+      type: Number
+    }
+  },
   data() {
     return {
       statusList: [
@@ -52,14 +63,6 @@ export default {
       ],
       currentStatus: null
     };
-  },
-  props: {
-    datasetStatus: {
-      type: Number
-    }
-  },
-  components: {
-    StatusIcon
   },
   methods: {
     handleChangeStatus(index) {
@@ -95,3 +98,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_dataset_status.scss"
+></style>

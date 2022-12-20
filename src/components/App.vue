@@ -1,11 +1,9 @@
-<style lang="scss" src="../assets/scss/main.scss"></style>
 <template>
   <div class="app-container">
     <DocumentsList />
     <DocumentDashboard />
   </div>
 </template>
-
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
@@ -35,24 +33,6 @@ export default {
       required: false
     },
     locale: { type: String, required: false }
-  },
-  created() {
-    // locale config
-    if (this.locale && this.locale !== "") {
-      this.$i18n.locale = this.locale;
-    }
-
-    // user token config
-    API.setAuthToken(this.userToken);
-
-    // document and project config
-    Promise.all([
-      this.$store.dispatch("project/setProjectId", this.projectId),
-      this.$store.dispatch("document/setDocId", this.documentId),
-      this.$store.dispatch("document/setPublicView", this.isPublicView)
-    ]).finally(() => {
-      this.$store.dispatch("document/fetchDocument");
-    });
   },
   computed: {
     documentId() {
@@ -93,6 +73,26 @@ export default {
         return true;
       }
     }
+  },
+  created() {
+    // locale config
+    if (this.locale && this.locale !== "") {
+      this.$i18n.locale = this.locale;
+    }
+
+    // user token config
+    API.setAuthToken(this.userToken);
+
+    // document and project config
+    Promise.all([
+      this.$store.dispatch("project/setProjectId", this.projectId),
+      this.$store.dispatch("document/setDocId", this.documentId),
+      this.$store.dispatch("document/setPublicView", this.isPublicView)
+    ]).finally(() => {
+      this.$store.dispatch("document/fetchDocument");
+    });
   }
 };
 </script>
+
+<style lang="scss" src="../assets/scss/main.scss"></style>

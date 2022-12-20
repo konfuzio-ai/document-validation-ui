@@ -1,18 +1,13 @@
-<style
-  scoped
-  lang="scss"
-  src="../../assets/scss/document_thumbnails.scss"
-></style>
 <template>
   <div class="document-pages">
     <div v-if="selectedDocument">
       <div
+        v-for="page in selectedDocument.pages"
+        :key="page.id"
         :class="[
           'document-thumbnail',
           currentPage == page.number && 'selected'
         ]"
-        v-for="page in selectedDocument.pages"
-        :key="page.id"
         @click="changePage(page.number)"
       >
         <div class="image-section">
@@ -24,14 +19,16 @@
                 currentPage == page.number && 'selected'
               ]"
               :width="'40px'"
-              :imageUrl="`${page.thumbnail_url}?${selectedDocument.downloaded_at}`"
+              :image-url="`${page.thumbnail_url}?${selectedDocument.downloaded_at}`"
             >
               <LoadingThumbnail />
             </ServerImage>
             <LoadingThumbnail v-else />
           </div>
         </div>
-        <div class="number-thumbnail">{{ page.number }}</div>
+        <div class="number-thumbnail">
+          {{ page.number }}
+        </div>
       </div>
     </div>
     <div v-else>
@@ -45,7 +42,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
@@ -88,3 +84,9 @@ export default {
   }
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_thumbnails.scss"
+></style>

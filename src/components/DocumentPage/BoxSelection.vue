@@ -1,8 +1,8 @@
 <template>
   <v-rect
-    :config="config"
-    :strokeScaleEnabled="false"
     ref="boxSelection"
+    :config="config"
+    :stroke-scale-enabled="false"
     @dragend="onChange"
     @transformend="onChange"
     v-on="$listeners"
