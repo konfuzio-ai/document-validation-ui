@@ -41,7 +41,7 @@
             </div>
             <div class="icon-container">
               <div class="action-icon">
-                <b-icon icon="eye" class="is-small" />
+                <EyeIcon />
               </div>
             </div>
           </div>
@@ -87,6 +87,7 @@ import { mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import SplitLines from "../../assets/images/SplitLines";
 import SplitZigZag from "../../assets/images/SplitZigZag";
+import EyeIcon from "../../assets/images/EyeIcon";
 import draggable from "vuedraggable";
 
 export default {
@@ -95,6 +96,7 @@ export default {
     ServerImage,
     SplitLines,
     SplitZigZag,
+    EyeIcon,
     draggable
   },
   props: {

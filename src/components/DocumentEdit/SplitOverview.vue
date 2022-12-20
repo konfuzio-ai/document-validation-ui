@@ -40,7 +40,7 @@
                 />
                 <div class="icon-container">
                   <div class="action-icon">
-                    <b-icon icon="eye" class="is-small" />
+                    <EyeIcon />
                   </div>
                 </div>
               </div>
@@ -84,12 +84,14 @@
 import { mapState } from "vuex";
 import DocumentCategory from "../../components/DocumentCategory";
 import ServerImage from "../../assets/images/ServerImage";
+import EyeIcon from "../../assets/images/EyeIcon";
 
 export default {
   name: "SplitOverview",
   components: {
     DocumentCategory,
-    ServerImage
+    ServerImage,
+    EyeIcon
   },
   props: {
     fileName: {
