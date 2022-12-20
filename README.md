@@ -1,4 +1,4 @@
-# Konfuzio Document View
+# Konfuzio Document Validation UI
 
 (Under active development)
 
