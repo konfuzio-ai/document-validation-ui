@@ -183,7 +183,7 @@
 
               .annotation,
               .empty-annotation {
-                min-height: 44px;
+                min-height: 36px;
                 display: flex;
                 align-items: center;
               }
@@ -298,7 +298,6 @@
             }
 
             .annotation-row-left {
-
               .annotation-details,
               .label-name {
                 margin-bottom: -1px;
@@ -322,7 +321,6 @@
           }
 
           @keyframes shake {
-
             10%,
             90% {
               transform: translate3d(-1px, 0, 0);
