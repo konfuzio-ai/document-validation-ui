@@ -5,17 +5,17 @@ const HTTP = myImports.HTTP;
 const state = {
   documentsInProject: [],
   documentsAvailableToReview: [], // filtered by user
-  categories: null
+  categories: null,
 };
 
 const getters = {
   /**
    * Get the category name for a given category ID
    */
-  categoryName: state => categoryId => {
+  categoryName: (state) => (categoryId) => {
     if (categoryId && state.categories) {
       return state.categories.find(
-        tempCategory => tempCategory.id == categoryId
+        (tempCategory) => tempCategory.id == categoryId
       ).name;
     }
     return "";
@@ -24,14 +24,14 @@ const getters = {
   /**
    * Get the category for a given category ID
    */
-  category: state => categoryId => {
+  category: (state) => (categoryId) => {
     if (categoryId && state.categories) {
       return state.categories.find(
-        tempCategory => tempCategory.id == categoryId
+        (tempCategory) => tempCategory.id == categoryId
       );
     }
     return null;
-  }
+  },
 };
 
 const actions = {
@@ -48,15 +48,16 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocumentList: ({ commit }, categoryId) => {
-    // TODO: we should filter by user and remove the limit
-    return HTTP.get(`documents/?category=${categoryId}&limit=100`)
-      .then(response => {
+  fetchDocumentList: ({ commit, rootState }, categoryId) => {
+    return HTTP.get(
+      `documents/?category=${categoryId}&assignee=${rootState.project.currentUser}`
+    )
+      .then((response) => {
         if (response.data.results) {
           commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error, "Could not fetch document list from the backend");
       });
   },
@@ -65,20 +66,20 @@ const actions = {
     { commit, state, dispatch, rootGetters },
     { categoryId, user, poll }
   ) => {
-    const sleep = duration =>
-      new Promise(resolve => setTimeout(resolve, duration));
+    const sleep = (duration) =>
+      new Promise((resolve) => setTimeout(resolve, duration));
 
     // Poll document data until the status_data is 2
     // and labeling is available (done)
     let count = 0;
-    const pollUntilLabelingAvailable = duration => {
+    const pollUntilLabelingAvailable = (duration) => {
       let errors = 0;
       count += 1;
 
       return dispatch("fetchDocumentList", categoryId).then(() => {
         for (let i = 0; i < state.documentsInProject.length; i++) {
           const found = state.documentsAvailableToReview.find(
-            doc => doc.id === state.documentsInProject[i].id
+            (doc) => doc.id === state.documentsInProject[i].id
           );
 
           if (found) {
@@ -90,10 +91,8 @@ const actions = {
               state.documentsInProject[i]
             )
           ) {
-            // add available doc to the end of the array if assigned to user
-            if (state.documentsInProject[i].assignee === user) {
-              commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
-            }
+            // add available doc to the end of the array
+            commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
           } else if (
             rootGetters["document/documentHadErrorDuringExtraction"](
               state.documentsInProject[i]
@@ -154,15 +153,15 @@ const actions = {
 
   fetchCategories: ({ commit }, projectId) => {
     return HTTP.get(`categories/?limit=100&project=${projectId}`)
-      .then(async response => {
+      .then(async (response) => {
         if (response.data && response.data.results) {
           commit("SET_CATEGORIES", response.data.results);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error, "Could not fetch categories from the backend");
       });
-  }
+  },
 };
 
 const mutations = {
@@ -174,7 +173,7 @@ const mutations = {
   },
   ADD_AVAILABLE_DOCUMENT: (state, availableDocument) => {
     const docAlreadyExists = state.documentsAvailableToReview.find(
-      document => document.id === availableDocument.id
+      (document) => document.id === availableDocument.id
     );
     if (!docAlreadyExists) {
       state.documentsAvailableToReview.push(availableDocument);
@@ -182,7 +181,7 @@ const mutations = {
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;
-  }
+  },
 };
 
 export default {
@@ -190,5 +189,5 @@ export default {
   state,
   actions,
   mutations,
-  getters
+  getters,
 };
