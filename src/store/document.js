@@ -620,12 +620,15 @@ const actions = {
   },
 
   updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", [annotationId]);
+
     return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then((response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+            commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
             resolve(response.data);
           }
         })
@@ -694,11 +697,12 @@ const actions = {
       });
   },
 
-  addMissingAnnotations: ({}, missingAnnotations) => {
+  addMissingAnnotations: ({ commit }, missingAnnotations) => {
     return new Promise((resolve) => {
       return HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then((response) => {
           if (response.status === 201) {
+            commit("SET_REJECTED_MISSING_ANNOTATIONS", null);
             resolve(true);
           }
         })
@@ -726,7 +730,7 @@ const actions = {
   },
 
   updateMultipleAnnotations: ({ state, commit }, annotations) => {
-    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
+    commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations.ids);
 
     return new Promise((resolve) => {
       return HTTP.patch(

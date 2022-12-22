@@ -56,22 +56,18 @@
 
     <template #content>
       <div class="label-details">
-        <div
-          v-if="description"
-          class="label-description"
-        >
+        <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div
-          v-if="accuracy"
-          class="accuracy"
-        >
-          <span>{{ $t("accuracy") }}</span><span
+        <div v-if="accuracy" class="accuracy">
+          <span>{{ $t("accuracy") }}</span
+          ><span
             :class="[
               'value',
               accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : '',
             ]"
-          >{{ Math.floor(accuracy * 100) / 100 }}</span>
+            >{{ Math.floor(accuracy * 100) / 100 }}</span
+          >
         </div>
         <div class="revision">
           <div class="detail-icons">

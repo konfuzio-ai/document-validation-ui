@@ -1,9 +1,5 @@
 <template>
-  <div
-    :id="annotation.id"
-    ref="annotation"
-    class="annotation"
-  >
+  <div :id="annotation.id" ref="annotation" class="annotation">
     <span
       v-if="!publicView"
       :id="annotation.id"
@@ -22,38 +18,20 @@
     >
       {{ span.offset_string }}
     </span>
-    <span
-      v-else
-      class="annotation-value"
-    >
+    <span v-else class="annotation-value">
       {{ span.offset_string }}
     </span>
-    <div class="buttons-container">
-      <ActionButtons
-        :save-btn="showButton()"
-        :cancel-btn="isAnnotationBeingEdited"
-        :is-loading="isLoading"
-        :accept-btn="showAcceptButton"
-        :label="label"
-        @cancel="handleCancel"
-        @save="saveAnnotationChanges"
-        @accept="saveAnnotationChanges"
-      />
-    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import ActionButtons from "./ActionButtons";
+
 /**
  * This component is responsible for managing filled annotations.
  */
 export default {
   name: "AnnotationContent",
-  components: {
-    ActionButtons,
-  },
   props: {
     annotation: {
       type: Object,
@@ -72,16 +50,15 @@ export default {
     annotationSet: {
       type: Object,
     },
-    isHovered: {
+    saveChanges: {
       type: Boolean,
-      default: false,
+      required: false,
     },
   },
   data() {
     return {
       error: null,
       isLoading: false,
-      showAcceptButton: false,
     };
   },
   computed: {
@@ -147,23 +124,16 @@ export default {
         this.handleCancel(true);
       }
     },
-    isHovered(newValue) {
-      if (this.publicView) return;
-      this.showAcceptButton = newValue && !this.annotation.revised;
-    },
-    newAcceptedAnnotations(newValue) {
-      if (!newValue) {
-        this.isLoading = false;
-        return;
-      }
-
-      this.enableLoading(newValue);
-    },
     selectedEntity(newValue) {
       if (!newValue) return;
 
       if (this.annotation.id === this.editAnnotation.id) {
         this.setText(newValue.offset_string);
+      }
+    },
+    saveChanges(newValue) {
+      if (newValue) {
+        this.saveAnnotationChanges();
       }
     },
   },
@@ -226,7 +196,6 @@ export default {
       if (wasOutsideClick) {
         this.setText(this.span.offset_string);
       } else {
-        this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/endLoading");
       }
@@ -332,12 +301,6 @@ export default {
           updatedValues: updatedString,
           annotationId: this.annotation.id,
         })
-        .then((updatedAnnotation) => {
-          // Check if the response is successful or not
-          if (updatedAnnotation) {
-            this.showAcceptButton = false;
-          }
-        })
         .catch((error) => {
           if (error) {
             this.$store.dispatch("document/setErrorMessage", error);
@@ -349,7 +312,8 @@ export default {
           }
         })
         .finally(() => {
-          this.handleCancel();
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.$store.dispatch("selection/disableSelection");
         });
     },
     createSpan(span) {
@@ -363,27 +327,6 @@ export default {
         start_offset: span.start_offset,
         end_offset: span.end_offset,
       };
-    },
-    showButton() {
-      if (this.publicView) return;
-
-      if (this.isAnnotationBeingEdited && this.spanSelection) {
-        return true;
-      }
-      return false;
-    },
-    enableLoading(annotations) {
-      if (annotations) {
-        const found = annotations.ids.find(
-          (annotation) => annotation === this.annotation.id
-        );
-
-        if (found) {
-          this.isLoading = true;
-        }
-      } else {
-        this.isLoading = false;
-      }
     },
   },
 };
