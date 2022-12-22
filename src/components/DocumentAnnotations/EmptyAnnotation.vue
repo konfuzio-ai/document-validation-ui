@@ -22,26 +22,19 @@
         {{ $t("no_data_found") }}
       </span>
     </span>
-
-    <ActionButtons
-      :save-btn="isEmptyAnnotationEditable()"
-      :cancel-btn="isAnnotationBeingEdited()"
-      :show-reject="showReject"
-      :is-loading="isLoading"
-      @save="saveEmptyAnnotation"
-      @cancel="cancelEmptyAnnotation"
-    />
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import ActionButtons from "./ActionButtons";
+
 /**
  * This component is responsible for managing empty annotations (labels with no annotations).
  */
 export default {
   name: "EmptyAnnotation",
-  components: { ActionButtons },
+  components: {
+    // ActionButtons
+  },
   props: {
     label: {
       required: true,
@@ -49,14 +42,15 @@ export default {
     annotationSet: {
       required: true,
     },
-    isHovered: {
-      type: Boolean,
-      default: false,
-    },
+
     span: {
       required: false,
     },
     spanIndex: {
+      required: false,
+    },
+    saveChanges: {
+      type: Boolean,
       required: false,
     },
   },
@@ -74,9 +68,7 @@ export default {
       "editAnnotation",
       "publicView",
       "documentId",
-      "rejectedMissingAnnotations",
       "annotationSets",
-      "hoveredAnnotationSet",
       "selectedEntity",
       "showActionError",
     ]),
@@ -104,18 +96,16 @@ export default {
         this.cancelEmptyAnnotation(true);
       }
     },
-    rejectedMissingAnnotations() {
-      this.enableLoading();
-    },
-    isHovered(newValue) {
-      if (this.publicView) return;
-      this.showReject = newValue && !this.isAnnotationBeingEdited();
-    },
     selectedEntity(newValue) {
       if (!newValue) return;
 
       if (this.emptyAnnotationId() === this.editAnnotation.id) {
         this.setText(newValue.offset_string);
+      }
+    },
+    saveChanges(newValue) {
+      if (newValue && this.isAnnotationInEditMode(this.emptyAnnotationId())) {
+        this.saveEmptyAnnotation();
       }
     },
   },
@@ -220,7 +210,6 @@ export default {
       if (wasOutsideClick) {
         this.setText(this.$t("no_data_found"));
       } else {
-        this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
       }
       this.isLoading = false;
@@ -251,47 +240,8 @@ export default {
         );
       }
     },
-    showActionButtons() {
-      return (
-        this.selectionEnabled === this.emptyAnnotationId() || this.isLoading
-      );
-    },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;
-    },
-
-    enableLoading() {
-      // Check for what empty annotations we want to show the loading
-      // while waiting for it to be removed from the row
-      if (!this.rejectedMissingAnnotations) {
-        this.isLoading = false;
-        return;
-      }
-
-      if (this.rejectedMissingAnnotations.length > 0) {
-        this.rejectedMissingAnnotations.map((annotation) => {
-          // Check if the annotation set and label are rejected
-          if (
-            annotation.label_set === this.annotationSet.label_set.id &&
-            annotation.annotation_set === this.annotationSet.id
-          ) {
-            // Check if we wanna add loading to all empty annotations
-            if (this.hoveredAnnotationSet) {
-              this.isLoading = true;
-              return;
-            }
-
-            // or we want to load a single one
-            if (
-              !this.hoveredAnnotationSet &&
-              annotation.label === this.label.id
-            ) {
-              this.isLoading = true;
-              return;
-            }
-          }
-        });
-      }
     },
   },
 };

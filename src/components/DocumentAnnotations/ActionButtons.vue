@@ -2,18 +2,9 @@
   <div class="action-buttons">
     <!-- loading -->
     <div v-if="isLoading && !finishReviewBtn">
-      <b-notification
-        :closable="false"
-        class="loading-background"
-      >
-        <b-loading
-          :active="isLoading"
-          :is-full-page="loadingOnFullPage"
-        >
-          <b-icon
-            icon="spinner"
-            class="fa-spin loading-icon-size spinner"
-          />
+      <b-notification :closable="false" class="loading-background">
+        <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
         </b-loading>
       </b-notification>
     </div>
@@ -51,11 +42,7 @@
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
       class="reject-button-container"
     >
-      <b-button
-        type="is-ghost"
-        class="reject-btn"
-        @click.stop="reject"
-      >
+      <b-button type="is-ghost" class="reject-btn" @click.stop="reject">
         {{ $t("reject_label") }}
       </b-button>
     </div>
@@ -111,18 +98,9 @@
       </span>
 
       <div v-else>
-        <b-notification
-          :closable="false"
-          :class="['loading-background']"
-        >
-          <b-loading
-            :active="isLoading"
-            :is-full-page="loadingOnFullPage"
-          >
-            <b-icon
-              icon="spinner"
-              class="fa-spin loading-icon-size spinner"
-            />
+        <b-notification :closable="false" :class="['loading-background']">
+          <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
           </b-loading>
         </b-notification>
       </div>
@@ -135,50 +113,50 @@ export default {
   name: "ActionButtons",
   props: {
     saveBtn: {
-      type: Boolean
+      type: Boolean,
     },
     cancelBtn: {
-      type: Boolean
+      type: Boolean,
     },
     showReject: {
-      type: Boolean
+      type: Boolean,
     },
     isLoading: {
-      type: Boolean
+      type: Boolean,
     },
     acceptBtn: {
-      type: Boolean
+      type: Boolean,
     },
     finishReviewBtn: {
-      type: Boolean
+      type: Boolean,
     },
     finishDisabled: {
-      type: Boolean
+      type: Boolean,
     },
     handleReject: {
-      type: Function
+      type: Function,
     },
     rejectAllEmptyBtn: {
-      type: Boolean
+      type: Boolean,
     },
     annotationSet: {
-      type: Object
+      type: Object,
     },
     acceptAllBtn: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
-      loadingOnFullPage: false
+      loadingOnFullPage: false,
     };
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
     ...mapGetters("document", [
       "emptyLabelsLength",
-      "annotationsWithPendingReviewLength"
-    ])
+      "annotationsWithPendingReviewLength",
+    ]),
   },
   methods: {
     save() {
@@ -191,7 +169,7 @@ export default {
       this.$emit("accept");
     },
     reject() {
-      this.$parent.$emit("reject");
+      this.$emit("reject");
     },
     mouseenterAnnotationSet(type) {
       if (type == "reject") {
@@ -214,8 +192,8 @@ export default {
     },
     acceptGroup() {
       this.$emit("accept-group");
-    }
-  }
+    },
+  },
 };
 </script>
 
