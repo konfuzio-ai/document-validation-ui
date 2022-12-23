@@ -148,7 +148,9 @@ export default {
   },
   props: {
     description: {
-      required: true,
+      type: String,
+      default: null,
+      required: false,
     },
     annotation: {
       type: Object,
