@@ -34,7 +34,10 @@
                   transform: 'rotate(' + getRotation(page.id) + 'deg)',
                 }"
               >
-                <b-skeleton width="57px" height="57px" />
+                <b-skeleton
+                  width="57px"
+                  height="57px"
+                />
               </ServerImage>
             </div>
             <div class="icon-container">
@@ -55,18 +58,24 @@
           @click="handleSplittingLines(page)"
         >
           <div class="scissors-icon">
-            <b-icon icon="scissors" class="is-small" />
+            <b-icon
+              icon="scissors"
+              class="is-small"
+            />
           </div>
           <div
             v-if="
               activeSplittingLines &&
-              activeSplittingLines[index] === page.page_number
+                activeSplittingLines[index] === page.page_number
             "
             class="lines"
           >
             <SplitZigZag />
           </div>
-          <div v-else class="lines">
+          <div
+            v-else
+            class="lines"
+          >
             <SplitLines />
           </div>
         </div>
