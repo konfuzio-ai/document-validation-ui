@@ -1,6 +1,9 @@
 <template>
   <div class="split-overview">
-    <div class="back-section" @click="handleBackButton">
+    <div
+      class="back-section"
+      @click="handleBackButton"
+    >
       <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
@@ -56,7 +59,7 @@
               @input="handleInput"
               @paste="handlePaste"
               @blur="handleChanges(page)"
-            />
+            >
             <div class="file-extension-container">
               <span>{{ `.${fileExtension}` }}</span>
             </div>

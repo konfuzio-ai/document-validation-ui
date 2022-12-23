@@ -1,6 +1,13 @@
 <template>
-  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <input v-model="selectedContent" class="popup-input" type="text" />
+  <div
+    class="annotation-popup"
+    :style="{ left: `${left}px`, top: `${top}px` }"
+  >
+    <input
+      v-model="selectedContent"
+      class="popup-input"
+      type="text"
+    >
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
@@ -17,14 +24,18 @@
           {{
             selectedSet
               ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `(${$t("new")})`
-                }`
+                selectedSet.id
+                  ? numberOfAnnotationSetGroup(selectedSet)
+                  : `(${$t("new")})`
+              }`
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon icon="angle-down" size="is-small" class="caret" />
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              class="caret"
+            />
           </span>
         </b-button>
       </template>
@@ -68,11 +79,15 @@
             selectedLabel
               ? selectedLabel.name
               : labels && labels.length === 0
-              ? $t("no_labels_to_choose")
-              : $t("select_label")
+                ? $t("no_labels_to_choose")
+                : $t("select_label")
           }}
           <span class="caret-icon">
-            <b-icon icon="angle-down" size="is-small" class="caret" />
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              class="caret"
+            />
           </span>
         </b-button>
       </template>
