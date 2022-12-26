@@ -1,6 +1,6 @@
 {
-  "no_label_sets_found": "No label sets found",
-  "no_label_sets_found_description": "There are no label sets in this document.",
+  "no_label_sets_found": "No annotation sets found",
+  "no_label_sets_found_description": "There are no annotation sets in this document.",
   "no_labels_found": "No labels found",
   "no_labels_description": "There are no labels in this label set.",
   "resolution_not_supported": "App not supported on this resolution",
@@ -106,5 +106,9 @@
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
   "get_support": "Get Support",
-  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set."
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set.",
+  "new_multi_ann_title": "Create multiple annotations",
+  "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
+  "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
+  "error_creating_multi_ann": "Not all annotation sets were created successfully."
 }

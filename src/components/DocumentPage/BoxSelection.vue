@@ -30,10 +30,10 @@ export default {
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
         name: "boxSelection",
-        draggable: true
+        draggable: true,
       };
     },
-    ...mapState("selection", ["selection", "isSelecting"])
+    ...mapState("selection", ["selection", "isSelecting"]),
   },
   methods: {
     /**
@@ -49,12 +49,12 @@ export default {
       let end;
 
       // we need to figure out if there's skewing going on, to fix start/end points
-      // (other cases appear to fix themselevs automatically)
+      // (other cases appear to fix themselves automatically)
       if (skewX >= 0) {
         start = { x, y };
         end = {
           x: start.x + realWidth,
-          y: start.y + realHeight
+          y: start.y + realHeight,
         };
       } else {
         end = { x, y };
@@ -76,7 +76,7 @@ export default {
       // backend once we're finished transforming/dragging
       this.$emit("changed");
     },
-    ...mapActions("selection", ["moveSelection"])
-  }
+    ...mapActions("selection", ["moveSelection"]),
+  },
 };
 </script>

@@ -1,0 +1,12 @@
+@import "./imports.scss";
+
+.multi-ann-table-popup {
+  position: absolute;
+  z-index: 40;
+
+  .label-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}

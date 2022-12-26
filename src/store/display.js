@@ -3,7 +3,7 @@ import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
   MINIMUM_APP_WIDTH,
-  MINIMUM_OPTIMIZED_APP_WIDTH
+  MINIMUM_OPTIMIZED_APP_WIDTH,
 } from "../constants";
 const debounce = (cb, duration) => {
   let timer;
@@ -23,9 +23,11 @@ const floor = (value, precision) => {
 const state = {
   scale: undefined,
   optimalScale: undefined,
-  fit: 'width',
+  fit: "width",
   currentPage: 1,
   optimalResolution: true,
+  interactionBlocked: false,
+  documentActionBar: null, // document action bar properties
 };
 
 const getters = {
@@ -39,10 +41,7 @@ const getters = {
     );
   },
   pageHeightScale: (state) => (clientHeight, viewportHeight) => {
-    return (
-      (clientHeight * PIXEL_RATIO * VIEWPORT_RATIO) /
-      viewportHeight
-    );
+    return (clientHeight * PIXEL_RATIO * VIEWPORT_RATIO) / viewportHeight;
   },
   visiblePageRange: (state, getters, rootState, rootGetters) => {
     const pageCount = rootGetters.pageCount;
@@ -56,52 +55,47 @@ const getters = {
    * The proportion between the original size of the page and the
    * image rendering.
    */
-  imageScale: state => page => {
-    return new BigNumber(page.size[0])
-      .div(page.original_size[0])
-      .toNumber();
+  imageScale: (state) => (page) => {
+    return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
   },
-  bboxToRect: (state, getters) => (page, bbox, hasOffset = false) => {
-    const imageScale = getters.imageScale(page);
-    const {
-      x0,
-      x1,
-      y0,
-      y1
-    } = bbox;
-    const pageHeight = new BigNumber(page.original_size[1]);
-    const rect = {
-      // left
-      x: new BigNumber(x0)
-        .minus(hasOffset ? 1 : 0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      // top
-      y: pageHeight
-        .minus(new BigNumber(y1))
-        .minus(hasOffset ? 17.1 : 0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      width: new BigNumber(x1)
-        .minus(x0)
-        .abs()
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber(),
-      height: new BigNumber(y1)
-        .minus(y0)
-        .times(state.scale)
-        .times(imageScale)
-        .div(PIXEL_RATIO)
-        .toNumber()
-    };
-    return rect;
-  },
+  bboxToRect:
+    (state, getters) =>
+    (page, bbox, hasOffset = false) => {
+      const imageScale = getters.imageScale(page);
+      const { x0, x1, y0, y1 } = bbox;
+      const pageHeight = new BigNumber(page.original_size[1]);
+      const rect = {
+        // left
+        x: new BigNumber(x0)
+          .minus(hasOffset ? 1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        // top
+        y: pageHeight
+          .minus(new BigNumber(y1))
+          .minus(hasOffset ? 17.1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        width: new BigNumber(x1)
+          .minus(x0)
+          .abs()
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        height: new BigNumber(y1)
+          .minus(y0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+      };
+      return rect;
+    },
   clientToBbox: (state, getters) => (page, start, end) => {
     /**
      * The backend bbox's `y0` and `y1` attributes depend on knowing the
@@ -138,10 +132,7 @@ const getters = {
       .times(PIXEL_RATIO)
       .dp(3)
       .toNumber();
-    const y0 = pageHeight
-      .minus(bottom)
-      .dp(3, BigNumber.ROUND_DOWN)
-      .toNumber();
+    const y0 = pageHeight.minus(bottom).dp(3, BigNumber.ROUND_DOWN).toNumber();
     const y1 = pageHeight.minus(top).dp(3, BigNumber.ROUND_UP).toNumber();
 
     const bbox = {
@@ -149,7 +140,7 @@ const getters = {
       x1,
       y0,
       y1,
-      page_index: page.number - 1
+      page_index: page.number - 1,
     };
 
     return bbox;
@@ -157,26 +148,17 @@ const getters = {
 };
 
 const actions = {
-  updateScale({
-    commit,
-    getters
-  }, {
-    elementsWidth,
-    client,
-    viewport,
-    scale
-  }) {
+  updateScale({ commit, getters }, { elementsWidth, client, viewport, scale }) {
     /**
      * Determine an ideal scale using viewport of document's first page, the pixel ratio
      * from the browser and a subjective scale factor based on the screen size.
      */
     switch (state.fit) {
       case "width":
-        commit("SET_SCALE", getters.pageWidthScale(
-          elementsWidth,
-          client.width,
-          viewport.width
-        ));
+        commit(
+          "SET_SCALE",
+          getters.pageWidthScale(elementsWidth, client.width, viewport.width)
+        );
         break;
       case "auto":
         const pageWidthScale = getters.pageWidthScale(
@@ -184,7 +166,10 @@ const actions = {
           client.width,
           viewport.width
         );
-        const pageHeightScale = getters.pageWidthScale(client.height, viewport.height);
+        const pageHeightScale = getters.pageWidthScale(
+          client.height,
+          viewport.height
+        );
         const autoScale = Math.min(pageWidthScale, pageHeightScale);
         commit("SET_SCALE", autoScale);
         break;
@@ -200,31 +185,26 @@ const actions = {
     }
   },
 
-  updateFit({
-      commit,
-    },
-    fit
-  ) {
+  updateFit({ commit }, fit) {
     commit("SET_FIT", fit);
   },
 
-  debounceUpdateCurrentPage: debounce(({
-    commit,
-    dispatch
-  }, pageNumber) => {
+  debounceUpdateCurrentPage: debounce(({ commit, dispatch }, pageNumber) => {
     dispatch("updateCurrentPage", pageNumber);
   }, 300),
 
-  updateCurrentPage({
-    commit
-  }, pageNumber) {
+  updateCurrentPage({ commit }, pageNumber) {
     commit("SET_CURRENT_PAGE", pageNumber);
   },
-  updateOptimalResolution({
-    commit
-  }, width) {
+  updateOptimalResolution({ commit }, width) {
     commit("SET_OPTIMAL_RESOLUTION", width >= MINIMUM_OPTIMIZED_APP_WIDTH);
-  }
+  },
+  showDocumentActionBar({ commit }, { icon, text, action, show, loading }) {
+    commit(
+      "SET_DOCUMENT_ACTION_BAR",
+      show ? { icon, text, action, loading } : null
+    );
+  },
 };
 
 const mutations = {
@@ -242,7 +222,11 @@ const mutations = {
 
   SET_CURRENT_PAGE: (state, currentPage) => {
     state.currentPage = currentPage;
-  }
+  },
+
+  SET_DOCUMENT_ACTION_BAR: (state, actionBar) => {
+    state.documentActionBar = actionBar;
+  },
 };
 
 export default {
@@ -250,5 +234,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

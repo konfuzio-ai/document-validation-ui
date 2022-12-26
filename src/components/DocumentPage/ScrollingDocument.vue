@@ -3,7 +3,10 @@
     <div
       ref="scrollingDocument"
       v-scroll.immediate="updateScrollBounds"
-      class="scrolling-document"
+      :class="[
+        'scrolling-document',
+        documentActionBar !== null ? 'has-bottom-padding' : '',
+      ]"
     >
       <div
         v-if="
@@ -20,38 +23,35 @@
           @page-jump="onPageJump"
         />
       </div>
-      <div
-        v-else
-        class="loading-page"
-      >
-        <b-skeleton
-          width="100%"
-          height="1000px"
-        />
+      <div v-else class="loading-page">
+        <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
-    <Toolbar v-if="pages.length > 0 && scale" />
+    <Toolbar v-if="showToolbar" />
+    <ActionBar v-if="showActionBar" />
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
-import Toolbar from "../DocumentPage/DocumentToolbar";
+import Toolbar from "./DocumentToolbar";
+import ActionBar from "./ActionBar";
 
 export default {
   components: {
     ScrollingPage,
-    Toolbar
+    Toolbar,
+    ActionBar,
   },
   directives: {
-    scroll
+    scroll,
   },
 
   data() {
     return {
       scrollTop: 0,
-      clientHeight: 0
+      clientHeight: 0,
     };
   },
 
@@ -59,10 +59,10 @@ export default {
     ...mapState("document", [
       "recalculatingAnnotations",
       "selectedDocument",
-      "loading"
+      "loading",
     ]),
     ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
-    ...mapState("display", ["scale"]),
+    ...mapState("display", ["scale", "documentActionBar"]),
 
     pages() {
       if (this.selectedDocument) {
@@ -70,12 +70,18 @@ export default {
       } else {
         return [];
       }
-    }
+    },
+    showToolbar() {
+      return this.pages.length > 0 && this.scale && !this.documentActionBar;
+    },
+    showActionBar() {
+      return this.documentActionBar !== null;
+    },
   },
   watch: {
     loading() {
       this.scrollTop = 0;
-    }
+    },
   },
 
   methods: {
@@ -93,8 +99,8 @@ export default {
       this.$refs.scrollingDocument.scrollTop =
         // the 4 comes from the margin between pages
         actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
-    }
-  }
+    },
+  },
 };
 </script>
 

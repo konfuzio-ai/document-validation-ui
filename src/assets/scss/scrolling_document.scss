@@ -5,6 +5,10 @@
   height: 100%;
   scroll-behavior: smooth;
 
+  &.has-bottom-padding {
+    padding-bottom: 60px;
+  }
+
   .scrolling-page {
     margin: 8px 0;
   }

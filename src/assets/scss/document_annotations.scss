@@ -8,6 +8,10 @@
   display: flex;
   flex-direction: column;
 
+  &.disabled {
+    pointer-events: none;
+  }
+
   .annotations-skeleton {
     .label-set-name-skeleton {
       margin: 24px 16px 8px 16px;

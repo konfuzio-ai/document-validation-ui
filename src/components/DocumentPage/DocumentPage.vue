@@ -1,11 +1,21 @@
 <template>
   <div ref="pdfContainer" class="pdf-page-container">
     <NewAnnotation
-      v-if="!publicView && newAnnotation.length && !editAnnotation"
+      v-if="
+        !publicView && newAnnotation && newAnnotation.length && !editAnnotation
+      "
       :new-annotation="newAnnotation"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
-      @close="closeNewAnnotation"
+      @close="closePopups"
+    />
+    <MultiAnnotationTablePopup
+      v-if="!publicView && tableSelection"
+      :table-position="tableSelection.position"
+      :page-size="scaledViewport"
+      :label-set="tableSelection.labelSet"
+      :grouped-entities="tableSelection.entities"
+      @close="closePopups"
     />
 
     <v-stage
@@ -16,8 +26,6 @@
       @mousedown="onMouseDown"
       @mouseup="onMouseUp"
       @mousemove="onMouseMove"
-      @mouseenter="onMouseEnter"
-      @mouseleave="onMouseLeave"
     >
       <v-layer>
         <v-image
@@ -34,9 +42,9 @@
               v-for="(entity, index) in scaledEntities"
               :key="index"
               :config="entityRect(entity)"
-              @mouseenter="(e) => getCursor(e)"
-              @mouseleave="getCursor()"
               @click="handleClickedEntity(entity)"
+              @mouseenter="onElementEnter"
+              @mouseleave="onElementLeave"
             />
           </v-group>
           <template v-for="annotation in pageAnnotations">
@@ -48,47 +56,43 @@
               <v-rect
                 v-if="!isAnnotationInEditMode(annotation.id)"
                 :key="'ann' + annotation.id + '-' + index"
-                :config="
-                  annotationRect(bbox, isAnnotationFocused(annotation.id))
-                "
-                @click="selectLabelAnnotation(annotation)"
-                @mouseenter="onAnnotationHover(annotation)"
-                @mouseleave="onAnnotationHover()"
+                :config="annotationRect(bbox, annotation.id)"
+                @click="handleClickedAnnotation(annotation)"
+                @mouseenter="onElementEnter"
+                @mouseleave="onElementLeave"
               />
             </template>
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation && !isInSelectionMode">
-        <template>
-          <v-label
-            :key="`label${documentAnnotationSelected.id}`"
+      <v-layer v-if="showFocusedAnnotation && !isSelecting">
+        <v-label
+          :key="`label${documentAnnotationSelected.id}`"
+          :config="{
+            listening: false,
+            ...annotationLabelRect(documentAnnotationSelected.span),
+          }"
+        >
+          <v-tag
             :config="{
+              fill: '#2B3545',
+              lineJoin: 'round',
+              hitStrokeWidth: 0,
               listening: false,
-              ...annotationLabelRect(documentAnnotationSelected.span),
             }"
-          >
-            <v-tag
-              :config="{
-                fill: '#2B3545',
-                lineJoin: 'round',
-                hitStrokeWidth: 0,
-                listening: false,
-              }"
-            />
-            <v-text
-              :config="{
-                padding: 4,
-                text: documentAnnotationSelected.labelName,
-                fill: 'white',
-                fontSize: 12,
-                listening: false,
-              }"
-            />
-          </v-label>
-        </template>
+          />
+          <v-text
+            :config="{
+              padding: 4,
+              text: documentAnnotationSelected.labelName,
+              fill: 'white',
+              fontSize: 12,
+              listening: false,
+            }"
+          />
+        </v-label>
       </v-layer>
-      <v-layer v-if="isInSelectionMode">
+      <v-layer v-if="selection && isSelectionValid && isElementSelected">
         <box-selection @changed="getBoxSelectionContent" />
         <v-transformer
           ref="transformer"
@@ -98,6 +102,13 @@
           :rotate-enabled="false"
           :ignore-stroke="true"
           :keep-ratio="false"
+        />
+      </v-layer>
+      <v-layer v-else-if="selection && isSelectionValid && !tableSelection">
+        <multi-ann-selection
+          :page="page"
+          @buttonEnter="onElementEnter"
+          @buttonLeave="onElementLeave"
         />
       </v-layer>
     </v-stage>
@@ -114,13 +125,17 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
+import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
+import MultiAnnotationTablePopup from "./MultiAnnotationTablePopup";
 
 export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
+    MultiAnnSelection,
     NewAnnotation,
+    MultiAnnotationTablePopup,
   },
 
   props: {
@@ -134,13 +149,11 @@ export default {
     return {
       image: null,
       newAnnotation: [],
+      newMultiAnnotationSetTable: null,
     };
   },
 
   computed: {
-    isInSelectionMode() {
-      return this.isSelectionEnabled && this.selection && this.selection.end;
-    },
     showFocusedAnnotation() {
       return (
         this.documentAnnotationSelected &&
@@ -167,7 +180,7 @@ export default {
 
     canvasStyle() {
       const { width, height } = this.scaledViewport;
-      return `width: ${width}px; height: ${height}px; margin: 0 auto`;
+      return `width: ${width}px; height: ${height}px;`;
     },
 
     pageInVisibleRange() {
@@ -239,6 +252,7 @@ export default {
       "isSelecting",
       "selectionFromBbox",
       "spanSelection",
+      "tableSelection",
     ]),
     ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
@@ -256,13 +270,17 @@ export default {
       "bboxToRect",
       "clientToBbox",
     ]),
-    ...mapGetters("selection", ["isSelectionEnabled"]),
+    ...mapGetters("selection", [
+      "isSelectionValid",
+      "isElementSelected",
+      "isEditingTable",
+    ]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "isDocumentReadyToBeReviewed",
+      "entitiesOnSelection",
     ]),
   },
-
   watch: {
     recalculatingAnnotations(newState) {
       if (!newState) {
@@ -271,14 +289,14 @@ export default {
     },
     // wait for the document image to be displayed to enable the selection transformer
     image(image) {
-      if (image && this.isInSelectionMode) {
+      if (image && this.isSelecting) {
         this.$nextTick(() => {
           this.updateTransformer();
         });
       }
     },
 
-    isInSelectionMode(value) {
+    isSelecting(value) {
       if (value) {
         this.$nextTick(() => {
           this.updateTransformer();
@@ -286,15 +304,14 @@ export default {
       }
     },
     scale() {
-      this.closeNewAnnotation();
+      this.closePopups();
     },
     selectedEntities(newValue) {
       if (!newValue) {
-        this.closeNewAnnotation();
+        this.closePopups();
       }
     },
   },
-
   mounted() {
     if (
       this.selectedDocument &&
@@ -303,7 +320,6 @@ export default {
       this.drawPage();
     }
   },
-
   methods: {
     ...mapActions("selection", [
       "startSelection",
@@ -313,23 +329,23 @@ export default {
     isAnnotationFocused(annotationId) {
       return (
         this.documentAnnotationSelected &&
-        !this.isSelectionEnabled &&
+        !this.isElementSelected &&
         annotationId === this.documentAnnotationSelected.id
       );
     },
-    /**
-     * Create bounding boxes
-     */
-    onMouseDown(event) {
-      // if we are not editing, do nothing
-      if (!this.isSelectionEnabled) {
-        return;
-      }
 
-      // if we click on the transformer, it should delegate to it
+    onMouseDown(event) {
+      console.log("event", event.target.name());
+      this.closePopups();
+      // check if element and delegate to it
       if (
-        event.target.getParent() &&
-        event.target.getParent().className === "Transformer"
+        event.target.name() === "entity" ||
+        event.target.name() === "annotation" ||
+        event.target.name() === "multiAnnBoxSelection" ||
+        event.target.name() === "multiAnnBoxTransformer" ||
+        event.target.name() === "multiAnnButton" ||
+        (event.target.getParent() &&
+          event.target.getParent().className === "Transformer")
       ) {
         return;
       }
@@ -338,6 +354,9 @@ export default {
         this.updateTransformer();
         return;
       }
+
+      // anything else, we start selecting
+
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.startSelection({
         pageNumber: this.pageNumber,
@@ -347,12 +366,8 @@ export default {
         },
       });
     },
-    onMouseMove(event) {
+    onMouseMove() {
       // if we are not editing, do nothing
-      if (!this.isSelectionEnabled) {
-        return;
-      }
-
       if (!this.isSelecting) {
         return;
       }
@@ -366,11 +381,8 @@ export default {
       });
     },
 
-    async onMouseUp(event) {
+    onMouseUp() {
       // if we are not editing, do nothing
-      if (!this.isSelectionEnabled) {
-        return;
-      }
       if (!this.isSelecting) {
         return;
       }
@@ -381,29 +393,66 @@ export default {
         y: position.y,
       });
 
-      /**
-       * `endSelection` will reset everything in case of invalid selection.
-       * Check the existance of `selection.end` before requesting the
-       * content from the backend.
-       * */
-      if (this.selection && this.selection.end) {
+      if (this.isSelectionValid) {
         this.updateTransformer();
-        this.getBoxSelectionContent();
+        if (this.isElementSelected) {
+          this.getBoxSelectionContent();
+        }
       }
     },
-    onMouseEnter() {
-      // if we are not editing, do nothing
-      if (!this.isSelectionEnabled) {
-        return;
-      }
-      this.$refs.stage.$el.style.cursor = "crosshair";
+
+    handleClickedAnnotation(annotation) {
+      this.closePopups();
+      this.$store.dispatch("document/resetEditAnnotation");
+      this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
-    onMouseLeave() {
-      // if we are not editing, do nothing
-      if (!this.isSelectionEnabled) {
-        return;
+
+    handleClickedEntity(entity) {
+      this.$store.dispatch("selection/setTableSelection", null);
+      if (!entity) return;
+      // Check if we are creating a new Annotation
+      // or if we are ediitng an existing or empty one
+      const entityToAdd = {
+        entity,
+        content: entity.original.offset_string,
+      };
+      let found;
+      if (this.newAnnotation) {
+        found = this.newAnnotation.find(
+          (ann) =>
+            ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
+            ann.content === entityToAdd.content
+        );
       }
-      this.$refs.stage.$el.style.cursor = "auto";
+      if (found) {
+        this.newAnnotation = this.newAnnotation.filter(
+          (ann) =>
+            ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
+            ann.content !== entityToAdd.content
+        );
+      } else {
+        this.newAnnotation.push(entityToAdd);
+      }
+      if (this.newAnnotation.length > 0) {
+        this.$store.dispatch(
+          "document/setSelectedEntities",
+          this.newAnnotation
+        );
+      } else {
+        this.$store.dispatch("document/setSelectedEntities", null);
+      }
+    },
+
+    onElementEnter() {
+      this.$refs.stage.$el.style.cursor = "pointer";
+    },
+
+    onElementLeave() {
+      this.$refs.stage.$el.style.cursor = "inherit";
+    },
+
+    handleMultiAnnSelectionFinished(newMultiAnnotationSetTable) {
+      this.newMultiAnnotationSetTable = newMultiAnnotationSetTable;
     },
 
     updateTransformer() {
@@ -462,25 +511,15 @@ export default {
      * Builds the konva config object for the entity.
      */
     entityRect(entity) {
-      if (!entity) return;
-
-      let fillColor;
-
-      if (this.newAnnotation.length) {
-        this.newAnnotation.map((ann) => {
-          if (ann.entity === entity) {
-            fillColor = "#67E9B7";
-          }
-        });
-      } else {
-        fillColor = "transparent";
-      }
-
       return {
         stroke: "#ccc",
         strokeWidth: 1,
         dash: [5, 2],
-        fill: fillColor,
+        fill:
+          (this.newAnnotation && this.newAnnotation.entity === entity) ||
+          (this.selectedEntity && this.selectedEntity === entity.original)
+            ? "#67E9B7"
+            : "transparent",
         globalCompositeOperation: "multiply",
         transformsEnabled: "position",
         hitStrokeWidth: 0,
@@ -494,7 +533,8 @@ export default {
     /**
      * Builds the konva config object for the annotation.
      */
-    annotationRect(bbox, focused, draggable) {
+    annotationRect(bbox, annotationId, draggable) {
+      const focused = this.isAnnotationFocused(annotationId);
       let fillColor = "yellow";
       let strokeWidth = 0;
       let strokeColor = "";
@@ -515,7 +555,6 @@ export default {
         ...this.bboxToRect(this.page, bbox),
       };
     },
-
     /**
      * Builds the konva config object for the annotation label.
      */
@@ -527,87 +566,19 @@ export default {
       };
     },
 
-    selectLabelAnnotation(annotation) {
-      this.closeNewAnnotation();
-      this.$store.dispatch("document/resetEditAnnotation");
-      this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
-    },
-
-    onAnnotationHover(annotation = null) {
-      // hack to change the cursor when hovering an annotation
-      if (annotation) {
-        this.$refs.stage.$el.style.cursor = "pointer";
-      } else {
-        this.$refs.stage.$el.style.cursor = this.isSelectionEnabled
-          ? "crosshair"
-          : "default";
-        // Set the id back to null so that the annotation doesn't stay selected
-        this.$store.dispatch("document/disableDocumentAnnotationSelected");
-      }
-    },
-
     async getBoxSelectionContent() {
       const box = this.clientToBbox(
         this.page,
         this.selection.start,
         this.selection.end
       );
-
       this.$store.dispatch("selection/getTextFromBboxes", box);
     },
-
-    getCursor(e) {
-      if (e) {
-        const container = e.target.getStage().container();
-        container.style.cursor = "pointer";
-      } else {
-        this.$refs.stage.$el.style.cursor = "crosshair";
-      }
-    },
-
-    handleClickedEntity(entity) {
-      if (!entity) return;
-
-      // Check if we are creating a new Annotation
-      // or if we are ediitng an existing or empty one
-
-      const entityToAdd = {
-        entity,
-        content: entity.original.offset_string,
-      };
-
-      let found;
-
-      if (this.newAnnotation) {
-        found = this.newAnnotation.find(
-          (ann) =>
-            ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
-            ann.content === entityToAdd.content
-        );
-      }
-
-      if (found) {
-        this.newAnnotation = this.newAnnotation.filter(
-          (ann) =>
-            ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
-            ann.content !== entityToAdd.content
-        );
-      } else {
-        this.newAnnotation.push(entityToAdd);
-      }
-
-      if (this.newAnnotation.length > 0) {
-        this.$store.dispatch(
-          "document/setSelectedEntities",
-          this.newAnnotation
-        );
-      } else {
-        this.$store.dispatch("document/setSelectedEntities", null);
-      }
-    },
-
-    closeNewAnnotation() {
+    closePopups() {
       this.newAnnotation = [];
+      if (this.isEditingTable) {
+        this.$store.dispatch("selection/disableSelection");
+      }
     },
   },
 };

@@ -32,6 +32,19 @@ const state = {
 
 const getters = {
   /**
+   * Get entities inside a box
+   */
+  entitiesOnSelection: (state) => (box, page) => {
+    return page.entities.filter(
+      (entity) =>
+        box.x0 <= entity.x0 &&
+        box.x1 >= entity.x1 &&
+        box.y0 <= entity.y0 &&
+        box.y1 >= entity.y1
+    );
+  },
+
+  /**
    * Number of pages. If the pages array doesn't exist yet, return 0.
    */
   pageCount: (state) => {
@@ -616,13 +629,14 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
-            resolve(null);
+            resolve(response);
           } else {
             resolve(response);
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          // TODO: Refactor to use reject instead of resolve
+          resolve(null);
           console.log(error);
         });
     });
