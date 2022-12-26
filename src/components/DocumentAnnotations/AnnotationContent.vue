@@ -1,9 +1,5 @@
 <template>
-  <div
-    :id="annotation.id"
-    ref="annotation"
-    class="annotation"
-  >
+  <div :id="annotation.id" ref="annotation" class="annotation">
     <span
       v-if="!publicView"
       :id="annotation.id"
@@ -11,7 +7,10 @@
       :class="[
         'annotation-value',
         isLoading && 'saving-changes',
-        error && 'error-editing',
+        showActionError &&
+          editAnnotation &&
+          editAnnotation.id === annotation.id &&
+          'error-editing',
         isAnnotationBeingEdited && 'clicked',
       ]"
       role="textbox"
@@ -22,38 +21,20 @@
     >
       {{ span.offset_string }}
     </span>
-    <span
-      v-else
-      class="annotation-value"
-    >
+    <span v-else class="annotation-value">
       {{ span.offset_string }}
     </span>
-    <div class="buttons-container">
-      <ActionButtons
-        :save-btn="showButton()"
-        :cancel-btn="isAnnotationBeingEdited"
-        :is-loading="isLoading"
-        :accept-btn="showAcceptButton"
-        :label="label"
-        @cancel="handleCancel"
-        @save="saveAnnotationChanges"
-        @accept="saveAnnotationChanges"
-      />
-    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import ActionButtons from "./ActionButtons";
+
 /**
  * This component is responsible for managing filled annotations.
  */
 export default {
   name: "AnnotationContent",
-  components: {
-    ActionButtons,
-  },
   props: {
     annotation: {
       type: Object,
@@ -72,16 +53,14 @@ export default {
     annotationSet: {
       type: Object,
     },
-    isHovered: {
+    saveChanges: {
       type: Boolean,
-      default: false,
+      required: false,
     },
   },
   data() {
     return {
-      error: null,
       isLoading: false,
-      showAcceptButton: false,
     };
   },
   computed: {
@@ -95,6 +74,7 @@ export default {
       "annotations",
       "newAcceptedAnnotations",
       "selectedEntity",
+      "showActionError",
     ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
@@ -147,23 +127,16 @@ export default {
         this.handleCancel(true);
       }
     },
-    isHovered(newValue) {
-      if (this.publicView) return;
-      this.showAcceptButton = newValue && !this.annotation.revised;
-    },
-    newAcceptedAnnotations(newValue) {
-      if (!newValue) {
-        this.isLoading = false;
-        return;
-      }
-
-      this.enableLoading(newValue);
-    },
     selectedEntity(newValue) {
       if (!newValue) return;
 
       if (this.annotation.id === this.editAnnotation.id) {
         this.setText(newValue.offset_string);
+      }
+    },
+    saveChanges(newValue) {
+      if (newValue) {
+        this.saveAnnotationChanges();
       }
     },
   },
@@ -226,7 +199,6 @@ export default {
       if (wasOutsideClick) {
         this.setText(this.span.offset_string);
       } else {
-        this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/endLoading");
       }
@@ -249,141 +221,14 @@ export default {
         event.preventDefault();
       }
 
-      let updatedString;
-
-      this.isLoading = true;
-
-      // Check if we are deleting a single annotation that it's not multi-lined
-      let isToDelete =
-        this.annotationText.length === 0 &&
-        (!this.isValueArray(this.annotation.span) ||
-          this.annotation.span.length === 1);
-
-      let storeAction;
-
-      if (isToDelete) {
-        storeAction = "document/deleteAnnotation";
-      } else {
-        storeAction = "document/updateAnnotation";
-
-        let spans = [...this.annotation.span];
-
-        // Validations to consider span as an array (multiline annotations) or object
-        if (
-          this.annotationText.length === 0 &&
-          this.isValueArray(this.annotation.span)
-        ) {
-          // if the annotation content in one row was deleted
-          // check if it it part of an array
-          // to only remove that string
-          spans.splice(this.spanIndex, 1);
-        } else if (
-          this.spanSelection &&
-          this.isValueArray(this.spanSelection)
-        ) {
-          let span;
-
-          // Check if editing was from selecting an entity
-          if (this.selectedEntity) {
-            span = this.selectedEntity;
-          } else {
-            spans = [...this.spanSelection];
-            span = this.createSpan(this.spanSelection[this.spanIndex]);
-          }
-
-          // span is array, only update current one
-          spans[this.spanIndex] = {
-            ...spans[this.spanIndex],
-            span,
-          };
-        } else {
-          // if span is NOT an array, but an object
-          let span;
-
-          if (this.selectedEntity) {
-            spans[this.spanIndex] = { ...this.selectedEntity };
-          } else if (this.spanSelection) {
-            span = this.createSpan(this.spanSelection);
-
-            spans[this.spanIndex] = {
-              ...spans[this.spanIndex],
-              ...span,
-            };
-          } else {
-            span = this.createSpan(this.span);
-
-            spans[this.spanIndex] = {
-              ...spans[this.spanIndex],
-              ...span,
-            };
-          }
-        }
-
-        updatedString = {
-          is_correct: true,
-          revised: true,
-          span: spans,
-        };
-      }
-
-      // Send to the store for the http patch/delete request
-      this.$store
-        .dispatch(storeAction, {
-          updatedValues: updatedString,
-          annotationId: this.annotation.id,
-        })
-        .then((updatedAnnotation) => {
-          // Check if the response is successful or not
-          if (updatedAnnotation) {
-            this.showAcceptButton = false;
-          }
-        })
-        .catch((error) => {
-          if (error) {
-            this.$store.dispatch("document/setErrorMessage", error);
-          } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("editing_error")
-            );
-          }
-        })
-        .finally(() => {
-          this.handleCancel();
-        });
-    },
-    createSpan(span) {
-      return {
-        offset_string: this.annotationText,
-        page_index: span.page_index,
-        x0: span.x0,
-        x1: span.x1,
-        y0: span.y0,
-        y1: span.y1,
-        start_offset: span.start_offset,
-        end_offset: span.end_offset,
-      };
-    },
-    showButton() {
-      if (this.publicView) return;
-
-      if (this.isAnnotationBeingEdited && this.spanSelection) {
-        return true;
-      }
-      return false;
-    },
-    enableLoading(annotations) {
-      if (annotations) {
-        const found = annotations.ids.find(
-          (annotation) => annotation === this.annotation.id
-        );
-
-        if (found) {
-          this.isLoading = true;
-        }
-      } else {
-        this.isLoading = false;
-      }
+      // API call handled in parent component - AnnotationRow
+      this.$emit(
+        "save-annotation-changes",
+        this.annotation,
+        this.spanIndex,
+        this.span,
+        this.annotationText
+      );
     },
   },
 };

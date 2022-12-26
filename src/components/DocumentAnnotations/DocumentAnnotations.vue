@@ -13,10 +13,7 @@
 
     <!-- When document data is still loading -->
     <div v-else-if="!annotationSets || loading">
-      <div
-        v-for="n in numberOfLoadingAnnotations"
-        :key="n"
-      >
+      <div v-for="n in numberOfLoadingAnnotations" :key="n">
         <LoadingAnnotations />
       </div>
     </div>
@@ -50,10 +47,6 @@
           </div>
           <div class="labelset-action-buttons">
             <ActionButtons
-              :save-btn="false"
-              :cancel-btn="false"
-              :show-reject="false"
-              :accept-btn="false"
               :reject-all-empty-btn="true"
               :annotation-set="annotationSet"
               :accept-all-btn="true"
@@ -73,14 +66,8 @@
           </div>
         </div>
 
-        <div
-          v-for="label in annotationSet.labels"
-          :key="label.id"
-        >
-          <div
-            v-if="labelNotRejected(annotationSet, label)"
-            class="labels"
-          >
+        <div v-for="label in annotationSet.labels" :key="label.id">
+          <div v-if="labelNotRejected(annotationSet, label)" class="labels">
             <DocumentLabel
               :label="label"
               :annotation-set="annotationSet"

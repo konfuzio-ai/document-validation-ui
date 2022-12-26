@@ -1,11 +1,10 @@
-import {
-  mount
-} from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import {
   DocumentAnnotations,
   DocumentLabel,
   EmptyAnnotation,
   AnnotationContent,
+  AnnotationRow,
 } from "../../src/components/DocumentAnnotations";
 import store from "../../src/store";
 
@@ -114,12 +113,25 @@ describe("Document Annotations Component", () => {
   it("Action buttons should appear when bbox is created in empty annotation", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
+    const annotation = annotationSet.labels[0].annotations[0];
 
     const wrapper = mount(EmptyAnnotation, {
       store,
       propsData: {
         label,
         annotationSet,
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(AnnotationRow, {
+      store,
+      propsData: {
+        label,
+        annotationSet,
+        annotation,
       },
       mocks: {
         $t,
@@ -143,56 +155,39 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
     await store.dispatch("selection/setSpanSelection", sampleBbox);
-    expect(await wrapper.findAll(".action-buttons").length).toEqual(1);
+    expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
   });
 
   it("Only show 'accept' button on hover on filled annotations", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
-    const spanIndex = 0;
-    const span = annotation.span[spanIndex];
 
-    const wrapper = mount(AnnotationContent, {
+    const wrapper = mount(AnnotationRow, {
       store,
       propsData: {
-        annotation,
         label,
         annotationSet,
-        span,
-        spanIndex,
-      },
-      data() {
-        return {
-          showAcceptButton: false,
-        };
+        annotation,
       },
       mocks: {
         $t,
       },
     });
 
-    await wrapper.findComponent(".annotation-value").trigger("mouseover");
-    await wrapper.setData({
-      showAcceptButton: true,
-    });
-
     expect(
       await wrapper
-      .find(".buttons-container .action-buttons .annotation-accept-btn")
-      .isVisible()
-    ).toBe(true);
-
-    await wrapper.findComponent(".annotation-value").trigger("mouseout");
-    await wrapper.setData({
-      showAcceptButton: false,
-    });
-
-    expect(
-      await wrapper
-      .find(".buttons-container .action-buttons .annotation-accept-btn")
-      .exists()
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .exists()
     ).toBe(false);
+
+    await wrapper.findComponent(".annotation-content").trigger("mouseover");
+
+    expect(
+      await wrapper
+        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .isVisible()
+    ).toBe(true);
   });
 
   it("Should only show the Rejected title when there are rejected labels", async () => {
@@ -224,12 +219,14 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: annotationSet.label_set.id,
-      label: label.id,
-      document: store.state.document.documentId,
-      annotation_set: annotationSet,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: annotationSet.label_set.id,
+        label: label.id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet,
+      },
+    ];
 
     expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
 
@@ -239,7 +236,7 @@ describe("Document Annotations Component", () => {
       showReject: true,
     });
 
-    await wrapper2
+    await wrapper
       .findComponent(".action-buttons .reject-button-container .reject-btn")
       .trigger("click");
 
@@ -253,8 +250,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       wrapper
-      .findAll(".rejected-labels-list .rejected-label-container .title")
-      .isVisible()
+        .findAll(".rejected-labels-list .rejected-label-container .title")
+        .isVisible()
     ).toBe(true);
 
     await wrapper
@@ -278,12 +275,14 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: annotationSet.label_set.id,
-      label: annotationSet.labels[0].id,
-      document: store.state.document.documentId,
-      annotation_set: annotationSet.id,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: annotationSet.label_set.id,
+        label: annotationSet.labels[0].id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet.id,
+      },
+    ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
@@ -310,12 +309,14 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [{
-      label_set: annotationSet.label_set.id,
-      label: annotationSet.labels[0].id,
-      document: store.state.document.documentId,
-      annotation_set: annotationSet.id,
-    }, ];
+    const rejectedAnnotation = [
+      {
+        label_set: annotationSet.label_set.id,
+        label: annotationSet.labels[0].id,
+        document: store.state.document.documentId,
+        annotation_set: annotationSet.id,
+      },
+    ];
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
 
@@ -342,10 +343,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .findComponent(
-        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-      )
-      .isVisible()
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .isVisible()
     ).toBe(true);
   });
 
@@ -359,10 +360,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .findComponent(
-        ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-      )
-      .attributes("disabled")
+        .findComponent(
+          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
+        )
+        .attributes("disabled")
     ).not.toBe("undefined");
   });
 
@@ -395,9 +396,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .find(".action-buttons .reject-all .reject-btn")
-      .text()
-      .includes(emptyLabels.length)
+        .find(".action-buttons .reject-all .reject-btn")
+        .text()
+        .includes(emptyLabels.length)
     ).toBe(true);
   });
 
@@ -430,8 +431,8 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .find(".action-buttons .accept-all .accept-all-btn")
-      .isVisible()
+        .find(".action-buttons .accept-all .accept-all-btn")
+        .isVisible()
     ).toBe(true);
   });
 
@@ -455,9 +456,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-      .find(".action-buttons .accept-all .accept-all-btn")
-      .text()
-      .includes(pendingAnnotations.length)
+        .find(".action-buttons .accept-all .accept-all-btn")
+        .text()
+        .includes(pendingAnnotations.length)
     ).toBe(true);
   });
 

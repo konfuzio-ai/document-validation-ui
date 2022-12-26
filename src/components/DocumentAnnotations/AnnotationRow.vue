@@ -8,7 +8,7 @@
         hoveredAnnotationSet.type == 'reject' &&
         annotationSet.id === hoveredAnnotationSet.annotationSet.id &&
         annotationSet.label_set.id ===
-        hoveredAnnotationSet.annotationSet.label_set.id &&
+          hoveredAnnotationSet.annotationSet.label_set.id &&
         hoveredEmptyLabels() === label.id &&
         'hovered-empty-labels',
       hoveredAnnotationSet &&
@@ -18,8 +18,8 @@
         'hovered-pending-annotations',
     ]"
     @click="onAnnotationClick"
-    @mouseover="isHovered = true"
-    @mouseleave="isHovered = false"
+    @mouseover="hoveredAnnotation = annotationId()"
+    @mouseleave="hoveredAnnotation = null"
   >
     <div
       class="annotation-row-left"
@@ -51,7 +51,9 @@
               :span-index="index"
               :label="label"
               :annotation-set="annotationSet"
-              :is-hovered="isHovered"
+              :is-hovered="hoveredAnnotation"
+              :save-changes="saveChanges"
+              @save-annotation-changes="handleSaveAnnotationChanges"
             />
           </div>
         </div>
@@ -64,18 +66,31 @@
               :span-index="index"
               :label="label"
               :annotation-set="annotationSet"
-              :is-hovered="isHovered"
-              @reject="handleReject"
+              :is-hovered="hoveredAnnotation"
+              :save-changes="saveChanges"
             />
           </div>
           <EmptyAnnotation
             v-else
             :label="label"
             :annotation-set="annotationSet"
-            :is-hovered="isHovered"
-            @reject="handleReject"
+            :is-hovered="hoveredAnnotation"
+            :save-changes="saveChanges"
           />
         </div>
+      </div>
+      <div class="buttons-container">
+        <ActionButtons
+          :cancel-btn="isAnnotationInEditMode(annotationId())"
+          :accept-btn="showAcceptButton()"
+          :show-reject="showRejectButton()"
+          :save-btn="showSaveButton()"
+          :is-loading="isLoading"
+          @reject="handleReject()"
+          @save="handleSaveChanges()"
+          @accept="handleSaveChanges()"
+          @cancel="handleCancelButton()"
+        />
       </div>
     </div>
   </div>
@@ -85,12 +100,15 @@ import { mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
+import ActionButtons from "./ActionButtons";
+
 export default {
   name: "AnnotationRow",
   components: {
     AnnotationDetails,
     AnnotationContent,
     EmptyAnnotation,
+    ActionButtons,
   },
   props: {
     annotationSet: {
@@ -108,7 +126,8 @@ export default {
       isLoading: false,
       isSelected: false,
       annotationAnimationTimeout: null,
-      isHovered: false,
+      hoveredAnnotation: null,
+      saveChanges: false,
     };
   },
   computed: {
@@ -117,8 +136,13 @@ export default {
       "sidebarAnnotationSelected",
       "hoveredAnnotationSet",
       "enableGroupingFeature",
+      "publicView",
+      "selectedEntity",
+      "newAcceptedAnnotations",
+      "rejectedMissingAnnotations",
+      "documentId",
     ]),
-    ...mapState("selection", ["spanSelection"]),
+    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
@@ -136,6 +160,15 @@ export default {
         this.spanSelection &&
         this.isValueArray(this.spanSelection) &&
         this.isAnnotationInEditMode(this.annotationId())
+      );
+    },
+    isAnnotation() {
+      return (
+        this.annotation &&
+        this.isAnnotationInEditMode(
+          this.annotationId(),
+          this.editAnnotation.index
+        )
       );
     },
   },
@@ -162,6 +195,26 @@ export default {
           }, 1500);
         };
         runAnimation();
+      }
+    },
+    editAnnotation(newValue) {
+      if (!newValue) {
+        this.saveChanges = false;
+        this.isLoading = false;
+      }
+    },
+    newAcceptedAnnotations(newValue) {
+      if (newValue) {
+        this.enableLoading(newValue);
+      } else {
+        this.isLoading = false;
+      }
+    },
+    rejectedMissingAnnotations(newValue) {
+      if (newValue) {
+        this.enableLoading();
+      } else {
+        this.isLoading = false;
       }
     },
   },
@@ -193,14 +246,12 @@ export default {
     onAnnotationHoverLeave() {
       this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
-    handleReject() {
-      // TODO: this should be dispatched here to the store and not in document annotations because it's going back and forward in a lot of components
-      this.$emit("handle-reject");
-    },
     onAnnotationClick() {
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     },
     hoveredEmptyLabels() {
+      // This method will change the style of the Empty Annotations in the same Label Set
+      // when the "Reject all" button is hovered
       if (!this.hoveredAnnotationSet) return;
 
       const labels = this.hoveredAnnotationSet.annotationSet.labels.map(
@@ -213,6 +264,8 @@ export default {
       return null;
     },
     hoveredPendingAnnotations() {
+      // This method will change the style of Annotations in the same Label Set
+      // when the "Accept all" button is hovered
       if (!this.hoveredAnnotationSet) return;
 
       const annotations =
@@ -235,6 +288,305 @@ export default {
         return found.id;
       } else {
         return null;
+      }
+    },
+    showAcceptButton() {
+      return (
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        this.annotation &&
+        !this.annotation.revised &&
+        this.hoveredAnnotation === this.annotation.id
+      );
+    },
+    showRejectButton() {
+      return (
+        this.hoveredAnnotation &&
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.annotation
+      );
+    },
+
+    showSaveButton() {
+      if (!this.editAnnotation || this.isLoading) return;
+
+      // Check if it's an Annotation or Empty Annotation
+      if (this.isAnnotation) {
+        return true;
+      } else {
+        if (!this.isAnnotationInEditMode(this.annotationId())) return;
+
+        // Check if an entity was selected instead of bbox
+        if (this.selectedEntity) {
+          return this.selectionEnabled === this.annotationId();
+        } else {
+          return (
+            this.selectionEnabled === this.annotationId() &&
+            this.spanSelection &&
+            Array.isArray(this.spanSelection)
+          );
+        }
+      }
+    },
+    handleReject() {
+      if (!this.label || !this.annotationSet) return;
+
+      // will emit to the DocumentAnnotations component, where the method is handled
+      // & dispatched to the store
+      this.$parent.$emit(
+        "handle-reject",
+        this.label.id,
+        this.annotationSet.label_set.id,
+        this.annotationSet.id,
+        false
+      );
+    },
+    handleSaveChanges() {
+      if (this.publicView) return;
+
+      if (
+        this.showAcceptButton() ||
+        this.isAnnotationInEditMode(
+          this.annotationId(),
+          this.editAnnotation.index
+        )
+      ) {
+        this.saveChanges = true;
+      }
+
+      if (
+        !this.annotation &&
+        this.isAnnotationInEditMode(this.annotationId())
+      ) {
+        this.saveEmptyAnnotationChanges();
+      }
+    },
+    handleSaveAnnotationChanges(
+      annotation,
+      spanIndex,
+      annotationSpan,
+      annotationText
+    ) {
+      let updatedString;
+
+      this.isLoading = true;
+
+      // Check if we are deleting a single annotation that it's not multi-lined
+      let isToDelete =
+        annotationText.length === 0 &&
+        (!this.isValueArray(annotation.span) || annotation.span.length === 1);
+
+      let storeAction;
+
+      if (isToDelete) {
+        storeAction = "document/deleteAnnotation";
+      } else {
+        storeAction = "document/updateAnnotation";
+
+        let spans = [...annotation.span];
+
+        // Validations to consider span as an array (multiline annotations) or object
+        if (annotationText.length === 0 && this.isValueArray(annotation.span)) {
+          // if the annotation content in one row was deleted
+          // check if it it part of an array
+          // to only remove that string
+          spans.splice(spanIndex, 1);
+        } else if (
+          this.spanSelection &&
+          this.isValueArray(this.spanSelection)
+        ) {
+          let span;
+
+          // Check if editing was from selecting an entity
+          if (this.selectedEntity) {
+            span = this.selectedEntity;
+          } else {
+            spans = [...this.spanSelection];
+            span = this.createSpan(
+              this.spanSelection[spanIndex],
+              annotationText
+            );
+          }
+
+          // span is array, only update current one
+          spans[spanIndex] = {
+            ...spans[spanIndex],
+            span,
+          };
+        } else {
+          // if span is NOT an array, but an object
+          let span;
+
+          if (this.selectedEntity) {
+            spans[spanIndex] = { ...this.selectedEntity };
+          } else if (this.spanSelection) {
+            span = this.createSpan(this.spanSelection, annotationText);
+
+            spans[spanIndex] = {
+              ...spans[spanIndex],
+              ...span,
+            };
+          } else {
+            span = this.createSpan(annotationSpan, annotationText);
+
+            spans[spanIndex] = {
+              ...spans[spanIndex],
+              ...span,
+            };
+          }
+        }
+
+        updatedString = {
+          is_correct: true,
+          revised: true,
+          span: spans,
+        };
+      }
+
+      // Send to the store for the http patch/delete request
+      this.$store
+        .dispatch(storeAction, {
+          updatedValues: updatedString,
+          annotationId: this.annotation.id,
+        })
+        .catch((error) => {
+          if (error) {
+            this.$store.dispatch("document/setErrorMessage", error);
+          } else {
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("editing_error")
+            );
+          }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.$store.dispatch("selection/disableSelection");
+        });
+    },
+    createSpan(span, annotationText) {
+      return {
+        offset_string: annotationText,
+        page_index: span.page_index,
+        x0: span.x0,
+        x1: span.x1,
+        y0: span.y0,
+        y1: span.y1,
+        start_offset: span.start_offset,
+        end_offset: span.end_offset,
+      };
+    },
+    saveEmptyAnnotationChanges() {
+      let annotationToCreate;
+      let span;
+
+      if (this.selectedEntity) {
+        span = [this.selectedEntity];
+      } else {
+        span = this.spanSelection;
+      }
+
+      if (this.annotationSet.id) {
+        annotationToCreate = {
+          document: this.documentId,
+          span: span,
+          label: this.label.id,
+          annotation_set: this.annotationSet.id,
+          is_correct: true,
+          revised: true,
+        };
+      } else {
+        // if annotation set id is null
+        annotationToCreate = {
+          document: this.documentId,
+          span: span,
+          label: this.label.id,
+          label_set: this.annotationSet.label_set.id,
+          is_correct: true,
+          revised: true,
+        };
+      }
+
+      this.isLoading = true;
+
+      this.$store
+        .dispatch("document/createAnnotation", annotationToCreate)
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.length > 0) {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                response.data[0]
+              );
+            } else {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("editing_error")
+              );
+            }
+          }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.handleCancelButton();
+        });
+    },
+    handleCancelButton() {
+      this.$store.dispatch("document/resetEditAnnotation");
+      if (this.selectionEnabled) {
+        this.$store.dispatch("selection/disableSelection");
+      }
+    },
+    enableLoading(annotations) {
+      if (annotations && this.annotation) {
+        const found = annotations.find(
+          (annotation) => annotation === this.annotation.id
+        );
+
+        if (found) {
+          this.isLoading = true;
+          this.saveChanges = false;
+          return;
+        }
+
+        this.isLoading = false;
+        this.saveChanges = false;
+        return;
+      }
+
+      // Check for what empty annotations we want to show the loading
+      // while waiting for it to be removed from the row
+      if (!this.rejectedMissingAnnotations) {
+        this.isLoading = false;
+        this.saveChanges = false;
+        return;
+      }
+
+      if (this.rejectedMissingAnnotations.length > 0) {
+        this.rejectedMissingAnnotations.map((annotation) => {
+          // Check if the annotation set and label are rejected
+          if (
+            annotation.label_set === this.annotationSet.label_set.id &&
+            annotation.annotation_set === this.annotationSet.id &&
+            annotation.label === this.label.id
+          ) {
+            // Check if we wanna add loading to all empty annotations
+            if (this.hoveredAnnotationSet) {
+              this.isLoading = true;
+              this.saveChanges = false;
+              return;
+            }
+
+            // or we want to add loading to a single one
+            if (
+              !this.hoveredAnnotationSet &&
+              annotation.label === this.label.id
+            ) {
+              this.isLoading = true;
+              this.saveChanges = false;
+              return;
+            }
+          }
+        });
       }
     },
   },

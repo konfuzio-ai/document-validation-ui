@@ -6,7 +6,10 @@
       ref="emptyAnnotation"
       :class="[
         'annotation-value',
-        showActionError && 'error-editing',
+        showActionError &&
+          editAnnotation &&
+          editAnnotation.id === emptyAnnotationId() &&
+          'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
       ]"
@@ -22,26 +25,19 @@
         {{ $t("no_data_found") }}
       </span>
     </span>
-
-    <ActionButtons
-      :save-btn="isEmptyAnnotationEditable()"
-      :cancel-btn="isAnnotationBeingEdited()"
-      :show-reject="showReject"
-      :is-loading="isLoading"
-      @save="saveEmptyAnnotation"
-      @cancel="cancelEmptyAnnotation"
-    />
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import ActionButtons from "./ActionButtons";
+
 /**
  * This component is responsible for managing empty annotations (labels with no annotations).
  */
 export default {
   name: "EmptyAnnotation",
-  components: { ActionButtons },
+  components: {
+    // ActionButtons
+  },
   props: {
     label: {
       required: true,
@@ -49,10 +45,7 @@ export default {
     annotationSet: {
       required: true,
     },
-    isHovered: {
-      type: Boolean,
-      default: false,
-    },
+
     span: {
       required: false,
     },
@@ -73,10 +66,6 @@ export default {
     ...mapState("document", [
       "editAnnotation",
       "publicView",
-      "documentId",
-      "rejectedMissingAnnotations",
-      "annotationSets",
-      "hoveredAnnotationSet",
       "selectedEntity",
       "showActionError",
     ]),
@@ -103,13 +92,6 @@ export default {
       if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
         this.cancelEmptyAnnotation(true);
       }
-    },
-    rejectedMissingAnnotations() {
-      this.enableLoading();
-    },
-    isHovered(newValue) {
-      if (this.publicView) return;
-      this.showReject = newValue && !this.isAnnotationBeingEdited();
     },
     selectedEntity(newValue) {
       if (!newValue) return;
@@ -149,78 +131,17 @@ export default {
         );
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
-          index: null,
+          index: this.spanIndex,
           label: this.label.id,
           labelSet: this.annotationSet.label_set.id,
           annotationSet: this.annotationSet.id,
         });
       }
     },
-    saveEmptyAnnotation(event) {
-      if (this.publicView) return;
-
-      if (event) {
-        event.preventDefault();
-      }
-      // update the bbox text with the one from the input
-
-      let annotationToCreate;
-      let span;
-
-      if (this.selectedEntity) {
-        span = [this.selectedEntity];
-      } else {
-        span = this.spanSelection;
-      }
-
-      if (this.annotationSet.id) {
-        annotationToCreate = {
-          document: this.documentId,
-          span: span,
-          label: this.label.id,
-          annotation_set: this.annotationSet.id,
-          is_correct: true,
-          revised: true,
-        };
-      } else {
-        // if annotation set id is null
-        annotationToCreate = {
-          document: this.documentId,
-          span: span,
-          label: this.label.id,
-          label_set: this.annotationSet.label_set.id,
-          is_correct: true,
-          revised: true,
-        };
-      }
-
-      this.isLoading = true;
-      this.$store
-        .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (response && response.data) {
-            if (response.data.length > 0) {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                response.data[0]
-              );
-            } else {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("editing_error")
-              );
-            }
-          }
-        })
-        .finally(() => {
-          this.cancelEmptyAnnotation();
-        });
-    },
     cancelEmptyAnnotation(wasOutsideClick = false) {
       if (wasOutsideClick) {
         this.setText(this.$t("no_data_found"));
       } else {
-        this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
       }
       this.isLoading = false;
@@ -251,47 +172,8 @@ export default {
         );
       }
     },
-    showActionButtons() {
-      return (
-        this.selectionEnabled === this.emptyAnnotationId() || this.isLoading
-      );
-    },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;
-    },
-
-    enableLoading() {
-      // Check for what empty annotations we want to show the loading
-      // while waiting for it to be removed from the row
-      if (!this.rejectedMissingAnnotations) {
-        this.isLoading = false;
-        return;
-      }
-
-      if (this.rejectedMissingAnnotations.length > 0) {
-        this.rejectedMissingAnnotations.map((annotation) => {
-          // Check if the annotation set and label are rejected
-          if (
-            annotation.label_set === this.annotationSet.label_set.id &&
-            annotation.annotation_set === this.annotationSet.id
-          ) {
-            // Check if we wanna add loading to all empty annotations
-            if (this.hoveredAnnotationSet) {
-              this.isLoading = true;
-              return;
-            }
-
-            // or we want to load a single one
-            if (
-              !this.hoveredAnnotationSet &&
-              annotation.label === this.label.id
-            ) {
-              this.isLoading = true;
-              return;
-            }
-          }
-        });
-      }
     },
   },
 };
