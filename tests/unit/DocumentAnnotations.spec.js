@@ -202,7 +202,6 @@ describe("Document Annotations Component", () => {
     await wrapper.findComponent(".annotation-content").trigger("mouseout");
 
     await mockFn();
-    console.log(mockFn.mock);
 
     expect(
       await wrapper
