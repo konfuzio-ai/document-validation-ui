@@ -188,14 +188,6 @@ describe("Document Annotations Component", () => {
         .find(".buttons-container .action-buttons .annotation-accept-btn")
         .isVisible()
     ).toBe(true);
-
-    await wrapper.findComponent(".annotation-content").trigger("mouseout");
-
-    expect(
-      await wrapper
-        .find(".buttons-container .action-buttons .annotation-accept-btn")
-        .exists()
-    ).toBe(false);
   });
 
   it("Should only show the Rejected title when there are rejected labels", async () => {
