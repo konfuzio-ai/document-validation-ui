@@ -81,7 +81,7 @@
       </div>
       <div class="buttons-container">
         <ActionButtons
-          :cancel-btn="isAnnotationInEditMode(annotationId())"
+          :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
           :show-reject="showRejectButton()"
           :save-btn="showSaveButton()"
@@ -305,7 +305,13 @@ export default {
         !this.annotation
       );
     },
+    showCancelButton() {
+      if (!this.editAnnotation || this.isLoading) return;
 
+      if (this.isAnnotationInEditMode(this.annotationId())) {
+        return true;
+      }
+    },
     showSaveButton() {
       if (!this.editAnnotation || this.isLoading) return;
 
