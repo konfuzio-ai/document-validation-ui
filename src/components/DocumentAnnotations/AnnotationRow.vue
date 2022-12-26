@@ -162,6 +162,15 @@ export default {
         this.isAnnotationInEditMode(this.annotationId())
       );
     },
+    isAnnotation() {
+      return (
+        this.annotation &&
+        this.isAnnotationInEditMode(
+          this.annotationId(),
+          this.editAnnotation.index
+        )
+      );
+    },
   },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
@@ -296,20 +305,12 @@ export default {
         !this.annotation
       );
     },
-    isAnnotation() {
-      return (
-        this.annotation &&
-        this.isAnnotationInEditMode(
-          this.annotationId(),
-          this.editAnnotation.index
-        )
-      );
-    },
+
     showSaveButton() {
       if (!this.editAnnotation || this.isLoading) return;
 
       // Check if it's an Annotation or Empty Annotation
-      if (this.isAnnotation()) {
+      if (this.isAnnotation) {
         return true;
       } else {
         if (!this.isAnnotationInEditMode(this.annotationId())) return;
