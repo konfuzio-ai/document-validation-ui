@@ -31,6 +31,17 @@
             font-size: 14px;
             font-weight: 400;
             line-height: 20px;
+
+            .labels-select {
+                padding: 12px;
+                overflow: scroll;
+                height: 154px;
+                border: 1px solid $grey-detail;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
         }
 
         .next-step-description {

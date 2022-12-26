@@ -221,6 +221,7 @@ export default {
         .dispatch("document/createAnnotation", annotationToCreate)
         .then((response) => {
           if (!response) {
+            // TODO: this store call should be done on the store (already there)
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
             this.$store.dispatch("document/createErrorMessage", {

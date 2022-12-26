@@ -530,7 +530,7 @@ export default {
         .dispatch("document/createAnnotation", annotationToCreate)
         .then((response) => {
           if (!response) return;
-
+          // TODO: this should be handled with the catch
           this.$store.dispatch("document/createErrorMessage", {
             response,
             serverErrorMessage: this.$t("server_error"),

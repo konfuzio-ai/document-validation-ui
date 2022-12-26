@@ -12,12 +12,27 @@ const state = {
   },
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: null,
+  tableSelection: null,
+  elementSelected: null, // selected element id
 };
 
 const getters = {
-  isSelectionEnabled: (state) => {
-    return state.selectionEnabled;
+  isElementSelected: (state) => {
+    return state.elementSelected;
+  },
+  isSelecting: (state) => {
+    return state.isSelecting;
+  },
+  isEditingTable: (state) => {
+    return state.tableSelection !== null;
+  },
+  isSelectionValid: (state) => {
+    /**
+     * `endSelection` will reset everything in case of invalid selection.
+     * Check the existence of `selection.end` before requesting the
+     * content from the backend.
+     * */
+    return state.selection && state.selection.end;
   },
   getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
@@ -31,16 +46,15 @@ const getters = {
 };
 
 const actions = {
-  enableSelection: ({ commit }, value) => {
-    commit("SELECTION_ENABLED", value);
-    commit("RESET_SELECTION");
-    commit("SET_SPAN_SELECTION", null);
+  selectElement: ({ commit }, value) => {
+    commit("ELEMENT_SELECTED", value);
   },
 
   disableSelection: ({ commit }) => {
-    commit("SELECTION_ENABLED", null);
+    commit("ELEMENT_SELECTED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
+    commit("SET_TABLE_SELECTION", null);
   },
 
   startSelection: ({ commit }, { pageNumber, start }) => {
@@ -87,6 +101,11 @@ const actions = {
     commit("SET_SPAN_SELECTION", span);
   },
 
+  setTableSelection: ({ commit }, tableSelection) => {
+    commit("RESET_SELECTION");
+    commit("SET_TABLE_SELECTION", tableSelection);
+  },
+
   getTextFromBboxes: ({ commit, rootState }, box) => {
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
       span: [box],
@@ -120,8 +139,8 @@ const actions = {
 };
 
 const mutations = {
-  SELECTION_ENABLED: (state, value) => {
-    state.selectionEnabled = value;
+  ELEMENT_SELECTED: (state, value) => {
+    state.elementSelected = value;
   },
   START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
@@ -151,7 +170,11 @@ const mutations = {
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
   },
+  SET_TABLE_SELECTION: (state, table) => {
+    state.tableSelection = table;
+  },
   SET_SELECTION: (state, selection) => {
+    state.isSelecting = true;
     state.selection = selection;
   },
 };

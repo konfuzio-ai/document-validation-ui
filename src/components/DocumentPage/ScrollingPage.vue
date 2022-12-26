@@ -1,18 +1,12 @@
 <template>
   <div>
-    <DocumentPage
-      v-if="editMode"
-      :page="page"
-    />
+    <DocumentPage v-if="editMode" :page="page" />
     <DummyPage
       v-else-if="!loadedPage || !pageInVisibleRange(page)"
       :width="page.size[0]"
       :height="page.size[1]"
     />
-    <DocumentPage
-      v-else
-      :page="loadedPage"
-    />
+    <DocumentPage v-else :page="loadedPage" />
   </div>
 </template>
 
@@ -26,22 +20,22 @@ export default {
 
   components: {
     DocumentPage,
-    DummyPage
+    DummyPage,
   },
 
   props: {
     page: {
       type: Object,
-      required: true
+      required: true,
     },
     scrollTop: {
       type: Number,
-      required: true
+      required: true,
     },
     clientHeight: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -50,7 +44,7 @@ export default {
       elementHeight: 0,
       previousFocusedAnnotation: null,
       previousY: null,
-      pageBeingLoaded: false
+      pageBeingLoaded: false,
     };
   },
 
@@ -61,7 +55,7 @@ export default {
     loadedPage() {
       let loadedPage = null;
       if (this.page && this.pages) {
-        loadedPage = this.pages.find(p => p.number === this.page.number);
+        loadedPage = this.pages.find((p) => p.number === this.page.number);
       }
       if (!loadedPage && this.pageInVisibleRange(this.page)) {
         if (!this.pageBeingLoaded) {
@@ -94,7 +88,7 @@ export default {
 
     ...mapState("display", ["scale", "currentPage"]),
     ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
-    ...mapState("edit", ["editMode"])
+    ...mapState("edit", ["editMode"]),
   },
 
   watch: {
@@ -137,7 +131,7 @@ export default {
       ) {
         this.$emit("page-jump", this.elementTop);
       }
-    }
+    },
   },
   mounted() {
     this.updateElementBounds();
@@ -184,7 +178,7 @@ export default {
      */
     scrollTo(y) {
       this.$emit("page-jump", this.elementTop + y - 80);
-    }
-  }
+    },
+  },
 };
 </script>

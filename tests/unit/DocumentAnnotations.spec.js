@@ -107,7 +107,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(store.state.selection.selectionEnabled).toEqual(emptyAnnotationId);
+    expect(store.state.selection.elementSelected).toEqual(emptyAnnotationId);
   });
 
   it("Action buttons should appear when bbox is created in empty annotation", async () => {
