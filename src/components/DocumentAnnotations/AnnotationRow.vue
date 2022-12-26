@@ -53,6 +53,7 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              @save-annotation-changes="handleSaveAnnotationChanges"
             />
           </div>
         </div>
@@ -139,6 +140,7 @@ export default {
       "selectedEntity",
       "newAcceptedAnnotations",
       "rejectedMissingAnnotations",
+      "documentId",
     ]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
@@ -189,6 +191,7 @@ export default {
     editAnnotation(newValue) {
       if (!newValue) {
         this.saveChanges = false;
+        this.isLoading = false;
       }
     },
     newAcceptedAnnotations(newValue) {
@@ -293,24 +296,36 @@ export default {
         !this.annotation
       );
     },
+    isAnnotation() {
+      return (
+        this.annotation &&
+        this.isAnnotationInEditMode(
+          this.annotationId(),
+          this.editAnnotation.index
+        )
+      );
+    },
     showSaveButton() {
-      if (!this.editAnnotation) return;
+      if (!this.editAnnotation || this.isLoading) return;
 
       // Check if it's an Annotation or Empty Annotation
-      if (
-        this.annotation &&
-        this.isAnnotationInEditMode(this.annotationId()) &&
-        this.spanSelection
-      ) {
+      if (this.isAnnotation()) {
         return true;
-      } else if (
-        this.selectedEntity &&
-        this.selectionEnabled === this.annotationId() &&
-        !this.isLoading
-      ) {
-        return true;
+      } else {
+        if (!this.isAnnotationInEditMode(this.annotationId())) return;
+
+        // Check if an entity was selected instead of bbox
+        if (this.selectedEntity) {
+          return this.selectionEnabled === this.annotationId();
+        } else {
+          console.log(this.spanSelection);
+          return (
+            this.selectionEnabled === this.annotationId() &&
+            this.spanSelection &&
+            Array.isArray(this.spanSelection)
+          );
+        }
       }
-      return false;
     },
     handleReject() {
       if (!this.label || !this.annotationSet) return;
@@ -326,12 +341,194 @@ export default {
       );
     },
     handleSaveChanges() {
+      if (this.publicView) return;
+
       if (
-        this.isAnnotationInEditMode(this.annotationId()) ||
-        this.showAcceptButton()
+        this.showAcceptButton() ||
+        this.isAnnotationInEditMode(
+          this.annotationId(),
+          this.editAnnotation.index
+        )
       ) {
         this.saveChanges = true;
       }
+
+      if (
+        !this.annotation &&
+        this.isAnnotationInEditMode(this.annotationId())
+      ) {
+        this.saveEmptyAnnotationChanges();
+      }
+    },
+    handleSaveAnnotationChanges(
+      annotation,
+      spanIndex,
+      annotationSpan,
+      annotationText
+    ) {
+      let updatedString;
+
+      this.isLoading = true;
+
+      // Check if we are deleting a single annotation that it's not multi-lined
+      let isToDelete =
+        annotationText.length === 0 &&
+        (!this.isValueArray(annotation.span) || annotation.span.length === 1);
+
+      let storeAction;
+
+      if (isToDelete) {
+        storeAction = "document/deleteAnnotation";
+      } else {
+        storeAction = "document/updateAnnotation";
+
+        let spans = [...annotation.span];
+
+        // Validations to consider span as an array (multiline annotations) or object
+        if (annotationText.length === 0 && this.isValueArray(annotation.span)) {
+          // if the annotation content in one row was deleted
+          // check if it it part of an array
+          // to only remove that string
+          spans.splice(spanIndex, 1);
+        } else if (
+          this.spanSelection &&
+          this.isValueArray(this.spanSelection)
+        ) {
+          let span;
+
+          // Check if editing was from selecting an entity
+          if (this.selectedEntity) {
+            span = this.selectedEntity;
+          } else {
+            spans = [...this.spanSelection];
+            span = this.createSpan(
+              this.spanSelection[spanIndex],
+              annotationText
+            );
+          }
+
+          // span is array, only update current one
+          spans[spanIndex] = {
+            ...spans[spanIndex],
+            span,
+          };
+        } else {
+          // if span is NOT an array, but an object
+          let span;
+
+          if (this.selectedEntity) {
+            spans[spanIndex] = { ...this.selectedEntity };
+          } else if (this.spanSelection) {
+            span = this.createSpan(this.spanSelection, annotationText);
+
+            spans[spanIndex] = {
+              ...spans[spanIndex],
+              ...span,
+            };
+          } else {
+            span = this.createSpan(annotationSpan, annotationText);
+
+            spans[spanIndex] = {
+              ...spans[spanIndex],
+              ...span,
+            };
+          }
+        }
+
+        updatedString = {
+          is_correct: true,
+          revised: true,
+          span: spans,
+        };
+      }
+
+      // Send to the store for the http patch/delete request
+      this.$store
+        .dispatch(storeAction, {
+          updatedValues: updatedString,
+          annotationId: this.annotation.id,
+        })
+        .catch((error) => {
+          if (error) {
+            this.$store.dispatch("document/setErrorMessage", error);
+          } else {
+            this.$store.dispatch(
+              "document/setErrorMessage",
+              this.$t("editing_error")
+            );
+          }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.$store.dispatch("selection/disableSelection");
+        });
+    },
+    createSpan(span, annotationText) {
+      return {
+        offset_string: annotationText,
+        page_index: span.page_index,
+        x0: span.x0,
+        x1: span.x1,
+        y0: span.y0,
+        y1: span.y1,
+        start_offset: span.start_offset,
+        end_offset: span.end_offset,
+      };
+    },
+    saveEmptyAnnotationChanges() {
+      let annotationToCreate;
+      let span;
+
+      if (this.selectedEntity) {
+        span = [this.selectedEntity];
+      } else {
+        span = this.spanSelection;
+      }
+
+      if (this.annotationSet.id) {
+        annotationToCreate = {
+          document: this.documentId,
+          span: span,
+          label: this.label.id,
+          annotation_set: this.annotationSet.id,
+          is_correct: true,
+          revised: true,
+        };
+      } else {
+        // if annotation set id is null
+        annotationToCreate = {
+          document: this.documentId,
+          span: span,
+          label: this.label.id,
+          label_set: this.annotationSet.label_set.id,
+          is_correct: true,
+          revised: true,
+        };
+      }
+
+      this.isLoading = true;
+
+      this.$store
+        .dispatch("document/createAnnotation", annotationToCreate)
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.length > 0) {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                response.data[0]
+              );
+            } else {
+              this.$store.dispatch(
+                "document/setErrorMessage",
+                this.$t("editing_error")
+              );
+            }
+          }
+        })
+        .finally(() => {
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.handleCancelButton();
+        });
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
