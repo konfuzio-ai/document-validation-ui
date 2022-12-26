@@ -162,14 +162,6 @@ describe("Document Annotations Component", () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
-    const mockFn = jest
-      .fn()
-      .mockImplementationOnce(() => {
-        return true;
-      })
-      .mockImplementationOnce(() => {
-        return false;
-      });
 
     const wrapper = mount(AnnotationRow, {
       store,
@@ -191,8 +183,6 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-content").trigger("mouseover");
 
-    await mockFn();
-
     expect(
       await wrapper
         .find(".buttons-container .action-buttons .annotation-accept-btn")
@@ -200,8 +190,6 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
 
     await wrapper.findComponent(".annotation-content").trigger("mouseout");
-
-    await mockFn();
 
     expect(
       await wrapper
