@@ -318,7 +318,6 @@ export default {
         if (this.selectedEntity) {
           return this.selectionEnabled === this.annotationId();
         } else {
-          console.log(this.spanSelection);
           return (
             this.selectionEnabled === this.annotationId() &&
             this.spanSelection &&
