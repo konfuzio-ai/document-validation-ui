@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="pdfContainer"
-    class="pdf-page-container"
-  >
+  <div ref="pdfContainer" class="pdf-page-container">
     <NewAnnotation
       v-if="!publicView && newAnnotation"
       :entity="newAnnotation.entity"
@@ -29,19 +26,16 @@
             image,
             width: scaledViewport.width,
             height: scaledViewport.height,
-            listening: false
+            listening: false,
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group
-            v-if="!publicView"
-            ref="entities"
-          >
+          <v-group v-if="!publicView" ref="entities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
               :config="entityRect(entity)"
-              @mouseenter="e => getCursor(e)"
+              @mouseenter="(e) => getCursor(e)"
               @mouseleave="getCursor()"
               @click="handleClickedEntity(entity)"
             />
@@ -49,7 +43,7 @@
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
-                bbox => bbox.page_index + 1 == pageNumber
+                (bbox) => bbox.page_index + 1 == pageNumber
               )"
             >
               <v-rect
@@ -72,7 +66,7 @@
             :key="`label${documentAnnotationSelected.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(documentAnnotationSelected.span)
+              ...annotationLabelRect(documentAnnotationSelected.span),
             }"
           >
             <v-tag
@@ -80,7 +74,7 @@
                 fill: '#2B3545',
                 lineJoin: 'round',
                 hitStrokeWidth: 0,
-                listening: false
+                listening: false,
               }"
             />
             <v-text
@@ -89,7 +83,7 @@
                 text: documentAnnotationSelected.labelName,
                 fill: 'white',
                 fontSize: 12,
-                listening: false
+                listening: false,
               }"
             />
           </v-label>
@@ -127,20 +121,21 @@ export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    NewAnnotation
+    NewAnnotation,
   },
 
   props: {
     page: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       image: null,
-      newAnnotation: null
+      newAnnotation: null,
+      isMultAnnSetCreationEnabled: true,
     };
   },
 
@@ -159,7 +154,7 @@ export default {
     actualSizeViewport() {
       return {
         width: this.page.size[0] * this.scale,
-        height: this.page.size[1] * this.scale
+        height: this.page.size[1] * this.scale,
       };
     },
 
@@ -167,7 +162,7 @@ export default {
       const { width: actualSizeWidth, height: actualSizeHeight } =
         this.actualSizeViewport;
       const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(
-        dim => dim / PIXEL_RATIO
+        (dim) => dim / PIXEL_RATIO
       );
       return { width: pixelWidth, height: pixelHeight };
     },
@@ -195,14 +190,14 @@ export default {
         return [];
       }
 
-      return this.page.entities.map(entity => {
+      return this.page.entities.map((entity) => {
         const box = this.bboxToRect(this.page, entity);
         return {
           original: entity,
           scaled: {
-            ...box
+            ...box,
           },
-          clickSelected: false
+          clickSelected: false,
         };
       });
     },
@@ -216,10 +211,10 @@ export default {
     pageAnnotations() {
       const annotations = [];
       if (this.annotations) {
-        this.annotations.map(annotation => {
+        this.annotations.map((annotation) => {
           if (
             annotation.span.find(
-              span => span.page_index + 1 === this.pageNumber
+              (span) => span.page_index + 1 === this.pageNumber
             )
           ) {
             annotations.push(annotation);
@@ -245,7 +240,7 @@ export default {
     ...mapState("selection", [
       "isSelecting",
       "selectionFromBbox",
-      "spanSelection"
+      "spanSelection",
     ]),
     ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
@@ -255,26 +250,27 @@ export default {
       "editAnnotation",
       "selectedDocument",
       "publicView",
-      "selectedEntity"
+      "selectedEntity",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
       "visiblePageRange",
       "bboxToRect",
-      "clientToBbox"
+      "clientToBbox",
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
-      "isDocumentReadyToBeReviewed"
-    ])
+      "isDocumentReadyToBeReviewed",
+      "entitiesOnSelection",
+    ]),
   },
 
   methods: {
     ...mapActions("selection", [
       "startSelection",
       "endSelection",
-      "moveSelection"
+      "moveSelection",
     ]),
     isAnnotationFocused(annotationId) {
       return (
@@ -289,7 +285,7 @@ export default {
     onMouseDown(event) {
       // if we are not editing, do nothing
       if (!this.isSelectionEnabled) {
-        return;
+        this.$store.dispatch("selection/enableSelection", true);
       }
 
       // if we click on the transformer, it should delegate to it
@@ -309,8 +305,8 @@ export default {
         pageNumber: this.pageNumber,
         start: {
           x: position.x,
-          y: position.y
-        }
+          y: position.y,
+        },
       });
     },
     onMouseMove(event) {
@@ -327,8 +323,8 @@ export default {
       this.moveSelection({
         end: {
           x: position.x,
-          y: position.y
-        }
+          y: position.y,
+        },
       });
     },
 
@@ -344,9 +340,8 @@ export default {
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.endSelection({
         x: position.x,
-        y: position.y
+        y: position.y,
       });
-
       /**
        * `endSelection` will reset everything in case of invalid selection.
        * Check the existance of `selection.end` before requesting the
@@ -412,10 +407,10 @@ export default {
       api.IMG_REQUEST.get(
         `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
       )
-        .then(response => {
+        .then((response) => {
           return response.data;
         })
-        .then(myBlob => {
+        .then((myBlob) => {
           image.src = URL.createObjectURL(myBlob);
           image.onload = () => {
             // set image only when it is loaded
@@ -443,7 +438,7 @@ export default {
         shadowForStrokeEnabled: false,
         perfectDrawEnabled: false,
         name: "entity",
-        ...entity.scaled
+        ...entity.scaled,
       };
     },
 
@@ -468,7 +463,7 @@ export default {
         stroke: strokeColor,
         name: "annotation",
         draggable,
-        ...this.bboxToRect(this.page, bbox)
+        ...this.bboxToRect(this.page, bbox),
       };
     },
     /**
@@ -478,7 +473,7 @@ export default {
       const rect = this.bboxToRect(this.page, bbox, true);
       return {
         x: rect.x,
-        y: rect.y
+        y: rect.y,
       };
     },
     selectLabelAnnotation(annotation) {
@@ -506,8 +501,26 @@ export default {
         this.selection.start,
         this.selection.end
       );
+      // TODO: add validation
+      console.log("box", box);
+      const entities = this.entitiesOnSelection(box, this.page);
 
-      this.$store.dispatch("selection/getTextFromBboxes", box);
+      console.log("result: entities", entities);
+
+      const rows = entities.map((o) => o["y0"]);
+      console.log("rows:", rows);
+
+      let cols = {};
+
+      rows.forEach((row) => {
+        cols[row] = entities
+          .filter((item) => {
+            return item.y0 === row;
+          })
+          .sort((a, b) => a - b);
+      });
+      console.log("cols:", cols);
+      //this.$store.dispatch("selection/getTextFromBboxes", box);
     },
 
     getCursor(e) {
@@ -533,7 +546,7 @@ export default {
     },
     closeNewAnnotation() {
       this.newAnnotation = null;
-    }
+    },
   },
   watch: {
     recalculatingAnnotations(newState) {
@@ -559,7 +572,7 @@ export default {
     },
     scale() {
       this.closeNewAnnotation();
-    }
+    },
   },
   mounted() {
     if (
@@ -568,7 +581,7 @@ export default {
     ) {
       this.drawPage();
     }
-  }
+  },
 };
 </script>
 
