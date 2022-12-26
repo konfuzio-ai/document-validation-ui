@@ -6,7 +6,10 @@
       ref="emptyAnnotation"
       :class="[
         'annotation-value',
-        showActionError && 'error-editing',
+        showActionError &&
+          editAnnotation &&
+          editAnnotation.id === emptyAnnotationId() &&
+          'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
       ]"
@@ -49,10 +52,6 @@ export default {
     spanIndex: {
       required: false,
     },
-    saveChanges: {
-      type: Boolean,
-      required: false,
-    },
   },
   data() {
     return {
@@ -67,8 +66,6 @@ export default {
     ...mapState("document", [
       "editAnnotation",
       "publicView",
-      "documentId",
-      "annotationSets",
       "selectedEntity",
       "showActionError",
     ]),
@@ -103,11 +100,6 @@ export default {
         this.setText(newValue.offset_string);
       }
     },
-    saveChanges(newValue) {
-      if (newValue && this.isAnnotationInEditMode(this.emptyAnnotationId())) {
-        this.saveEmptyAnnotation();
-      }
-    },
   },
   methods: {
     emptyAnnotationId() {
@@ -139,72 +131,12 @@ export default {
         );
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
-          index: null,
+          index: this.spanIndex,
           label: this.label.id,
           labelSet: this.annotationSet.label_set.id,
           annotationSet: this.annotationSet.id,
         });
       }
-    },
-    saveEmptyAnnotation(event) {
-      if (this.publicView) return;
-
-      if (event) {
-        event.preventDefault();
-      }
-      // update the bbox text with the one from the input
-
-      let annotationToCreate;
-      let span;
-
-      if (this.selectedEntity) {
-        span = [this.selectedEntity];
-      } else {
-        span = this.spanSelection;
-      }
-
-      if (this.annotationSet.id) {
-        annotationToCreate = {
-          document: this.documentId,
-          span: span,
-          label: this.label.id,
-          annotation_set: this.annotationSet.id,
-          is_correct: true,
-          revised: true,
-        };
-      } else {
-        // if annotation set id is null
-        annotationToCreate = {
-          document: this.documentId,
-          span: span,
-          label: this.label.id,
-          label_set: this.annotationSet.label_set.id,
-          is_correct: true,
-          revised: true,
-        };
-      }
-
-      this.isLoading = true;
-      this.$store
-        .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (response && response.data) {
-            if (response.data.length > 0) {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                response.data[0]
-              );
-            } else {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("editing_error")
-              );
-            }
-          }
-        })
-        .finally(() => {
-          this.cancelEmptyAnnotation();
-        });
     },
     cancelEmptyAnnotation(wasOutsideClick = false) {
       if (wasOutsideClick) {
