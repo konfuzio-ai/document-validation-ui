@@ -35,9 +35,6 @@ import { mapState, mapGetters } from "vuex";
  */
 export default {
   name: "EmptyAnnotation",
-  components: {
-    // ActionButtons
-  },
   props: {
     label: {
       required: true,
@@ -100,6 +97,20 @@ export default {
         this.setText(newValue.offset_string);
       }
     },
+    spanSelection(newValue) {
+      if (!newValue) return;
+
+      const isSpanArray = Array.isArray(newValue);
+
+      // Check if the bbox is empty
+      if (
+        (isSpanArray && !newValue[0].offset_string) ||
+        (!isSpanArray && !newValue.offset_string)
+      ) {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
+      }
+    },
   },
   methods: {
     emptyAnnotationId() {
@@ -145,7 +156,6 @@ export default {
         this.$store.dispatch("selection/disableSelection");
       }
       this.isLoading = false;
-
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
