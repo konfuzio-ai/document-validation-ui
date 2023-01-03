@@ -24,11 +24,9 @@
         <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
-    <Toolbar
-      v-if="pages.length > 0 && scale && !creatingMultipleAnnotationSets"
-    />
+    <Toolbar v-if="pages.length > 0 && scale && !showActionBar" />
     <ActionBar
-      v-if="creatingMultipleAnnotationSets"
+      v-if="showActionBar"
       :has-icon="hasIcon"
       :icon="icon"
       :text="text"
@@ -57,11 +55,11 @@ export default {
     return {
       scrollTop: 0,
       clientHeight: 0,
+      showActionBar: false,
       hasIcon: false,
       icon: null,
       text: null,
       hasButton: false,
-      creatingMultipleAnnotationSets: false, // TODO: move to store & set dynamically when more features implemented
     };
   },
 
@@ -70,7 +68,6 @@ export default {
       "recalculatingAnnotations",
       "selectedDocument",
       "loading",
-      "publicView",
     ]),
     ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
     ...mapState("display", ["scale"]),
