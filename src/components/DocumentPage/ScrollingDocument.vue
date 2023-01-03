@@ -20,17 +20,20 @@
           @page-jump="onPageJump"
         />
       </div>
-      <div
-        v-else
-        class="loading-page"
-      >
-        <b-skeleton
-          width="100%"
-          height="1000px"
-        />
+      <div v-else class="loading-page">
+        <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
-    <Toolbar v-if="pages.length > 0 && scale" />
+    <Toolbar
+      v-if="pages.length > 0 && scale && !creatingMultipleAnnotationSets"
+    />
+    <ActionBar
+      v-if="creatingMultipleAnnotationSets"
+      :has-icon="hasIcon"
+      :icon="icon"
+      :text="text"
+      :has-button="hasButton"
+    />
   </div>
 </template>
 <script>
@@ -38,20 +41,27 @@ import { mapState } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "../DocumentPage/DocumentToolbar";
+import ActionBar from "./ActionBar";
 
 export default {
   components: {
     ScrollingPage,
-    Toolbar
+    Toolbar,
+    ActionBar,
   },
   directives: {
-    scroll
+    scroll,
   },
 
   data() {
     return {
       scrollTop: 0,
-      clientHeight: 0
+      clientHeight: 0,
+      hasIcon: true,
+      icon: "grid",
+      text: "This is an action bar",
+      hasButton: true,
+      creatingMultipleAnnotationSets: true, // TODO: move to store & set dynamically when more features implemented
     };
   },
 
@@ -59,7 +69,8 @@ export default {
     ...mapState("document", [
       "recalculatingAnnotations",
       "selectedDocument",
-      "loading"
+      "loading",
+      "publicView",
     ]),
     ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
     ...mapState("display", ["scale"]),
@@ -70,12 +81,12 @@ export default {
       } else {
         return [];
       }
-    }
+    },
   },
   watch: {
     loading() {
       this.scrollTop = 0;
-    }
+    },
   },
 
   methods: {
@@ -93,8 +104,8 @@ export default {
       this.$refs.scrollingDocument.scrollTop =
         // the 4 comes from the margin between pages
         actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -12,7 +12,10 @@
     <!-- save button -->
     <b-button
       v-if="saveBtn && !isLoading"
-      class="annotation-save-btn text-btn"
+      :class="[
+        'annotation-save-btn text-btn',
+        actionBar && 'action-bar-save-btn',
+      ]"
       type="is-primary"
       @click.stop="save"
     >
@@ -144,6 +147,10 @@ export default {
     },
     acceptAllBtn: {
       type: Boolean,
+    },
+    actionBar: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {

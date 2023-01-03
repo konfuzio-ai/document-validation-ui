@@ -129,6 +129,14 @@ button {
     padding-right: 4px;
   }
 
+  &.action-bar-save-btn {
+    border-radius: 20px;
+    height: 32px;
+    padding: 6px 12px 6px 12px !important;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
   &[disabled] {
     border: none;
 
@@ -251,7 +259,7 @@ button {
     }
   }
 
-  +.dropdown {
+  + .dropdown {
     margin-left: 0;
   }
 

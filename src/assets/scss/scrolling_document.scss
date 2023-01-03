@@ -17,3 +17,39 @@
     padding: 12px;
   }
 }
+
+.action-bar {
+  position: absolute;
+  width: fit-content;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+
+  .action-bar-elements {
+    background-color: $dark-blue;
+    height: 40px;
+    width: fit-content;
+    padding: 4px 4px 4px 12px;
+    border-radius: 52px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    .action-icon {
+      .icon {
+        display: flex;
+      }
+    }
+
+    .action-text {
+      color: $white;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+  }
+}
