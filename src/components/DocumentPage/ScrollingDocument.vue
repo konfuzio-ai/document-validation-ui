@@ -57,11 +57,11 @@ export default {
     return {
       scrollTop: 0,
       clientHeight: 0,
-      hasIcon: true,
-      icon: "grid",
-      text: "This is an action bar",
-      hasButton: true,
-      creatingMultipleAnnotationSets: true, // TODO: move to store & set dynamically when more features implemented
+      hasIcon: false,
+      icon: null,
+      text: null,
+      hasButton: false,
+      creatingMultipleAnnotationSets: false, // TODO: move to store & set dynamically when more features implemented
     };
   },
 
