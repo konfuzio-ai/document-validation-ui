@@ -40,7 +40,7 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $low-opacity-white;
     padding-bottom: 8px;
     word-wrap: break-all;
     white-space: normal;
@@ -55,7 +55,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $low-opacity-white;
     padding-bottom: 8px;
 
     .value {
