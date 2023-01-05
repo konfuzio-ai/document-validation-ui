@@ -2,8 +2,6 @@ import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentTopBar,
   DocumentName,
-  DatasetStatus,
-  Category,
   Handover,
 } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
@@ -19,8 +17,6 @@ describe("Document Top Bar", () => {
     require("../mock/page_2.json"),
   ];
   documentData.pages = pages;
-  // mock axios
-  jest.mock("axios");
 
   beforeEach(() => {
     Promise.resolve(
@@ -196,5 +192,35 @@ describe("Document Top Bar", () => {
     expect(await wrapper.findComponent(".notification").isVisible()).toBe(
       false
     );
+  });
+
+  it("Keyboard icon is visible", () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(wrapper.find(".keyboard-actions-info").exists()).toBe(true);
+  });
+
+  it("Tooltip is visible on hover", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper
+      .findComponent(".keyboard-actions-info .tooltip-trigger")
+      .trigger("mouseenter");
+
+    expect(
+      await wrapper
+        .find(".keyboard-actions-info .b-tooltip .tooltip-content")
+        .isVisible()
+    ).toBe(true);
   });
 });
