@@ -93,5 +93,10 @@
   "annotations_accepted": "Akzeptierte Annotationen",
   "reject_all_empty": "Alle fehlenden Annotationen ablehnen",
   "no_labels_to_choose": "Keine Labels",
-  "accept_group": "Alle akzeptieren"
+  "accept_group": "Alle akzeptieren",
+  "use_your_keyboard": "Use your keyboard",
+  "arrow_keys": "to Navigate",
+  "esc_key": "Exit",
+  "enter_key": "Accept or Save",
+  "delete_key": "Reject"
 }

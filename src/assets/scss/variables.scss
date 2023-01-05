@@ -251,7 +251,7 @@ button {
     }
   }
 
-  +.dropdown {
+  + .dropdown {
     margin-left: 0;
   }
 
@@ -433,6 +433,21 @@ button {
   &.width-184 {
     .tooltip-content {
       width: 184px !important;
+    }
+  }
+
+  &.left-down-aligned {
+    .tooltip-content {
+      font-size: 14px;
+      padding: 12px 12px;
+      top: 45px;
+      background-color: $dark-blue;
+      border-radius: 4px !important;
+
+      &::before {
+        top: 17px;
+        border-left-color: $dark-blue !important;
+      }
     }
   }
 }

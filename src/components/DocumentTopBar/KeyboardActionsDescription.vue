@@ -1,13 +1,45 @@
 <template>
   <div class="keyboard-actions-description">
     <section class="b-tooltips">
-      <b-tooltip
-        label="Tooltip large multilined, because it's too long to be on a medium size. Did I tell you it's really long? Yes, it is — I assure you!"
-        position="is-left"
-        size="is-large"
-        multilined
-      >
+      <b-tooltip position="is-left" size="is-large" class="left-down-aligned">
         <KeyboardIcon />
+
+        <template #content>
+          <div class="tooltip-title">
+            {{ $t("use_your_keyboard") }}
+          </div>
+
+          <div class="tooltip-description">
+            <div class="content-line">
+              <div class="action-item">
+                <div class="key"><ArrowUpKey /></div>
+                <div class="key"><ArrowDownKey /></div>
+                <div class="keyboard-action-text">{{ $t("arrow_keys") }}</div>
+              </div>
+
+              <div class="tooltip-divider"></div>
+
+              <div class="action-item">
+                <div class="key">{{ "ESC" }}</div>
+                <div class="keyboard-action-text">{{ $t("esc_key") }}</div>
+              </div>
+            </div>
+
+            <div class="content-line">
+              <div class="action-item">
+                <div class="key">{{ "ENTER" }}</div>
+                <div class="keyboard-action-text">{{ $t("enter_key") }}</div>
+              </div>
+
+              <div class="tooltip-divider"></div>
+
+              <div class="action-item">
+                <div class="key">{{ "DELETE" }}</div>
+                <div class="keyboard-action-text">{{ $t("delete_key") }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
       </b-tooltip>
     </section>
   </div>
@@ -15,11 +47,17 @@
 
 <script>
 import KeyboardIcon from "../../assets/images/KeyboardIcon";
+import ArrowUpKey from "../../assets/images/ArrowUpKey";
+import ArrowDownKey from "../../assets/images/ArrowDownKey";
 
 export default {
   name: "KeyboardActionsDescription",
   components: {
     KeyboardIcon,
+    ArrowUpKey,
+    ArrowDownKey,
   },
 };
 </script>
+
+<style scoped lang="scss" src="../../assets/scss/document_top_bar.scss"></style>

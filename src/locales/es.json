@@ -94,5 +94,10 @@
   "annotations_accepted": "aceptadas",
   "reject_all_empty": "Rechazar todas las anotaciones vacías",
   "no_labels_to_choose": "Sin etiquetas",
-  "accept_group": "Aceptar todas"
+  "accept_group": "Aceptar todas",
+  "use_your_keyboard": "Use su teclado",
+  "arrow_keys": "para Navegar",
+  "esc_key": "Salir del modo de edición",
+  "enter_key": "Aceptar o Guardar",
+  "delete_key": "Rechazar"
 }

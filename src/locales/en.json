@@ -100,5 +100,10 @@
   "select_label_set": "Select label-set model",
   "new_ann_set_hint": "The new set will only be created in the moment you save your annotation.",
   "new": "New",
-  "continue": "Continue"
+  "continue": "Continue",
+  "use_your_keyboard": "Use your keyboard",
+  "arrow_keys": "to Navigate",
+  "esc_key": "Exit",
+  "enter_key": "Accept or Save",
+  "delete_key": "Reject"
 }
