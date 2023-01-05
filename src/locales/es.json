@@ -94,5 +94,13 @@
   "annotations_accepted": "aceptadas",
   "reject_all_empty": "Rechazar todas las anotaciones vacías",
   "no_labels_to_choose": "Sin etiquetas",
-  "accept_group": "Aceptar todas"
+  "accept_group": "Aceptar todas",
+  "new_ann_set_title": "Nuevo grupo de anotaciones",
+  "new_ann_set_description": "Seleccione un nuevo modelo de datos. El nuevo grupo de anotaciones estará comformado por las mismas etiquetas.",
+  "select_label_set": "Seleccione un modelo de grupo de etiquetas",
+  "new_ann_set_hint": "El nuevo grupo será creado solo cuando se haya guardado la anotación.",
+  "new": "Nuevo",
+  "continue": "Continuar",
+  "fit_table": "Ajuste la tabla según corresponda",
+  "edit_table": "Editar la tabla '{table_name}'"
 }

@@ -100,5 +100,7 @@
   "select_label_set": "Select label-set model",
   "new_ann_set_hint": "The new set will only be created in the moment you save your annotation.",
   "new": "New",
-  "continue": "Continue"
+  "continue": "Continue",
+  "fit_table": "Fit the table into the correct areas",
+  "edit_table": "Edit '{table_name}' table"
 }
