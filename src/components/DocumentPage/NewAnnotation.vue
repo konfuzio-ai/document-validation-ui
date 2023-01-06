@@ -1,13 +1,6 @@
 <template>
-  <div
-    class="annotation-popup"
-    :style="{ left: `${left}px`, top: `${top}px` }"
-  >
-    <input
-      v-model="selectedContent"
-      class="popup-input"
-      type="text"
-    >
+  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
+    <input v-model="getSelectedContent" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
@@ -24,18 +17,14 @@
           {{
             selectedSet
               ? `${selectedSet.label_set.name} ${
-                selectedSet.id
-                  ? numberOfAnnotationSetGroup(selectedSet)
-                  : `(${$t("new")})`
-              }`
+                  selectedSet.id
+                    ? numberOfAnnotationSetGroup(selectedSet)
+                    : `(${$t("new")})`
+                }`
               : $t("select_annotation_set")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            />
+            <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
         </b-button>
       </template>
@@ -79,15 +68,11 @@
             selectedLabel
               ? selectedLabel.name
               : labels && labels.length === 0
-                ? $t("no_labels_to_choose")
-                : $t("select_label")
+              ? $t("no_labels_to_choose")
+              : $t("select_label")
           }}
           <span class="caret-icon">
-            <b-icon
-              icon="angle-down"
-              size="is-small"
-              class="caret"
-            />
+            <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
         </b-button>
       </template>
@@ -132,13 +117,9 @@ import { ChooseLabelSetModal } from "../DocumentAnnotations";
 
 export default {
   props: {
-    entity: {
-      type: Object,
+    newAnnotation: {
       required: true,
-    },
-    content: {
-      type: String,
-      required: true,
+      type: Array,
     },
     containerWidth: {
       type: Number,
@@ -149,6 +130,17 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      selectedLabel: null,
+      selectedSet: null,
+      labels: null,
+      selectedContent: [],
+      loading: false,
+      isAnnSetModalShowing: false,
+      setsList: [],
+    };
+  },
   computed: {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
@@ -156,16 +148,20 @@ export default {
       "labelsFilteredForAnnotationCreation",
     ]),
     top() {
-      const top = this.entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
+      const top = this.newAnnotation[0].entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
 
       //check if the popup will not go off the container on the top
-      return this.entity.scaled.y > heightOfPopup
+      return this.newAnnotation[0].entity.scaled.y > heightOfPopup
         ? top
-        : this.entity.scaled.y + this.entity.scaled.height + margin;
+        : this.newAnnotation[0].entity.scaled.y +
+            this.newAnnotation[0].entity.scaled.height +
+            margin;
     },
     left() {
       const left =
-        this.entity.scaled.x + this.entity.scaled.width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+        this.newAnnotation[0].entity.scaled.x +
+        this.newAnnotation[0].entity.scaled.width / 2 -
+        widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
       //check if the popup will not go off the container
       if (left + widthOfPopup > this.containerWidth) {
@@ -176,55 +172,53 @@ export default {
         return left > 0 ? left : 0;
       }
     },
-  },
-  data() {
-    return {
-      selectedLabel: null,
-      selectedSet: null,
-      labels: null,
-      selectedContent: this.content,
-      loading: false,
-      isAnnSetModalShowing: false,
-      setsList: [],
-    };
+    getSelectedContent() {
+      return this.selectedContent.join(" ");
+    },
   },
   watch: {
     selectedSet(newValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
     },
+
+    newAnnotation(newValue) {
+      this.updateSelectedContent(newValue);
+    },
   },
   mounted() {
     this.setsList = [...this.annotationSets];
+
     setTimeout(() => {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
+
+    this.updateSelectedContent(this.newAnnotation);
   },
   destroyed() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
-    clickOutside(event) {
-      if (!this.isAnnSetModalShowing) {
-        if (!(this.$el == event.target || this.$el.contains(event.target))) {
-          this.close();
-        }
-      }
+    updateSelectedContent(annotation) {
+      this.selectedContent = [];
+      annotation.map((ann) => {
+        this.selectedContent.push(ann.content);
+      });
     },
     close() {
+      this.selectedContent = [];
       this.$emit("close");
     },
     save() {
       this.loading = true;
-      const span = {
-        ...this.entity.original,
-        offset_string: this.selectedContent,
-      };
+      const span = this.newAnnotation.flatMap((ann) => {
+        return { ...ann.entity.original, offset_string: ann.content };
+      });
 
       const annotationToCreate = {
         document: this.documentId,
-        span: [span],
+        span: span,
         label: this.selectedLabel.id,
         is_correct: true,
         revised: false,
