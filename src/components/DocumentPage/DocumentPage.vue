@@ -1,12 +1,8 @@
 <template>
-  <div
-    ref="pdfContainer"
-    class="pdf-page-container"
-  >
+  <div ref="pdfContainer" class="pdf-page-container">
     <NewAnnotation
-      v-if="!publicView && newAnnotation"
-      :entity="newAnnotation.entity"
-      :content="newAnnotation.content"
+      v-if="!publicView && newAnnotation.length && !editAnnotation"
+      :new-annotation="newAnnotation"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       @close="closeNewAnnotation"
@@ -29,19 +25,16 @@
             image,
             width: scaledViewport.width,
             height: scaledViewport.height,
-            listening: false
+            listening: false,
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group
-            v-if="!publicView"
-            ref="entities"
-          >
+          <v-group v-if="!publicView" ref="entities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
               :config="entityRect(entity)"
-              @mouseenter="e => getCursor(e)"
+              @mouseenter="(e) => getCursor(e)"
               @mouseleave="getCursor()"
               @click="handleClickedEntity(entity)"
             />
@@ -49,7 +42,7 @@
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
-                bbox => bbox.page_index + 1 == pageNumber
+                (bbox) => bbox.page_index + 1 == pageNumber
               )"
             >
               <v-rect
@@ -72,7 +65,7 @@
             :key="`label${documentAnnotationSelected.id}`"
             :config="{
               listening: false,
-              ...annotationLabelRect(documentAnnotationSelected.span)
+              ...annotationLabelRect(documentAnnotationSelected.span),
             }"
           >
             <v-tag
@@ -80,7 +73,7 @@
                 fill: '#2B3545',
                 lineJoin: 'round',
                 hitStrokeWidth: 0,
-                listening: false
+                listening: false,
               }"
             />
             <v-text
@@ -89,7 +82,7 @@
                 text: documentAnnotationSelected.labelName,
                 fill: 'white',
                 fontSize: 12,
-                listening: false
+                listening: false,
               }"
             />
           </v-label>
@@ -127,20 +120,20 @@ export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    NewAnnotation
+    NewAnnotation,
   },
 
   props: {
     page: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       image: null,
-      newAnnotation: null
+      newAnnotation: [],
     };
   },
 
@@ -159,7 +152,7 @@ export default {
     actualSizeViewport() {
       return {
         width: this.page.size[0] * this.scale,
-        height: this.page.size[1] * this.scale
+        height: this.page.size[1] * this.scale,
       };
     },
 
@@ -167,7 +160,7 @@ export default {
       const { width: actualSizeWidth, height: actualSizeHeight } =
         this.actualSizeViewport;
       const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(
-        dim => dim / PIXEL_RATIO
+        (dim) => dim / PIXEL_RATIO
       );
       return { width: pixelWidth, height: pixelHeight };
     },
@@ -195,14 +188,14 @@ export default {
         return [];
       }
 
-      return this.page.entities.map(entity => {
+      return this.page.entities.map((entity) => {
         const box = this.bboxToRect(this.page, entity);
         return {
           original: entity,
           scaled: {
-            ...box
+            ...box,
           },
-          clickSelected: false
+          clickSelected: false,
         };
       });
     },
@@ -216,10 +209,10 @@ export default {
     pageAnnotations() {
       const annotations = [];
       if (this.annotations) {
-        this.annotations.map(annotation => {
+        this.annotations.map((annotation) => {
           if (
             annotation.span.find(
-              span => span.page_index + 1 === this.pageNumber
+              (span) => span.page_index + 1 === this.pageNumber
             )
           ) {
             annotations.push(annotation);
@@ -245,7 +238,7 @@ export default {
     ...mapState("selection", [
       "isSelecting",
       "selectionFromBbox",
-      "spanSelection"
+      "spanSelection",
     ]),
     ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
@@ -255,26 +248,62 @@ export default {
       "editAnnotation",
       "selectedDocument",
       "publicView",
-      "selectedEntity"
+      "selectedEntity",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
       "visiblePageRange",
       "bboxToRect",
-      "clientToBbox"
+      "clientToBbox",
     ]),
     ...mapGetters("selection", ["isSelectionEnabled"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
-      "isDocumentReadyToBeReviewed"
-    ])
+      "isDocumentReadyToBeReviewed",
+    ]),
+  },
+
+  watch: {
+    recalculatingAnnotations(newState) {
+      if (!newState) {
+        this.drawPage(true);
+      }
+    },
+    // wait for the document image to be displayed to enable the selection transformer
+    image(image) {
+      if (image && this.isInSelectionMode) {
+        this.$nextTick(() => {
+          this.updateTransformer();
+        });
+      }
+    },
+
+    isInSelectionMode(value) {
+      if (value) {
+        this.$nextTick(() => {
+          this.updateTransformer();
+        });
+      }
+    },
+    scale() {
+      this.closeNewAnnotation();
+    },
+  },
+
+  mounted() {
+    if (
+      this.selectedDocument &&
+      this.selectedDocument.labeling_available === 1
+    ) {
+      this.drawPage();
+    }
   },
 
   methods: {
     ...mapActions("selection", [
       "startSelection",
       "endSelection",
-      "moveSelection"
+      "moveSelection",
     ]),
     isAnnotationFocused(annotationId) {
       return (
@@ -309,8 +338,8 @@ export default {
         pageNumber: this.pageNumber,
         start: {
           x: position.x,
-          y: position.y
-        }
+          y: position.y,
+        },
       });
     },
     onMouseMove(event) {
@@ -327,8 +356,8 @@ export default {
       this.moveSelection({
         end: {
           x: position.x,
-          y: position.y
-        }
+          y: position.y,
+        },
       });
     },
 
@@ -344,7 +373,7 @@ export default {
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.endSelection({
         x: position.x,
-        y: position.y
+        y: position.y,
       });
 
       /**
@@ -412,10 +441,10 @@ export default {
       api.IMG_REQUEST.get(
         `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
       )
-        .then(response => {
+        .then((response) => {
           return response.data;
         })
-        .then(myBlob => {
+        .then((myBlob) => {
           image.src = URL.createObjectURL(myBlob);
           image.onload = () => {
             // set image only when it is loaded
@@ -428,22 +457,34 @@ export default {
      * Builds the konva config object for the entity.
      */
     entityRect(entity) {
+      if (!entity) return;
+
+      let fillColor;
+
+      if (this.newAnnotation.length) {
+        this.newAnnotation.map((ann) => {
+          if (ann.entity === entity) {
+            fillColor = "#67E9B7";
+          }
+        });
+      } else if (this.selectedEntity === entity.original) {
+        fillColor = "#67E9B7";
+      } else {
+        fillColor = "transparent";
+      }
+
       return {
         stroke: "#ccc",
         strokeWidth: 1,
         dash: [5, 2],
-        fill:
-          (this.newAnnotation && this.newAnnotation.entity === entity) ||
-          (this.selectedEntity && this.selectedEntity === entity.original)
-            ? "#67E9B7"
-            : "transparent",
+        fill: fillColor,
         globalCompositeOperation: "multiply",
         transformsEnabled: "position",
         hitStrokeWidth: 0,
         shadowForStrokeEnabled: false,
         perfectDrawEnabled: false,
         name: "entity",
-        ...entity.scaled
+        ...entity.scaled,
       };
     },
 
@@ -468,9 +509,10 @@ export default {
         stroke: strokeColor,
         name: "annotation",
         draggable,
-        ...this.bboxToRect(this.page, bbox)
+        ...this.bboxToRect(this.page, bbox),
       };
     },
+
     /**
      * Builds the konva config object for the annotation label.
      */
@@ -478,9 +520,10 @@ export default {
       const rect = this.bboxToRect(this.page, bbox, true);
       return {
         x: rect.x,
-        y: rect.y
+        y: rect.y,
       };
     },
+
     selectLabelAnnotation(annotation) {
       this.closeNewAnnotation();
       this.$store.dispatch("document/resetEditAnnotation");
@@ -520,10 +563,36 @@ export default {
     },
 
     handleClickedEntity(entity) {
+      if (!entity) return;
+
       // Check if we are creating a new Annotation
       // or if we are ediitng an existing or empty one
+
       if (!this.isSelectionEnabled) {
-        this.newAnnotation = { entity, content: entity.original.offset_string };
+        const entityToAdd = {
+          entity,
+          content: entity.original.offset_string,
+        };
+
+        let found;
+
+        if (this.newAnnotation) {
+          found = this.newAnnotation.find(
+            (ann) =>
+              ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
+              ann.content === entityToAdd.content
+          );
+        }
+
+        if (found) {
+          this.newAnnotation = this.newAnnotation.filter(
+            (ann) =>
+              ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
+              ann.content !== entityToAdd.content
+          );
+        } else {
+          this.newAnnotation.push(entityToAdd);
+        }
         return;
       }
 
@@ -531,44 +600,11 @@ export default {
         this.$store.dispatch("document/setSelectedEntity", entity.original);
       }
     },
-    closeNewAnnotation() {
-      this.newAnnotation = null;
-    }
-  },
-  watch: {
-    recalculatingAnnotations(newState) {
-      if (!newState) {
-        this.drawPage(true);
-      }
-    },
-    // wait for the document image to be displayed to enable the selection transformer
-    image(image) {
-      if (image && this.isInSelectionMode) {
-        this.$nextTick(() => {
-          this.updateTransformer();
-        });
-      }
-    },
 
-    isInSelectionMode(value) {
-      if (value) {
-        this.$nextTick(() => {
-          this.updateTransformer();
-        });
-      }
+    closeNewAnnotation() {
+      this.newAnnotation = [];
     },
-    scale() {
-      this.closeNewAnnotation();
-    }
   },
-  mounted() {
-    if (
-      this.selectedDocument &&
-      this.selectedDocument.labeling_available === 1
-    ) {
-      this.drawPage();
-    }
-  }
 };
 </script>
 
