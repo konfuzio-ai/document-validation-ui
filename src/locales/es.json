@@ -99,5 +99,6 @@
   "arrow_keys": "para Navegar",
   "esc_key": "Salir del modo de edición",
   "enter_key": "Aceptar o Guardar",
-  "delete_key": "Rechazar"
+  "delete_key": "Rechazar",
+  "decline": "Declinar"
 }

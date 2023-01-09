@@ -98,5 +98,6 @@
   "arrow_keys": "to Navigate",
   "esc_key": "Exit",
   "enter_key": "Accept or Save",
-  "delete_key": "Reject"
+  "delete_key": "Reject",
+  "decline": "Decline"
 }
