@@ -8,26 +8,26 @@ const state = {
   selection: {
     pageNumber: null,
     start: null,
-    end: null
+    end: null,
   },
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: null
+  selectionEnabled: null,
 };
 
 const getters = {
-  isSelectionEnabled: state => {
+  isSelectionEnabled: (state) => {
     return state.selectionEnabled;
   },
-  getSelectionForPage: state => pageNumber => {
+  getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
     }
     return null;
   },
-  isValueArray: () => value => {
+  isValueArray: () => (value) => {
     return Array.isArray(value);
-  }
+  },
 };
 
 const actions = {
@@ -43,22 +43,22 @@ const actions = {
     commit("SET_SPAN_SELECTION", null);
   },
 
-  startSelection: ({ commit, dispatch }, { pageNumber, start }) => {
+  startSelection: ({ commit }, { pageNumber, start }) => {
     commit("START_SELECTION", {
       pageNumber,
-      start
+      start,
     });
-
-    dispatch("document/setSelectedEntity", null, { root: true });
   },
 
-  moveSelection: ({ commit, state }, points) => {
+  moveSelection: ({ commit, state, dispatch }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
     const xDiff = Math.abs(state.selection.start.x - points.end.x);
     const yDiff = Math.abs(state.selection.start.y - points.end.y);
     if (xDiff > 5 && yDiff > 5) {
       commit("MOVE_SELECTION", points);
     }
+
+    dispatch("document/setSelectedEntities", null, { root: true });
   },
 
   endSelection: ({ commit, state }, end) => {
@@ -89,9 +89,9 @@ const actions = {
 
   getTextFromBboxes: ({ commit, rootState }, box) => {
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-      span: [box]
+      span: [box],
     })
-      .then(response => {
+      .then((response) => {
         if (response.data.span.length && response.data.span.length > 0) {
           /**
            * If we have a non-empty bboxes list, we assume there
@@ -110,13 +110,13 @@ const actions = {
           commit("SET_SPAN_SELECTION", box);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         alert("Could not fetch the selected text from the backend");
       });
   },
   setSpanSelection: ({ commit }, span) => {
     commit("SET_SPAN_SELECTION", span);
-  }
+  },
 };
 
 const mutations = {
@@ -142,7 +142,7 @@ const mutations = {
     state.selection.end = end;
     state.isSelecting = false;
   },
-  RESET_SELECTION: state => {
+  RESET_SELECTION: (state) => {
     state.isSelecting = false;
     state.selection.pageNumber = null;
     state.selection.start = null;
@@ -153,7 +153,7 @@ const mutations = {
   },
   SET_SELECTION: (state, selection) => {
     state.selection = selection;
-  }
+  },
 };
 
 export default {
@@ -161,5 +161,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

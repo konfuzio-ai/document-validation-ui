@@ -64,7 +64,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("document", ["isAnnotationInEditMode", "pageAtIndex"]),
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "pageAtIndex",
+      "getTextFromEntities",
+    ]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
@@ -73,13 +77,13 @@ export default {
       "publicView",
       "annotations",
       "newAcceptedAnnotations",
-      "selectedEntity",
+      "selectedEntities",
       "showActionError",
     ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
-        if (this.selectedEntity) {
-          return this.selectedEntity.offset_string;
+        if (this.selectedEntities && this.selectedEntities.length > 0) {
+          return this.getTextFromEntities();
         }
         return this.$refs.contentEditable.textContent.trim();
       } else {
@@ -127,11 +131,14 @@ export default {
         this.handleCancel(true);
       }
     },
-    selectedEntity(newValue) {
+    selectedEntities(newValue) {
       if (!newValue) return;
 
-      if (this.annotation.id === this.editAnnotation.id) {
-        this.setText(newValue.offset_string);
+      if (
+        this.editAnnotation &&
+        this.annotation.id === this.editAnnotation.id
+      ) {
+        this.setText(this.getTextFromEntities());
       }
     },
     saveChanges(newValue) {
@@ -208,7 +215,7 @@ export default {
         this.$refs.contentEditable.blur();
       }
 
-      this.$store.dispatch("document/setSelectedEntity", null);
+      this.$store.dispatch("document/setSelectedEntities", null);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text

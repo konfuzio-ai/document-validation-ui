@@ -26,7 +26,7 @@ const state = {
   hoveredAnnotationSet: null,
   finishedReview: false,
   newAcceptedAnnotations: null,
-  selectedEntity: null,
+  selectedEntities: null,
 };
 
 const getters = {
@@ -377,6 +377,14 @@ const getters = {
       state.publicView
     );
   },
+
+  getTextFromEntities: (state) => () => {
+    return state.selectedEntities
+      .map((entity) => {
+        return entity.content;
+      })
+      .join(" ");
+  },
 };
 
 const actions = {
@@ -462,8 +470,8 @@ const actions = {
   setNewAcceptedAnnotations: ({ commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
   },
-  setSelectedEntity: ({ commit }, entity) => {
-    commit("SET_SELECTED_ENTITY", entity);
+  setSelectedEntities: ({ commit }, entities) => {
+    commit("SET_SELECTED_ENTITIES", entities);
   },
 
   /**
@@ -991,8 +999,8 @@ const mutations = {
   SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
     state.newAcceptedAnnotations = annotations;
   },
-  SET_SELECTED_ENTITY: (state, entity) => {
-    state.selectedEntity = entity;
+  SET_SELECTED_ENTITIES: (state, entities) => {
+    state.selectedEntities = entities;
   },
 };
 
