@@ -34,7 +34,7 @@
     >
       <b-button
         type="is-ghost"
-        class="reject-decline-btn"
+        class="reject-decline-btn decline-btn"
         @click.stop="decline"
       >
         {{ $t("decline") }}
@@ -56,7 +56,11 @@
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
       class="reject-decline-button-container"
     >
-      <b-button type="is-ghost" class="reject-decline-btn" @click.stop="reject">
+      <b-button
+        type="is-ghost"
+        class="reject-decline-btn reject-btn"
+        @click.stop="reject"
+      >
         {{ $t("reject_label") }}
       </b-button>
     </div>
@@ -66,13 +70,13 @@
       v-if="
         !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
       "
-      :class="['reject-decline-button-container', 'reject-all']"
+      class="reject-decline-button-container reject-all"
       @mouseenter="mouseenterAnnotationSet('reject')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
-        :class="['reject-decline-btn', 'reject-all-btn']"
+        class="reject-decline-btn reject-btn reject-all-btn"
         :disabled="emptyLabelsLength(annotationSet) === 0"
         @click.stop="rejectAllEmpty"
       >
