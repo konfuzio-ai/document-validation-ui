@@ -53,7 +53,6 @@ export default {
   data() {
     return {
       isLoading: false,
-      showReject: false,
     };
   },
   computed: {

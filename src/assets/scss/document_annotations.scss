@@ -236,36 +236,6 @@
             }
           }
 
-          .action-buttons {
-            display: flex;
-            gap: 6px;
-
-            button {
-              height: 32px;
-
-              &.annotation-save-btn,
-              &.annotation-accept-btn {
-                padding: 6px 14px 6px 14px;
-                border-radius: 8px;
-                font-weight: 500;
-                font-size: 14px;
-                line-height: 20px;
-                width: auto;
-              }
-
-              &.annotation-cancel-btn {
-                padding-top: 8px !important;
-                border: none !important;
-                background-color: transparent !important;
-                width: 32px;
-              }
-            }
-
-            .reject-button-container {
-              background-color: transparent;
-            }
-          }
-
           .empty-annotation {
             display: flex;
             width: 100%;
@@ -387,12 +357,37 @@
           box-shadow: none !important;
         }
       }
+
+      &.finish-review-btn {
+        height: 40px;
+
+        .icon:last-child:not(:first-child) {
+          margin: 0;
+        }
+      }
+
+      &.text-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      &.annotation-save-btn {
+        padding: 6px 14px 6px 14px;
+      }
+
+      &.annotation-cancel-btn {
+        border: none !important;
+        background-color: transparent !important;
+        width: 32px;
+      }
     }
 
-    .reject-button-container {
+    .reject-decline-button-container {
       background-color: transparent;
 
-      .reject-btn {
+      .reject-decline-btn {
         color: $grey-blue !important;
         font-size: 14px !important;
         font-weight: 500;
@@ -458,40 +453,6 @@
             padding: 12px;
           }
         }
-      }
-    }
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 6px;
-
-    button {
-      height: 32px;
-
-      &.finish-review-btn {
-        height: 40px;
-
-        .icon:last-child:not(:first-child) {
-          margin: 0;
-        }
-      }
-
-      &.text-btn {
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-      }
-
-      &.annotation-save-btn {
-        padding: 6px 14px 6px 14px;
-      }
-
-      &.annotation-cancel-btn {
-        border: none !important;
-        background-color: transparent !important;
-        width: 32px;
       }
     }
   }

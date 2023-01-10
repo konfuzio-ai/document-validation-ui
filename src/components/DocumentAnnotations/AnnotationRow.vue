@@ -82,13 +82,15 @@
       <div class="buttons-container">
         <ActionButtons
           :cancel-btn="showCancelButton()"
-          :accept-btn="showAcceptButton()"
+          :accept-btn="showAcceptAndDeclineButtons()"
+          :decline-btn="showAcceptAndDeclineButtons()"
           :show-reject="showRejectButton()"
           :save-btn="showSaveButton()"
           :is-loading="isLoading"
           @reject="handleReject()"
           @save="handleSaveChanges()"
           @accept="handleSaveChanges()"
+          @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton()"
         />
       </div>
@@ -128,6 +130,7 @@ export default {
       annotationAnimationTimeout: null,
       hoveredAnnotation: null,
       saveChanges: false,
+      toDecline: false,
     };
   },
   computed: {
@@ -295,7 +298,7 @@ export default {
         return null;
       }
     },
-    showAcceptButton() {
+    showAcceptAndDeclineButtons() {
       return (
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
@@ -351,17 +354,20 @@ export default {
         false
       );
     },
-    handleSaveChanges() {
+    handleSaveChanges(decline) {
       if (this.publicView) return;
 
       if (
-        this.showAcceptButton() ||
+        this.showAcceptAndDeclineButtons() ||
         this.isAnnotationInEditMode(
           this.annotationId(),
           this.editAnnotation.index
         )
       ) {
         this.saveChanges = true;
+        if (decline) {
+          this.toDecline = true;
+        }
       }
 
       if (
@@ -388,7 +394,7 @@ export default {
 
       let storeAction;
 
-      if (isToDelete) {
+      if (isToDelete || this.toDecline) {
         storeAction = "document/deleteAnnotation";
       } else {
         storeAction = "document/updateAnnotation";
@@ -473,6 +479,7 @@ export default {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("selection/disableSelection");
           this.$store.dispatch("document/setSelectedEntities", null);
+          this.toDecline = false;
         });
     },
     createSpan(span, annotationText) {

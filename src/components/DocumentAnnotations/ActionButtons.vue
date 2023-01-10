@@ -27,6 +27,20 @@
       @click.stop="cancel"
     />
 
+    <!-- decline button -->
+    <div
+      v-if="declineBtn && !isLoading && !saveBtn && !cancelBtn"
+      class="reject-decline-button-container"
+    >
+      <b-button
+        type="is-ghost"
+        class="reject-decline-btn decline-btn"
+        @click.stop="decline"
+      >
+        {{ $t("decline") }}
+      </b-button>
+    </div>
+
     <!-- accept button -->
     <b-button
       v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
@@ -40,9 +54,13 @@
     <!-- reject button -->
     <div
       v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
-      class="reject-button-container"
+      class="reject-decline-button-container"
     >
-      <b-button type="is-ghost" class="reject-btn" @click.stop="reject">
+      <b-button
+        type="is-ghost"
+        class="reject-decline-btn reject-btn"
+        @click.stop="reject"
+      >
         {{ $t("reject_label") }}
       </b-button>
     </div>
@@ -52,13 +70,13 @@
       v-if="
         !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
       "
-      :class="['reject-button-container', 'reject-all']"
+      class="reject-decline-button-container reject-all"
       @mouseenter="mouseenterAnnotationSet('reject')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
-        :class="['reject-btn', 'reject-all-btn']"
+        class="reject-decline-btn reject-btn reject-all-btn"
         :disabled="emptyLabelsLength(annotationSet) === 0"
         @click.stop="rejectAllEmpty"
       >
@@ -135,14 +153,19 @@ export default {
     },
     handleReject: {
       type: Function,
+      default: null,
     },
     rejectAllEmptyBtn: {
       type: Boolean,
     },
     annotationSet: {
       type: Object,
+      default: null,
     },
     acceptAllBtn: {
+      type: Boolean,
+    },
+    declineBtn: {
       type: Boolean,
     },
   },
@@ -192,6 +215,9 @@ export default {
     },
     acceptGroup() {
       this.$emit("accept-group");
+    },
+    decline() {
+      this.$emit("decline");
     },
   },
 };

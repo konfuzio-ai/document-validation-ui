@@ -190,6 +190,38 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
   });
 
+  it("Only show 'decline' button on hover on filled annotations", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const annotation = label.annotations[0];
+
+    const wrapper = mount(AnnotationRow, {
+      store,
+      propsData: {
+        label,
+        annotationSet,
+        annotation,
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .find(".buttons-container .action-buttons .decline-btn")
+        .exists()
+    ).toBe(false);
+
+    await wrapper.findComponent(".annotation-content").trigger("mouseover");
+
+    expect(
+      await wrapper
+        .find(".buttons-container .action-buttons .decline-btn")
+        .isVisible()
+    ).toBe(true);
+  });
+
   it("Should only show the Rejected title when there are rejected labels", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
@@ -206,11 +238,6 @@ describe("Document Annotations Component", () => {
       store,
       mocks: {
         $t,
-      },
-      data() {
-        return {
-          showReject: false,
-        };
       },
       props: {
         label,
@@ -232,12 +259,10 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
 
-    await wrapper2.setData({
-      showReject: true,
-    });
-
     await wrapper
-      .findComponent(".action-buttons .reject-button-container .reject-btn")
+      .findComponent(
+        ".action-buttons .reject-decline-button-container .reject-btn"
+      )
       .trigger("click");
 
     await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
@@ -249,7 +274,7 @@ describe("Document Annotations Component", () => {
     );
 
     expect(
-      wrapper
+      await wrapper
         .findAll(".rejected-labels-list .rejected-label-container .title")
         .isVisible()
     ).toBe(true);
