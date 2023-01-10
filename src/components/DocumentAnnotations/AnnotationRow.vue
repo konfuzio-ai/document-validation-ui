@@ -36,7 +36,7 @@
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
-        <div v-if="annotation && isNotDeclined">
+        <div v-if="annotation">
           <div
             v-for="(span, index) in spanForEditing
               ? spanSelection
@@ -68,7 +68,6 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
-              :annotation="annotation"
             />
           </div>
           <EmptyAnnotation
@@ -77,7 +76,6 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
-            :annotation="annotation"
           />
         </div>
       </div>
@@ -179,12 +177,6 @@ export default {
           this.annotationId(),
           this.editAnnotation.index
         )
-      );
-    },
-    isNotDeclined() {
-      return (
-        this.annotation &&
-        !(this.annotation.revised && !this.annotation.is_correct)
       );
     },
   },
@@ -402,15 +394,8 @@ export default {
 
       let storeAction;
 
-      if (isToDelete) {
+      if (isToDelete || this.toDecline) {
         storeAction = "document/deleteAnnotation";
-      } else if (this.toDecline) {
-        storeAction = "document/updateAnnotation";
-
-        updatedString = {
-          is_correct: false,
-          revised: true,
-        };
       } else {
         storeAction = "document/updateAnnotation";
 
