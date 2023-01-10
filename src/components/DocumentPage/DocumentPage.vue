@@ -248,7 +248,7 @@ export default {
       "editAnnotation",
       "selectedDocument",
       "publicView",
-      "selectedEntity",
+      "selectedEntities",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", [
@@ -287,6 +287,11 @@ export default {
     },
     scale() {
       this.closeNewAnnotation();
+    },
+    selectedEntities(newValue) {
+      if (!newValue) {
+        this.closeNewAnnotation();
+      }
     },
   },
 
@@ -467,8 +472,6 @@ export default {
             fillColor = "#67E9B7";
           }
         });
-      } else if (this.selectedEntity === entity.original) {
-        fillColor = "#67E9B7";
       } else {
         fillColor = "transparent";
       }
@@ -568,36 +571,38 @@ export default {
       // Check if we are creating a new Annotation
       // or if we are ediitng an existing or empty one
 
-      if (!this.isSelectionEnabled) {
-        const entityToAdd = {
-          entity,
-          content: entity.original.offset_string,
-        };
+      const entityToAdd = {
+        entity,
+        content: entity.original.offset_string,
+      };
 
-        let found;
+      let found;
 
-        if (this.newAnnotation) {
-          found = this.newAnnotation.find(
-            (ann) =>
-              ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
-              ann.content === entityToAdd.content
-          );
-        }
-
-        if (found) {
-          this.newAnnotation = this.newAnnotation.filter(
-            (ann) =>
-              ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
-              ann.content !== entityToAdd.content
-          );
-        } else {
-          this.newAnnotation.push(entityToAdd);
-        }
-        return;
+      if (this.newAnnotation) {
+        found = this.newAnnotation.find(
+          (ann) =>
+            ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
+            ann.content === entityToAdd.content
+        );
       }
 
-      if (!this.isSelecting) {
-        this.$store.dispatch("document/setSelectedEntity", entity.original);
+      if (found) {
+        this.newAnnotation = this.newAnnotation.filter(
+          (ann) =>
+            ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
+            ann.content !== entityToAdd.content
+        );
+      } else {
+        this.newAnnotation.push(entityToAdd);
+      }
+
+      if (this.newAnnotation.length > 0) {
+        this.$store.dispatch(
+          "document/setSelectedEntities",
+          this.newAnnotation
+        );
+      } else {
+        this.$store.dispatch("document/setSelectedEntities", null);
       }
     },
 

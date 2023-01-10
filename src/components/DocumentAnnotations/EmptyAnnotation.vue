@@ -57,13 +57,20 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "getTextFromEntities",
+    ]),
     ...mapGetters("selection", ["isValueArray"]),
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("selection", [
+      "spanSelection",
+      "selectionEnabled",
+      "isSelecting",
+    ]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
-      "selectedEntity",
+      "selectedEntities",
       "showActionError",
     ]),
   },
@@ -90,11 +97,21 @@ export default {
         this.cancelEmptyAnnotation(true);
       }
     },
-    selectedEntity(newValue) {
-      if (!newValue) return;
+    selectedEntities(newValue) {
+      if (!newValue && this.isAnnotationBeingEdited(this.emptyAnnotationId())) {
+        this.setText(
+          this.$t("draw_box_document", { label_name: this.label.name })
+        );
+        return;
+      }
 
-      if (this.emptyAnnotationId() === this.editAnnotation.id) {
-        this.setText(newValue.offset_string);
+      if (
+        newValue &&
+        this.editAnnotation &&
+        this.emptyAnnotationId() === this.editAnnotation.id
+      ) {
+        const text = this.getTextFromEntities();
+        this.setText(text);
       }
     },
     spanSelection(newValue) {
@@ -155,15 +172,16 @@ export default {
       } else {
         this.$store.dispatch("selection/disableSelection");
       }
+
       this.isLoading = false;
+      this.$store.dispatch("document/setSelectedEntities", null);
+
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
-
-      this.$store.dispatch("document/setSelectedEntity", null);
     },
     isEmptyAnnotationEditable() {
-      if (this.selectedEntity) {
+      if (this.selectedEntities && this.selectedEntities.length > 0) {
         return (
           this.selectionEnabled === this.emptyAnnotationId() && !this.isLoading
         );

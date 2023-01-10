@@ -1,6 +1,6 @@
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <input v-model="getSelectedContent" class="popup-input" type="text" />
+    <input v-model="textFromEntities" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
@@ -97,7 +97,7 @@
         type="is-primary"
         class="popup-button"
         :label="$t('save')"
-        :disabled="loading || !selectedContent || !selectedLabel"
+        :disabled="loading || !getTextFromEntities || !selectedLabel"
         @click.prevent="save"
       />
     </div>
@@ -135,7 +135,6 @@ export default {
       selectedLabel: null,
       selectedSet: null,
       labels: null,
-      selectedContent: [],
       loading: false,
       isAnnSetModalShowing: false,
       setsList: [],
@@ -146,6 +145,7 @@ export default {
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation",
+      "getTextFromEntities",
     ]),
     top() {
       const top = this.newAnnotation[0].entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
@@ -172,18 +172,14 @@ export default {
         return left > 0 ? left : 0;
       }
     },
-    getSelectedContent() {
-      return this.selectedContent.join(" ");
+    textFromEntities() {
+      return this.getTextFromEntities();
     },
   },
   watch: {
     selectedSet(newValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
-    },
-
-    newAnnotation(newValue) {
-      this.updateSelectedContent(newValue);
     },
   },
   mounted() {
@@ -193,21 +189,12 @@ export default {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
-
-    this.updateSelectedContent(this.newAnnotation);
   },
   destroyed() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
-    updateSelectedContent(annotation) {
-      this.selectedContent = [];
-      annotation.map((ann) => {
-        this.selectedContent.push(ann.content);
-      });
-    },
     close() {
-      this.selectedContent = [];
       this.$emit("close");
     },
     save() {

@@ -137,7 +137,7 @@ export default {
       "hoveredAnnotationSet",
       "enableGroupingFeature",
       "publicView",
-      "selectedEntity",
+      "selectedEntities",
       "newAcceptedAnnotations",
       "rejectedMissingAnnotations",
       "documentId",
@@ -161,6 +161,11 @@ export default {
         this.isValueArray(this.spanSelection) &&
         this.isAnnotationInEditMode(this.annotationId())
       );
+    },
+    spanFromSelectedEntities() {
+      return this.selectedEntities.flatMap((ann) => {
+        return { ...ann.entity.original, offset_string: ann.content };
+      });
     },
     isAnnotation() {
       return (
@@ -322,7 +327,7 @@ export default {
         if (!this.isAnnotationInEditMode(this.annotationId())) return;
 
         // Check if an entity was selected instead of bbox
-        if (this.selectedEntity) {
+        if (this.selectedEntities && this.selectedEntities.length > 0) {
           return this.selectionEnabled === this.annotationId();
         } else {
           return (
@@ -403,8 +408,8 @@ export default {
           let span;
 
           // Check if editing was from selecting an entity
-          if (this.selectedEntity) {
-            span = this.selectedEntity;
+          if (this.selectedEntities && this.selectedEntities.length > 0) {
+            span = this.spanFromSelectedEntities;
           } else {
             spans = [...this.spanSelection];
             span = this.createSpan(
@@ -422,8 +427,8 @@ export default {
           // if span is NOT an array, but an object
           let span;
 
-          if (this.selectedEntity) {
-            spans[spanIndex] = { ...this.selectedEntity };
+          if (this.selectedEntities && this.selectedEntities.length > 0) {
+            spans[spanIndex] = this.spanFromSelectedEntities;
           } else if (this.spanSelection) {
             span = this.createSpan(this.spanSelection, annotationText);
 
@@ -467,6 +472,7 @@ export default {
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("selection/disableSelection");
+          this.$store.dispatch("document/setSelectedEntities", null);
         });
     },
     createSpan(span, annotationText) {
@@ -485,8 +491,8 @@ export default {
       let annotationToCreate;
       let span;
 
-      if (this.selectedEntity) {
-        span = [this.selectedEntity];
+      if (this.selectedEntities && this.selectedEntities.length > 0) {
+        span = this.spanFromSelectedEntities;
       } else {
         span = this.spanSelection;
       }
@@ -540,6 +546,7 @@ export default {
       this.$store.dispatch("document/resetEditAnnotation");
       if (this.selectionEnabled) {
         this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/setSelectedEntities", null);
       }
     },
     enableLoading(annotations) {
