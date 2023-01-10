@@ -49,6 +49,9 @@ export default {
     spanIndex: {
       required: false,
     },
+    annotation: {
+      required: false,
+    },
   },
   data() {
     return {
@@ -133,7 +136,9 @@ export default {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      if (this.annotationSet.id) {
+      if (this.annotation && this.annotation.id) {
+        return this.annotation.id;
+      } else if (this.annotationSet.id) {
         return `${this.annotationSet.id}_${this.label.id}`;
       } else {
         return `${this.annotationSet.label_set.id}_${this.label.id}`;

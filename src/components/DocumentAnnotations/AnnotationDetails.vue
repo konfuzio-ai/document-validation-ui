@@ -211,7 +211,15 @@ export default {
     accepted() {
       // TODO: add this verification to store
       if (this.annotation) {
-        return this.annotation.revised;
+        return this.annotation.revised && this.annotation.is_correct;
+      } else {
+        return null;
+      }
+    },
+    declined() {
+      // TODO: add this verification to store
+      if (this.annotation) {
+        return this.annotation.revised && !this.annotation.is_correct;
       } else {
         return null;
       }
@@ -266,6 +274,10 @@ export default {
         return this.user
           ? `${this.$t("approved_by")} ${this.user}`
           : this.$t("approved");
+      } else if (this.declined) {
+        return this.user
+          ? `${this.$t("declined_by")} ${this.user}`
+          : this.$t("declined");
       } else {
         return this.$t("not_revised_yet");
       }

@@ -100,5 +100,7 @@
   "esc_key": "Salir del modo de edición",
   "enter_key": "Aceptar o Guardar",
   "delete_key": "Rechazar",
-  "decline": "Declinar"
+  "decline": "Declinar",
+  "declined_by": "Declinada por ",
+  "declined": "Declinada"
 }

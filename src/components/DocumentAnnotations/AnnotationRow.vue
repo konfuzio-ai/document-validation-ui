@@ -36,7 +36,7 @@
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
-        <div v-if="annotation">
+        <div v-if="annotation && isNotDeclined">
           <div
             v-for="(span, index) in spanForEditing
               ? spanSelection
@@ -68,6 +68,7 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              :annotation="annotation"
             />
           </div>
           <EmptyAnnotation
@@ -76,6 +77,7 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
+            :annotation="annotation"
           />
         </div>
       </div>
@@ -90,7 +92,7 @@
           @reject="handleReject()"
           @save="handleSaveChanges()"
           @accept="handleSaveChanges()"
-          @decline="handleSaveChanges((decline = true))"
+          @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton()"
         />
       </div>
@@ -177,6 +179,12 @@ export default {
           this.annotationId(),
           this.editAnnotation.index
         )
+      );
+    },
+    isNotDeclined() {
+      return (
+        this.annotation &&
+        !(this.annotation.revised && !this.annotation.is_correct)
       );
     },
   },

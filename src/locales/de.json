@@ -99,5 +99,7 @@
   "esc_key": "Exit",
   "enter_key": "Accept or Save",
   "delete_key": "Reject",
-  "decline": "Decline"
+  "decline": "Decline",
+  "declined_by": "Declined by ",
+  "declined": "Declined"
 }
