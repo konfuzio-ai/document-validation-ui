@@ -274,7 +274,7 @@ describe("Document Annotations Component", () => {
     );
 
     expect(
-      wrapper
+      await wrapper
         .findAll(".rejected-labels-list .rejected-label-container .title")
         .isVisible()
     ).toBe(true);
