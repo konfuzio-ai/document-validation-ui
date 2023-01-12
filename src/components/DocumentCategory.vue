@@ -3,7 +3,7 @@
     :class="[
       'category-chooser',
       splitMode && 'split-mode',
-      selectedDocument.is_reviewed && 'disabled'
+      selectedDocument.is_reviewed && 'disabled',
     ]"
     aria-role="list"
     :disabled="selectedDocument.is_reviewed"
@@ -14,10 +14,7 @@
           <CategoryIcon />
         </div>
         <div class="category-info">
-          <p
-            v-if="!splitMode"
-            class="category-title"
-          >
+          <p v-if="!splitMode" class="category-title">
             {{ $t("category") }}
           </p>
           <div class="category-name">
@@ -57,53 +54,53 @@ import CategoryIcon from "../assets/images/CategoryIconImg";
 export default {
   name: "DocumentCategory",
   components: {
-    CategoryIcon
+    CategoryIcon,
   },
   props: {
     splitMode: {
-      type: Boolean
+      type: Boolean,
     },
     page: {
-      type: Object
+      type: Object,
     },
     index: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   data() {
     return {
       currentProjectCategories: [],
-      categoryError: false
+      categoryError: false,
     };
   },
   computed: {
     ...mapGetters("category", {
-      categoryName: "categoryName"
+      categoryName: "categoryName",
     }),
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["categories"]),
-    ...mapState("edit", ["updatedDocument"])
+    ...mapState("edit", ["updatedDocument"]),
   },
   watch: {
     categories(newValue) {
-      newValue.map(category => {
+      newValue.map((category) => {
         if (category.project === this.selectedDocument.project) {
           const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
+            (cat) => cat.id === category.id
           );
           if (found) return;
 
           this.currentProjectCategories.push(category);
         }
       });
-    }
+    },
   },
   mounted() {
     if (this.categories) {
-      this.categories.map(category => {
+      this.categories.map((category) => {
         if (category.project === this.selectedDocument.project) {
           const found = this.currentProjectCategories.find(
-            cat => cat.id === category.id
+            (cat) => cat.id === category.id
           );
           if (found) return;
 
@@ -126,7 +123,7 @@ export default {
       // handling the category change will be different based on
       // the dropdown being on the topbar or the split overview
       const updatedCategory = {
-        category: category.id
+        category: category.id,
       };
 
       if (!this.splitMode) {
@@ -134,26 +131,13 @@ export default {
 
         this.$store
           .dispatch("document/updateDocument", updatedCategory)
-          .then(response => {
-            if (response === 200) {
-              // Poll document data until the status_data is 111 (error) or
-              // 2 and labeling is available (done)
-              this.$store.dispatch("document/pollDocumentEndpoint");
-            } else {
-              const resp = JSON.stringify(response);
+          .then((response) => {
+            if (!response) return;
 
-              if (resp.includes("500")) {
-                this.$store.dispatch(
-                  "document/setErrorMessage",
-                  this.$t("category_server_error")
-                );
-              } else {
-                this.$store.dispatch(
-                  "document/setErrorMessage",
-                  this.$t("category_error")
-                );
-              }
-            }
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              typeOfMessage: null,
+            });
           })
           .finally(() => {
             this.$store.dispatch("document/endRecalculatingAnnotations");
@@ -165,8 +149,8 @@ export default {
       // Send the category ID to the split overview
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
-    }
-  }
+    },
+  },
 };
 </script>
 

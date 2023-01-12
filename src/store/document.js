@@ -1,5 +1,6 @@
 import myImports from "../api";
 import sleep from "../utils/utils";
+import i18n from "../i18n";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
@@ -27,6 +28,7 @@ const state = {
   finishedReview: false,
   newAcceptedAnnotations: null,
   selectedEntities: null,
+  serverError: false,
 };
 
 const getters = {
@@ -444,11 +446,15 @@ const actions = {
   setMissingAnnotations: ({ commit }, missingAnnotations) => {
     commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
   },
-  setErrorMessage: ({ commit, dispatch }, message) => {
+  setErrorMessage: ({ commit, dispatch }, { message, value = false }) => {
     if (message) {
       commit("SET_SHOW_ACTION_ERROR", true);
     } else {
       commit("SET_SHOW_ACTION_ERROR", false);
+    }
+
+    if (value) {
+      commit("SET_SERVER_ERROR", value);
     }
 
     commit("SET_ERROR_MESSAGE", message);
@@ -630,27 +636,21 @@ const actions = {
   updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", [annotationId]);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then((response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
-            resolve(response.data);
+            resolve(null);
+          } else {
+            resolve(response);
           }
         })
         .catch((error) => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.length > 0
-          ) {
-            reject(error.response.data[0]);
-          } else {
-            console.log(error);
-            reject(null);
-          }
+          resolve(error.response);
+          console.log(error);
         });
     });
   },
@@ -659,12 +659,16 @@ const actions = {
     return new Promise((resolve) => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then((response) => {
-          commit("DELETE_ANNOTATION", annotationId);
-          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-          resolve(true);
+          if (response.status === 204) {
+            commit("DELETE_ANNOTATION", annotationId);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+            resolve(null);
+          } else {
+            resolve(response);
+          }
         })
         .catch((error) => {
-          resolve(false);
+          resolve(error.response);
           console.log(error);
         });
     });
@@ -682,11 +686,14 @@ const actions = {
 
             commit("SET_SELECTED_DOCUMENT", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-            resolve(response.status);
+            dispatch("pollDocumentEndpoint");
+            resolve(null);
+          } else {
+            resolve(response);
           }
         })
         .catch((error) => {
-          resolve(error);
+          resolve(error.response);
           console.log(error);
         });
     });
@@ -705,18 +712,20 @@ const actions = {
       });
   },
 
-  addMissingAnnotations: ({ commit }, missingAnnotations) => {
+  addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
     return new Promise((resolve) => {
       return HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then((response) => {
           if (response.status === 201) {
             commit("SET_REJECTED_MISSING_ANNOTATIONS", null);
-            resolve(true);
+            dispatch("fetchMissingAnnotations");
           }
+
+          resolve(response);
         })
         .catch((error) => {
+          resolve(error.response);
           console.log(error);
-          resolve(false);
         });
     });
   },
@@ -726,13 +735,15 @@ const actions = {
       return HTTP.delete(`/missing-annotations/${id}/`)
         .then((response) => {
           if (response.status === 204) {
-            resolve(true);
             dispatch("fetchMissingAnnotations");
+            resolve(null);
+          } else {
+            resolve(response);
           }
         })
         .catch((error) => {
+          resolve(error.response);
           console.log(error);
-          resolve(false);
         });
     });
   },
@@ -751,12 +762,14 @@ const actions = {
               commit("UPDATE_ANNOTATION", annotation);
             });
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
-            resolve(true);
+            resolve(null);
+          } else {
+            resolve(response);
           }
         })
         .catch((error) => {
           console.log(error);
-          resolve(false);
+          resolve(error.response);
         });
     });
   },
@@ -818,11 +831,62 @@ const actions = {
       });
   },
 
+  createErrorMessage: ({ dispatch }, { response, typeOfMessage = null }) => {
+    if (!response) return;
+
+    let responseAsString;
+    let message;
+
+    if (response.status) {
+      responseAsString = response.status.toString();
+    }
+
+    switch (typeOfMessage) {
+      case "review":
+        message = i18n.t("review_error");
+        break;
+      case "creating annotation":
+        message = i18n.t("error_creating_annotation");
+        break;
+      default:
+        message = i18n.t("edit_error");
+    }
+
+    // check type of error
+    if (response.data && response.data.length > 0) {
+      dispatch("setErrorMessage", {
+        message: response.data[0],
+      });
+    } else if (responseAsString.startsWith("5")) {
+      dispatch("setErrorMessage", {
+        message: i18n.t("server_error"),
+      });
+    } else {
+      dispatch("setErrorMessage", {
+        message: message,
+      });
+    }
+  },
+
   closeErrorMessage: ({ commit }) => {
     setTimeout(() => {
       commit("SET_ERROR_MESSAGE", null);
       commit("SET_SHOW_ACTION_ERROR", false);
+      commit("SET_SERVER_ERROR", false);
     }, 5000);
+  },
+
+  contactSupport: ({ rootState }, error) => {
+    let url;
+    const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser}&issue=${error}`;
+
+    if (process.env.VUE_APP_I18N_LOCALE == "de") {
+      url = "https://konfuzio.com/de/support/";
+    } else {
+      url = "https://konfuzio.com/en/support/";
+    }
+
+    window.open(`${url}?${params}`, "_blank");
   },
 };
 
@@ -1001,6 +1065,9 @@ const mutations = {
   },
   SET_SELECTED_ENTITIES: (state, entities) => {
     state.selectedEntities = entities;
+  },
+  SET_SERVER_ERROR: (state, value) => {
+    state.serverError = value;
   },
 };
 

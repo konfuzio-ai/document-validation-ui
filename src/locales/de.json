@@ -7,7 +7,6 @@
   "upload_documents": "Laden Sie Ihre Dokumente hoch",
   "request_trial": "Fordern Sie Ihren Probezugang an",
   "warning_message": "Die KI kann nicht trainiert werden, wenn Sie den Text manuell ändern.",
-  "editing_error": "Editing this annotation is not possible.",
   "category": "Kategorie",
   "status": "Status",
   "preparation": "Vorbereitung",
@@ -15,7 +14,6 @@
   "test": "Test",
   "excluded": "Ausgenommen",
   "set_status": "Setzen Sie bitte einen Status",
-  "category_server_error": "Das Ändern der Dokumentenkategorie war nicht möglich. Bitte versuchen Sie es später erneut.",
   "category_error": "Die Kategorie kann nicht geändert werden, da bereits akzeptierte Annotationen oder manuell erstellte Annotationen zu diesem Dokument vorhanden sind.",
   "status_error": "Wir konnten den Status nicht ändern. Bitte versuchen Sie es später erneut.",
   "edit": "Bearbeiten",
@@ -100,6 +98,5 @@
   "enter_key": "Accept or Save",
   "delete_key": "Reject",
   "decline": "Decline",
-  "declined_by": "Declined by ",
-  "declined": "Declined"
+  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support"
 }

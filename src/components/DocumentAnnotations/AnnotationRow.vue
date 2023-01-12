@@ -465,15 +465,13 @@ export default {
           updatedValues: updatedString,
           annotationId: this.annotation.id,
         })
-        .catch((error) => {
-          if (error) {
-            this.$store.dispatch("document/setErrorMessage", error);
-          } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("editing_error")
-            );
-          }
+        .then((response) => {
+          if (!response) return;
+
+          this.$store.dispatch("document/createErrorMessage", {
+            response,
+            typeOfMessage: null,
+          });
         })
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");
@@ -530,19 +528,12 @@ export default {
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
         .then((response) => {
-          if (response && response.data) {
-            if (response.data.length > 0) {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                response.data[0]
-              );
-            } else {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("editing_error")
-              );
-            }
-          }
+          if (!response) return;
+
+          this.$store.dispatch("document/createErrorMessage", {
+            response,
+            typeOfMessage: null,
+          });
         })
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");

@@ -223,10 +223,10 @@ export default {
           if (!response) {
             this.$store.dispatch("document/fetchMissingAnnotations");
           } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("error_creating_annotation")
-            );
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              typeOfMessage: "creating annotation",
+            });
           }
         })
         .finally(() => {

@@ -433,16 +433,18 @@ export default {
       this.$store
         .dispatch("document/addMissingAnnotations", rejected)
         .then((response) => {
-          if (response) {
-            this.$store.dispatch("document/fetchMissingAnnotations");
+          if (!response) return;
+
+          if (response.status === 201) {
             this.jumpToNextAnnotation = true;
-          } else {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("ann_exists")
-            );
-            this.jumpToNextAnnotation = false;
+            return;
           }
+
+          this.$store.dispatch("document/createErrorMessage", {
+            response,
+            typeOfMessage: null,
+          });
+          this.jumpToNextAnnotation = false;
         })
         .finally(() => {
           this.$store.dispatch("document/setRejectedMissingAnnotations", null);
@@ -487,12 +489,12 @@ export default {
         this.$store
           .dispatch("document/updateMultipleAnnotations", acceptedAnnotations)
           .then((response) => {
-            if (!response) {
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("editing_error")
-              );
-            }
+            if (!response) return;
+
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              typeOfMessage: null,
+            });
           });
       }
     },
