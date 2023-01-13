@@ -31,7 +31,7 @@ export default {
       this.$store.dispatch("document/contactSupport", error);
     },
     handleErrorClose() {
-      this.$store.dispatch("document/setErrorMessage", { message: null });
+      this.$store.dispatch("document/setErrorMessage", null);
     },
   },
 };

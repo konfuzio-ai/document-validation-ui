@@ -445,15 +445,11 @@ const actions = {
   setMissingAnnotations: ({ commit }, missingAnnotations) => {
     commit("SET_MISSING_ANNOTATIONS", missingAnnotations);
   },
-  setErrorMessage: ({ commit, dispatch }, { message, value = false }) => {
+  setErrorMessage: ({ commit, dispatch }, message) => {
     if (message) {
       commit("SET_SHOW_ACTION_ERROR", true);
     } else {
       commit("SET_SHOW_ACTION_ERROR", false);
-    }
-
-    if (value) {
-      commit("SET_SERVER_ERROR", value);
     }
 
     commit("SET_ERROR_MESSAGE", message);
@@ -831,7 +827,7 @@ const actions = {
   },
 
   createErrorMessage: (
-    { dispatch },
+    { commit, dispatch },
     { response, serverErrorMessage, defaultErrorMessage }
   ) => {
     let responseAsString;
@@ -842,17 +838,12 @@ const actions = {
 
     // check type of error
     if (response.data && response.data.length > 0) {
-      dispatch("setErrorMessage", {
-        message: response.data[0],
-      });
+      dispatch("setErrorMessage", response.data[0]);
     } else if (responseAsString.startsWith("5")) {
-      dispatch("setErrorMessage", {
-        message: serverErrorMessage,
-      });
+      dispatch("setErrorMessage", serverErrorMessage);
+      commit("SET_SERVER_ERROR", true);
     } else {
-      dispatch("setErrorMessage", {
-        message: defaultErrorMessage,
-      });
+      dispatch("setErrorMessage", defaultErrorMessage);
     }
   },
 
