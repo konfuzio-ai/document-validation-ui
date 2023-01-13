@@ -190,6 +190,26 @@ button {
     width: 100%;
     justify-content: center;
     align-items: center;
+
+    .server-error {
+      display: flex;
+
+      .contact-support {
+        text-decoration: underline;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        padding-left: 5px;
+
+        .icon {
+          padding-left: 10px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .btn-container {

@@ -7,7 +7,6 @@
   "upload_documents": "Upload your own documents",
   "request_trial": "Request  trial access",
   "warning_message": "AI can’t be trained if you change the text manually.",
-  "editing_error": "Editing this annotation is not possible.",
   "category": "Category",
   "status": "Status",
   "preparation": "Preparation",
@@ -15,8 +14,6 @@
   "test": "Test",
   "excluded": "Excluded",
   "set_status": "Set a status",
-  "category_error": "Category cannot be changed because there are already accepted annotations or manually created annotations on this document.",
-  "category_server_error": "Changing the document category was not possible. Please try again later.",
   "status_error": "We couldn’t change the status. Please try again later.",
   "edit": "Edit",
   "save": "Save",
@@ -107,6 +104,6 @@
   "enter_key": "Accept or Save",
   "delete_key": "Reject",
   "decline": "Decline",
-  "declined_by": "Declined by ",
-  "declined": "Declined"
+  "server_error": "We are currently experiencing a server issue. Please try again later or",
+  "get_support": "Get Support"
 }

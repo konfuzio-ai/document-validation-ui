@@ -9,9 +9,9 @@
     <b-button
       :label="
         editMode &&
-          updatedDocument &&
-          updatedDocument.length > 1 &&
-          !splitOverview
+        updatedDocument &&
+        updatedDocument.length > 1 &&
+        !splitOverview
           ? $t('next')
           : $t('submit')
       "
@@ -30,13 +30,10 @@ export default {
   name: "DocumentTopBarButtons",
   computed: {
     ...mapState("document", ["selectedDocument"]),
-    ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"])
+    ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
   },
   methods: {
     /** EDIT MODE */
-    showError() {
-      this.$store.dispatch("document/setErrorMessage", this.$t("edit_error"));
-    },
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode");
       this.$store.dispatch("edit/setSplitOverview", false);
@@ -62,17 +59,21 @@ export default {
         // Send update request to the backend
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
-          .then(response => {
-            if (!response) this.showError();
-          })
-          .catch(error => {
-            this.showError();
+          .then((response) => {
+            if (!response) return;
+
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
           });
+
         // Close edit mode
         this.closeEditMode();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

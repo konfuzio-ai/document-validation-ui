@@ -7,7 +7,6 @@
   "upload_documents": "Suba sus propios documentos",
   "request_trial": "Solicite acceso a la versión de prueba",
   "warning_message": "La IA no puede ser entrenada si se cambia el texto manualmente.",
-  "editing_error": "No ha sido posible editar esta anotación.",
   "category": "Categoría",
   "status": "Estado",
   "preparation": "Preparación",
@@ -16,7 +15,6 @@
   "excluded": "Excluído",
   "set_status": "Establecer estado",
   "category_error": "La categoría no se puede cambiar porque hay anotaciones que ya han sido aceptadas o creadas manualmente en este documento.",
-  "category_server_error": "No ha sido posible cambiar la categoría del documento. Por favor, inténtelo de nuevo más tarde.",
   "status_error": "No ha sido posible cambiar el estado del documento. Por favor, inténtelo de nuevo más tarde.",
   "edit": "Editar",
   "save": "Guardar",
@@ -101,6 +99,5 @@
   "enter_key": "Aceptar o Guardar",
   "delete_key": "Rechazar",
   "decline": "Declinar",
-  "declined_by": "Declinada por ",
-  "declined": "Declinada"
+  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support"
 }

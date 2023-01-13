@@ -11,7 +11,8 @@
           <h3>{{ $t("categorize_document_title") }}</h3>
           <p v-if="documentCategory">
             {{ $t("categorized_as")
-            }}<strong>&nbsp;{{ documentCategory.name }}</strong>.&nbsp;{{ $t("categorized_error") }}
+            }}<strong>&nbsp;{{ documentCategory.name }}</strong
+            >.&nbsp;{{ $t("categorized_error") }}
           </p>
           <p v-else>
             {{ $t("not_categorized") }}
@@ -41,20 +42,14 @@
               <span>{{ categoryItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
-          <div
-            v-if="selectedCategory"
-            class="category-description"
-          >
+          <div v-if="selectedCategory" class="category-description">
             {{
               selectedCategory.description
                 ? selectedCategory.description
                 : $t("categorize_document_no_category_description")
             }}
           </div>
-          <div
-            v-else
-            class="category-description"
-          >
+          <div v-else class="category-description">
             {{ $t("select_category") }}
           </div>
           <b-button
@@ -84,13 +79,13 @@ export default {
     ...mapState("category", ["categories"]),
     ...mapState("document", ["selectedDocument"]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["categorizationIsConfirmed"])
+    ...mapGetters("document", ["categorizationIsConfirmed"]),
   },
   data() {
     return {
       show: false,
       selectedCategory: null, // category selected in dropdown
-      documentCategory: null // category associated to document
+      documentCategory: null, // category associated to document
     };
   },
   watch: {
@@ -103,7 +98,7 @@ export default {
       if (newCategories && oldCategories === null) {
         this.setDocumentValues();
       }
-    }
+    },
   },
   mounted() {
     this.setDocumentValues();
@@ -132,36 +127,34 @@ export default {
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
-          is_category_accepted: true
+          is_category_accepted: true,
         };
 
         this.$store.dispatch("document/startRecalculatingAnnotations");
 
         this.$store
           .dispatch("document/updateDocument", updatedCategory)
-          .then(response => {
-            if (response) {
-              // TODO: this should be done on the update document endpoint
-              // Poll document data until the status_data is 111 (error) or
-              // 2 and labeling is available (done)
-              this.$store.dispatch("document/pollDocumentEndpoint");
-            } else {
-              this.$store.dispatch("document/endRecalculatingAnnotations");
-              this.$store.dispatch(
-                "document/setErrorMessage",
-                this.$t("category_error")
-              );
-            }
+          .then((response) => {
+            if (!response) return;
+
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          })
+          .finally(() => {
+            this.$store.dispatch("document/endRecalculatingAnnotations");
           });
       } else {
         // if same category, then just accept it
         this.$store.dispatch("document/updateDocument", {
-          is_category_accepted: true
+          is_category_accepted: true,
         });
       }
       this.show = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

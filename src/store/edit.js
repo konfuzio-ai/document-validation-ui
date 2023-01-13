@@ -8,7 +8,7 @@ const state = {
   isMultipleSelection: false,
   documentPagesListForEditMode: [], // TODO: change name
   selectedPages: [],
-  updatedDocument: []
+  updatedDocument: [],
 };
 
 const actions = {
@@ -39,11 +39,13 @@ const actions = {
       return;
     }
 
-    const found = state.selectedPages.find(page => page.id === selectedPage.id);
+    const found = state.selectedPages.find(
+      (page) => page.id === selectedPage.id
+    );
 
     if (found) {
       const filtered = state.selectedPages.filter(
-        page => page.id !== selectedPage.id
+        (page) => page.id !== selectedPage.id
       );
       commit("SET_SELECTED_PAGES", filtered);
     } else if (state.isMultipleSelection) {
@@ -55,9 +57,9 @@ const actions = {
   },
 
   rotatePage: ({ state, commit }, { page, direction }) => {
-    if (state.documentPagesListForEditMode.find(p => p.id === page[0].id)) {
+    if (state.documentPagesListForEditMode.find((p) => p.id === page[0].id)) {
       const documentPagesListForEditMode =
-        state.documentPagesListForEditMode.map(p => {
+        state.documentPagesListForEditMode.map((p) => {
           let rotatedAngle;
           if (direction === "left") {
             rotatedAngle = p.angle - 90;
@@ -67,7 +69,7 @@ const actions = {
               }
               return {
                 ...p,
-                angle: rotatedAngle
+                angle: rotatedAngle,
               };
             }
             return p;
@@ -80,7 +82,7 @@ const actions = {
               }
               return {
                 ...p,
-                angle: rotatedAngle
+                angle: rotatedAngle,
               };
             }
             return p;
@@ -95,7 +97,7 @@ const actions = {
           page_number: page.number,
           angle: -90,
           thumbnail_url: page.thumbnail_url,
-          updated_at: page.updated_at
+          updated_at: page.updated_at,
         });
       }
 
@@ -105,7 +107,7 @@ const actions = {
           page_number: page.number,
           angle: 90,
           thumbnail_url: page.thumbnail_url,
-          updated_at: page.updated_at
+          updated_at: page.updated_at,
         });
       }
     }
@@ -113,14 +115,14 @@ const actions = {
 
   updateRotationToTheLeft: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.documentPagesListForEditMode.map(p => {
+    const array = state.documentPagesListForEditMode.map((p) => {
       let rotatedAngle = p.angle - 90;
       if (rotatedAngle === -270) {
         rotatedAngle = 90;
       }
       return {
         ...p,
-        angle: rotatedAngle
+        angle: rotatedAngle,
       };
     });
 
@@ -129,14 +131,14 @@ const actions = {
 
   updateRotationToTheRight: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.documentPagesListForEditMode.map(p => {
+    const array = state.documentPagesListForEditMode.map((p) => {
       let rotatedAngle = p.angle + 90;
       if (rotatedAngle === 270) {
         rotatedAngle = -90;
       }
       return {
         ...p,
-        angle: rotatedAngle
+        angle: rotatedAngle,
       };
     });
 
@@ -145,35 +147,35 @@ const actions = {
 
   editDocument: ({ rootState, dispatch }, editedDocument) => {
     dispatch("document/startRecalculatingAnnotations", null, {
-      root: true
+      root: true,
     });
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       HTTP.post(
         `/documents/${rootState.document.documentId}/postprocess/`,
         editedDocument
       )
-        .then(async response => {
+        .then(async (response) => {
           if (response && response.status === 200) {
             const newDocument = response.data[0];
             const newId = newDocument.id;
 
             await dispatch("document/setDocId", newId, {
-              root: true
+              root: true,
             });
             dispatch("document/pollDocumentEndpoint", null, {
-              root: true
+              root: true,
             });
-            resolve(true);
+            resolve(null);
           } else {
-            resolve(false);
+            resolve(response);
           }
         })
-        .catch(error => {
-          resolve(false);
+        .catch((error) => {
+          resolve(error.response);
           console.log(error);
         });
     });
-  }
+  },
 };
 
 const mutations = {
@@ -197,12 +199,12 @@ const mutations = {
   },
   ADD_SELECTED_PAGE: (state, selectedPage) => {
     state.selectedPages.push(selectedPage);
-  }
+  },
 };
 
 export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
 };

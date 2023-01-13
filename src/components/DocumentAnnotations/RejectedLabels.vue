@@ -13,14 +13,14 @@
           closable
           aria-close-label="Close tag"
           :class="[
-            isLoading && closedTag === missingAnnotation.id && 'loading-active'
+            isLoading && closedTag === missingAnnotation.id && 'loading-active',
           ]"
           @close="removeRejectedLabel(missingAnnotation.id)"
         >
           <span
             :class="[
               'label-name',
-              isLoading && closedTag === missingAnnotation.id && 'loading'
+              isLoading && closedTag === missingAnnotation.id && 'loading',
             ]"
           >
             {{ getLabelName(missingAnnotation.label) }}
@@ -42,19 +42,22 @@ import ActionButtons from "./ActionButtons.vue";
 
 export default {
   name: "RejectedLabels",
+  components: { ActionButtons },
   props: {
     missingAnnotations: {
-      type: Array
-    }
+      default: null,
+      type: Array,
+    },
   },
+
   data() {
     return {
       isLoading: false,
-      closedTag: null
+      closedTag: null,
     };
   },
   computed: {
-    ...mapState("document", ["labels"])
+    ...mapState("document", ["labels"]),
   },
   methods: {
     removeRejectedLabel(id) {
@@ -63,13 +66,14 @@ export default {
 
       this.$store
         .dispatch("document/deleteMissingAnnotation", id)
-        .then(response => {
-          if (!response) {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("ann_exists")
-            );
-          }
+        .then((response) => {
+          if (!response) return;
+
+          this.$store.dispatch("document/createErrorMessage", {
+            response,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
         })
         .finally(() => {
           this.isLoading = false;
@@ -78,13 +82,12 @@ export default {
     },
     getLabelName(label) {
       if (!this.labels) return;
-      const found = this.labels.find(l => l.id === label);
+      const found = this.labels.find((l) => l.id === label);
       if (found) {
         return found.name;
       }
-    }
+    },
   },
-  components: { ActionButtons }
 };
 </script>
 

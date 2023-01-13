@@ -1,18 +1,18 @@
 <template>
   <b-message>
-    <div class="message-container">
+    <div v-if="serverError" class="message-container">
+      <span class="server-error">
+        {{ errorMessage }}
+        <span @click="handleGetSupport" class="contact-support">
+          {{ $t("get_support") }} <b-icon icon="arrow-right" size="is-small"
+        /></span>
+      </span>
+    </div>
+    <div v-else class="message-container">
       {{ errorMessage }}
     </div>
-    <div
-      class="btn-container"
-      type="button"
-      @click="handleErrorClose"
-    >
-      <b-icon
-        icon="xmark"
-        class="close-btn error-icon"
-        size="is-small"
-      />
+    <div class="btn-container" type="button" @click="handleErrorClose">
+      <b-icon icon="xmark" class="close-btn error-icon" size="is-small" />
     </div>
   </b-message>
 </template>
@@ -22,14 +22,18 @@ import { mapState } from "vuex";
 
 export default {
   name: "ErrorMessage",
+  computed: {
+    ...mapState("document", ["errorMessage", "serverError"]),
+  },
   methods: {
+    handleGetSupport() {
+      const error = "Server error";
+      this.$store.dispatch("document/contactSupport", error);
+    },
     handleErrorClose() {
       this.$store.dispatch("document/setErrorMessage", null);
-    }
+    },
   },
-  computed: {
-    ...mapState("document", ["errorMessage"])
-  }
 };
 </script>
 
