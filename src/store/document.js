@@ -1,6 +1,5 @@
 import myImports from "../api";
 import sleep from "../utils/utils";
-import i18n from "../i18n";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
@@ -831,25 +830,14 @@ const actions = {
       });
   },
 
-  createErrorMessage: ({ dispatch }, { response, typeOfMessage = null }) => {
-    if (!response) return;
-
+  createErrorMessage: (
+    { dispatch },
+    { response, serverErrorMessage, defaultErrorMessage }
+  ) => {
     let responseAsString;
-    let message;
 
     if (response.status) {
       responseAsString = response.status.toString();
-    }
-
-    switch (typeOfMessage) {
-      case "review":
-        message = i18n.t("review_error");
-        break;
-      case "creating annotation":
-        message = i18n.t("error_creating_annotation");
-        break;
-      default:
-        message = i18n.t("edit_error");
     }
 
     // check type of error
@@ -859,11 +847,11 @@ const actions = {
       });
     } else if (responseAsString.startsWith("5")) {
       dispatch("setErrorMessage", {
-        message: i18n.t("server_error"),
+        message: serverErrorMessage,
       });
     } else {
       dispatch("setErrorMessage", {
-        message: message,
+        message: defaultErrorMessage,
       });
     }
   },

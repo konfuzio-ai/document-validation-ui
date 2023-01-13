@@ -73,7 +73,11 @@ export default {
           if (response === 200) {
             this.currentStatus = this.statusList[index];
           } else {
-            this.$store.dispatch("document/createErrorMessage", response, null);
+            this.$store.dispatch("document/createErrorMessage", {
+              response,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
           }
         });
     },

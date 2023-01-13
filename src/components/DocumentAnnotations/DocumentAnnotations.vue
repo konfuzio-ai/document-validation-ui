@@ -442,7 +442,8 @@ export default {
 
           this.$store.dispatch("document/createErrorMessage", {
             response,
-            typeOfMessage: null,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
           });
           this.jumpToNextAnnotation = false;
         })
@@ -493,7 +494,8 @@ export default {
 
             this.$store.dispatch("document/createErrorMessage", {
               response,
-              typeOfMessage: null,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
             });
           });
       }

@@ -66,7 +66,8 @@ export default {
 
           this.$store.dispatch("document/createErrorMessage", {
             response,
-            typeOfMessage: "review",
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("review_error"),
           });
         })
         .finally(() => {

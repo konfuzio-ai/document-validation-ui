@@ -225,7 +225,8 @@ export default {
           } else {
             this.$store.dispatch("document/createErrorMessage", {
               response,
-              typeOfMessage: "creating annotation",
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("error_creating_annotation"),
             });
           }
         })

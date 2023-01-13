@@ -470,7 +470,8 @@ export default {
 
           this.$store.dispatch("document/createErrorMessage", {
             response,
-            typeOfMessage: null,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
           });
         })
         .finally(() => {
@@ -532,7 +533,8 @@ export default {
 
           this.$store.dispatch("document/createErrorMessage", {
             response,
-            typeOfMessage: null,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
           });
         })
         .finally(() => {
