@@ -19,11 +19,15 @@
       justify-content: center;
 
       .img-thumbnail {
-        outline: 1px solid $grey-detail;
+        border: 1px solid $grey-detail;
         border-radius: 4px;
 
         &.selected {
-          outline: 2px solid $lighter-green;
+          border: 2px solid $lighter-green;
+        }
+
+        img {
+          border-radius: 4px;
         }
       }
     }
@@ -33,6 +37,5 @@
       font-size: 12px;
       margin-top: 4px;
     }
-
   }
 }

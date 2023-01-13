@@ -1,10 +1,6 @@
 <template>
   <div style="display: flex">
-    <img
-      v-show="loaded"
-      ref="imgTag"
-      :height="height"
-    >
+    <img v-show="loaded" ref="imgTag" :height="height" />
     <slot v-if="!loaded" />
   </div>
 </template>
@@ -16,24 +12,24 @@ export default {
   name: "ServerImage",
   props: {
     imageUrl: {
-      required: true
+      required: true,
     },
     height: {
-      default: null
+      default: null,
     },
     width: {
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
-      loaded: false
+      loaded: false,
     };
   },
   watch: {
     imageUrl() {
       this.loadImage();
-    }
+    },
   },
   mounted() {
     this.loadImage();
@@ -42,10 +38,10 @@ export default {
     loadImage() {
       if (!this.imageUrl) return;
       return api.IMG_REQUEST.get(this.imageUrl)
-        .then(response => {
+        .then((response) => {
           return response.data;
         })
-        .then(myBlob => {
+        .then((myBlob) => {
           this.$refs.imgTag.src = URL.createObjectURL(myBlob);
           if (this.height) {
             this.$refs.imgTag.style.height = this.height;
@@ -55,7 +51,13 @@ export default {
           }
           this.loaded = true;
         });
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style
+  scoped
+  lang="scss"
+  src="../../assets/scss/document_thumbnails.scss"
+></style>
