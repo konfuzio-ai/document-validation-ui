@@ -29,11 +29,16 @@
             >
               <div
                 :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
-                :style="{
-                  transform: 'rotate(' + getRotation(page.pages[0].id) + 'deg)',
-                }"
               >
-                <ServerImage ref="image" :image-url="getImageUrl(page)" />
+                <ServerImage
+                  :style="{
+                    transform:
+                      'rotate(' + getRotation(page.pages[0].id) + 'deg)',
+                  }"
+                  ref="image"
+                  :image-url="getImageUrl(page)"
+                  class="page-thumbnail"
+                />
                 <div class="icon-container">
                   <div class="action-icon">
                     <EyeIcon />
