@@ -1,9 +1,6 @@
 <template>
   <div class="split-overview">
-    <div
-      class="back-section"
-      @click="handleBackButton"
-    >
+    <div class="back-section" @click="handleBackButton">
       <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
@@ -32,15 +29,11 @@
             >
               <div
                 :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
+                :style="{
+                  transform: 'rotate(' + getRotation(page.pages[0].id) + 'deg)',
+                }"
               >
-                <ServerImage
-                  ref="image"
-                  :image-url="getImageUrl(page)"
-                  :style="{
-                    transform:
-                      'rotate(' + getRotation(page.pages[0].id) + 'deg)',
-                  }"
-                />
+                <ServerImage ref="image" :image-url="getImageUrl(page)" />
                 <div class="icon-container">
                   <div class="action-icon">
                     <EyeIcon />
@@ -59,7 +52,7 @@
               @input="handleInput"
               @paste="handlePaste"
               @blur="handleChanges(page)"
-            >
+            />
             <div class="file-extension-container">
               <span>{{ `.${fileExtension}` }}</span>
             </div>
