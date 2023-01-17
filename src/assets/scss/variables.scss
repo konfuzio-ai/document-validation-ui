@@ -556,6 +556,12 @@ button {
   }
 }
 
+.button {
+  &.rotate-button[disabled] {
+    border: 1px solid $detail;
+  }
+}
+
 .dropdown {
   &.split-mode {
     .dropdown-trigger {

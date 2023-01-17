@@ -309,7 +309,7 @@
         .document-details {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 20px;
           padding-bottom: 40px;
 
           .overview-thumbnails {
@@ -327,12 +327,17 @@
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  border: $component-border;
-                  border-radius: 2px;
+
+                  .page-thumbnail {
+                    border: $component-border;
+                    border-radius: 2px;
+                  }
 
                   &.page-stack {
-                    box-shadow: 2px 2px $white, 3px 3px $detail, 5px 5px $white,
-                      6px 6px $detail;
+                    .page-thumbnail {
+                      box-shadow: 2px 2px $white, 3px 3px $detail,
+                        5px 5px $white, 6px 6px $detail;
+                    }
                   }
                 }
               }
