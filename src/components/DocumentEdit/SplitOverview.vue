@@ -31,11 +31,11 @@
                 :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
               >
                 <ServerImage
+                  ref="image"
                   :style="{
                     transform:
                       'rotate(' + getRotation(page.pages[0].id) + 'deg)',
                   }"
-                  ref="image"
                   :image-url="getImageUrl(page)"
                   class="page-thumbnail"
                 />
