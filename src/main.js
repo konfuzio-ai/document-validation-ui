@@ -17,7 +17,6 @@ import {
   faAngleDown,
   faSpinner,
   faXmark,
-  faSpinner,
   faEllipsisVertical,
   faCircleInfo,
   faArrowRotateLeft,
