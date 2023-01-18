@@ -335,7 +335,6 @@ export default {
     },
 
     onMouseDown(event) {
-      console.log("event", event.target.name());
       this.closePopups();
       // check if element and delegate to it
       if (

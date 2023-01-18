@@ -3,7 +3,7 @@
     <div v-if="serverError" class="message-container">
       <span class="server-error">
         {{ errorMessage }}
-        <span @click="handleGetSupport" class="contact-support">
+        <span class="contact-support" @click="handleGetSupport">
           {{ $t("get_support") }} <b-icon icon="arrow-right" size="is-small"
         /></span>
       </span>
