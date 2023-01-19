@@ -98,5 +98,6 @@
   "enter_key": "Accept or Save",
   "delete_key": "Reject",
   "decline": "Decline",
-  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support"
+  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support",
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels."
 }

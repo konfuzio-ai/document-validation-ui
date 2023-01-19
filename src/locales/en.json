@@ -105,5 +105,6 @@
   "delete_key": "Reject",
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
-  "get_support": "Get Support"
+  "get_support": "Get Support",
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set."
 }

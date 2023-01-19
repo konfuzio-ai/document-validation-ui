@@ -99,5 +99,6 @@
   "enter_key": "Aceptar o Guardar",
   "delete_key": "Rechazar",
   "decline": "Declinar",
-  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support"
+  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support",
+  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado."
 }
