@@ -110,5 +110,6 @@
   "new_multi_ann_title": "Create multiple annotations",
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
-  "error_creating_multi_ann": "Not all annotation sets were created successfully."
+  "error_creating_multi_ann": "Not all annotation sets were created successfully.",
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set."
 }
