@@ -621,10 +621,12 @@ button {
       line-height: 18px;
       th {
         .th-wrap {
+          text-transform: none;
           .icon {
             margin: 0;
           }
         }
+        background-color: #7b61ff;
         color: white;
         vertical-align: middle;
         &[draggable="true"] {
