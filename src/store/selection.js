@@ -12,7 +12,6 @@ const state = {
   },
   isSelecting: false,
   spanSelection: null,
-  tableSelection: null,
   elementSelected: null, // selected element id
 };
 
@@ -22,9 +21,6 @@ const getters = {
   },
   isSelecting: (state) => {
     return state.isSelecting;
-  },
-  isEditingTable: (state) => {
-    return state.tableSelection !== null;
   },
   isSelectionValid: (state) => {
     /**
@@ -54,7 +50,6 @@ const actions = {
     commit("ELEMENT_SELECTED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
-    commit("SET_TABLE_SELECTION", null);
   },
 
   startSelection: ({ commit }, { pageNumber, start }) => {
@@ -99,11 +94,6 @@ const actions = {
   setSelection: ({ commit }, { span, selection }) => {
     commit("SET_SELECTION", selection);
     commit("SET_SPAN_SELECTION", span);
-  },
-
-  setTableSelection: ({ commit }, tableSelection) => {
-    commit("RESET_SELECTION");
-    commit("SET_TABLE_SELECTION", tableSelection);
   },
 
   getTextFromBboxes: ({ commit, rootState }, box) => {
@@ -169,9 +159,6 @@ const mutations = {
   },
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
-  },
-  SET_TABLE_SELECTION: (state, table) => {
-    state.tableSelection = table;
   },
   SET_SELECTION: (state, selection) => {
     state.isSelecting = true;

@@ -10,11 +10,11 @@
       @close="closePopups"
     />
     <MultiAnnotationTablePopup
-      v-if="!publicView && tableSelection"
-      :table-position="tableSelection.position"
+      v-if="!publicView && newMultiAnnotationSetTable"
+      :table-position="newMultiAnnotationSetTable.position"
       :page-size="scaledViewport"
-      :label-set="tableSelection.labelSet"
-      :grouped-entities="tableSelection.entities"
+      :label-set="newMultiAnnotationSetTable.labelSet"
+      :grouped-entities="newMultiAnnotationSetTable.entities"
       @close="closePopups"
     />
 
@@ -104,11 +104,12 @@
           :keep-ratio="false"
         />
       </v-layer>
-      <v-layer v-else-if="selection && isSelectionValid && !tableSelection">
+      <v-layer v-else-if="selection && isSelectionValid">
         <multi-ann-selection
           :page="page"
           @buttonEnter="onElementEnter"
           @buttonLeave="onElementLeave"
+          @finished="handleMultiAnnSelectionFinished"
         />
       </v-layer>
     </v-stage>
@@ -252,7 +253,6 @@ export default {
       "isSelecting",
       "selectionFromBbox",
       "spanSelection",
-      "tableSelection",
     ]),
     ...mapState("display", ["scale", "optimalScale"]),
     ...mapState("document", [
@@ -270,11 +270,7 @@ export default {
       "bboxToRect",
       "clientToBbox",
     ]),
-    ...mapGetters("selection", [
-      "isSelectionValid",
-      "isElementSelected",
-      "isEditingTable",
-    ]),
+    ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "isDocumentReadyToBeReviewed",
@@ -407,7 +403,6 @@ export default {
     },
 
     handleClickedEntity(entity) {
-      this.$store.dispatch("selection/setTableSelection", null);
       if (!entity) return;
       // Check if we are creating a new Annotation
       // or if we are ediitng an existing or empty one
@@ -451,6 +446,7 @@ export default {
     },
 
     handleMultiAnnSelectionFinished(newMultiAnnotationSetTable) {
+      console.log(newMultiAnnotationSetTable);
       this.newMultiAnnotationSetTable = newMultiAnnotationSetTable;
     },
 
@@ -575,9 +571,7 @@ export default {
     },
     closePopups() {
       this.newAnnotation = [];
-      if (this.isEditingTable) {
-        this.$store.dispatch("selection/disableSelection");
-      }
+      this.newMultiAnnotationSetTable = null;
     },
   },
 };

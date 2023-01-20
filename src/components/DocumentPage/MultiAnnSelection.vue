@@ -152,7 +152,8 @@ export default {
         },
         entities: this.entities,
       };
-      this.$store.dispatch("selection/setTableSelection", tableSelection);
+      this.$store.dispatch("selection/disableSelection");
+      this.$emit("finished", tableSelection);
     },
 
     onButtonEnter() {

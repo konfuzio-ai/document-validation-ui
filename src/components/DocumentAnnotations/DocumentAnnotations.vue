@@ -1,5 +1,5 @@
 <template>
-  <div :class="['labels-sidebar', isEditingTable ? 'disabled' : '']">
+  <div class="labels-sidebar">
     <div class="labels-top-bar">
       <AnnotationsTopBar
         v-if="!publicView && annotationSets && annotationSets.length > 0"
@@ -132,7 +132,6 @@ export default {
       "labels",
       "selectedDocument",
     ]),
-    ...mapGetters("selection", ["isEditingTable"]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
     isAnnotationBeingEdited() {
