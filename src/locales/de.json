@@ -99,6 +99,7 @@
   "delete_key": "Reject",
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or Get Support",
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels.",
   "new_ann_set_title": "Neues Annotations-Set",
   "new_ann_set_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus. Das neue Annotations-Set enthält dieselben Beschriftungen.",
   "select_label_set": "Wählen Sie das Label-Set-Modell aus",
@@ -108,5 +109,7 @@
   "new_multi_ann_title": "Erstellen Sie mehrere Annotationen",
   "new_multi_ann_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus und deaktivieren Sie dann die Labels, die in diesem Dokument nicht vorhanden sind.",
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
+  "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels.",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt."
 }
