@@ -81,11 +81,11 @@ export default {
     setTimeout(() => {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
-      this.$refs.table.$el.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
+      // this.$refs.table.$el.scrollIntoView({
+      //   behavior: "smooth",
+      //   block: "nearest",
+      //   inline: "center",
+      // });
     }, 200);
 
     // show action bar
