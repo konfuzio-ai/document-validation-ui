@@ -146,7 +146,7 @@ export default {
       "documentId",
       "showActionError",
     ]),
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
@@ -337,13 +337,19 @@ export default {
 
         // Check if an entity was selected instead of bbox
         if (this.selectedEntities && this.selectedEntities.length > 0) {
-          return this.selectionEnabled === this.annotationId();
+          return this.elementSelected === this.annotationId();
         } else {
-          return (
-            this.selectionEnabled === this.annotationId() &&
-            this.spanSelection &&
-            Array.isArray(this.spanSelection)
-          );
+          if (!this.isAnnotationInEditMode(this.annotationId())) return;
+          // Check if an entity was selected instead of bbox
+          if (this.selectedEntities && this.selectedEntities.length > 0) {
+            return this.elementSelected === this.annotationId();
+          } else {
+            return (
+              this.elementSelected === this.annotationId() &&
+              this.spanSelection &&
+              Array.isArray(this.spanSelection)
+            );
+          }
         }
       }
     },
@@ -550,7 +556,7 @@ export default {
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
-      if (this.selectionEnabled) {
+      if (this.elementSelected) {
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/setSelectedEntities", null);
       }
