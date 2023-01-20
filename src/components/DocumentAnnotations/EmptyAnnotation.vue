@@ -14,7 +14,7 @@
         isAnnotationBeingEdited() && 'clicked',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
-      @keypress.enter="saveEmptyAnnotation"
+      @keypress.enter="saveEmptyAnnotationChanges"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
     >
@@ -127,11 +127,6 @@ export default {
         this.$store.dispatch("selection/disableSelection");
       }
     },
-    saveChanges(newValue) {
-      if (newValue && this.isAnnotationInEditMode(this.emptyAnnotationId())) {
-        this.saveEmptyAnnotation();
-      }
-    },
   },
   methods: {
     emptyAnnotationId() {
@@ -203,6 +198,16 @@ export default {
           !this.isLoading
         );
       }
+    },
+    saveEmptyAnnotationChanges(event) {
+      if (this.publicView) return;
+
+      if (event) {
+        event.preventDefault();
+      }
+
+      // API call handled in parent component - AnnotationRow
+      this.$emit("save-empty-annotation-changes");
     },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;

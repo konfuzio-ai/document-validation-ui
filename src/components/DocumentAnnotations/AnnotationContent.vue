@@ -146,11 +146,6 @@ export default {
         this.saveAnnotationChanges();
       }
     },
-    saveChanges(newValue) {
-      if (newValue) {
-        this.saveAnnotationChanges();
-      }
-    },
   },
   methods: {
     setText(text) {

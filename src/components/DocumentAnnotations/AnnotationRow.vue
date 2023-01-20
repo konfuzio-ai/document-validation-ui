@@ -68,6 +68,7 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              @save-empty-annotation-changes="saveEmptyAnnotationChanges"
             />
           </div>
           <EmptyAnnotation
@@ -76,6 +77,7 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
+            @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
       </div>
