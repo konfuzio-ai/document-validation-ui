@@ -446,7 +446,6 @@ export default {
     },
 
     handleMultiAnnSelectionFinished(newMultiAnnotationSetTable) {
-      console.log(newMultiAnnotationSetTable);
       this.newMultiAnnotationSetTable = newMultiAnnotationSetTable;
     },
 

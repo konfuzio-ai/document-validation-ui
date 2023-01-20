@@ -3,10 +3,7 @@
     <div
       ref="scrollingDocument"
       v-scroll.immediate="updateScrollBounds"
-      :class="[
-        'scrolling-document',
-        documentActionBar !== null ? 'has-bottom-padding' : '',
-      ]"
+      class="scrolling-document"
     >
       <div
         v-if="
