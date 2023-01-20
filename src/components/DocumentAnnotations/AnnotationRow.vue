@@ -144,6 +144,7 @@ export default {
       "newAcceptedAnnotations",
       "rejectedMissingAnnotations",
       "documentId",
+      "showActionError",
     ]),
     ...mapState("selection", ["spanSelection", "selectionEnabled"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
@@ -222,6 +223,11 @@ export default {
       if (newValue) {
         this.enableLoading();
       } else {
+        this.isLoading = false;
+      }
+    },
+    showActionError(newValue) {
+      if (newValue) {
         this.isLoading = false;
       }
     },

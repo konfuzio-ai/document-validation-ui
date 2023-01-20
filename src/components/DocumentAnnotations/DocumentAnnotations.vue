@@ -318,6 +318,8 @@ export default {
         // Check for ENTER or DELETE
         // Accept annotation
         if (event.key === "Enter") {
+          if (!this.annotations || !this.editAnnotation) return;
+
           const currentAnn = this.annotations.find(
             (a) => a.id === this.editAnnotation.id
           );
