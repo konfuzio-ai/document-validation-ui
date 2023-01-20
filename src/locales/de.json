@@ -110,5 +110,6 @@
   "new_multi_ann_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus und deaktivieren Sie dann die Labels, die in diesem Dokument nicht vorhanden sind.",
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
-  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels."
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels.",
+  "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt."
 }

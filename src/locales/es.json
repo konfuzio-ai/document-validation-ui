@@ -109,5 +109,6 @@
   "continue": "Continuar",
   "drag_drop_columns_multi_ann": "Arrastre y suelte las columnas para ordenar las etiquetas",
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
-  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado."
+  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
+  "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa."
 }

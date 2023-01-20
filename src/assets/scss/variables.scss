@@ -326,6 +326,17 @@ button {
   }
 }
 
+.b-checkbox.checkbox {
+  &:hover input[type="checkbox"]:not(:disabled) + .check {
+    border-color: $primary !important;
+  }
+
+  input[type="checkbox"]:checked + .check {
+    border-color: $primary !important;
+    background-color: $primary;
+  }
+}
+
 .modal {
   z-index: 999;
 
