@@ -68,6 +68,7 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              @save-empty-annotation-changes="saveEmptyAnnotationChanges"
             />
           </div>
           <EmptyAnnotation
@@ -76,6 +77,7 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
+            @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
       </div>
@@ -144,8 +146,9 @@ export default {
       "newAcceptedAnnotations",
       "rejectedMissingAnnotations",
       "documentId",
+      "showActionError",
     ]),
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
@@ -222,6 +225,11 @@ export default {
       if (newValue) {
         this.enableLoading();
       } else {
+        this.isLoading = false;
+      }
+    },
+    showActionError(newValue) {
+      if (newValue) {
         this.isLoading = false;
       }
     },
@@ -331,13 +339,19 @@ export default {
 
         // Check if an entity was selected instead of bbox
         if (this.selectedEntities && this.selectedEntities.length > 0) {
-          return this.selectionEnabled === this.annotationId();
+          return this.elementSelected === this.annotationId();
         } else {
-          return (
-            this.selectionEnabled === this.annotationId() &&
-            this.spanSelection &&
-            Array.isArray(this.spanSelection)
-          );
+          if (!this.isAnnotationInEditMode(this.annotationId())) return;
+          // Check if an entity was selected instead of bbox
+          if (this.selectedEntities && this.selectedEntities.length > 0) {
+            return this.elementSelected === this.annotationId();
+          } else {
+            return (
+              this.elementSelected === this.annotationId() &&
+              this.spanSelection &&
+              Array.isArray(this.spanSelection)
+            );
+          }
         }
       }
     },
@@ -544,7 +558,7 @@ export default {
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
-      if (this.selectionEnabled) {
+      if (this.elementSelected) {
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/setSelectedEntities", null);
       }

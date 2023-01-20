@@ -5,11 +5,7 @@
         :height="'22px'"
         :image-url="`${selectedDocument.thumbnail_url}?${selectedDocument.downloaded_at}`"
       >
-        <b-skeleton
-          width="15px"
-          height="22px"
-          :rounded="false"
-        />
+        <b-skeleton width="15px" height="22px" :rounded="false" />
       </ServerImage>
     </div>
     <span class="file-name-section">
@@ -20,7 +16,8 @@
         @paste="handlePaste"
         @keydown.enter="handleSave"
         @blur="handleSave"
-      >{{ textContent }}</span>
+        >{{ textContent }}</span
+      >
     </span>
     <div
       v-if="
@@ -38,40 +35,19 @@
     >
       {{ $t("save") }}
     </div>
-    <div
-      v-if="saving"
-      class="message-container"
-    >
+    <div v-if="saving" class="message-container">
       <span class="loading-container">
-        <b-notification
-          :closable="false"
-          class="loading-background"
-        >
-          <b-loading
-            v-model="saving"
-            :is-full-page="isFullPage"
-          >
-            <b-icon
-              icon="spinner"
-              class="fa-spin loading-icon-size spinner"
-            />
+        <b-notification :closable="false" class="loading-background">
+          <b-loading v-model="saving" :is-full-page="isFullPage">
+            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
           </b-loading>
         </b-notification>
       </span>
       <span>{{ $t("autosaving") }}</span>
     </div>
-    <div
-      v-if="changed"
-      class="message-container"
-    >
-      <span
-        v-if="saved"
-        class="cloud-icon"
-      ><FileNameSaved /></span>
-      <span
-        v-else
-        class="cloud-icon"
-      ><FileNameNotSaved /></span>
+    <div v-if="changed" class="message-container">
+      <span v-if="saved" class="cloud-icon"><FileNameSaved /></span>
+      <span v-else class="cloud-icon"><FileNameNotSaved /></span>
       <span>{{ saved ? $t("saved") : $t("not_saved") }}</span>
     </div>
   </div>
@@ -88,12 +64,12 @@ export default {
   components: {
     ServerImage,
     FileNameSaved,
-    FileNameNotSaved
+    FileNameNotSaved,
   },
   props: {
     dataFileName: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
@@ -106,14 +82,14 @@ export default {
       saving: false,
       isFullPage: false,
       changed: false,
-      saved: false
+      saved: false,
     };
   },
   computed: {
     ...mapState("document", [
       "selectedDocument",
       "publicView",
-      "recalculatingAnnotations"
+      "recalculatingAnnotations",
     ]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
@@ -127,7 +103,7 @@ export default {
       } else {
         return this.shortFilenameIfNeeded(this.dataFileName);
       }
-    }
+    },
   },
   updated() {
     const contentEditable = document.querySelector(".document-name");
@@ -209,7 +185,7 @@ export default {
       event.target.textContent = this.fileName;
 
       const updatedFileName = {
-        data_file_name: `${this.fileName}.${this.fileExtension}`
+        data_file_name: `${this.fileName}.${this.fileExtension}`,
       };
 
       this.showSaveBtn = false;
@@ -217,9 +193,9 @@ export default {
 
       this.$store
         .dispatch("document/updateDocument", updatedFileName)
-        .then(response => {
+        .then((response) => {
           // Check if the response is successful or not
-          if (response === 200) {
+          if (!response) {
             // if successful, set the old name to be the new name
             this.changed = true;
             this.oldFileName = this.fileName;
@@ -239,8 +215,8 @@ export default {
       if (contentNotEditable) {
         contentNotEditable.blur();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
