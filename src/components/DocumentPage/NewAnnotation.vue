@@ -205,6 +205,7 @@ export default {
   },
   methods: {
     close() {
+      this.$store.dispatch("document/setSelectedEntities", null);
       this.$emit("close");
     },
     save() {

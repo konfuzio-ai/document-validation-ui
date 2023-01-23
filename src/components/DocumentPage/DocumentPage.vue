@@ -368,6 +368,7 @@ export default {
       if (!entity) return;
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
+      this.$store.dispatch("selection/disableSelection");
       const entityToAdd = {
         entity,
         content: entity.original.offset_string,
@@ -438,15 +439,23 @@ export default {
      * Builds the konva config object for the entity.
      */
     entityRect(entity) {
+      let entityIsSelected = false;
+      if (this.newAnnotation) {
+        entityIsSelected = this.newAnnotation.find((selectedEntity) => {
+          return (
+            selectedEntity.entity.original.offset_string ===
+              entity.original.offset_string &&
+            selectedEntity.entity.original.x0 === entity.original.x0 &&
+            selectedEntity.entity.original.y0 === entity.original.y0
+          );
+        });
+      }
+
       return {
         stroke: "#ccc",
         strokeWidth: 1,
         dash: [5, 2],
-        fill:
-          (this.newAnnotation && this.newAnnotation.entity === entity) ||
-          (this.selectedEntity && this.selectedEntity === entity.original)
-            ? "#67E9B7"
-            : "transparent",
+        fill: entityIsSelected ? "#67E9B7" : "transparent",
         globalCompositeOperation: "multiply",
         transformsEnabled: "position",
         hitStrokeWidth: 0,
