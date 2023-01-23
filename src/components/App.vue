@@ -13,26 +13,26 @@ export default {
   name: "App",
   components: {
     DocumentsList,
-    DocumentDashboard
+    DocumentDashboard,
   },
   props: {
     document: {
       type: String,
-      required: false
+      required: false,
     },
     project: {
       type: String,
-      required: false
+      required: false,
     },
     user_token: {
       type: String,
-      required: false
+      required: false,
     },
     full_mode: {
       type: String,
-      required: false
+      required: false,
     },
-    locale: { type: String, required: false }
+    locale: { type: String, required: false },
   },
   computed: {
     documentId() {
@@ -72,7 +72,7 @@ export default {
       } else {
         return true;
       }
-    }
+    },
   },
   created() {
     // locale config
@@ -87,11 +87,25 @@ export default {
     Promise.all([
       this.$store.dispatch("project/setProjectId", this.projectId),
       this.$store.dispatch("document/setDocId", this.documentId),
-      this.$store.dispatch("document/setPublicView", this.isPublicView)
+      this.$store.dispatch("document/setPublicView", this.isPublicView),
     ]).finally(() => {
       this.$store.dispatch("document/fetchDocument");
     });
-  }
+
+    // Add observer for class added to HTML tag when Buefy modals are mounted
+    const htmlTag = document.documentElement;
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.attributeName === "class") {
+          const classToRemove = "is-clipped";
+          if (mutation.target.classList.contains(classToRemove)) {
+            htmlTag.classList.remove(classToRemove);
+          }
+        }
+      });
+    });
+    observer.observe(htmlTag, { attributes: true });
+  },
 };
 </script>
 
