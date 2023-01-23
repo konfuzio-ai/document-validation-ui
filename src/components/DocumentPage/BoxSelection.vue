@@ -75,7 +75,10 @@ export default {
 
       const transformerNode = transformer.getNode();
       const stage = transformerNode.getStage();
-      const selectedNode = stage.findOne(".boxSelection");
+      let selectedNode;
+      if (stage) {
+        selectedNode = stage.findOne(".boxSelection");
+      }
 
       // do nothing if selected node is already attached
       if (selectedNode === transformerNode.node()) {

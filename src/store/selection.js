@@ -44,6 +44,8 @@ const getters = {
 
 const actions = {
   selectElement: ({ commit }, value) => {
+    commit("RESET_SELECTION");
+    commit("SET_SPAN_SELECTION", null);
     commit("ELEMENT_SELECTED", value);
   },
 
