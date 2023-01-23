@@ -193,6 +193,7 @@ export default {
               y: y + height,
             },
             pageNumber: page.number,
+            custom: false,
           };
 
           this.$store.dispatch("selection/setSelection", {

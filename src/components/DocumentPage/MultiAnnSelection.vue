@@ -173,7 +173,7 @@ export default {
      */
     onChange(event) {
       this.isEditing = false;
-      // TODO: confirm use of this
+
       const { x, y, scaleX, scaleY, skewX, width, height } = event.target.attrs;
       const realWidth = width * scaleX;
       const realHeight = height * scaleY;

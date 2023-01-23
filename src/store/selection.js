@@ -9,6 +9,7 @@ const state = {
     pageNumber: null,
     start: null,
     end: null,
+    custom: false, // if the box was created by user in document or it comes from an annotation
   },
   isSelecting: false,
   spanSelection: null,
@@ -136,9 +137,11 @@ const mutations = {
     state.selection.end = null;
     state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
+    state.selection.custom = true;
     state.selection.start = start;
   },
   MOVE_SELECTION: (state, points) => {
+    state.isSelecting = true;
     const { start, end } = points;
     if (start) {
       state.selection.start = start;
@@ -161,7 +164,6 @@ const mutations = {
     state.spanSelection = span;
   },
   SET_SELECTION: (state, selection) => {
-    state.isSelecting = true;
     state.selection = selection;
   },
 };
