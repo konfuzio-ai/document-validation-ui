@@ -92,17 +92,8 @@
           />
         </v-label>
       </v-layer>
-      <v-layer v-if="selection && isSelectionValid && isElementSelected">
-        <box-selection @changed="getBoxSelectionContent" />
-        <v-transformer
-          ref="transformer"
-          :anchor-size="6"
-          anchor-stroke="#7B61FF"
-          :border-enabled="false"
-          :rotate-enabled="false"
-          :ignore-stroke="true"
-          :keep-ratio="false"
-        />
+      <v-layer v-if="selection && !isSelecting && isElementSelected">
+        <box-selection :page="page" />
       </v-layer>
       <v-layer v-else-if="selection && isSelectionValid">
         <multi-ann-selection
@@ -265,11 +256,7 @@ export default {
       "selectedEntities",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("display", [
-      "visiblePageRange",
-      "bboxToRect",
-      "clientToBbox",
-    ]),
+    ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
     ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
@@ -281,22 +268,6 @@ export default {
     recalculatingAnnotations(newState) {
       if (!newState) {
         this.drawPage(true);
-      }
-    },
-    // wait for the document image to be displayed to enable the selection transformer
-    image(image) {
-      if (image && this.isSelecting) {
-        this.$nextTick(() => {
-          this.updateTransformer();
-        });
-      }
-    },
-
-    isSelecting(value) {
-      if (value) {
-        this.$nextTick(() => {
-          this.updateTransformer();
-        });
       }
     },
     scale() {
@@ -333,20 +304,18 @@ export default {
     onMouseDown(event) {
       this.closePopups();
       // check if element and delegate to it
+
       if (
         event.target.name() === "entity" ||
         event.target.name() === "annotation" ||
         event.target.name() === "multiAnnBoxSelection" ||
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
+        event.target.name() === "boxSelection" ||
+        event.target.name() === "boxTransformer" ||
         (event.target.getParent() &&
           event.target.getParent().className === "Transformer")
       ) {
-        return;
-      }
-      // if we click on a selection box, we should enable the transformer
-      if (event.target.name() === "boxSelection") {
-        this.updateTransformer();
         return;
       }
 
@@ -387,13 +356,6 @@ export default {
         x: position.x,
         y: position.y,
       });
-
-      if (this.isSelectionValid) {
-        this.updateTransformer();
-        if (this.isElementSelected) {
-          this.getBoxSelectionContent();
-        }
-      }
     },
 
     handleClickedAnnotation(annotation) {
@@ -405,7 +367,7 @@ export default {
     handleClickedEntity(entity) {
       if (!entity) return;
       // Check if we are creating a new Annotation
-      // or if we are ediitng an existing or empty one
+      // or if we are editing an existing or empty one
       const entityToAdd = {
         entity,
         content: entity.original.offset_string,
@@ -447,35 +409,6 @@ export default {
 
     handleMultiAnnSelectionFinished(newMultiAnnotationSetTable) {
       this.newMultiAnnotationSetTable = newMultiAnnotationSetTable;
-    },
-
-    updateTransformer() {
-      // here we need to manually attach or detach Transformer node
-      const transformer = this.$refs.transformer;
-
-      // maybe we're out of sync and the transformer is not available, just return
-      if (!transformer) {
-        return;
-      }
-
-      const transformerNode = transformer.getNode();
-      const stage = transformerNode.getStage();
-      const selectedNode = stage.findOne(".boxSelection");
-
-      // do nothing if selected node is already attached
-      if (selectedNode === transformerNode.node()) {
-        return;
-      }
-
-      if (selectedNode) {
-        // attach to another node
-        transformerNode.nodes([selectedNode]);
-      } else {
-        // remove transformer
-        transformerNode.nodes([]);
-      }
-
-      transformerNode.getLayer().batchDraw();
     },
 
     /**
@@ -558,15 +491,6 @@ export default {
         x: rect.x,
         y: rect.y,
       };
-    },
-
-    async getBoxSelectionContent() {
-      const box = this.clientToBbox(
-        this.page,
-        this.selection.start,
-        this.selection.end
-      );
-      this.$store.dispatch("selection/getTextFromBboxes", box);
     },
     closePopups() {
       this.newAnnotation = [];
