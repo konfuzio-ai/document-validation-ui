@@ -341,17 +341,12 @@ export default {
         if (this.selectedEntities && this.selectedEntities.length > 0) {
           return this.elementSelected === this.annotationId();
         } else {
-          if (!this.isAnnotationInEditMode(this.annotationId())) return;
           // Check if an entity was selected instead of bbox
-          if (this.selectedEntities && this.selectedEntities.length > 0) {
-            return this.elementSelected === this.annotationId();
-          } else {
-            return (
-              this.elementSelected === this.annotationId() &&
-              this.spanSelection &&
-              Array.isArray(this.spanSelection)
-            );
-          }
+          return (
+            this.elementSelected === this.annotationId() &&
+            this.spanSelection &&
+            Array.isArray(this.spanSelection)
+          );
         }
       }
     },

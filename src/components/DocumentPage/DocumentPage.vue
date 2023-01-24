@@ -271,11 +271,11 @@ export default {
       }
     },
     scale() {
-      this.closePopups();
+      this.closePopups(true);
     },
     selectedEntities(newValue) {
       if (!newValue) {
-        this.closePopups();
+        this.closePopups(true);
       }
     },
   },
@@ -359,37 +359,41 @@ export default {
     },
 
     handleClickedAnnotation(annotation) {
-      this.closePopups();
+      this.closePopups(true);
       this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
     },
 
     handleClickedEntity(entity) {
       if (!entity) return;
+
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
       this.$store.dispatch("selection/disableSelection");
+
       const entityToAdd = {
         entity,
         content: entity.original.offset_string,
       };
-      let found;
-      if (this.newAnnotation) {
-        found = this.newAnnotation.find(
-          (ann) =>
-            ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
-            ann.content === entityToAdd.content
-        );
-      }
+
+      const found = this.newAnnotation.find(
+        (ann) =>
+          ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
+          ann.content === entityToAdd.content
+      );
+
       if (found) {
-        this.newAnnotation = this.newAnnotation.filter(
-          (ann) =>
-            ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
-            ann.content !== entityToAdd.content
-        );
+        this.newAnnotation = [
+          ...this.newAnnotation.filter(
+            (ann) =>
+              ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
+              ann.content !== entityToAdd.content
+          ),
+        ];
       } else {
         this.newAnnotation.push(entityToAdd);
       }
+
       if (this.newAnnotation.length > 0) {
         this.$store.dispatch(
           "document/setSelectedEntities",
@@ -501,9 +505,11 @@ export default {
         y: rect.y,
       };
     },
-    closePopups() {
-      this.newAnnotation = [];
+    closePopups(closeNewAnnotaton) {
       this.newMultiAnnotationSetTable = null;
+      if (closeNewAnnotaton) {
+        this.newAnnotation = [];
+      }
     },
   },
 };
