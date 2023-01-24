@@ -443,7 +443,7 @@ export default {
           let span;
 
           if (this.selectedEntities && this.selectedEntities.length > 0) {
-            spans[spanIndex] = this.spanFromSelectedEntities;
+            spans = this.spanFromSelectedEntities;
           } else if (this.spanSelection) {
             span = this.createSpan(this.spanSelection, annotationText);
 
@@ -532,7 +532,6 @@ export default {
           revised: true,
         };
       }
-
       this.isLoading = true;
 
       this.$store

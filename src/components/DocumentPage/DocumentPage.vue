@@ -369,8 +369,6 @@ export default {
 
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
-      this.$store.dispatch("selection/disableSelection");
-
       const entityToAdd = {
         entity,
         content: entity.original.offset_string,
