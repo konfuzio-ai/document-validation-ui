@@ -686,14 +686,11 @@ const actions = {
               response.data.is_category_accepted = true;
             }
 
-            const oldFIleName = state.selectedDocument.data_file_name;
-
             commit("SET_SELECTED_DOCUMENT", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
-            if (oldFIleName === response.data.data_file_name) {
-              dispatch("pollDocumentEndpoint");
-            }
+            dispatch("pollDocumentEndpoint");
+
             resolve(true);
           }
         })
