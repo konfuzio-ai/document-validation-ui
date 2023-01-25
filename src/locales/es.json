@@ -99,7 +99,8 @@
   "enter_key": "Aceptar o Guardar",
   "delete_key": "Rechazar",
   "decline": "Declinar",
-  "server_error": "We are currently experiencing a server issue. Please try again later or Get Support",
+  "server_error": "Estamos experimentando problemas con el servidor. Por favor, repita la operación o ",
+  "get_support": "Contacte al Soporte",
   "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
   "new_ann_set_title": "Crear anotaciones múltiples",
   "new_ann_set_description": "Seleccione un modelo de datos de las opciones disponibles, y luego deseleccione las etiquetas que no existen en este documento.",
@@ -108,7 +109,5 @@
   "new": "Nuevo",
   "continue": "Continuar",
   "drag_drop_columns_multi_ann": "Arrastre y suelte las columnas para ordenar las etiquetas",
-  "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
-  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa."
 }

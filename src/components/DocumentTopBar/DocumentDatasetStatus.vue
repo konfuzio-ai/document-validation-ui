@@ -69,16 +69,16 @@ export default {
       this.$store
         .dispatch("document/updateDocument", updatedDatasetStatus)
         .then((response) => {
-          // Check if the response is successfull or not
-          if (response === 200) {
+          if (response) {
             this.currentStatus = this.statusList[index];
-          } else {
-            this.$store.dispatch("document/createErrorMessage", {
-              response,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("edit_error"),
-            });
           }
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
         });
     },
     handleStatus() {

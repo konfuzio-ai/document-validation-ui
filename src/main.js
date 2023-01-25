@@ -25,6 +25,7 @@ import {
   faScissors,
   faRepeat,
   faArrowLeft,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -44,7 +45,8 @@ library.add(
   faArrowRotateRight,
   faScissors,
   faRepeat,
-  faArrowLeft
+  faArrowLeft,
+  faArrowRight
 );
 Vue.component("VueFontawesome", FontAwesomeIcon);
 Vue.component("App", App);
