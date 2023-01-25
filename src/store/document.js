@@ -610,7 +610,7 @@ const actions = {
   },
 
   createAnnotation: ({ commit, getters, dispatch }, annotation) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {
           if (response.status === 201) {
@@ -629,14 +629,11 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
-            resolve(response);
-          } else {
-            resolve(response);
+            resolve(true);
           }
         })
         .catch((error) => {
-          // TODO: Refactor to use reject instead of resolve
-          resolve(null);
+          reject(error.response);
           console.log(error);
         });
     });
@@ -645,46 +642,42 @@ const actions = {
   updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", [annotationId]);
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
         .then((response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
-            resolve(null);
-          } else {
-            resolve(response);
+            resolve(true);
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });
   },
 
   deleteAnnotation: ({ commit, getters }, { annotationId }) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then((response) => {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-            resolve(null);
-          } else {
-            resolve(response);
+            resolve(true);
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });
   },
 
-  updateDocument: ({ commit, state, getters }, updatedDocument) => {
-    return new Promise((resolve) => {
+  updateDocument: ({ commit, state, getters, dispatch }, updatedDocument) => {
+    return new Promise((resolve, reject) => {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then((response) => {
           if (response.status === 200) {
@@ -695,14 +688,14 @@ const actions = {
 
             commit("SET_SELECTED_DOCUMENT", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+
             dispatch("pollDocumentEndpoint");
-            resolve(null);
-          } else {
-            resolve(response);
+
+            resolve(true);
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });
@@ -722,7 +715,7 @@ const actions = {
   },
 
   addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       return HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then((response) => {
           if (response.status === 201) {
@@ -733,7 +726,7 @@ const actions = {
           resolve(response);
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });
@@ -745,9 +738,7 @@ const actions = {
         .then((response) => {
           if (response.status === 204) {
             dispatch("fetchMissingAnnotations");
-            resolve(null);
-          } else {
-            resolve(response);
+            resolve(true);
           }
         })
         .catch((error) => {
@@ -760,7 +751,7 @@ const actions = {
   updateMultipleAnnotations: ({ state, commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations.ids);
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       return HTTP.patch(
         `documents/${state.documentId}/update-annotations/`,
         annotations
@@ -771,14 +762,12 @@ const actions = {
               commit("UPDATE_ANNOTATION", annotation);
             });
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
-            resolve(null);
-          } else {
-            resolve(response);
+            resolve(true);
           }
         })
         .catch((error) => {
           console.log(error);
-          resolve(error.response);
+          reject(error.response);
         });
     });
   },
@@ -842,18 +831,18 @@ const actions = {
 
   createErrorMessage: (
     { commit, dispatch },
-    { response, serverErrorMessage, defaultErrorMessage }
+    { error, serverErrorMessage, defaultErrorMessage }
   ) => {
-    let responseAsString;
+    let errorAsString;
 
-    if (response.status) {
-      responseAsString = response.status.toString();
+    if (error && error.status) {
+      errorAsString = error.status.toString();
     }
 
     // check type of error
-    if (response.data && response.data.length > 0) {
-      dispatch("setErrorMessage", response.data[0]);
-    } else if (responseAsString.startsWith("5")) {
+    if (error.data && error.data.length > 0) {
+      dispatch("setErrorMessage", error.data[0]);
+    } else if (errorAsString.startsWith("5")) {
       dispatch("setErrorMessage", serverErrorMessage);
       commit("SET_SERVER_ERROR", true);
     } else {

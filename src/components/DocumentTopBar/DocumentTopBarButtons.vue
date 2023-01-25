@@ -59,11 +59,9 @@ export default {
         // Send update request to the backend
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
-          .then((response) => {
-            if (!response) return;
-
+          .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
-              response,
+              error,
               serverErrorMessage: this.$t("server_error"),
               defaultErrorMessage: this.$t("edit_error"),
             });

@@ -230,17 +230,12 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (!response) {
-            // TODO: this store call should be done on the store (already there)
-            this.$store.dispatch("document/fetchMissingAnnotations");
-          } else {
-            this.$store.dispatch("document/createErrorMessage", {
-              response,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("error_creating_annotation"),
-            });
-          }
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_creating_annotation"),
+          });
         })
         .finally(() => {
           this.close();

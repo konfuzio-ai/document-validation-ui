@@ -474,11 +474,9 @@ export default {
           updatedValues: updatedString,
           annotationId: this.annotation.id,
         })
-        .then((response) => {
-          if (!response) return;
-
+        .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
-            response,
+            error,
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("edit_error"),
           });
@@ -536,11 +534,9 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (!response) return;
-          // TODO: this should be handled with the catch
+        .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
-            response,
+            error,
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("edit_error"),
           });

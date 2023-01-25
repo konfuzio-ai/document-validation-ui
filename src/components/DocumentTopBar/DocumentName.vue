@@ -195,16 +195,17 @@ export default {
         .dispatch("document/updateDocument", updatedFileName)
         .then((response) => {
           // Check if the response is successful or not
-          if (!response) {
+          if (response) {
             // if successful, set the old name to be the new name
             this.changed = true;
             this.oldFileName = this.fileName;
             this.saved = true;
-          } else {
-            this.changed = true;
-            event.target.textContent = this.oldFileName;
-            this.fileName = this.oldFileName;
           }
+        })
+        .catch((error) => {
+          this.changed = true;
+          event.target.textContent = this.oldFileName;
+          this.fileName = this.oldFileName;
         })
         .finally(() => {
           this.saving = false;

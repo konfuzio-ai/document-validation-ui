@@ -134,11 +134,9 @@ export default {
 
         this.$store
           .dispatch("document/updateDocument", updatedCategory)
-          .then((response) => {
-            if (!response) return;
-
+          .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
-              response,
+              error,
               serverErrorMessage: this.$t("server_error"),
               defaultErrorMessage: this.$t("edit_error"),
             });
