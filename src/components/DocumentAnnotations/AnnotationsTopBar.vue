@@ -1,11 +1,13 @@
 <template>
   <div class="top-bar">
-    <ActionButtons
-      :finish-review-btn="finishReviewBtn"
-      :finish-disabled="finishDisabled"
-      :is-loading="isLoading"
-      @finish-review="handleFinishReview"
-    />
+    <div class="finish-review-button-container">
+      <ActionButtons
+        :finish-review-btn="finishReviewBtn"
+        :finish-disabled="finishDisabled"
+        :is-loading="isLoading"
+        @finish-review="handleFinishReview"
+      />
+    </div>
   </div>
 </template>
 
@@ -50,6 +52,7 @@ export default {
   mounted() {
     this.finishDisabled = !this.finishedReview;
   },
+
   methods: {
     handleFinishReview() {
       // update document
