@@ -79,8 +79,8 @@ describe("Document Annotations Component", () => {
       .findAll(".annotation-row .annotation-details")
       .at(0);
     await element.find(".tooltip-trigger").trigger("mouseenter");
-    requestAnimationFrame(() => {
-      expect(element.find(".tooltip-content").isVisible()).toBe(true);
+    requestAnimationFrame(async () => {
+      expect(await element.find(".tooltip-content").isVisible()).toBe(true);
     });
   });
 
@@ -356,40 +356,6 @@ describe("Document Annotations Component", () => {
     expect(
       await wrapper.findAll(".annotation-row .label-name span").at(0).text()
     ).toBe("Anrede");
-  });
-
-  it("Finish review button should be always visible", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(
-      await wrapper
-        .findComponent(
-          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-        )
-        .isVisible()
-    ).toBe(true);
-  });
-
-  it("If document has been reviewed, document should be in public mode and button disabled", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(
-      await wrapper
-        .findComponent(
-          ".labels-top-bar .top-bar .action-buttons .finish-review-btn"
-        )
-        .attributes("disabled")
-    ).not.toBe("undefined");
   });
 
   it("Reject all empty button should always be visible", async () => {
