@@ -44,31 +44,6 @@
     }
   }
 
-  .top-bar {
-    height: 56px;
-    width: 100%;
-    border-bottom: $component-border;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    .finish-review-button-container {
-      .action-buttons {
-        .button {
-          margin-right: 12px;
-          border-radius: 4px;
-
-          &:focus {
-            box-shadow: none;
-            outline: 3px solid $grey-dark;
-            border: 2px solid;
-            margin-right: 11px;
-          }
-        }
-      }
-    }
-  }
-
   .annotation-set-list {
     padding-bottom: 16px;
     overflow: auto;

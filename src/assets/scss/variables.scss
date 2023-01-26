@@ -137,6 +137,22 @@ button {
     font-weight: 500;
   }
 
+  &.finish-review-btn {
+    border-radius: 4px;
+    margin-right: 2px;
+
+    &:focus {
+      box-shadow: none;
+      outline: 3px solid $grey-dark;
+      border: 2px solid;
+      margin-right: 1px;
+    }
+
+    .spinner {
+      margin: auto !important;
+    }
+  }
+
   &[disabled] {
     border: none;
 

@@ -18,6 +18,13 @@
 
       <div class="right-bar-components">
         <div
+          v-if="!editMode && (!publicView || !selectedDocument.is_reviewed)"
+          class="keyboard-actions-info"
+        >
+          <KeyboardActionsDescription />
+        </div>
+
+        <div
           v-if="!editMode && (publicView || selectedDocument.is_reviewed)"
           class="read-only-info"
         >
@@ -54,19 +61,12 @@
           </b-tooltip>
         </div>
 
-        <div v-if="editMode" class="edit-mode-buttons">
+        <div class="top-bar-buttons">
           <DocumentTopBarButtons />
         </div>
 
         <div v-if="showHandoverButton && !editMode" class="handover">
           <DocumentHandover />
-        </div>
-
-        <div
-          v-if="!editMode && (!publicView || !selectedDocument.is_reviewed)"
-          class="keyboard-actions-info"
-        >
-          <KeyboardActionsDescription />
         </div>
       </div>
     </div>
