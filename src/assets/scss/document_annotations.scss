@@ -44,16 +44,6 @@
     }
   }
 
-  .top-bar {
-    height: 56px;
-    width: 100%;
-    border-bottom: $component-border;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 16px;
-  }
-
   .annotation-set-list {
     padding-bottom: 16px;
     overflow: auto;

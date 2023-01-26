@@ -1,11 +1,5 @@
 <template>
   <div class="labels-sidebar">
-    <div class="labels-top-bar">
-      <AnnotationsTopBar
-        v-if="!publicView && annotationSets && annotationSets.length > 0"
-      />
-    </div>
-
     <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations">
       <ExtractingData />
@@ -95,7 +89,6 @@ import ActionButtons from "./ActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
-import AnnotationsTopBar from "./AnnotationsTopBar";
 import CategorizeModal from "./CategorizeModal";
 
 /**
@@ -109,7 +102,6 @@ export default {
     DocumentLabel,
     RejectedLabels,
     LoadingAnnotations,
-    AnnotationsTopBar,
     CategorizeModal,
   },
   data() {
