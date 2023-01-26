@@ -176,23 +176,25 @@ export default {
           annotationToCreate.label_set = this.labelSet.id;
         }
 
-        const response = await this.$store.dispatch(
-          "document/createAnnotation",
-          annotationToCreate
-        );
-        if (!response) {
-          // TODO: refactor to use catch after store is updated
-          if (!errorMessageShown) {
-            this.$store.dispatch(
-              "document/setErrorMessage",
-              this.$t("error_creating_multi_ann")
-            );
+        this.$store
+          .dispatch("document/createAnnotation", annotationToCreate)
+          .then((response) => {
+            if (response) {
+              // set ann set id to use on the next labels on the same row
+              previousAnnotationSetId = response.data.annotation_set;
+            }
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("error_creating_multi_ann"),
+            });
+
+            // set to true to only show 1 error
+            // the first time it appears
             errorMessageShown = true;
-          }
-        } else {
-          // set ann set id to use on the next labels on the same row
-          previousAnnotationSetId = response.data.annotation_set;
-        }
+          });
       }
       this.$emit("close");
     },
