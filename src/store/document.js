@@ -629,7 +629,7 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
-            resolve(true);
+            resolve(response);
           }
         })
         .catch((error) => {
