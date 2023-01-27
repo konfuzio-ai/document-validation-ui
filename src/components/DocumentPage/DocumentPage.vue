@@ -1,16 +1,14 @@
 <template>
   <div ref="pdfContainer" class="pdf-page-container">
     <NewAnnotation
-      v-if="
-        !publicView && newAnnotation && newAnnotation.length && !editAnnotation
-      "
+      v-if="newAnnotation && newAnnotation.length && !editAnnotation"
       :new-annotation="newAnnotation"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       @close="closePopups"
     />
     <MultiAnnotationTablePopup
-      v-if="!publicView && newMultiAnnotationSetTable"
+      v-if="newMultiAnnotationSetTable"
       :table-position="newMultiAnnotationSetTable.position"
       :page-size="scaledViewport"
       :label-set="newMultiAnnotationSetTable.labelSet"
@@ -303,8 +301,8 @@ export default {
 
     onMouseDown(event) {
       this.closePopups();
-      // check if element and delegate to it
 
+      // check if element and delegate to it
       if (
         event.target.name() === "entity" ||
         event.target.name() === "annotation" ||
@@ -316,6 +314,9 @@ export default {
         (event.target.getParent() &&
           event.target.getParent().className === "Transformer")
       ) {
+        return;
+      }
+      if (this.publicView) {
         return;
       }
 
