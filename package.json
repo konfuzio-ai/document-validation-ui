@@ -1,6 +1,6 @@
 {
   "name": "@konfuzio/capture-vue",
-  "version": "0.1.1-multi-ann-set-2",
+  "version": "0.1.1-multi-ann-set-3",
   "repository": "git://github.com:konfuzio-ai/document-validation-ui.git",
   "scripts": {
     "serve": "vue-cli-service serve",
