@@ -244,16 +244,56 @@ export default {
         this.selection.end
       );
       const entities = this.entitiesOnSelection(box, this.page);
-      const rows = entities.map((o) => o["y0"]);
+
+      const offset = 4;
+      if (entities.length === 0) {
+        return;
+      }
+
+      const rows = [...new Set(entities.map((o) => o["top"]))];
+      rows.sort();
+
+      let joinRow = 0;
+      const jointRows = [];
+
+      // group entities that are near each other on Y axis
+      rows.forEach((row) => {
+        if (row - joinRow > offset) {
+          joinRow = row;
+          jointRows.push(row);
+        }
+      });
 
       let cols = {};
-      rows.forEach((row) => {
-        cols[row] = entities
-          .filter((item) => {
-            return item.y0 === row;
-          })
-          .sort((a, b) => a - b);
+      jointRows.forEach((row) => {
+        const entityRow = [];
+        entities.forEach((item) => {
+          if (item.top === row || Math.abs(item.top - row) <= offset) {
+            entityRow.push(item);
+          }
+        });
+        entityRow.sort((a, b) => a.x0 - b.x0);
+
+        const finalRow = {};
+        let previousEntity = null;
+
+        // group entities that are near each other on X axis
+        entityRow.forEach((entity) => {
+          let xGroup = entity.x0;
+          if (previousEntity && previousEntity.x1 + offset > entity.x0) {
+            // compare to previous one
+            finalRow[previousEntity.xGroup].push(entity);
+            xGroup = previousEntity.xGroup;
+          } else {
+            finalRow[entity.x0] = [entity];
+          }
+          previousEntity = entity;
+          previousEntity.xGroup = xGroup;
+        });
+
+        cols[row] = finalRow;
       });
+
       this.entities = cols;
     },
     ...mapActions("selection", ["moveSelection"]),

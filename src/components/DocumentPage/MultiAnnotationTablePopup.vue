@@ -111,18 +111,31 @@ export default {
       this.orderedEntities = []; // this will match the order of entities in the table so we have a way of tracking them once we submit
       let rowIndex = 0;
 
-      Object.entries(this.groupedEntities).forEach(([key, entity]) => {
+      Object.entries(this.groupedEntities).forEach(([key, groupedEntity]) => {
         let row = null;
         this.columns.forEach((column, index) => {
-          const entityExists = index < entity.length;
+          let spans = [];
+          if (
+            Object.entries(groupedEntity)[index] &&
+            Object.entries(groupedEntity)[index].length > 0
+          ) {
+            spans = Object.entries(groupedEntity)[index][1];
+          }
+          const entityExists = spans.length > 0;
+
+          let textContent = "";
+
+          spans.forEach((entity) => {
+            textContent = `${textContent} ${entity.offset_string}`;
+          });
 
           row = {
             ...row,
-            [column.field]: entityExists ? entity[index].offset_string : "",
+            [column.field]: textContent,
           };
           if (entityExists) {
             const customEntity = {
-              ...entity[index],
+              spans: [...spans],
               label_id: column.field,
               row_index: rowIndex,
             };
@@ -155,20 +168,21 @@ export default {
 
       // traditional for to await for every request
       for (let i = 0; i < this.orderedEntities.length; i++) {
-        const entity = this.orderedEntities[i];
+        const groupedEntity = this.orderedEntities[i];
+
         const annotationToCreate = {
           document: this.documentId,
-          span: [entity],
-          label: entity.label_id,
+          span: groupedEntity.spans,
+          label: groupedEntity.label_id,
           is_correct: true,
           revised: false,
         };
 
-        if (entity.row_index !== previousRowIndex) {
+        if (groupedEntity.row_index !== previousRowIndex) {
           // if line changed then reset annotation set
           previousAnnotationSetId = null;
         }
-        previousRowIndex = entity.row_index;
+        previousRowIndex = groupedEntity.row_index;
 
         if (previousAnnotationSetId) {
           annotationToCreate.annotation_set = previousAnnotationSetId;
@@ -185,15 +199,17 @@ export default {
             }
           })
           .catch((error) => {
-            this.$store.dispatch("document/createErrorMessage", {
-              error,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("error_creating_multi_ann"),
-            });
+            if (!errorMessageShown) {
+              this.$store.dispatch("document/createErrorMessage", {
+                error,
+                serverErrorMessage: this.$t("server_error"),
+                defaultErrorMessage: this.$t("error_creating_multi_ann"),
+              });
 
-            // set to true to only show 1 error
-            // the first time it appears
-            errorMessageShown = true;
+              // set to true to only show 1 error
+              // the first time it appears
+              errorMessageShown = true;
+            }
           });
       }
       this.$emit("close");
