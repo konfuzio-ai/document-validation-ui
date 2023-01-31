@@ -1,7 +1,7 @@
 @import "./imports.scss";
 
 .labels-sidebar {
-  font-family: "Inter", sans-serif;
+  font-family: $font-family;
   flex: 1;
   background-color: $background;
   position: relative;

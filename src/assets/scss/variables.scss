@@ -3,18 +3,36 @@
 $green: #4bb543;
 $lighter-green: #44b78b;
 $green-low-opacity: rgba(75, 181, 67, 0.11);
+$green-border: #67d19f;
+$green-hover-background: rgba(18, 183, 106, 0.05);
 $darker-green: #3a9c76;
+$primary-green: #41af85;
+$primary-dark: #0c4b33;
+$primary-low-opacity: rgba(52, 171, 125, 0.16);
+
 $red: #e7423a;
 $lighter-red: #f04438;
-$lightest-red: rgba(254, 227, 226, 0.5);
+$dark-error-red: #bb2b3b;
+$light-error-red: rgba(187, 43, 59, 0.3);
+$low-opacity-red: rgba(231, 66, 58, 0.08);
+$error-red: #d4453d;
 
 $dark: #2f3032;
 $full-black: #000;
+
+$white: #fff;
+$low-opacity-white: rgba(255, 255, 255, 0.1);
+
+$yellow: #ffd600;
+$warning-yellow: #fec84b;
+
+$blue: #2f80ed;
+$dark-blue: #2b3545;
+
 $grey-dark: #344054;
 $grey: #798190;
 $grey-low-opacity: rgba(133, 140, 154, 0.4);
 $grey-lighter-low-opacity: rgba(223, 224, 228, 0.5);
-$grey-lighter: #c7c7c7;
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
 $grey-detail: #dfe0e4;
@@ -22,26 +40,14 @@ $subtle-grey: #f2f4f7;
 $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
 $grey-hover: #fafafa;
-$green-hover: #3a9c76;
-$green-border: #67d19f;
-$green-hover-background: rgba(18, 183, 106, 0.05);
 $grey-blue: #667085;
-$action-grey: #5f5d59;
-
-$yellow: #ffd600;
-$blue: #2f80ed;
-$dark-blue: #2b3545;
-$white: #fff;
-$low-opacity-white: rgba(255, 255, 255, 0.1);
-
-$warning-yellow: #fec84b;
+$detail: #e2e3e4;
 
 $primary: #41af85;
 $primary-dark: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
-$background: $white;
-$detail: #e2e3e4;
+$error-background: #fdf4f6;
 
 $link: $primary;
 $info: $blue;
@@ -53,17 +59,23 @@ $text-strong: $dark;
 $text-lighter: $grey;
 $black: $dark;
 
-$error-red: #d4453d;
-$error-background: #fdf4f6;
-$dark-error-red: #bb2b3b;
-$light-error-red: rgba(187, 43, 59, 0.3);
-$low-opacity-red: rgba(231, 66, 58, 0.08);
-$light-red: #fdf4f4;
-
 $input-shadow: none;
 $top-bar-height: 56px;
-
 $component-border: 1px solid $detail;
+
+:root {
+  --background-color: #{$white};
+  --toolbar-color: #{$dark-blue};
+  --tooltip-color: #{$dark};
+  --font-family: #{"Inter", sans-serif};
+  --primary-color: #{$primary-green};
+}
+
+$font-family: var(--font-family);
+$background: var(--background-color);
+$toolbar: var(--toolbar-color);
+$primary: var(--primary-color);
+$tooltip: var(--tooltip-color);
 
 button {
   &.is-primary {
