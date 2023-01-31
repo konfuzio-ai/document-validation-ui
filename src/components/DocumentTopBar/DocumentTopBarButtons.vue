@@ -24,7 +24,7 @@
     </div>
 
     <div
-      v-if="!editMode && !selectedDocument.is_reviewed"
+      v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
       class="finish-review-button-container"
     >
       <ActionButtons
