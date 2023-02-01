@@ -6,27 +6,13 @@ $green-low-opacity: rgba(75, 181, 67, 0.11);
 $green-border: #67d19f;
 $green-hover-background: rgba(18, 183, 106, 0.05);
 $darker-green: #3a9c76;
-$primary-dark: #0c4b33;
+$dark-green-hover: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
 $red: #e7423a;
-$lighter-red: #f04438;
-$dark-error-red: #bb2b3b;
-$light-error-red: rgba(187, 43, 59, 0.3);
 $low-opacity-red: rgba(231, 66, 58, 0.08);
-$error-red: #d4453d;
-
-$dark: #2f3032;
-$full-black: #000;
-
-$white: #fff;
-$low-opacity-white: rgba(255, 255, 255, 0.1);
-
-$yellow: #ffd600;
-$warning-yellow: #fec84b;
-
-$blue: #2f80ed;
-$dark-blue: #2b3545;
+$lightest-red: #fdf4f6;
+$error-background: #d4453d;
 
 $grey-dark: #344054;
 $grey: #798190;
@@ -42,24 +28,46 @@ $grey-hover: #fafafa;
 $grey-blue: #667085;
 $detail: #e2e3e4;
 
-$primary-dark: #0c4b33;
-$primary-low-opacity: rgba(52, 171, 125, 0.16);
+$dark: #2f3032;
+$full-black: #000;
 
-$error-background: #fdf4f6;
+$white: #fff;
+$low-opacity-white: rgba(255, 255, 255, 0.1);
+
+$yellow: #ffd600;
+$warning-yellow: #fec84b;
+
+$blue: #2f80ed;
+$dark-blue: #2b3545;
 
 :root {
+  --font-family: #{"Inter", sans-serif};
+  --font-color: ;
+  --dark-font-color: ;
+  --light-font-color: ;
   --background-color: #{$white};
+  --primary-color: #{$konfuzio-green};
+  --primary-hover: #{$dark-green-hover};
   --toolbar-color: #{$dark-blue};
   --tooltip-color: #{$dark};
-  --font-family: #{"Inter", sans-serif};
-  --primary-color: #{$konfuzio-green};
+  --error-background: #{$error-background};
+  --error-text: #{$white};
+  --toolbar-elements: #{$white};
+  --annotation-icon-success: #{$green};
+  --annotation-icon-pending: #{$grey-detail};
+  --light-buttons: #{$white};
 }
 
 $font-family: var(--font-family);
 $background: var(--background-color);
 $toolbar: var(--toolbar-color);
 $primary: var(--primary-color);
+$primary-dark: var(--primary-hover);
 $tooltip: var(--tooltip-color);
+$toolbar-elements: var(--toolbar-elements);
+$annotation-icon-success: var(--annotation-icon-success);
+$annotation-icon-pending: var(--annotation-icon-pending);
+$light-buttons: var(--light-buttons);
 
 $link: $primary;
 $info: $blue;
@@ -109,8 +117,8 @@ button {
   }
 
   &:not(.is-text, .is-primary, .reject-btn) {
-    background-color: $white !important;
-    color: $dark-blue !important;
+    background-color: $white;
+    color: $dark-blue;
   }
 
   &.is-text {
@@ -163,6 +171,10 @@ button {
     }
   }
 
+  &.rotate-button[disabled] {
+    border: 1px solid $detail;
+  }
+
   &[disabled] {
     border: none;
 
@@ -205,8 +217,8 @@ button {
   }
 
   .message-body {
-    background-color: $error-red;
-    color: $white;
+    background-color: var(--error-background);
+    color: var(--error-text);
     font-size: 14px;
     border: 0;
     border-radius: 0%;
@@ -265,9 +277,9 @@ button {
 
     .message-body {
       border-radius: 4px;
-      border: 1px solid $light-error-red;
-      background-color: $error-background !important;
-      color: $dark-error-red;
+      border: 1px solid $red;
+      background-color: $lightest-red !important;
+      color: $red;
       width: 100%;
     }
 
@@ -352,17 +364,6 @@ button {
   }
 }
 
-.b-checkbox.checkbox {
-  &:hover input[type="checkbox"]:not(:disabled) + .check {
-    border-color: $primary !important;
-  }
-
-  input[type="checkbox"]:checked + .check {
-    border-color: $primary !important;
-    background-color: $primary;
-  }
-}
-
 .modal {
   z-index: 999;
 
@@ -398,6 +399,10 @@ button {
         &::before,
         &::after {
           background-color: $grey;
+        }
+
+        &:hover {
+          background-color: $white;
         }
       }
 
@@ -613,12 +618,6 @@ button {
         height: 15px !important;
       }
     }
-  }
-}
-
-.button {
-  &.rotate-button[disabled] {
-    border: 1px solid $detail;
   }
 }
 
