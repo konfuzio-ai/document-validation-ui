@@ -1,12 +1,11 @@
 /* Theme */
 
+$konfuzio-green: #41af85;
 $green: #4bb543;
-$lighter-green: #44b78b;
 $green-low-opacity: rgba(75, 181, 67, 0.11);
 $green-border: #67d19f;
 $green-hover-background: rgba(18, 183, 106, 0.05);
 $darker-green: #3a9c76;
-$primary-green: #41af85;
 $primary-dark: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
@@ -43,11 +42,24 @@ $grey-hover: #fafafa;
 $grey-blue: #667085;
 $detail: #e2e3e4;
 
-$primary: #41af85;
 $primary-dark: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
 $error-background: #fdf4f6;
+
+:root {
+  --background-color: #{$white};
+  --toolbar-color: #{$dark-blue};
+  --tooltip-color: #{$dark};
+  --font-family: #{"Inter", sans-serif};
+  --primary-color: #{$konfuzio-green};
+}
+
+$font-family: var(--font-family);
+$background: var(--background-color);
+$toolbar: var(--toolbar-color);
+$primary: var(--primary-color);
+$tooltip: var(--tooltip-color);
 
 $link: $primary;
 $info: $blue;
@@ -62,20 +74,6 @@ $black: $dark;
 $input-shadow: none;
 $top-bar-height: 56px;
 $component-border: 1px solid $detail;
-
-:root {
-  --background-color: #{$white};
-  --toolbar-color: #{$dark-blue};
-  --tooltip-color: #{$dark};
-  --font-family: #{"Inter", sans-serif};
-  --primary-color: #{$primary-green};
-}
-
-$font-family: var(--font-family);
-$background: var(--background-color);
-$toolbar: var(--toolbar-color);
-$primary: var(--primary-color);
-$tooltip: var(--tooltip-color);
 
 button {
   &.is-primary {
