@@ -42,20 +42,16 @@ $dark-blue: #2b3545;
 
 :root {
   --font-family: #{"Inter", sans-serif};
-  --font-color: ;
-  --dark-font-color: ;
-  --light-font-color: ;
   --background-color: #{$white};
   --primary-color: #{$konfuzio-green};
   --primary-hover: #{$dark-green-hover};
   --toolbar-color: #{$dark-blue};
+  --toolbar-elements: #{$white};
   --tooltip-color: #{$dark};
   --error-background: #{$error-background};
   --error-text: #{$white};
-  --toolbar-elements: #{$white};
   --annotation-icon-success: #{$green};
   --annotation-icon-pending: #{$grey-detail};
-  --light-buttons: #{$white};
 }
 
 $font-family: var(--font-family);
@@ -67,7 +63,6 @@ $tooltip: var(--tooltip-color);
 $toolbar-elements: var(--toolbar-elements);
 $annotation-icon-success: var(--annotation-icon-success);
 $annotation-icon-pending: var(--annotation-icon-pending);
-$light-buttons: var(--light-buttons);
 
 $link: $primary;
 $info: $blue;
