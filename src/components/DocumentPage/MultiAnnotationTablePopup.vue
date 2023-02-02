@@ -190,7 +190,7 @@ export default {
           annotationToCreate.label_set = this.labelSet.id;
         }
 
-        this.$store
+        await this.$store
           .dispatch("document/createAnnotation", annotationToCreate)
           .then((response) => {
             if (response) {
