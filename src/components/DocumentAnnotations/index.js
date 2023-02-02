@@ -4,6 +4,5 @@ export { default as EmptyAnnotation } from "./EmptyAnnotation";
 export { default as DocumentLabel } from "./DocumentLabel";
 export { default as AnnotationDetails } from "./AnnotationDetails";
 export { default as RejectedLabels } from "./RejectedLabels";
-export { default as AnnotationsTopBar } from "./AnnotationsTopBar";
 export { default as ChooseLabelSetModal } from "./ChooseLabelSetModal";
 export { default as AnnotationRow } from "./AnnotationRow";

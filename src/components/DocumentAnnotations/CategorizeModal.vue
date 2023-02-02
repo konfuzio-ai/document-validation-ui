@@ -127,18 +127,16 @@ export default {
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
-          is_category_accepted: true,
+          category_is_revised: true,
         };
 
         this.$store.dispatch("document/startRecalculatingAnnotations");
 
         this.$store
           .dispatch("document/updateDocument", updatedCategory)
-          .then((response) => {
-            if (!response) return;
-
+          .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
-              response,
+              error,
               serverErrorMessage: this.$t("server_error"),
               defaultErrorMessage: this.$t("edit_error"),
             });
@@ -149,7 +147,7 @@ export default {
       } else {
         // if same category, then just accept it
         this.$store.dispatch("document/updateDocument", {
-          is_category_accepted: true,
+          category_is_revised: true,
         });
       }
       this.show = false;

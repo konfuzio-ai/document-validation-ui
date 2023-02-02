@@ -1,18 +1,27 @@
 <template>
-  <v-rect
-    ref="boxSelection"
-    :config="config"
-    :stroke-scale-enabled="false"
-    @dragend="onChange"
-    @transformend="onChange"
-    v-on="$listeners"
-  />
+  <v-group>
+    <v-rect
+      v-if="isSelectionValid"
+      ref="boxSelection"
+      :config="config"
+      :stroke-scale-enabled="false"
+      @dragend="onChange"
+      @transformend="onChange"
+    />
+    <v-transformer ref="boxTransformer" :config="transformerConfig" />
+  </v-group>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapGetters, mapState, mapActions } from "vuex";
 
 export default {
+  props: {
+    page: {
+      required: true,
+      type: Object,
+    },
+  },
   computed: {
     /**
      * Konva options of the selection rectangle, based on the
@@ -30,12 +39,72 @@ export default {
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
         name: "boxSelection",
-        draggable: true
+        draggable: true,
       };
     },
-    ...mapState("selection", ["selection", "isSelecting"])
+    transformerConfig() {
+      return {
+        borderEnabled: false,
+        rotateEnabled: false,
+        ignoreStroke: true,
+        keepRatio: false,
+        anchorStroke: "#7B61FF",
+        anchorSize: 6,
+      };
+    },
+    ...mapState("selection", ["selection", "isSelecting"]),
+    ...mapGetters("display", ["clientToBbox"]),
+    ...mapGetters("selection", ["isSelectionValid"]),
+  },
+  mounted() {
+    this.updateTransformer();
+
+    if (this.selection.custom) {
+      this.getBoxSelectionContent();
+    }
   },
   methods: {
+    updateTransformer() {
+      // here we need to manually attach or detach Transformer node
+      const transformer = this.$refs.boxTransformer;
+
+      // maybe we're out of sync and the transformer is not available, just return
+      if (!transformer) {
+        return;
+      }
+
+      const transformerNode = transformer.getNode();
+      const stage = transformerNode.getStage();
+      let selectedNode;
+      if (stage) {
+        selectedNode = stage.findOne(".boxSelection");
+      }
+
+      // do nothing if selected node is already attached
+      if (selectedNode === transformerNode.node()) {
+        return;
+      }
+
+      if (selectedNode) {
+        // attach to another node
+        transformerNode.nodes([selectedNode]);
+      } else {
+        // remove transformer
+        transformerNode.nodes([]);
+      }
+
+      transformerNode.getLayer().batchDraw();
+    },
+
+    getBoxSelectionContent() {
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
+      this.$store.dispatch("selection/getTextFromBboxes", box);
+    },
+
     /**
      * This method is used for both transforms and drags since it just
      * retrieves the rect's new attributes from the event and uses those
@@ -49,12 +118,12 @@ export default {
       let end;
 
       // we need to figure out if there's skewing going on, to fix start/end points
-      // (other cases appear to fix themselevs automatically)
+      // (other cases appear to fix themselves automatically)
       if (skewX >= 0) {
         start = { x, y };
         end = {
           x: start.x + realWidth,
-          y: start.y + realHeight
+          y: start.y + realHeight,
         };
       } else {
         end = { x, y };
@@ -72,11 +141,9 @@ export default {
       node.scaleX(1);
       node.scaleY(1);
 
-      // we emit this to DocumentPage so that it can refresh the selection from the
-      // backend once we're finished transforming/dragging
-      this.$emit("changed");
+      this.getBoxSelectionContent();
     },
-    ...mapActions("selection", ["moveSelection"])
-  }
+    ...mapActions("selection", ["moveSelection"]),
+  },
 };
 </script>

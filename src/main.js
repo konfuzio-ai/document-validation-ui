@@ -15,8 +15,9 @@ import {
   faAngleLeft,
   faAngleUp,
   faAngleDown,
-  faXmark,
   faSpinner,
+  faPlus,
+  faXmark,
   faEllipsisVertical,
   faCircleInfo,
   faArrowRotateLeft,
@@ -25,7 +26,6 @@ import {
   faRepeat,
   faArrowLeft,
   faArrowRight,
-  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -35,8 +35,10 @@ library.add(
   faAngleLeft,
   faAngleUp,
   faAngleDown,
+  faSpinner,
   faXmark,
   faSpinner,
+  faPlus,
   faEllipsisVertical,
   faCircleInfo,
   faArrowRotateLeft,
@@ -44,8 +46,7 @@ library.add(
   faScissors,
   faRepeat,
   faArrowLeft,
-  faArrowRight,
-  faPlus
+  faArrowRight
 );
 Vue.component("VueFontawesome", FontAwesomeIcon);
 Vue.component("App", App);

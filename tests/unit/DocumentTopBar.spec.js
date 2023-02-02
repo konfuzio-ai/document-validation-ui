@@ -27,7 +27,7 @@ describe("Document Top Bar", () => {
     );
   });
 
-  it("Document Top Bar should be rendered", () => {
+  it("Document Top Bar should be rendered", async () => {
     const wrapper = shallowMount(DocumentTopBar, {
       store,
       mocks: {
@@ -35,7 +35,7 @@ describe("Document Top Bar", () => {
       },
     });
 
-    expect(wrapper.getComponent(".document-top-bar-component"));
+    expect(await wrapper.getComponent(".document-top-bar-component"));
   });
 
   it("File name should be visible", () => {
@@ -194,7 +194,7 @@ describe("Document Top Bar", () => {
     );
   });
 
-  it("Keyboard icon is visible", () => {
+  it("Keyboard icon is visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
@@ -202,7 +202,7 @@ describe("Document Top Bar", () => {
       },
     });
 
-    expect(wrapper.find(".keyboard-actions-info").exists()).toBe(true);
+    expect(await wrapper.find(".keyboard-actions-info").exists()).toBe(true);
   });
 
   it("Tooltip is visible on hover", async () => {
@@ -222,5 +222,58 @@ describe("Document Top Bar", () => {
         .find(".keyboard-actions-info .b-tooltip .tooltip-content")
         .isVisible()
     ).toBe(true);
+  });
+
+  it("Finish review button should be visible if not in edit mode, public view or review finished", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
+        )
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("If document has been reviewed, document should be in public mode and button disabled", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
+        )
+        .attributes("disabled")
+    ).not.toBe("undefined");
+  });
+
+  it("If document is in edit mode, button should not be visible", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await store.dispatch("edit/enableEditMode", true);
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
+        )
+        .exists()
+    ).toBe(false);
   });
 });

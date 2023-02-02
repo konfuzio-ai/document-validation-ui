@@ -1,5 +1,8 @@
 <template>
-  <div class="keyboard-actions-description">
+  <div
+    v-if="!publicView && !selectedDocument.is_reviewed && !editMode"
+    class="keyboard-actions-description"
+  >
     <section class="b-tooltips">
       <b-tooltip position="is-left" size="is-large" class="left-down-aligned">
         <KeyboardIcon />
@@ -46,6 +49,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import KeyboardIcon from "../../assets/images/KeyboardIcon";
 import ArrowUpKey from "../../assets/images/ArrowUpKey";
 import ArrowDownKey from "../../assets/images/ArrowDownKey";
@@ -56,6 +60,10 @@ export default {
     KeyboardIcon,
     ArrowUpKey,
     ArrowDownKey,
+  },
+  computed: {
+    ...mapState("edit", ["editMode"]),
+    ...mapState("document", ["selectedDocument", "publicView"]),
   },
 };
 </script>

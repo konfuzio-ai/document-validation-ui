@@ -71,7 +71,7 @@ export default {
     ]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapGetters("selection", ["isValueArray"]),
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("selection", ["spanSelection"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
@@ -163,7 +163,7 @@ export default {
         !this.isAnnotationBeingEdited &&
         !this.isLoading
       ) {
-        this.$store.dispatch("selection/enableSelection", this.annotation.id);
+        this.$store.dispatch("selection/selectElement", this.annotation.id);
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
@@ -193,6 +193,7 @@ export default {
               y: y + height,
             },
             pageNumber: page.number,
+            custom: false,
           };
 
           this.$store.dispatch("selection/setSelection", {

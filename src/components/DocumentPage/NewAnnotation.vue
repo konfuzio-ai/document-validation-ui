@@ -54,37 +54,47 @@
         {{ $t("new_ann_set_title") }}
       </b-button>
     </b-dropdown>
-    <b-dropdown
-      v-model="selectedLabel"
-      aria-role="list"
-      :disabled="!labels || labels.length === 0"
+    <b-tooltip
+      :label="$t('no_labels_available')"
+      multilined
+      type="is-dark"
+      :active="selectedSet && (!labels || labels.length === 0)"
+      size="is-large"
+      position="is-bottom"
     >
-      <template #trigger>
-        <b-button
-          :class="['popup-input', selectedLabel ? '' : 'not-selected']"
-          type="is-text"
-        >
-          {{
-            selectedLabel
-              ? selectedLabel.name
-              : labels && labels.length === 0
-              ? $t("no_labels_to_choose")
-              : $t("select_label")
-          }}
-          <span class="caret-icon">
-            <b-icon icon="angle-down" size="is-small" class="caret" />
-          </span>
-        </b-button>
-      </template>
-      <b-dropdown-item
-        v-for="label in labels"
-        :key="label.id"
-        aria-role="listitem"
-        :value="label"
+      <b-dropdown
+        v-model="selectedLabel"
+        aria-role="list"
+        :disabled="!labels || labels.length === 0"
+        class="label-dropdown"
       >
-        <span>{{ label.name }}</span>
-      </b-dropdown-item>
-    </b-dropdown>
+        <template #trigger>
+          <b-button
+            :class="['popup-input', selectedLabel ? '' : 'not-selected']"
+            type="is-text"
+          >
+            {{
+              selectedLabel
+                ? selectedLabel.name
+                : labels && labels.length === 0
+                ? $t("no_labels_to_choose")
+                : $t("select_label")
+            }}
+            <span class="caret-icon">
+              <b-icon icon="angle-down" size="is-small" class="caret" />
+            </span>
+          </b-button>
+        </template>
+        <b-dropdown-item
+          v-for="label in labels"
+          :key="label.id"
+          aria-role="listitem"
+          :value="label"
+        >
+          <span>{{ label.name }}</span>
+        </b-dropdown-item>
+      </b-dropdown>
+    </b-tooltip>
     <div class="annotation-buttons">
       <b-button
         type="is-text"
@@ -195,6 +205,7 @@ export default {
   },
   methods: {
     close() {
+      this.$store.dispatch("document/setSelectedEntities", null);
       this.$emit("close");
     },
     save() {
@@ -219,16 +230,12 @@ export default {
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (!response) {
-            this.$store.dispatch("document/fetchMissingAnnotations");
-          } else {
-            this.$store.dispatch("document/createErrorMessage", {
-              response,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("error_creating_annotation"),
-            });
-          }
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_creating_annotation"),
+          });
         })
         .finally(() => {
           this.close();

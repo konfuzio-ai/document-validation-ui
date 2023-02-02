@@ -1,36 +1,85 @@
 <template>
   <div class="buttons">
-    <b-button
-      :label="$t('cancel')"
-      class="button-cancel"
-      type="is-default"
-      @click="closeEditMode"
-    />
-    <b-button
-      :label="
-        editMode &&
-        updatedDocument &&
-        updatedDocument.length > 1 &&
-        !splitOverview
-          ? $t('next')
-          : $t('submit')
-      "
-      type="is-primary"
-      :disabled="false"
-      class="button-next"
-      @click="handleButton"
-    />
+    <div v-if="editMode" class="edit-mode-buttons">
+      <b-button
+        :label="$t('cancel')"
+        class="button-cancel"
+        type="is-default"
+        @click="closeEditMode"
+      />
+      <b-button
+        :label="
+          editMode &&
+          updatedDocument &&
+          updatedDocument.length > 1 &&
+          !splitOverview
+            ? $t('next')
+            : $t('submit')
+        "
+        type="is-primary"
+        :disabled="false"
+        class="button-next"
+        @click="handleButton"
+      />
+    </div>
+
+    <div
+      v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
+      class="finish-review-button-container"
+    >
+      <ActionButtons
+        :finish-review-btn="finishReviewBtn"
+        :finish-disabled="finishDisabled"
+        :is-loading="isLoading"
+        @finish-review="handleFinishReview"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import ActionButtons from "../DocumentAnnotations/ActionButtons";
 
 export default {
   name: "DocumentTopBarButtons",
+  components: {
+    ActionButtons,
+  },
+  data() {
+    return {
+      finishReviewBtn: true,
+      finishDisabled: true,
+      emptyLabels: null,
+      isLoading: false,
+    };
+  },
+
   computed: {
-    ...mapState("document", ["selectedDocument"]),
+    ...mapState("document", [
+      "selectedDocument",
+      "publicView",
+      "finishedReview",
+    ]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
+  },
+
+  watch: {
+    finishedReview(newValue) {
+      if (newValue) {
+        this.finishDisabled = false;
+      } else {
+        this.finishDisabled = true;
+      }
+    },
+    publicView(newValue) {
+      if (newValue) {
+        this.finishDisabled = true;
+      }
+    },
+  },
+  mounted() {
+    this.finishDisabled = !this.finishedReview;
   },
   methods: {
     /** EDIT MODE */
@@ -59,11 +108,9 @@ export default {
         // Send update request to the backend
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
-          .then((response) => {
-            if (!response) return;
-
+          .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
-              response,
+              error,
               serverErrorMessage: this.$t("server_error"),
               defaultErrorMessage: this.$t("edit_error"),
             });
@@ -72,6 +119,27 @@ export default {
         // Close edit mode
         this.closeEditMode();
       }
+    },
+    handleFinishReview() {
+      // update document
+      const updatedDocumentReviewStatus = {
+        is_reviewed: true,
+      };
+
+      this.isLoading = true;
+
+      this.$store
+        .dispatch("document/updateDocument", updatedDocumentReviewStatus)
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("review_error"),
+          });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
   },
 };

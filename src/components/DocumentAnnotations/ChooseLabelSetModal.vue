@@ -9,8 +9,20 @@
     >
       <section class="modal-card-body">
         <div class="content">
-          <h3>{{ $t("new_ann_set_title") }}</h3>
-          <p>{{ $t("new_ann_set_description") }}</p>
+          <h3>
+            {{
+              isMultipleAnnotations
+                ? $t("new_multi_ann_title")
+                : $t("new_ann_set_title")
+            }}
+          </h3>
+          <p>
+            {{
+              isMultipleAnnotations
+                ? $t("new_multi_ann_description")
+                : $t("new_ann_set_description")
+            }}
+          </p>
           <b-dropdown
             v-model="selectedLabelSet"
             aria-role="list"
@@ -37,17 +49,16 @@
               <span>{{ labelSetItem.name }}</span>
             </b-dropdown-item>
           </b-dropdown>
-          <div
-            v-if="selectedLabelSet"
-            class="labels-list"
-          >
-            <span
-              v-for="(label, index) in selectedLabelSet.labels"
-              :key="label.id"
-            >{{
-              `${label.name}${
-                index + 1 !== selectedLabelSet.labels.length ? ", " : ""
-              }`
+          <div v-if="selectedLabelSet" class="labels-list">
+            <div v-if="isMultipleAnnotations" class="labels-select">
+              <div v-for="label in labels" :key="label.id">
+                <b-checkbox v-model="label.selected">{{
+                  label.name
+                }}</b-checkbox>
+              </div>
+            </div>
+            <span v-for="(label, index) in labels" v-else :key="label.id">{{
+              `${label.name}${index + 1 !== labels.length ? ", " : ""}`
             }}</span>
           </div>
           <b-button
@@ -59,7 +70,7 @@
             {{ $t("continue") }}
           </b-button>
           <p
-            v-if="selectedLabelSet"
+            v-if="!isMultipleAnnotations && selectedLabelSet"
             class="next-step-description"
           >
             {{ $t("new_ann_set_hint") }}
@@ -81,17 +92,24 @@ export default {
   name: "CreateAnnotationSetModal",
   computed: {
     ...mapState("document", ["annotationSets"]),
-    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"])
+    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
+  },
+  props: {
+    isMultipleAnnotations: {
+      default: false,
+      required: false,
+    },
   },
   data() {
     return {
       selectedLabelSet: null,
       labelSets: [],
-      show: true
+      show: true,
+      labels: [],
     };
   },
   mounted() {
-    this.$store.dispatch("project/fetchLabelSets").then(data => {
+    this.$store.dispatch("project/fetchLabelSets").then((data) => {
       this.labelSets = this.labelSetsFilteredForAnnotationSetCreation(
         data,
         this.annotationSets
@@ -100,16 +118,33 @@ export default {
   },
   methods: {
     submit() {
+      // filter labels that were selected (by default all are selected so no issue if the feature is disabled)
+      const labelsFiltered = this.labels.filter((label) => label.selected);
+      this.selectedLabelSet.labels = this.selectedLabelSet.labels.filter(
+        (label) => {
+          return labelsFiltered.find((filtered) => filtered.id === label.id);
+        }
+      );
+
       this.$emit("labelSet", this.selectedLabelSet);
       this.close();
     },
     setSelectedLabelSet(labelSet) {
+      this.createLabelsList(labelSet.labels);
       this.selectedLabelSet = labelSet;
     },
     close() {
       this.$emit("close");
-    }
-  }
+    },
+    createLabelsList(labels) {
+      this.labels = labels.map((label) => {
+        return {
+          ...label,
+          selected: true,
+        };
+      });
+    },
+  },
 };
 </script>
 

@@ -14,7 +14,7 @@
         isAnnotationBeingEdited() && 'clicked',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
-      @keypress.enter="saveEmptyAnnotation"
+      @keypress.enter="saveEmptyAnnotationChanges"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
     >
@@ -49,6 +49,10 @@ export default {
     spanIndex: {
       required: false,
     },
+    saveChanges: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {
@@ -61,11 +65,7 @@ export default {
       "getTextFromEntities",
     ]),
     ...mapGetters("selection", ["isValueArray"]),
-    ...mapState("selection", [
-      "spanSelection",
-      "selectionEnabled",
-      "isSelecting",
-    ]),
+    ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
@@ -75,7 +75,7 @@ export default {
   },
   watch: {
     span(newValue) {
-      if (this.selectionEnabled === this.emptyAnnotationId() && newValue) {
+      if (this.elementSelected === this.emptyAnnotationId() && newValue) {
         if (this.isValueArray(newValue))
           newValue.map((span) => {
             if (span.offset_string) {
@@ -147,13 +147,13 @@ export default {
       if (
         !this.publicView &&
         !this.isLoading &&
-        this.selectionEnabled !== this.emptyAnnotationId()
+        this.elementSelected !== this.emptyAnnotationId()
       ) {
         this.setText(
           this.$t("draw_box_document", { label_name: this.label.name })
         );
         this.$store.dispatch(
-          "selection/enableSelection",
+          "selection/selectElement",
           this.emptyAnnotationId()
         );
         this.$store.dispatch("document/setEditAnnotation", {
@@ -182,7 +182,7 @@ export default {
     isEmptyAnnotationEditable() {
       if (this.selectedEntities && this.selectedEntities.length > 0) {
         return (
-          this.selectionEnabled === this.emptyAnnotationId() && !this.isLoading
+          this.elementSelected === this.emptyAnnotationId() && !this.isLoading
         );
       } else if (
         this.spanSelection &&
@@ -191,13 +191,23 @@ export default {
         return false;
       } else {
         return (
-          this.selectionEnabled === this.emptyAnnotationId() &&
+          this.elementSelected === this.emptyAnnotationId() &&
           this.spanSelection &&
           this.spanSelection[this.spanIndex] &&
           this.spanSelection[this.spanIndex].offset_string != null &&
           !this.isLoading
         );
       }
+    },
+    saveEmptyAnnotationChanges(event) {
+      if (this.publicView) return;
+
+      if (event) {
+        event.preventDefault();
+      }
+
+      // API call handled in parent component - AnnotationRow
+      this.$emit("save-empty-annotation-changes");
     },
     setText(text) {
       this.$refs.emptyAnnotation.innerHTML = text;

@@ -1,6 +1,6 @@
 {
   "name": "@konfuzio/capture-vue",
-  "version": "0.1.0",
+  "version": "0.1.1-multi-ann-set-3",
   "repository": "git://github.com:konfuzio-ai/document-validation-ui.git",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,6 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "lint": "vue-cli-service lint",
+    "format": "prettier .  --write",
     "prepublishOnly": "npm run build"
   },
   "pre-commit": [
@@ -50,8 +51,10 @@
     "@vue/vue2-jest": "^27.0.0",
     "babel-jest": "^27.0.6",
     "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-vue": "^9.8.0",
     "jest": "^27.0.5",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "prettier": "2.8.1"
   }
 }

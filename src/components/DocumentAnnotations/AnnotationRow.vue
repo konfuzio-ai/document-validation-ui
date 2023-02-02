@@ -68,6 +68,7 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              @save-empty-annotation-changes="saveEmptyAnnotationChanges"
             />
           </div>
           <EmptyAnnotation
@@ -76,6 +77,7 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
+            @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
       </div>
@@ -144,8 +146,9 @@ export default {
       "newAcceptedAnnotations",
       "rejectedMissingAnnotations",
       "documentId",
+      "showActionError",
     ]),
-    ...mapState("selection", ["spanSelection", "selectionEnabled"]),
+    ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapGetters("document", ["isAnnotationInEditMode"]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
@@ -222,6 +225,11 @@ export default {
       if (newValue) {
         this.enableLoading();
       } else {
+        this.isLoading = false;
+      }
+    },
+    showActionError(newValue) {
+      if (newValue) {
         this.isLoading = false;
       }
     },
@@ -331,10 +339,11 @@ export default {
 
         // Check if an entity was selected instead of bbox
         if (this.selectedEntities && this.selectedEntities.length > 0) {
-          return this.selectionEnabled === this.annotationId();
+          return this.elementSelected === this.annotationId();
         } else {
+          // Check if an entity was selected instead of bbox
           return (
-            this.selectionEnabled === this.annotationId() &&
+            this.elementSelected === this.annotationId() &&
             this.spanSelection &&
             Array.isArray(this.spanSelection)
           );
@@ -434,7 +443,7 @@ export default {
           let span;
 
           if (this.selectedEntities && this.selectedEntities.length > 0) {
-            spans[spanIndex] = this.spanFromSelectedEntities;
+            spans = this.spanFromSelectedEntities;
           } else if (this.spanSelection) {
             span = this.createSpan(this.spanSelection, annotationText);
 
@@ -465,11 +474,9 @@ export default {
           updatedValues: updatedString,
           annotationId: this.annotation.id,
         })
-        .then((response) => {
-          if (!response) return;
-
+        .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
-            response,
+            error,
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("edit_error"),
           });
@@ -523,16 +530,13 @@ export default {
           revised: true,
         };
       }
-
       this.isLoading = true;
 
       this.$store
         .dispatch("document/createAnnotation", annotationToCreate)
-        .then((response) => {
-          if (!response) return;
-
+        .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
-            response,
+            error,
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("edit_error"),
           });
@@ -544,7 +548,7 @@ export default {
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
-      if (this.selectionEnabled) {
+      if (this.elementSelected) {
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("document/setSelectedEntities", null);
       }

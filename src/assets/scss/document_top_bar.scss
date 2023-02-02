@@ -75,13 +75,8 @@
         }
       }
 
-      .edit-mode-buttons {
-        display: flex;
-        margin-right: 16px;
-      }
-
       .keyboard-actions-info {
-        margin-right: 30px;
+        margin-right: 16px;
 
         .tooltip-title {
           font-weight: 600;
@@ -123,6 +118,14 @@
               line-height: 20px;
             }
           }
+        }
+      }
+
+      .top-bar-buttons {
+        .buttons {
+          display: flex;
+          align-items: center;
+          margin-right: 16px;
         }
       }
     }

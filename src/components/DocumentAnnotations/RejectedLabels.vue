@@ -66,11 +66,9 @@ export default {
 
       this.$store
         .dispatch("document/deleteMissingAnnotation", id)
-        .then((response) => {
-          if (!response) return;
-
+        .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
-            response,
+            error,
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("edit_error"),
           });

@@ -9,15 +9,27 @@ const state = {
     pageNumber: null,
     start: null,
     end: null,
+    custom: false, // if the box was created by user in document or it comes from an annotation
   },
   isSelecting: false,
   spanSelection: null,
-  selectionEnabled: null,
+  elementSelected: null, // selected element id
 };
 
 const getters = {
-  isSelectionEnabled: (state) => {
-    return state.selectionEnabled;
+  isElementSelected: (state) => {
+    return state.elementSelected;
+  },
+  isSelecting: (state) => {
+    return state.isSelecting;
+  },
+  isSelectionValid: (state) => {
+    /**
+     * `endSelection` will reset everything in case of invalid selection.
+     * Check the existence of `selection.end` before requesting the
+     * content from the backend.
+     * */
+    return state.selection && state.selection.end;
   },
   getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
@@ -31,14 +43,14 @@ const getters = {
 };
 
 const actions = {
-  enableSelection: ({ commit }, value) => {
-    commit("SELECTION_ENABLED", value);
+  selectElement: ({ commit }, value) => {
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
+    commit("ELEMENT_SELECTED", value);
   },
 
   disableSelection: ({ commit }) => {
-    commit("SELECTION_ENABLED", null);
+    commit("ELEMENT_SELECTED", null);
     commit("RESET_SELECTION");
     commit("SET_SPAN_SELECTION", null);
   },
@@ -120,16 +132,18 @@ const actions = {
 };
 
 const mutations = {
-  SELECTION_ENABLED: (state, value) => {
-    state.selectionEnabled = value;
+  ELEMENT_SELECTED: (state, value) => {
+    state.elementSelected = value;
   },
   START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
     state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
+    state.selection.custom = true;
     state.selection.start = start;
   },
   MOVE_SELECTION: (state, points) => {
+    state.isSelecting = true;
     const { start, end } = points;
     if (start) {
       state.selection.start = start;
