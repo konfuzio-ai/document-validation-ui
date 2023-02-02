@@ -12,7 +12,7 @@
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
-            'user-icon',
+            'user-icon success',
           ]"
         >
           <AcceptedUser />
@@ -22,7 +22,7 @@
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
-            'user-icon',
+            'user-icon pending',
           ]"
         >
           <UserIcon />
@@ -33,7 +33,7 @@
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
-          'question-icon',
+          'question-icon pending',
         ]"
       >
         <QuestionMark />
@@ -41,15 +41,21 @@
       <div v-else>
         <div
           v-if="accepted"
-          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+          :class="[
+            'annotation-details-icon success',
+            animate ? 'animated-ripple' : '',
+          ]"
         >
           <AcceptedCheckMark />
         </div>
         <div
           v-else
-          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+          :class="[
+            'annotation-details-icon pending',
+            animate ? 'animated-ripple' : '',
+          ]"
         >
-          <CheckMark />
+          <CheckMark class="pending" />
         </div>
       </div>
     </div>

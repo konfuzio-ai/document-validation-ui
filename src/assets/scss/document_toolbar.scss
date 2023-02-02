@@ -9,7 +9,7 @@
   margin: 0 auto;
 
   .toolbar {
-    background-color: $dark-blue;
+    background-color: $toolbar;
     height: 40px;
     width: fit-content;
     border-radius: 8px;
@@ -37,6 +37,12 @@
       display: flex;
       align-items: center;
 
+      .icon {
+        svg {
+          fill: $toolbar-elements;
+        }
+      }
+
       &.icons-left {
         padding-right: 10px;
 
@@ -56,12 +62,12 @@
         }
 
         .edit-text {
-          color: $white;
+          color: $toolbar-elements;
         }
       }
 
       .percentage {
-        color: $white;
+        color: $toolbar-elements;
         width: 32px;
         padding: 7px;
         margin-right: 20px;

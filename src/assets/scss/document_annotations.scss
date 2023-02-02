@@ -1,7 +1,7 @@
 @import "./imports.scss";
 
 .labels-sidebar {
-  font-family: "Inter", sans-serif;
+  font-family: $font-family;
   flex: 1;
   background-color: $background;
   position: relative;
@@ -271,7 +271,7 @@
 
           &.editing {
             background-color: $background;
-            border-bottom: 1px solid $lighter-green;
+            border-bottom: 1px solid $primary;
           }
 
           .saving-changes {
@@ -336,7 +336,7 @@
       }
 
       &.accept-all-btn {
-        color: $lighter-green !important;
+        color: $primary !important;
         font-size: 14px !important;
         font-weight: 500;
         background-color: transparent !important;

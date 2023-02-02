@@ -3,7 +3,7 @@ $documents-list-height: 52px;
 
 .documents-list {
   background-color: $background;
-  font-family: "Inter", sans-serif;
+  font-family: $font-family;
 
   .documents-list-top {
     display: flex;

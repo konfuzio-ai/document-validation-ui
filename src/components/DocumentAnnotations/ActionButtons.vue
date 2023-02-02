@@ -95,7 +95,7 @@
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
-        type="is-ghost"
+        type="is-primary"
         class="accept-all-btn"
         :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
         @click.stop="acceptGroup"

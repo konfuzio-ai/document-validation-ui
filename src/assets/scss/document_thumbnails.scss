@@ -4,7 +4,7 @@
   background: $background;
   min-width: 80px;
   overflow-y: auto;
-  font-family: "Inter", sans-serif;
+  font-family: $font-family;
   height: 100%;
   border-right: $component-border;
 
@@ -23,7 +23,7 @@
         border-radius: 4px;
 
         &.selected {
-          border: 2px solid $lighter-green;
+          border: 2px solid $primary;
         }
 
         img {
