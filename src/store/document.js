@@ -90,7 +90,7 @@ const getters = {
   categorizationIsConfirmed: (state) => {
     if (state.selectedDocument) {
       if (
-        state.selectedDocument.is_category_accepted ||
+        state.selectedDocument.category_is_revised ||
         state.selectedDocument.is_reviewed
       ) {
         return true;
@@ -681,9 +681,9 @@ const actions = {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then((response) => {
           if (response.status === 200) {
-            // TODO: remove this after implementation in backend for is_category_accepted
-            if (updatedDocument.is_category_accepted) {
-              response.data.is_category_accepted = true;
+            // TODO: remove this after implementation in backend for category_is_revised
+            if (updatedDocument.category_is_revised) {
+              response.data.category_is_revised = true;
             }
 
             commit("SET_SELECTED_DOCUMENT", response.data);

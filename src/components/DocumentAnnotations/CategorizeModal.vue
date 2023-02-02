@@ -127,7 +127,7 @@ export default {
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
-          is_category_accepted: true,
+          category_is_revised: true,
         };
 
         this.$store.dispatch("document/startRecalculatingAnnotations");
@@ -147,7 +147,7 @@ export default {
       } else {
         // if same category, then just accept it
         this.$store.dispatch("document/updateDocument", {
-          is_category_accepted: true,
+          category_is_revised: true,
         });
       }
       this.show = false;
