@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentAnnotations,
   DocumentLabel,
@@ -21,6 +21,8 @@ describe("Document Annotations Component", () => {
       store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
+      store.dispatch("selection/disableSelection"),
+      store.dispatch("document/resetEditAnnotation"),
     ]);
   });
 
@@ -158,6 +160,68 @@ describe("Document Annotations Component", () => {
     expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
   });
 
+  it("Click should trigger edit mode in annotation", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const annotation = label.annotations[0];
+    const span = annotation.span;
+    const spanIndex = 0;
+
+    const wrapper = mount(AnnotationContent, {
+      store,
+      propsData: {
+        annotation,
+        label,
+        annotationSet,
+        span,
+        spanIndex,
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper.findComponent(".annotation-value").trigger("click");
+    expect(store.state.selection.elementSelected).toEqual(annotation.id);
+  });
+
+  it("Action buttons should appear when annotation is in edit mode", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const annotation = label.annotations[0];
+    const span = annotation.span;
+    const spanIndex = 0;
+
+    const wrapper = mount(AnnotationContent, {
+      store,
+      propsData: {
+        annotation,
+        label,
+        annotationSet,
+        span,
+        spanIndex,
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(AnnotationRow, {
+      store,
+      propsData: {
+        label,
+        annotationSet,
+        annotation,
+      },
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper.findComponent(".annotation-value").trigger("click");
+    expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
+  });
+
   it("Only show 'accept' button on hover on filled annotations", async () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
@@ -185,7 +249,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .find(
+          ".annotation-row-right .buttons-container .action-buttons .annotation-accept-btn"
+        )
         .isVisible()
     ).toBe(true);
   });

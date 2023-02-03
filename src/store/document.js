@@ -392,12 +392,28 @@ const getters = {
     );
   },
 
+  /**
+   * Joins all strings in a multi-entity Annotation array
+   * to look like a single string
+   */
   getTextFromEntities: (state) => () => {
     return state.selectedEntities
       .map((entity) => {
         return entity.content;
       })
       .join(" ");
+  },
+
+  /**
+   * Checks the level of confidence of an annotation
+   */
+
+  accuracy: () => (annotation) => {
+    if (annotation) {
+      return annotation.confidence;
+    } else {
+      return null;
+    }
   },
 };
 

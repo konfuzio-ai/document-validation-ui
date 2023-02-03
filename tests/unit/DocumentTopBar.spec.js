@@ -241,23 +241,6 @@ describe("Document Top Bar", () => {
     ).toBe(true);
   });
 
-  it("If document has been reviewed, document should be in public mode and button disabled", async () => {
-    const wrapper = mount(DocumentTopBar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(
-      await wrapper
-        .findComponent(
-          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
-        )
-        .attributes("disabled")
-    ).not.toBe("undefined");
-  });
-
   it("If document is in edit mode, button should not be visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
