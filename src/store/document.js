@@ -405,12 +405,72 @@ const getters = {
   },
 
   /**
-   * Checks the level of confidence of an annotation
+   * Check the level of confidence of an annotation
    */
-
   accuracy: () => (annotation) => {
     if (annotation) {
       return annotation.confidence;
+    } else {
+      return null;
+    }
+  },
+
+  /**
+   * Check status of annotation
+   */
+  notFound: () => (annotation) => {
+    if (annotation) {
+      return !annotation.span;
+    } else {
+      return true;
+    }
+  },
+  created: () => (annotation) => {
+    if (annotation) {
+      return (
+        annotation.created_by && !annotation.revised && annotation.is_correct
+      );
+    } else {
+      return null;
+    }
+  },
+  edited: () => (annotation) => {
+    if (annotation) {
+      if (annotation.offset_string !== annotation.offset_string_original) {
+        return true;
+      } else if (annotation.created_by) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return null;
+    }
+  },
+  accepted: () => (annotation) => {
+    if (annotation) {
+      return annotation.revised && annotation.is_correct;
+    } else {
+      return null;
+    }
+  },
+
+  /**
+   * Check for user who created or revised the annotation
+   */
+  getUser: () => (annotation) => {
+    if (annotation) {
+      console.log(annotation);
+      if (annotation.created_by && !annotation.revised) {
+        // If the annotation was created but not yet revised
+        // we show who created it
+        return annotation.created_by;
+      } else if (annotation.revised && annotation.revised_by) {
+        return annotation.revised_by;
+      } else {
+        // If both revised_by and created_by are null, we don't show any user
+        return null;
+      }
     } else {
       return null;
     }
