@@ -19,16 +19,6 @@
       width: 25px;
     }
 
-    &.success {
-      svg {
-        fill: $annotation-icon-success;
-      }
-    }
-
-    &.pending {
-      fill: $annotation-icon-pending;
-    }
-
     &.user-icon {
       padding: 0 18px;
       svg {

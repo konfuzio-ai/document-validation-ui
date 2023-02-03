@@ -50,8 +50,6 @@ $dark-blue: #2b3545;
   --tooltip-color: #{$dark};
   --error-background: #{$error-background};
   --error-text: #{$white};
-  --annotation-icon-success: #{$green};
-  --annotation-icon-pending: #{$grey-detail};
 }
 
 $font-family: var(--font-family);
@@ -61,8 +59,6 @@ $primary: var(--primary-color);
 $primary-dark: var(--primary-hover);
 $tooltip: var(--tooltip-color);
 $toolbar-elements: var(--toolbar-elements);
-$annotation-icon-success: var(--annotation-icon-success);
-$annotation-icon-pending: var(--annotation-icon-pending);
 
 $link: $primary;
 $info: $blue;
