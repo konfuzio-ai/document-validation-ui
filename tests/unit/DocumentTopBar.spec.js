@@ -2,7 +2,6 @@ import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentTopBar,
   DocumentName,
-  Handover,
 } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
@@ -152,46 +151,6 @@ describe("Document Top Bar", () => {
     await mockFn();
 
     expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  it("Should render the handover button", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(await wrapper.findComponent(".handover-container").exists()).toBe(
-      true
-    );
-  });
-
-  it("Clicking the button should open modal", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    await wrapper.findComponent(".handover-btn").trigger("click");
-    expect(await wrapper.findComponent(".notification").isVisible()).toBe(true);
-  });
-
-  it("Clicking the X button should close modal", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    await wrapper.findComponent(".handover-btn").trigger("click");
-    await wrapper.findComponent(".modal-btn").trigger("click");
-    expect(await wrapper.findComponent(".notification").isVisible()).toBe(
-      false
-    );
   });
 
   it("Keyboard icon is visible", async () => {

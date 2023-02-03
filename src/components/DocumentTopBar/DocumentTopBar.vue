@@ -8,10 +8,6 @@
         <DocumentCategory
           v-if="categories && !editMode && !recalculatingAnnotations"
         />
-        <DocumentDatasetStatus
-          v-if="showDatasetDropdown && !editMode && !recalculatingAnnotations"
-          :dataset-status="selectedDocument.dataset_status"
-        />
       </div>
 
       <DocumentName :data-file-name="selectedDocument.data_file_name" />
@@ -64,10 +60,6 @@
         <div class="top-bar-buttons">
           <DocumentTopBarButtons />
         </div>
-
-        <div v-if="showHandoverButton && !editMode" class="handover">
-          <DocumentHandover />
-        </div>
       </div>
     </div>
     <div v-else class="loading-top-bar">
@@ -78,10 +70,8 @@
 
 <script>
 import { mapState } from "vuex";
-import DocumentDatasetStatus from "./DocumentDatasetStatus";
 import DocumentCategory from "../../components/DocumentCategory";
 import DocumentName from "./DocumentName";
-import DocumentHandover from "./DocumentHandover";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
 import KeyboardActionsDescription from "./KeyboardActionsDescription";
 
@@ -94,17 +84,13 @@ export default {
   name: "DocumentTopBar",
   components: {
     DocumentCategory,
-    DocumentDatasetStatus,
     DocumentName,
-    DocumentHandover,
     DocumentTopBarButtons,
     KeyboardActionsDescription,
   },
   data() {
     return {
       categoryError: false,
-      showDatasetDropdown: false,
-      showHandoverButton: false,
     };
   },
   computed: {
