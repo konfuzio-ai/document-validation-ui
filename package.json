@@ -1,10 +1,10 @@
 {
-  "name": "@konfuzio/document-validation-ui",
+  "name": "@konfuzio/capture-vue",
   "version": "0.1.1",
   "repository": "git://github.com:konfuzio-ai/document-validation-ui.git",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --name CaptureVue ./src/main.js",
+    "build": "vue-cli-service build --name DocumentValidationUi ./src/main.js",
     "test:unit": "vue-cli-service test:unit",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "lint": "vue-cli-service lint",
