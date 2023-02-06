@@ -1,5 +1,8 @@
 <template>
-  <div ref="pdfContainer" class="pdf-page-container">
+  <div
+    ref="pdfContainer"
+    :class="['pdf-page-container', categorizeModalIsActive && 'pointer-cursor']"
+  >
     <NewAnnotation
       v-if="newAnnotation && newAnnotation.length && !editAnnotation"
       :new-annotation="newAnnotation"
@@ -245,6 +248,7 @@ export default {
       "selectedDocument",
       "publicView",
       "selectedEntities",
+      "categorizeModalIsActive",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -293,6 +297,8 @@ export default {
     },
 
     onMouseDown(event) {
+      if (this.categorizeModalIsActive) return;
+
       this.closePopups();
 
       // check if element and delegate to it
@@ -359,7 +365,7 @@ export default {
     },
 
     handleClickedEntity(entity) {
-      if (!entity) return;
+      if (!entity || this.categorizeModalIsActive) return;
 
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
@@ -397,7 +403,9 @@ export default {
     },
 
     onElementEnter() {
-      this.$refs.stage.$el.style.cursor = "pointer";
+      if (!this.categorizeModalIsActive) {
+        this.$refs.stage.$el.style.cursor = "pointer";
+      }
     },
 
     onElementLeave() {

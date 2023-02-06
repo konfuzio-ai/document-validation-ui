@@ -99,6 +99,9 @@ export default {
         this.setDocumentValues();
       }
     },
+    show(newValue) {
+      this.$store.dispatch("document/setCategorizeModalIsActive", newValue);
+    },
   },
   mounted() {
     this.setDocumentValues();
