@@ -5,4 +5,8 @@
   cursor: crosshair;
   width: fit-content;
   margin: 0 auto;
+
+  &.pointer-cursor {
+    cursor: default;
+  }
 }
