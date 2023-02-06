@@ -48,7 +48,7 @@
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
-                (bbox) => bbox.page_index + 1 == pageNumber
+                (bbox) => bbox.page_index + 1 == page.number
               )"
             >
               <v-rect
@@ -147,7 +147,7 @@ export default {
     showFocusedAnnotation() {
       return (
         this.documentAnnotationSelected &&
-        this.documentAnnotationSelected.page === this.pageNumber &&
+        this.documentAnnotationSelected.page === this.page.number &&
         this.visiblePageRange.includes(this.documentAnnotationSelected.page) &&
         !this.isAnnotationInEditMode(this.documentAnnotationSelected.id)
       );
@@ -174,7 +174,7 @@ export default {
     },
 
     pageInVisibleRange() {
-      return this.visiblePageRange.includes(this.pageNumber);
+      return this.visiblePageRange.includes(this.page.number);
     },
 
     /**
@@ -215,7 +215,7 @@ export default {
         this.annotations.map((annotation) => {
           if (
             annotation.span.find(
-              (span) => span.page_index + 1 === this.pageNumber
+              (span) => span.page_index + 1 === this.page.number
             )
           ) {
             annotations.push(annotation);
@@ -225,16 +225,9 @@ export default {
       return annotations;
     },
 
-    pageNumber() {
-      if (this.editMode) {
-        return this.page.page_number;
-      }
-      return this.page.number;
-    },
-
     selection() {
       return this.$store.getters["selection/getSelectionForPage"](
-        this.pageNumber
+        this.page.number
       );
     },
 
@@ -324,7 +317,7 @@ export default {
 
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.startSelection({
-        pageNumber: this.pageNumber,
+        pageNumber: this.page.number,
         start: {
           x: position.x,
           y: position.y,

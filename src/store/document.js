@@ -460,7 +460,6 @@ const getters = {
    */
   getUser: () => (annotation) => {
     if (annotation) {
-      console.log(annotation);
       if (annotation.created_by && !annotation.revised) {
         // If the annotation was created but not yet revised
         // we show who created it
