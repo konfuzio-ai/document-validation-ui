@@ -6,9 +6,9 @@
     class="left-aligned annotation-details"
   >
     <div class="label-icon">
-      <div v-if="created || edited">
+      <div v-if="created(annotation) || edited(annotation)">
         <div
-          v-if="accepted"
+          v-if="accepted(annotation)"
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
@@ -29,7 +29,7 @@
         </div>
       </div>
       <div
-        v-else-if="notFound"
+        v-else-if="notFound(annotation)"
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
@@ -40,8 +40,11 @@
       </div>
       <div v-else>
         <div
-          v-if="accepted"
-          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+          v-if="accepted(annotation)"
+          :class="[
+            'annotation-details-icon success',
+            animate ? 'animated-ripple' : '',
+          ]"
         >
           <AcceptedCheckMark />
         </div>
@@ -59,21 +62,25 @@
         <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div v-if="accuracy" class="accuracy">
+        <div v-if="accuracy(annotation)" class="accuracy">
           <span>{{ $t("accuracy") }}</span
           ><span
             :class="[
               'value',
-              accuracy <= 0.2 ? 'red' : accuracy <= 0.5 ? 'yellow' : '',
+              accuracy(annotation) <= 0.2
+                ? 'red'
+                : accuracy(annotation) <= 0.5
+                ? 'yellow'
+                : '',
             ]"
-            >{{ Math.floor(accuracy * 100) / 100 }}</span
+            >{{ Math.floor(accuracy(annotation) * 100) / 100 }}</span
           >
         </div>
         <div class="revision">
           <div class="detail-icons">
-            <div v-if="created || edited">
+            <div v-if="created(annotation) || edited(annotation)">
               <div
-                v-if="accepted"
+                v-if="accepted(annotation)"
                 :class="[
                   'annotation-details-icon',
                   animate ? 'animated-ripple' : '',
@@ -94,7 +101,7 @@
               </div>
             </div>
             <div
-              v-else-if="notFound"
+              v-else-if="notFound(annotation)"
               :class="[
                 'annotation-details-icon',
                 animate ? 'animated-ripple' : '',
@@ -105,7 +112,7 @@
             </div>
             <div v-else>
               <div
-                v-if="accepted"
+                v-if="accepted(annotation)"
                 :class="[
                   'annotation-details-icon',
                   animate ? 'animated-ripple' : '',
@@ -131,6 +138,7 @@
   </b-tooltip>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import CheckMark from "../../assets/images/CheckMark";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import QuestionMark from "../../assets/images/QuestionMark";
@@ -163,97 +171,23 @@ export default {
     };
   },
   computed: {
-    accuracy() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        return this.annotation.confidence;
-      } else {
-        return null;
-      }
-    },
-    notFound() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        return !this.annotation.span;
-      } else {
-        return true;
-      }
-    },
-    created() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        return (
-          this.annotation.created_by &&
-          !this.annotation.revised &&
-          this.annotation.is_correct
-        );
-      } else {
-        return null;
-      }
-    },
-    edited() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        if (
-          this.annotation.offset_string !==
-          this.annotation.offset_string_original
-        ) {
-          return true;
-        } else if (this.annotation.created_by) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        return null;
-      }
-    },
-    accepted() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        return this.annotation.revised && this.annotation.is_correct;
-      } else {
-        return null;
-      }
-    },
-    declined() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        return this.annotation.revised && !this.annotation.is_correct;
-      } else {
-        return null;
-      }
-    },
-    user() {
-      // TODO: add this verification to store
-      if (this.annotation) {
-        if (this.annotation.created_by && !this.annotation.revised) {
-          // If the annotation was created but not yet revised
-          // we show who created it
-          return this.annotation.created_by;
-        } else if (this.annotation.revised && this.annotation.revised_by) {
-          return this.annotation.revised_by;
-        } else {
-          // If both revised_by and created_by are null, we don't show any user
-          return null;
-        }
-      } else {
-        return null;
-      }
-    },
+    ...mapGetters("document", [
+      "accuracy",
+      "notFound",
+      "created",
+      "edited",
+      "accepted",
+      "getUser",
+    ]),
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
       // animate an annotation being accepted
-      // TODO: add this accepted check to store
-      const accepted = (ann) => {
-        return ann && ann.id && ann.revised && ann.is_correct;
-      };
       if (
         newAnnotation &&
         newAnnotation.id &&
-        accepted(newAnnotation) &&
-        !accepted(oldAnnotation)
+        this.accepted(newAnnotation) &&
+        !this.accepted(oldAnnotation)
       ) {
         this.animate = true;
         setTimeout(() => {
@@ -264,20 +198,16 @@ export default {
   },
   methods: {
     getText() {
-      if (this.notFound) {
+      if (this.notFound(this.annotation)) {
         return this.$t("not_found_in_document");
-      } else if (this.created) {
-        return this.user
-          ? `${this.$t("created_by")} ${this.user}`
+      } else if (this.created(this.annotation)) {
+        return this.getUser(this.annotation)
+          ? `${this.$t("created_by")} ${this.getUser(this.annotation)}`
           : this.$t("created");
-      } else if (this.accepted) {
-        return this.user
-          ? `${this.$t("approved_by")} ${this.user}`
+      } else if (this.accepted(this.annotation)) {
+        return this.getUser(this.annotation)
+          ? `${this.$t("approved_by")} ${this.getUser(this.annotation)}`
           : this.$t("approved");
-      } else if (this.declined) {
-        return this.user
-          ? `${this.$t("declined_by")} ${this.user}`
-          : this.$t("declined");
       } else {
         return this.$t("not_revised_yet");
       }

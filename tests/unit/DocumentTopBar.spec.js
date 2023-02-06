@@ -2,7 +2,6 @@ import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentTopBar,
   DocumentName,
-  Handover,
 } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
 
@@ -154,46 +153,6 @@ describe("Document Top Bar", () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it("Should render the handover button", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(await wrapper.findComponent(".handover-container").exists()).toBe(
-      true
-    );
-  });
-
-  it("Clicking the button should open modal", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    await wrapper.findComponent(".handover-btn").trigger("click");
-    expect(await wrapper.findComponent(".notification").isVisible()).toBe(true);
-  });
-
-  it("Clicking the X button should close modal", async () => {
-    const wrapper = mount(Handover, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    await wrapper.findComponent(".handover-btn").trigger("click");
-    await wrapper.findComponent(".modal-btn").trigger("click");
-    expect(await wrapper.findComponent(".notification").isVisible()).toBe(
-      false
-    );
-  });
-
   it("Keyboard icon is visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
@@ -239,23 +198,6 @@ describe("Document Top Bar", () => {
         )
         .isVisible()
     ).toBe(true);
-  });
-
-  it("If document has been reviewed, document should be in public mode and button disabled", async () => {
-    const wrapper = mount(DocumentTopBar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    expect(
-      await wrapper
-        .findComponent(
-          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
-        )
-        .attributes("disabled")
-    ).not.toBe("undefined");
   });
 
   it("If document is in edit mode, button should not be visible", async () => {

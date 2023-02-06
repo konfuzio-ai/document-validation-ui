@@ -34,10 +34,7 @@
                   transform: 'rotate(' + getRotation(page.id) + 'deg)',
                 }"
               >
-                <b-skeleton
-                  width="57px"
-                  height="57px"
-                />
+                <b-skeleton width="57px" height="57px" />
               </ServerImage>
             </div>
             <div class="icon-container">
@@ -46,36 +43,30 @@
               </div>
             </div>
           </div>
-          <span class="page-number">{{ page.page_number }}</span>
+          <span class="page-number">{{ page.number }}</span>
         </div>
         <div
           :class="[
             'splitting-lines',
             activeSplittingLines &&
-              activeSplittingLines[index] === page.page_number &&
+              activeSplittingLines[index] === page.number &&
               'active-split',
           ]"
           @click="handleSplittingLines(page)"
         >
           <div class="scissors-icon">
-            <b-icon
-              icon="scissors"
-              class="is-small"
-            />
+            <b-icon icon="scissors" class="is-small" />
           </div>
           <div
             v-if="
               activeSplittingLines &&
-                activeSplittingLines[index] === page.page_number
+              activeSplittingLines[index] === page.number
             "
             class="lines"
           >
             <SplitZigZag />
           </div>
-          <div
-            v-else
-            class="lines"
-          >
+          <div v-else class="lines">
             <SplitLines />
           </div>
         </div>
@@ -162,10 +153,10 @@ export default {
     },
     selectPage(page) {
       if (!page) return;
-      this.$emit("change-page", page.page_number);
+      this.$emit("change-page", page.number);
       const selectedPage = {
         id: page.id,
-        number: page.page_number,
+        number: page.number,
         thumbnail_url: page.thumbnail_url,
       };
       this.selected = true;

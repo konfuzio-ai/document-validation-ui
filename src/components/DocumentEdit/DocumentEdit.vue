@@ -1,9 +1,6 @@
 <template>
   <div :class="['document-edit', splitOverview && 'split-overview-component']">
-    <div
-      v-if="!splitOverview"
-      class="pages-section"
-    >
+    <div v-if="!splitOverview" class="pages-section">
       <EditPages
         :active-splitting-lines="activeSplittingLines"
         @change-page="changePage"
@@ -12,20 +9,14 @@
         @handle-drag-end="handleDragEnd"
       />
     </div>
-    <div
-      v-else
-      class="split-overview-section"
-    >
+    <div v-else class="split-overview-section">
       <SplitOverview
         :file-name="fileName"
         :file-extension="fileExtension"
         @change-page="changePage"
       />
     </div>
-    <div
-      v-if="!splitOverview"
-      class="sidebar"
-    >
+    <div v-if="!splitOverview" class="sidebar">
       <EditSidebar
         @rotate-left="rotatePage"
         @rotate-right="rotatePage"
@@ -49,7 +40,7 @@ export default {
   components: {
     EditSidebar,
     SplitOverview,
-    EditPages
+    EditPages,
   },
   data() {
     return {
@@ -57,7 +48,7 @@ export default {
       fileExtension: null,
       activeSplittingLines: [],
       dragging: false,
-      prevPageAtIndex: null
+      prevPageAtIndex: null,
     };
   },
   computed: {
@@ -68,8 +59,8 @@ export default {
       "documentPagesListForEditMode",
       "updatedDocument",
       "splitOverview",
-      "selectedPages"
-    ])
+      "selectedPages",
+    ]),
   },
   watch: {
     pages() {
@@ -85,7 +76,7 @@ export default {
       if (newValue) {
         this.saveUpdatedDocument();
       }
-    }
+    },
   },
   mounted() {
     this.setPages();
@@ -105,15 +96,15 @@ export default {
       );
     },
     createDocumentPagesListForEditMode() {
-      return this.selectedDocument.pages.map(page => {
+      return this.selectedDocument.pages.map((page) => {
         return {
           id: page.id,
           angle: 0,
-          page_number: page.number,
+          number: page.number,
           thumbnail_url: page.thumbnail_url,
           image_url: page.image_url,
           size: page.size,
-          updated_at: this.selectedDocument.downloaded_at
+          updated_at: this.selectedDocument.downloaded_at,
         };
       });
     },
@@ -129,13 +120,13 @@ export default {
 
     /** ROTATE */
     rotatePage(direction) {
-      const page = this.selectedPages.map(page => {
+      const page = this.selectedPages.map((page) => {
         return page;
       });
 
       this.$store.dispatch("edit/rotatePage", {
         page,
-        direction
+        direction,
       });
     },
     handleRotationsToTheLeft() {
@@ -170,17 +161,13 @@ export default {
       // Add page number to specific index
       // Or replace it with 0 (to keep the same index) if it exists
       const found = this.activeSplittingLines.find(
-        item => item === page.page_number
+        (item) => item === page.number
       );
 
       if (found) {
-        this.activeSplittingLines.splice(page.page_number - 1, 1, 0);
+        this.activeSplittingLines.splice(page.number - 1, 1, 0);
       } else {
-        this.activeSplittingLines.splice(
-          page.page_number - 1,
-          1,
-          page.page_number
-        );
+        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
       }
 
       this.saveUpdatedDocument();
@@ -189,7 +176,9 @@ export default {
       this.splitFileNameFromExtension();
 
       // Check how many sub docs we have
-      const subDocuments = this.activeSplittingLines.filter(item => item !== 0);
+      const subDocuments = this.activeSplittingLines.filter(
+        (item) => item !== 0
+      );
 
       // Create array of objects
       // with a fixed size based on how many sub documents are currently
@@ -201,7 +190,7 @@ export default {
         const pageObject = {
           name: this.handleFileName(i),
           category: this.selectedDocument.category,
-          pages: this.handleSubPages(i, subDocuments)
+          pages: this.handleSubPages(i, subDocuments),
         };
 
         // Then we replace the "undefined" with the created object
@@ -255,24 +244,24 @@ export default {
     checkMove(e) {
       // Save the page placed originally where the page we are dragging will go
       this.prevPageAtIndex = this.documentPagesListForEditMode.find(
-        page =>
+        (page) =>
           this.documentPagesListForEditMode.indexOf(page) ===
           e.draggedContext.futureIndex
       );
     },
     handleDragEnd() {
       // Update page numbers
-      const pages = this.documentPagesListForEditMode.map(page => {
+      const pages = this.documentPagesListForEditMode.map((page) => {
         const index = this.documentPagesListForEditMode.indexOf(page);
         return {
           ...page,
-          page_number: index + 1
+          number: index + 1,
         };
       });
 
       this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
-    }
-  }
+    },
+  },
 };
 </script>
 

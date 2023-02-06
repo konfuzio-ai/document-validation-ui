@@ -113,20 +113,12 @@ export default {
     },
     isElementFocused(focused) {
       if (!this.loading && focused) {
-        let pageNumber;
-
-        // TODO: have the same name for page.number in the edit mode so there's no need to do this validations
-        if (this.editMode) {
-          pageNumber = this.page.page_number;
-        } else {
-          pageNumber = this.page.number;
-        }
-        this.$store.dispatch("display/updateCurrentPage", pageNumber);
+        this.$store.dispatch("display/updateCurrentPage", this.page.number);
       }
     },
     currentPage(number) {
       if (
-        (this.page.number === number || this.page.page_number === number) &&
+        (this.page.number === number || this.page.number === number) &&
         !this.isElementFocused
       ) {
         this.$emit("page-jump", this.elementTop);
@@ -147,14 +139,9 @@ export default {
         });
     },
     pageInVisibleRange(page) {
-      let number;
-      if (this.editMode) {
-        number = page.page_number;
-      } else {
-        number = page.number;
-      }
       return (
-        this.currentPage === number || this.visiblePageRange.includes(number)
+        this.currentPage === page.number ||
+        this.visiblePageRange.includes(page.number)
       );
     },
     updateElementBounds() {
