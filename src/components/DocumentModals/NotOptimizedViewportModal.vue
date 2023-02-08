@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Illustration from "../assets/images/NotOptimizedIllustration";
+import Illustration from "../../assets/images/NotOptimizedIllustration";
 
 export default {
   name: "NotOptimizedViewportModal",
@@ -47,5 +47,5 @@ export default {
 <style
   scoped
   lang="scss"
-  src="../assets/scss/document_viewport_modal.scss"
+  src="../../assets/scss/document_viewport_modal.scss"
 ></style>

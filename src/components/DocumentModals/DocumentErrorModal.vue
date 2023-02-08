@@ -29,11 +29,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import ErrorIcon from "../assets/images/ErrorIcon";
+import ErrorIcon from "../../assets/images/ErrorIcon";
 
 export default {
-  name: "DocumentError",
+  name: "DocumentErrorModal",
   components: {
     ErrorIcon,
   },
@@ -54,4 +53,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss" src="../assets/scss/document_error.scss"></style>
+<style scoped lang="scss" src="../../assets/scss/document_error.scss"></style>

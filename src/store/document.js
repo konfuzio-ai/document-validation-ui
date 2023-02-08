@@ -28,6 +28,7 @@ const state = {
   newAcceptedAnnotations: null,
   selectedEntities: null,
   serverError: false,
+  splittingSuggestions: false,
 };
 
 const getters = {
@@ -441,6 +442,13 @@ const getters = {
   },
 
   /**
+   *
+   */
+  documentHasSplittingSuggestions: () => (document) => {
+    return document.status_data === 2;
+  },
+
+  /**
    * Joins all strings in a multi-entity Annotation array
    * to look like a single string
    */
@@ -610,6 +618,9 @@ const actions = {
   setSelectedEntities: ({ commit }, entities) => {
     commit("SET_SELECTED_ENTITIES", entities);
   },
+  setSplittingSuggestions: ({ commit }, value) => {
+    commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -654,6 +665,10 @@ const actions = {
             dispatch("project/setProjectId", response.data.project, {
               root: true,
             });
+          }
+
+          if (getters.documentHasSplittingSuggestions(response.data)) {
+            commit("SET_SPLITTING_SUGGESTIONS", true);
           }
 
           categoryId = response.data.category;
@@ -912,8 +927,11 @@ const actions = {
         `documents/${state.documentId}/?fields=status_data,labeling_available`
       )
         .then((response) => {
-          if (getters.isDocumentReadyToBeReviewed(response.data)) {
-            // ready
+          if (
+            getters.isDocumentReadyToBeReviewed(response.data) ||
+            getters.documentHasSplittingSuggestions(response.data)
+          ) {
+            // ready or has splitting suggestions
             return resolve(true);
           } else if (getters.documentHadErrorDuringExtraction(response.data)) {
             // error
@@ -1184,6 +1202,9 @@ const mutations = {
 
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
+  },
+  SET_SPLITTING_SUGGESTIONS: (state, value) => {
+    state.splittingSuggestions = value;
   },
 };
 

@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     ...mapState("category", ["categories"]),
-    ...mapState("document", ["selectedDocument"]),
+    ...mapState("document", ["selectedDocument", "categorizeModalIsActive"]),
     ...mapGetters("category", ["category", "projectHasSingleCategory"]),
     ...mapGetters("document", ["categorizationIsConfirmed"]),
   },
@@ -126,6 +126,13 @@ export default {
     },
     show(newValue) {
       this.$store.dispatch("display/setCategorizeModalIsActive", newValue);
+    },
+    categorizeModalIsActive(newValue) {
+      // Show modal after split suggestion modal
+      // if no category confirmed
+      if (newValue) {
+        this.show = newValue && !this.categorizationIsConfirmed;
+      }
     },
   },
   mounted() {

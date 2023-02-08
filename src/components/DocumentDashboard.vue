@@ -18,7 +18,7 @@
       </transition>
     </div>
     <div v-if="showDocumentError" class="error-modal">
-      <DocumentError />
+      <DocumentErrorModal />
     </div>
     <div v-if="!optimalResolution" class="not-optimized">
       <NotOptimizedViewportModal />
@@ -27,6 +27,9 @@
       <div class="text">
         {{ $t("resolution_not_supported") }}
       </div>
+    </div>
+    <div v-if="documentHasSplittingSuggestions">
+      <SplittingConfirmationModal />
     </div>
   </div>
 </template>
@@ -39,8 +42,9 @@ import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
-import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
-import DocumentError from "./DocumentError";
+import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
+import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
+import SplittingConfirmationModal from "../components/DocumentModals/SplittingConfirmationModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -56,7 +60,8 @@ export default {
     DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal,
-    DocumentError,
+    DocumentErrorModal,
+    SplittingConfirmationModal,
   },
   data() {
     return {
@@ -80,6 +85,7 @@ export default {
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["isMinimumWidth"]),
+    ...mapGetters("document", ["documentHasSplittingSuggestions"]),
   },
   watch: {
     selectedDocument(newDocument, oldDocument) {
