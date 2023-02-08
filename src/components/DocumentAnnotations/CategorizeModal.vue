@@ -174,7 +174,11 @@ export default {
         }
 
         this.selectedCategory = category;
-        this.show = !this.categorizationIsConfirmed;
+        this.documentCategory = category;
+
+        // TODO: add extra validation to check if split modal is shown or not
+        // If not shown, we show modal based on category confirmed
+        // this.show = !this.categorizationIsConfirmed;
       }
     },
     canCloseModal() {
