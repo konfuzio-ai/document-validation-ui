@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { nextTick } from "vue";
 import MagicWandIcon from "../../assets/images/MagicWandIcon.vue";
 
 export default {
@@ -81,7 +82,9 @@ export default {
     };
   },
   mounted() {
-    this.newText = this.$t("new").toUpperCase();
+    nextTick(() => {
+      this.newText = this.$t("new").toUpperCase();
+    });
   },
 
   methods: {

@@ -77,7 +77,7 @@ describe("Document Annotations Component", () => {
         $t,
       },
     });
-    const element = wrapper
+    const element = await wrapper
       .findAll(".annotation-row .annotation-details")
       .at(0);
     await element.find(".tooltip-trigger").trigger("mouseenter");

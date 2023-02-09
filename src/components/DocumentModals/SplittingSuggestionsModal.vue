@@ -1,5 +1,5 @@
 <template>
-  <section ref="confirmationModal" class="splitting-confirmation-modal">
+  <section ref="splittingModal" class="splitting-confirmation-modal">
     <b-modal
       v-model="isModalActive"
       class="modal-400"
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { nextTick } from "vue";
 import { mapState } from "vuex";
 import StarIcon from "../../assets/images/StarIcon";
 
@@ -34,14 +35,14 @@ import StarIcon from "../../assets/images/StarIcon";
  * This component shows a modal to inform the user about auto-splitting suggestions
  */
 export default {
-  name: "SplittingConfirmationModal",
+  name: "SplittingSuggestionsModal",
   components: {
     StarIcon,
   },
   data() {
     return {
       isModalActive: false,
-      numberOfSplitDocuments: 5,
+      numberOfSplitDocuments: 5, // to get from the endpoint
       recommended: null,
     };
   },
@@ -65,7 +66,9 @@ export default {
     },
   },
   mounted() {
-    this.recommended = this.$t("recommended").toUpperCase();
+    nextTick(() => {
+      this.recommended = this.$t("recommended").toUpperCase();
+    });
   },
   methods: {
     closeModal() {
@@ -75,9 +78,6 @@ export default {
     handleReviewNow() {
       this.$store.dispatch("edit/enableEditMode");
       this.isModalActive = false;
-    },
-    setText(text) {
-      console.log(text);
     },
   },
 };

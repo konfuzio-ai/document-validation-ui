@@ -29,7 +29,7 @@
       </div>
     </div>
     <div v-if="documentHasSplittingSuggestions">
-      <SplittingConfirmationModal />
+      <SplittingSuggestionsModal />
     </div>
   </div>
 </template>
@@ -44,7 +44,7 @@ import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
-import SplittingConfirmationModal from "../components/DocumentModals/SplittingConfirmationModal";
+import SplittingSuggestionsModal from "../components/DocumentModals/SplittingSuggestionsModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -61,7 +61,7 @@ export default {
     ErrorMessage,
     NotOptimizedViewportModal,
     DocumentErrorModal,
-    SplittingConfirmationModal,
+    SplittingSuggestionsModal,
   },
   data() {
     return {

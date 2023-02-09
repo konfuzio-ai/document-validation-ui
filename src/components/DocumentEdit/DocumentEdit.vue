@@ -28,6 +28,9 @@
         @show-bar="handleShowBar"
       />
     </div>
+    <div class="confirmation-modal-container">
+      <EditConfirmationModal />
+    </div>
   </div>
 </template>
 <script>
@@ -36,6 +39,7 @@ import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
 import SplitInfoBar from "./SplitInfoBar";
+import EditConfirmationModal from "./EditConfirmationModal";
 
 /**
  * This component shows a document thumbnail grid view and sidebar, to be able to edit the document.
@@ -47,6 +51,7 @@ export default {
     SplitOverview,
     EditPages,
     SplitInfoBar,
+    EditConfirmationModal,
   },
   data() {
     return {
