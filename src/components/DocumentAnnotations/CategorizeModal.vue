@@ -178,7 +178,9 @@ export default {
 
         // TODO: add extra validation to check if split modal is shown or not
         // If not shown, we show modal based on category confirmed
-        // this.show = !this.categorizationIsConfirmed;
+        // this.show =
+        //   !this.categorizationIsConfirmed &&
+        //   !this.documentHasSplittingSuggestions(this.selectedDocument);
       }
     },
     canCloseModal() {

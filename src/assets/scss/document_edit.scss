@@ -290,6 +290,14 @@
               margin-bottom: 14px;
             }
           }
+
+          &:first-child {
+            margin-top: 14px;
+          }
+
+          &:last-child {
+            margin-bottom: 14px;
+          }
         }
       }
     }
