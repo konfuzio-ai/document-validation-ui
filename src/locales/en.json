@@ -132,7 +132,7 @@
   "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>.",
   "single_category_in_project": "The current project has only one category, which is already assigned to this document. To be able to change it, the new one should be first added to the project. For details on how to do this, visit <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>this link</a>.",
   "split_modal_title": "Split the document",
-  "split_modal_body": "We've scanned your file and found <span>{number_of_split_documents}</span> different documents. <span>We strongly recommend</span> splitting it at this stage, otherwise all the progress you’ve made will be lost due to document data re-extraction.",
+  "split_modal_body": "We've scanned your file and found <strong>{number_of_split_documents}</strong> different documents. <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost due to document data re-extraction.",
   "do_it_later": "I'll do it later",
   "review_now": "Review now",
   "recommended": "Recommended",
