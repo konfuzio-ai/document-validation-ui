@@ -1,40 +1,43 @@
 <template>
   <div class="sidebar-buttons">
     <!-- Rotate buttons -->
-    <b-button
-      v-if="showRotateButton"
-      class="rotate-button edit-mode-btn"
-      :disabled="buttonDisabled"
-      @click="rotateButton"
-    >
-      <div class="button-content">
-        <b-icon :icon="icon" class="is-small" />
-        <span class="button-text">{{ buttonText }}</span>
-      </div>
-    </b-button>
-
-    <!-- Splitting suggestions button-->
-    <b-tooltip
-      :label="tooltipInfo"
-      multilined
-      type="is-dark"
-      :active="buttonDisabled"
-      size="is-large"
-      position="is-left"
-    >
+    <div v-if="showRotateButton" class="rotate-button-container">
       <b-button
-        v-if="showSplitButton"
-        class="split-button edit-mode-btn"
+        class="rotate-button edit-mode-btn"
         :disabled="buttonDisabled"
-        @click="showSplitInfoBar"
+        @click="rotateButton"
       >
         <div class="button-content">
-          <MagicWandIcon />
-          <span class="button-text">{{ $t("smart_split") }}</span>
-          <span class="new-badge">{{ newText }}</span>
+          <b-icon :icon="icon" class="is-small" />
+          <span class="button-text">{{ buttonText }}</span>
         </div>
       </b-button>
-    </b-tooltip>
+    </div>
+
+    <!-- Splitting suggestions button-->
+    <div v-if="showSplitButton" class="split-button-container">
+      <b-tooltip
+        :label="tooltipInfo"
+        multilined
+        type="is-dark"
+        :active="buttonDisabled"
+        size="is-large"
+        position="is-left"
+        class="split-tooltip"
+      >
+        <b-button
+          class="split-button edit-mode-btn"
+          :disabled="buttonDisabled"
+          @click="showSplitInfoBar"
+        >
+          <div class="button-content">
+            <MagicWandIcon />
+            <span class="button-text">{{ $t("smart_split") }}</span>
+            <span class="new-badge">{{ newText }}</span>
+          </div>
+        </b-button>
+      </b-tooltip>
+    </div>
   </div>
 </template>
 
