@@ -114,5 +114,13 @@
   "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>.",
   "single_category_in_project": "Das aktuelle Projekt hat nur eine Kategorie. Um sie ändern zu können, sollte die neue zuerst dem Projekt hinzugefügt werden. Einzelheiten dazu finden Sie unter <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>diesem Link</a>.",
   "approved_annotations": "Die Kategorie kann nicht geändert werden, da bereits akzeptierte Annotationen oder manuell erstellte Annotationen zu diesem Dokument vorhanden sind.",
-  "restore": "Restore"
+  "restore": "Restore",
+  "split_modal_title": "Split the document",
+  "split_modal_body": "We've scanned your file and found <strong>{number_of_split_documents}</strong> different documents. <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost due to document data re-extraction.",
+  "do_it_later": "I'll do it later",
+  "review_now": "Review now",
+  "recommended": "Recommended",
+  "smart_split": "Smart Split",
+  "smart_split_suggestions": "Our Smart Split suggestions are highlighted in green",
+  "no_splitting_suggestions": "This document does not have splitting suggestions"
 }

@@ -117,7 +117,7 @@
   "approved_annotations": "It is not possible to change the current category since the document has approved or manually created annotations.",
   "restore": "Restore",
   "split_modal_title": "Split the document",
-  "split_modal_body": "We've scanned your file and found <span>{number_of_split_documents}</span> different documents. <span>We strongly recommend</span> splitting it at this stage, otherwise all the progress you’ve made will be lost due to document data re-extraction.",
+  "split_modal_body": "We've scanned your file and found <strong>{number_of_split_documents}</strong> different documents. <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost due to document data re-extraction.",
   "do_it_later": "I'll do it later",
   "review_now": "Review now",
   "recommended": "Recommended",

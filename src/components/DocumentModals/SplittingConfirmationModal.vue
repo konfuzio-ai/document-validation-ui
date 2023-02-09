@@ -1,5 +1,5 @@
 <template>
-  <section class="splitting-confirmation-modal">
+  <section ref="confirmationModal" class="splitting-confirmation-modal">
     <b-modal
       v-model="isModalActive"
       class="modal-400"
@@ -11,15 +11,7 @@
           <StarIcon />
           <p class="modal-title">{{ $t("split_modal_title") }}</p>
         </div>
-        <div class="content">
-          <p>
-            {{
-              $t("split_modal_body", {
-                number_of_split_documents: numberOfSplitDocuments,
-              })
-            }}
-          </p>
-        </div>
+        <div ref="bodyText" class="content"></div>
       </section>
       <footer class="modal-card-foot">
         <b-button @click="closeModal">
@@ -62,6 +54,15 @@ export default {
         this.isModalActive = true;
       }
     },
+    isModalActive(newValue) {
+      if (newValue) {
+        this.$nextTick(() => {
+          this.$refs.bodyText.innerHTML = this.$t("split_modal_body", {
+            number_of_split_documents: this.numberOfSplitDocuments,
+          });
+        });
+      }
+    },
   },
   mounted() {
     this.recommended = this.$t("recommended").toUpperCase();
@@ -74,6 +75,9 @@ export default {
     handleReviewNow() {
       this.$store.dispatch("edit/enableEditMode");
       this.isModalActive = false;
+    },
+    setText(text) {
+      console.log(text);
     },
   },
 };
