@@ -8,6 +8,9 @@
         @check-move="checkMove"
         @handle-drag-end="handleDragEnd"
       />
+      <div class="info-bar">
+        <SplitInfoBar v-if="splitSuggestionsEnabled" />
+      </div>
     </div>
     <div v-else class="split-overview-section">
       <SplitOverview
@@ -22,6 +25,7 @@
         @rotate-right="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
+        @show-bar="handleShowBar"
       />
     </div>
   </div>
@@ -31,6 +35,7 @@ import { mapState } from "vuex";
 import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
+import SplitInfoBar from "./SplitInfoBar";
 
 /**
  * This component shows a document thumbnail grid view and sidebar, to be able to edit the document.
@@ -41,6 +46,7 @@ export default {
     EditSidebar,
     SplitOverview,
     EditPages,
+    SplitInfoBar,
   },
   data() {
     return {
@@ -49,6 +55,7 @@ export default {
       activeSplittingLines: [],
       dragging: false,
       prevPageAtIndex: null,
+      splitSuggestionsEnabled: false,
     };
   },
   computed: {
@@ -234,6 +241,9 @@ export default {
         }
       }
       return pages;
+    },
+    handleShowBar() {
+      this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
     },
 
     /** SORT */

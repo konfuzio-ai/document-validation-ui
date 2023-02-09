@@ -107,7 +107,10 @@ export default {
     ...mapState("category", ["categories"]),
     ...mapState("document", ["selectedDocument", "categorizeModalIsActive"]),
     ...mapGetters("category", ["category", "projectHasSingleCategory"]),
-    ...mapGetters("document", ["categorizationIsConfirmed"]),
+    ...mapGetters("document", [
+      "categorizationIsConfirmed",
+      "documentHasSplittingSuggestions",
+    ]),
   },
   watch: {
     selectedDocument(newValue) {
