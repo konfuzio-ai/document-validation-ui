@@ -27,6 +27,7 @@
     </div>
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
+    <MultiAnnotationTableOverlay />
   </div>
 </template>
 <script>
@@ -35,12 +36,14 @@ import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
 import ActionBar from "./ActionBar";
+import MultiAnnotationTableOverlay from "./MultiAnnotationTableOverlay";
 
 export default {
   components: {
     ScrollingPage,
     Toolbar,
     ActionBar,
+    MultiAnnotationTableOverlay,
   },
   directives: {
     scroll,

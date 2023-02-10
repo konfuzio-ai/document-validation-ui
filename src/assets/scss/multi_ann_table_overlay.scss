@@ -1,0 +1,13 @@
+@import "./imports.scss";
+
+.multi-ann-table-overlay {
+  position: absolute;
+  bottom: 0;
+  height: fit-content;
+  z-index: 40;
+  width: 100%;
+  background-color: $background;
+
+  .multi-ann-set-table {
+  }
+}
