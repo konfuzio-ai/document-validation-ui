@@ -124,7 +124,8 @@
   "smart_split": "Smart Split",
   "smart_split_suggestions": "Our Smart Split suggestions are highlighted in green",
   "no_splitting_suggestions": "This document does not have splitting suggestions",
-  "confirm_splitting": "Are you sure you want to split the document?",
+  "confirm_splitting": "Are you sure you want to confirm the changes?",
   "splitting_warning": "Be aware that any annotations you have made in this document will not be saved if you proceed.",
-  "no": "No"
+  "no": "No",
+  "yes": "Yes"
 }

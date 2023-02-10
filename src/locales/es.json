@@ -121,5 +121,9 @@
   "recommended": "Recomendado",
   "smart_split": "División Inteligente",
   "smart_split_suggestions": "Nuestras sugerencias de División Inteligente están marcadas en color verde",
-  "no_splitting_suggestions": "Este documento no tiene sugerencias de división"
+  "no_splitting_suggestions": "Este documento no tiene sugerencias de división",
+  "confirm_splitting": "¿Seguro que quieres confirmar los cambios?",
+  "splitting_warning": "Ten en cuenta que se perderán las anotaciones que hayas confirmado en el documento.",
+  "no": "No",
+  "yes": "Sí"
 }
