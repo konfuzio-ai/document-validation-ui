@@ -61,6 +61,54 @@ describe("Document Edit Component", () => {
     ).toBe(true);
   });
 
+  it("The sidebar has 5 buttons", async () => {
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper.findAll(".buttons-container .sidebar-buttons").length
+    ).toBe(5);
+  });
+
+  it("Info bar appears when clicking Smart Split button", async () => {
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          splitSuggestionsEnabled: false,
+        };
+      },
+    });
+
+    await wrapper
+      .find(".buttons-container .split .split-button-container .split-button")
+      .trigger("click");
+
+    await wrapper2.setData({
+      splitSuggestionsEnabled: true,
+    });
+
+    expect(
+      await wrapper2
+        .find(".pages-section .info-bar .split-info-bar")
+        .isVisible()
+    ).toBe(true);
+  });
+
   it("Clicking the cancel button should close edit view", async () => {
     const wrapper = mount(DocumentTopBarButtons, {
       store,
@@ -158,9 +206,9 @@ describe("Document Edit Component", () => {
       buttonDisabled: false,
     });
 
-    expect(wrapper2.vm.buttonDisabled).toBe(false);
+    expect(await wrapper2.vm.buttonDisabled).toBe(false);
     expect(
-      wrapper2
+      await wrapper2
         .findAll(".buttons-container .rotate-selected .rotate-button")
         .at(0)
         .attributes("disabled")
@@ -236,7 +284,7 @@ describe("Document Edit Component", () => {
 
     await mockFn(require("../mock/page_1.json").number);
 
-    store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     const wrapper2 = mount(DocumentTopBarButtons, {
       store,
