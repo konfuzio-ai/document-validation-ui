@@ -43,7 +43,7 @@ export default {
     return {
       isModalActive: false,
       numberOfSplitDocuments: 5, // to get from the endpoint
-      recommended: null,
+      recommended: this.$t("recommended"),
     };
   },
   computed: {
@@ -67,7 +67,9 @@ export default {
   },
   mounted() {
     nextTick(() => {
-      this.recommended = this.$t("recommended").toUpperCase();
+      if (this.recommended) {
+        this.recommended = this.recommended.toUpperCase();
+      }
     });
   },
   methods: {

@@ -29,7 +29,7 @@
       />
     </div>
     <div class="confirmation-modal-container">
-      <EditConfirmationModal />
+      <EditConfirmationModal @save-changes="saveEditChanges" />
     </div>
   </div>
 </template>
@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      fileName: [],
+      fileName: null,
       fileExtension: null,
       activeSplittingLines: [],
       dragging: false,
@@ -271,6 +271,33 @@ export default {
       });
 
       this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
+    },
+
+    /** SUBMIT CHANGES */
+    // Send update request to the backend
+    saveEditChanges() {
+      this.$store
+        .dispatch("edit/editDocument", this.updatedDocument)
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        });
+
+      this.closeEditMode();
+    },
+
+    closeEditMode() {
+      this.$store.dispatch("edit/disableEditMode");
+      this.$store.dispatch("edit/setSplitOverview", false);
+      this.$store.dispatch("edit/setUpdatedDocument", null);
+      this.$store.dispatch("edit/setSelectedPages", null);
+      this.$nextTick(() => {
+        // reset to first page
+        this.$store.dispatch("display/updateCurrentPage", 1);
+      });
     },
   },
 };

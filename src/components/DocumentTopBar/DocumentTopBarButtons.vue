@@ -102,7 +102,6 @@ export default {
     this.finishDisabled = !this.finishedReview;
   },
   methods: {
-    /** EDIT MODE */
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode");
       this.$store.dispatch("edit/setSplitOverview", false);
@@ -124,24 +123,11 @@ export default {
         // Enable the "next" button to go to the overview
         this.$store.dispatch("edit/setSplitOverview", true);
         this.$store.dispatch("edit/setSelectedPages", null);
-      }
-
-      // If we are in the overview (so more than 1 doc)
-      // or in the edit mode (only 1 doc)
-      else if (this.updatedDocument) {
-        // Send update request to the backend
-        this.$store
-          .dispatch("edit/editDocument", this.updatedDocument)
-          .catch((error) => {
-            this.$store.dispatch("document/createErrorMessage", {
-              error,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("edit_error"),
-            });
-          });
-
-        // Close edit mode
-        this.closeEditMode();
+      } else if (this.updatedDocument) {
+        // If we are in the overview (so more than 1 doc)
+        // or in the edit mode (only 1 doc)
+        // Show confirmation modal to user
+        this.$store.dispatch("edit/setShowEditConfirmationModal", true);
       }
     },
     handleFinishReview() {

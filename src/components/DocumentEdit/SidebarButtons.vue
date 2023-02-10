@@ -78,12 +78,14 @@ export default {
   },
   data() {
     return {
-      newText: null,
+      newText: this.$t("new"),
     };
   },
   mounted() {
     nextTick(() => {
-      this.newText = this.$t("new").toUpperCase();
+      if (this.newText) {
+        this.newText = this.$t("new").toUpperCase();
+      }
     });
   },
 

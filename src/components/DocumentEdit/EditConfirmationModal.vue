@@ -12,7 +12,7 @@
           {{ $t("no") }}
         </b-button>
         <b-button type="is-primary" @click="confirmChanges">
-          {{ $t("split") }}
+          {{ $t("yes") }}
         </b-button>
       </footer>
     </b-modal>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 /**
  * This component shows a modal to confirm the edit changes in the document
  */
@@ -27,14 +28,25 @@ export default {
   name: "EditConfirmationModal",
   data() {
     return {
-      isModalActive: true,
+      isModalActive: false,
     };
+  },
+  computed: {
+    ...mapState("edit", ["showEditConfirmationModal"]),
+  },
+  watch: {
+    showEditConfirmationModal(newValue) {
+      this.isModalActive = newValue;
+    },
   },
   methods: {
     closeModal() {
       this.isModalActive = false;
+      this.$store.dispatch("edit/setShowEditConfirmationModal", false);
     },
-    confirmChanges() {},
+    confirmChanges() {
+      this.$emit("save-changes");
+    },
   },
 };
 </script>
