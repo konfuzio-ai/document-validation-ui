@@ -752,7 +752,7 @@ const actions = {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {
           if (response.status === 201) {
-            dispatch("fetchMissingAnnotations");
+            await dispatch("fetchMissingAnnotations");
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
             if (!getters.annotationSetExists(response.data.annotation_set)) {
@@ -865,11 +865,11 @@ const actions = {
 
   addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
     return new Promise((resolve, reject) => {
-      return HTTP.post(`/missing-annotations/`, missingAnnotations)
-        .then((response) => {
+      HTTP.post(`/missing-annotations/`, missingAnnotations)
+        .then(async (response) => {
           if (response.status === 201) {
             commit("SET_REJECTED_MISSING_ANNOTATIONS", null);
-            dispatch("fetchMissingAnnotations");
+            await dispatch("fetchMissingAnnotations");
           }
 
           resolve(response);

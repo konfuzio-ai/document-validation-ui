@@ -9,6 +9,7 @@ const state = {
   documentPagesListForEditMode: [], // TODO: change name
   selectedPages: [],
   updatedDocument: [],
+  showEditConfirmationModal: false,
 };
 
 const actions = {
@@ -176,6 +177,10 @@ const actions = {
         });
     });
   },
+
+  setShowEditConfirmationModal: ({ commit }, value) => {
+    commit("SET_SHOW_EDIT_CONFIRMATION_MODAL", value);
+  },
 };
 
 const mutations = {
@@ -199,6 +204,9 @@ const mutations = {
   },
   ADD_SELECTED_PAGE: (state, selectedPage) => {
     state.selectedPages.push(selectedPage);
+  },
+  SET_SHOW_EDIT_CONFIRMATION_MODAL: (state, value) => {
+    state.showEditConfirmationModal = value;
   },
 };
 

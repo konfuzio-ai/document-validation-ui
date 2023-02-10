@@ -71,7 +71,7 @@ describe("Document Edit Component", () => {
 
     await wrapper.find(".buttons .button-cancel").trigger("click");
 
-    expect(store.state.edit.editMode).toBe(false);
+    expect(await store.state.edit.editMode).toBe(false);
   });
 
   it("Clicking on thumbnail should select it", async () => {
@@ -93,7 +93,7 @@ describe("Document Edit Component", () => {
       .trigger("click");
 
     expect(
-      wrapper
+      await wrapper
         .find(
           ".document-grid .image-section .image-container .thumbnail .selected"
         )
@@ -201,7 +201,7 @@ describe("Document Edit Component", () => {
 
     await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
-    expect(store.state.edit.updatedDocument.length).toBe(2);
+    expect(await store.state.edit.updatedDocument.length).toBe(2);
   });
 
   it("If document was split, go to overview", async () => {
@@ -258,17 +258,17 @@ describe("Document Edit Component", () => {
       },
     });
 
-    store.dispatch("edit/setSplitOverview", true);
+    await store.dispatch("edit/setSplitOverview", true);
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -296,15 +296,15 @@ describe("Document Edit Component", () => {
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.data_file_name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.data_file_name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
         name:
           require("../mock/document.json").data_file_name.split(".")[0] +
           "_copy",
-        category: store.state.document.selectedDocument.category,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -317,9 +317,33 @@ describe("Document Edit Component", () => {
     await mockFn(subDocumentMock[1].name);
 
     expect(
-      wrapper
+      await wrapper
         .findAll(".document-details .doc-info .file-name-section .name-input")
         .at(0).element.value
     ).toBe("3AVAWS");
+  });
+
+  it("Confirmation modal is shown when trying to submit changes", async () => {
+    const wrapper = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(DocumentTopBarButtons, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper2.find(".buttons .is-primary").trigger("click");
+
+    expect(
+      await wrapper
+        .find(".confirmation-modal-container .edit-confirmation-modal")
+        .isVisible()
+    ).toBe(true);
   });
 });
