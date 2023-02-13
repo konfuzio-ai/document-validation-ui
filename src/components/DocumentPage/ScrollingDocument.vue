@@ -13,10 +13,10 @@
         <ScrollingPage
           v-for="page in editMode ? pagesForPostprocess : pages"
           :key="page.number"
+          ref="scrollingPage"
           :page="page"
           :client-height="clientHeight"
           :scroll-top="scrollTop"
-          ref="scrollingPage"
           class="scrolling-page"
           @page-jump="onPageJump"
         />
@@ -27,7 +27,10 @@
     </div>
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
-    <MultiAnnotationTableOverlay />
+    <MultiAnnotationTableOverlay
+      v-if="testAnnotationsSets"
+      :annotations-sets="testAnnotationsSets"
+    />
   </div>
 </template>
 <script>
@@ -63,6 +66,7 @@ export default {
       "recalculatingAnnotations",
       "selectedDocument",
       "loading",
+      "annotationSets",
     ]),
     ...mapState("edit", [
       "editMode",
@@ -99,6 +103,18 @@ export default {
   watch: {
     loading() {
       this.scrollTop = 0;
+    },
+    annotationSets(newValue) {
+      if (newValue) {
+        this.testAnnotationsSets = [
+          this.$store.state.document.annotationSets[3],
+          this.$store.state.document.annotationSets[4],
+          this.$store.state.document.annotationSets[5],
+          this.$store.state.document.annotationSets[6],
+          this.$store.state.document.annotationSets[7],
+        ];
+        console.log(this.testAnnotationsSets);
+      }
     },
   },
   mounted() {
