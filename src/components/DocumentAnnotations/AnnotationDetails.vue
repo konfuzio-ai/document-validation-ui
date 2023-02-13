@@ -220,13 +220,16 @@ export default {
       const annDetails = document.getElementsByClassName("annotation-details");
 
       // Only last 3 rows will change the position
-      const lastElementsInList = annDetails.length - 3;
-
-      for (let i = lastElementsInList; i < annDetails.length; i++) {
-        this.updateClass(annDetails, i);
+      if (annDetails) {
+        const lastElementsInList = annDetails.length - 3;
+        for (let i = lastElementsInList; i < annDetails.length; i++) {
+          this.updateClass(annDetails, i);
+        }
       }
     },
     updateClass(array, index) {
+      if (!array[index]) return;
+
       array[index].classList.remove("is-bottom");
       array[index].classList.add("is-top");
     },
