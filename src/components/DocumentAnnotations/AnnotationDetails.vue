@@ -196,6 +196,9 @@ export default {
       }
     },
   },
+  mounted() {
+    this.changePositionOfTooltip();
+  },
   methods: {
     getText() {
       if (this.notFound(this.annotation)) {
@@ -211,6 +214,24 @@ export default {
       } else {
         return this.$t("not_revised_yet");
       }
+    },
+    changePositionOfTooltip() {
+      // Get all elements
+      const annDetails = document.getElementsByClassName("annotation-details");
+
+      // Only last 3 rows will change the position
+      if (annDetails) {
+        const lastElementsInList = annDetails.length - 3;
+        for (let i = lastElementsInList; i < annDetails.length; i++) {
+          this.updateClass(annDetails, i);
+        }
+      }
+    },
+    updateClass(array, index) {
+      if (!array[index]) return;
+
+      array[index].classList.remove("is-bottom");
+      array[index].classList.add("is-top");
     },
   },
 };
