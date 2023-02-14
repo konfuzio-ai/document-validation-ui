@@ -196,6 +196,8 @@
 
   .sidebar {
     width: 45%;
+    max-width: 300px;
+    min-width: 200px;
     background-color: $background;
 
     .edit-sidebar {
