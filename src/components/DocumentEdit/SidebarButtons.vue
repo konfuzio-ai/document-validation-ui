@@ -28,7 +28,7 @@
         <b-button
           class="split-button edit-mode-btn"
           :disabled="buttonDisabled"
-          @click="showSplitInfoBar"
+          @click="handleSplittingSuggestions"
         >
           <div class="button-content">
             <MagicWandIcon />
@@ -93,8 +93,8 @@ export default {
     rotateButton() {
       this.$emit("rotate");
     },
-    showSplitInfoBar() {
-      this.$parent.$emit("show-bar");
+    handleSplittingSuggestions() {
+      this.$parent.$emit("handle-splitting-suggestions");
     },
   },
 };

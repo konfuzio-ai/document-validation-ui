@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     closeModal() {
-      this.$store.dispatch("document/setCategorizeModalIsActive", true);
+      this.$store.dispatch("document/setCategorizeModalIsActive", false);
       this.isModalActive = false;
     },
     handleReviewNow() {

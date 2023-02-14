@@ -25,7 +25,7 @@
         @rotate-right="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
-        @show-bar="handleShowBar"
+        @handle-splitting-suggestions="applySplittingSuggestions"
       />
     </div>
     <div class="confirmation-modal-container">
@@ -34,7 +34,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
@@ -73,6 +73,7 @@ export default {
       "splitOverview",
       "selectedPages",
     ]),
+    ...mapGetters("document", ["getSplittingSuggestions"]),
   },
   watch: {
     pages() {
@@ -247,8 +248,11 @@ export default {
       }
       return pages;
     },
-    handleShowBar() {
+    applySplittingSuggestions() {
+      // Show information bar
       this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
+
+      this.getSplittingSuggestions();
     },
 
     /** SORT */

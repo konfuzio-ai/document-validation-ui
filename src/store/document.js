@@ -530,6 +530,15 @@ const getters = {
       return null;
     }
   },
+
+  /**
+   * Get auto splitting suggestions
+   */
+  getSplittingSuggestions: (state) => () => {
+    console.log("getting splitting suggestions");
+    return true;
+    // return state.selectedDocument.splittingSuggestions
+  },
 };
 
 const actions = {
