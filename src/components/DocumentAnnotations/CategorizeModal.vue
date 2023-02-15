@@ -105,12 +105,13 @@ export default {
   },
   computed: {
     ...mapState("category", ["categories"]),
-    ...mapState("document", ["selectedDocument", "categorizeModalIsActive"]),
-    ...mapGetters("category", ["category", "projectHasSingleCategory"]),
-    ...mapGetters("document", [
-      "categorizationIsConfirmed",
-      "documentHasSplittingSuggestions",
+    ...mapState("document", [
+      "selectedDocument",
+      "categorizeModalIsActive",
+      "splittingSuggestions",
     ]),
+    ...mapGetters("category", ["category", "projectHasSingleCategory"]),
+    ...mapGetters("document", ["categorizationIsConfirmed"]),
 
     singleCategoryInProject() {
       // if only 1 category in the project, we don't enable the dropdown
@@ -176,11 +177,9 @@ export default {
         this.selectedCategory = category;
         this.documentCategory = category;
 
-        // TODO: add extra validation to check if split modal is shown or not
-        // If not shown, we show modal based on category confirmed
-        // this.show =
-        //   !this.categorizationIsConfirmed &&
-        //   !this.documentHasSplittingSuggestions(this.selectedDocument);
+        // By default, if the document has no category, the categorize modal is shown
+        // But if there is a category, we also need to check if there are splitting suggestions or not
+        this.show = !category || (category && !this.splittingSuggestions);
       }
     },
     canCloseModal() {

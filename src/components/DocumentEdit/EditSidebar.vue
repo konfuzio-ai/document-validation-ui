@@ -56,11 +56,10 @@
       <div class="split edit-buttons">
         <SidebarButtons
           :show-split-button="true"
-          :button-disabled="!getSplittingSuggestions()"
+          :button-disabled="!splittingSuggestions"
           :button-text="$t('rotate_all')"
           :icon="'arrow-rotate-right'"
           :tooltip-info="tooltipInfo"
-          @rotate="rotateAllRight"
         />
       </div>
     </div>
@@ -69,7 +68,7 @@
 
 <script>
 import SidebarButtons from "./SidebarButtons";
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 /**
  * This component renders buttons to rotate single pages or all pages
@@ -88,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState("edit", ["selectedPages"]),
-    ...mapGetters("document", ["getSplittingSuggestions"]),
+    ...mapState("document", ["splittingSuggestions"]),
   },
   watch: {
     selectedPages(newValue) {

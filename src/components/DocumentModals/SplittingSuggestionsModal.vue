@@ -42,12 +42,12 @@ export default {
   data() {
     return {
       isModalActive: false,
-      numberOfSplitDocuments: 5, // to get from the endpoint
+      numberOfSplitDocuments: 5, // to replace by splittingSuggestions.length
       recommended: this.$t("recommended"),
     };
   },
   computed: {
-    ...mapState("document", ["splittingSuggestions"]),
+    ...mapState("document", ["splittingSuggestions", "selectedDocument"]),
   },
   watch: {
     splittingSuggestions(newValue) {
@@ -66,6 +66,10 @@ export default {
     },
   },
   mounted() {
+    if (this.splittingSuggestions && this.selectedDocument.category) {
+      this.isModalActive = true;
+    }
+
     nextTick(() => {
       if (this.recommended) {
         this.recommended = this.recommended.toUpperCase();
@@ -74,6 +78,16 @@ export default {
   },
   methods: {
     closeModal() {
+      const updatedDocument = [
+        {
+          name: this.selectedDocument.data_file_name,
+          category: this.selectedDocument.category,
+          pages: this.selectedDocument.pages,
+        },
+      ];
+
+      this.$store.dispatch("edit/editDocument", updatedDocument);
+
       this.$store.dispatch("document/setCategorizeModalIsActive", false);
       this.isModalActive = false;
     },

@@ -28,7 +28,11 @@
         {{ $t("resolution_not_supported") }}
       </div>
     </div>
-    <div v-if="documentHasSplittingSuggestions">
+    <div
+      v-if="
+        splittingSuggestions && selectedDocument && selectedDocument.category
+      "
+    >
       <SplittingSuggestionsModal />
     </div>
   </div>
@@ -82,10 +86,10 @@ export default {
       "showDocumentError",
       "errorMessageWidth",
       "selectedDocument",
+      "splittingSuggestions",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["isMinimumWidth"]),
-    ...mapGetters("document", ["documentHasSplittingSuggestions"]),
   },
   watch: {
     selectedDocument(newDocument, oldDocument) {

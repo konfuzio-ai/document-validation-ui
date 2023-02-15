@@ -64,7 +64,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["recalculatingAnnotations", "selectedDocument"]),
+    ...mapState("document", [
+      "recalculatingAnnotations",
+      "selectedDocument",
+      "splittingSuggestions",
+    ]),
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
@@ -73,7 +77,6 @@ export default {
       "splitOverview",
       "selectedPages",
     ]),
-    ...mapGetters("document", ["getSplittingSuggestions"]),
   },
   watch: {
     pages() {
@@ -251,8 +254,6 @@ export default {
     applySplittingSuggestions() {
       // Show information bar
       this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
-
-      this.getSplittingSuggestions();
     },
 
     /** SORT */

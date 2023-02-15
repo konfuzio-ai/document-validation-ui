@@ -444,8 +444,8 @@ const getters = {
   /**
    *
    */
-  documentHasSplittingSuggestions: () => (document) => {
-    return document.status_data === 2;
+  waitingForSplittingConfirmation: () => (document) => {
+    return document.status_data === 2; // will replace 2 with 41
   },
 
   /**
@@ -529,15 +529,6 @@ const getters = {
     } else {
       return null;
     }
-  },
-
-  /**
-   * Get auto splitting suggestions
-   */
-  getSplittingSuggestions: (state) => () => {
-    console.log("getting splitting suggestions");
-    return true;
-    // return state.selectedDocument.splittingSuggestions
   },
 };
 
@@ -676,8 +667,8 @@ const actions = {
             });
           }
 
-          if (getters.documentHasSplittingSuggestions(response.data)) {
-            commit("SET_SPLITTING_SUGGESTIONS", true);
+          if (getters.waitingForSplittingConfirmation(response.data)) {
+            commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
           }
 
           categoryId = response.data.category;
@@ -938,7 +929,7 @@ const actions = {
         .then((response) => {
           if (
             getters.isDocumentReadyToBeReviewed(response.data) ||
-            getters.documentHasSplittingSuggestions(response.data)
+            getters.waitingForSplittingConfirmation(response.data)
           ) {
             // ready or has splitting suggestions
             return resolve(true);
