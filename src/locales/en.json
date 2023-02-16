@@ -127,5 +127,6 @@
   "confirm_splitting": "Are you sure you want to confirm the changes?",
   "splitting_warning": "Be aware that any annotations you have made in this document will not be saved if you proceed.",
   "no": "No",
-  "yes": "Yes"
+  "yes": "Yes",
+  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected."
 }
