@@ -34,7 +34,7 @@
   "ok": "Ok, verstanden",
   "no_data_found": "Zum Bearbeiten anklicken...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",
-  "accuracy": "Genauigkeit",
+  "confidence": "Genauigkeit",
   "not_found_in_document": "Im Dokument nicht gefunden",
   "approved_by": "Genehmigt von",
   "approved": "Genehmigt",

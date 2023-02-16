@@ -475,6 +475,12 @@ button {
         left: auto !important;
       }
     }
+
+    &.finish-review {
+      .tooltip-content {
+        right: 0 !important;
+      }
+    }
   }
 
   &.width-184 {

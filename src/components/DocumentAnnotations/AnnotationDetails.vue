@@ -62,18 +62,18 @@
         <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div v-if="accuracy(annotation)" class="accuracy">
-          <span>{{ $t("accuracy") }}</span
+        <div v-if="confidence(annotation)" class="confidence">
+          <span>{{ $t("confidence") }}</span
           ><span
             :class="[
               'value',
-              accuracy(annotation) <= 0.2
+              confidence(annotation) <= 0.2
                 ? 'red'
-                : accuracy(annotation) <= 0.5
+                : confidence(annotation) <= 0.5
                 ? 'yellow'
                 : '',
             ]"
-            >{{ Math.floor(accuracy(annotation) * 100) / 100 }}</span
+            >{{ Math.floor(confidence(annotation) * 100) / 100 }}</span
           >
         </div>
         <div class="revision">
@@ -172,7 +172,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", [
-      "accuracy",
+      "confidence",
       "notFound",
       "created",
       "edited",

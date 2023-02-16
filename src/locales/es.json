@@ -34,7 +34,7 @@
   "ok": "Ok, entendido",
   "no_data_found": "Click para editar...",
   "draw_box_document": "Encuentra <i>{label_name}</i> en el documento",
-  "accuracy": "Precisión",
+  "confidence": "Precisión",
   "not_found_in_document": "No encontrado en el documento",
   "approved_by": "Aprobado por",
   "approved": "Aprobado",

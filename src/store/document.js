@@ -408,7 +408,7 @@ const getters = {
   /**
    * Check the level of confidence of an annotation
    */
-  accuracy: () => (annotation) => {
+  confidence: () => (annotation) => {
     if (annotation) {
       return annotation.confidence;
     } else {

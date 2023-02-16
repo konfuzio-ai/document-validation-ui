@@ -33,7 +33,7 @@
   "ok": "Ok, got it",
   "no_data_found": "Click to edit...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",
-  "accuracy": "Accuracy",
+  "confidence": "Confidence",
   "not_found_in_document": "Not found in the document",
   "approved_by": "Approved by",
   "approved": "Approved",
@@ -110,5 +110,6 @@
   "new_multi_ann_title": "Create multiple annotations",
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
-  "error_creating_multi_ann": "Not all annotation sets were created successfully."
+  "error_creating_multi_ann": "Not all annotation sets were created successfully.",
+  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected."
 }
