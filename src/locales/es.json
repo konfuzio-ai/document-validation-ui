@@ -125,5 +125,6 @@
   "confirm_splitting": "¿Seguro que quieres confirmar los cambios?",
   "splitting_warning": "Ten en cuenta que se perderán las anotaciones que hayas confirmado en el documento.",
   "no": "No",
-  "yes": "Sí"
+  "yes": "Sí",
+  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas."
 }
