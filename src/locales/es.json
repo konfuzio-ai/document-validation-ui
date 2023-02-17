@@ -110,5 +110,6 @@
   "continue": "Continuar",
   "drag_drop_columns_multi_ann": "Arrastre y suelte las columnas para ordenar las etiquetas",
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
-  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas."
+  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas.",
+  "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haz click en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html?highlight=multiple#' target='_blank'>este link</a>."
 }

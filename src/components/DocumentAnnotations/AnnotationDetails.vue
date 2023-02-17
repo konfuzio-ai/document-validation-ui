@@ -1,6 +1,5 @@
 <template>
   <b-tooltip
-    type="is-dark"
     :animated="false"
     position="is-bottom"
     class="left-aligned annotation-details"

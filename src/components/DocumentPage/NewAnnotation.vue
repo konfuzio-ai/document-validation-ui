@@ -57,10 +57,10 @@
     <b-tooltip
       :label="$t('no_labels_available')"
       multilined
-      type="is-dark"
       :active="selectedSet && (!labels || labels.length === 0)"
       size="is-large"
       position="is-bottom"
+      class="bottom-aligned"
     >
       <b-dropdown
         v-model="selectedLabel"

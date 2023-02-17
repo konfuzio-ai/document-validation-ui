@@ -109,7 +109,6 @@
     <!-- finish review button -->
     <b-tooltip
       :active="finishDisabled"
-      type="is-dark"
       position="is-bottom"
       multilined
       class="right-aligned finish-review"

@@ -25,7 +25,6 @@
           class="read-only-info"
         >
           <b-tooltip
-            type="is-dark"
             :animated="false"
             position="is-bottom"
             class="right-aligned width-184"

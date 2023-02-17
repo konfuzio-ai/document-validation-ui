@@ -111,5 +111,6 @@
   "new_multi_ann_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus und deaktivieren Sie dann die Labels, die in diesem Dokument nicht vorhanden sind.",
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
-  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden."
+  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden.",
+  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html?highlight=multiple#' target='_blank'>this link</a>."
 }

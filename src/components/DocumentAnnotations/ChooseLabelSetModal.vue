@@ -23,32 +23,47 @@
                 : $t("new_ann_set_description")
             }}
           </p>
-          <b-dropdown
-            v-model="selectedLabelSet"
-            aria-role="list"
-            :disabled="labelSets.length === 0"
-            class="label-set-dropdown"
+          <b-tooltip
+            multilined
+            :active="labelSets.length === 0"
+            size="is-large"
+            position="is-bottom"
+            class="bottom-aligned"
+            always
           >
-            <template #trigger>
-              <div>
-                <div>
-                  <span v-if="selectedLabelSet">{{
-                    selectedLabelSet.name
-                  }}</span>
-                  <span v-else>{{ $t("select_label_set") }}</span>
-                </div>
-              </div>
+            <template #content>
+              <div ref="tooltipContent"></div>
             </template>
-            <b-dropdown-item
-              v-for="labelSetItem in labelSets"
-              :key="labelSetItem.id"
-              aria-role="listitem"
-              :value="labelSetItem"
-              @click="setSelectedLabelSet(labelSetItem)"
+            <b-dropdown
+              v-model="selectedLabelSet"
+              aria-role="list"
+              :disabled="labelSets.length === 0"
+              :class="[
+                'label-set-dropdown',
+                labelSets.length === 0 && 'dropdown-disabled',
+              ]"
             >
-              <span>{{ labelSetItem.name }}</span>
-            </b-dropdown-item>
-          </b-dropdown>
+              <template #trigger>
+                <div>
+                  <div>
+                    <span v-if="selectedLabelSet">{{
+                      selectedLabelSet.name
+                    }}</span>
+                    <span v-else>{{ $t("select_label_set") }}</span>
+                  </div>
+                </div>
+              </template>
+              <b-dropdown-item
+                v-for="labelSetItem in labelSets"
+                :key="labelSetItem.id"
+                aria-role="listitem"
+                :value="labelSetItem"
+                @click="setSelectedLabelSet(labelSetItem)"
+              >
+                <span>{{ labelSetItem.name }}</span>
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-tooltip>
           <div v-if="selectedLabelSet" class="labels-list">
             <div v-if="isMultipleAnnotations" class="labels-select">
               <div v-for="label in labels" :key="label.id">
@@ -90,12 +105,9 @@ import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "CreateAnnotationSetModal",
-  computed: {
-    ...mapState("document", ["annotationSets"]),
-    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
-  },
   props: {
     isMultipleAnnotations: {
+      type: Boolean,
       default: false,
       required: false,
     },
@@ -107,6 +119,17 @@ export default {
       show: true,
       labels: [],
     };
+  },
+  computed: {
+    ...mapState("document", ["annotationSets"]),
+    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
+  },
+  watch: {
+    labelSets(newValue) {
+      if (newValue.length === 0) {
+        this.setTooltipText();
+      }
+    },
   },
   mounted() {
     this.$store.dispatch("project/fetchLabelSets").then((data) => {
@@ -143,6 +166,12 @@ export default {
           selected: true,
         };
       });
+    },
+    setTooltipText() {
+      // Text set from innerHTML vs 'label' due to html tag in locales file string
+      this.$refs.tooltipContent.innerHTML = this.$t(
+        "no_multi_ann_labelset_model"
+      );
     },
   },
 };

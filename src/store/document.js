@@ -933,16 +933,13 @@ const actions = {
   },
 
   contactSupport: ({ rootState }, error) => {
-    let url;
+    const url =
+      "https://konfuzio.atlassian.net/servicedesk/customer/portal/1/group/1/create/1";
     const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser}&issue=${error}`;
 
-    if (process.env.VUE_APP_I18N_LOCALE == "de") {
-      url = "https://konfuzio.com/de/support/";
-    } else {
-      url = "https://konfuzio.com/en/support/";
-    }
+    const fullUrl = `${url}?${params}`;
 
-    window.open(`${url}?${params}`, "_blank");
+    window.open(fullUrl, "_blank");
   },
 };
 
