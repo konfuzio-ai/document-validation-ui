@@ -34,7 +34,7 @@
   "ok": "Ok, verstanden",
   "no_data_found": "Zum Bearbeiten anklicken...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",
-  "confidence": "Genauigkeit",
+  "confidence": "Konfidenz",
   "not_found_in_document": "Im Dokument nicht gefunden",
   "approved_by": "Genehmigt von",
   "approved": "Genehmigt",
@@ -111,5 +111,5 @@
   "new_multi_ann_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus und deaktivieren Sie dann die Labels, die in diesem Dokument nicht vorhanden sind.",
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
-  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected."
+  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden."
 }
