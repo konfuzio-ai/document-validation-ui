@@ -33,7 +33,7 @@
   "ok": "Ok, got it",
   "no_data_found": "Click to edit...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",
-  "accuracy": "Accuracy",
+  "confidence": "Confidence",
   "not_found_in_document": "Not found in the document",
   "approved_by": "Approved by",
   "approved": "Approved",
@@ -106,9 +106,11 @@
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
   "get_support": "Get Support",
-  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set.",
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set. For more details, you can visit <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>this link</a>.",
   "new_multi_ann_title": "Create multiple annotations",
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
-  "error_creating_multi_ann": "Not all annotation sets were created successfully."
+  "error_creating_multi_ann": "Not all annotation sets were created successfully.",
+  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected.",
+  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>."
 }

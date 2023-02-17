@@ -450,6 +450,10 @@ button {
 }
 
 .b-tooltip {
+  .tooltip-content {
+    background-color: $dark-blue !important;
+  }
+
   &.left-aligned {
     .tooltip-content {
       left: 10px !important;
@@ -459,6 +463,8 @@ button {
       &::before {
         left: 16px !important;
         right: auto !important;
+        border-top-color: $dark-blue !important;
+        border-bottom-color: $dark-blue !important;
       }
     }
   }
@@ -473,6 +479,13 @@ button {
       &::before {
         right: 16px !important;
         left: auto !important;
+        border-bottom-color: $dark-blue !important;
+      }
+    }
+
+    &.finish-review {
+      .tooltip-content {
+        right: 0 !important;
       }
     }
   }
@@ -494,6 +507,29 @@ button {
       &::before {
         top: 17px;
         border-left-color: $dark-blue !important;
+      }
+    }
+  }
+
+  &.bottom-aligned {
+    width: 100%;
+
+    .tooltip-content {
+      &::before {
+        border-bottom-color: $dark-blue !important;
+      }
+
+      a {
+        color: $primary !important;
+        font-weight: 500;
+      }
+    }
+  }
+
+  &.top-aligned {
+    .tooltip-content {
+      &::before {
+        border-top-color: $dark-blue !important;
       }
     }
   }

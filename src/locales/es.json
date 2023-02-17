@@ -34,7 +34,7 @@
   "ok": "Ok, entendido",
   "no_data_found": "Click para editar...",
   "draw_box_document": "Encuentra <i>{label_name}</i> en el documento",
-  "accuracy": "Precisión",
+  "confidence": "Precisión",
   "not_found_in_document": "No encontrado en el documento",
   "approved_by": "Aprobado por",
   "approved": "Aprobado",
@@ -101,7 +101,7 @@
   "decline": "Declinar",
   "server_error": "Estamos experimentando problemas con el servidor. Por favor, repita la operación o ",
   "get_support": "Contacte al Soporte",
-  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
+  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado. Para más información, haz clic en <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>este enlace</a>.",
   "new_ann_set_title": "Crear anotaciones múltiples",
   "new_ann_set_description": "Seleccione un modelo de datos de las opciones disponibles, y luego deseleccione las etiquetas que no existen en este documento.",
   "select_label_set": "Seleccione un modelo de grupo de etiquetas",
@@ -109,5 +109,7 @@
   "new": "Nuevo",
   "continue": "Continuar",
   "drag_drop_columns_multi_ann": "Arrastre y suelte las columnas para ordenar las etiquetas",
-  "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa."
+  "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
+  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas.",
+  "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haz clic en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>este enlace</a>."
 }

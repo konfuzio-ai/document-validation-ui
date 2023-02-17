@@ -107,25 +107,37 @@
     </div>
 
     <!-- finish review button -->
-    <b-button
-      v-if="finishReviewBtn"
-      :class="['finish-review-btn', 'text-btn']"
-      type="is-primary"
-      :disabled="finishDisabled"
-      @click.stop="finishReview"
+    <b-tooltip
+      :active="finishDisabled"
+      position="is-bottom"
+      multilined
+      class="right-aligned finish-review"
     >
-      <span v-if="!isLoading">
-        {{ $t("finish_review") }}
-      </span>
+      <b-button
+        v-if="finishReviewBtn"
+        :class="['finish-review-btn', 'text-btn']"
+        type="is-primary"
+        :disabled="finishDisabled"
+        @click.stop="finishReview"
+      >
+        <span v-if="!isLoading">
+          {{ $t("finish_review") }}
+        </span>
 
-      <div v-else>
-        <b-notification :closable="false" :class="['loading-background']">
-          <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
-            <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
-          </b-loading>
-        </b-notification>
-      </div>
-    </b-button>
+        <div v-else>
+          <b-notification :closable="false" :class="['loading-background']">
+            <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+              <b-icon
+                icon="spinner"
+                class="fa-spin loading-icon-size spinner"
+              />
+            </b-loading>
+          </b-notification>
+        </div>
+      </b-button>
+
+      <template #content> {{ $t("disabled_finish_review") }} </template>
+    </b-tooltip>
   </div>
 </template>
 <script>

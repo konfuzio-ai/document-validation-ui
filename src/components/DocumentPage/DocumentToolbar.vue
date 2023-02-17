@@ -4,15 +4,15 @@
       <b-tooltip
         :label="tooltipInfo"
         multilined
-        type="is-dark"
         :active="editModeDisabled"
         size="is-large"
+        class="top-aligned"
       >
         <div
           v-if="!editMode"
           :class="[
             'icons icons-left',
-            editModeDisabled && 'edit-mode-disabled'
+            editModeDisabled && 'edit-mode-disabled',
           ]"
           @click="handleEdit"
         >
@@ -22,27 +22,15 @@
           <span class="edit-text">{{ $t("edit") }}</span>
         </div>
       </b-tooltip>
-      <div
-        v-if="!editMode"
-        class="toolbar-divider"
-      />
+      <div v-if="!editMode" class="toolbar-divider" />
       <div class="icons icons-right">
-        <div
-          class="fit-zoom icon"
-          @click.prevent.stop="fitAuto"
-        >
+        <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
         </div>
-        <div
-          class="zoom-in icon"
-          @click.prevent.stop="zoomIn"
-        >
+        <div class="zoom-in icon" @click.prevent.stop="zoomIn">
           <PlusIcon />
         </div>
-        <div
-          class="zoom-out icon"
-          @click.prevent.stop="zoomOut"
-        >
+        <div class="zoom-out icon" @click.prevent.stop="zoomOut">
           <MinusIcon />
         </div>
         <div class="percentage">
@@ -66,7 +54,7 @@ export default {
     FitZoomIcon,
     PlusIcon,
     MinusIcon,
-    EditDocIcon
+    EditDocIcon,
   },
   data() {
     return {
@@ -76,21 +64,21 @@ export default {
       fitPercentage: 0.5,
       toolbarModalOpen: true,
       editModeDisabled: false,
-      tooltipInfo: null
+      tooltipInfo: null,
     };
   },
   computed: {
     ...mapState("display", ["scale"]),
     ...mapState("edit", ["editMode"]),
     ...mapState("document", ["selectedDocument", "recalculatingAnnotations"]),
-    ...mapGetters("document", ["documentCannotBeEdited"])
+    ...mapGetters("document", ["documentCannotBeEdited"]),
   },
   watch: {
     selectedDocument(newValue) {
       if (this.documentCannotBeEdited(newValue)) {
         this.editModeDisabled = true;
       }
-    }
+    },
   },
   mounted() {
     this.defaultScale = this.scale;
@@ -137,8 +125,8 @@ export default {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
         this.$store.dispatch("display/updateScale", { scale });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
