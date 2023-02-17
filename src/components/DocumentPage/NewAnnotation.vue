@@ -55,13 +55,16 @@
       </b-button>
     </b-dropdown>
     <b-tooltip
-      :label="$t('no_labels_available')"
       multilined
       :active="selectedSet && (!labels || labels.length === 0)"
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
+      :close-delay="5000"
     >
+      <template #content>
+        <div ref="tooltipContent"></div>
+      </template>
       <b-dropdown
         v-model="selectedLabel"
         aria-role="list"
@@ -199,6 +202,8 @@ export default {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
+
+    this.setTooltipText();
   },
   destroyed() {
     document.body.removeEventListener("click", this.clickOutside);
@@ -275,6 +280,10 @@ export default {
           close: this.disableLabelSetModalShowing,
         },
       });
+    },
+    setTooltipText() {
+      // Text set from innerHTML vs 'label' due to html tag in locales file string
+      this.$refs.tooltipContent.innerHTML = this.$t("no_labels_available");
     },
   },
 };
