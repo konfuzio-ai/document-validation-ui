@@ -98,9 +98,9 @@
   "enter_key": "Akzeptieren oder Speichern",
   "delete_key": "Ablehnen",
   "decline": "Decline",
-  "server_error": "We are currently experiencing a server issue. Please try again later or",
-  "get_support": "Get Support",
-  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels. For more details, you can visit <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>this link</a>.",
+  "server_error": "Wir haben derzeit ein Serverproblem. Bitte versuchen Sie es später noch einmal oder",
+  "get_support": "Hole dir Unterstützung",
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>diesem Link</a>.",
   "new_ann_set_title": "Neues Annotations-Set",
   "new_ann_set_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus. Das neue Annotations-Set enthält dieselben Beschriftungen.",
   "select_label_set": "Wählen Sie das Label-Set-Modell aus",
@@ -112,5 +112,5 @@
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
   "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden.",
-  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>."
+  "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>."
 }
