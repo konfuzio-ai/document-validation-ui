@@ -127,5 +127,5 @@
   "splitting_warning": "Be aware that any annotations you have made in this document will not be saved if you proceed.",
   "no": "No",
   "yes": "Yes",
-  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected."
+  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden."
 }
