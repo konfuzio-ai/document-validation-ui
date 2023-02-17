@@ -126,5 +126,6 @@
   "splitting_warning": "Ten en cuenta que se perderán las anotaciones que hayas confirmado en el documento.",
   "no": "No",
   "yes": "Sí",
-  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas."
+  "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas.",
+  "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haz click en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html?highlight=multiple#' target='_blank'>este link</a>."
 }

@@ -127,5 +127,6 @@
   "splitting_warning": "Be aware that any annotations you have made in this document will not be saved if you proceed.",
   "no": "No",
   "yes": "Yes",
-  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden."
+  "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden.",
+  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html?highlight=multiple#' target='_blank'>this link</a>."
 }
