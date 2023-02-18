@@ -4,7 +4,7 @@
     position="is-bottom"
     class="left-aligned annotation-details"
   >
-    <div class="label-icon">
+    <div :class="['label-icon', isSmall ? 'is-small' : '']">
       <div v-if="created(annotation) || edited(annotation)">
         <div
           v-if="accepted(annotation)"
@@ -178,6 +178,10 @@ export default {
     label: {
       type: Object,
       default: null,
+    },
+    isSmall: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

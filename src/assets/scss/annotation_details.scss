@@ -4,11 +4,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
 
   .annotation-details-icon {
     display: flex;
-    padding: 0 15px;
 
     &.animated-ripple {
       animation: bounce 0.4s 0.1s;
@@ -20,9 +18,21 @@
     }
 
     &.user-icon {
-      padding: 0 18px;
+      padding: 0 3px;
       svg {
         width: 20px;
+      }
+    }
+  }
+  &.is-small {
+    .annotation-details-icon {
+      svg {
+        width: 16px;
+      }
+      &.user-icon {
+        svg {
+          width: 12px;
+        }
       }
     }
   }

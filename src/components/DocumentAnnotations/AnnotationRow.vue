@@ -17,12 +17,15 @@
       @mouseenter="onAnnotationHoverEnter(defaultSpan)"
       @mouseleave="onAnnotationHoverLeave"
     >
-      <AnnotationDetails
-        :description="label.description"
-        :annotation="annotation"
-        :annotation-set="annotationSet"
-        :label="label"
-      />
+      <div class="annotation-icon">
+        <AnnotationDetails
+          :description="label.description"
+          :annotation="annotation"
+          :annotation-set="annotationSet"
+          :label="label"
+        />
+      </div>
+
       <div
         :class="[
           'label-name',

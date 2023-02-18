@@ -5,19 +5,45 @@
       class="multi-ann-set-table dark-header"
       detail-icon="faScissors"
       :data="rows"
-      :columns="columns"
       :sticky-header="true"
       :narrowed="true"
       :bordered="false"
-    />
+    >
+      <b-table-column
+        v-for="(column, index) in columns"
+        :key="index"
+        v-slot="props"
+        :field="column.field"
+        :label="column.label.name"
+      >
+        <div
+          class="annotation-content"
+          @mouseenter="
+            selectAnnotationInDocument(column.label, props.row[column.field])
+          "
+          @mouseleave="deselectAnnotationInDocument"
+        >
+          <AnnotationDetails
+            is-small
+            :description="column.description"
+            :annotation="props.row[column.field]"
+          />
+          <span>{{ props.row[column.field].offset_string }}</span>
+        </div>
+      </b-table-column>
+    </b-table>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import AnnotationDetails from "../DocumentAnnotations/AnnotationDetails";
 
 export default {
   name: "MultiAnnotationTablePopup",
+  components: {
+    AnnotationDetails,
+  },
   props: {
     annotationsSets: {
       required: true,
@@ -29,9 +55,6 @@ export default {
     return {
       rows: [],
       columns: [],
-      counter: 0,
-      draggingColumn: null,
-      draggingColumnIndex: null,
       orderedAnnotations: [],
     };
   },
@@ -55,7 +78,7 @@ export default {
           if (!labelAlreadyExists(label)) {
             const column = {
               field: `${label.id}`,
-              label: label.name,
+              label: label,
               centered: false,
             };
             this.columns.push(column);
@@ -73,12 +96,23 @@ export default {
 
         annotationSet.labels.forEach((label) => {
           if (label.annotations.length > 0) {
-            row[label.id] = label.annotations[0].offset_string;
-            orderedAnnotations.push(label.annotations[0]);
+            row[label.id] = label.annotations[0];
+            this.orderedAnnotations.push(label.annotations[0]);
           }
         });
         this.rows.push(row);
       });
+    },
+    selectAnnotationInDocument(label, annotation) {
+      this.$store.dispatch("document/setDocumentAnnotationSelected", {
+        annotation: annotation,
+        label: label,
+        span: annotation.span[0],
+        scrollTo: false,
+      });
+    },
+    deselectAnnotationInDocument() {
+      this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
   },
 };
