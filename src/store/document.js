@@ -622,12 +622,12 @@ const actions = {
         return;
       });
 
-    await dispatch("fetchMissingAnnotations");
-
     if (!state.publicView) {
       await dispatch("project/fetchCurrentUser", null, {
         root: true,
       });
+
+      await dispatch("fetchMissingAnnotations");
 
       if (projectId) {
         await dispatch("category/fetchCategories", projectId, {

@@ -11,7 +11,7 @@
 
     <!-- save button -->
     <b-button
-      v-if="saveBtn && !isLoading"
+      v-if="saveBtn && !isLoading && !publicView"
       :class="[
         'annotation-save-btn text-btn',
         actionBar && 'action-bar-save-btn',
@@ -32,7 +32,7 @@
 
     <!-- decline button -->
     <div
-      v-if="declineBtn && !isLoading && !saveBtn && !cancelBtn"
+      v-if="declineBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
       class="reject-decline-button-container"
     >
       <b-button
@@ -46,7 +46,7 @@
 
     <!-- accept button -->
     <b-button
-      v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn"
+      v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
       class="annotation-accept-btn"
       type="is-primary"
       @click.stop="accept"
@@ -56,7 +56,7 @@
 
     <!-- reject button -->
     <div
-      v-if="showReject && !isLoading && !cancelBtn && !saveBtn"
+      v-if="showReject && !isLoading && !cancelBtn && !saveBtn && !publicView"
       class="reject-decline-button-container"
     >
       <b-button
@@ -114,7 +114,7 @@
       class="right-aligned finish-review"
     >
       <b-button
-        v-if="finishReviewBtn"
+        v-if="finishReviewBtn && !publicView"
         :class="['finish-review-btn', 'text-btn']"
         type="is-primary"
         :disabled="finishDisabled"
