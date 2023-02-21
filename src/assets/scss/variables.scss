@@ -336,6 +336,16 @@ button {
   &.modal-400 {
     .modal-content {
       max-width: 400px !important;
+
+      .scroll-hidden {
+        overflow: hidden;
+        padding: 0;
+
+        .content {
+          overflow: auto;
+          padding: 20px;
+        }
+      }
     }
   }
 
@@ -513,6 +523,7 @@ button {
 
   &.bottom-aligned {
     width: 100%;
+    bottom: 10px;
 
     .tooltip-content {
       &::before {
@@ -520,7 +531,8 @@ button {
       }
 
       a {
-        color: $primary !important;
+        color: $white;
+        text-decoration: underline;
         font-weight: 500;
       }
     }

@@ -6,7 +6,7 @@
       :can-cancel="canCloseModal()"
       class="modal-absolute modal-400 modal-no-footer"
     >
-      <section class="modal-card-body">
+      <section class="modal-card-body scroll-hidden">
         <div class="content">
           <h3>{{ $t("categorize_document_title") }}</h3>
           <p v-if="documentCategory">
@@ -17,31 +17,48 @@
           <p v-else>
             {{ $t("not_categorized") }}
           </p>
-          <b-dropdown
-            v-model="selectedCategory"
-            aria-role="list"
-            class="categorize-dropdown"
+
+          <b-tooltip
+            multilined
+            :active="categories.length === 1"
+            size="is-large"
+            position="is-bottom"
+            class="bottom-aligned"
+            :close-delay="5000"
           >
-            <template #trigger>
-              <div class="category-dropdown">
-                <div>
-                  <span v-if="selectedCategory">{{
-                    selectedCategory.name
-                  }}</span>
-                  <span v-else>{{ $t("choose_category") }}</span>
-                </div>
-              </div>
+            <template #content>
+              <div ref="tooltipContent"></div>
             </template>
-            <b-dropdown-item
-              v-for="categoryItem in categories"
-              :key="categoryItem.id"
-              aria-role="listitem"
-              :value="categoryItem"
-              @click="setSelectedCategory(categoryItem)"
+            <b-dropdown
+              v-model="selectedCategory"
+              aria-role="list"
+              :class="[
+                'categorize-dropdown',
+                categories.length === 1 && 'dropdown-disabled',
+              ]"
+              :disabled="categories.length === 1"
             >
-              <span>{{ categoryItem.name }}</span>
-            </b-dropdown-item>
-          </b-dropdown>
+              <template #trigger>
+                <div class="category-dropdown">
+                  <div>
+                    <span v-if="selectedCategory">{{
+                      selectedCategory.name
+                    }}</span>
+                    <span v-else>{{ $t("choose_category") }}</span>
+                  </div>
+                </div>
+              </template>
+              <b-dropdown-item
+                v-for="categoryItem in categories"
+                :key="categoryItem.id"
+                aria-role="listitem"
+                :value="categoryItem"
+                @click="setSelectedCategory(categoryItem)"
+              >
+                <span>{{ categoryItem.name }}</span>
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-tooltip>
           <div v-if="selectedCategory" class="category-description">
             {{
               selectedCategory.description
@@ -97,6 +114,10 @@ export default {
     categories(newCategories, oldCategories) {
       if (newCategories && oldCategories === null) {
         this.setDocumentValues();
+
+        if (newCategories.length === 1) {
+          this.setTooltipText();
+        }
       }
     },
     show(newValue) {
@@ -105,6 +126,13 @@ export default {
   },
   mounted() {
     this.setDocumentValues();
+
+    this.$nextTick(() => {
+      this.setTooltipText();
+    });
+  },
+  updated() {
+    this.setTooltipText();
   },
   methods: {
     setDocumentValues() {
@@ -154,6 +182,14 @@ export default {
         });
       }
       this.show = false;
+    },
+    setTooltipText() {
+      // Text set from innerHTML vs 'label' due to html tag in locales file string
+      if (this.categories.length === 1 && this.show) {
+        this.$refs.tooltipContent.innerHTML = this.$t(
+          "single_category_in_project"
+        );
+      }
     },
   },
 };
