@@ -129,5 +129,6 @@
   "no": "No",
   "yes": "Yes",
   "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected.",
-  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>."
+  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>.",
+  "single_category_in_project": "The current project has only one category, which is already assigned to this document. To be able to change it, the new one should be first added to the project. For details on how to do this, visit <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>this link</a>."
 }
