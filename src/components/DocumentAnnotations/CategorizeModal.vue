@@ -20,7 +20,7 @@
 
           <b-tooltip
             multilined
-            :active="categories.length === 1"
+            :active="disableDropdown"
             size="is-large"
             position="is-bottom"
             class="bottom-aligned"
@@ -34,15 +34,18 @@
               aria-role="list"
               :class="[
                 'categorize-dropdown',
-                categories.length === 1 && 'dropdown-disabled',
+                disableDropdown && 'dropdown-disabled',
               ]"
-              :disabled="categories.length === 1"
+              :disabled="disableDropdown"
             >
               <template #trigger>
                 <div class="category-dropdown">
                   <div>
                     <span v-if="selectedCategory">{{
                       selectedCategory.name
+                    }}</span>
+                    <span v-else-if="categories.length === 1">{{
+                      categories[0].name
                     }}</span>
                     <span v-else>{{ $t("choose_category") }}</span>
                   </div>
@@ -92,18 +95,23 @@ import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "CategorizeModal",
-  computed: {
-    ...mapState("category", ["categories"]),
-    ...mapState("document", ["selectedDocument"]),
-    ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["categorizationIsConfirmed"]),
-  },
   data() {
     return {
       show: false,
       selectedCategory: null, // category selected in dropdown
       documentCategory: null, // category associated to document
     };
+  },
+  computed: {
+    ...mapState("category", ["categories"]),
+    ...mapState("document", ["selectedDocument"]),
+    ...mapGetters("category", ["category"]),
+    ...mapGetters("document", ["categorizationIsConfirmed"]),
+
+    disableDropdown() {
+      // if only 1 category in the project, we don't enable the dropdown
+      return this.categories.length === 1;
+    },
   },
   watch: {
     selectedDocument(newValue) {
@@ -137,7 +145,16 @@ export default {
   methods: {
     setDocumentValues() {
       if (this.selectedDocument) {
-        const category = this.category(this.selectedDocument.category);
+        let category;
+
+        if (this.selectedDocument.category) {
+          category = this.category(this.selectedDocument.category);
+        } else if (this.categories.length === 1) {
+          category = this.category(this.categories[0].id);
+        } else {
+          category = category;
+        }
+
         this.selectedCategory = category;
         this.documentCategory = category;
         this.show = !this.categorizationIsConfirmed;
@@ -154,7 +171,8 @@ export default {
         (this.selectedCategory &&
           this.documentCategory &&
           this.selectedCategory.id !== this.documentCategory.id) ||
-        (this.selectedCategory && !this.documentCategory)
+        (this.selectedCategory && !this.documentCategory) ||
+        (this.selectedCategory && this.disableDropdown)
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,

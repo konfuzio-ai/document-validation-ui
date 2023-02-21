@@ -28,7 +28,7 @@
       class="finish-review-button-container"
     >
       <ActionButtons
-        :finish-review-btn="finishReviewBtn"
+        :finish-review-btn="annotationSets.length > 0"
         :finish-disabled="finishDisabled"
         :is-loading="isLoading"
         @finish-review="handleFinishReview"
@@ -60,6 +60,7 @@ export default {
       "selectedDocument",
       "publicView",
       "finishedReview",
+      "annotationSets",
     ]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
   },
