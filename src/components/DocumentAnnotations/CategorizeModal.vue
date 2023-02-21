@@ -111,6 +111,11 @@ export default {
       "categorizationIsConfirmed",
       "documentHasSplittingSuggestions",
     ]),
+
+    disableDropdown() {
+      // if only 1 category in the project, we don't enable the dropdown
+      return this.categories.length === 1;
+    },
   },
   watch: {
     selectedDocument(newValue) {
