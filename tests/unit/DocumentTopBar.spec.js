@@ -194,7 +194,7 @@ describe("Document Top Bar", () => {
     expect(
       await wrapper
         .findComponent(
-          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
+          ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review"
         )
         .isVisible()
     ).toBe(true);

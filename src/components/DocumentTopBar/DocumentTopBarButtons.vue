@@ -28,7 +28,7 @@
       class="finish-review-button-container"
     >
       <ActionButtons
-        :finish-review-btn="annotationSets.length > 0"
+        :finish-review-btn="annotationSets && annotationSets.length > 0"
         :finish-disabled="finishDisabled"
         :is-loading="isLoading"
         @finish-review="handleFinishReview"
@@ -97,7 +97,11 @@ export default {
     handleButton() {
       // Check if we are not in the split overview
       // and if we have a split document
-      if (!this.splitOverview && this.updatedDocument.length > 1) {
+      if (
+        !this.splitOverview &&
+        this.updatedDocument &&
+        this.updatedDocument.length > 1
+      ) {
         // Enable the "next" button to go to the overview
         this.$store.dispatch("edit/setSplitOverview", true);
         this.$store.dispatch("edit/setSelectedPages", null);

@@ -20,7 +20,7 @@
 
           <b-tooltip
             multilined
-            :active="disableDropdown"
+            :active="singleCategoryInProject"
             size="is-large"
             position="is-bottom"
             class="bottom-aligned"
@@ -34,9 +34,9 @@
               aria-role="list"
               :class="[
                 'categorize-dropdown',
-                disableDropdown && 'dropdown-disabled',
+                singleCategoryInProject && 'dropdown-disabled',
               ]"
-              :disabled="disableDropdown"
+              :disabled="singleCategoryInProject"
             >
               <template #trigger>
                 <div class="category-dropdown">
@@ -44,7 +44,7 @@
                     <span v-if="selectedCategory">{{
                       selectedCategory.name
                     }}</span>
-                    <span v-else-if="categories.length === 1">{{
+                    <span v-else-if="singleCategoryInProject">{{
                       categories[0].name
                     }}</span>
                     <span v-else>{{ $t("choose_category") }}</span>
@@ -108,9 +108,9 @@ export default {
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["categorizationIsConfirmed"]),
 
-    disableDropdown() {
+    singleCategoryInProject() {
       // if only 1 category in the project, we don't enable the dropdown
-      return this.categories.length === 1;
+      return this.categories && this.categories.length === 1;
     },
   },
   watch: {
@@ -149,7 +149,7 @@ export default {
 
         if (this.selectedDocument.category) {
           category = this.category(this.selectedDocument.category);
-        } else if (this.categories.length === 1) {
+        } else if (this.categories && this.categories.length === 1) {
           category = this.category(this.categories[0].id);
         } else {
           category = category;
@@ -172,7 +172,7 @@ export default {
           this.documentCategory &&
           this.selectedCategory.id !== this.documentCategory.id) ||
         (this.selectedCategory && !this.documentCategory) ||
-        (this.selectedCategory && this.disableDropdown)
+        (this.selectedCategory && this.singleCategoryInProject)
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
@@ -203,7 +203,7 @@ export default {
     },
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
-      if (this.categories.length === 1 && this.show) {
+      if (this.singleCategoryInProject && this.show) {
         this.$refs.tooltipContent.innerHTML = this.$t(
           "single_category_in_project"
         );

@@ -113,5 +113,5 @@
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
   "disabled_finish_review": "Der Abschluss der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder abgelehnt wurden.",
   "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>.",
-  "single_category_in_project": "The current project has only one category, which is already assigned to this document. To be able to change it, the new one should be first added to the project. For details on how to do this, visit <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>this link</a>."
+  "single_category_in_project": "Das aktuelle Projekt hat nur eine Kategorie, die diesem Dokument bereits zugeordnet ist. Um sie ändern zu können, sollte die neue zuerst dem Projekt hinzugefügt werden. Einzelheiten dazu finden Sie unter <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>diesem Link</a>."
 }
