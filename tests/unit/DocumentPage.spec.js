@@ -17,8 +17,25 @@ describe("Document Page Component", () => {
     });
   });
 
+  // mock scale for scrolling pages
+  const scale = {
+    elementsWidth: 1,
+    client: {
+      width: 1600,
+      height: 1200,
+    },
+    viewport: {
+      width: require("../mock/page_1.json").size[0],
+      height: require("../mock/page_1.json").size[1],
+    },
+  };
+
   beforeEach(() => {
     Promise.all([
+      store.dispatch(
+        "document/setSelectedDocument",
+        require("../mock/document.json")
+      ),
       store.dispatch("document/setAnnotations", annotations),
       store.dispatch("document/setPages", [
         require("../mock/page_1.json"),
@@ -26,21 +43,21 @@ describe("Document Page Component", () => {
       ]),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
+      store.dispatch("display/updateScale", scale),
     ]);
   });
+
   it("document contains two scrolling pages", async () => {
-    const wrapper = mount(ScrollingDocument, {
+    const wrapper = shallowMount(ScrollingDocument, {
       store,
-      propsData: {
-        pages: store.state.document.pages,
-      },
       mocks: {
         $t,
       },
     });
 
-    // expect(await wrapper.findAllComponents(ScrollingPage).length).toBe(2);
+    expect(await wrapper.findAll(".scrolling-page").length).toBe(2);
   });
+
   it("document should have page 1 visible", async () => {
     mount(ScrollingDocument, {
       store,

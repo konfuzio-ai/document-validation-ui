@@ -537,4 +537,56 @@ describe("Document Annotations Component", () => {
 
     expect(updateAnnotations).toHaveBeenCalledTimes(1);
   });
+
+  it("Missing annotations, buttons and edit options for annotations do not appear in public documents", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const label = annotationSet.labels[0];
+    const annotation = label.annotations[0];
+
+    const wrapper = mount(DocumentAnnotations, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    store.dispatch("document/setPublicView", true);
+
+    const rejectAllButton = await wrapper.findAll(
+      ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .reject-all .reject-all-btn"
+    );
+
+    const acceptAllButton = await wrapper.findAll(
+      ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .accept-all .accept-all-btn"
+    );
+
+    const annotationRow = await wrapper.find(
+      ".annotation-set-list .annotation-set-group .labels .label .annotation-row"
+    );
+
+    const rejectButton = await wrapper.find(
+      ".annotation-set-list .annotation-set-group .labels .labelset-action-buttons .action-buttons .reject-all .reject-all-btn"
+    );
+
+    const acceptButton = await wrapper.find(
+      ".annotation-set-list .annotation-set-group .labels .label .annotation-row .annotation-row-right .buttons-container .action-buttons .annotation-accept-btn"
+    );
+
+    const declineButton = await wrapper.find(
+      ".annotation-set-list .annotation-set-group .labels .label .annotation-row .annotation-row-right .buttons-container .action-buttons .decline-btn"
+    );
+
+    await wrapper.findComponent(".annotation-value").trigger("click");
+
+    expect(await store.state.document.missingAnnotations.length).toBe(0);
+    expect(rejectAllButton.exists()).toBe(false);
+    expect(acceptAllButton.exists()).toBe(false);
+    await annotationRow.trigger("mouseenter");
+    expect(rejectButton.exists()).toBe(false);
+    expect(acceptButton.exists()).toBe(false);
+    expect(declineButton.exists()).toBe(false);
+    expect(await store.state.selection.elementSelected).not.toEqual(
+      annotation.id
+    );
+  });
 });
