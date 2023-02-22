@@ -220,7 +220,14 @@ export default {
 
       // Only last 3 rows will change the position
       if (annDetails) {
-        const lastElementsInList = annDetails.length - 3;
+        let lastElementsInList;
+
+        if (annDetails.length >= 3) {
+          lastElementsInList = annDetails.length - 2;
+        } else {
+          return;
+        }
+
         for (let i = lastElementsInList; i < annDetails.length; i++) {
           this.updateClass(annDetails, i);
         }
