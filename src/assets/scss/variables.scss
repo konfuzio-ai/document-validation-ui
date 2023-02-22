@@ -41,24 +41,16 @@ $blue: #2f80ed;
 $dark-blue: #2b3545;
 
 :root {
-  --font-family: #{"Inter", sans-serif};
-  --background-color: #{$white};
   --primary-color: #{$konfuzio-green};
-  --primary-hover: #{$dark-green-hover};
-  --toolbar-color: #{$dark-blue};
-  --toolbar-elements: #{$white};
-  --tooltip-color: #{$dark};
-  --error-background: #{$error-background};
-  --error-text: #{$white};
 }
 
-$font-family: var(--font-family);
-$background: var(--background-color);
-$toolbar: var(--toolbar-color);
 $primary: var(--primary-color);
-$primary-dark: var(--primary-hover);
-$tooltip: var(--tooltip-color);
-$toolbar-elements: var(--toolbar-elements);
+$primary-dark: $dark-green-hover;
+$font-family: "Inter", sans-serif;
+$background: $white;
+$toolbar: $dark-blue;
+$tooltip: $dark;
+$toolbar-elements: $white;
 
 $link: $primary;
 $info: $blue;
@@ -208,8 +200,8 @@ button {
   }
 
   .message-body {
-    background-color: var(--error-background);
-    color: var(--error-text);
+    background-color: $error-background;
+    color: $white;
     font-size: 14px;
     border: 0;
     border-radius: 0%;
