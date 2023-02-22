@@ -218,4 +218,36 @@ describe("Document Top Bar", () => {
         .exists()
     ).toBe(false);
   });
+
+  it("Should not show Category dropdown, option to edit file name, keyboard actions information or other buttons", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    store.dispatch("document/setPublicView", true);
+
+    const categoryDropdown = await wrapper.find(
+      ".left-bar-components .dropdown"
+    );
+
+    const fileNameEditButton = await wrapper.find(
+      ".document-name-component .edit-btn"
+    );
+
+    const keyboardActionInfo = await wrapper.find(
+      ".right-bar-components .keyboard-actions-info"
+    );
+
+    const finishReviewButton = await wrapper.find(
+      ".right-bar-components .top-bar-buttons .buttons .finish-review-button-container"
+    );
+
+    expect(categoryDropdown.exists()).toBe(false);
+    expect(fileNameEditButton.exists()).toBe(false);
+    expect(keyboardActionInfo.exists()).toBe(false);
+    expect(finishReviewButton.exists()).toBe(false);
+  });
 });
