@@ -147,8 +147,11 @@ export default {
       if (this.selectedDocument) {
         let category;
 
+        // Check if the document has an extracted category
+        // or if it doesn't, but the project has only 1 category
         if (this.selectedDocument.category) {
           category = this.category(this.selectedDocument.category);
+          this.documentCategory = category;
         } else if (this.categories && this.categories.length === 1) {
           category = this.category(this.categories[0].id);
         } else {
@@ -156,7 +159,6 @@ export default {
         }
 
         this.selectedCategory = category;
-        this.documentCategory = category;
         this.show = !this.categorizationIsConfirmed;
       }
     },
