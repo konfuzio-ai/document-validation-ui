@@ -16,19 +16,14 @@
         :field="column.field"
         :label="column.label.name"
       >
-        <div
-          class="annotation-content"
-          @mouseenter="
-            selectAnnotationInDocument(column.label, props.row[column.field])
-          "
-          @mouseleave="deselectAnnotationInDocument"
-        >
-          <AnnotationDetails
-            is-small
-            :description="column.description"
+        <div class="annotation-content">
+          <AnnotationRow
             :annotation="props.row[column.field]"
+            :label="column.label"
+            :annotation-set="column.annotationSet"
+            :show-label="false"
+            :is-small="true"
           />
-          <span>{{ props.row[column.field].offset_string }}</span>
         </div>
       </b-table-column>
     </b-table>
@@ -37,12 +32,12 @@
 
 <script>
 import { mapState } from "vuex";
-import AnnotationDetails from "../DocumentAnnotations/AnnotationDetails";
+import AnnotationRow from "../DocumentAnnotations/AnnotationRow";
 
 export default {
   name: "MultiAnnotationTablePopup",
   components: {
-    AnnotationDetails,
+    AnnotationRow,
   },
   props: {
     annotationsSets: {
@@ -79,6 +74,7 @@ export default {
             const column = {
               field: `${label.id}`,
               label: label,
+              annotationSet,
               centered: false,
             };
             this.columns.push(column);
@@ -102,17 +98,6 @@ export default {
         });
         this.rows.push(row);
       });
-    },
-    selectAnnotationInDocument(label, annotation) {
-      this.$store.dispatch("document/setDocumentAnnotationSelected", {
-        annotation: annotation,
-        label: label,
-        span: annotation.span[0],
-        scrollTo: false,
-      });
-    },
-    deselectAnnotationInDocument() {
-      this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
   },
 };

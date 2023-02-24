@@ -23,10 +23,12 @@
           :annotation="annotation"
           :annotation-set="annotationSet"
           :label="label"
+          :is-small="isSmall"
         />
       </div>
 
       <div
+        v-if="showLabel"
         :class="[
           'label-name',
           annotationIsNotFound(annotationSet, label) && 'not-found-text',
@@ -129,6 +131,14 @@ export default {
     annotation: {
       type: Object,
       default: null,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
+    isSmall: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
