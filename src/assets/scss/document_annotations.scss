@@ -402,6 +402,17 @@
   }
 }
 
+.annotation-row {
+  display: flex;
+  align-items: center;
+  .annotation-icon {
+    display: flex;
+  }
+  .annotation-value {
+    outline: none;
+  }
+}
+
 .message {
   .message-container {
     display: flex;

@@ -84,7 +84,7 @@
           />
         </div>
       </div>
-      <div class="buttons-container">
+      <div v-if="showButtons" class="buttons-container">
         <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
@@ -133,6 +133,10 @@ export default {
       default: null,
     },
     showLabel: {
+      type: Boolean,
+      default: true,
+    },
+    showButtons: {
       type: Boolean,
       default: true,
     },

@@ -22,6 +22,7 @@
             :label="column.label"
             :annotation-set="column.annotationSet"
             :show-label="false"
+            :show-buttons="false"
             :is-small="true"
           />
         </div>

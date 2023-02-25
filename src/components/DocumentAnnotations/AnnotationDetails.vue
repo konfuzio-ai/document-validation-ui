@@ -2,9 +2,9 @@
   <b-tooltip
     :animated="false"
     position="is-bottom"
-    class="left-aligned annotation-details"
+    :class="[!isSmall && 'left-aligned', 'annotation-details']"
   >
-    <div :class="['label-icon', isSmall ? 'is-small' : '']">
+    <div :class="['label-icon', isSmall && 'is-small']">
       <div v-if="created(annotation) || edited(annotation)">
         <div
           v-if="accepted(annotation)"
@@ -199,6 +199,11 @@ export default {
       "getUser",
       "annotationIsNotFound",
     ]),
+    isLeftAligned() {
+      console.log(this.$el);
+
+      return true;
+    },
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
