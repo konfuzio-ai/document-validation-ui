@@ -79,7 +79,7 @@
         >
           <v-tag
             :config="{
-              fill: '#2B3545',
+              fill: '#1A1A1A',
               lineJoin: 'round',
               hitStrokeWidth: 0,
               listening: false,

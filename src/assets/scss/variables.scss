@@ -15,12 +15,12 @@ $lightest-red: #fdf4f6;
 $error-background: #d4453d;
 
 $grey-dark: #344054;
-$grey: #798190;
+$grey: #858585;
 $grey-low-opacity: rgba(133, 140, 154, 0.4);
 $grey-lighter-low-opacity: rgba(223, 224, 228, 0.5);
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
-$grey-detail: #dfe0e4;
+$grey-detail: #e1e1e1;
 $subtle-grey: #f2f4f7;
 $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
@@ -38,7 +38,7 @@ $yellow: #ffd600;
 $warning-yellow: #fec84b;
 
 $blue: #2f80ed;
-$dark-blue: #2b3545;
+$text-color: #1a1a1a;
 
 :root {
   --primary-color: #{$konfuzio-green};
@@ -48,7 +48,7 @@ $primary: var(--primary-color);
 $primary-dark: $dark-green-hover;
 $font-family: "Inter", sans-serif;
 $background: $white;
-$toolbar: $dark-blue;
+$toolbar: $text-color;
 $tooltip: $dark;
 $toolbar-elements: $white;
 
@@ -72,7 +72,7 @@ button {
     color: $white !important;
 
     &:hover:enabled {
-      background-color: $primary-dark !important;
+      background: $primary-dark !important;
     }
 
     &:disabled {
@@ -90,7 +90,7 @@ button {
     &:not([disabled]) {
       &:hover {
         text-decoration: none;
-        color: $dark-blue !important;
+        color: $text-color !important;
       }
     }
 
@@ -101,7 +101,7 @@ button {
 
   &:not(.is-text, .is-primary, .reject-btn) {
     background-color: $white;
-    color: $dark-blue;
+    color: $text-color;
   }
 
   &.is-text {
@@ -290,7 +290,7 @@ button {
 
   &.dropdown-menu-animation {
     a.navbar-item {
-      color: $dark-blue;
+      color: $text-color;
       font-size: 16px;
       line-height: 24px;
 
@@ -419,7 +419,7 @@ button {
 
 .notices {
   .snackbar {
-    background-color: $dark-blue;
+    background-color: $text-color;
     min-height: 40px;
 
     .text {
@@ -453,7 +453,7 @@ button {
 
 .b-tooltip {
   .tooltip-content {
-    background-color: $dark-blue !important;
+    background-color: $text-color !important;
 
     a {
       color: $white;
@@ -471,8 +471,8 @@ button {
       &::before {
         left: 16px !important;
         right: auto !important;
-        border-top-color: $dark-blue !important;
-        border-bottom-color: $dark-blue !important;
+        border-top-color: $text-color !important;
+        border-bottom-color: $text-color !important;
       }
     }
   }
@@ -487,7 +487,7 @@ button {
       &::before {
         right: 16px !important;
         left: auto !important;
-        border-bottom-color: $dark-blue !important;
+        border-bottom-color: $text-color !important;
       }
     }
 
@@ -517,12 +517,12 @@ button {
       font-size: 14px;
       padding: 12px 12px;
       top: 45px;
-      background-color: $dark-blue;
+      background-color: $text-color;
       border-radius: 4px !important;
 
       &::before {
         top: 17px;
-        border-left-color: $dark-blue !important;
+        border-left-color: $text-color !important;
       }
     }
   }
@@ -532,7 +532,7 @@ button {
 
     .tooltip-content {
       &::before {
-        border-bottom-color: $dark-blue !important;
+        border-bottom-color: $text-color !important;
       }
     }
   }
@@ -540,7 +540,7 @@ button {
   &.top-aligned {
     .tooltip-content {
       &::before {
-        border-top-color: $dark-blue !important;
+        border-top-color: $text-color !important;
       }
     }
   }

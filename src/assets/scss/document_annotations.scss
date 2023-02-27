@@ -390,7 +390,7 @@
 
         &:hover {
           text-decoration: none !important;
-          color: $dark-blue !important;
+          color: $text-color !important;
         }
 
         &:focus {
@@ -416,7 +416,7 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 20px;
-        color: $dark-blue;
+        color: $text-color;
         padding-bottom: 15px;
         margin: 0;
         padding-left: 15px;
