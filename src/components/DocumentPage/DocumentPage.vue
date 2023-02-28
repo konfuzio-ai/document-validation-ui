@@ -1,7 +1,10 @@
 <template>
   <div
     ref="pdfContainer"
-    :class="['pdf-page-container', categorizeModalIsActive && 'pointer-cursor']"
+    :class="[
+      'pdf-page-container',
+      categorizeModalIsActive || (editMode && 'pointer-cursor'),
+    ]"
   >
     <NewAnnotation
       v-if="newAnnotation && newAnnotation.length && !editAnnotation"
@@ -297,7 +300,7 @@ export default {
     },
 
     onMouseDown(event) {
-      if (this.categorizeModalIsActive) return;
+      if (this.categorizeModalIsActive || this.editMode) return;
 
       this.closePopups();
 
