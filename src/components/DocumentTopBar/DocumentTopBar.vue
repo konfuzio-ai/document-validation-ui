@@ -12,7 +12,7 @@
 
       <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
-      <div class="right-bar-components">
+      <div v-if="!recalculatingAnnotations" class="right-bar-components">
         <div
           v-if="!editMode && (!publicView || !selectedDocument.is_reviewed)"
           class="keyboard-actions-info"

@@ -94,7 +94,7 @@ const actions = {
       if (direction === "left") {
         state.documentPagesListForEditMode.push({
           id: page.id,
-          page_number: page.number,
+          number: page.number,
           angle: -90,
           thumbnail_url: page.thumbnail_url,
           updated_at: page.updated_at,
@@ -104,7 +104,7 @@ const actions = {
       if (direction === "right") {
         state.documentPagesListForEditMode.push({
           id: page.id,
-          page_number: page.number,
+          number: page.number,
           angle: 90,
           thumbnail_url: page.thumbnail_url,
           updated_at: page.updated_at,

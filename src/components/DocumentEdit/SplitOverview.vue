@@ -25,7 +25,7 @@
           <div class="split-documents">
             <div
               class="image-container"
-              @click="handlePageChange(page.pages[0].page_number)"
+              @click="handlePageChange(page.pages[0].number)"
             >
               <div
                 :class="['thumbnail', page.pages.length > 1 && 'page-stack']"
@@ -165,7 +165,7 @@ export default {
       // returns the first thumbnail in the pages array
       // for each new document
       const image = this.documentPagesListForEditMode.find(
-        (p) => p.page_number === page.pages[0].page_number
+        (p) => p.number === page.pages[0].number
       );
 
       return `${image.thumbnail_url}?${image.updated_at}`;
