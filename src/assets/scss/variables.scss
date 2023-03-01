@@ -462,6 +462,12 @@ button {
 .b-tooltip {
   .tooltip-content {
     background-color: $dark-blue !important;
+
+    a {
+      color: $white;
+      text-decoration: underline;
+      font-weight: 500;
+    }
   }
 
   &.left-aligned {
@@ -498,6 +504,14 @@ button {
         right: 0 !important;
       }
     }
+
+    &.full-height-tooltip {
+      height: 100%;
+
+      .tooltip-content {
+        right: 0 !important;
+      }
+    }
   }
 
   &.width-184 {
@@ -527,12 +541,6 @@ button {
     .tooltip-content {
       &::before {
         border-bottom-color: $dark-blue !important;
-      }
-
-      a {
-        color: $white;
-        text-decoration: underline;
-        font-weight: 500;
       }
     }
   }
@@ -648,6 +656,10 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  &.is-disabled {
+    cursor: not-allowed;
   }
 }
 

@@ -1,50 +1,62 @@
 <template>
-  <b-dropdown
-    :class="[
-      'category-chooser',
-      splitMode && 'split-mode',
-      selectedDocument.is_reviewed && 'disabled',
-    ]"
-    aria-role="list"
-    :disabled="selectedDocument.is_reviewed"
+  <b-tooltip
+    multilined
+    :active="tooltipIsShown"
+    size="is-large"
+    position="is-bottom"
+    :class="[editMode ? 'right-aligned full-height-tooltip' : 'left-aligned']"
+    :close-delay="5000"
   >
-    <template #trigger>
-      <div class="category-drop-down">
-        <div class="icon">
-          <CategoryIcon />
-        </div>
-        <div class="category-info">
-          <p v-if="!splitMode" class="category-title">
-            {{ $t("category") }}
-          </p>
-          <div class="category-name">
-            {{
-              !splitMode
-                ? categoryName(selectedDocument.category)
-                : categoryName(updatedDocument[index].category)
-            }}
+    <template #content>
+      <div ref="tooltipContent"></div>
+    </template>
+    <b-dropdown
+      :class="[
+        'category-chooser',
+        splitMode && 'split-mode',
+        selectedDocument.is_reviewed && 'disabled',
+      ]"
+      aria-role="list"
+      :disabled="selectedDocument.is_reviewed || tooltipIsShown"
+    >
+      <template #trigger>
+        <div class="category-drop-down">
+          <div class="icon">
+            <CategoryIcon />
+          </div>
+          <div class="category-info">
+            <p v-if="!splitMode" class="category-title">
+              {{ $t("category") }}
+            </p>
+            <div class="category-name">
+              {{
+                !splitMode
+                  ? categoryName(selectedDocument.category)
+                  : categoryName(updatedDocument[index].category)
+              }}
+            </div>
+          </div>
+          <div :class="[!splitMode && 'caret-section']">
+            <b-icon
+              icon="angle-down"
+              size="is-small"
+              :class="['caret', splitMode && 'split-mode-caret']"
+            />
           </div>
         </div>
-        <div :class="[!splitMode && 'caret-section']">
-          <b-icon
-            icon="angle-down"
-            size="is-small"
-            :class="['caret', splitMode && 'split-mode-caret']"
-          />
-        </div>
-      </div>
-    </template>
+      </template>
 
-    <b-dropdown-item
-      v-for="category in currentProjectCategories"
-      :key="category.id"
-      aria-role="listitem"
-      :disabled="handleOptionInDropdownDisabled(category)"
-      @click="handleChangeCategory(category)"
-    >
-      <span>{{ category.name }}</span>
-    </b-dropdown-item>
-  </b-dropdown>
+      <b-dropdown-item
+        v-for="category in currentProjectCategories"
+        :key="category.id"
+        aria-role="listitem"
+        :disabled="handleOptionInDropdownDisabled(category)"
+        @click="handleChangeCategory(category)"
+      >
+        <span>{{ category.name }}</span>
+      </b-dropdown-item>
+    </b-dropdown>
+  </b-tooltip>
 </template>
 
 <script>
@@ -71,15 +83,17 @@ export default {
     return {
       currentProjectCategories: [],
       categoryError: false,
+      tooltipIsShown: false,
     };
   },
   computed: {
     ...mapGetters("category", {
       categoryName: "categoryName",
+      projectHasSingleCategory: "projectHasSingleCategory",
     }),
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["categories"]),
-    ...mapState("edit", ["updatedDocument"]),
+    ...mapState("edit", ["editMode", "updatedDocument"]),
   },
   watch: {
     categories(newValue) {
@@ -108,6 +122,17 @@ export default {
         }
       });
     }
+
+    if (this.projectHasSingleCategory()) {
+      this.tooltipIsShown = true;
+    }
+
+    this.$nextTick(() => {
+      this.setTooltipText();
+    });
+  },
+  updated() {
+    this.setTooltipText();
   },
   methods: {
     // The current category name will change
@@ -148,6 +173,15 @@ export default {
       // Send the category ID to the split overview
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
+    },
+
+    setTooltipText() {
+      // Text set from innerHTML vs 'label' due to html tag in locales file string
+      if (this.projectHasSingleCategory()) {
+        this.$refs.tooltipContent.innerHTML = this.$t(
+          "single_category_in_project"
+        );
+      }
     },
   },
 };

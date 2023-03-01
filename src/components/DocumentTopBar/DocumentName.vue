@@ -10,7 +10,7 @@
     </div>
     <span class="file-name-section">
       <span
-        :class="['document-name', isEditable ? 'is-editable' : '']"
+        :class="['document-name', isEditable && 'is-editable']"
         :contenteditable="isEditable"
         @input="handleInput"
         @paste="handlePaste"
