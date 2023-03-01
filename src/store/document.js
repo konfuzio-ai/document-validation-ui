@@ -760,10 +760,16 @@ const actions = {
       HTTP.patch(`/documents/${state.documentId}/`, updatedDocument)
         .then((response) => {
           if (response.status === 200) {
-            commit("SET_SELECTED_DOCUMENT", response.data);
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+            if (updatedDocument.data_file_name) {
+              // if the only change was the file name, don't reload the page
+              // only update the file name for the selectedDocument
+              commit("UPDATE_FILE_NAME", response.data.data_file_name);
+            } else {
+              commit("SET_SELECTED_DOCUMENT", response.data);
+              commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
-            dispatch("pollDocumentEndpoint");
+              dispatch("pollDocumentEndpoint");
+            }
 
             resolve(true);
           }
@@ -1124,6 +1130,9 @@ const mutations = {
   },
   SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {
     state.categorizeModalIsActive = value;
+  },
+  UPDATE_FILE_NAME: (state, value) => {
+    state.selectedDocument.data_file_name = value;
   },
 };
 
