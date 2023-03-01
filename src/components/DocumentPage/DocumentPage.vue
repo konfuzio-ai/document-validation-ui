@@ -276,6 +276,11 @@ export default {
         this.closePopups(true);
       }
     },
+    page(newValue, oldValue) {
+      if (newValue.image_url !== oldValue.image_url) {
+        this.drawPage(true);
+      }
+    },
   },
   mounted() {
     if (
