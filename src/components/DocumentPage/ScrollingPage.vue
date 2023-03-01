@@ -1,8 +1,7 @@
 <template>
   <div>
-    <DocumentPage v-if="editMode" :page="page" />
     <DummyPage
-      v-else-if="!loadedPage || !pageInVisibleRange(page)"
+      v-if="!loadedPage || !pageInVisibleRange(page)"
       :width="page.size[0]"
       :height="page.size[1]"
     />
@@ -53,6 +52,9 @@ export default {
     ...mapGetters("document", ["scrollDocumentToAnnotation"]),
 
     loadedPage() {
+      if (this.editMode) {
+        return this.page;
+      }
       let loadedPage = null;
       if (this.page && this.pages) {
         loadedPage = this.pages.find((p) => p.number === this.page.number);
