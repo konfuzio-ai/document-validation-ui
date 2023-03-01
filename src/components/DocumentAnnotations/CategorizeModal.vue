@@ -194,6 +194,7 @@ export default {
           })
           .finally(() => {
             this.$store.dispatch("document/endRecalculatingAnnotations");
+            this.$store.dispatch("document/setCategorizeModalIsActive", false);
           });
       } else {
         // if same category, then just accept it
