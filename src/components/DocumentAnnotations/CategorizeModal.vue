@@ -20,7 +20,7 @@
 
           <b-tooltip
             multilined
-            :active="singleCategoryInProject"
+            :active="tooltipIsShown"
             size="is-large"
             position="is-bottom"
             class="bottom-aligned"
@@ -34,9 +34,9 @@
               aria-role="list"
               :class="[
                 'categorize-dropdown',
-                singleCategoryInProject && 'dropdown-disabled',
+                projectHasSingleCategory() && 'dropdown-disabled',
               ]"
-              :disabled="singleCategoryInProject"
+              :disabled="tooltipIsShown"
             >
               <template #trigger>
                 <div class="category-dropdown">
@@ -44,7 +44,7 @@
                     <span v-if="selectedCategory">{{
                       selectedCategory.name
                     }}</span>
-                    <span v-else-if="singleCategoryInProject">{{
+                    <span v-else-if="projectHasSingleCategory()">{{
                       categories[0].name
                     }}</span>
                     <span v-else>{{ $t("choose_category") }}</span>
@@ -100,18 +100,14 @@ export default {
       show: false,
       selectedCategory: null, // category selected in dropdown
       documentCategory: null, // category associated to document
+      tooltipIsShown: false,
     };
   },
   computed: {
     ...mapState("category", ["categories"]),
     ...mapState("document", ["selectedDocument"]),
-    ...mapGetters("category", ["category"]),
+    ...mapGetters("category", ["category", "projectHasSingleCategory"]),
     ...mapGetters("document", ["categorizationIsConfirmed"]),
-
-    singleCategoryInProject() {
-      // if only 1 category in the project, we don't enable the dropdown
-      return this.categories && this.categories.length === 1;
-    },
   },
   watch: {
     selectedDocument(newValue) {
@@ -138,6 +134,10 @@ export default {
     this.$nextTick(() => {
       this.setTooltipText();
     });
+
+    if (this.projectHasSingleCategory()) {
+      this.tooltipIsShown = true;
+    }
   },
   updated() {
     this.setTooltipText();
@@ -152,7 +152,7 @@ export default {
         if (this.selectedDocument.category) {
           category = this.category(this.selectedDocument.category);
           this.documentCategory = category;
-        } else if (this.categories && this.categories.length === 1) {
+        } else if (this.projectHasSingleCategory()) {
           category = this.category(this.categories[0].id);
         } else {
           category = category;
@@ -174,7 +174,7 @@ export default {
           this.documentCategory &&
           this.selectedCategory.id !== this.documentCategory.id) ||
         (this.selectedCategory && !this.documentCategory) ||
-        (this.selectedCategory && this.singleCategoryInProject)
+        (this.selectedCategory && this.projectHasSingleCategory)
       ) {
         const updatedCategory = {
           category: this.selectedCategory.id,
@@ -206,7 +206,7 @@ export default {
     },
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
-      if (this.singleCategoryInProject && this.show) {
+      if (this.projectHasSingleCategory() && this.show) {
         this.$refs.tooltipContent.innerHTML = this.$t(
           "single_category_in_project"
         );

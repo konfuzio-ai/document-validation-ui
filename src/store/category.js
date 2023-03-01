@@ -32,6 +32,10 @@ const getters = {
     }
     return null;
   },
+
+  projectHasSingleCategory: (state) => () => {
+    return state.categories && state.categories.length === 1;
+  },
 };
 
 const actions = {
