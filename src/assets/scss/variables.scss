@@ -6,7 +6,6 @@ $green-low-opacity: rgba(75, 181, 67, 0.11);
 $green-border: #67d19f;
 $green-hover-background: rgba(18, 183, 106, 0.05);
 $darker-green: #3a9c76;
-$dark-green-hover: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
 $red: #e7423a;
@@ -45,7 +44,7 @@ $text-color: #1a1a1a;
 }
 
 $primary: var(--primary-color);
-$primary-dark: $dark-green-hover;
+$hover-style: brightness(0.8) contrast(160%) grayscale(0.4);
 $font-family: "Inter", sans-serif;
 $background: $white;
 $toolbar: $text-color;
@@ -72,7 +71,7 @@ button {
     color: $white !important;
 
     &:hover:enabled {
-      background: $primary-dark !important;
+      filter: $hover-style;
     }
 
     &:disabled {

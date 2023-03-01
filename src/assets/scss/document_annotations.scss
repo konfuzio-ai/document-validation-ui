@@ -344,7 +344,8 @@
 
         &:hover {
           text-decoration: none !important;
-          color: $primary-dark !important;
+          color: $primary !important;
+          filter: $hover-style;
         }
 
         &:focus {
