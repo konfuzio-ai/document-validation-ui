@@ -43,11 +43,22 @@ $documents-list-height: 52px;
         align-self: center;
         width: 75%;
         height: 100%;
-        background-color: $primary-low-opacity;
         display: flex;
         justify-content: center;
         align-items: flex-start;
         position: relative;
+
+        &:before {
+          display: block;
+          content: "";
+          width: 100%;
+          height: 100%;
+          background: $primary;
+          opacity: 0.1;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
 
         span {
           margin-top: 20px;
