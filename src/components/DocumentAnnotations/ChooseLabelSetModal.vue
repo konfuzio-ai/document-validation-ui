@@ -77,7 +77,7 @@
             }}</span>
           </div>
           <b-button
-            class="submit-ann-set"
+            class="submit-ann-set primary-button"
             type="is-primary"
             :disabled="!selectedLabelSet"
             @click="submit"

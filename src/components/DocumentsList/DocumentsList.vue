@@ -3,10 +3,7 @@
     v-if="documentsAvailableToReview && documentsAvailableToReview.length > 0"
     class="documents-list"
   >
-    <div
-      v-if="showCategoryInfo && selectedCategory"
-      class="documents-list-top"
-    >
+    <div v-if="showCategoryInfo && selectedCategory" class="documents-list-top">
       <div class="documents-list-top-left">
         <h2>{{ selectedCategory.name }}</h2>
         <p>
@@ -17,7 +14,7 @@
         <div class="action-box">
           <span>{{ $t("upload_documents") }}</span>
           <b-button
-            class="action-button"
+            class="action-button primary-button"
             type="is-primary"
             @click="requestTrialAccess"
           >
@@ -27,34 +24,28 @@
       </div>
     </div>
     <div class="documents-list-bottom">
-      <b-carousel-list
-        :data="documentsAvailableToReview"
-        :items-to-show="5"
-      >
+      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
               'documents-list-thumbnail',
-              selectedDocument.id == document.id && 'selected'
+              selectedDocument.id == document.id && 'selected',
             ]"
             @click="changeDocument(document.id)"
           >
             <ServerImage
               :class="[
                 'img-thumbnail',
-                selectedDocument.id == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected',
               ]"
               :image-url="`${document.thumbnail_url}?${document.updated_at}`"
             >
-              <b-skeleton
-                width="20px"
-                height="100%"
-              />
+              <b-skeleton width="20px" height="100%" />
             </ServerImage>
             <div
               :class="[
                 'document-name',
-                selectedDocument.id == document.id && 'selected'
+                selectedDocument.id == document.id && 'selected',
               ]"
             >
               <!-- if is the current document, then we use the store variable to get the file name edits in real time -->
@@ -90,27 +81,27 @@ export default {
   name: "DocumentsList",
   components: {
     ServerImage,
-    ErrorIcon
+    ErrorIcon,
   },
   data() {
     return {
       showCategoryInfo: false,
       selectedCategory: null,
-      documentsList: null
+      documentsList: null,
     };
   },
   computed: {
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["documentsAvailableToReview"]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["documentHadErrorDuringExtraction"])
+    ...mapGetters("document", ["documentHadErrorDuringExtraction"]),
   },
   watch: {
     showCategoryInfo(newValue) {
       if (newValue) {
         this.selectedCategory = this.category(this.selectedDocument.category);
       }
-    }
+    },
   },
   methods: {
     changeDocument(documentId) {
@@ -119,8 +110,8 @@ export default {
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="scss" src="../../assets/scss/documents_list.scss"></style>

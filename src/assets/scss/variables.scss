@@ -6,7 +6,6 @@ $green-low-opacity: rgba(75, 181, 67, 0.11);
 $green-border: #67d19f;
 $green-hover-background: rgba(18, 183, 106, 0.05);
 $darker-green: #3a9c76;
-$dark-green-hover: #0c4b33;
 $primary-low-opacity: rgba(52, 171, 125, 0.16);
 
 $red: #e7423a;
@@ -15,12 +14,12 @@ $lightest-red: #fdf4f6;
 $error-background: #d4453d;
 
 $grey-dark: #344054;
-$grey: #798190;
+$grey: #858585;
 $grey-low-opacity: rgba(133, 140, 154, 0.4);
 $grey-lighter-low-opacity: rgba(223, 224, 228, 0.5);
 $grey-lightest: #f0f0f0;
 $grey-outline: #d0d5dd;
-$grey-detail: #dfe0e4;
+$grey-detail: #e1e1e1;
 $subtle-grey: #f2f4f7;
 $subtlest-grey: #e3e4e5;
 $grey-darker: #101828;
@@ -38,27 +37,23 @@ $yellow: #ffd600;
 $warning-yellow: #fec84b;
 
 $blue: #2f80ed;
-$dark-blue: #2b3545;
+$text-color: #1a1a1a;
 
 :root {
-  --font-family: #{"Inter", sans-serif};
-  --background-color: #{$white};
   --primary-color: #{$konfuzio-green};
-  --primary-hover: #{$dark-green-hover};
-  --toolbar-color: #{$dark-blue};
-  --toolbar-elements: #{$white};
-  --tooltip-color: #{$dark};
-  --error-background: #{$error-background};
-  --error-text: #{$white};
+
+  --primary-button: 4px;
+  --secondary-button: 8px;
+  --tertiary-button: 20px;
 }
 
-$font-family: var(--font-family);
-$background: var(--background-color);
-$toolbar: var(--toolbar-color);
 $primary: var(--primary-color);
-$primary-dark: var(--primary-hover);
-$tooltip: var(--tooltip-color);
-$toolbar-elements: var(--toolbar-elements);
+$hover-style: brightness(0.8) contrast(160%) grayscale(0.4);
+$font-family: "Inter", sans-serif;
+$background: $white;
+$toolbar: $text-color;
+$tooltip: $dark;
+$toolbar-elements: $white;
 
 $link: $primary;
 $info: $blue;
@@ -80,7 +75,7 @@ button {
     color: $white !important;
 
     &:hover:enabled {
-      background-color: $primary-dark !important;
+      filter: $hover-style;
     }
 
     &:disabled {
@@ -98,7 +93,7 @@ button {
     &:not([disabled]) {
       &:hover {
         text-decoration: none;
-        color: $dark-blue !important;
+        color: $text-color !important;
       }
     }
 
@@ -109,7 +104,7 @@ button {
 
   &:not(.is-text, .is-primary, .reject-btn) {
     background-color: $white;
-    color: $dark-blue;
+    color: $text-color;
   }
 
   &.is-text {
@@ -139,7 +134,6 @@ button {
   }
 
   &.action-bar-save-btn {
-    border-radius: 20px;
     height: 32px;
     padding: 6px 12px 6px 12px !important;
     font-size: 14px;
@@ -147,7 +141,6 @@ button {
   }
 
   &.finish-review-btn {
-    border-radius: 4px;
     margin-right: 2px;
 
     &:focus {
@@ -172,6 +165,18 @@ button {
     &:hover {
       text-decoration: none;
     }
+  }
+
+  &.primary-button {
+    border-radius: var(--primary-button) !important;
+  }
+
+  &.secondary-button {
+    border-radius: var(--secondary-button) !important;
+  }
+
+  &.tertiary-button {
+    border-radius: var(--tertiary-button) !important;
   }
 }
 
@@ -208,8 +213,8 @@ button {
   }
 
   .message-body {
-    background-color: var(--error-background);
-    color: var(--error-text);
+    background-color: $error-background;
+    color: $white;
     font-size: 14px;
     border: 0;
     border-radius: 0%;
@@ -298,7 +303,7 @@ button {
 
   &.dropdown-menu-animation {
     a.navbar-item {
-      color: $dark-blue;
+      color: $text-color;
       font-size: 16px;
       line-height: 24px;
 
@@ -427,7 +432,7 @@ button {
 
 .notices {
   .snackbar {
-    background-color: $dark-blue;
+    background-color: $text-color;
     min-height: 40px;
 
     .text {
@@ -461,7 +466,7 @@ button {
 
 .b-tooltip {
   .tooltip-content {
-    background-color: $dark-blue !important;
+    background-color: $text-color !important;
 
     a {
       color: $white;
@@ -479,8 +484,8 @@ button {
       &::before {
         left: 16px !important;
         right: auto !important;
-        border-top-color: $dark-blue !important;
-        border-bottom-color: $dark-blue !important;
+        border-top-color: $text-color !important;
+        border-bottom-color: $text-color !important;
       }
     }
   }
@@ -495,7 +500,7 @@ button {
       &::before {
         right: 16px !important;
         left: auto !important;
-        border-bottom-color: $dark-blue !important;
+        border-bottom-color: $text-color !important;
       }
     }
 
@@ -525,12 +530,12 @@ button {
       font-size: 14px;
       padding: 12px 12px;
       top: 45px;
-      background-color: $dark-blue;
+      background-color: $text-color;
       border-radius: 4px !important;
 
       &::before {
         top: 17px;
-        border-left-color: $dark-blue !important;
+        border-left-color: $text-color !important;
       }
     }
   }
@@ -540,7 +545,7 @@ button {
 
     .tooltip-content {
       &::before {
-        border-bottom-color: $dark-blue !important;
+        border-bottom-color: $text-color !important;
       }
     }
   }
@@ -548,7 +553,7 @@ button {
   &.top-aligned {
     .tooltip-content {
       &::before {
-        border-top-color: $dark-blue !important;
+        border-top-color: $text-color !important;
       }
     }
   }

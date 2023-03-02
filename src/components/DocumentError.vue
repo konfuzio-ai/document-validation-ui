@@ -16,7 +16,11 @@
         </div>
       </section>
       <footer class="modal-card-foot">
-        <b-button type="is-primary" @click="handleContactSupport">
+        <b-button
+          type="is-primary"
+          class="primary-button"
+          @click="handleContactSupport"
+        >
           {{ $t("contact_support") }}
         </b-button>
       </footer>

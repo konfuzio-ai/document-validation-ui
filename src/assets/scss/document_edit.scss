@@ -41,7 +41,7 @@
 
           &.selected {
             .img-thumbnail {
-              border-color: $dark-blue;
+              border-color: $text-color;
               filter: contrast(0.7);
             }
           }
@@ -131,7 +131,7 @@
 
               .action-icon {
                 border-radius: 60px;
-                background-color: $dark-blue;
+                background-color: $text-color;
                 width: 32px;
                 height: 32px;
                 color: $white;
@@ -185,7 +185,7 @@
         height: 50%;
 
         h3 {
-          color: $dark-blue;
+          color: $text-color;
           font-weight: 600;
           font-size: 16px;
           line-height: 24px;
@@ -296,7 +296,7 @@
       }
 
       .overview-title {
-        color: $dark-blue;
+        color: $text-color;
         font-size: 16px;
         font-weight: 600;
       }
@@ -348,7 +348,7 @@
 
                 .action-icon {
                   border-radius: 60px;
-                  background-color: $dark-blue;
+                  background-color: $text-color;
                   width: 28px;
                   height: 28px;
                   color: $white;

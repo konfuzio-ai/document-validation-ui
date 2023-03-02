@@ -243,29 +243,23 @@
 
           &.hovered-empty-labels {
             background-color: $grey-lightest;
-            outline: 1px solid $grey-detail;
-            margin-bottom: 1px;
+            border-bottom-color: $grey-detail;
           }
 
           &.hovered-pending-annotations {
-            background-color: $green-hover-background;
-            outline: 1px solid $green-border;
-            margin-bottom: 1px;
+            position: relative;
+            border-bottom-color: $primary;
 
-            .annotation-row-right {
-              .annotation-content {
-                .annotation {
-                  min-height: 43px;
-                  padding-top: 1px;
-                }
-              }
-            }
-
-            .annotation-row-left {
-              .annotation-details,
-              .label-name {
-                margin-bottom: -1px;
-              }
+            &:before {
+              display: block;
+              content: "";
+              width: 100%;
+              height: 100%;
+              background: $primary;
+              opacity: 0.1;
+              position: absolute;
+              top: 0;
+              left: 0;
             }
           }
 
@@ -344,7 +338,8 @@
 
         &:hover {
           text-decoration: none !important;
-          color: $primary-dark !important;
+          color: $primary !important;
+          filter: $hover-style;
         }
 
         &:focus {
@@ -390,7 +385,7 @@
 
         &:hover {
           text-decoration: none !important;
-          color: $dark-blue !important;
+          color: $text-color !important;
         }
 
         &:focus {
@@ -416,7 +411,7 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 20px;
-        color: $dark-blue;
+        color: $text-color;
         padding-bottom: 15px;
         margin: 0;
         padding-left: 15px;

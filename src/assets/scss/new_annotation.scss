@@ -2,7 +2,7 @@
 
 .annotation-popup {
   border-radius: 12px;
-  background-color: $dark-blue;
+  background-color: $text-color;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -14,7 +14,7 @@
   padding: 8px;
 
   .popup-input {
-    background-color: $dark-blue;
+    background-color: $text-color;
     color: $white;
     font-size: 14px;
     font-weight: 400;

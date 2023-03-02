@@ -18,52 +18,34 @@
           {{ selectedPages.length }} {{ $t("selected") }}
         </p>
         <b-button
-          class="rotate-button"
+          class="rotate-button primary-button"
           :disabled="buttonDisabled"
           @click="rotateLeft"
         >
           <div class="button-content">
-            <b-icon
-              icon="arrow-rotate-left"
-              class="is-small"
-            />
+            <b-icon icon="arrow-rotate-left" class="is-small" />
             <span class="button-text">{{ $t("rotate_selected") }}</span>
           </div>
         </b-button>
         <b-button
-          class="rotate-button"
+          class="rotate-button primary-button"
           :disabled="buttonDisabled"
           @click="rotateRight"
         >
           <div class="button-content">
-            <b-icon
-              icon="arrow-rotate-right"
-              class="is-small"
-            />
+            <b-icon icon="arrow-rotate-right" class="is-small" />
             <span class="button-text">{{ $t("rotate_selected") }}</span>
           </div>
         </b-button>
       </div>
 
       <div class="rotate-all rotate">
-        <b-button
-          class="rotate-button"
-          @click="rotateAllLeft"
-        >
-          <b-icon
-            icon="arrow-rotate-left"
-            class="is-small"
-          />
+        <b-button class="rotate-button primary-button" @click="rotateAllLeft">
+          <b-icon icon="arrow-rotate-left" class="is-small" />
           <span class="button-text">{{ $t("rotate_all") }}</span>
         </b-button>
-        <b-button
-          class="rotate-button"
-          @click="rotateAllRight"
-        >
-          <b-icon
-            icon="arrow-rotate-right"
-            class="is-small"
-          />
+        <b-button class="rotate-button primary-button" @click="rotateAllRight">
+          <b-icon icon="arrow-rotate-right" class="is-small" />
           <span class="button-text">{{ $t("rotate_all") }}</span>
         </b-button>
       </div>
@@ -83,11 +65,11 @@ export default {
   name: "EditSidebar",
   data() {
     return {
-      buttonDisabled: true
+      buttonDisabled: true,
     };
   },
   computed: {
-    ...mapState("edit", ["selectedPages"])
+    ...mapState("edit", ["selectedPages"]),
   },
   watch: {
     selectedPages(newValue) {
@@ -96,7 +78,7 @@ export default {
       } else {
         this.buttonDisabled = true;
       }
-    }
+    },
   },
   methods: {
     rotateLeft() {
@@ -110,8 +92,8 @@ export default {
     },
     rotateAllRight() {
       this.$emit("rotate-all-right");
-    }
-  }
+    },
+  },
 };
 </script>
 
