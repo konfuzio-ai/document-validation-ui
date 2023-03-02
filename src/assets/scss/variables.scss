@@ -41,6 +41,10 @@ $text-color: #1a1a1a;
 
 :root {
   --primary-color: #{$konfuzio-green};
+
+  --primary-button: 4px;
+  --secondary-button: 8px;
+  --tertiary-button: 20px;
 }
 
 $primary: var(--primary-color);
@@ -130,7 +134,6 @@ button {
   }
 
   &.action-bar-save-btn {
-    border-radius: 20px;
     height: 32px;
     padding: 6px 12px 6px 12px !important;
     font-size: 14px;
@@ -138,7 +141,6 @@ button {
   }
 
   &.finish-review-btn {
-    border-radius: 4px;
     margin-right: 2px;
 
     &:focus {
@@ -163,6 +165,18 @@ button {
     &:hover {
       text-decoration: none;
     }
+  }
+
+  &.primary-button {
+    border-radius: var(--primary-button) !important;
+  }
+
+  &.secondary-button {
+    border-radius: var(--secondary-button) !important;
+  }
+
+  &.tertiary-button {
+    border-radius: var(--tertiary-button) !important;
   }
 }
 

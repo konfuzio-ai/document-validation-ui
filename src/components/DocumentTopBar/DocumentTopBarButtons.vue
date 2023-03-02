@@ -3,7 +3,7 @@
     <div v-if="editMode" class="edit-mode-buttons">
       <b-button
         :label="$t('cancel')"
-        class="button-cancel"
+        class="button-cancel primary-button"
         type="is-default"
         @click="closeEditMode"
       />
@@ -18,7 +18,7 @@
         "
         type="is-primary"
         :disabled="false"
-        class="button-next"
+        class="button-next primary-button"
         @click="handleButton"
       />
     </div>

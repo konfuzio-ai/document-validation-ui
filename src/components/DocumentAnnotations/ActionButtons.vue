@@ -15,6 +15,7 @@
       :class="[
         'annotation-save-btn text-btn',
         actionBar && 'action-bar-save-btn',
+        actionBar ? 'tertiary-button' : 'secondary-button',
       ]"
       type="is-primary"
       @click.stop="save"
@@ -47,7 +48,7 @@
     <!-- accept button -->
     <b-button
       v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
-      class="annotation-accept-btn"
+      class="annotation-accept-btn secondary-button"
       type="is-primary"
       @click.stop="accept"
     >
@@ -115,7 +116,7 @@
     >
       <b-button
         v-if="finishReviewBtn && !publicView"
-        :class="['finish-review-btn', 'text-btn']"
+        :class="['finish-review-btn', 'text-btn', 'primary-button']"
         type="is-primary"
         :disabled="finishDisabled"
         @click.stop="finishReview"
