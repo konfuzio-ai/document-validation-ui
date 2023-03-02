@@ -73,7 +73,7 @@
             {{ $t("select_category") }}
           </div>
           <b-button
-            class="submit-category"
+            class="submit-category primary-button"
             type="is-primary"
             :disabled="!selectedCategory"
             @click="submit"
