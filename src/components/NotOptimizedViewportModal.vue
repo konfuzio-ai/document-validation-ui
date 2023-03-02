@@ -1,10 +1,6 @@
 <template>
   <section class="viewport-modal">
-    <b-modal
-      v-model="isModalActive"
-      class="modal-text-center"
-      :width="500"
-    >
+    <b-modal v-model="isModalActive" class="modal-text-center" :width="500">
       <section class="modal-card-body">
         <div class="image">
           <Illustration />
@@ -17,6 +13,7 @@
       <footer class="modal-card-foot">
         <b-button
           type="is-primary"
+          class="primary-button"
           @click="handleNotOptimizedModal"
         >
           {{ $t("ok") }}
@@ -32,18 +29,18 @@ import Illustration from "../assets/images/NotOptimizedIllustration";
 export default {
   name: "NotOptimizedViewportModal",
   components: {
-    Illustration
+    Illustration,
   },
   data() {
     return {
-      isModalActive: true
+      isModalActive: true,
     };
   },
   methods: {
     handleNotOptimizedModal() {
       this.isModalActive = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

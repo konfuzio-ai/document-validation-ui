@@ -101,14 +101,14 @@
     <div class="annotation-buttons">
       <b-button
         type="is-text"
-        class="cancel-button popup-button"
+        class="cancel-button popup-button primary-button"
         :label="$t('cancel')"
         :disabled="loading"
         @click.prevent="close"
       />
       <b-button
         type="is-primary"
-        class="popup-button"
+        class="popup-button primary-button"
         :label="$t('save')"
         :disabled="loading || !getTextFromEntities || !selectedLabel"
         @click.prevent="save"
