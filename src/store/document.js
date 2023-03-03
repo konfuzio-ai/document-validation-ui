@@ -667,9 +667,24 @@ const actions = {
             });
           }
 
-          if (getters.waitingForSplittingConfirmation(response.data)) {
-            commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
-          }
+          // if (getters.waitingForSplittingConfirmation(response.data)) {
+          //   commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
+          // }
+
+          // Mock data
+          const suggestions = [
+            {
+              name: response.data.data_file_name,
+              category: response.data.category,
+              pages: [{ id: response.data.pages[0].id, angle: 0 }],
+            },
+            {
+              name: "file-name-example",
+              category: response.data.category,
+              pages: [{ id: response.data.pages[1].id, angle: 0 }],
+            },
+          ];
+          commit("SET_SPLITTING_SUGGESTIONS", suggestions);
 
           categoryId = response.data.category;
           // TODO: add this validation to a method

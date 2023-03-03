@@ -64,7 +64,7 @@
             "
             class="lines"
           >
-            <SplitZigZag />
+            <SplitZigZag :color="splitSuggestionsEnabled ? 'green' : 'dark'" />
           </div>
           <div v-else class="lines">
             <SplitLines />
@@ -102,6 +102,9 @@ export default {
       type: Array,
       default: null,
     },
+    splitSuggestionsEnabled: {
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -114,6 +117,7 @@ export default {
       "pages",
       "recalculatingAnnotations",
       "selectedDocument",
+      "splittingSuggestions",
     ]),
     ...mapState("edit", [
       "editMode",

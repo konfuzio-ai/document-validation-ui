@@ -42,7 +42,6 @@ export default {
   data() {
     return {
       isModalActive: false,
-      numberOfSplitDocuments: 5, // to replace by splittingSuggestions.length
       recommended: this.$t("recommended"),
     };
   },
@@ -59,7 +58,7 @@ export default {
       if (newValue) {
         this.$nextTick(() => {
           this.$refs.bodyText.innerHTML = this.$t("split_modal_body", {
-            number_of_split_documents: this.numberOfSplitDocuments,
+            number_of_split_documents: this.splittingSuggestions.length,
           });
         });
       }

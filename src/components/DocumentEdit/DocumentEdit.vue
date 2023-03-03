@@ -3,6 +3,7 @@
     <div v-if="!splitOverview" class="pages-section">
       <EditPages
         :active-splitting-lines="activeSplittingLines"
+        :split-suggestions-enabled="splitSuggestionsEnabled"
         @change-page="changePage"
         @handle-splitting-lines="handleSplittingLines"
         @check-move="checkMove"
@@ -96,6 +97,11 @@ export default {
   },
   mounted() {
     this.setPages();
+
+    if (this.splittingSuggestions) {
+      this.splitSuggestionsEnabled = true;
+      this.setAutomaticSplitting();
+    }
   },
   methods: {
     setPages() {
@@ -153,6 +159,15 @@ export default {
     },
 
     /** SPLIT */
+    setAutomaticSplitting() {
+      this.splittingSuggestions.map((item) => {
+        const fullPage = this.selectedDocument.pages.find(
+          (page) => page.id === item.pages[0].id
+        );
+
+        this.handleSplittingLines(fullPage);
+      });
+    },
     splitFileNameFromExtension() {
       if (!this.selectedDocument && !this.selectedDocument.data_file_name)
         return;
@@ -195,6 +210,8 @@ export default {
       // Create array of objects
       // with a fixed size based on how many sub documents are currently
       const pageObjectArray = new Array(subDocuments.length + 1);
+
+      console.log("page obj array", pageObjectArray);
 
       // Loop over the created array
       // for each iteration we create the page object with the correponding data
@@ -254,6 +271,9 @@ export default {
     applySplittingSuggestions() {
       // Show information bar
       this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
+
+      // Apply or remove split lines
+      this.setAutomaticSplitting();
     },
 
     /** SORT */

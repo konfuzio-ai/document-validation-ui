@@ -123,7 +123,7 @@ export default {
         // Enable the "next" button to go to the overview
         this.$store.dispatch("edit/setSplitOverview", true);
         this.$store.dispatch("edit/setSelectedPages", null);
-      } else if (this.updatedDocument) {
+      } else {
         // If we are in the overview (so more than 1 doc)
         // or in the edit mode (only 1 doc)
         // Show confirmation modal to user
