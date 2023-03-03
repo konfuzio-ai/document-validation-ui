@@ -3,7 +3,7 @@
     <!-- Rotate buttons -->
     <div v-if="showRotateButton" class="rotate-button-container">
       <b-button
-        class="rotate-button edit-mode-btn"
+        class="rotate-button edit-mode-btn primary-button"
         :disabled="buttonDisabled"
         @click="rotateButton"
       >
@@ -26,7 +26,7 @@
         class="split-tooltip"
       >
         <b-button
-          class="split-button edit-mode-btn"
+          class="split-button edit-mode-btn primary-button"
           :disabled="buttonDisabled"
           @click="handleSplittingSuggestions"
         >
