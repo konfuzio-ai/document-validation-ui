@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 import EditSidebar from "./EditSidebar";
 import SplitOverview from "./SplitOverview";
 import EditPages from "./EditPages";
@@ -82,6 +82,7 @@ export default {
   watch: {
     pages() {
       if (!this.selectedDocument) return;
+
       this.setPages();
     },
     splitOverview(newValue) {
@@ -110,7 +111,9 @@ export default {
       }
       // set array of pages only with the data we need
       const pages = this.createDocumentPagesListForEditMode();
+
       this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
+
       // create array to handle the splitting
       // length - 1 because of how many lines to split we need (last one not necessary)
       this.activeSplittingLines = new Array(
@@ -203,15 +206,20 @@ export default {
       this.splitFileNameFromExtension();
 
       // Check how many sub docs we have
+      // Check for 0 since this is a placeholder for the pages other than the first one in the sub document
       const subDocuments = this.activeSplittingLines.filter(
         (item) => item !== 0
       );
 
       // Create array of objects
       // with a fixed size based on how many sub documents are currently
-      const pageObjectArray = new Array(subDocuments.length + 1);
-
-      console.log("page obj array", pageObjectArray);
+      let arrayLength;
+      if (this.splittingSuggestions) {
+        arrayLength = this.splittingSuggestions.length;
+      } else {
+        arrayLength = subDocuments.length + 1;
+      }
+      const pageObjectArray = new Array(arrayLength);
 
       // Loop over the created array
       // for each iteration we create the page object with the correponding data
