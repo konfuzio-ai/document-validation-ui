@@ -390,7 +390,10 @@ export default {
 
         allEmptyLabels.map((label) => {
           const found = this.missingAnnotations.find(
-            (l) => l.label === label.id && l.annotation_set === annotationSet.id
+            (l) =>
+              l.label === label.id &&
+              l.annotation_set === annotationSet.id &&
+              l.label_set === annotationSet.label_set.id
           );
 
           if (!found) {
