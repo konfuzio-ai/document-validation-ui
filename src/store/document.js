@@ -283,7 +283,10 @@ const getters = {
 
     labels.map((label) => {
       const found = state.missingAnnotations.find(
-        (l) => l.label === label.id && annotationSet.id === l.annotation_set
+        (l) =>
+          l.label === label.id &&
+          annotationSet.id === l.annotation_set &&
+          annotationSet.label_set.id === l.label_set
       );
 
       if (!found) {
