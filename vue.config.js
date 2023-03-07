@@ -10,4 +10,16 @@ module.exports = {
       enableBridge: true,
     },
   },
+  css: {
+    extract: {
+      filename: "css/[name].css?_hash=[contenthash:8]",
+      chunkFilename: "css/[name].css?_hash=[contenthash:8]",
+    },
+  },
+  configureWebpack: {
+    output: {
+      filename: "js/[name].js",
+      chunkFilename: "js/[name].js",
+    },
+  },
 };
