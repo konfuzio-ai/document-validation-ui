@@ -88,14 +88,18 @@ export default {
       this.clientHeight = clientHeight;
     },
     /**
-     * Scrolls the ScrollingDocument to the offset specified by scrollTop
+     * Scrolls the ScrollingDocument to the offset specified by scrollTop & scrollLeft (if zoomed in)
      * (i.e., another page).
      */
-    onPageJump(scrollTop) {
-      const actualScroll = scrollTop;
-      this.$refs.scrollingDocument.scrollTop =
-        // the 4 comes from the margin between pages
-        actualScroll - (this.$refs.scrollingDocument.offsetTop + 4);
+    onPageJump(scrollTop, scrollLeft) {
+      const scrollY = scrollTop - (this.$refs.scrollingDocument.offsetTop + 4); // + 4 due to margin between pages
+      const scrollX = scrollLeft - this.$refs.scrollingDocument.offsetLeft - 4; // - 4 to add more space before the entity
+
+      this.$refs.scrollingDocument.scrollTop = scrollY;
+
+      setTimeout(() => {
+        this.$refs.scrollingDocument.scrollLeft = scrollX;
+      }, 2000);
     },
   },
 };

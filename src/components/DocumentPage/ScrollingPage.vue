@@ -109,7 +109,10 @@ export default {
         // to the focused annotation.
         this.$nextTick(() => {
           // Scroll to the annotation
-          this.scrollTo(this.getYForBbox(this.documentAnnotationSelected.span));
+          this.scrollTo(
+            this.getYForBbox(this.documentAnnotationSelected.span),
+            this.getXForBbox(this.documentAnnotationSelected.span)
+          );
         });
       }
     },
@@ -123,7 +126,7 @@ export default {
         (this.page.number === number || this.page.number === number) &&
         !this.isElementFocused
       ) {
-        this.$emit("page-jump", this.elementTop);
+        this.$emit("page-jump", this.elementTop, 0);
       }
     },
   },
@@ -161,12 +164,16 @@ export default {
       return this.bboxToRect(this.page, bbox).y;
     },
 
+    getXForBbox(bbox) {
+      return this.bboxToRect(this.page, bbox).x;
+    },
+
     /**
      * Scroll to a relative position in the page. It gets added
      * the page's element top and a padding margin.
      */
-    scrollTo(y) {
-      this.$emit("page-jump", this.elementTop + y - 80);
+    scrollTo(y, x) {
+      this.$emit("page-jump", this.elementTop + y - 80, x);
     },
   },
 };
