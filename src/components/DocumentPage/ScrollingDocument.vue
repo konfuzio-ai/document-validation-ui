@@ -95,11 +95,7 @@ export default {
       const scrollY = scrollTop - (this.$refs.scrollingDocument.offsetTop + 4); // + 4 due to margin between pages
       const scrollX = scrollLeft - this.$refs.scrollingDocument.offsetLeft - 4; // - 4 to add more space before the entity
 
-      this.$refs.scrollingDocument.scrollTop = scrollY;
-
-      setTimeout(() => {
-        this.$refs.scrollingDocument.scrollLeft = scrollX;
-      }, 2000);
+      this.$refs.scrollingDocument.scroll(scrollX, scrollY);
     },
   },
 };
