@@ -445,7 +445,7 @@ const getters = {
    *
    */
   waitingForSplittingConfirmation: () => (document) => {
-    return document.status_data === 2; // will replace 2 with 41
+    return document.status_data === 41;
   },
 
   /**
@@ -667,24 +667,9 @@ const actions = {
             });
           }
 
-          // if (getters.waitingForSplittingConfirmation(response.data)) {
-          //   commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
-          // }
-
-          // Mock data
-          const suggestions = [
-            {
-              name: response.data.data_file_name,
-              category: response.data.category,
-              pages: [{ id: response.data.pages[0].id, angle: 0 }],
-            },
-            {
-              name: "file-name-example",
-              category: response.data.category,
-              pages: [{ id: response.data.pages[1].id, angle: 0 }],
-            },
-          ];
-          commit("SET_SPLITTING_SUGGESTIONS", suggestions);
+          if (getters.waitingForSplittingConfirmation(response.data)) {
+            commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
+          }
 
           categoryId = response.data.category;
           // TODO: add this validation to a method

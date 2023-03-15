@@ -73,7 +73,7 @@ export default {
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
       "editMode",
-      "documentPagesListForEditMode",
+      "pagesForPostprocess",
       "updatedDocument",
       "splitOverview",
       "selectedPages",
@@ -90,7 +90,7 @@ export default {
         this.splitFileNameFromExtension();
       }
     },
-    documentPagesListForEditMode(newValue) {
+    pagesForPostprocess(newValue) {
       if (newValue) {
         this.saveUpdatedDocument();
       }
@@ -98,29 +98,29 @@ export default {
   },
   mounted() {
     this.setPages();
-
-    if (this.splittingSuggestions) {
-      this.splitSuggestionsEnabled = true;
-      this.setAutomaticSplitting();
-    }
   },
   methods: {
     setPages() {
       if (!this.selectedDocument) {
         return;
       }
-      // set array of pages only with the data we need
-      const pages = this.createDocumentPagesListForEditMode();
 
-      this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
+      // set array of pages only with the data we need for postprocessing the document
+      const pages = this.createPagesForPostprocess();
 
-      // create array to handle the splitting
-      // length - 1 because of how many lines to split we need (last one not necessary)
-      this.activeSplittingLines = new Array(
-        this.selectedDocument.pages.length - 1
-      );
+      this.$store.dispatch("edit/setPagesForPostprocess", pages);
+
+      // create array to handle the places where the document is split
+      if (this.splittingSuggestions) {
+        this.splitSuggestionsEnabled = true;
+        this.setAutomaticSplitting();
+      } else {
+        this.selectedDocument.pages.map((page) => {
+          this.setSplittingArray(0, null);
+        });
+      }
     },
-    createDocumentPagesListForEditMode() {
+    createPagesForPostprocess() {
       return this.selectedDocument.pages.map((page) => {
         return {
           id: page.id,
@@ -163,12 +163,33 @@ export default {
 
     /** SPLIT */
     setAutomaticSplitting() {
-      this.splittingSuggestions.map((item) => {
-        const fullPage = this.selectedDocument.pages.find(
-          (page) => page.id === item.pages[0].id
-        );
+      // What originates the splitting
+      const origin = "AI";
 
-        this.handleSplittingLines(fullPage);
+      // map over splitting suggestions to find the page number based on the page id
+      // to update the activeSplittingLines array with this data
+      this.splittingSuggestions.map((item, index) => {
+        // const fullPage = this.selectedDocument.pages.find(
+        //   (page) => page.id === item.pages[0].id
+        // );
+
+        // check if it's the first time we set the array, or if it already had a length > 0
+        if (
+          this.activeSplittingLines.length ===
+          this.selectedDocument.pages.length
+        ) {
+          this.handleSplittingLines(index + 1, origin);
+        } else {
+          this.setSplittingArray(index + 1, origin);
+        }
+      });
+    },
+    setSplittingArray(pageNumber, splittingOrigin) {
+      // This function sets the activeSplittingLines array
+      // based on splitting suggestions or no suggestions
+      this.activeSplittingLines.push({
+        page: pageNumber,
+        origin: splittingOrigin,
       });
     },
     splitFileNameFromExtension() {
@@ -186,18 +207,21 @@ export default {
         .split(".")
         .at(-1);
     },
-    handleSplittingLines(page) {
-      // For splitting line purposes
-      // Add page number to specific index
-      // Or replace it with 0 (to keep the same index) if it exists
+    handleSplittingLines(page, origin) {
+      // To select and deselect the division lines
+      // Add page number & origin to specific index
+      // Or replace it with 0 (to keep the same index & array length) if it exists
       const found = this.activeSplittingLines.find(
-        (item) => item === page.number
+        (item) => item.page === page
       );
 
+      const newPage = { page: page, origin: origin };
+      const removedPage = { page: 0, origin: null };
+
       if (found) {
-        this.activeSplittingLines.splice(page.number - 1, 1, 0);
+        this.activeSplittingLines.splice(page - 1, 1, removedPage);
       } else {
-        this.activeSplittingLines.splice(page.number - 1, 1, page.number);
+        this.activeSplittingLines.splice(page - 1, 1, newPage);
       }
 
       this.saveUpdatedDocument();
@@ -206,32 +230,34 @@ export default {
       this.splitFileNameFromExtension();
 
       // Check how many sub docs we have
-      // Check for 0 since this is a placeholder for the pages other than the first one in the sub document
+      // Filter out page = 0 since this is a placeholder for the pages that don't have splitting
       const subDocuments = this.activeSplittingLines.filter(
-        (item) => item !== 0
+        (item) => item.page !== 0
       );
 
       // Create array of objects
       // with a fixed size based on how many sub documents are currently
-      let arrayLength;
-      if (this.splittingSuggestions) {
-        arrayLength = this.splittingSuggestions.length;
+      let newDocuments;
+
+      if (this.splitSuggestionsEnabled) {
+        newDocuments = new Array(subDocuments.length);
       } else {
-        arrayLength = subDocuments.length + 1;
+        newDocuments = new Array(subDocuments.length + 1);
       }
-      const pageObjectArray = new Array(arrayLength);
 
       // Loop over the created array
       // for each iteration we create the page object with the correponding data
-      for (let i = 0; i < pageObjectArray.length; i++) {
-        const pageObject = {
+      for (let i = 0; i < subDocuments.length; i++) {
+        let pageObject;
+
+        pageObject = {
           name: this.handleFileName(i),
-          category: this.selectedDocument.category,
+          category: this.handleDocumentCategory(i, subDocuments),
           pages: this.handleSubPages(i, subDocuments),
         };
 
         // Then we replace the "undefined" with the created object
-        pageObjectArray.splice(i, 1, pageObject);
+        newDocuments.splice(i, 1, pageObject);
       }
 
       // Set the state to the created array
@@ -253,29 +279,38 @@ export default {
       }
       return newFileName;
     },
-    handleSubPages(index, splittingLine) {
+    handleDocumentCategory(index, filteredDocuments) {
+      console.log("filtered docs", filteredDocuments);
+      // if (
+      //   filteredDocuments[index].origin &&
+      //   filteredDocuments[index].origin === "manual"
+      // ) {
+      //   return this.selectedDocument.category;
+      // } else {
+      //   const page = filteredDocuments[index].page;
+      //   return this.splittingSuggestions[page - 1].category;
+      // }
+    },
+    handleSubPages(index, newDocuments) {
       // assign the correct pages to each object
       let pages;
 
       if (index === 0) {
-        pages = this.documentPagesListForEditMode.slice(
-          0,
-          splittingLine[index]
-        );
+        pages = this.pagesForPostprocess.slice(0, newDocuments[index].page);
       } else {
-        if (!splittingLine[index]) {
-          pages = this.documentPagesListForEditMode.slice(
-            splittingLine[index - 1]
-          );
+        if (!newDocuments[index].page) {
+          pages = this.pagesForPostprocess.slice(newDocuments[index - 1].page);
         } else {
-          pages = this.documentPagesListForEditMode.slice(
-            splittingLine[index - 1],
-            splittingLine[index]
+          pages = this.pagesForPostprocess.slice(
+            newDocuments[index - 1].page,
+            newDocuments[index].page
           );
         }
       }
+
       return pages;
     },
+
     applySplittingSuggestions() {
       // Show information bar
       this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
@@ -287,16 +322,16 @@ export default {
     /** SORT */
     checkMove(e) {
       // Save the page placed originally where the page we are dragging will go
-      this.prevPageAtIndex = this.documentPagesListForEditMode.find(
+      this.prevPageAtIndex = this.pagesForPostprocess.find(
         (page) =>
-          this.documentPagesListForEditMode.indexOf(page) ===
+          this.pagesForPostprocess.indexOf(page) ===
           e.draggedContext.futureIndex
       );
     },
     handleDragEnd() {
       // Update page numbers
-      const pages = this.documentPagesListForEditMode.map((page) => {
-        const index = this.documentPagesListForEditMode.indexOf(page);
+      const pages = this.pagesForPostprocess.map((page) => {
+        const index = this.pagesForPostprocess.indexOf(page);
         return {
           ...page,
           number: index + 1,

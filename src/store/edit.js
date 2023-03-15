@@ -6,7 +6,7 @@ const state = {
   editMode: false,
   splitOverview: false,
   isMultipleSelection: false,
-  documentPagesListForEditMode: [], // TODO: change name
+  pagesForPostprocess: [],
   selectedPages: [],
   updatedDocument: [],
   showEditConfirmationModal: false,
@@ -27,7 +27,7 @@ const actions = {
   },
 
   setDocumentPagesListForEditMode: ({ commit }, pages) => {
-    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", pages);
+    commit("SET_PAGES_FOR_POSTPROCESS", pages);
   },
 
   setUpdatedDocument: ({ commit }, updatedDocument) => {
@@ -58,42 +58,41 @@ const actions = {
   },
 
   rotatePage: ({ state, commit }, { page, direction }) => {
-    if (state.documentPagesListForEditMode.find((p) => p.id === page[0].id)) {
-      const documentPagesListForEditMode =
-        state.documentPagesListForEditMode.map((p) => {
-          let rotatedAngle;
-          if (direction === "left") {
-            rotatedAngle = p.angle - 90;
-            if (p.id === page[0].id) {
-              if (rotatedAngle === -270) {
-                rotatedAngle = 90;
-              }
-              return {
-                ...p,
-                angle: rotatedAngle,
-              };
+    if (state.pagesForPostprocess.find((p) => p.id === page[0].id)) {
+      const pagesForPostprocess = state.pagesForPostprocess.map((p) => {
+        let rotatedAngle;
+        if (direction === "left") {
+          rotatedAngle = p.angle - 90;
+          if (p.id === page[0].id) {
+            if (rotatedAngle === -270) {
+              rotatedAngle = 90;
             }
-            return p;
+            return {
+              ...p,
+              angle: rotatedAngle,
+            };
           }
-          if (direction === "right") {
-            rotatedAngle = p.angle + 90;
-            if (p.id === page[0].id) {
-              if (rotatedAngle === 270) {
-                rotatedAngle = -90;
-              }
-              return {
-                ...p,
-                angle: rotatedAngle,
-              };
+          return p;
+        }
+        if (direction === "right") {
+          rotatedAngle = p.angle + 90;
+          if (p.id === page[0].id) {
+            if (rotatedAngle === 270) {
+              rotatedAngle = -90;
             }
-            return p;
+            return {
+              ...p,
+              angle: rotatedAngle,
+            };
           }
-        });
+          return p;
+        }
+      });
 
-      commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", documentPagesListForEditMode);
+      commit("SET_PAGES_FOR_POSTPROCESS", pagesForPostprocess);
     } else {
       if (direction === "left") {
-        state.documentPagesListForEditMode.push({
+        state.pagesForPostprocess.push({
           id: page.id,
           number: page.number,
           angle: -90,
@@ -103,7 +102,7 @@ const actions = {
       }
 
       if (direction === "right") {
-        state.documentPagesListForEditMode.push({
+        state.pagesForPostprocess.push({
           id: page.id,
           number: page.number,
           angle: 90,
@@ -116,7 +115,7 @@ const actions = {
 
   updateRotationToTheLeft: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.documentPagesListForEditMode.map((p) => {
+    const array = state.pagesForPostprocess.map((p) => {
       let rotatedAngle = p.angle - 90;
       if (rotatedAngle === -270) {
         rotatedAngle = 90;
@@ -127,12 +126,12 @@ const actions = {
       };
     });
 
-    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
+    commit("SET_PAGES_FOR_POSTPROCESS", array);
   },
 
   updateRotationToTheRight: ({ state, commit }) => {
     // updated the angles that will be sent to the backend
-    const array = state.documentPagesListForEditMode.map((p) => {
+    const array = state.pagesForPostprocess.map((p) => {
       let rotatedAngle = p.angle + 90;
       if (rotatedAngle === 270) {
         rotatedAngle = -90;
@@ -143,7 +142,7 @@ const actions = {
       };
     });
 
-    commit("SET_DOCUMENT_PAGES_FOR_EDIT_MODE", array);
+    commit("SET_PAGES_FOR_POSTPROCESS", array);
   },
 
   editDocument: ({ rootState, dispatch }, editedDocument) => {
@@ -192,8 +191,8 @@ const mutations = {
     state.splitOverview = overview;
   },
 
-  SET_DOCUMENT_PAGES_FOR_EDIT_MODE: (state, pages) => {
-    state.documentPagesListForEditMode = pages;
+  SET_PAGES_FOR_POSTPROCESS: (state, pages) => {
+    state.pagesForPostprocess = pages;
   },
 
   SET_UPDATED_DOCUMENT: (state, updatedDocument) => {

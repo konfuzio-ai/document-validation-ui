@@ -38,7 +38,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -130,7 +130,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -157,7 +157,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -180,7 +180,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -223,7 +223,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -260,7 +260,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
