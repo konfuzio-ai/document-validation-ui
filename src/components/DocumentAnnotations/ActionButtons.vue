@@ -15,7 +15,7 @@
       :class="[
         'annotation-save-btn text-btn',
         actionBar && 'action-bar-save-btn',
-        actionBar ? 'tertiary-button' : 'secondary-button',
+        actionBar ? 'tertiary-button' : 'primary-button',
       ]"
       type="is-primary"
       @click.stop="save"
@@ -48,7 +48,7 @@
     <!-- accept button -->
     <b-button
       v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
-      class="annotation-accept-btn secondary-button"
+      class="annotation-accept-btn primary-button"
       type="is-primary"
       @click.stop="accept"
     >
