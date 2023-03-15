@@ -41,10 +41,7 @@ $text-color: #1a1a1a;
 
 :root {
   --primary-color: #{$konfuzio-green};
-
   --primary-button: 4px;
-  --secondary-button: 8px;
-  --tertiary-button: 20px;
 }
 
 $primary: var(--primary-color);
@@ -171,12 +168,8 @@ button {
     border-radius: var(--primary-button) !important;
   }
 
-  &.secondary-button {
-    border-radius: var(--secondary-button) !important;
-  }
-
   &.tertiary-button {
-    border-radius: var(--tertiary-button) !important;
+    border-radius: 20px !important;
   }
 }
 
