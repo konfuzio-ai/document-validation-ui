@@ -204,34 +204,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: center;
       height: 100%;
-      gap: 50px;
-
-      .sidebar-header {
-        width: 85%;
-        height: 50%;
-
-        h3 {
-          color: $text-color;
-          font-weight: 600;
-          font-size: 16px;
-          line-height: 24px;
-          padding-bottom: 15px;
-        }
-
-        .description {
-          color: $grey;
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 20px;
-
-          &:last-child {
-            padding-top: 12px;
-          }
-        }
-      }
 
       .buttons-container {
         width: 85%;
@@ -242,6 +217,7 @@
         .pages-selected {
           font-weight: 400;
           font-size: 14px;
+          margin-bottom: 15px;
 
           &.disabled {
             color: $grey;
@@ -252,10 +228,7 @@
           display: flex;
           flex-direction: column;
           gap: 8px;
-
-          &:not(:last-child) {
-            border-bottom: 1px solid $grey-detail;
-          }
+          border-bottom: 1px solid $grey-detail;
 
           .sidebar-buttons {
             .edit-mode-btn {
@@ -272,14 +245,6 @@
                   font-size: 14px;
                   font-weight: 500;
                   max-width: 70%;
-                }
-
-                .new-badge {
-                  background: linear-gradient(90deg, #c1ff79 0%, #79fff7 100%);
-                  border-radius: 36px;
-                  font-weight: 700;
-                  font-size: 11px;
-                  padding: 0 4px;
                 }
               }
             }
@@ -299,6 +264,28 @@
 
           &:last-child {
             margin-bottom: 14px;
+          }
+        }
+      }
+
+      .smart-split {
+        .switch {
+          .control-label {
+            .switch-text {
+              font-size: 14px;
+              padding-right: 10px;
+              color: $grey-dark;
+              font-weight: 500;
+            }
+          }
+
+          .new-badge {
+            background: linear-gradient(90deg, #c1ff79 0%, #79fff7 100%);
+            border-radius: 36px;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 5px;
+            color: $text-color;
           }
         }
       }

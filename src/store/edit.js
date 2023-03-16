@@ -26,7 +26,7 @@ const actions = {
     commit("SET_SPLIT_OVERVIEW", overview);
   },
 
-  setDocumentPagesListForEditMode: ({ commit }, pages) => {
+  setPagesForPostprocess: ({ commit }, pages) => {
     commit("SET_PAGES_FOR_POSTPROCESS", pages);
   },
 

@@ -23,7 +23,7 @@ describe("Document Edit Component", () => {
     Promise.all([
       store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch("document/setPages", pages),
-      store.dispatch("edit/setDocumentPagesListForEditMode", pages),
+      store.dispatch("edit/setPagesForPostprocess", pages),
       store.dispatch("edit/enableEditMode"),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),

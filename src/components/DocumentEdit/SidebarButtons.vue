@@ -13,49 +13,14 @@
         </div>
       </b-button>
     </div>
-
-    <!-- Splitting suggestions button-->
-    <div v-if="showSplitButton" class="split-button-container">
-      <b-tooltip
-        :label="tooltipInfo"
-        multilined
-        type="is-dark"
-        :active="buttonDisabled"
-        size="is-large"
-        position="is-left"
-        class="split-tooltip"
-      >
-        <b-button
-          class="split-button edit-mode-btn primary-button"
-          :disabled="buttonDisabled"
-          @click="handleSplittingSuggestions"
-        >
-          <div class="button-content">
-            <MagicWandIcon />
-            <span class="button-text">{{ $t("smart_split") }}</span>
-            <span class="new-badge">{{ newText }}</span>
-          </div>
-        </b-button>
-      </b-tooltip>
-    </div>
   </div>
 </template>
 
 <script>
-import { nextTick } from "vue";
-import MagicWandIcon from "../../assets/images/MagicWandIcon.vue";
-
 export default {
   name: "SidebarButtons",
-  components: {
-    MagicWandIcon,
-  },
   props: {
     showRotateButton: {
-      type: Boolean,
-      default: false,
-    },
-    showSplitButton: {
       type: Boolean,
       default: false,
     },
@@ -75,18 +40,6 @@ export default {
       type: String,
       default: null,
     },
-  },
-  data() {
-    return {
-      newText: this.$t("new"),
-    };
-  },
-  mounted() {
-    nextTick(() => {
-      if (this.newText) {
-        this.newText = this.$t("new").toUpperCase();
-      }
-    });
   },
 
   methods: {

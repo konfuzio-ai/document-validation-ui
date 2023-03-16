@@ -1,23 +1,7 @@
 <template>
   <div class="edit-sidebar">
-    <div class="sidebar-header">
-      <h3 class="sidebar-title">
-        {{ $t("edit_document") }}
-      </h3>
-      <p class="description">
-        {{ $t("edit_early_access") }}
-      </p>
-      <p class="description">
-        {{ $t("select_pages") }}
-      </p>
-    </div>
-
     <div class="buttons-container">
       <div class="rotate-selected edit-buttons">
-        <p :class="['pages-selected', buttonDisabled && 'disabled']">
-          {{ selectedPages.length }} {{ $t("selected") }}
-        </p>
-
         <SidebarButtons
           :show-rotate-button="true"
           :button-disabled="buttonDisabled"
@@ -33,6 +17,10 @@
           :icon="'arrow-rotate-right'"
           @rotate="rotateRight"
         />
+
+        <p :class="['pages-selected', buttonDisabled && 'disabled']">
+          {{ selectedPages.length }} {{ $t("selected") }}
+        </p>
       </div>
 
       <div class="rotate-all edit-buttons">
@@ -52,23 +40,22 @@
           @rotate="rotateAllRight"
         />
       </div>
-
-      <div class="split edit-buttons">
-        <SidebarButtons
-          :show-split-button="true"
-          :button-disabled="!splittingSuggestions"
-          :button-text="$t('rotate_all')"
-          :icon="'arrow-rotate-right'"
-          :tooltip-info="tooltipInfo"
-        />
-      </div>
+    </div>
+    <div class="split smart-split">
+      <b-field>
+        <b-switch :value="true" size="is-small" v-model="switchStatus">
+          <span class="switch-text">{{ $t("smart_split") }}</span>
+          <span class="new-badge">{{ newText }}</span>
+        </b-switch>
+      </b-field>
     </div>
   </div>
 </template>
 
 <script>
-import SidebarButtons from "./SidebarButtons";
 import { mapState } from "vuex";
+import { nextTick } from "vue";
+import SidebarButtons from "./SidebarButtons";
 
 /**
  * This component renders buttons to rotate single pages or all pages
@@ -83,7 +70,14 @@ export default {
     return {
       buttonDisabled: true,
       tooltipInfo: null,
+      newText: this.$t("new"),
+      switchStatus: true,
     };
+  },
+  props: {
+    splitSuggestionsEnabled: {
+      type: Boolean,
+    },
   },
   computed: {
     ...mapState("edit", ["selectedPages"]),
@@ -97,9 +91,20 @@ export default {
         this.buttonDisabled = true;
       }
     },
+    switchStatus() {
+      this.$emit("handle-splitting-suggestions");
+    },
   },
   mounted() {
     this.tooltipInfo = this.$t("no_splitting_suggestions");
+
+    nextTick(() => {
+      if (this.newText) {
+        this.newText = this.$t("new").toUpperCase();
+      }
+
+      this.switchStatus = this.splitSuggestionsEnabled;
+    });
   },
   methods: {
     rotateLeft() {

@@ -27,6 +27,7 @@
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
         @handle-splitting-suggestions="applySplittingSuggestions"
+        :split-suggestions-enabled="splitSuggestionsEnabled"
       />
     </div>
     <div class="confirmation-modal-container">
@@ -261,7 +262,7 @@ export default {
       }
 
       // Set the state to the created array
-      this.$store.dispatch("edit/setUpdatedDocument", pageObjectArray);
+      this.$store.dispatch("edit/setUpdatedDocument", newDocuments);
     },
     handleFileName(index) {
       let newFileName;
@@ -280,16 +281,15 @@ export default {
       return newFileName;
     },
     handleDocumentCategory(index, filteredDocuments) {
-      console.log("filtered docs", filteredDocuments);
-      // if (
-      //   filteredDocuments[index].origin &&
-      //   filteredDocuments[index].origin === "manual"
-      // ) {
-      //   return this.selectedDocument.category;
-      // } else {
-      //   const page = filteredDocuments[index].page;
-      //   return this.splittingSuggestions[page - 1].category;
-      // }
+      if (
+        filteredDocuments[index].origin &&
+        filteredDocuments[index].origin === "manual"
+      ) {
+        return this.selectedDocument.category;
+      } else {
+        const page = filteredDocuments[index].page;
+        return this.splittingSuggestions[page - 1].category;
+      }
     },
     handleSubPages(index, newDocuments) {
       // assign the correct pages to each object
@@ -338,7 +338,7 @@ export default {
         };
       });
 
-      this.$store.dispatch("edit/setDocumentPagesListForEditMode", pages);
+      this.$store.dispatch("edit/setPagesForPostprocess", pages);
     },
 
     /** SUBMIT CHANGES */

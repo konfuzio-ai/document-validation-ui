@@ -145,7 +145,7 @@ export default {
     },
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
+        this.$store.dispatch("edit/setPagesForPostprocess", newValue);
       }
     },
     splitOverview(newValue) {
