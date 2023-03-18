@@ -143,7 +143,6 @@ const mutations = {
     state.selection.start = start;
   },
   MOVE_SELECTION: (state, points) => {
-    state.isSelecting = true;
     const { start, end } = points;
     if (start) {
       state.selection.start = start;

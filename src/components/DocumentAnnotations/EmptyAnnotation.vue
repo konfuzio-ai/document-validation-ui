@@ -114,17 +114,17 @@ export default {
       }
     },
     spanSelection(newValue) {
-      if (!newValue) return;
+      if (this.elementSelected === this.emptyAnnotationId() && newValue) {
+        const isSpanArray = Array.isArray(newValue);
 
-      const isSpanArray = Array.isArray(newValue);
-
-      // Check if the bbox is empty
-      if (
-        (isSpanArray && !newValue[0].offset_string) ||
-        (!isSpanArray && !newValue.offset_string)
-      ) {
-        this.$store.dispatch("document/resetEditAnnotation");
-        this.$store.dispatch("selection/disableSelection");
+        // Check if the bbox is empty
+        if (
+          (isSpanArray && !newValue[0].offset_string) ||
+          (!isSpanArray && !newValue.offset_string)
+        ) {
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.$store.dispatch("selection/disableSelection");
+        }
       }
     },
   },
