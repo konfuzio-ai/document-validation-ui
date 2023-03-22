@@ -91,8 +91,8 @@ export default {
         this.buttonDisabled = true;
       }
     },
-    switchStatus() {
-      this.$emit("handle-splitting-suggestions");
+    switchStatus(newValue) {
+      this.$emit("handle-splitting-suggestions", newValue);
     },
   },
   mounted() {
