@@ -923,11 +923,11 @@ const actions = {
     }
 
     // check type of error
-    if (error.data && error.data.length > 0) {
-      dispatch("setErrorMessage", error.data[0]);
-    } else if (errorAsString.startsWith("5")) {
+    if (error && error.status === 500) {
       dispatch("setErrorMessage", serverErrorMessage);
       commit("SET_SERVER_ERROR", true);
+    } else if (error.data && error.data.length > 0) {
+      dispatch("setErrorMessage", error.data[0]);
     } else {
       dispatch("setErrorMessage", defaultErrorMessage);
     }
