@@ -107,18 +107,23 @@ export default {
       }
 
       // set array of pages only with the data we need for postprocessing the document
-      const pages = this.createPagesForPostprocess();
+      this.$store.dispatch(
+        "edit/setPagesForPostprocess",
+        this.createPagesForPostprocess()
+      );
 
-      this.$store.dispatch("edit/setPagesForPostprocess", pages);
+      // Create array with placeholder data for the splitting points
+      this.selectedDocument.pages.map((page) => {
+        if (page.number === this.selectedDocument.pages.length) {
+          this.setSplittingArray(page.number, null);
+          return;
+        }
+        this.setSplittingArray(0, null);
+      });
 
-      // create array to handle the places where the document is split
       if (this.splittingSuggestions) {
         this.splitSuggestionsEnabled = true;
         this.setAutomaticSplitting();
-      } else {
-        this.selectedDocument.pages.map((page) => {
-          this.setSplittingArray(0, null);
-        });
       }
     },
     createPagesForPostprocess() {
@@ -164,26 +169,22 @@ export default {
 
     /** SPLIT */
     setAutomaticSplitting() {
-      // What originates the splitting
-      const origin = "AI";
-
       // map over splitting suggestions to find the page number based on the page id
       // to update the activeSplittingLines array with this data
       this.splittingSuggestions.map((item, index) => {
-        // const fullPage = this.selectedDocument.pages.find(
-        //   (page) => page.id === item.pages[0].id
-        // );
+        const firstPage = this.selectedDocument.pages.find(
+          (page) => page.id === item.pages[0].id
+        );
 
-        // check if it's the first time we set the array, or if it already had a length > 0
-        if (
-          this.activeSplittingLines.length ===
-          this.selectedDocument.pages.length
-        ) {
-          this.handleSplittingLines(index + 1, origin);
-        } else {
-          this.setSplittingArray(index + 1, origin);
-        }
+        this.handleSplittingLines(firstPage.number, "AI");
       });
+    },
+    applySplittingSuggestions(value) {
+      // Show information bar
+      this.splitSuggestionsEnabled = value;
+
+      // Apply or remove split lines
+      this.setAutomaticSplitting();
     },
     setSplittingArray(pageNumber, splittingOrigin) {
       // This function sets the activeSplittingLines array
@@ -209,17 +210,24 @@ export default {
         .at(-1);
     },
     handleSplittingLines(page, origin) {
+      console.log(this.splitSuggestionsEnabled);
       // To select and deselect the division lines
       // Add page number & origin to specific index
       // Or replace it with 0 (to keep the same index & array length) if it exists
+
       const found = this.activeSplittingLines.find(
         (item) => item.page === page
       );
 
+      // new line added or removed based on the page number:
       const newPage = { page: page, origin: origin };
       const removedPage = { page: 0, origin: null };
 
-      if (found) {
+      // the last line, not visible in the UI, should always remain
+      // for consistency in number of new documents
+      if (page === this.activeSplittingLines.length) {
+        return;
+      } else if (found) {
         this.activeSplittingLines.splice(page - 1, 1, removedPage);
       } else {
         this.activeSplittingLines.splice(page - 1, 1, newPage);
@@ -230,39 +238,29 @@ export default {
     saveUpdatedDocument() {
       this.splitFileNameFromExtension();
 
-      // Check how many sub docs we have
-      // Filter out page = 0 since this is a placeholder for the pages that don't have splitting
-      const subDocuments = this.activeSplittingLines.filter(
-        (item) => item.page !== 0
+      const newDocuments = this.createEachNewDocument(
+        this.activeSplittingLines,
+        this.activeSplittingLines.length
       );
 
-      // Create array of objects
-      // with a fixed size based on how many sub documents are currently
-      let newDocuments;
+      // // Set the state to the created array
+      this.$store.dispatch("edit/setUpdatedDocument", newDocuments);
+    },
+    createEachNewDocument(clickedLines, length) {
+      const documents = new Array(length);
 
-      if (this.splitSuggestionsEnabled) {
-        newDocuments = new Array(subDocuments.length);
-      } else {
-        newDocuments = new Array(subDocuments.length + 1);
-      }
-
-      // Loop over the created array
-      // for each iteration we create the page object with the correponding data
-      for (let i = 0; i < subDocuments.length; i++) {
-        let pageObject;
-
-        pageObject = {
+      for (let i = 0; i < length; i++) {
+        const pageObject = {
           name: this.handleFileName(i),
-          category: this.handleDocumentCategory(i, subDocuments),
-          pages: this.handleSubPages(i, subDocuments),
+          category: this.handleDocumentCategory(i, clickedLines),
+          pages: this.handleSubPages(i, clickedLines),
         };
 
-        // Then we replace the "undefined" with the created object
-        newDocuments.splice(i, 1, pageObject);
+        // we replace the "undefined" with the created object
+        documents.splice(i, 1, pageObject);
       }
 
-      // Set the state to the created array
-      this.$store.dispatch("edit/setUpdatedDocument", newDocuments);
+      return documents;
     },
     handleFileName(index) {
       let newFileName;
@@ -280,43 +278,32 @@ export default {
       }
       return newFileName;
     },
-    handleDocumentCategory(index, filteredDocuments) {
-      if (
-        filteredDocuments[index].origin &&
-        filteredDocuments[index].origin === "manual"
-      ) {
-        return this.selectedDocument.category;
-      } else {
-        const page = filteredDocuments[index].page;
+    handleDocumentCategory(index, clicledLines) {
+      if (clicledLines[index].origin && clicledLines[index].origin === "AI") {
+        const page = clicledLines[index].page;
         return this.splittingSuggestions[page - 1].category;
+      } else {
+        return this.selectedDocument.category;
       }
     },
-    handleSubPages(index, newDocuments) {
+    handleSubPages(index, clickedLines) {
       // assign the correct pages to each object
       let pages;
 
       if (index === 0) {
-        pages = this.pagesForPostprocess.slice(0, newDocuments[index].page);
+        pages = this.pagesForPostprocess.slice(0, clickedLines[index].page);
       } else {
-        if (!newDocuments[index].page) {
-          pages = this.pagesForPostprocess.slice(newDocuments[index - 1].page);
+        if (!clickedLines[index].page) {
+          pages = this.pagesForPostprocess.slice(clickedLines[index - 1].page);
         } else {
           pages = this.pagesForPostprocess.slice(
-            newDocuments[index - 1].page,
-            newDocuments[index].page
+            clickedLines[index - 1].page,
+            clickedLines[index].page
           );
         }
       }
 
       return pages;
-    },
-
-    applySplittingSuggestions() {
-      // Show information bar
-      this.splitSuggestionsEnabled = !this.splitSuggestionsEnabled;
-
-      // Apply or remove split lines
-      this.setAutomaticSplitting();
     },
 
     /** SORT */
