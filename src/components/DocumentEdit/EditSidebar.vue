@@ -113,6 +113,11 @@ export default {
       if (this.splittingSuggestions && this.splittingSuggestions.length > 0)
         this.$emit("handle-splitting-suggestions", newValue);
     },
+    splitSuggestionsEnabled(newValue) {
+      if (!newValue) {
+        this.switchStatus = false;
+      }
+    },
   },
   mounted() {
     this.tooltipInfo = this.$t("no_splitting_suggestions");

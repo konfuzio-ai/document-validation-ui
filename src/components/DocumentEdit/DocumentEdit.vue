@@ -96,6 +96,15 @@ export default {
         this.saveUpdatedDocument();
       }
     },
+    activeSplittingLines(newValue) {
+      const aiSplit = newValue.find((item) => item.origin === "AI");
+
+      // If there are no AI suggestions left - manually removed by the user
+      // the Smart Split switch should be off
+      if (!aiSplit) {
+        this.splitSuggestionsEnabled = false;
+      }
+    },
   },
   mounted() {
     this.setPages();
