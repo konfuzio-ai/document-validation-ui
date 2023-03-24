@@ -126,5 +126,6 @@
   "confirm_splitting": "Sind Sie sicher, dass Sie die Änderungen bestätigen möchten?",
   "splitting_warning": "Beachten Sie bitte, dass alle Annotationen, die Sie in diesem Dokument gemacht haben, nicht gespeichert werden, wenn Sie fortfahren.",
   "no": "Nein",
-  "yes": "Ja"
+  "yes": "Ja",
+  "split_modal_no_suggestions": "Do you need to split the document? <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost in the future."
 }

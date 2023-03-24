@@ -9,7 +9,13 @@
       <section class="modal-card-body split-modal">
         <div class="header">
           <StarIcon />
-          <p class="modal-title">{{ $t("split_modal_title") }}</p>
+          <p class="modal-title">
+            {{
+              splittingSuggestions && splittingSuggestions.length > 0
+                ? $t("split_modal_title")
+                : $t("prepare_document")
+            }}
+          </p>
         </div>
         <div ref="bodyText" class="content"></div>
       </section>
@@ -28,7 +34,7 @@
 
 <script>
 import { nextTick } from "vue";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import StarIcon from "../../assets/images/StarIcon";
 
 /**
@@ -47,6 +53,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["splittingSuggestions", "selectedDocument"]),
+    ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
   watch: {
     splittingSuggestions(newValue) {
@@ -57,15 +64,24 @@ export default {
     isModalActive(newValue) {
       if (newValue) {
         this.$nextTick(() => {
-          this.$refs.bodyText.innerHTML = this.$t("split_modal_body", {
-            number_of_split_documents: this.splittingSuggestions.length,
-          });
+          if (
+            this.splittingSuggestions &&
+            this.splittingSuggestions.length > 0
+          ) {
+            this.$refs.bodyText.innerHTML = this.$t("split_modal_body", {
+              number_of_split_documents: this.splittingSuggestions.length,
+            });
+          } else {
+            this.$refs.bodyText.innerHTML = this.$t(
+              "split_modal_no_suggestions"
+            );
+          }
         });
       }
     },
   },
   mounted() {
-    if (this.splittingSuggestions && this.selectedDocument.category) {
+    if (this.splittingSuggestions) {
       this.isModalActive = true;
     }
 

@@ -46,9 +46,6 @@ export default {
     rotateButton() {
       this.$emit("rotate");
     },
-    handleSplittingSuggestions() {
-      this.$parent.$emit("handle-splitting-suggestions");
-    },
   },
 };
 </script>

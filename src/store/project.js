@@ -3,7 +3,7 @@ const HTTP = myImports.HTTP;
 
 const state = {
   projectId: null,
-  currentUser: null
+  currentUser: null,
 };
 
 const getters = {
@@ -11,13 +11,13 @@ const getters = {
    * Gets label sets for an annotation set creation
    */
   labelSetsFilteredForAnnotationSetCreation:
-    state => (labelsSet, annotationSets) => {
+    (state) => (labelsSet, annotationSets) => {
       let returnLabels = [];
       if (labelsSet) {
-        returnLabels = labelsSet.filter(labelSet => {
+        returnLabels = labelsSet.filter((labelSet) => {
           // check if label set has multiple and if not, if there's already an annotation set created
           if (!labelSet.has_multiple_annotation_sets) {
-            const existingAnnotationSet = annotationSets.find(annSet => {
+            const existingAnnotationSet = annotationSets.find((annSet) => {
               return annSet.id === labelSet.id;
             });
             return existingAnnotationSet;
@@ -27,7 +27,7 @@ const getters = {
         });
       }
       return returnLabels;
-    }
+    },
 };
 
 const actions = {
@@ -38,10 +38,10 @@ const actions = {
   fetchLabelSetDetails: ({ commit, state }, labelSetId) => {
     return new Promise((resolve, reject) => {
       HTTP.get(`label-sets/${labelSetId}/`)
-        .then(response => {
+        .then((response) => {
           return resolve(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
           console.log(error);
         });
@@ -52,10 +52,10 @@ const actions = {
   fetchLabelSets: ({ state }) => {
     return new Promise((resolve, reject) => {
       HTTP.get(`label-sets/?project=${state.projectId}`)
-        .then(response => {
+        .then((response) => {
           return resolve(response.data.results);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
           console.log(error);
         });
@@ -64,17 +64,17 @@ const actions = {
 
   fetchCurrentUser: ({ commit }) => {
     return HTTP.get(`/auth/me/`)
-      .then(response => {
+      .then((response) => {
         commit("SET_CURRENT_USER", response.data.username);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   },
 
   setCurrentUser: ({ commit }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
-  }
+  },
 };
 
 const mutations = {
@@ -83,7 +83,7 @@ const mutations = {
   },
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
-  }
+  },
 };
 
 export default {
@@ -91,5 +91,5 @@ export default {
   state,
   actions,
   mutations,
-  getters
+  getters,
 };

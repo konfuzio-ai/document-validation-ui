@@ -29,11 +29,7 @@
               {{ $t("category") }}
             </p>
             <div class="category-name">
-              {{
-                !splitMode
-                  ? categoryName(selectedDocument.category)
-                  : categoryName(updatedDocument[index].category)
-              }}
+              {{ setCategoryDefaultText }}
             </div>
           </div>
           <div :class="[!splitMode && 'caret-section']">
@@ -102,6 +98,18 @@ export default {
     ...mapState("document", ["selectedDocument", "annotations"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
+
+    setCategoryDefaultText() {
+      if (!this.splitMode) {
+        return this.categoryName(this.selectedDocument.category);
+      } else {
+        const categoryName = this.categoryName(
+          this.updatedDocument[this.index].category
+        );
+
+        return categoryName ? categoryName : this.$t("choose_category");
+      }
+    },
   },
   watch: {
     categories(newValue) {

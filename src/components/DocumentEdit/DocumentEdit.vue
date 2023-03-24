@@ -113,17 +113,19 @@ export default {
       );
 
       // Create array with placeholder data for the splitting points
-      this.selectedDocument.pages.map((page) => {
-        if (page.number === this.selectedDocument.pages.length) {
-          this.setSplittingArray(page.number, null);
-          return;
-        }
-        this.setSplittingArray(0, null);
-      });
+      if (this.selectedDocument.pages.length > 0) {
+        this.selectedDocument.pages.map((page) => {
+          if (page.number === this.selectedDocument.pages.length) {
+            this.setSplittingArray(page.number, null);
+            return;
+          }
+          this.setSplittingArray(0, null);
+        });
 
-      if (this.splittingSuggestions) {
-        this.splitSuggestionsEnabled = true;
-        this.setAutomaticSplitting();
+        if (this.splittingSuggestions) {
+          this.splitSuggestionsEnabled = true;
+          this.setAutomaticSplitting();
+        }
       }
     },
     createPagesForPostprocess() {
@@ -169,9 +171,13 @@ export default {
 
     /** SPLIT */
     setAutomaticSplitting() {
+      this.activeSplittingLines.map((item) => {
+        console.log(item);
+      });
       // map over splitting suggestions to find the page number based on the page id
       // to update the activeSplittingLines array with this data
-      this.splittingSuggestions.map((item, index) => {
+
+      this.splittingSuggestions.map((item) => {
         const firstPage = this.selectedDocument.pages.find(
           (page) => page.id === item.pages[0].id
         );
@@ -210,23 +216,28 @@ export default {
         .at(-1);
     },
     handleSplittingLines(page, origin) {
-      console.log(this.splitSuggestionsEnabled);
       // To select and deselect the division lines
       // Add page number & origin to specific index
       // Or replace it with 0 (to keep the same index & array length) if it exists
-
       const found = this.activeSplittingLines.find(
         (item) => item.page === page
       );
 
       // new line added or removed based on the page number:
       const newPage = { page: page, origin: origin };
-      const removedPage = { page: 0, origin: null };
+      const removedPage = { page: 0, origin: origin };
 
-      // the last line, not visible in the UI, should always remain
-      // for consistency in number of new documents
       if (page === this.activeSplittingLines.length) {
+        // keep last item unchanged
         return;
+      } else if (!this.splitSuggestionsEnabled && !found && origin === "AI") {
+        // If splitting is switched off, but some of the suggestion lines
+        // were removed manually
+        return;
+      } else if (this.splitSuggestionsEnabled && origin === "AI") {
+        // if manual suggestions were added but we enable automatic splitting,
+        // this last one takes over
+        this.activeSplittingLines.splice(page - 1, 1, newPage);
       } else if (found) {
         this.activeSplittingLines.splice(page - 1, 1, removedPage);
       } else {
@@ -238,9 +249,13 @@ export default {
     saveUpdatedDocument() {
       this.splitFileNameFromExtension();
 
+      const filteredLines = this.activeSplittingLines.filter(
+        (item) => item.page !== 0
+      );
+
       const newDocuments = this.createEachNewDocument(
-        this.activeSplittingLines,
-        this.activeSplittingLines.length
+        filteredLines,
+        filteredLines.length
       );
 
       // // Set the state to the created array
@@ -278,10 +293,10 @@ export default {
       }
       return newFileName;
     },
-    handleDocumentCategory(index, clicledLines) {
-      if (clicledLines[index].origin && clicledLines[index].origin === "AI") {
-        const page = clicledLines[index].page;
-        return this.splittingSuggestions[page - 1].category;
+    handleDocumentCategory(index, clickedLines) {
+      if (clickedLines[index].origin && clickedLines[index].origin === "AI") {
+        const page = clickedLines[index].page;
+        return this.splittingSuggestions[page].category;
       } else {
         return this.selectedDocument.category;
       }

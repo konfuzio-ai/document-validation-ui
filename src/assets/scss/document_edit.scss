@@ -7,7 +7,6 @@
 
   &.split-overview-component {
     min-width: 600px;
-    flex: 0;
   }
 
   .pages-section {
@@ -288,6 +287,10 @@
             color: $text-color;
           }
         }
+
+        // &.smart-split-disabled {
+        //   filter: opacity(0.5);
+        // }
       }
     }
   }

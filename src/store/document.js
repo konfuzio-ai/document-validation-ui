@@ -442,10 +442,17 @@ const getters = {
   },
 
   /**
-   *
+   * If automatic splitting is enabled for the project
    */
   waitingForSplittingConfirmation: () => (document) => {
     return document.status_data === 41;
+  },
+
+  /**
+   * Show the Smart Split switch or not
+   */
+  documentHasProposedSplit: () => (document) => {
+    return document.proposed_split && document.proposed_split.length > 0;
   },
 
   /**
@@ -667,7 +674,7 @@ const actions = {
             });
           }
 
-          if (getters.waitingForSplittingConfirmation(response.data)) {
+          if (getters.documentHasProposedSplit(response.data)) {
             commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
           }
 
@@ -1203,8 +1210,8 @@ const mutations = {
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
   },
-  SET_SPLITTING_SUGGESTIONS: (state, value) => {
-    state.splittingSuggestions = value;
+  SET_SPLITTING_SUGGESTIONS: (state, array) => {
+    state.splittingSuggestions = array;
   },
 };
 

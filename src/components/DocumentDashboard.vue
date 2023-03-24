@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <DocumentTopBar />
-    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
+    <div :class="['dashboard-viewer', splitOverview ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
       <ScrollingDocument ref="scrollingDocument" class="dashboard-document" />
       <DocumentAnnotations v-if="!editMode" ref="annotations" />
@@ -30,7 +30,7 @@
     </div>
     <div
       v-if="
-        splittingSuggestions && selectedDocument && selectedDocument.category
+        selectedDocument && waitingForSplittingConfirmation(selectedDocument)
       "
     >
       <SplittingSuggestionsModal />
@@ -88,8 +88,9 @@ export default {
       "selectedDocument",
       "splittingSuggestions",
     ]),
-    ...mapState("edit", ["editMode"]),
+    ...mapState("edit", ["editMode", "splitOverview"]),
     ...mapGetters("display", ["isMinimumWidth"]),
+    ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
   watch: {
     selectedDocument(newDocument, oldDocument) {

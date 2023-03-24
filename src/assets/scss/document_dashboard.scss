@@ -25,6 +25,12 @@
       background-size: 9px 9px;
     }
 
+    &.edit-mode {
+      .dashboard-document {
+        flex: 1.5;
+      }
+    }
+
     @media print {
       .dashboard-document {
         position: static;

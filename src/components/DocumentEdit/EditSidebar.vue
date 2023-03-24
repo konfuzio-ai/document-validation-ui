@@ -42,18 +42,35 @@
       </div>
     </div>
     <div class="split smart-split">
-      <b-field>
-        <b-switch :value="true" size="is-small" v-model="switchStatus">
-          <span class="switch-text">{{ $t("smart_split") }}</span>
-          <span class="new-badge">{{ newText }}</span>
-        </b-switch>
-      </b-field>
+      <b-tooltip
+        multilined
+        :active="!documentHasProposedSplit(selectedDocument)"
+        position="is-bottom"
+        class="bottom-aligned"
+        :label="tooltipInfo"
+      >
+        <b-field>
+          <b-switch
+            :value="true"
+            size="is-small"
+            v-model="switchStatus"
+            :disabled="!documentHasProposedSplit(selectedDocument)"
+          >
+            <span class="switch-text">{{ $t("smart_split") }}</span>
+            <span
+              v-if="documentHasProposedSplit(selectedDocument)"
+              class="new-badge"
+              >{{ newText }}</span
+            >
+          </b-switch>
+        </b-field>
+      </b-tooltip>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { nextTick } from "vue";
 import SidebarButtons from "./SidebarButtons";
 
@@ -81,7 +98,8 @@ export default {
   },
   computed: {
     ...mapState("edit", ["selectedPages"]),
-    ...mapState("document", ["splittingSuggestions"]),
+    ...mapState("document", ["splittingSuggestions", "selectedDocument"]),
+    ...mapGetters("document", ["documentHasProposedSplit"]),
   },
   watch: {
     selectedPages(newValue) {
@@ -92,7 +110,8 @@ export default {
       }
     },
     switchStatus(newValue) {
-      this.$emit("handle-splitting-suggestions", newValue);
+      if (this.splittingSuggestions && this.splittingSuggestions.length > 0)
+        this.$emit("handle-splitting-suggestions", newValue);
     },
   },
   mounted() {
