@@ -36,7 +36,9 @@ export default {
   },
   computed: {
     documentId() {
-      if (process.env.VUE_APP_DOCUMENT_ID) {
+      if(this.$route.query.document){
+        return this.$route.query.document;
+      } else if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {
         return this.document;
