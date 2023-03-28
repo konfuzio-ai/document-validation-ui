@@ -7,6 +7,7 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
+import { changeDocumentURL, getURLQueryParam } from "../utils/utils";
 import API from "../api";
 
 export default {
@@ -36,8 +37,8 @@ export default {
   },
   computed: {
     documentId() {
-      if(this.$route.query.document){
-        return this.$route.query.document;
+      if (getURLQueryParam("document")) {
+        return getURLQueryParam("document");
       } else if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {
