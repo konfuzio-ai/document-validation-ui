@@ -445,7 +445,7 @@ const getters = {
    * If automatic splitting is enabled for the project
    */
   waitingForSplittingConfirmation: () => (document) => {
-    return document.status_data === 41;
+    return document && document.status_data === 41;
   },
 
   /**

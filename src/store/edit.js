@@ -162,6 +162,15 @@ const actions = {
             await dispatch("document/setDocId", newId, {
               root: true,
             });
+
+            // TODO: get current URL and check for document ID
+            // update id to be the new one WITHOUT reloading page
+            // window.history.pushState(
+            //   null,
+            //   null,
+            //   `https://testing.konfuzio.com/${newId}`
+            // );
+
             dispatch("document/pollDocumentEndpoint", null, {
               root: true,
             });

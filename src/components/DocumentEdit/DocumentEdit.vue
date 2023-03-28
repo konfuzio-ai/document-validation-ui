@@ -180,9 +180,6 @@ export default {
 
     /** SPLIT */
     setAutomaticSplitting() {
-      this.activeSplittingLines.map((item) => {
-        console.log(item);
-      });
       // map over splitting suggestions to find the page number based on the page id
       // to update the activeSplittingLines array with this data
 
@@ -237,7 +234,7 @@ export default {
       const removedPage = { page: 0, origin: origin };
 
       if (page === this.activeSplittingLines.length) {
-        // keep last item unchanged
+        // keep last item unchanged for array of new documents
         return;
       } else if (!this.splitSuggestionsEnabled && !found && origin === "AI") {
         // If splitting is switched off, but some of the suggestion lines
@@ -248,6 +245,12 @@ export default {
         // this last one takes over
         this.activeSplittingLines.splice(page - 1, 1, newPage);
       } else if (found) {
+        // If splitting is switched off and we have manual splits,
+        // those should stay unchanged
+        if (!this.splitSuggestionsEnabled && found.origin !== origin) {
+          return;
+        }
+
         this.activeSplittingLines.splice(page - 1, 1, removedPage);
       } else {
         this.activeSplittingLines.splice(page - 1, 1, newPage);
