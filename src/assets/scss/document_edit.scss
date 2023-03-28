@@ -176,10 +176,12 @@
       left: 0;
       right: 0;
       margin: 0 auto;
+      padding: 10px;
 
       .split-info-bar {
-        padding: 0 13px;
-        height: 32px;
+        padding: 5px 13px;
+        min-height: 32px;
+        height: auto;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -189,6 +191,7 @@
         font-weight: 400;
         font-size: 14px;
         border-radius: 52px;
+        text-align: center;
       }
     }
   }
