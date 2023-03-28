@@ -1,5 +1,5 @@
 import myImports from "../api";
-import sleep from "../utils/utils";
+import { sleep } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;

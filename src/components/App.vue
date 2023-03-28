@@ -7,6 +7,7 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
+import { changeDocumentURL, getURLQueryParam } from "../utils/utils";
 import API from "../api";
 
 export default {
@@ -36,7 +37,9 @@ export default {
   },
   computed: {
     documentId() {
-      if (process.env.VUE_APP_DOCUMENT_ID) {
+      if (getURLQueryParam("document")) {
+        return getURLQueryParam("document");
+      } else if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {
         return this.document;
