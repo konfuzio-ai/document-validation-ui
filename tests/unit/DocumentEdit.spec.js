@@ -61,7 +61,7 @@ describe("Document Edit Component", () => {
     ).toBe(true);
   });
 
-  it("The sidebar has 5 buttons", async () => {
+  it("The sidebar has 4 buttons", async () => {
     const wrapper = mount(EditSidebar, {
       store,
       mocks: {
@@ -71,42 +71,7 @@ describe("Document Edit Component", () => {
 
     expect(
       await wrapper.findAll(".buttons-container .sidebar-buttons").length
-    ).toBe(5);
-  });
-
-  it("Info bar appears when clicking Smart Split button", async () => {
-    const wrapper = mount(EditSidebar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    const wrapper2 = mount(DocumentEdit, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          splitSuggestionsEnabled: false,
-        };
-      },
-    });
-
-    await wrapper
-      .find(".buttons-container .split .split-button-container .split-button")
-      .trigger("click");
-
-    await wrapper2.setData({
-      splitSuggestionsEnabled: true,
-    });
-
-    expect(
-      await wrapper2
-        .find(".pages-section .info-bar .split-info-bar")
-        .isVisible()
-    ).toBe(true);
+    ).toBe(4);
   });
 
   it("Clicking the cancel button should close edit view", async () => {
@@ -393,5 +358,153 @@ describe("Document Edit Component", () => {
         .find(".confirmation-modal-container .edit-confirmation-modal")
         .isVisible()
     ).toBe(true);
+  });
+
+  it("Smart Split is visible & switch is disabled if no splitting suggestions", async () => {
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(await wrapper.find(".smart-split .b-tooltip").isVisible()).toBe(
+      true
+    );
+
+    expect(
+      await wrapper
+        .find(".smart-split .b-tooltip .tooltip-trigger .switch")
+        .attributes("disabled")
+    ).toBe("disabled");
+  });
+
+  it("Smart Split is enabled if splitting suggestions & info bar appears", async () => {
+    const suggestions = [
+      {
+        name: require("../mock/document_data.json").data_file_name,
+        category: require("../mock/document_data.json").category,
+        pages: [require("../mock/document_data.json").pages[1]],
+      },
+      {
+        name: require("../mock/document_data.json").data_file_name,
+        category: require("../mock/document_data.json").category,
+        pages: [require("../mock/document_data.json").pages[1]],
+      },
+    ];
+
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await store.dispatch("document/setSplittingSuggestions", suggestions);
+    await store.dispatch("edit/setSplitOverview", false);
+
+    expect(
+      await wrapper
+        .find(".smart-split .b-tooltip .tooltip-trigger .switch")
+        .attributes("disabled")
+    ).toBeUndefined;
+
+    await wrapper2.setData({
+      splitSuggestionsEnabled: true,
+    });
+
+    expect(
+      await wrapper2
+        .find(".pages-section .info-bar .split-info-bar")
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("Smart Split toggles between adding the suggestions and removing them", async () => {
+    const suggestions = [
+      {
+        name: require("../mock/document_data.json").data_file_name,
+        category: require("../mock/document_data.json").category,
+        pages: [require("../mock/document_data.json").pages[1]],
+      },
+      {
+        name: require("../mock/document_data.json").data_file_name,
+        category: require("../mock/document_data.json").category,
+        pages: [require("../mock/document_data.json").pages[1]],
+      },
+    ];
+
+    const lines = [
+      { page: 1, origin: "AI" },
+      { page: 2, origin: null },
+    ];
+
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          switchStatus: false,
+        };
+      },
+    });
+
+    const wrapper2 = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          splitSuggestionsEnabled: false,
+          activeSplittingLines: [],
+        };
+      },
+    });
+
+    await store.dispatch("document/setSplittingSuggestions", suggestions);
+    await store.dispatch("edit/setSplitOverview", false);
+
+    const switchElement = await wrapper.find(
+      ".smart-split .b-tooltip .tooltip-trigger .switch"
+    );
+
+    await wrapper2.setData({
+      splitSuggestionsEnabled: true,
+      activeSplittingLines: lines,
+    });
+
+    await wrapper.setData({ switchStatus: true });
+
+    expect(
+      await wrapper2.find(".image-section .active-split").isVisible()
+    ).toBe(true);
+
+    await switchElement.trigger("click");
+
+    await wrapper2.setData({
+      splitSuggestionsEnabled: false,
+      activeSplittingLines: [
+        { page: 0, origin: "AI" },
+        { page: 0, origin: null },
+      ],
+    });
+
+    await wrapper.setData({ switchStatus: false });
+
+    wrapper.vm.$nextTick(async () => {
+      expect(
+        await wrapper2.find(".image-section .active-split").isVisible()
+      ).toBe(false);
+    });
   });
 });
