@@ -1,4 +1,5 @@
 import myImports from "../api";
+import { navigateToNewDocumentURL } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 
@@ -149,31 +150,22 @@ const actions = {
     dispatch("document/startRecalculatingAnnotations", null, {
       root: true,
     });
-    return new Promise((resolve, reject) => {
+
+    const oldId = rootState.document.documentId;
+
+    return new Promise((resolve) => {
       HTTP.post(
         `/documents/${rootState.document.documentId}/postprocess/`,
         editedDocument
       )
         .then(async (response) => {
           if (response && response.status === 200) {
-            const newDocument = response.data[0];
-            const newId = newDocument.id;
+            const newId = response.data[0].id;
 
-            await dispatch("document/setDocId", newId, {
-              root: true,
-            });
+            if (newId !== oldId) {
+              navigateToNewDocumentURL(oldId, newId);
+            }
 
-            // TODO: get current URL and check for document ID
-            // update id to be the new one WITHOUT reloading page
-            // window.history.pushState(
-            //   null,
-            //   null,
-            //   `https://testing.konfuzio.com/${newId}`
-            // );
-
-            dispatch("document/pollDocumentEndpoint", null, {
-              root: true,
-            });
             resolve(null);
           } else {
             resolve(response);
