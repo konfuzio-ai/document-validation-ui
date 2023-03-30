@@ -350,12 +350,14 @@ const getters = {
     const annotationsWithPendingReview = [];
 
     labels.map((label) => {
-      const foundPendingAnnotation = label.annotations.find(
+      const foundPendingAnnotations = label.annotations.filter(
         (ann) => !ann.revised
       );
 
-      if (foundPendingAnnotation) {
-        annotationsWithPendingReview.push(foundPendingAnnotation);
+      if (foundPendingAnnotations && foundPendingAnnotations.length > 0) {
+        foundPendingAnnotations.map((annotation) => {
+          annotationsWithPendingReview.push(annotation);
+        });
       }
     });
 
