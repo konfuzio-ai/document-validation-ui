@@ -68,7 +68,7 @@
   "edit_early_access": "Eres uno de los usuarios que tiene acceso a estas funcionalidades antes de la fecha de lanzamiento.",
   "selected": "seleccionadas",
   "rotate_selected": "Rotar seleccionadas",
-  "edit_not_available": "No es posible editar documentos con estado en 'Preparación', 'Entrenamiento' o 'Pruebas', así como documentos que son de 'Sólo Lectura' o 'Revisados'",
+  "edit_not_available": "No es posible editar documentos con estado en 'Preparación', 'Entrenamiento' o 'Pruebas', así como documentos que han sido 'Revisados'",
   "back_to_edit": "Volver a editar",
   "split_document": "Dividir documento",
   "select_label": "Seleccionar etiqueta",

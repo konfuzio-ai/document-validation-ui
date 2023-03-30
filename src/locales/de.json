@@ -64,7 +64,7 @@
   "edit_early_access": "Sie sind einer der Nutzer, die Zugang zu diesen Funktionalitäten vor dem offiziellen Erscheinungstermin erhalten.",
   "selected": "ausgewählt",
   "rotate_selected": "Ausgewählte Seite drehen",
-  "edit_not_available": "Dokumente mit dem Status 'Vorbereitung', 'Training' oder 'Test' sowie Dokumente mit dem Status 'Schreibgeschützt' oder 'Geprüft' können nicht bearbeitet werden.",
+  "edit_not_available": "Dokumente mit dem Status 'Vorbereitung', 'Training' oder 'Test' sowie Dokumente mit dem Status 'Geprüft' können nicht bearbeitet werden.",
   "back_to_edit": "Zurück zum Bearbeiten Modus",
   "split_document": "Dokument aufteilen",
   "submit": "Senden",
