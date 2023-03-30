@@ -1,11 +1,11 @@
 <template>
   <b-tooltip
     multilined
-    :active="tooltipIsShown"
+    :active="tooltipIsShown || dropdownIsDisabled"
     size="is-large"
     position="is-bottom"
     :class="[editMode ? 'right-aligned full-height-tooltip' : 'left-aligned']"
-    :close-delay="5000"
+    :close-delay="tooltipCloseDelay"
   >
     <template #content>
       <div ref="tooltipContent"></div>
@@ -17,7 +17,7 @@
         selectedDocument.is_reviewed && 'disabled',
       ]"
       aria-role="list"
-      :disabled="selectedDocument.is_reviewed || tooltipIsShown"
+      :disabled="dropdownIsDisabled"
     >
       <template #trigger>
         <div class="category-drop-down">
@@ -84,6 +84,8 @@ export default {
       currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
+      dropdownIsDisabled: false,
+      tooltipCloseDelay: 0,
     };
   },
   computed: {
@@ -91,6 +93,10 @@ export default {
       categoryName: "categoryName",
       projectHasSingleCategory: "projectHasSingleCategory",
     }),
+    ...mapGetters("document", [
+      "documentCannotBeEdited",
+      "documentHasRevisedAnnotations",
+    ]),
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
@@ -125,6 +131,13 @@ export default {
 
     if (this.projectHasSingleCategory()) {
       this.tooltipIsShown = true;
+    }
+
+    if (
+      this.documentCannotBeEdited(this.selectedDocument) ||
+      this.documentHasRevisedAnnotations
+    ) {
+      this.dropdownIsDisabled = true;
     }
 
     this.$nextTick(() => {
@@ -181,6 +194,11 @@ export default {
         this.$refs.tooltipContent.innerHTML = this.$t(
           "single_category_in_project"
         );
+
+        this.tooltipCloseDelay = 5000;
+      } else {
+        this.$refs.tooltipContent.innerHTML = this.$t("edit_not_available");
+        this.tooltipCloseDelay = 0;
       }
     },
   },

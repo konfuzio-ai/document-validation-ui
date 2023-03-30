@@ -6,7 +6,9 @@
     >
       <div class="left-bar-components">
         <DocumentCategory
-          v-if="categories && !editMode && !recalculatingAnnotations"
+          v-if="
+            categories && !editMode && !recalculatingAnnotations && !publicView
+          "
         />
       </div>
 

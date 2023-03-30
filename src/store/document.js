@@ -398,6 +398,10 @@ const getters = {
     );
   },
 
+  documentHasRevisedAnnotations: (state) => () => {
+    return state.annotations.filter((ann) => ann.revised);
+  },
+
   /**
    * Joins all strings in a multi-entity Annotation array
    * to look like a single string
