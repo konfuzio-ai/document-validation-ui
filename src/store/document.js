@@ -944,10 +944,8 @@ const actions = {
   },
 
   contactSupport: ({ rootState }, error) => {
-    const url =
-      "https://konfuzio.atlassian.net/servicedesk/customer/portal/1/group/1/create/1";
+    const url = "https://konfuzio.com/en/support/";
     const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser}&issue=${error}`;
-
     const fullUrl = `${url}?${params}`;
 
     window.open(fullUrl, "_blank");
