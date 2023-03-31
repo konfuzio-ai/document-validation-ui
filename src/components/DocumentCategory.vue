@@ -97,7 +97,7 @@ export default {
       "documentCannotBeEdited",
       "documentHasCorrectAnnotations",
     ]),
-    ...mapState("document", ["selectedDocument"]),
+    ...mapState("document", ["selectedDocument", "annotations"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
   },
@@ -113,6 +113,11 @@ export default {
           this.currentProjectCategories.push(category);
         }
       });
+    },
+    annotations(newValue) {
+      if (newValue) {
+        this.showTooltip();
+      }
     },
   },
   mounted() {
@@ -133,12 +138,7 @@ export default {
       this.tooltipIsShown = true;
     }
 
-    if (
-      this.documentCannotBeEdited(this.selectedDocument) ||
-      this.documentHasCorrectAnnotations
-    ) {
-      this.dropdownIsDisabled = true;
-    }
+    this.showTooltip();
 
     this.$nextTick(() => {
       this.setTooltipText();
@@ -188,6 +188,17 @@ export default {
       this.$emit("category-change", this.page, category.id);
     },
 
+    showTooltip() {
+      if (
+        this.documentCannotBeEdited(this.selectedDocument) ||
+        this.documentHasCorrectAnnotations()
+      ) {
+        this.dropdownIsDisabled = true;
+      } else {
+        this.dropdownIsDisabled = false;
+      }
+    },
+
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
       let tooltipText;
@@ -198,7 +209,7 @@ export default {
       } else {
         this.tooltipCloseDelay = 0;
 
-        if (this.documentHasCorrectAnnotations) {
+        if (this.documentHasCorrectAnnotations()) {
           tooltipText = this.$t("approved_annotations");
         } else {
           tooltipText = this.$t("edit_not_available");

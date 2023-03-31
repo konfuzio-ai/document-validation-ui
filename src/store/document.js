@@ -398,7 +398,7 @@ const getters = {
   },
 
   documentHasCorrectAnnotations: (state) => () => {
-    return state.annotations.filter((ann) => ann.is_correct);
+    return state.annotations.filter((ann) => ann.is_correct).length > 0;
   },
 
   /**
