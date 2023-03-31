@@ -393,8 +393,14 @@ const getters = {
       document.dataset_status === 1 ||
       document.dataset_status === 2 ||
       document.dataset_status === 3 ||
-      document.is_reviewed ||
-      state.publicView
+      document.is_reviewed
+    );
+  },
+
+  documentHasCorrectAnnotations: (state) => () => {
+    return (
+      state.annotations &&
+      state.annotations.filter((ann) => ann.is_correct).length > 0
     );
   },
 

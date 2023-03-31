@@ -1,11 +1,11 @@
 <template>
   <b-tooltip
     multilined
-    :active="tooltipIsShown"
+    :active="tooltipIsShown || dropdownIsDisabled"
     size="is-large"
     position="is-bottom"
     :class="[editMode ? 'right-aligned full-height-tooltip' : 'left-aligned']"
-    :close-delay="5000"
+    :close-delay="tooltipCloseDelay"
   >
     <template #content>
       <div ref="tooltipContent"></div>
@@ -17,7 +17,7 @@
         selectedDocument.is_reviewed && 'disabled',
       ]"
       aria-role="list"
-      :disabled="selectedDocument.is_reviewed || tooltipIsShown"
+      :disabled="dropdownIsDisabled"
     >
       <template #trigger>
         <div class="category-drop-down">
@@ -84,6 +84,8 @@ export default {
       currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
+      dropdownIsDisabled: false,
+      tooltipCloseDelay: 0,
     };
   },
   computed: {
@@ -91,7 +93,11 @@ export default {
       categoryName: "categoryName",
       projectHasSingleCategory: "projectHasSingleCategory",
     }),
-    ...mapState("document", ["selectedDocument"]),
+    ...mapGetters("document", [
+      "documentCannotBeEdited",
+      "documentHasCorrectAnnotations",
+    ]),
+    ...mapState("document", ["selectedDocument", "annotations"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
   },
@@ -107,6 +113,11 @@ export default {
           this.currentProjectCategories.push(category);
         }
       });
+    },
+    annotations(newValue) {
+      if (newValue) {
+        this.showTooltip();
+      }
     },
   },
   mounted() {
@@ -126,6 +137,8 @@ export default {
     if (this.projectHasSingleCategory()) {
       this.tooltipIsShown = true;
     }
+
+    this.showTooltip();
 
     this.$nextTick(() => {
       this.setTooltipText();
@@ -175,13 +188,35 @@ export default {
       this.$emit("category-change", this.page, category.id);
     },
 
+    showTooltip() {
+      if (
+        this.documentCannotBeEdited(this.selectedDocument) ||
+        (this.documentHasCorrectAnnotations() && !this.splitMode)
+      ) {
+        this.dropdownIsDisabled = true;
+      } else {
+        this.dropdownIsDisabled = false;
+      }
+    },
+
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
+      let tooltipText;
       if (this.projectHasSingleCategory()) {
-        this.$refs.tooltipContent.innerHTML = this.$t(
-          "single_category_in_project"
-        );
+        tooltipText = this.$t("single_category_in_project");
+
+        this.tooltipCloseDelay = 5000;
+      } else {
+        this.tooltipCloseDelay = 0;
+
+        if (this.documentHasCorrectAnnotations()) {
+          tooltipText = this.$t("approved_annotations");
+        } else {
+          tooltipText = this.$t("edit_not_available");
+        }
       }
+
+      this.$refs.tooltipContent.innerHTML = tooltipText;
     },
   },
 };

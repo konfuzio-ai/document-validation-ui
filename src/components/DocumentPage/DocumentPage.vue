@@ -3,7 +3,7 @@
     ref="pdfContainer"
     :class="[
       'pdf-page-container',
-      (categorizeModalIsActive || editMode) && 'pointer-cursor',
+      (categorizeModalIsActive || editMode || publicView) && 'default-cursor',
     ]"
   >
     <NewAnnotation

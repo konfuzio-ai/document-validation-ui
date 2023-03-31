@@ -14,7 +14,6 @@
   "test": "Prueba",
   "excluded": "Excluído",
   "set_status": "Establecer estado",
-  "category_error": "La categoría no se puede cambiar porque hay anotaciones que ya han sido aceptadas o creadas manualmente en este documento.",
   "status_error": "No ha sido posible cambiar el estado del documento. Por favor, inténtelo de nuevo más tarde.",
   "edit": "Editar",
   "save": "Guardar",
@@ -68,7 +67,7 @@
   "edit_early_access": "Eres uno de los usuarios que tiene acceso a estas funcionalidades antes de la fecha de lanzamiento.",
   "selected": "seleccionadas",
   "rotate_selected": "Rotar seleccionadas",
-  "edit_not_available": "No es posible editar documentos con estado en 'Preparación', 'Entrenamiento' o 'Pruebas', así como documentos que son de 'Sólo Lectura' o 'Revisados'",
+  "edit_not_available": "No es posible editar documentos con estado en 'Preparación', 'Entrenamiento' o 'Pruebas', así como documentos que han sido 'Revisados'",
   "back_to_edit": "Volver a editar",
   "split_document": "Dividir documento",
   "select_label": "Seleccionar etiqueta",
@@ -112,5 +111,6 @@
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
   "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o rechazadas.",
   "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haz clic en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>este enlace</a>.",
-  "single_category_in_project": "Este proyecto solo tiene una categoría. Para poder modificarla, es necesario agregar esta nueva categoría al proyecto. Para más información, visita <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>este enlace</a>."
+  "single_category_in_project": "Este proyecto solo tiene una categoría. Para poder modificarla, es necesario agregar esta nueva categoría al proyecto. Para más información, visita <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>este enlace</a>.",
+  "approved_annotations": "No es posible cambiar la categoría, ya que existen anotaciones aceptadas o creadas manualmente en este documento."
 }

@@ -44,6 +44,7 @@ describe("Document Page Component", () => {
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
       store.dispatch("display/updateScale", scale),
+      store.dispatch("document/setPublicView", false),
     ]);
   });
 
