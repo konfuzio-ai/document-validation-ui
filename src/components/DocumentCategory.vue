@@ -191,7 +191,7 @@ export default {
     showTooltip() {
       if (
         this.documentCannotBeEdited(this.selectedDocument) ||
-        this.documentHasCorrectAnnotations()
+        (this.documentHasCorrectAnnotations() && !this.splitMode)
       ) {
         this.dropdownIsDisabled = true;
       } else {
