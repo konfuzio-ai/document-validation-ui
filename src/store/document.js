@@ -972,7 +972,7 @@ const actions = {
   },
 
   contactSupport: ({ rootState }, error) => {
-    const url = "https://konfuzio.com/en/support/";
+    const url = "https://konfuzio.com/support/";
     const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser}&issue=${error}`;
     const fullUrl = `${url}?${params}`;
 
