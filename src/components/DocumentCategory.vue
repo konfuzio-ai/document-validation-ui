@@ -93,12 +93,9 @@ export default {
       categoryName: "categoryName",
       projectHasSingleCategory: "projectHasSingleCategory",
     }),
-    ...mapGetters("document", [
-      "documentCannotBeEdited",
-      "documentHasCorrectAnnotations",
-    ]),
+    ...mapGetters("document", ["documentCannotBeEdited"]),
     ...mapState("document", ["selectedDocument", "annotations"]),
-    ...mapState("category", ["categories"]),
+    ...mapState("category", ["categories", "categoryCanBeChanged"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
   },
   watch: {
@@ -114,10 +111,8 @@ export default {
         }
       });
     },
-    annotations(newValue) {
-      if (newValue) {
-        this.showTooltip();
-      }
+    categoryCanBeChanged() {
+      this.showTooltip();
     },
   },
   mounted() {
@@ -191,7 +186,7 @@ export default {
     showTooltip() {
       if (
         this.documentCannotBeEdited(this.selectedDocument) ||
-        (this.documentHasCorrectAnnotations() && !this.splitMode)
+        (!this.categoryCanBeChanged && !this.splitMode)
       ) {
         this.dropdownIsDisabled = true;
       } else {
@@ -209,7 +204,7 @@ export default {
       } else {
         this.tooltipCloseDelay = 0;
 
-        if (this.documentHasCorrectAnnotations()) {
+        if (!this.categoryCanBeChanged) {
           tooltipText = this.$t("approved_annotations");
         } else {
           tooltipText = this.$t("edit_not_available");

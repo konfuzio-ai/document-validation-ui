@@ -397,11 +397,15 @@ const getters = {
     );
   },
 
-  documentHasCorrectAnnotations: (state) => () => {
-    return (
+  documentHasNoCorrectAnnotations: (state) => () => {
+    if (
       state.annotations &&
       state.annotations.filter((ann) => ann.is_correct).length > 0
-    );
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   },
 
   /**
@@ -613,6 +617,13 @@ const actions = {
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
           commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+          dispatch(
+            "category/setCategoryCanBeChanged",
+            getters.documentHasNoCorrectAnnotations(),
+            {
+              root: true,
+            }
+          );
 
           if (rootState.project.projectId) {
             projectId = rootState.project.projectId;
@@ -719,6 +730,13 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
+            dispatch(
+              "category/setCategoryCanBeChanged",
+              getters.documentHasNoCorrectAnnotations(),
+              {
+                root: true,
+              }
+            );
             resolve(response);
           }
         })
@@ -729,16 +747,26 @@ const actions = {
     });
   },
 
-  updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
+  updateAnnotation: (
+    { commit, getters, dispatch },
+    { updatedValues, annotationId }
+  ) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", [annotationId]);
 
     return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
+            await dispatch(
+              "category/setCategoryCanBeChanged",
+              getters.documentHasNoCorrectAnnotations(),
+              {
+                root: true,
+              }
+            );
             resolve(true);
           }
         })
@@ -749,13 +777,20 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters }, { annotationId }) => {
+  deleteAnnotation: ({ commit, getters, dispatch }, { annotationId }) => {
     return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+            await dispatch(
+              "category/setCategoryCanBeChanged",
+              getters.documentHasNoCorrectAnnotations(),
+              {
+                root: true,
+              }
+            );
             resolve(true);
           }
         })

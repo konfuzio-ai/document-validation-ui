@@ -6,6 +6,7 @@ const state = {
   documentsInProject: [],
   documentsAvailableToReview: [], // filtered by user
   categories: null,
+  categoryCanBeChanged: null,
 };
 
 const getters = {
@@ -47,6 +48,9 @@ const actions = {
   },
   setCategories: ({ commit }, categories) => {
     commit("SET_CATEGORIES", categories);
+  },
+  setCategoryCanBeChanged: ({ commit }, value) => {
+    commit("SET_CATEGORY_CAN_BE_CHANGED", value);
   },
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -185,6 +189,9 @@ const mutations = {
   },
   SET_CATEGORIES: (state, categories) => {
     state.categories = categories;
+  },
+  SET_CATEGORY_CAN_BE_CHANGED: (state, value) => {
+    state.categoryCanBeChanged = value;
   },
 };
 
