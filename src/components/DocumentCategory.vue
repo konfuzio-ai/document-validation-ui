@@ -204,10 +204,10 @@ export default {
       } else {
         this.tooltipCloseDelay = 0;
 
-        if (!this.categoryCanBeChanged) {
-          tooltipText = this.$t("approved_annotations");
-        } else {
+        if (this.documentCannotBeEdited(this.selectedDocument)) {
           tooltipText = this.$t("edit_not_available");
+        } else if (!this.categoryCanBeChanged) {
+          tooltipText = this.$t("approved_annotations");
         }
       }
 
