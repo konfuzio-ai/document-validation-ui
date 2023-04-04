@@ -185,6 +185,7 @@ export default {
 
     showTooltip() {
       if (
+        this.projectHasSingleCategory() ||
         this.documentCannotBeEdited(this.selectedDocument) ||
         (!this.categoryCanBeChanged && !this.splitMode)
       ) {
