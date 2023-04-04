@@ -3,6 +3,7 @@ import {
   DocumentTopBar,
   DocumentName,
 } from "../../src/components/DocumentTopBar";
+import { DocumentCategory } from "../../src/components";
 import store from "../../src/store";
 
 // mock i18n so we don't need to load the library
@@ -20,6 +21,10 @@ describe("Document Top Bar", () => {
   beforeEach(() => {
     Promise.resolve(
       store.dispatch("document/setSelectedDocument", documentData),
+      store.dispatch(
+        "document/setAnnotationSets",
+        require("../mock/document_data.json").annotation_sets
+      ),
       store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading")
@@ -121,7 +126,7 @@ describe("Document Top Bar", () => {
     ).not.toContain("is-editable");
   });
 
-  it("Clicking on the save button should show the autosaving message to the user", async () => {
+  it("Clicking the save button should show the autosaving message to the user", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
       mocks: {
@@ -249,5 +254,45 @@ describe("Document Top Bar", () => {
     expect(fileNameEditButton.exists()).toBe(false);
     expect(keyboardActionInfo.exists()).toBe(false);
     expect(finishReviewButton.exists()).toBe(false);
+  });
+
+  it("Category dropdown is disabled if the Document belongs to a dataset, or if there are Annotations that are correct", async () => {
+    const annotationSet = store.state.document.annotationSets[0];
+    const labels = annotationSet.labels;
+    const annotations = labels.flatMap((label) => {
+      return label.annotations;
+    });
+    const correctAnnotations = annotations.filter((ann) => ann.is_correct);
+
+    const wrapper = mount(DocumentCategory, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          dropdownIsDisabled: false,
+          tooltipIsShown: false,
+        };
+      },
+    });
+
+    if (correctAnnotations.length > 0) {
+      await wrapper.setData({ dropdownIsDisabled: true, tooltipIsShown: true });
+    }
+
+    expect(
+      await wrapper
+        .findComponent(".b-tooltip .tooltip-trigger .dropdown")
+        .classes()
+    ).toContain("is-disabled");
+
+    await wrapper
+      .findComponent(".b-tooltip .tooltip-trigger")
+      .trigger("mouseenter");
+
+    expect(await wrapper.find(".b-tooltip .tooltip-content").isVisible()).toBe(
+      true
+    );
   });
 });

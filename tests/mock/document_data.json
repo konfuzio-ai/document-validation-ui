@@ -61,7 +61,7 @@
               "translated_string": null,
               "normalized": "Herr",
               "confidence": 0.179997700056761,
-              "is_correct": false,
+              "is_correct": true,
               "revised": false,
               "created_by": null,
               "revised_by": null,
