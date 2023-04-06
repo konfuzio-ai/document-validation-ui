@@ -4,12 +4,8 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       class="document-top-bar"
     >
-      <div class="left-bar-components">
-        <DocumentCategory
-          v-if="
-            categories && !editMode && !recalculatingAnnotations && !publicView
-          "
-        />
+      <div v-if="!recalculatingAnnotations" class="left-bar-components">
+        <DocumentCategory v-if="categories && !editMode && !publicView" />
       </div>
 
       <DocumentName :data-file-name="selectedDocument.data_file_name" />
