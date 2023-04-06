@@ -617,13 +617,6 @@ const actions = {
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
           commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-          dispatch(
-            "category/setCategoryCanBeChanged",
-            getters.documentHasNoCorrectAnnotations(),
-            {
-              root: true,
-            }
-          );
 
           if (rootState.project.projectId) {
             projectId = rootState.project.projectId;
@@ -730,13 +723,7 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
-            dispatch(
-              "category/setCategoryCanBeChanged",
-              getters.documentHasNoCorrectAnnotations(),
-              {
-                root: true,
-              }
-            );
+
             resolve(response);
           }
         })
@@ -760,13 +747,7 @@ const actions = {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
-            await dispatch(
-              "category/setCategoryCanBeChanged",
-              getters.documentHasNoCorrectAnnotations(),
-              {
-                root: true,
-              }
-            );
+
             resolve(true);
           }
         })
@@ -784,13 +765,7 @@ const actions = {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-            await dispatch(
-              "category/setCategoryCanBeChanged",
-              getters.documentHasNoCorrectAnnotations(),
-              {
-                root: true,
-              }
-            );
+
             resolve(true);
           }
         })

@@ -84,7 +84,7 @@ export default {
       currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
-      dropdownIsDisabled: false,
+      // dropdownIsDisabled: false,
       tooltipCloseDelay: 0,
     };
   },
@@ -92,11 +92,23 @@ export default {
     ...mapGetters("category", {
       categoryName: "categoryName",
       projectHasSingleCategory: "projectHasSingleCategory",
+      categoryCanBeChanged: "categoryCanBeChanged",
     }),
     ...mapGetters("document", ["documentCannotBeEdited"]),
     ...mapState("document", ["selectedDocument", "annotations"]),
-    ...mapState("category", ["categories", "categoryCanBeChanged"]),
+    ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
+
+    dropdownIsDisabled() {
+      if (
+        this.projectHasSingleCategory() ||
+        this.documentCannotBeEdited(this.selectedDocument) ||
+        (!this.categoryCanBeChanged() && !this.splitMode)
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
   watch: {
     categories(newValue) {
@@ -110,9 +122,6 @@ export default {
           this.currentProjectCategories.push(category);
         }
       });
-    },
-    categoryCanBeChanged() {
-      this.showTooltip();
     },
   },
   mounted() {
@@ -132,8 +141,6 @@ export default {
     if (this.projectHasSingleCategory()) {
       this.tooltipIsShown = true;
     }
-
-    this.showTooltip();
 
     this.$nextTick(() => {
       this.setTooltipText();
@@ -184,15 +191,14 @@ export default {
     },
 
     showTooltip() {
-      if (
-        this.projectHasSingleCategory() ||
-        this.documentCannotBeEdited(this.selectedDocument) ||
-        (!this.categoryCanBeChanged && !this.splitMode)
-      ) {
-        this.dropdownIsDisabled = true;
-      } else {
-        this.dropdownIsDisabled = false;
-      }
+      // if (
+      //   this.projectHasSingleCategory() ||
+      //   this.documentCannotBeEdited(this.selectedDocument) ||
+      //   (!this.categoryCanBeChanged() && !this.splitMode)
+      // ) {
+      //   this.dropdownIsDisabled = true;
+      // }
+      // this.dropdownIsDisabled = true;
     },
 
     setTooltipText() {
@@ -207,7 +213,7 @@ export default {
 
         if (this.documentCannotBeEdited(this.selectedDocument)) {
           tooltipText = this.$t("edit_not_available");
-        } else if (!this.categoryCanBeChanged) {
+        } else if (!this.categoryCanBeChanged()) {
           tooltipText = this.$t("approved_annotations");
         }
       }
