@@ -1,12 +1,13 @@
 <template>
-  <div class="document-pages">
+  <div ref="documentThumbnails" class="document-pages">
     <div v-if="selectedDocument">
       <div
         v-for="page in selectedDocument.pages"
+        ref="docPage"
         :key="page.id"
         :class="[
           'document-thumbnail',
-          currentPage == page.number && 'selected'
+          currentPage == page.number && 'selected',
         ]"
         @click="changePage(page.number)"
       >
@@ -16,7 +17,7 @@
               v-if="!loading && !recalculatingAnnotations"
               :class="[
                 'img-thumbnail',
-                currentPage == page.number && 'selected'
+                currentPage == page.number && 'selected',
               ]"
               :width="'40px'"
               :image-url="`${page.thumbnail_url}?${selectedDocument.downloaded_at}`"
@@ -57,19 +58,44 @@ export default {
   name: "DocumentThumbnails",
   components: {
     ServerImage,
-    LoadingThumbnail
+    LoadingThumbnail,
+  },
+  data() {
+    return {
+      thumbnailClicked: false,
+      previousScrollPosition: 0,
+    };
   },
   computed: {
     ...mapState("document", [
       "selectedDocument",
       "recalculatingAnnotations",
-      "loading"
+      "loading",
     ]),
-    ...mapState("display", ["currentPage"])
+    ...mapState("display", ["currentPage"]),
   },
+  watch: {
+    currentPage(newPage) {
+      if (newPage && !this.thumbnailClicked) {
+        this.scrollToThumbnail();
+      }
+    },
+  },
+  mounted() {
+    const scrollingPage = document.querySelector(".scrolling-document");
+
+    if (scrollingPage) {
+      scrollingPage.addEventListener("scroll", () => {
+        this.scrollToThumbnail();
+      });
+    }
+  },
+
   methods: {
     /* Change page if not the currently open and not in modal */
     changePage(pageNumber) {
+      this.thumbnailClicked = true;
+
       if (
         !this.loading &&
         !this.recalculatingAnnotations &&
@@ -80,8 +106,19 @@ export default {
           parseInt(pageNumber, 10)
         );
       }
-    }
-  }
+    },
+
+    scrollToThumbnail() {
+      // select only the active thumbnail
+      const selectedPage = this.$refs.docPage.filter((image) =>
+        image.className.includes("selected")
+      );
+
+      if (selectedPage && selectedPage[0]) {
+        selectedPage[0].scrollIntoView();
+      }
+    },
+  },
 };
 </script>
 
