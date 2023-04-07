@@ -196,34 +196,21 @@ export default {
       this.$emit("category-change", this.page, category.id);
     },
 
-    showTooltip() {
-      // if (
-      //   this.projectHasSingleCategory() ||
-      //   this.documentCannotBeEdited(this.selectedDocument) ||
-      //   (!this.categoryCanBeChanged() && !this.splitMode)
-      // ) {
-      //   this.dropdownIsDisabled = true;
-      // }
-      // this.dropdownIsDisabled = true;
-    },
-
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
       let tooltipText;
-      if (this.projectHasSingleCategory()) {
+      let tooltipDelay = 0;
+
+      if (this.documentCannotBeEdited(this.selectedDocument)) {
+        tooltipText = this.$t("edit_not_available");
+      } else if (this.documentHasCorrectAnnotations()) {
+        tooltipText = this.$t("approved_annotations");
+      } else if (this.projectHasSingleCategory()) {
         tooltipText = this.$t("single_category_in_project");
-
         this.tooltipCloseDelay = 5000;
-      } else {
-        this.tooltipCloseDelay = 0;
-
-        if (this.documentCannotBeEdited(this.selectedDocument)) {
-          tooltipText = this.$t("edit_not_available");
-        } else if (this.documentHasCorrectAnnotations()) {
-          tooltipText = this.$t("approved_annotations");
-        }
       }
 
+      this.tooltipCloseDelay = tooltipDelay;
       this.$refs.tooltipContent.innerHTML = tooltipText;
     },
   },
