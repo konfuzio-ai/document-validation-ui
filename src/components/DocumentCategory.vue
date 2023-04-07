@@ -116,6 +116,7 @@ export default {
     },
     annotations() {
       this.checkIfDropdownIsDisabled();
+      this.setTooltipText();
     },
   },
   mounted() {
