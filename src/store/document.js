@@ -1016,7 +1016,7 @@ const mutations = {
       (existingAnnotation) => existingAnnotation.id === annotation.id
     );
     if (indexOfAnnotationInAnnotations > -1) {
-      state.annotations[indexOfAnnotationInAnnotations] = annotation;
+      state.annotations.splice(indexOfAnnotationInAnnotations, 1, annotation);
     }
     let updatedAnnotation = false;
     state.annotationSets.forEach((annotationSet) => {
