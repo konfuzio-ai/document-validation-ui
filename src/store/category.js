@@ -37,20 +37,6 @@ const getters = {
   projectHasSingleCategory: (state) => () => {
     return state.categories && state.categories.length === 1;
   },
-
-  categoryCanBeChanged: (state, getters, rootState) => () => {
-    console.log(rootState.document.annotations);
-    if (
-      !rootState.document.annotations ||
-      (rootState.document.annotations &&
-        rootState.document.annotations.filter((ann) => ann.is_correct)
-          .length === 0)
-    ) {
-      return true;
-    }
-
-    return false;
-  },
 };
 
 const actions = {

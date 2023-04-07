@@ -84,31 +84,22 @@ export default {
       currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
-      // dropdownIsDisabled: false,
       tooltipCloseDelay: 0,
+      dropdownIsDisabled: false,
     };
   },
   computed: {
     ...mapGetters("category", {
       categoryName: "categoryName",
       projectHasSingleCategory: "projectHasSingleCategory",
-      categoryCanBeChanged: "categoryCanBeChanged",
     }),
-    ...mapGetters("document", ["documentCannotBeEdited"]),
+    ...mapGetters("document", [
+      "documentCannotBeEdited",
+      "documentHasCorrectAnnotations",
+    ]),
     ...mapState("document", ["selectedDocument", "annotations"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode", "updatedDocument"]),
-
-    dropdownIsDisabled() {
-      if (
-        this.projectHasSingleCategory() ||
-        this.documentCannotBeEdited(this.selectedDocument) ||
-        (!this.categoryCanBeChanged() && !this.splitMode)
-      ) {
-        return true;
-      }
-      return false;
-    },
   },
   watch: {
     categories(newValue) {
@@ -122,6 +113,9 @@ export default {
           this.currentProjectCategories.push(category);
         }
       });
+    },
+    annotations() {
+      this.checkIfDropdownIsDisabled();
     },
   },
   mounted() {
@@ -144,12 +138,24 @@ export default {
 
     this.$nextTick(() => {
       this.setTooltipText();
+      this.checkIfDropdownIsDisabled();
     });
   },
   updated() {
     this.setTooltipText();
   },
   methods: {
+    checkIfDropdownIsDisabled() {
+      if (
+        this.projectHasSingleCategory() ||
+        this.documentCannotBeEdited(this.selectedDocument) ||
+        (this.documentHasCorrectAnnotations() && !this.splitMode)
+      ) {
+        this.dropdownIsDisabled = true;
+      } else {
+        this.dropdownIsDisabled = false;
+      }
+    },
     // The current category name will change
     // depending on if we are on edit mode or not
     handleOptionInDropdownDisabled(category) {
@@ -213,7 +219,7 @@ export default {
 
         if (this.documentCannotBeEdited(this.selectedDocument)) {
           tooltipText = this.$t("edit_not_available");
-        } else if (!this.categoryCanBeChanged()) {
+        } else if (this.documentHasCorrectAnnotations()) {
           tooltipText = this.$t("approved_annotations");
         }
       }

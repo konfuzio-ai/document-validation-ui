@@ -185,6 +185,18 @@ const getters = {
     };
   },
 
+  /* Checks if there are annotations correct in the document */
+  documentHasCorrectAnnotations: (state) => () => {
+    if (
+      !state.annotations ||
+      (state.annotations &&
+        state.annotations.filter((ann) => ann.is_correct).length > 0)
+    ) {
+      return true;
+    }
+    return false;
+  },
+
   /* Returns the number of accepted annotations in a label */
   numberOfAcceptedAnnotationsInLabel: (_) => (label) => {
     const annotations = label.annotations.filter((annotation) => {
