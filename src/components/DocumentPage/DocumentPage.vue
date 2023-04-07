@@ -4,6 +4,7 @@
     :class="[
       'pdf-page-container',
       (categorizeModalIsActive || editMode || publicView) && 'default-cursor',
+      page.number === currentPage && 'current-page',
     ]"
   >
     <NewAnnotation
@@ -150,6 +151,8 @@ export default {
   },
 
   computed: {
+    ...mapState("display", ["currentPage"]),
+
     showFocusedAnnotation() {
       return (
         this.documentAnnotationSelected &&
