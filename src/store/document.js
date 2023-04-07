@@ -28,7 +28,6 @@ const state = {
   newAcceptedAnnotations: null,
   selectedEntities: null,
   serverError: false,
-  categorizeModalIsActive: false,
 };
 
 const getters = {
@@ -590,9 +589,6 @@ const actions = {
   setSelectedEntities: ({ commit }, entities) => {
     commit("SET_SELECTED_ENTITIES", entities);
   },
-  setCategorizeModalIsActive: ({ commit }, value) => {
-    commit("SET_CATEGORIZE_MODAL_IS_ACTIVE", value);
-  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -621,7 +617,7 @@ const actions = {
 
           // load first page
           if (response.data.pages.length > 0) {
-            await dispatch("fetchDocumentPage", initialPage);
+            dispatch("fetchDocumentPage", initialPage);
           }
           // set information on the store
           commit("SET_ANNOTATION_SETS", annotationSets);
@@ -650,11 +646,11 @@ const actions = {
       });
 
     if (!state.publicView) {
+      dispatch("fetchMissingAnnotations");
+
       await dispatch("project/fetchCurrentUser", null, {
         root: true,
       });
-
-      await dispatch("fetchMissingAnnotations");
 
       if (projectId) {
         await dispatch("category/fetchCategories", projectId, {
@@ -1159,9 +1155,7 @@ const mutations = {
   SET_SERVER_ERROR: (state, value) => {
     state.serverError = value;
   },
-  SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {
-    state.categorizeModalIsActive = value;
-  },
+
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
   },

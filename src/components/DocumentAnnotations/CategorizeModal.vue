@@ -125,7 +125,7 @@ export default {
       }
     },
     show(newValue) {
-      this.$store.dispatch("document/setCategorizeModalIsActive", newValue);
+      this.$store.dispatch("display/setCategorizeModalIsActive", newValue);
     },
   },
   mounted() {
@@ -194,7 +194,7 @@ export default {
           })
           .finally(() => {
             this.$store.dispatch("document/endRecalculatingAnnotations");
-            this.$store.dispatch("document/setCategorizeModalIsActive", false);
+            this.$store.dispatch("display/setCategorizeModalIsActive", false);
           });
       } else {
         // if same category, then just accept it

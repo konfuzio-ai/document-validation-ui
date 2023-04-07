@@ -20,18 +20,20 @@ import { PIXEL_RATIO } from "../../constants";
 export default {
   props: {
     width: {
-      default: 0
+      default: 0,
+      type: Number,
     },
     height: {
-      default: 0
-    }
+      default: 0,
+      type: Number,
+    },
   },
   computed: {
     ...mapState("display", ["scale"]),
     actualSizeViewport() {
       return {
         width: this.width * this.scale,
-        height: this.height * this.scale
+        height: this.height * this.scale,
       };
     },
 
@@ -39,7 +41,7 @@ export default {
       const { width: actualSizeWidth, height: actualSizeHeight } =
         this.actualSizeViewport;
       const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(
-        dim => Math.ceil(dim / PIXEL_RATIO)
+        (dim) => Math.ceil(dim / PIXEL_RATIO)
       );
       return { width: pixelWidth, height: pixelHeight };
     },
@@ -47,7 +49,7 @@ export default {
     canvasStyle() {
       const { width, height } = this.scaledViewport;
       return `width: ${width}px; height: ${height}px; margin: 0 auto`;
-    }
-  }
+    },
+  },
 };
 </script>

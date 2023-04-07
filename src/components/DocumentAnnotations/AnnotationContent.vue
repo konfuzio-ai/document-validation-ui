@@ -41,6 +41,7 @@ export default {
       required: true,
     },
     span: {
+      type: Object,
       required: true,
     },
     spanIndex: {
@@ -49,9 +50,11 @@ export default {
     },
     label: {
       type: Object,
+      required: true,
     },
     annotationSet: {
       type: Object,
+      required: true,
     },
     saveChanges: {
       type: Boolean,

@@ -97,9 +97,11 @@ export default {
   props: {
     fileName: {
       type: String,
+      default: "",
     },
     fileExtension: {
       type: String,
+      default: "",
     },
   },
   data() {

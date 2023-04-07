@@ -2,22 +2,10 @@
   <div class="dashboard">
     <DocumentTopBar />
     <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
-      <DocumentThumbnails
-        v-if="!editMode"
-        ref="documentPages"
-      />
-      <ScrollingDocument
-        ref="scrollingDocument"
-        class="dashboard-document"
-      />
-      <DocumentAnnotations
-        v-if="!editMode"
-        ref="annotations"
-      />
-      <DocumentEdit
-        v-else
-        ref="editView"
-      />
+      <DocumentThumbnails v-if="!editMode" ref="documentPages" />
+      <ScrollingDocument ref="scrollingDocument" class="dashboard-document" />
+      <DocumentAnnotations v-if="!editMode" ref="annotations" />
+      <DocumentEdit v-else ref="editView" />
 
       <transition name="slide-fade">
         <div
@@ -29,22 +17,13 @@
         </div>
       </transition>
     </div>
-    <div
-      v-if="showDocumentError"
-      class="error-modal"
-    >
+    <div v-if="showDocumentError" class="error-modal">
       <DocumentError />
     </div>
-    <div
-      v-if="!optimalResolution"
-      class="not-optimized"
-    >
+    <div v-if="!optimalResolution" class="not-optimized">
       <NotOptimizedViewportModal />
     </div>
-    <div
-      v-if="!isMinimumWidth"
-      class="not-supported"
-    >
+    <div v-if="!isMinimumWidth" class="not-supported">
       <div class="text">
         {{ $t("resolution_not_supported") }}
       </div>
@@ -77,7 +56,13 @@ export default {
     DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal,
-    DocumentError
+    DocumentError,
+  },
+  data() {
+    return {
+      resizeObserver: null,
+      unwatchSelectedDocument: null,
+    };
   },
   computed: {
     ...mapState("display", [
@@ -85,16 +70,16 @@ export default {
       "fit",
       "optimalResolution",
       "pageWidthScale",
-      "currentPage"
+      "currentPage",
     ]),
     ...mapState("document", [
       "showActionError",
       "showDocumentError",
       "errorMessageWidth",
-      "selectedDocument"
+      "selectedDocument",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("display", ["isMinimumWidth"])
+    ...mapGetters("display", ["isMinimumWidth"]),
   },
   watch: {
     selectedDocument(newDocument, oldDocument) {
@@ -104,7 +89,7 @@ export default {
       } else if (newDocument) {
         this.onDocumentResize();
       }
-    }
+    },
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
@@ -113,12 +98,6 @@ export default {
     if (this.$refs.scrollingDocument) {
       this.resizeObserver.unobserve(this.$refs.scrollingDocument.$el);
     }
-  },
-  data() {
-    return {
-      resizeObserver: null,
-      unwatchSelectedDocument: null
-    };
   },
   methods: {
     elementsWidth() {
@@ -144,16 +123,16 @@ export default {
           elementsWidth: this.elementsWidth(),
           client: {
             width: this.$el.clientWidth,
-            height: this.$el.clientHeight
+            height: this.$el.clientHeight,
           },
           viewport: {
             width: this.selectedDocument.pages[0].size[0],
-            height: this.selectedDocument.pages[0].size[1]
-          }
+            height: this.selectedDocument.pages[0].size[1],
+          },
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="scss" src="../assets/scss/document_dashboard.scss"></style>

@@ -100,6 +100,7 @@ export default {
   props: {
     activeSplittingLines: {
       type: Array,
+      default: null,
     },
   },
   data() {

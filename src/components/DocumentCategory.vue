@@ -74,9 +74,11 @@ export default {
     },
     page: {
       type: Object,
+      default: null,
     },
     index: {
       type: Number,
+      default: 0,
     },
   },
   data() {
