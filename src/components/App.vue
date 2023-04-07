@@ -20,20 +20,30 @@ export default {
     document: {
       type: String,
       required: false,
+      default: null,
     },
     project: {
       type: String,
       required: false,
+      default: null,
     },
+    // eslint-disable-next-line vue/prop-name-casing
     user_token: {
       type: String,
       required: false,
+      default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
     full_mode: {
       type: String,
       required: false,
+      default: "false",
     },
-    locale: { type: String, required: false },
+    locale: {
+      type: String,
+      required: false,
+      default: "en",
+    },
   },
   computed: {
     documentId() {

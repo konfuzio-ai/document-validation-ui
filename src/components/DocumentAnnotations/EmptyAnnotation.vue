@@ -37,17 +37,22 @@ export default {
   name: "EmptyAnnotation",
   props: {
     label: {
+      type: Object,
       required: true,
     },
     annotationSet: {
+      type: Object,
       required: true,
     },
-
     span: {
+      type: Object,
+      default: null,
       required: false,
     },
     spanIndex: {
+      type: Number,
       required: false,
+      default: 0,
     },
     saveChanges: {
       type: Boolean,

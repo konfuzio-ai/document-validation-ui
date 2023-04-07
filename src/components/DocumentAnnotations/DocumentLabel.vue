@@ -66,9 +66,11 @@ export default {
   components: { AnnotationRow },
   props: {
     label: {
+      type: Object,
       required: true,
     },
     annotationSet: {
+      type: Object,
       required: true,
     },
   },

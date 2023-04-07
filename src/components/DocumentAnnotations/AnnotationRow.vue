@@ -116,12 +116,15 @@ export default {
   },
   props: {
     annotationSet: {
+      type: Object,
       required: true,
     },
     label: {
+      type: Object,
       required: true,
     },
     annotation: {
+      type: Object,
       default: null,
     },
   },

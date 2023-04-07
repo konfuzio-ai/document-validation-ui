@@ -13,12 +13,15 @@ export default {
   props: {
     imageUrl: {
       required: true,
+      type: String,
     },
     height: {
       default: null,
+      type: Number,
     },
     width: {
       default: null,
+      type: Number,
     },
   },
   data() {
