@@ -69,7 +69,12 @@ export default {
       }
     },
     showToolbar() {
-      return this.pages.length > 0 && this.scale && !this.documentActionBar;
+      return (
+        !this.loading &&
+        this.pages.length > 0 &&
+        this.scale &&
+        !this.documentActionBar
+      );
     },
     showActionBar() {
       return this.documentActionBar !== null;

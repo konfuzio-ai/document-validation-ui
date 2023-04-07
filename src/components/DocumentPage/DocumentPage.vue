@@ -245,7 +245,11 @@ export default {
       "selectionFromBbox",
       "spanSelection",
     ]),
-    ...mapState("display", ["scale", "optimalScale"]),
+    ...mapState("display", [
+      "scale",
+      "optimalScale",
+      "categorizeModalIsActive",
+    ]),
     ...mapState("document", [
       "documentAnnotationSelected",
       "recalculatingAnnotations",
@@ -254,7 +258,6 @@ export default {
       "selectedDocument",
       "publicView",
       "selectedEntities",
-      "categorizeModalIsActive",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -455,7 +458,7 @@ export default {
      */
     entityRect(entity) {
       let entityIsSelected = false;
-      if (this.newAnnotation) {
+      if (this.newAnnotation && this.newAnnotation.length > 0) {
         entityIsSelected = this.newAnnotation.find((selectedEntity) => {
           return (
             selectedEntity.entity.original.offset_string ===

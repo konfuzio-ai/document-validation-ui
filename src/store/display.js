@@ -28,6 +28,7 @@ const state = {
   optimalResolution: true,
   interactionBlocked: false,
   documentActionBar: null, // document action bar properties
+  categorizeModalIsActive: false,
 };
 
 const getters = {
@@ -205,6 +206,9 @@ const actions = {
       show ? { icon, text, action, loading } : null
     );
   },
+  setCategorizeModalIsActive: ({ commit }, value) => {
+    commit("SET_CATEGORIZE_MODAL_IS_ACTIVE", value);
+  },
 };
 
 const mutations = {
@@ -226,6 +230,10 @@ const mutations = {
 
   SET_DOCUMENT_ACTION_BAR: (state, actionBar) => {
     state.documentActionBar = actionBar;
+  },
+
+  SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {
+    state.categorizeModalIsActive = value;
   },
 };
 

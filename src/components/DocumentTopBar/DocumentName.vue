@@ -69,6 +69,7 @@ export default {
   props: {
     dataFileName: {
       type: String,
+      default: "",
     },
   },
   data() {

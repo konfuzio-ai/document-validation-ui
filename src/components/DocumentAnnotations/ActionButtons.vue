@@ -142,6 +142,7 @@
   </div>
 </template>
 <script>
+/* Component for showing actions for each annotation row */
 import { mapState, mapGetters } from "vuex";
 export default {
   name: "ActionButtons",
@@ -161,23 +162,29 @@ export default {
     acceptBtn: {
       type: Boolean,
     },
+    // TODO: finishReviewBtn should not be here (see comment above for purpose of this component)
     finishReviewBtn: {
       type: Boolean,
     },
+    // TODO: finishDisabled should not be here
     finishDisabled: {
       type: Boolean,
     },
+    // TODO: handleReject should not be here
     handleReject: {
       type: Function,
       default: null,
     },
+    // TODO: rejectAllEmptyBtn should not be here
     rejectAllEmptyBtn: {
       type: Boolean,
     },
+    // TODO: annotationSet should not be needed on a UI only component
     annotationSet: {
       type: Object,
       default: null,
     },
+    // TODO: acceptAllBtn should not be here
     acceptAllBtn: {
       type: Boolean,
     },
