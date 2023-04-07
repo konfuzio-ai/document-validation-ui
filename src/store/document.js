@@ -185,6 +185,18 @@ const getters = {
     };
   },
 
+  /* Checks if there are annotations correct in the document */
+  documentHasCorrectAnnotations: (state) => () => {
+    if (
+      !state.annotations ||
+      (state.annotations &&
+        state.annotations.filter((ann) => ann.is_correct).length > 0)
+    ) {
+      return true;
+    }
+    return false;
+  },
+
   /* Returns the number of accepted annotations in a label */
   numberOfAcceptedAnnotationsInLabel: (_) => (label) => {
     const annotations = label.annotations.filter((annotation) => {
@@ -397,11 +409,15 @@ const getters = {
     );
   },
 
-  documentHasCorrectAnnotations: (state) => () => {
-    return (
+  documentHasNoCorrectAnnotations: (state) => () => {
+    if (
       state.annotations &&
       state.annotations.filter((ann) => ann.is_correct).length > 0
-    );
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   },
 
   /**
@@ -719,6 +735,7 @@ const actions = {
             } else {
               commit("ADD_ANNOTATION", response.data);
             }
+
             resolve(response);
           }
         })
@@ -729,16 +746,20 @@ const actions = {
     });
   },
 
-  updateAnnotation: ({ commit, getters }, { updatedValues, annotationId }) => {
+  updateAnnotation: (
+    { commit, getters, dispatch },
+    { updatedValues, annotationId }
+  ) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", [annotationId]);
 
     return new Promise((resolve, reject) => {
       HTTP.patch(`/annotations/${annotationId}/`, updatedValues)
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
+
             resolve(true);
           }
         })
@@ -749,13 +770,14 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters }, { annotationId }) => {
+  deleteAnnotation: ({ commit, getters, dispatch }, { annotationId }) => {
     return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+
             resolve(true);
           }
         })
@@ -994,7 +1016,7 @@ const mutations = {
       (existingAnnotation) => existingAnnotation.id === annotation.id
     );
     if (indexOfAnnotationInAnnotations > -1) {
-      state.annotations[indexOfAnnotationInAnnotations] = annotation;
+      state.annotations.splice(indexOfAnnotationInAnnotations, 1, annotation);
     }
     let updatedAnnotation = false;
     state.annotationSets.forEach((annotationSet) => {

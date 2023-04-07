@@ -84,8 +84,8 @@ export default {
       currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
-      dropdownIsDisabled: false,
       tooltipCloseDelay: 0,
+      dropdownIsDisabled: false,
     };
   },
   computed: {
@@ -114,10 +114,9 @@ export default {
         }
       });
     },
-    annotations(newValue) {
-      if (newValue) {
-        this.showTooltip();
-      }
+    annotations() {
+      this.checkIfDropdownIsDisabled();
+      this.setTooltipText();
     },
   },
   mounted() {
@@ -138,16 +137,26 @@ export default {
       this.tooltipIsShown = true;
     }
 
-    this.showTooltip();
-
     this.$nextTick(() => {
       this.setTooltipText();
+      this.checkIfDropdownIsDisabled();
     });
   },
   updated() {
     this.setTooltipText();
   },
   methods: {
+    checkIfDropdownIsDisabled() {
+      if (
+        this.projectHasSingleCategory() ||
+        this.documentCannotBeEdited(this.selectedDocument) ||
+        (this.documentHasCorrectAnnotations() && !this.splitMode)
+      ) {
+        this.dropdownIsDisabled = true;
+      } else {
+        this.dropdownIsDisabled = false;
+      }
+    },
     // The current category name will change
     // depending on if we are on edit mode or not
     handleOptionInDropdownDisabled(category) {
@@ -188,34 +197,21 @@ export default {
       this.$emit("category-change", this.page, category.id);
     },
 
-    showTooltip() {
-      if (
-        this.documentCannotBeEdited(this.selectedDocument) ||
-        (this.documentHasCorrectAnnotations() && !this.splitMode)
-      ) {
-        this.dropdownIsDisabled = true;
-      } else {
-        this.dropdownIsDisabled = false;
-      }
-    },
-
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
       let tooltipText;
-      if (this.projectHasSingleCategory()) {
+      let tooltipDelay = 0;
+
+      if (this.documentCannotBeEdited(this.selectedDocument)) {
+        tooltipText = this.$t("edit_not_available");
+      } else if (this.documentHasCorrectAnnotations()) {
+        tooltipText = this.$t("approved_annotations");
+      } else if (this.projectHasSingleCategory()) {
         tooltipText = this.$t("single_category_in_project");
-
         this.tooltipCloseDelay = 5000;
-      } else {
-        this.tooltipCloseDelay = 0;
-
-        if (this.documentHasCorrectAnnotations()) {
-          tooltipText = this.$t("approved_annotations");
-        } else {
-          tooltipText = this.$t("edit_not_available");
-        }
       }
 
+      this.tooltipCloseDelay = tooltipDelay;
       this.$refs.tooltipContent.innerHTML = tooltipText;
     },
   },
