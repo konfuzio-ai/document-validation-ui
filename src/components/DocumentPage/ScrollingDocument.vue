@@ -28,7 +28,7 @@
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
     <MultiAnnotationTableOverlay
-      v-if="testAnnotationsSets && false"
+      v-if="testAnnotationsSets"
       :annotations-sets="testAnnotationsSets"
     />
   </div>

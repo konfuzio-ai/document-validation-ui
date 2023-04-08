@@ -10,6 +10,15 @@
 
   .multi-ann-set-table {
     padding-bottom: 6px;
+
+    .header-dropdown {
+      cursor: pointer;
+
+      .delete-action {
+        color: $red;
+      }
+    }
+
     .annotation-content {
       height: 22px;
       display: flex;

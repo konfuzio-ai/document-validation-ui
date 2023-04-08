@@ -12,20 +12,45 @@
       <b-table-column
         v-for="(column, index) in columns"
         :key="index"
-        v-slot="props"
         :field="column.field"
         :label="column.label.name"
       >
-        <div class="annotation-content">
-          <AnnotationRow
-            :annotation="props.row[column.field]"
-            :label="column.label"
-            :annotation-set="column.annotationSet"
-            :show-label="false"
-            :show-buttons="false"
-            :is-small="true"
-          />
-        </div>
+        <template #header="{ column }">
+          <b-dropdown aria-role="list" class="header-dropdown">
+            <template #trigger="{ active }">
+              <span :class="active ? 'active' : ''"
+                >{{ column.label }}
+                <b-icon
+                  :icon="active ? 'angle-up' : 'angle-down'"
+                  size="is-small"
+              /></span>
+            </template>
+
+            <b-dropdown-item aria-role="listitem"
+              ><span @click="editLabel">{{
+                $t("edit_label")
+              }}</span></b-dropdown-item
+            >
+            <b-dropdown-item aria-role="listitem" class="delete-action">
+              <span @click="deleteLabel">{{
+                $t("delete_label")
+              }}</span></b-dropdown-item
+            >
+          </b-dropdown>
+        </template>
+
+        <template #default="props">
+          <div class="annotation-content">
+            <AnnotationRow
+              :annotation="props.row[column.field]"
+              :label="column.label"
+              :annotation-set="column.annotationSet"
+              :show-label="false"
+              :show-buttons="false"
+              :is-small="true"
+            />
+          </div>
+        </template>
       </b-table-column>
     </b-table>
   </div>
@@ -99,6 +124,14 @@ export default {
         });
         this.rows.push(row);
       });
+    },
+
+    editLabel() {
+      alert("edit label");
+    },
+
+    deleteLabel() {
+      alert("delete label");
     },
   },
 };
