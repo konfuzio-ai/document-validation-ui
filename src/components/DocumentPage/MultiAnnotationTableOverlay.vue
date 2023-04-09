@@ -10,10 +10,10 @@
       :bordered="false"
     >
       <b-table-column
-        v-for="(column, index) in columns"
+        v-for="(item, index) in columns"
         :key="index"
-        :field="column.field"
-        :label="column.label.name"
+        :field="item.field"
+        :label="item.label.name"
       >
         <template #header="{ column }">
           <b-dropdown aria-role="list" class="header-dropdown">
@@ -26,25 +26,41 @@
               /></span>
             </template>
 
-            <b-dropdown-item aria-role="listitem"
-              ><span @click="editLabel">{{
-                $t("edit_label")
-              }}</span></b-dropdown-item
-            >
-            <b-dropdown-item aria-role="listitem" class="delete-action">
-              <span @click="deleteLabel">{{
-                $t("delete_label")
-              }}</span></b-dropdown-item
-            >
+            <div v-if="editingLabels.length === 0">
+              <b-dropdown-item
+                aria-role="listitem"
+                custom
+                @click="editLabel(item)"
+                ><span>{{ $t("edit_label") }}</span></b-dropdown-item
+              >
+              <b-dropdown-item
+                aria-role="listitem"
+                class="delete-action"
+                @click="deleteColumn(item)"
+              >
+                <span>{{ $t("delete_label") }}</span></b-dropdown-item
+              >
+            </div>
+            <div v-else>
+              <b-dropdown-item
+                v-for="label in editingLabels"
+                :key="label.id"
+                aria-role="listitem"
+                :disabled="label.disabled"
+                ><span @click="chooseLabel(item)">{{
+                  label.name
+                }}</span></b-dropdown-item
+              >
+            </div>
           </b-dropdown>
         </template>
 
         <template #default="props">
           <div class="annotation-content">
             <AnnotationRow
-              :annotation="props.row[column.field]"
-              :label="column.label"
-              :annotation-set="column.annotationSet"
+              :annotation="props.row[item.field]"
+              :label="item.label"
+              :annotation-set="item.annotationSet"
               :show-label="false"
               :show-buttons="false"
               :is-small="true"
@@ -77,6 +93,7 @@ export default {
       rows: [],
       columns: [],
       orderedAnnotations: [],
+      editingLabels: [],
     };
   },
   computed: {},
@@ -126,12 +143,68 @@ export default {
       });
     },
 
-    editLabel() {
-      alert("edit label");
+    async editLabel(column) {
+      this.$store
+        .dispatch(
+          "project/fetchLabelSetDetails",
+          column.annotationSet.label_set.id
+        )
+        .then(async (labelSet) => {
+          this.editingLabels = [];
+
+          labelSet.labels.forEach((label) => {
+            const dropdownLabel = {
+              ...label,
+              disabled:
+                this.columns.find((column) => column.label.id === label.id) !==
+                undefined,
+            };
+            this.editingLabels.push(dropdownLabel);
+          });
+        });
     },
 
-    deleteLabel() {
-      alert("delete label");
+    async chooseLabel(column, label) {
+      console.log("column", column.label);
+      console.log("label", label);
+      return;
+      for (let i = 0; i < this.rows.length; i++) {
+        const annotationToUpdate = this.rows[i][column.label.id];
+        await this.$store
+          .dispatch("document/updateAnnotation", {
+            annotationId: annotationToUpdate.id,
+            updatedValues: { label: label.id },
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          });
+      }
+    },
+
+    async deleteColumn(column) {
+      console.log("columnn", column.label.id);
+      console.log("rows", this.rows);
+      console.log("ann", this.rows[0][column.label.id]);
+      return;
+
+      for (let i = 0; i < this.rows.length; i++) {
+        const annotationToDelete = this.rows[i][column.label.id];
+        await this.$store
+          .dispatch("document/deleteAnnotation", {
+            annotationId: annotationToDelete.id,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          });
+      }
     },
   },
 };
