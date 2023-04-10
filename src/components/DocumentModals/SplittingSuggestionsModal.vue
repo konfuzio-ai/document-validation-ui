@@ -103,7 +103,7 @@ export default {
 
       this.$store.dispatch("edit/editDocument", updatedDocument);
 
-      this.$store.dispatch("document/setCategorizeModalIsActive", false);
+      this.$store.dispatch("display/setCategorizeModalIsActive", false);
       this.isModalActive = false;
     },
     handleReviewNow() {

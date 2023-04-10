@@ -48,8 +48,8 @@
         <div
           :class="[
             'splitting-lines',
-            activeSplittingLines &&
-              activeSplittingLines[index].page === page.number &&
+            splittingLines &&
+              splittingLines[index].page === page.number &&
               'active-split',
           ]"
           @click="handleSplittingLines(page.number, 'manual')"
@@ -58,17 +58,14 @@
             <b-icon icon="scissors" class="is-small" />
           </div>
           <div
-            v-if="
-              activeSplittingLines &&
-              activeSplittingLines[index].page === page.number
-            "
+            v-if="splittingLines && splittingLines[index].page === page.number"
             class="lines"
           >
             <SplitZigZag
               :color="
-                activeSplittingLines &&
-                activeSplittingLines[index].origin &&
-                activeSplittingLines[index].origin === 'AI' &&
+                splittingLines &&
+                splittingLines[index].origin &&
+                splittingLines[index].origin === 'AI' &&
                 splitSuggestionsEnabled
                   ? 'green'
                   : 'dark'
@@ -107,12 +104,13 @@ export default {
     draggable,
   },
   props: {
-    activeSplittingLines: {
+    splittingLines: {
       type: Array,
       default: null,
     },
     splitSuggestionsEnabled: {
       type: Boolean,
+      default: false,
     },
   },
   data() {
