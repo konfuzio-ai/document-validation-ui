@@ -1,5 +1,5 @@
 import myImports from "../api";
-import { navigateToNewDocumentURL } from "../utils/utils";
+import { getURLQueryParam, navigateToNewDocumentURL } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 
@@ -163,7 +163,17 @@ const actions = {
             const newId = response.data[0].id;
 
             if (newId !== oldId) {
-              navigateToNewDocumentURL(oldId, newId);
+              if (getURLQueryParam("document")) {
+                navigateToNewDocumentURL(oldId, newId);
+              } else {
+                await dispatch("document/setDocId", newId, {
+                  root: true,
+                });
+
+                dispatch("document/pollDocumentEndpoint", null, {
+                  root: true,
+                });
+              }
             }
 
             resolve(null);
