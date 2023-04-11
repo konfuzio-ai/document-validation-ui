@@ -1,4 +1,4 @@
 import Vue from "vue";
-import Buefy from "Buefy";
+import Buefy from "buefy";
 
 Vue.use(Buefy);
