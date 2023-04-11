@@ -17,11 +17,11 @@ export default {
     },
     height: {
       default: null,
-      type: Number,
+      type: String,
     },
     width: {
       default: null,
-      type: Number,
+      type: String,
     },
   },
   data() {
