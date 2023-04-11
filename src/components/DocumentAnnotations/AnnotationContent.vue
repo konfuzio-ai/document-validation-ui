@@ -41,7 +41,7 @@ export default {
       required: true,
     },
     span: {
-      type: Object,
+      type: [Object, Array],
       required: true,
     },
     spanIndex: {
