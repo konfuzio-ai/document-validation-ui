@@ -138,23 +138,19 @@ export default {
 
     /** SPLIT */
     splitFileNameFromExtension() {
-      if (!this.selectedDocument) return;
+      if (!this.selectedDocument && !this.selectedDocument.data_file_name)
+        return;
 
       // Save the file name and the extension in different variables
       // to be used in the next step of the splitting
+      this.fileName = this.selectedDocument.data_file_name
+        .split(".")
+        .slice(0, -1)
+        .join(".");
 
-      if (this.selectedDocument.data_file_name) {
-        this.fileName = this.selectedDocument.data_file_name
-          .split(".")
-          .slice(0, -1)
-          .join(".");
-      }
-
-      if (this.selectedDocument.data_file_name) {
-        this.fileExtension = this.selectedDocument.data_file_name
-          .split(".")
-          .at(-1);
-      }
+      this.fileExtension = this.selectedDocument.data_file_name
+        .split(".")
+        .at(-1);
     },
     handleSplittingLines(page) {
       // For splitting line purposes
