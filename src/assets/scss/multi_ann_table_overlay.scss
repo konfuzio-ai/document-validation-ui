@@ -11,17 +11,28 @@
   .multi-ann-set-table {
     padding-bottom: 6px;
 
-    .header-dropdown {
-      cursor: pointer;
+    .table-wrapper {
+      overflow: visible;
+      .header-dropdown {
+        cursor: pointer;
 
-      .delete-action {
-        color: $red;
+        .icon.arrow {
+          margin-left: 4px;
+        }
+        .draggable {
+          margin-right: 4px;
+          cursor: move;
+        }
+
+        .delete-action {
+          color: $red;
+        }
       }
-    }
 
-    .annotation-content {
-      height: 22px;
-      display: flex;
+      .annotation-content {
+        height: 22px;
+        display: flex;
+      }
     }
   }
 }

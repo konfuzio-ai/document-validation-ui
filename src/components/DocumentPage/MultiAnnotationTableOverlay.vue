@@ -2,12 +2,17 @@
   <div class="multi-ann-table-overlay">
     <b-table
       ref="table"
-      class="multi-ann-set-table dark-header"
+      class="multi-ann-set-table dark-header header-32"
       detail-icon="faScissors"
       :data="rows"
       :sticky-header="true"
       :narrowed="true"
       :bordered="false"
+      draggable-column
+      @columndragstart="columndragstart"
+      @columndrop="columndrop"
+      @columndragover="columndragover"
+      @columndragleave="columndragleave"
     >
       <b-table-column
         v-for="(item, index) in columns"
@@ -16,21 +21,26 @@
         :label="item.label.name"
       >
         <template #header="{ column }">
-          <b-dropdown aria-role="list" class="header-dropdown">
+          <b-dropdown
+            :ref="getDropdownReference(item)"
+            aria-role="list"
+            class="header-dropdown"
+            position="is-top-left"
+            :close-on-click="false"
+            @active-change="(e) => onDropdownChange(item, e)"
+          >
             <template #trigger="{ active }">
-              <span :class="active ? 'active' : ''"
-                >{{ column.label }}
-                <b-icon
-                  :icon="active ? 'angle-up' : 'angle-down'"
-                  size="is-small"
-              /></span>
+              <DraggableIcon class="draggable" />
+              <span :class="active ? 'active' : ''">{{ column.label }} </span>
+              <b-icon
+                :icon="active ? 'angle-up' : 'angle-down'"
+                size="is-small"
+                class="arrow"
+              />
             </template>
 
             <div v-if="editingLabels.length === 0">
-              <b-dropdown-item
-                aria-role="listitem"
-                custom
-                @click="editLabel(item)"
+              <b-dropdown-item aria-role="listitem" @click="editLabel(item)"
                 ><span>{{ $t("edit_label") }}</span></b-dropdown-item
               >
               <b-dropdown-item
@@ -47,7 +57,7 @@
                 :key="label.id"
                 aria-role="listitem"
                 :disabled="label.disabled"
-                ><span @click="chooseLabel(item)">{{
+                ><span @click="changeLabel(item, label)">{{
                   label.name
                 }}</span></b-dropdown-item
               >
@@ -75,11 +85,13 @@
 <script>
 import { mapState } from "vuex";
 import AnnotationRow from "../DocumentAnnotations/AnnotationRow";
+import DraggableIcon from "../../assets/images/DraggableIcon";
 
 export default {
   name: "MultiAnnotationTablePopup",
   components: {
     AnnotationRow,
+    DraggableIcon,
   },
   props: {
     annotationsSets: {
@@ -94,6 +106,8 @@ export default {
       columns: [],
       orderedAnnotations: [],
       editingLabels: [],
+      openDropdown: null,
+      draggingColumnIndex: null,
     };
   },
   computed: {},
@@ -102,6 +116,9 @@ export default {
     this.handleRows();
   },
   methods: {
+    getDropdownReference(column) {
+      return `editDropdown_${column.field}`;
+    },
     handleColumns() {
       this.columns = [];
       const labelAlreadyExists = (label) => {
@@ -164,10 +181,7 @@ export default {
         });
     },
 
-    async chooseLabel(column, label) {
-      console.log("column", column.label);
-      console.log("label", label);
-      return;
+    async changeLabel(column, label) {
       for (let i = 0; i < this.rows.length; i++) {
         const annotationToUpdate = this.rows[i][column.label.id];
         await this.$store
@@ -183,12 +197,15 @@ export default {
             });
           });
       }
+      this.closeDropdown(column);
     },
 
     async deleteColumn(column) {
       console.log("columnn", column.label.id);
       console.log("rows", this.rows);
       console.log("ann", this.rows[0][column.label.id]);
+      this.closeDropdown(column);
+
       return;
 
       for (let i = 0; i < this.rows.length; i++) {
@@ -205,6 +222,58 @@ export default {
             });
           });
       }
+    },
+
+    onDropdownChange(column, open) {
+      console.log("open,", open);
+      console.log("coli,", column);
+      this.editingLabels = [];
+      if (open) {
+        if (this.openDropdown) {
+          this.$refs[this.openDropdown][0].toggle();
+        }
+        this.openDropdown = this.getDropdownReference(column);
+      } else {
+        if (this.openDropdown === this.getDropdownReference(column)) {
+          this.openDropdown = null;
+        }
+      }
+    },
+
+    closeDropdown(column) {
+      if (this.openDropdown) {
+        this.$refs[this.getDropdownReference(column)][0].toggle();
+        this.openDropdown = null;
+      }
+    },
+
+    columndragstart(payload) {
+      this.draggingColumnIndex = payload.index;
+      payload.event.dataTransfer.effectAllowed = "copy";
+    },
+    columndragover(payload) {
+      payload.event.dataTransfer.dropEffect = "copy";
+      payload.event.target.closest("th").classList.add("is-selected");
+      payload.event.preventDefault();
+    },
+    columndragleave(payload) {
+      payload.event.target.closest("th").classList.remove("is-selected");
+      payload.event.preventDefault();
+    },
+    async columndrop(payload) {
+      payload.event.target.closest("th").classList.remove("is-selected");
+      const droppedOnColumnIndex = payload.index;
+
+      const draggingColumn = this.columns[this.draggingColumnIndex];
+      const droppedColumn = this.columns[droppedOnColumnIndex];
+
+      await this.changeLabel(draggingColumn, droppedColumn.label);
+      await this.changeLabel(droppedColumn, draggingColumn.label);
+
+      // const column = this.columns[this.draggingColumnIndex];
+      // this.columns.splice(this.draggingColumnIndex, 1);
+      // this.columns.splice(droppedOnColumnIndex, 0, column);
+      // this.handleRows();
     },
   },
 };

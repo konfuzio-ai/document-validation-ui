@@ -1083,11 +1083,21 @@ const mutations = {
           (existingAnnotation) => existingAnnotation.id === annotation.id
         );
         if (indexOfAnnotationAnnotationSets > -1) {
-          label.annotations.splice(
-            indexOfAnnotationAnnotationSets,
-            1,
-            annotation
-          );
+          // checks if an annotation label was changed and add it to the new label
+          if (annotation.label && annotation.label.id !== label.id) {
+            label.annotations.splice(indexOfAnnotationAnnotationSets, 1);
+
+            const labelToAdd = annotationSet.labels.find(
+              (labelToAdd) => labelToAdd.id === annotation.label.id
+            );
+            labelToAdd.annotations.push(annotation);
+          } else {
+            label.annotations.splice(
+              indexOfAnnotationAnnotationSets,
+              1,
+              annotation
+            );
+          }
           updatedAnnotation = true;
           return;
         }
