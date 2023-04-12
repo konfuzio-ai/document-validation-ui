@@ -42,12 +42,14 @@ $text-color: #1a1a1a;
 :root {
   --primary-color: #{$konfuzio-green};
   --primary-button: 4px;
+  --top-bar-background: #{$white};
 }
 
 $primary: var(--primary-color);
 $hover-style: brightness(0.8) contrast(160%) grayscale(0.4);
 $font-family: "Inter", sans-serif;
 $background: $white;
+$top-bar-background: var(--top-bar-background);
 $toolbar: $text-color;
 $tooltip: $dark;
 $toolbar-elements: $white;
