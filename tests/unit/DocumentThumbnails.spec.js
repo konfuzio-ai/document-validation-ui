@@ -12,7 +12,7 @@ describe("Document Thumbnails Component", () => {
       annotations.push(...label.annotations);
     });
   });
-  const documentData = require("../mock/document_data.json");
+  const documentData = require("../mock/document.json");
   const pages = [
     require("../mock/page_1.json"),
     require("../mock/page_2.json"),

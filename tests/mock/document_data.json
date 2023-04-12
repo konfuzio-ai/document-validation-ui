@@ -1,17 +1,19 @@
 {
-  "id": 21310,
+  "id": 1369630,
   "project": 5,
   "number_of_pages": 2,
   "data_file_name": "3AVAWS.pdf",
-  "file_url": "/doc/show/21310/",
-  "thumbnail_url": "/page/show-thumbnail/64434/",
-  "ocr_time": 14.6129915714264,
+  "file_url": "/doc/show/1369630/",
+  "thumbnail_url": "/page/show-thumbnail/71910/",
+  "ocr_time": 23.40655827522278,
   "categorization_time": null,
-  "extraction_time": 10.8643732070923,
-  "extraction_url": "https://testing.konfuzio.com/api/v1/docs/21310/",
+  "extraction_time": 13.693226337432861,
+  "processing_time": 39.297420024871826,
+  "extraction_url": "https://testing.konfuzio.com/api/v1/docs/1369630/",
   "callback_url": null,
   "callback_status_code": null,
-  "category_confidence": 0.386661410331726,
+  "category_confidence": 1,
+  "category_is_revised": false,
   "status_data": 2,
   "labeling_available": 1,
   "is_reviewed": false,
@@ -20,28 +22,361 @@
   "dataset_status": 0,
   "pages": [
     {
-      "id": 64434,
+      "id": 71910,
       "number": 1,
-      "image_url": "/page/show-image/64434/",
-      "thumbnail_url": "/page/show-thumbnail/64434/",
+      "image_url": "/page/show-image/71910/",
+      "thumbnail_url": "/page/show-thumbnail/71910/",
       "original_size": [595.0008, 835.9992],
       "size": [1032, 1451]
     },
     {
-      "id": 64435,
+      "id": 71911,
       "number": 2,
-      "image_url": "/page/show-image/64435/",
-      "thumbnail_url": "/page/show-thumbnail/64435/",
+      "image_url": "/page/show-image/71911/",
+      "thumbnail_url": "/page/show-thumbnail/71911/",
       "original_size": [595.0008, 835.9992],
       "size": [1032, 1451]
     }
   ],
   "annotation_sets": [
     {
-      "id": 75756,
+      "id": 92316,
+      "label_set": {
+        "id": 31,
+        "name": "Zahlungsposition",
+        "api_name": "Zahlungsposition",
+        "description": null,
+        "has_multiple_annotation_sets": true
+      },
+      "labels": [
+        {
+          "id": 92,
+          "name": "Position",
+          "api_name": "Position",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509283,
+              "document": 1369630,
+              "offset_string": "Fahrkarte",
+              "offset_string_original": "Fahrkarte",
+              "translated_string": null,
+              "normalized": "Fahrkarte",
+              "confidence": 0.8499576057814899,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 38.736,
+                  "y0": 629.5464,
+                  "x1": 73.5984,
+                  "y1": 638.0712,
+                  "page_index": 0,
+                  "start_offset": 602,
+                  "end_offset": 611,
+                  "offset_string": "Fahrkarte",
+                  "offset_string_original": "Fahrkarte"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 38.736,
+                "y0": 629.5464,
+                "x1": 73.5984,
+                "y1": 638.0712,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509281,
+              "document": 1369630,
+              "offset_string": "1",
+              "offset_string_original": "1",
+              "translated_string": null,
+              "normalized": "1",
+              "confidence": 0.8599803723839154,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 120.8592,
+                  "y0": 630.3168,
+                  "x1": 124.7328,
+                  "y1": 637.2936,
+                  "page_index": 0,
+                  "start_offset": 622,
+                  "end_offset": 623,
+                  "offset_string": "1",
+                  "offset_string_original": "1"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 120.8592,
+                "y0": 630.3168,
+                "x1": 124.7328,
+                "y1": 637.2936,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
+          "id": 94,
+          "name": "Preis",
+          "api_name": "Preis",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509287,
+              "document": 1369630,
+              "offset_string": "5,10€",
+              "offset_string_original": "5,10€",
+              "translated_string": null,
+              "normalized": "5,10€",
+              "confidence": 0.7999779474410336,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 149.5224,
+                  "y0": 629.5464,
+                  "x1": 169.6824,
+                  "y1": 638.0712,
+                  "page_index": 0,
+                  "start_offset": 629,
+                  "end_offset": 634,
+                  "offset_string": "5,10€",
+                  "offset_string_original": "5,10€"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 149.5224,
+                "y0": 629.5464,
+                "x1": 169.6824,
+                "y1": 638.0712,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 92317,
+      "label_set": {
+        "id": 32,
+        "name": "Zahlungsmethode",
+        "api_name": "Zahlungsmethode",
+        "description": null,
+        "has_multiple_annotation_sets": false
+      },
+      "labels": [
+        {
+          "id": 88,
+          "name": "Datum",
+          "api_name": "Datum",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509277,
+              "document": 1369630,
+              "offset_string": "13.07.2016",
+              "offset_string_original": "13.07.2016",
+              "translated_string": null,
+              "normalized": "2016-07-13",
+              "confidence": 0.92,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 78.2496,
+                  "y0": 587.6784,
+                  "x1": 118.5696,
+                  "y1": 596.9808,
+                  "page_index": 0,
+                  "start_offset": 983,
+                  "end_offset": 993,
+                  "offset_string": "13.07.2016",
+                  "offset_string_original": "13.07.2016"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 78.2496,
+                "y0": 587.6784,
+                "x1": 118.5696,
+                "y1": 596.9808,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
+          "id": 97,
+          "name": "Zahlungsbetrag",
+          "api_name": "Zahlungsbetrag",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509289,
+              "document": 1369630,
+              "offset_string": "5.10€",
+              "offset_string_original": "5.10€",
+              "translated_string": null,
+              "normalized": 5.1,
+              "confidence": 0.7499813618000334,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 77.472,
+                  "y0": 597.7584,
+                  "x1": 99.18,
+                  "y1": 607.0608,
+                  "page_index": 0,
+                  "start_offset": 873,
+                  "end_offset": 878,
+                  "offset_string": "5.10€",
+                  "offset_string_original": "5.10€"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 77.472,
+                "y0": 597.7584,
+                "x1": 99.18,
+                "y1": 607.0608,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
+          "id": 96,
+          "name": "Transaktions-Nr",
+          "api_name": "Transaktions-Nr",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509291,
+              "document": 1369630,
+              "offset_string": "272505",
+              "offset_string_original": "272505",
+              "translated_string": null,
+              "normalized": "272505",
+              "confidence": 0.55,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 304.4736,
+                  "y0": 597.7584,
+                  "x1": 331.6032,
+                  "y1": 607.0608,
+                  "page_index": 0,
+                  "start_offset": 926,
+                  "end_offset": 932,
+                  "offset_string": "272505",
+                  "offset_string_original": "272505"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 304.4736,
+                "y0": 597.7584,
+                "x1": 331.6032,
+                "y1": 607.0608,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
+          "id": 95,
+          "name": "Zahlungsmethode",
+          "api_name": "Zahlungsmethode",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509293,
+              "document": 1369630,
+              "offset_string": "Kreditkartenzahlung",
+              "offset_string_original": "Kreditkartenzahlung",
+              "translated_string": null,
+              "normalized": "Kreditkartenzahlung",
+              "confidence": 0.4199896019529856,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 38.736,
+                  "y0": 606.2832,
+                  "x1": 116.1648,
+                  "y1": 616.3632,
+                  "page_index": 0,
+                  "start_offset": 769,
+                  "end_offset": 788,
+                  "offset_string": "Kreditkartenzahlung",
+                  "offset_string_original": "Kreditkartenzahlung"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 38.736,
+                "y0": 606.2832,
+                "x1": 116.1648,
+                "y1": 616.3632,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 92313,
       "label_set": {
         "id": 29,
         "name": "Fahrgast",
+        "api_name": "Fahrgast",
         "description": "",
         "has_multiple_annotation_sets": false
       },
@@ -54,15 +389,16 @@
           "has_multiple_top_candidates": true,
           "annotations": [
             {
-              "id": 422364,
-              "document": 21310,
+              "id": 509295,
+              "document": 1369630,
               "offset_string": "Herr",
               "offset_string_original": "Herr",
               "translated_string": null,
               "normalized": "Herr",
-              "confidence": 0.179997700056761,
-              "is_correct": true,
+              "confidence": 0.17999770005676086,
+              "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -90,12 +426,48 @@
           ]
         },
         {
-          "id": 93,
-          "name": "Anzahl",
-          "api_name": "Anzahl",
-          "description": "",
+          "id": 78,
+          "name": "Vorname",
+          "api_name": "Vorname",
+          "description": "Der Vorname des Arbeitnehmers.",
           "has_multiple_top_candidates": false,
-          "annotations": []
+          "annotations": [
+            {
+              "id": 509294,
+              "document": 1369630,
+              "offset_string": "Florian",
+              "offset_string_original": "Florian",
+              "translated_string": null,
+              "normalized": "Florian",
+              "confidence": 0.2699902202451685,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 385.0488,
+                  "y0": 554.3424,
+                  "x1": 416.8008,
+                  "y1": 566.7408,
+                  "page_index": 0,
+                  "start_offset": 1392,
+                  "end_offset": 1399,
+                  "offset_string": "Florian",
+                  "offset_string_original": "Florian"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 385.0488,
+                "y0": 554.3424,
+                "x1": 416.8008,
+                "y1": 566.7408,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
         },
         {
           "id": 79,
@@ -105,15 +477,16 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422361,
-              "document": 21310,
+              "id": 509292,
+              "document": 1369630,
               "offset_string": "Zyprian",
               "offset_string_original": "Zyprian",
               "translated_string": null,
               "normalized": "Zyprian",
-              "confidence": 0.459977240633958,
+              "confidence": 0.45997724063395806,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -141,95 +514,62 @@
           ]
         },
         {
-          "id": 78,
-          "name": "Vorname",
-          "api_name": "Vorname",
-          "description": "Der Vorname des Arbeitnehmers.",
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "description": "",
           "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422363,
-              "document": 21310,
-              "offset_string": "Florian",
-              "offset_string_original": "Florian",
-              "translated_string": null,
-              "normalized": "Florian",
-              "confidence": 0.269990220245168,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 385.0488,
-                  "y0": 554.3424,
-                  "x1": 416.8008,
-                  "y1": 566.7408,
-                  "page_index": 0,
-                  "start_offset": 1392,
-                  "end_offset": 1399,
-                  "offset_string": "Florian",
-                  "offset_string_original": "Florian"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 385.0488,
-                "y0": 554.3424,
-                "x1": 416.8008,
-                "y1": 566.7408,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
+          "annotations": []
         }
       ]
     },
     {
-      "id": 75757,
+      "id": 92314,
       "label_set": {
         "id": 30,
         "name": "Reiseverbindung",
+        "api_name": "Reiseverbindung",
         "description": null,
         "has_multiple_annotation_sets": true
       },
       "labels": [
         {
-          "id": 91,
-          "name": "Abfahrt/Ankunft",
-          "api_name": "Abfahrt/Ankunft",
+          "id": 98,
+          "name": "Produkt",
+          "api_name": "Produkt",
           "description": "",
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422345,
-              "document": 21310,
-              "offset_string": "ab",
-              "offset_string_original": "ab",
+              "id": 509288,
+              "document": 1369630,
+              "offset_string": "RE 57030",
+              "offset_string_original": "RE 57030",
               "translated_string": null,
-              "normalized": "ab",
-              "confidence": 0.92,
+              "normalized": "RE 57030",
+              "confidence": 0.77,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
                 {
-                  "x0": 207.6336,
-                  "y0": 481.464,
-                  "x1": 218.4768,
+                  "x0": 293.6232,
+                  "y0": 480.6864,
+                  "x1": 333.9216,
                   "y1": 490.7664,
                   "page_index": 0,
-                  "start_offset": 1934,
-                  "end_offset": 1936,
-                  "offset_string": "ab",
-                  "offset_string_original": "ab"
+                  "start_offset": 1953,
+                  "end_offset": 1961,
+                  "offset_string": "RE 57030",
+                  "offset_string_original": "RE 57030"
                 }
               ],
               "selection_bbox": {
-                "x0": 207.6336,
-                "y0": 481.464,
-                "x1": 218.4768,
+                "x0": 293.6232,
+                "y0": 480.6864,
+                "x1": 333.9216,
                 "y1": 490.7664,
                 "page_index": 0
               },
@@ -245,8 +585,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422349,
-              "document": 21310,
+              "id": 509280,
+              "document": 1369630,
               "offset_string": "München-Pasing",
               "offset_string_original": "München-Pasing",
               "translated_string": null,
@@ -254,6 +594,7 @@
               "confidence": 0.86,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -288,8 +629,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422355,
-              "document": 21310,
+              "id": 509286,
+              "document": 1369630,
               "offset_string": "13.07.",
               "offset_string_original": "13.07.",
               "translated_string": null,
@@ -297,6 +638,7 @@
               "confidence": 0.82,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -324,6 +666,50 @@
           ]
         },
         {
+          "id": 89,
+          "name": "Zeit",
+          "api_name": "Zeit",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509284,
+              "document": 1369630,
+              "offset_string": "14:05",
+              "offset_string_original": "14:05",
+              "translated_string": null,
+              "normalized": "14:05",
+              "confidence": 0.84,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 220.8024,
+                  "y0": 481.464,
+                  "x1": 243.2664,
+                  "y1": 491.5368,
+                  "page_index": 0,
+                  "start_offset": 1937,
+                  "end_offset": 1942,
+                  "offset_string": "14:05",
+                  "offset_string_original": "14:05"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 220.8024,
+                "y0": 481.464,
+                "x1": 243.2664,
+                "y1": 491.5368,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
           "id": 90,
           "name": "Gleis",
           "api_name": "Gleis",
@@ -331,8 +717,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422347,
-              "document": 21310,
+              "id": 509278,
+              "document": 1369630,
               "offset_string": "10",
               "offset_string_original": "10",
               "translated_string": null,
@@ -340,6 +726,7 @@
               "confidence": 0.91,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -367,85 +754,43 @@
           ]
         },
         {
-          "id": 98,
-          "name": "Produkt",
-          "api_name": "Produkt",
+          "id": 91,
+          "name": "Abfahrt/Ankunft",
+          "api_name": "Abfahrt/Ankunft",
           "description": "",
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422357,
-              "document": 21310,
-              "offset_string": "RE 57030",
-              "offset_string_original": "RE 57030",
+              "id": 509276,
+              "document": 1369630,
+              "offset_string": "ab",
+              "offset_string_original": "ab",
               "translated_string": null,
-              "normalized": "RE 57030",
-              "confidence": 0.77,
+              "normalized": "ab",
+              "confidence": 0.92,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
                 {
-                  "x0": 293.6232,
-                  "y0": 480.6864,
-                  "x1": 333.9216,
+                  "x0": 207.6336,
+                  "y0": 481.464,
+                  "x1": 218.4768,
                   "y1": 490.7664,
                   "page_index": 0,
-                  "start_offset": 1953,
-                  "end_offset": 1961,
-                  "offset_string": "RE 57030",
-                  "offset_string_original": "RE 57030"
+                  "start_offset": 1934,
+                  "end_offset": 1936,
+                  "offset_string": "ab",
+                  "offset_string_original": "ab"
                 }
               ],
               "selection_bbox": {
-                "x0": 293.6232,
-                "y0": 480.6864,
-                "x1": 333.9216,
-                "y1": 490.7664,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 89,
-          "name": "Zeit",
-          "api_name": "Zeit",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422353,
-              "document": 21310,
-              "offset_string": "14:05",
-              "offset_string_original": "14:05",
-              "translated_string": null,
-              "normalized": "14:05",
-              "confidence": 0.84,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 220.8024,
-                  "y0": 481.464,
-                  "x1": 243.2664,
-                  "y1": 491.5368,
-                  "page_index": 0,
-                  "start_offset": 1937,
-                  "end_offset": 1942,
-                  "offset_string": "14:05",
-                  "offset_string_original": "14:05"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 220.8024,
+                "x0": 207.6336,
                 "y0": 481.464,
-                "x1": 243.2664,
-                "y1": 491.5368,
+                "x1": 218.4768,
+                "y1": 490.7664,
                 "page_index": 0
               },
               "custom_offset_string": false
@@ -455,56 +800,22 @@
       ]
     },
     {
-      "id": 75758,
+      "id": 92315,
       "label_set": {
         "id": 30,
         "name": "Reiseverbindung",
+        "api_name": "Reiseverbindung",
         "description": null,
         "has_multiple_annotation_sets": true
       },
       "labels": [
         {
-          "id": 91,
-          "name": "Abfahrt/Ankunft",
-          "api_name": "Abfahrt/Ankunft",
+          "id": 98,
+          "name": "Produkt",
+          "api_name": "Produkt",
           "description": "",
           "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422351,
-              "document": 21310,
-              "offset_string": "an",
-              "offset_string_original": "an",
-              "translated_string": null,
-              "normalized": "an",
-              "confidence": 0.85,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 206.856,
-                  "y0": 470.6064,
-                  "x1": 218.4768,
-                  "y1": 479.9088,
-                  "page_index": 0,
-                  "start_offset": 2010,
-                  "end_offset": 2012,
-                  "offset_string": "an",
-                  "offset_string_original": "an"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 206.856,
-                "y0": 470.6064,
-                "x1": 218.4768,
-                "y1": 479.9088,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
+          "annotations": []
         },
         {
           "id": 87,
@@ -514,8 +825,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422354,
-              "document": 21310,
+              "id": 509285,
+              "document": 1369630,
               "offset_string": "Augsburg-Hochzoll",
               "offset_string_original": "Augsburg-Hochzoll",
               "translated_string": null,
@@ -523,6 +834,7 @@
               "confidence": 0.83,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -557,8 +869,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422359,
-              "document": 21310,
+              "id": 509290,
+              "document": 1369630,
               "offset_string": "13.07.",
               "offset_string_original": "13.07.",
               "translated_string": null,
@@ -566,6 +878,7 @@
               "confidence": 0.68,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -593,6 +906,50 @@
           ]
         },
         {
+          "id": 89,
+          "name": "Zeit",
+          "api_name": "Zeit",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": [
+            {
+              "id": 509279,
+              "document": 1369630,
+              "offset_string": "14:36",
+              "offset_string_original": "14:36",
+              "translated_string": null,
+              "normalized": "14:36",
+              "confidence": 0.88,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 220.8024,
+                  "y0": 470.6064,
+                  "x1": 244.0584,
+                  "y1": 479.9088,
+                  "page_index": 0,
+                  "start_offset": 2013,
+                  "end_offset": 2018,
+                  "offset_string": "14:36",
+                  "offset_string_original": "14:36"
+                }
+              ],
+              "selection_bbox": {
+                "x0": 220.8024,
+                "y0": 470.6064,
+                "x1": 244.0584,
+                "y1": 479.9088,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            }
+          ]
+        },
+        {
           "id": 90,
           "name": "Gleis",
           "api_name": "Gleis",
@@ -600,8 +957,8 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422344,
-              "document": 21310,
+              "id": 509275,
+              "document": 1369630,
               "offset_string": "3",
               "offset_string_original": "3",
               "translated_string": null,
@@ -609,6 +966,7 @@
               "confidence": 0.96,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -636,49 +994,42 @@
           ]
         },
         {
-          "id": 98,
-          "name": "Produkt",
-          "api_name": "Produkt",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": []
-        },
-        {
-          "id": 89,
-          "name": "Zeit",
-          "api_name": "Zeit",
+          "id": 91,
+          "name": "Abfahrt/Ankunft",
+          "api_name": "Abfahrt/Ankunft",
           "description": "",
           "has_multiple_top_candidates": false,
           "annotations": [
             {
-              "id": 422348,
-              "document": 21310,
-              "offset_string": "14:36",
-              "offset_string_original": "14:36",
+              "id": 509282,
+              "document": 1369630,
+              "offset_string": "an",
+              "offset_string_original": "an",
               "translated_string": null,
-              "normalized": "14:36",
-              "confidence": 0.88,
+              "normalized": "an",
+              "confidence": 0.85,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
                 {
-                  "x0": 220.8024,
+                  "x0": 206.856,
                   "y0": 470.6064,
-                  "x1": 244.0584,
+                  "x1": 218.4768,
                   "y1": 479.9088,
                   "page_index": 0,
-                  "start_offset": 2013,
-                  "end_offset": 2018,
-                  "offset_string": "14:36",
-                  "offset_string_original": "14:36"
+                  "start_offset": 2010,
+                  "end_offset": 2012,
+                  "offset_string": "an",
+                  "offset_string_original": "an"
                 }
               ],
               "selection_bbox": {
-                "x0": 220.8024,
+                "x0": 206.856,
                 "y0": 470.6064,
-                "x1": 244.0584,
+                "x1": 218.4768,
                 "y1": 479.9088,
                 "page_index": 0
               },
@@ -689,333 +1040,11 @@
       ]
     },
     {
-      "id": 75760,
-      "label_set": {
-        "id": 32,
-        "name": "Zahlungsmethode",
-        "description": null,
-        "has_multiple_annotation_sets": false
-      },
-      "labels": [
-        {
-          "id": 88,
-          "name": "Datum",
-          "api_name": "Datum",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422346,
-              "document": 21310,
-              "offset_string": "13.07.2016",
-              "offset_string_original": "13.07.2016",
-              "translated_string": null,
-              "normalized": "2016-07-13",
-              "confidence": 0.92,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 78.2496,
-                  "y0": 587.6784,
-                  "x1": 118.5696,
-                  "y1": 596.9808,
-                  "page_index": 0,
-                  "start_offset": 983,
-                  "end_offset": 993,
-                  "offset_string": "13.07.2016",
-                  "offset_string_original": "13.07.2016"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 78.2496,
-                "y0": 587.6784,
-                "x1": 118.5696,
-                "y1": 596.9808,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 96,
-          "name": "Transaktions-Nr",
-          "api_name": "Transaktions-Nr",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422360,
-              "document": 21310,
-              "offset_string": "272505",
-              "offset_string_original": "272505",
-              "translated_string": null,
-              "normalized": "272505",
-              "confidence": 0.55,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 304.4736,
-                  "y0": 597.7584,
-                  "x1": 331.6032,
-                  "y1": 607.0608,
-                  "page_index": 0,
-                  "start_offset": 926,
-                  "end_offset": 932,
-                  "offset_string": "272505",
-                  "offset_string_original": "272505"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 304.4736,
-                "y0": 597.7584,
-                "x1": 331.6032,
-                "y1": 607.0608,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 97,
-          "name": "Zahlungsbetrag",
-          "api_name": "Zahlungsbetrag",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422358,
-              "document": 21310,
-              "offset_string": "5.10€",
-              "offset_string_original": "5.10€",
-              "translated_string": null,
-              "normalized": 5.1,
-              "confidence": 0.749981361800033,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 77.472,
-                  "y0": 597.7584,
-                  "x1": 99.18,
-                  "y1": 607.0608,
-                  "page_index": 0,
-                  "start_offset": 873,
-                  "end_offset": 878,
-                  "offset_string": "5.10€",
-                  "offset_string_original": "5.10€"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 77.472,
-                "y0": 597.7584,
-                "x1": 99.18,
-                "y1": 607.0608,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 95,
-          "name": "Zahlungsmethode",
-          "api_name": "Zahlungsmethode",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422362,
-              "document": 21310,
-              "offset_string": "Kreditkartenzahlung",
-              "offset_string_original": "Kreditkartenzahlung",
-              "translated_string": null,
-              "normalized": "Kreditkartenzahlung",
-              "confidence": 0.419989601952986,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 38.736,
-                  "y0": 606.2832,
-                  "x1": 116.1648,
-                  "y1": 616.3632,
-                  "page_index": 0,
-                  "start_offset": 769,
-                  "end_offset": 788,
-                  "offset_string": "Kreditkartenzahlung",
-                  "offset_string_original": "Kreditkartenzahlung"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 38.736,
-                "y0": 606.2832,
-                "x1": 116.1648,
-                "y1": 616.3632,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 75759,
-      "label_set": {
-        "id": 31,
-        "name": "Zahlungsposition",
-        "description": null,
-        "has_multiple_annotation_sets": true
-      },
-      "labels": [
-        {
-          "id": 93,
-          "name": "Anzahl",
-          "api_name": "Anzahl",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422350,
-              "document": 21310,
-              "offset_string": "1",
-              "offset_string_original": "1",
-              "translated_string": null,
-              "normalized": "1",
-              "confidence": 0.859980372383915,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 120.8592,
-                  "y0": 630.3168,
-                  "x1": 124.7328,
-                  "y1": 637.2936,
-                  "page_index": 0,
-                  "start_offset": 622,
-                  "end_offset": 623,
-                  "offset_string": "1",
-                  "offset_string_original": "1"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 120.8592,
-                "y0": 630.3168,
-                "x1": 124.7328,
-                "y1": 637.2936,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 92,
-          "name": "Position",
-          "api_name": "Position",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422352,
-              "document": 21310,
-              "offset_string": "Fahrkarte",
-              "offset_string_original": "Fahrkarte",
-              "translated_string": null,
-              "normalized": "Fahrkarte",
-              "confidence": 0.84995760578149,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 38.736,
-                  "y0": 629.5464,
-                  "x1": 73.5984,
-                  "y1": 638.0712,
-                  "page_index": 0,
-                  "start_offset": 602,
-                  "end_offset": 611,
-                  "offset_string": "Fahrkarte",
-                  "offset_string_original": "Fahrkarte"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 38.736,
-                "y0": 629.5464,
-                "x1": 73.5984,
-                "y1": 638.0712,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        },
-        {
-          "id": 94,
-          "name": "Preis",
-          "api_name": "Preis",
-          "description": "",
-          "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 422356,
-              "document": 21310,
-              "offset_string": "5,10€",
-              "offset_string_original": "5,10€",
-              "translated_string": null,
-              "normalized": "5,10€",
-              "confidence": 0.799977947441034,
-              "is_correct": false,
-              "revised": false,
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 149.5224,
-                  "y0": 629.5464,
-                  "x1": 169.6824,
-                  "y1": 638.0712,
-                  "page_index": 0,
-                  "start_offset": 629,
-                  "end_offset": 634,
-                  "offset_string": "5,10€",
-                  "offset_string_original": "5,10€"
-                }
-              ],
-              "selection_bbox": {
-                "x0": 149.5224,
-                "y0": 629.5464,
-                "x1": 169.6824,
-                "y1": 638.0712,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 75755,
+      "id": 92312,
       "label_set": {
         "id": 27,
-        "name": "Zugticket",
+        "name": "Online-Ticket",
+        "api_name": "online-ticket",
         "description": "Description of the category. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         "has_multiple_annotation_sets": false
       },
@@ -1028,8 +1057,8 @@
           "has_multiple_top_candidates": true,
           "annotations": [
             {
-              "id": 422366,
-              "document": 21310,
+              "id": 509297,
+              "document": 1369630,
               "offset_string": "Lichtbildausweis",
               "offset_string_original": "Lichtbildausweis",
               "translated_string": null,
@@ -1037,6 +1066,7 @@
               "confidence": 0.11,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -1062,8 +1092,8 @@
               "custom_offset_string": false
             },
             {
-              "id": 422365,
-              "document": 21310,
+              "id": 509296,
+              "document": 1369630,
               "offset_string": "Verkaufsstelle",
               "offset_string_original": "Verkaufsstelle",
               "translated_string": null,
@@ -1071,6 +1101,7 @@
               "confidence": 0.14,
               "is_correct": false,
               "revised": false,
+              "origin": "extraction",
               "created_by": null,
               "revised_by": null,
               "span": [
@@ -1100,10 +1131,275 @@
       ]
     },
     {
+      "id": 92306,
+      "label_set": {
+        "id": 27,
+        "name": "Online-Ticket",
+        "api_name": "online-ticket",
+        "description": "Description of the category. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "has_multiple_annotation_sets": false
+      },
+      "labels": [
+        {
+          "id": 99,
+          "name": "Identifikationsnachweis",
+          "api_name": "Identifikationsnachweis",
+          "description": "Fahrkarte gilt nur in Zusammenhang mit einem Identifikationsnachweis in dieser Form.",
+          "has_multiple_top_candidates": true,
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": 92311,
+      "label_set": {
+        "id": 32,
+        "name": "Zahlungsmethode",
+        "api_name": "Zahlungsmethode",
+        "description": null,
+        "has_multiple_annotation_sets": false
+      },
+      "labels": [
+        {
+          "id": 88,
+          "name": "Datum",
+          "api_name": "Datum",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 97,
+          "name": "Zahlungsbetrag",
+          "api_name": "Zahlungsbetrag",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 96,
+          "name": "Transaktions-Nr",
+          "api_name": "Transaktions-Nr",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 95,
+          "name": "Zahlungsmethode",
+          "api_name": "Zahlungsmethode",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": 92310,
+      "label_set": {
+        "id": 31,
+        "name": "Zahlungsposition",
+        "api_name": "Zahlungsposition",
+        "description": null,
+        "has_multiple_annotation_sets": true
+      },
+      "labels": [
+        {
+          "id": 92,
+          "name": "Position",
+          "api_name": "Position",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 94,
+          "name": "Preis",
+          "api_name": "Preis",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": 92309,
+      "label_set": {
+        "id": 30,
+        "name": "Reiseverbindung",
+        "api_name": "Reiseverbindung",
+        "description": null,
+        "has_multiple_annotation_sets": true
+      },
+      "labels": [
+        {
+          "id": 98,
+          "name": "Produkt",
+          "api_name": "Produkt",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 87,
+          "name": "Bahnhof",
+          "api_name": "Bahnhof",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 88,
+          "name": "Datum",
+          "api_name": "Datum",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 89,
+          "name": "Zeit",
+          "api_name": "Zeit",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 90,
+          "name": "Gleis",
+          "api_name": "Gleis",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 91,
+          "name": "Abfahrt/Ankunft",
+          "api_name": "Abfahrt/Ankunft",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": 92308,
+      "label_set": {
+        "id": 30,
+        "name": "Reiseverbindung",
+        "api_name": "Reiseverbindung",
+        "description": null,
+        "has_multiple_annotation_sets": true
+      },
+      "labels": [
+        {
+          "id": 98,
+          "name": "Produkt",
+          "api_name": "Produkt",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 87,
+          "name": "Bahnhof",
+          "api_name": "Bahnhof",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 88,
+          "name": "Datum",
+          "api_name": "Datum",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 89,
+          "name": "Zeit",
+          "api_name": "Zeit",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 90,
+          "name": "Gleis",
+          "api_name": "Gleis",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 91,
+          "name": "Abfahrt/Ankunft",
+          "api_name": "Abfahrt/Ankunft",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": 92307,
+      "label_set": {
+        "id": 29,
+        "name": "Fahrgast",
+        "api_name": "Fahrgast",
+        "description": "",
+        "has_multiple_annotation_sets": false
+      },
+      "labels": [
+        {
+          "id": 82,
+          "name": "Anrede",
+          "api_name": "Anrede",
+          "description": "Herr/Frau",
+          "has_multiple_top_candidates": true,
+          "annotations": []
+        },
+        {
+          "id": 78,
+          "name": "Vorname",
+          "api_name": "Vorname",
+          "description": "Der Vorname des Arbeitnehmers.",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 79,
+          "name": "Nachname",
+          "api_name": "Nachname",
+          "description": "Der Nachname des Arbeitnehmers.",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        },
+        {
+          "id": 93,
+          "name": "Anzahl",
+          "api_name": "Anzahl",
+          "description": "",
+          "has_multiple_top_candidates": false,
+          "annotations": []
+        }
+      ]
+    },
+    {
       "id": null,
       "label_set": {
         "id": 52,
         "name": "Person",
+        "api_name": "person",
         "description": "",
         "has_multiple_annotation_sets": false
       },
@@ -1121,6 +1417,6 @@
   ],
   "assignee": null,
   "created_by": "vebarina@gmail.com",
-  "created_at": "2022-11-29T11:17:45.049486+01:00",
-  "updated_at": "2022-11-29T11:18:19.264453+01:00"
+  "created_at": "2023-04-12T10:26:53.991220+02:00",
+  "updated_at": "2023-04-12T10:27:33.829542+02:00"
 }

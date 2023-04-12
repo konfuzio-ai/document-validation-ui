@@ -11,7 +11,7 @@ const $t = () => {};
 
 describe("Document Top Bar", () => {
   // Set file name
-  const documentData = require("../mock/document_data.json");
+  const documentData = require("../mock/document.json");
   const pages = [
     require("../mock/page_1.json"),
     require("../mock/page_2.json"),
@@ -23,7 +23,7 @@ describe("Document Top Bar", () => {
       store.dispatch("document/setSelectedDocument", documentData),
       store.dispatch(
         "document/setAnnotationSets",
-        require("../mock/document_data.json").annotation_sets
+        require("../mock/document.json").annotation_sets
       ),
       store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
