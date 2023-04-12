@@ -27,10 +27,7 @@
     </div>
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
-    <MultiAnnotationTableOverlay
-      v-if="testAnnotationsSets"
-      :annotations-sets="testAnnotationsSets"
-    />
+    <MultiAnnotationTableOverlay v-if="showAnnSetTable" />
   </div>
 </template>
 <script>
@@ -78,6 +75,7 @@ export default {
       "documentActionBar",
       "pageChangedFromThumbnail",
       "currentPage",
+      "showAnnSetTable",
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
 
@@ -103,18 +101,6 @@ export default {
   watch: {
     loading() {
       this.scrollTop = 0;
-    },
-    annotationSets(newValue) {
-      if (newValue) {
-        this.testAnnotationsSets = [
-          this.$store.state.document.annotationSets[3],
-          this.$store.state.document.annotationSets[4],
-          this.$store.state.document.annotationSets[5],
-          this.$store.state.document.annotationSets[6],
-          this.$store.state.document.annotationSets[7],
-        ];
-        console.log(this.testAnnotationsSets);
-      }
     },
   },
   mounted() {

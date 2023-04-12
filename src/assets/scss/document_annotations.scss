@@ -68,6 +68,33 @@
           color: $text;
         }
       }
+
+      .ann-set-table {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        cursor: pointer;
+        .ann-set-table-icon {
+          padding: 4px 8px;
+          border-radius: 32px;
+          margin-left: 14px;
+          background: $purple-low-opacity;
+          display: flex;
+          width: fit-content;
+          align-items: center;
+          .ann-set-number {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            margin-left: 4px;
+          }
+        }
+        .ann-set-table-label-set-name {
+          margin-left: 8px;
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
     }
 
     .labels {

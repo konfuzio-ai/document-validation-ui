@@ -3,6 +3,7 @@ import { sleep } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
+export const table_reference_api = "api.v3.dvui.table";
 
 const state = {
   loading: true,
@@ -159,6 +160,58 @@ const getters = {
     return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
   },
 
+  /* Get annotation sets created in table */
+  annotationSetsInTable: (state) => () => {
+    const annotationSetsList = [];
+    state.annotationSets.forEach((annotationSet) => {
+      let addAnnotationSet = false;
+      if (annotationSet.labels) {
+        annotationSet.labels.forEach((label) => {
+          if (
+            label.annotations &&
+            label.annotations.find(
+              (annotation) =>
+                annotation.origin && annotation.origin === table_reference_api
+            )
+          ) {
+            addAnnotationSet = true;
+            return;
+          }
+        });
+      }
+      if (addAnnotationSet) {
+        annotationSetsList.push(annotationSet);
+      }
+    });
+    return annotationSetsList;
+  },
+
+  /* Get annotation sets without tables */
+  annotationSetsToShowInList: (state) => () => {
+    const annotationSetsList = [];
+    state.annotationSets.forEach((annotationSet) => {
+      let addAnnotationSet = true;
+      if (annotationSet.labels) {
+        annotationSet.labels.forEach((label) => {
+          if (
+            label.annotations &&
+            label.annotations.find(
+              (annotation) =>
+                annotation.origin && annotation.origin === table_reference_api
+            )
+          ) {
+            addAnnotationSet = false;
+            return;
+          }
+        });
+      }
+      if (addAnnotationSet) {
+        annotationSetsList.push(annotationSet);
+      }
+    });
+    return annotationSetsList;
+  },
+
   /* Process annotations and extract labels and sets */
   processAnnotationSets: (state, getters) => (annotationSets) => {
     // group annotations for sidebar
@@ -230,6 +283,7 @@ const getters = {
       });
       return found ? `${value + 1}` : "";
     }
+    return "";
   },
 
   /**

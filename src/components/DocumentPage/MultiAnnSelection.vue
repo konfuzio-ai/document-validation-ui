@@ -45,6 +45,7 @@
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
 import { ChooseLabelSetModal } from "../DocumentAnnotations";
+import { table_reference_api } from "../../store/document";
 
 export default {
   props: {
@@ -138,7 +139,7 @@ export default {
         customClass: "invisible-parent-modal",
         props: { isMultipleAnnotations: true },
         events: {
-          labelSet: this.chooseLabelSet,
+          labelSet: this.submitAnnotations,
         },
       });
     },
@@ -179,6 +180,7 @@ export default {
           revised: false,
           label_set: labelSet.id,
           set_reference: orderedEntity.row_index,
+          origin: table_reference_api,
         });
       });
 
@@ -194,6 +196,7 @@ export default {
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("error_creating_multi_ann"),
           });
+          this.$emit("finished");
         });
     },
 

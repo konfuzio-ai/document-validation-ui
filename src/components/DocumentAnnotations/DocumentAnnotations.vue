@@ -27,7 +27,25 @@
     <div v-else :class="['annotation-set-list']">
       <CategorizeModal v-if="!publicView || !documentIsReviewed" />
       <div
-        v-for="(annotationSet, indexGroup) in annotationSets"
+        v-if="annotationSetsInTable().length > 0"
+        class="annotation-set-group"
+      >
+        <div class="label-set-header">
+          <div class="label-set-name">{{ $t("table") }}</div>
+        </div>
+        <div class="ann-set-table" @click="openAnnotationSetTable()">
+          <div class="ann-set-table-icon">
+            <GridIcon /><span class="ann-set-number">{{
+              annotationSetsInTable().length
+            }}</span>
+          </div>
+          <span class="ann-set-table-label-set-name">{{
+            annotationSetsInTable()[0].label_set.name
+          }}</span>
+        </div>
+      </div>
+      <div
+        v-for="(annotationSet, indexGroup) in annotationSetsToShowInList()"
         :key="indexGroup"
         class="annotation-set-group"
       >
@@ -89,6 +107,7 @@ import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import LoadingAnnotations from "./LoadingAnnotations";
 import CategorizeModal from "./CategorizeModal";
+import GridIcon from "../../assets/images/GridIcon";
 
 /**
  * This component loads all annotations for one document
@@ -101,6 +120,7 @@ export default {
     DocumentLabel,
     LoadingAnnotations,
     CategorizeModal,
+    GridIcon,
   },
   data() {
     return {
@@ -130,6 +150,8 @@ export default {
       "emptyLabelsLength",
       "annotationsWithPendingReviewLength",
       "waitingForSplittingConfirmation",
+      "annotationSetsToShowInList",
+      "annotationSetsInTable",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -467,6 +489,10 @@ export default {
             });
           });
       }
+    },
+
+    openAnnotationSetTable() {
+      this.$store.dispatch("display/toggleAnnSetTable");
     },
   },
 };

@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 import AnnotationRow from "../DocumentAnnotations/AnnotationRow";
 import DraggableIcon from "../../assets/images/DraggableIcon";
 
@@ -92,13 +92,6 @@ export default {
   components: {
     AnnotationRow,
     DraggableIcon,
-  },
-  props: {
-    annotationsSets: {
-      required: true,
-      type: Array,
-      default: null,
-    },
   },
   data() {
     return {
@@ -110,7 +103,11 @@ export default {
       draggingColumnIndex: null,
     };
   },
-  computed: {},
+  computed: {
+    ...mapGetters("document", {
+      annotationsSets: "annotationSetsInTable",
+    }),
+  },
   mounted() {
     this.handleColumns();
     this.handleRows();
@@ -128,7 +125,7 @@ export default {
         );
       };
 
-      this.annotationsSets.forEach((annotationSet) => {
+      this.annotationsSets().forEach((annotationSet) => {
         annotationSet.labels.forEach((label) => {
           if (!labelAlreadyExists(label)) {
             const column = {
@@ -147,7 +144,7 @@ export default {
       this.rows = [];
       this.orderedAnnotations = [];
 
-      this.annotationsSets.forEach((annotationSet) => {
+      this.annotationsSets().forEach((annotationSet) => {
         let row = {};
 
         annotationSet.labels.forEach((label) => {
