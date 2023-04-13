@@ -149,7 +149,7 @@ const actions = {
     dispatch("document/startRecalculatingAnnotations", null, {
       root: true,
     });
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       HTTP.post(
         `/documents/${rootState.document.documentId}/postprocess/`,
         editedDocument
@@ -171,7 +171,7 @@ const actions = {
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });

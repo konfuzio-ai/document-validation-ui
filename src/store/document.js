@@ -811,16 +811,20 @@ const actions = {
   },
 
   fetchMissingAnnotations: ({ commit, state, getters }) => {
-    return HTTP.get(
-      `/missing-annotations/?document=${state.documentId}&limit=100`
-    )
-      .then((response) => {
-        commit("SET_MISSING_ANNOTATIONS", response.data.results);
-        commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    return new Promise((resolve, reject) => {
+      return HTTP.get(
+        `/missing-annotations/?document=${state.documentId}&limit=100`
+      )
+        .then((response) => {
+          commit("SET_MISSING_ANNOTATIONS", response.data.results);
+          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
+          resolve(true);
+        })
+        .catch((error) => {
+          reject(error.response);
+          console.log(error);
+        });
+    });
   },
 
   addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
@@ -842,7 +846,7 @@ const actions = {
   },
 
   deleteMissingAnnotation: ({ commit, getters, dispatch }, id) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       return HTTP.delete(`/missing-annotations/${id}/`)
         .then((response) => {
           if (response.status === 204) {
@@ -851,7 +855,7 @@ const actions = {
           }
         })
         .catch((error) => {
-          resolve(error.response);
+          reject(error.response);
           console.log(error);
         });
     });
@@ -899,6 +903,7 @@ const actions = {
           }
         })
         .catch((error) => {
+          reject(error.response);
           console.log(error);
         });
     });
