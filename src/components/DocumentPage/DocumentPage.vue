@@ -438,6 +438,9 @@ export default {
         return;
       }
       const image = new Image();
+      if (process.env.NODE_ENV === "test") {
+        return;
+      }
       api.IMG_REQUEST.get(
         `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
       )
