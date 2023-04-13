@@ -188,7 +188,7 @@ export default {
           (page) => page.id === item.pages[0].id
         );
 
-        if (firstPage.number === 1) {
+        if (firstPage.number === 1 && item.pages.length > 1) {
           // only add the active splitting line from the 1st page of the second document
           // since it's the first splitting point
           return;
