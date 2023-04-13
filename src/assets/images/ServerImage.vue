@@ -40,10 +40,6 @@ export default {
   methods: {
     loadImage() {
       if (!this.imageUrl) return;
-      // if (process.env.NODE_ENV === "test") {
-      //   this.loaded = true;
-      //   return "";
-      // }
       return api
         .makeImageRequest(this.imageUrl)
         .then((myBlob) => {
