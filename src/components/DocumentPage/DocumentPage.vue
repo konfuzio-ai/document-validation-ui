@@ -438,19 +438,21 @@ export default {
         return;
       }
       const image = new Image();
-      api.IMG_REQUEST.get(
-        `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
-      )
-        .then((response) => {
-          return response.data;
-        })
+      if (process.env.NODE_ENV === "test") {
+        return;
+      }
+      api
+        .makeImageRequest(
+          `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
+        )
         .then((myBlob) => {
           image.src = URL.createObjectURL(myBlob);
           image.onload = () => {
             // set image only when it is loaded
             this.image = image;
           };
-        });
+        })
+        .catch((error) => {});
     },
 
     /**

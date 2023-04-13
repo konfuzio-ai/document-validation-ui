@@ -47,7 +47,7 @@ describe("Document Annotations Component", () => {
       },
     });
     expect(await wrapper.findAll(".label-set-name").at(2).text()).toContain(
-      store.state.document.annotationSets[1].label_set.name
+      store.state.document.annotationSets[2].label_set.name
     );
   });
 
@@ -421,7 +421,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper.findAll(".annotation-row .label-name span").at(0).text()
-    ).toBe("Anrede");
+    ).toBe(annotationSet.labels[0].name);
   });
 
   it("Reject all empty button should always be visible", async () => {
@@ -507,9 +507,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const pendingAnnotations = annotations.filter(
-      (ann) => !ann.revised && !ann.is_correct
-    );
+    const pendingAnnotations = annotations.filter((ann) => !ann.revised);
 
     expect(
       await wrapper

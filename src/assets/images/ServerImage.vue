@@ -17,11 +17,11 @@ export default {
     },
     height: {
       default: null,
-      type: Number,
+      type: String,
     },
     width: {
       default: null,
-      type: Number,
+      type: String,
     },
   },
   data() {
@@ -40,10 +40,12 @@ export default {
   methods: {
     loadImage() {
       if (!this.imageUrl) return;
-      return api.IMG_REQUEST.get(this.imageUrl)
-        .then((response) => {
-          return response.data;
-        })
+      // if (process.env.NODE_ENV === "test") {
+      //   this.loaded = true;
+      //   return "";
+      // }
+      return api
+        .makeImageRequest(this.imageUrl)
         .then((myBlob) => {
           this.$refs.imgTag.src = URL.createObjectURL(myBlob);
           if (this.height) {
@@ -53,6 +55,9 @@ export default {
             this.$refs.imgTag.style.width = this.width;
           }
           this.loaded = true;
+        })
+        .catch((error) => {
+          this.loaded = false;
         });
     },
   },

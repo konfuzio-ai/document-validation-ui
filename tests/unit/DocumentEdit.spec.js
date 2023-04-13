@@ -18,7 +18,7 @@ describe("Document Edit Component", () => {
       require("../mock/page_2.json"),
     ];
 
-    const selectedDocument = require("../mock/document_data.json");
+    const selectedDocument = require("../mock/document.json");
     selectedDocument.pages = pages;
     Promise.all([
       store.dispatch("document/setSelectedDocument", selectedDocument),
@@ -302,7 +302,7 @@ describe("Document Edit Component", () => {
       },
       {
         name:
-          require("../mock/document_data.json").data_file_name.split(".")[0] +
+          require("../mock/document.json").data_file_name.split(".")[0] +
           "_copy",
         category: store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
