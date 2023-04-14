@@ -1,0 +1,24 @@
+name: DVUI pre-release
+
+on:
+  schedule:
+    # Adjust refresh schedule here. By default, it runs once per day.
+    # Syntax reference: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#schedule
+    # Recommended tool: https://crontab.guru/
+    - cron: "* * * * 4"
+
+jobs:
+  build-and-publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run test:unit
+      # - run: npm version [VERSION]-pre-release-[NUMBER_OF_PRE_RELEASE]
+      - run: npm publish --tag pre-release
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
