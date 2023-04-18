@@ -308,6 +308,34 @@ const getters = {
     return pendingEmpty.length;
   },
 
+  annotationIsNotFound: (state) => (annotationSet, label) => {
+    // Check if the combined label and label set have been rejected
+    // or if the document is in public mode
+    if (state.missingAnnotations.length === 0) {
+      return false;
+    } else {
+      let found;
+
+      if (annotationSet && annotationSet.id) {
+        found = state.missingAnnotations.filter(
+          (el) =>
+            el.label === label.id && el.annotation_set === annotationSet.id
+        );
+      } else {
+        found = state.missingAnnotations.filter(
+          (el) =>
+            el.label === label.id && el.label_set === annotationSet.label_set.id
+        );
+      }
+
+      if (found.length !== 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+
   // Check if document is ready to be finished
   isDocumentReviewFinished: (state) => () => {
     // check if all annotations have been revised
@@ -445,7 +473,7 @@ const getters = {
   /**
    * Check status of annotation
    */
-  notFound: () => (annotation) => {
+  notExtracted: () => (annotation) => {
     if (annotation) {
       return !annotation.span;
     } else {

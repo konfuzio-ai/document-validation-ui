@@ -139,6 +139,16 @@
 
       <template #content> {{ $t("disabled_finish_review") }} </template>
     </b-tooltip>
+
+    <!-- Restore not found annotations -->
+    <b-button
+      v-if="restoreBtn && !isLoading && !publicView"
+      class="accept-all-btn"
+      type="is-primary"
+      @click.stop="restore"
+    >
+      {{ $t("restore") }}
+    </b-button>
   </div>
 </template>
 <script>
@@ -195,6 +205,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    restoreBtn: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {
@@ -245,6 +259,9 @@ export default {
     },
     decline() {
       this.$emit("decline");
+    },
+    restore() {
+      this.$emit("restore");
     },
   },
 };

@@ -268,6 +268,11 @@
             border-bottom: 1px solid $primary;
           }
 
+          .not_found_text {
+            color: $grey;
+            opacity: 0.3;
+          }
+
           .saving-changes {
             color: $grey;
           }

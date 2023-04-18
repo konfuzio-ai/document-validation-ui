@@ -16,6 +16,7 @@
         annotation &&
         hoveredPendingAnnotations() === annotation.id &&
         'hovered-pending-annotations',
+      annotationIsNotFound(annotationSet, label) && 'not-found',
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"
@@ -29,8 +30,15 @@
       <AnnotationDetails
         :description="label.description"
         :annotation="annotation"
+        :annotation-set="annotationSet"
+        :label="label"
       />
-      <div class="label-name">
+      <div
+        :class="[
+          'label-name',
+          annotationIsNotFound(annotationSet, label) && 'not_found_text',
+        ]"
+      >
         <span>{{ label.name }} </span>
       </div>
     </div>
@@ -88,6 +96,7 @@
           :decline-btn="showAcceptAndDeclineButtons()"
           :show-reject="showRejectButton()"
           :save-btn="showSaveButton()"
+          :restore-btn="showRestoreButton()"
           :is-loading="isLoading"
           @reject="handleReject()"
           @save="handleSaveChanges()"
@@ -152,7 +161,10 @@ export default {
       "showActionError",
     ]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "annotationIsNotFound",
+    ]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
       if (
@@ -321,7 +333,16 @@ export default {
       return (
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
-        !this.annotation
+        !this.annotation &&
+        !this.annotationIsNotFound(this.annotationSet, this.label)
+      );
+    },
+    showRestoreButton() {
+      return (
+        this.hoveredAnnotation &&
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.annotation &&
+        this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
     showCancelButton() {

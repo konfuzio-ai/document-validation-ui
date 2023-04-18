@@ -61,7 +61,7 @@
         </div>
 
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <div v-if="labelNotRejected(annotationSet, label)" class="labels">
+          <div class="labels">
             <DocumentLabel
               :label="label"
               :annotation-set="annotationSet"
@@ -72,13 +72,6 @@
         </div>
       </div>
     </div>
-
-    <div
-      v-if="!publicView && missingAnnotations.length"
-      class="rejected-labels-list"
-    >
-      <RejectedLabels :missing-annotations="missingAnnotations" />
-    </div>
   </div>
 </template>
 <script>
@@ -87,7 +80,6 @@ import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import ActionButtons from "./ActionButtons";
 import DocumentLabel from "./DocumentLabel";
-import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
 import CategorizeModal from "./CategorizeModal";
 
@@ -100,7 +92,6 @@ export default {
     ExtractingData,
     ActionButtons,
     DocumentLabel,
-    RejectedLabels,
     LoadingAnnotations,
     CategorizeModal,
   },
@@ -318,38 +309,6 @@ export default {
           this.jumpToNextAnnotation = true;
         } else {
           return;
-        }
-      }
-    },
-
-    labelNotRejected(annotationSet, label) {
-      // Check if the combined label and label set have been rejected
-      // or if the document is in public mode
-      if (
-        this.missingAnnotations.length === 0 ||
-        !this.showMissingAnnotations()
-      ) {
-        return true;
-      } else {
-        let found;
-
-        if (annotationSet && annotationSet.id) {
-          found = this.missingAnnotations.filter(
-            (el) =>
-              el.label === label.id && el.annotation_set === annotationSet.id
-          );
-        } else {
-          found = this.missingAnnotations.filter(
-            (el) =>
-              el.label === label.id &&
-              el.label_set === annotationSet.label_set.id
-          );
-        }
-
-        if (found.length !== 0) {
-          return false;
-        } else {
-          return true;
         }
       }
     },
