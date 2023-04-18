@@ -21,7 +21,7 @@ jobs:
       - name: Bump pre-release version
       - run: |
           npm version prepatch --preid=prerelease
-          npm publish --tag pre-release
+          npm publish --tag prerelease
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           
