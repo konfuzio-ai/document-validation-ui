@@ -28,11 +28,10 @@ jobs:
       - name: Save new pre-release version to env file on GitHub
         run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
           
-      - name: Commit and package.json changes and create tag
+      - name: Commit package.json changes
         run: |
           git add "package.json"
           git commit -m "prerelease ${{ env.PRERELEASE_VERSION }}"
-          git tag ${{ env.NEW_VERSION }}
 
       - name: Push changes to repository
         run: |
