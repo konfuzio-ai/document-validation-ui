@@ -5,7 +5,7 @@ on:
     # Adjust refresh schedule here. By default, it runs once per day.
     # Syntax reference: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#schedule
     # Recommended tool: https://crontab.guru/
-    - cron: "* * * * 4"
+    - cron: "19 3 * * *"
 
 jobs:
   build-and-publish-npm:
@@ -17,8 +17,25 @@ jobs:
           node-version: 16
       - run: npm ci
       - run: npm run test:unit
-      # - run: npm version [VERSION]-pre-release-[NUMBER_OF_PRE_RELEASE]
-      - run: npm publish --tag pre-release
+     
+      - name: Bump pre-release version
+      - run: |
+          npm version prepatch --preid=prerelease
+          npm publish --tag pre-release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          
+      - name: Save new pre-release version to env file on GitHub
+        run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
+          
+      - name: Commit and package.json changes and create tag
+        run: |
+          git add "package.json"
+          git commit -m "prerelease ${{ env.PRERELEASE_VERSION }}"
+          git tag ${{ env.NEW_VERSION }}
 
+      - name: Push changes to repository
+        run: |
+          git push origin
+        env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
