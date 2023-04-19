@@ -23,7 +23,7 @@
       </span>
       <span
         v-else-if="annotationIsNotFound(annotationSet, label)"
-        class="not_found_text"
+        class="not-found-text"
       >
         {{ $t("not_found_in_document") }}
       </span>

@@ -5,7 +5,7 @@
       isSelected && 'selected',
       hoverEmptyLabelRows && 'hovered-empty-labels',
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
-      annotationIsNotFound(annotationSet, label) && 'not-found',
+      annotationIsNotFound(annotationSet, label) && 'rejected',
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"
@@ -25,7 +25,7 @@
       <div
         :class="[
           'label-name',
-          annotationIsNotFound(annotationSet, label) && 'not_found_text',
+          annotationIsNotFound(annotationSet, label) && 'not-found-text',
         ]"
       >
         <span>{{ label.name }} </span>
@@ -351,7 +351,6 @@ export default {
       return (
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
-        !this.annotation &&
         this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },

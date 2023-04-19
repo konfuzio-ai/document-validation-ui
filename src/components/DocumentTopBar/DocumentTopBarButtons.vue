@@ -27,7 +27,6 @@
       v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
       class="finish-review-button-container"
     >
-      <!-- finish review button -->
       <b-tooltip
         :active="finishDisabled"
         position="is-bottom"
