@@ -3,19 +3,8 @@
     :class="[
       'annotation-row',
       isSelected && 'selected',
-      isAnnotationInEditMode(annotationId()) && 'editing',
-      hoveredAnnotationSet &&
-        hoveredAnnotationSet.type == 'reject' &&
-        annotationSet.id === hoveredAnnotationSet.annotationSet.id &&
-        annotationSet.label_set.id ===
-          hoveredAnnotationSet.annotationSet.label_set.id &&
-        hoveredEmptyLabels() === label.id &&
-        'hovered-empty-labels',
-      hoveredAnnotationSet &&
-        hoveredAnnotationSet.type == 'accept' &&
-        annotation &&
-        hoveredPendingAnnotations() === annotation.id &&
-        'hovered-pending-annotations',
+      hoverEmptyLabelRows && 'hovered-empty-labels',
+      hoverPendingAnnotationRows && 'hovered-pending-annotations',
       annotationIsNotFound(annotationSet, label) && 'not-found',
     ]"
     @click="onAnnotationClick"
@@ -195,6 +184,25 @@ export default {
           this.annotationId(),
           this.editAnnotation.index
         )
+      );
+    },
+    hoverEmptyLabelRows() {
+      return (
+        this.hoveredAnnotationSet &&
+        this.hoveredAnnotationSet.type == "reject" &&
+        !this.annotationIsNotFound(this.annotationSet, this.label) &&
+        this.annotationSet.id === this.hoveredAnnotationSet.annotationSet.id &&
+        this.annotationSet.label_set.id ===
+          this.hoveredAnnotationSet.annotationSet.label_set.id &&
+        this.hoveredEmptyLabels() === this.label.id
+      );
+    },
+    hoverPendingAnnotationRows() {
+      return (
+        this.hoveredAnnotationSet &&
+        this.hoveredAnnotationSet.type == "accept" &&
+        this.annotation &&
+        this.hoveredPendingAnnotations() === this.annotation.id
       );
     },
   },
