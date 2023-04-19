@@ -49,11 +49,6 @@
     overflow: auto;
     max-height: 100%;
 
-    &.showing-rejected {
-      height: calc(100% - 56px);
-      padding-bottom: 130px;
-    }
-
     .annotation-set-group {
       .label-set-header {
         display: flex;

@@ -18,13 +18,7 @@
       <EmptyState />
     </div>
 
-    <div
-      v-else
-      :class="[
-        'annotation-set-list',
-        missingAnnotations.length && !publicView && 'showing-rejected',
-      ]"
-    >
+    <div v-else :class="['annotation-set-list']">
       <CategorizeModal v-if="!publicView" />
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
