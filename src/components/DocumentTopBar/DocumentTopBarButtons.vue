@@ -27,28 +27,48 @@
       v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
       class="finish-review-button-container"
     >
-      <AnnotationActionButtons
-        :finish-review-btn="annotationSets && annotationSets.length > 0"
-        :finish-disabled="finishDisabled"
-        :is-loading="isLoading"
-        @finish-review="handleFinishReview"
-      />
+      <!-- finish review button -->
+      <b-tooltip
+        :active="finishDisabled"
+        position="is-bottom"
+        multilined
+        class="right-aligned finish-review"
+      >
+        <b-button
+          :class="['finish-review-btn', 'text-btn', 'primary-button']"
+          type="is-primary"
+          :disabled="finishDisabled"
+          @click.stop="handleFinishReview"
+        >
+          <span v-if="!isLoading">
+            {{ $t("finish_review") }}
+          </span>
+
+          <div v-else>
+            <b-notification :closable="false" :class="['loading-background']">
+              <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+                <b-icon
+                  icon="spinner"
+                  class="fa-spin loading-icon-size spinner"
+                />
+              </b-loading>
+            </b-notification>
+          </div>
+        </b-button>
+
+        <template #content> {{ $t("disabled_finish_review") }} </template>
+      </b-tooltip>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import AnnotationActionButtons from "../DocumentAnnotations/AnnotationActionButtons";
 
 export default {
   name: "DocumentTopBarButtons",
-  components: {
-    AnnotationActionButtons,
-  },
   data() {
     return {
-      finishReviewBtn: true,
       finishDisabled: true,
       emptyLabels: null,
       isLoading: false,

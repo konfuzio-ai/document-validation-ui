@@ -1,7 +1,7 @@
 <template>
   <div class="action-buttons">
     <!-- loading -->
-    <div v-if="isLoading && !finishReviewBtn">
+    <div v-if="isLoading">
       <b-notification :closable="false" class="loading-background">
         <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
           <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
@@ -69,39 +69,6 @@
       </b-button>
     </div>
 
-    <!-- finish review button -->
-    <b-tooltip
-      :active="finishDisabled"
-      position="is-bottom"
-      multilined
-      class="right-aligned finish-review"
-    >
-      <b-button
-        v-if="finishReviewBtn && !publicView"
-        :class="['finish-review-btn', 'text-btn', 'primary-button']"
-        type="is-primary"
-        :disabled="finishDisabled"
-        @click.stop="finishReview"
-      >
-        <span v-if="!isLoading">
-          {{ $t("finish_review") }}
-        </span>
-
-        <div v-else>
-          <b-notification :closable="false" :class="['loading-background']">
-            <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
-              <b-icon
-                icon="spinner"
-                class="fa-spin loading-icon-size spinner"
-              />
-            </b-loading>
-          </b-notification>
-        </div>
-      </b-button>
-
-      <template #content> {{ $t("disabled_finish_review") }} </template>
-    </b-tooltip>
-
     <!-- Restore not found annotations -->
     <b-button
       v-if="restoreBtn && !isLoading && !publicView"
@@ -115,7 +82,7 @@
 </template>
 <script>
 /* Component for showing actions for each annotation row */
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "AnnotationActionButtons",
   props: {
@@ -134,25 +101,6 @@ export default {
     acceptBtn: {
       type: Boolean,
     },
-    // TODO: finishReviewBtn should not be here (see comment above for purpose of this component)
-    finishReviewBtn: {
-      type: Boolean,
-    },
-    // TODO: finishDisabled should not be here
-    finishDisabled: {
-      type: Boolean,
-    },
-    // TODO: handleReject should not be here
-    handleReject: {
-      type: Function,
-      default: null,
-    },
-    // TODO: annotationSet should not be needed on a UI only component
-    annotationSet: {
-      type: Object,
-      default: null,
-    },
-
     declineBtn: {
       type: Boolean,
     },
@@ -186,11 +134,6 @@ export default {
     reject() {
       this.$emit("reject");
     },
-
-    finishReview() {
-      this.$emit("finish-review");
-    },
-
     decline() {
       this.$emit("decline");
     },
