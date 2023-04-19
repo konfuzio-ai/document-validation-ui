@@ -92,6 +92,7 @@
           @accept="handleSaveChanges()"
           @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton()"
+          @restore="handleRestore()"
         />
       </div>
     </div>
@@ -148,6 +149,7 @@ export default {
       "rejectedMissingAnnotations",
       "documentId",
       "showActionError",
+      "missingAnnotations",
     ]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapGetters("document", [
@@ -417,6 +419,30 @@ export default {
       ) {
         this.saveEmptyAnnotationChanges();
       }
+    },
+    handleRestore() {
+      this.isLoading = true;
+
+      const foundItem = this.missingAnnotations.find(
+        (item) =>
+          item.annotation_set === this.annotationSet.id &&
+          item.label === this.label.id &&
+          item.label_set === this.annotationSet.label_set.id
+      );
+
+      this.$store
+        .dispatch("document/deleteMissingAnnotation", foundItem.id)
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.closedTag = null;
+        });
     },
     handleSaveAnnotationChanges(
       annotation,

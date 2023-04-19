@@ -72,7 +72,7 @@
     <!-- Restore not found annotations -->
     <b-button
       v-if="restoreBtn && !isLoading && !publicView"
-      class="accept-all-btn"
+      class="restore-btn"
       type="is-primary"
       @click.stop="restore"
     >

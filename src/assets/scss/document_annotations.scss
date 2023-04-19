@@ -329,7 +329,8 @@
         width: 32px;
       }
 
-      &.accept-all-btn {
+      &.accept-all-btn,
+      &.restore-btn {
         color: $primary !important;
         font-size: 14px !important;
         font-weight: 500;
