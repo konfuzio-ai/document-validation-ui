@@ -1,0 +1,40 @@
+name: DVUI pre-release
+
+on:
+  schedule:
+    # Adjust refresh schedule here. By default, it runs once per day.
+    # Syntax reference: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#schedule
+    # Recommended tool: https://crontab.guru/
+    - cron: "19 3 * * *"
+
+jobs:
+  build-and-publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run test:unit
+     
+      - name: Bump pre-release version
+      - run: |
+          npm version prepatch --preid=prerelease
+          npm publish --tag prerelease
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          
+      - name: Save new pre-release version to env file on GitHub
+        run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
+          
+      - name: Commit package.json changes
+        run: |
+          git add "package.json"
+          git commit -m "prerelease ${{ env.PRERELEASE_VERSION }}"
+
+      - name: Push changes to repository
+        run: |
+          git push origin
+        env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
