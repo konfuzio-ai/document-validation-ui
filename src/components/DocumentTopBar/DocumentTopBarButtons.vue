@@ -27,7 +27,7 @@
       v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
       class="finish-review-button-container"
     >
-      <ActionButtons
+      <AnnotationActionButtons
         :finish-review-btn="annotationSets && annotationSets.length > 0"
         :finish-disabled="finishDisabled"
         :is-loading="isLoading"
@@ -39,12 +39,12 @@
 
 <script>
 import { mapState } from "vuex";
-import ActionButtons from "../DocumentAnnotations/ActionButtons";
+import AnnotationActionButtons from "../DocumentAnnotations/AnnotationActionButtons";
 
 export default {
   name: "DocumentTopBarButtons",
   components: {
-    ActionButtons,
+    AnnotationActionButtons,
   },
   data() {
     return {

@@ -69,44 +69,6 @@
       </b-button>
     </div>
 
-    <!-- reject all labels -->
-    <div
-      v-if="
-        !publicView && rejectAllEmptyBtn && !isLoading && !cancelBtn && !saveBtn
-      "
-      class="reject-decline-button-container reject-all"
-      @mouseenter="mouseenterAnnotationSet('reject')"
-      @mouseleave="mouseleaveAnnotationSet"
-    >
-      <b-button
-        type="is-ghost"
-        class="reject-decline-btn reject-btn reject-all-btn"
-        :disabled="emptyLabelsLength(annotationSet) === 0"
-        @click.stop="rejectAllEmpty"
-      >
-        {{ $t("reject_all_empty") }} ({{ emptyLabelsLength(annotationSet) }})
-      </b-button>
-    </div>
-
-    <!-- accept all pending annotations -->
-    <div
-      v-if="!publicView && acceptAllBtn && !isLoading"
-      class="accept-all"
-      @mouseenter="mouseenterAnnotationSet('accept')"
-      @mouseleave="mouseleaveAnnotationSet"
-    >
-      <b-button
-        type="is-primary"
-        class="accept-all-btn"
-        :disabled="annotationsWithPendingReviewLength(annotationSet) === 0"
-        @click.stop="acceptGroup"
-      >
-        {{ $t("accept_group") }} ({{
-          annotationsWithPendingReviewLength(annotationSet)
-        }})
-      </b-button>
-    </div>
-
     <!-- finish review button -->
     <b-tooltip
       :active="finishDisabled"
@@ -155,7 +117,7 @@
 /* Component for showing actions for each annotation row */
 import { mapState, mapGetters } from "vuex";
 export default {
-  name: "ActionButtons",
+  name: "AnnotationActionButtons",
   props: {
     saveBtn: {
       type: Boolean,
@@ -185,19 +147,12 @@ export default {
       type: Function,
       default: null,
     },
-    // TODO: rejectAllEmptyBtn should not be here
-    rejectAllEmptyBtn: {
-      type: Boolean,
-    },
     // TODO: annotationSet should not be needed on a UI only component
     annotationSet: {
       type: Object,
       default: null,
     },
-    // TODO: acceptAllBtn should not be here
-    acceptAllBtn: {
-      type: Boolean,
-    },
+
     declineBtn: {
       type: Boolean,
     },
@@ -217,10 +172,6 @@ export default {
   },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
-    ...mapGetters("document", [
-      "emptyLabelsLength",
-      "annotationsWithPendingReviewLength",
-    ]),
   },
   methods: {
     save() {
@@ -235,28 +186,11 @@ export default {
     reject() {
       this.$emit("reject");
     },
-    mouseenterAnnotationSet(type) {
-      if (type == "reject") {
-        this.$emit("hover-annotation-set-to-reject");
-      }
 
-      if (type == "accept") {
-        this.$emit("hover-annotation-set-to-accept");
-      }
-    },
-    mouseleaveAnnotationSet() {
-      this.$emit("leave-annotation-set-to-accept");
-      this.$emit("leave-annotation-set-to-reject");
-    },
-    rejectAllEmpty() {
-      this.$emit("reject-all-empty");
-    },
     finishReview() {
       this.$emit("finish-review");
     },
-    acceptGroup() {
-      this.$emit("accept-group");
-    },
+
     decline() {
       this.$emit("decline");
     },

@@ -27,7 +27,7 @@
           </span>
         </b-tag>
         <div class="tag-loading-container">
-          <ActionButtons
+          <AnnotationActionButtons
             :is-loading="isLoading && closedTag === missingAnnotation.id"
           />
         </div>
@@ -38,11 +38,11 @@
 
 <script>
 import { mapState } from "vuex";
-import ActionButtons from "./ActionButtons.vue";
+import AnnotationActionButtons from "./AnnotationActionButtons";
 
 export default {
   name: "RejectedLabels",
-  components: { ActionButtons },
+  components: { AnnotationActionButtons },
   props: {
     missingAnnotations: {
       default: null,

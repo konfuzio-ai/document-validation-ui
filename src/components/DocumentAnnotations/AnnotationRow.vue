@@ -79,7 +79,7 @@
         </div>
       </div>
       <div class="buttons-container">
-        <ActionButtons
+        <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptAndDeclineButtons()"
           :decline-btn="showAcceptAndDeclineButtons()"
@@ -102,7 +102,7 @@ import { mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
-import ActionButtons from "./ActionButtons";
+import AnnotationActionButtons from "./AnnotationActionButtons";
 
 export default {
   name: "AnnotationRow",
@@ -110,7 +110,7 @@ export default {
     AnnotationDetails,
     AnnotationContent,
     EmptyAnnotation,
-    ActionButtons,
+    AnnotationActionButtons,
   },
   props: {
     annotationSet: {

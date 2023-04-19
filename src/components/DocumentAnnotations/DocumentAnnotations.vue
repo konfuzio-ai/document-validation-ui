@@ -34,10 +34,13 @@
             }}
           </div>
           <div class="labelset-action-buttons">
-            <ActionButtons
-              :reject-all-empty-btn="true"
-              :annotation-set="annotationSet"
-              :accept-all-btn="true"
+            <AnnotationSetActionButtons
+              :number-of-empty-labels-in-annotation-set="
+                emptyLabelsLength(annotationSet)
+              "
+              :number-of-pending-annotations-in-annotation-set="
+                annotationsWithPendingReviewLength(annotationSet)
+              "
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
               "
@@ -45,7 +48,9 @@
                 handleHoverAnnotationSet(annotationSet, 'reject')
               "
               @leave-annotation-set-to-reject="handleHoverAnnotationSet(null)"
-              @accept-group="acceptGroup(annotationSet)"
+              @accept-all-pending-annotations="
+                acceptPendingAnnotationsInAnnotationSet(annotationSet)
+              "
               @hover-annotation-set-to-accept="
                 handleHoverAnnotationSet(annotationSet, 'accept')
               "
@@ -72,7 +77,7 @@
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
-import ActionButtons from "./ActionButtons";
+import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import LoadingAnnotations from "./LoadingAnnotations";
 import CategorizeModal from "./CategorizeModal";
@@ -84,7 +89,7 @@ export default {
   components: {
     EmptyState,
     ExtractingData,
-    ActionButtons,
+    AnnotationSetActionButtons,
     DocumentLabel,
     LoadingAnnotations,
     CategorizeModal,
@@ -110,7 +115,11 @@ export default {
       "selectedDocument",
     ]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
+    ...mapGetters("document", [
+      "numberOfAnnotationSetGroup",
+      "emptyLabelsLength",
+      "annotationsWithPendingReviewLength",
+    ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
     },
@@ -402,7 +411,7 @@ export default {
       this.$store.dispatch("document/setHoveredAnnotationSet", hovered);
     },
 
-    acceptGroup(annotationSet) {
+    acceptPendingAnnotationsInAnnotationSet(annotationSet) {
       const annotationsToAccept = [];
 
       annotationSet.labels.map((label) => {
