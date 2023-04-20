@@ -81,8 +81,8 @@
       <div class="buttons-container">
         <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
-          :accept-btn="showAcceptAndDeclineButtons()"
-          :decline-btn="showAcceptAndDeclineButtons()"
+          :accept-btn="showAcceptButton()"
+          :decline-btn="showDeclineButton()"
           :show-reject="showRejectButton()"
           :save-btn="showSaveButton()"
           :restore-btn="showRestoreButton()"
@@ -331,11 +331,18 @@ export default {
         return null;
       }
     },
-    showAcceptAndDeclineButtons() {
+    showAcceptButton() {
       return (
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
         !this.annotation.revised &&
+        this.hoveredAnnotation === this.annotation.id
+      );
+    },
+    showDeclineButton() {
+      return (
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        this.annotation &&
         this.hoveredAnnotation === this.annotation.id
       );
     },
@@ -400,7 +407,8 @@ export default {
       if (this.publicView) return;
 
       if (
-        this.showAcceptAndDeclineButtons() ||
+        this.showAcceptButton() ||
+        this.showDeclineButton() ||
         this.isAnnotationInEditMode(
           this.annotationId(),
           this.editAnnotation.index
