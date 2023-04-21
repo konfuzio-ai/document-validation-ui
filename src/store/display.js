@@ -29,6 +29,7 @@ const state = {
   interactionBlocked: false,
   documentActionBar: null, // document action bar properties
   categorizeModalIsActive: false,
+  pageChangedFromThumbnail: false,
 };
 
 const getters = {
@@ -209,6 +210,9 @@ const actions = {
   setCategorizeModalIsActive: ({ commit }, value) => {
     commit("SET_CATEGORIZE_MODAL_IS_ACTIVE", value);
   },
+  setPageChangedFromThumbnail: ({ commit }, value) => {
+    commit("SET_PAGE_CHANGED_FROM_THUMBNAIL", value);
+  },
 };
 
 const mutations = {
@@ -234,6 +238,9 @@ const mutations = {
 
   SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {
     state.categorizeModalIsActive = value;
+  },
+  SET_PAGE_CHANGED_FROM_THUMBNAIL: (state, value) => {
+    state.pageChangedFromThumbnail = value;
   },
 };
 
