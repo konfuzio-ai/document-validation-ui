@@ -16,6 +16,7 @@
           :page="page"
           :client-height="clientHeight"
           :scroll-top="scrollTop"
+          ref="scrollingPage"
           class="scrolling-page"
           @page-jump="onPageJump"
         />
@@ -29,7 +30,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
@@ -49,6 +50,8 @@ export default {
     return {
       scrollTop: 0,
       clientHeight: 0,
+      isScolling: false,
+      scrollTimeout: null,
     };
   },
 
@@ -59,7 +62,13 @@ export default {
       "loading",
     ]),
     ...mapState("edit", ["editMode", "documentPagesListForEditMode"]),
-    ...mapState("display", ["scale", "documentActionBar"]),
+    ...mapState("display", [
+      "scale",
+      "documentActionBar",
+      "pageChangedFromThumbnail",
+      "currentPage",
+    ]),
+    ...mapGetters("display", ["visiblePageRange"]),
 
     pages() {
       if (this.selectedDocument) {
@@ -85,6 +94,9 @@ export default {
       this.scrollTop = 0;
     },
   },
+  mounted() {
+    this.$refs.scrollingDocument.addEventListener("scroll", this.handleScroll);
+  },
 
   methods: {
     updateScrollBounds() {
@@ -101,6 +113,24 @@ export default {
       const scrollX = scrollLeft - this.$refs.scrollingDocument.offsetLeft - 4; // - 4 to add more space before the entity
 
       this.$refs.scrollingDocument.scroll(scrollX, scrollY);
+    },
+    handleScroll() {
+      if (this.pages.length === 1) return;
+
+      this.isScrolling = true;
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.isScrolling = false;
+
+        if (
+          this.pageChangedFromThumbnail &&
+          this.visiblePageRange[1] === this.currentPage
+        ) {
+          this.$store.dispatch("display/setPageChangedFromThumbnail", false);
+        }
+      }, 300);
     },
   },
 };

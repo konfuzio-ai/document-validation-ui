@@ -44,10 +44,12 @@ export default {
       previousFocusedAnnotation: null,
       previousY: null,
       pageBeingLoaded: false,
+      isScrolling: false,
     };
   },
 
   computed: {
+    ...mapState("display", ["pageChangedFromThumbnail"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
     ...mapGetters("document", ["scrollDocumentToAnnotation"]),
 
@@ -117,15 +119,12 @@ export default {
       }
     },
     isElementFocused(focused) {
-      if (!this.loading && focused) {
+      if (!this.loading && focused && !this.pageChangedFromThumbnail) {
         this.$store.dispatch("display/updateCurrentPage", this.page.number);
       }
     },
     currentPage(number) {
-      if (
-        (this.page.number === number || this.page.number === number) &&
-        !this.isElementFocused
-      ) {
+      if (this.page.number === number && !this.isElementFocused) {
         this.$emit("page-jump", this.elementTop, 0);
       }
     },

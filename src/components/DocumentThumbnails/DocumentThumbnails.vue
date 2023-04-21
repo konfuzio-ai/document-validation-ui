@@ -62,7 +62,7 @@ export default {
   },
   data() {
     return {
-      thumbnailClicked: false,
+      thumbnailClicked: null,
       previousScrollPosition: 0,
     };
   },
@@ -76,9 +76,10 @@ export default {
   },
   watch: {
     currentPage(newPage) {
-      if (newPage && !this.thumbnailClicked) {
-        this.scrollToThumbnail();
-      }
+      if (!newPage) return;
+
+      // handle thumbnail selection when scrolling the document
+      this.scrollToThumbnail(newPage);
     },
   },
   mounted() {
@@ -94,27 +95,29 @@ export default {
   methods: {
     /* Change page if not the currently open and not in modal */
     changePage(pageNumber) {
-      this.thumbnailClicked = true;
+      this.thumbnailClicked = pageNumber;
 
       if (
         !this.loading &&
         !this.recalculatingAnnotations &&
         pageNumber != this.currentPage
       ) {
-        this.$store.dispatch(
-          "display/updateCurrentPage",
-          parseInt(pageNumber, 10)
-        );
+        this.$store.dispatch("display/setPageChangedFromThumbnail", true);
+        this.$store.dispatch("display/updateCurrentPage", pageNumber);
       }
     },
 
-    scrollToThumbnail() {
+    scrollToThumbnail(page) {
       // select only the active thumbnail
       const selectedPage = this.$refs.docPage.filter((image) =>
         image.className.includes("selected")
       );
 
-      if (selectedPage && selectedPage[0]) {
+      if (page == this.thumbnailClicked) {
+        this.thumbnailClicked = null;
+      }
+
+      if (!this.thumbnailClicked && selectedPage && selectedPage[0]) {
         selectedPage[0].scrollIntoView();
       }
     },
