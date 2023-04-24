@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 import AnnotationRow from "../DocumentAnnotations/AnnotationRow";
 import DraggableIcon from "../../assets/images/DraggableIcon";
 
@@ -104,9 +104,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("document", {
-      annotationsSets: "annotationSetsInTable",
-    }),
+    ...mapState("display", ["showAnnSetTable"]),
   },
   mounted() {
     this.handleColumns();
@@ -125,7 +123,7 @@ export default {
         );
       };
 
-      this.annotationsSets().forEach((annotationSet) => {
+      this.showAnnSetTable.forEach((annotationSet) => {
         annotationSet.labels.forEach((label) => {
           if (!labelAlreadyExists(label) && label.annotations.length > 0) {
             const column = {
@@ -144,7 +142,7 @@ export default {
       this.rows = [];
       this.orderedAnnotations = [];
 
-      this.annotationsSets().forEach((annotationSet) => {
+      this.showAnnSetTable.forEach((annotationSet) => {
         let row = {};
 
         annotationSet.labels.forEach((label) => {
@@ -260,11 +258,6 @@ export default {
 
       await this.changeLabel(draggingColumn, droppedColumn.label);
       await this.changeLabel(droppedColumn, draggingColumn.label);
-
-      // const column = this.columns[this.draggingColumnIndex];
-      // this.columns.splice(this.draggingColumnIndex, 1);
-      // this.columns.splice(droppedOnColumnIndex, 0, column);
-      // this.handleRows();
     },
   },
 };

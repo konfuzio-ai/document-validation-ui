@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import SettingsIcon from "../../assets/images/SettingsIcon";
 
 export default {
@@ -39,8 +39,9 @@ export default {
       "annotationSetsInTable",
       "annotationsInAnnotationsSets",
     ]),
+    ...mapState("display", ["showAnnSetTable"]),
     firstAnnotationSet() {
-      return this.annotationSetsInTable()[0];
+      return this.showAnnSetTable[0];
     },
     coordinates() {
       let x = 0;
@@ -62,7 +63,7 @@ export default {
   methods: {
     handleDelete() {
       const annotationsToDelete = this.annotationsInAnnotationsSets(
-        this.annotationSetsInTable()
+        this.showAnnSetTable
       );
 
       for (let i = 0; i < annotationsToDelete.length; i++) {
@@ -79,7 +80,7 @@ export default {
             });
           });
       }
-      this.$store.dispatch("display/showAnnSetTable", false);
+      this.$store.dispatch("display/showAnnSetTable", null);
     },
   },
 };

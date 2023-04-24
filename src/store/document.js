@@ -162,7 +162,7 @@ const getters = {
 
   /* Get annotation sets created in table */
   annotationSetsInTable: (state) => () => {
-    const annotationSetsList = [];
+    const annotationSetsList = {};
     state.annotationSets.forEach((annotationSet) => {
       let addAnnotationSet = false;
       if (annotationSet.labels) {
@@ -180,7 +180,14 @@ const getters = {
         });
       }
       if (addAnnotationSet) {
-        annotationSetsList.push(annotationSet);
+        // group by label set
+        if (annotationSetsList[`${annotationSet.label_set.id}`]) {
+          annotationSetsList[`${annotationSet.label_set.id}`].push(
+            annotationSet
+          );
+        } else {
+          annotationSetsList[`${annotationSet.label_set.id}`] = [annotationSet];
+        }
       }
     });
     return annotationSetsList;

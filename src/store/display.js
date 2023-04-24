@@ -30,7 +30,7 @@ const state = {
   documentActionBar: null, // document action bar properties
   categorizeModalIsActive: false,
   pageChangedFromThumbnail: false,
-  showAnnSetTable: false,
+  showAnnSetTable: null,
 };
 
 const getters = {
@@ -208,11 +208,11 @@ const actions = {
       show ? { icon, text, action, loading } : null
     );
   },
-  showAnnSetTable({ commit }, show) {
+  showAnnSetTable({ commit }, tableSet) {
     commit("SET_ANN_SET_TABLE", show);
   },
-  toggleAnnSetTable({ commit }) {
-    commit("TOGGLE_ANN_SET_TABLE");
+  toggleAnnSetTable({ commit }, tableSet) {
+    commit("TOGGLE_ANN_SET_TABLE", tableSet);
   },
   setCategorizeModalIsActive: ({ commit }, value) => {
     commit("SET_CATEGORIZE_MODAL_IS_ACTIVE", value);
@@ -243,12 +243,16 @@ const mutations = {
     state.documentActionBar = actionBar;
   },
 
-  SET_ANN_SET_TABLE: (state, show) => {
-    state.showAnnSetTable = show;
+  SET_ANN_SET_TABLE: (state, tableSet) => {
+    state.showAnnSetTable = tableSet;
   },
 
-  TOGGLE_ANN_SET_TABLE: (state) => {
-    state.showAnnSetTable = !state.showAnnSetTable;
+  TOGGLE_ANN_SET_TABLE: (state, tableSet) => {
+    if (state.showAnnSetTable) {
+      state.showAnnSetTable = null;
+    } else {
+      state.showAnnSetTable = tableSet;
+    }
   },
 
   SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {

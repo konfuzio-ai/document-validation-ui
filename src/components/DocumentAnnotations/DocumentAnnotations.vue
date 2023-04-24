@@ -27,20 +27,25 @@
     <div v-else :class="['annotation-set-list']">
       <CategorizeModal v-if="!publicView || !documentIsReviewed" />
       <div
-        v-if="annotationSetsInTable().length > 0"
+        v-if="Object.entries(annotationSetsInTable()).length > 0"
         class="annotation-set-group"
       >
         <div class="label-set-header">
           <div class="label-set-name">{{ $t("table") }}</div>
         </div>
-        <div class="ann-set-table" @click="openAnnotationSetTable()">
+        <div
+          v-for="(tableSet, index) in Object.values(annotationSetsInTable())"
+          :key="index"
+          class="ann-set-table"
+          @click="openAnnotationSetTable(tableSet)"
+        >
           <div class="ann-set-table-icon">
             <GridIcon /><span class="ann-set-number">{{
-              annotationSetsInTable().length
+              tableSet.length
             }}</span>
           </div>
           <span class="ann-set-table-label-set-name">{{
-            annotationSetsInTable()[0].label_set.name
+            tableSet[0].label_set.name
           }}</span>
         </div>
       </div>
@@ -491,8 +496,8 @@ export default {
       }
     },
 
-    openAnnotationSetTable() {
-      this.$store.dispatch("display/toggleAnnSetTable");
+    openAnnotationSetTable(tableSet) {
+      this.$store.dispatch("display/toggleAnnSetTable", tableSet);
     },
   },
 };
