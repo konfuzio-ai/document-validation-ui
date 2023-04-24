@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="dv-ui-app-container dv-ui-theme">
     <DocumentsList />
     <DocumentDashboard />
   </div>
@@ -7,7 +7,7 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
-import { changeDocumentURL, getURLQueryParam } from "../utils/utils";
+import { getURLQueryParam } from "../utils/utils";
 import API from "../api";
 
 export default {
@@ -106,6 +106,7 @@ export default {
     });
 
     // Add observer for class added to HTML tag when Buefy modals are mounted
+    // TODO: check defaultModalScroll property in Buefy constructor https://buefy.org/documentation/constructor-options
     const htmlTag = document.documentElement;
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
