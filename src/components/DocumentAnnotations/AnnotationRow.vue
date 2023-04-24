@@ -6,6 +6,7 @@
       hoverEmptyLabelRows && 'hovered-empty-labels',
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
       annotationIsNotFound(annotationSet, label) && 'rejected',
+      isAnnotationInEditMode(annotationId()) && 'editing',
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"
