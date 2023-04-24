@@ -1,0 +1,26 @@
+@import "./imports.scss";
+
+.ann-set-table-header {
+  position: absolute;
+  background-color: $purple;
+  color: $white;
+  font-size: 14px;
+  padding: 4px;
+  z-index: 9;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  .ann-set-table-header-dropdown {
+    cursor: pointer;
+    .ann-set-label-set-name {
+      margin-right: 4px;
+    }
+
+    .delete-action {
+      color: $red;
+    }
+  }
+}

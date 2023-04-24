@@ -27,6 +27,8 @@
       @close="closePopups"
     />
 
+    <AnnSetTableOptions v-if="showAnnSetTable" />
+
     <v-stage
       v-if="image && scale"
       ref="stage"
@@ -129,6 +131,7 @@ import BoxSelection from "./BoxSelection";
 import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
 import MultiAnnotationTablePopup from "./MultiAnnotationTablePopup";
+import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
   name: "DocumentPage",
@@ -137,6 +140,7 @@ export default {
     MultiAnnSelection,
     NewAnnotation,
     MultiAnnotationTablePopup,
+    AnnSetTableOptions,
   },
 
   props: {
@@ -155,7 +159,7 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["currentPage"]),
+    ...mapState("display", ["currentPage", "showAnnSetTable"]),
 
     showFocusedAnnotation() {
       return (

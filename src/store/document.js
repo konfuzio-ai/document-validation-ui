@@ -212,6 +212,19 @@ const getters = {
     return annotationSetsList;
   },
 
+  /* Get annotations inside a list of annotation sets */
+  annotationsInAnnotationsSets: (state) => (annotationsSets) => {
+    const annotations = [];
+    annotationsSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((label) => {
+        label.annotations.forEach((annotation) => {
+          annotations.push(annotation);
+        });
+      });
+    });
+    return annotations;
+  },
+
   /* Process annotations and extract labels and sets */
   processAnnotationSets: (state, getters) => (annotationSets) => {
     // group annotations for sidebar

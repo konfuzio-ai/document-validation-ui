@@ -198,13 +198,6 @@ export default {
     },
 
     async deleteColumn(column) {
-      console.log("columnn", column.label.id);
-      console.log("rows", this.rows);
-      console.log("ann", this.rows[0][column.label.id]);
-      this.closeDropdown(column);
-
-      return;
-
       for (let i = 0; i < this.rows.length; i++) {
         const annotationToDelete = this.rows[i][column.label.id];
         await this.$store
@@ -219,6 +212,7 @@ export default {
             });
           });
       }
+      this.closeDropdown(column);
     },
 
     onDropdownChange(column, open) {

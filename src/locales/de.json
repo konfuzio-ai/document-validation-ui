@@ -129,5 +129,6 @@
   "missing_from_document": "Fehlt im Dokument",
   "edit_label": "Edit label",
   "delete_label": "Delete label",
-  "table": "Table"
+  "table": "Table",
+  "delete_table": "Delete table"
 }
