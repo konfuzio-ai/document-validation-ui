@@ -18,13 +18,7 @@
       <EmptyState />
     </div>
 
-    <div
-      v-else
-      :class="[
-        'annotation-set-list',
-        missingAnnotations.length && !publicView && 'showing-rejected',
-      ]"
-    >
+    <div v-else :class="['annotation-set-list']">
       <CategorizeModal v-if="!publicView" />
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
@@ -40,10 +34,13 @@
             }}
           </div>
           <div class="labelset-action-buttons">
-            <ActionButtons
-              :reject-all-empty-btn="true"
-              :annotation-set="annotationSet"
-              :accept-all-btn="true"
+            <AnnotationSetActionButtons
+              :number-of-empty-labels-in-annotation-set="
+                emptyLabelsLength(annotationSet)
+              "
+              :number-of-pending-annotations-in-annotation-set="
+                annotationsWithPendingReviewLength(annotationSet)
+              "
               @reject-all-empty="
                 rejectMissingAnnotations(null, null, annotationSet, true)
               "
@@ -51,7 +48,9 @@
                 handleHoverAnnotationSet(annotationSet, 'reject')
               "
               @leave-annotation-set-to-reject="handleHoverAnnotationSet(null)"
-              @accept-group="acceptGroup(annotationSet)"
+              @accept-all-pending-annotations="
+                acceptPendingAnnotationsInAnnotationSet(annotationSet)
+              "
               @hover-annotation-set-to-accept="
                 handleHoverAnnotationSet(annotationSet, 'accept')
               "
@@ -61,7 +60,7 @@
         </div>
 
         <div v-for="label in annotationSet.labels" :key="label.id">
-          <div v-if="labelNotRejected(annotationSet, label)" class="labels">
+          <div class="labels">
             <DocumentLabel
               :label="label"
               :annotation-set="annotationSet"
@@ -72,22 +71,14 @@
         </div>
       </div>
     </div>
-
-    <div
-      v-if="!publicView && missingAnnotations.length"
-      class="rejected-labels-list"
-    >
-      <RejectedLabels :missing-annotations="missingAnnotations" />
-    </div>
   </div>
 </template>
 <script>
 import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
-import ActionButtons from "./ActionButtons";
+import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
-import RejectedLabels from "./RejectedLabels";
 import LoadingAnnotations from "./LoadingAnnotations";
 import CategorizeModal from "./CategorizeModal";
 
@@ -98,9 +89,8 @@ export default {
   components: {
     EmptyState,
     ExtractingData,
-    ActionButtons,
+    AnnotationSetActionButtons,
     DocumentLabel,
-    RejectedLabels,
     LoadingAnnotations,
     CategorizeModal,
   },
@@ -125,7 +115,11 @@ export default {
       "selectedDocument",
     ]),
     ...mapGetters("category", ["category"]),
-    ...mapGetters("document", ["numberOfAnnotationSetGroup"]),
+    ...mapGetters("document", [
+      "numberOfAnnotationSetGroup",
+      "emptyLabelsLength",
+      "annotationsWithPendingReviewLength",
+    ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
     },
@@ -263,6 +257,18 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
+        // Skip rejected annotations
+        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+          for (let i = this.count; i < annotations.length; i++) {
+            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+              break;
+            }
+            this.count++;
+          }
+        }
+
+        if (!annotations[this.count]) return;
+
         annotations[this.count].click();
 
         // scroll to current annotation if not empty
@@ -284,6 +290,18 @@ export default {
         if (clickedAnnotations[0]) {
           this.count = currentAnnIndex - 1;
         }
+
+        // Skip rejected annotations
+        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+          for (let i = this.count; i < annotations.length; i--) {
+            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+              break;
+            }
+            this.count--;
+          }
+        }
+
+        if (!annotations[this.count]) return;
 
         annotations[this.count].click();
 
@@ -322,36 +340,8 @@ export default {
       }
     },
 
-    labelNotRejected(annotationSet, label) {
-      // Check if the combined label and label set have been rejected
-      // or if the document is in public mode
-      if (
-        this.missingAnnotations.length === 0 ||
-        !this.showMissingAnnotations()
-      ) {
-        return true;
-      } else {
-        let found;
-
-        if (annotationSet && annotationSet.id) {
-          found = this.missingAnnotations.filter(
-            (el) =>
-              el.label === label.id && el.annotation_set === annotationSet.id
-          );
-        } else {
-          found = this.missingAnnotations.filter(
-            (el) =>
-              el.label === label.id &&
-              el.label_set === annotationSet.label_set.id
-          );
-        }
-
-        if (found.length !== 0) {
-          return false;
-        } else {
-          return true;
-        }
-      }
+    focusedAnnotationIsRejected(annotations, index) {
+      return annotations[index].classList.value.includes("rejected-label");
     },
 
     rejectMissingAnnotations(label, labelSet, annotationSet, rejectAll) {
@@ -449,7 +439,7 @@ export default {
       this.$store.dispatch("document/setHoveredAnnotationSet", hovered);
     },
 
-    acceptGroup(annotationSet) {
+    acceptPendingAnnotationsInAnnotationSet(annotationSet) {
       const annotationsToAccept = [];
 
       annotationSet.labels.map((label) => {

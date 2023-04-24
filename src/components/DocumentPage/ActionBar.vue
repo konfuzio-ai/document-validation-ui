@@ -8,7 +8,7 @@
         {{ documentActionBar.text }}
       </div>
       <div v-if="documentActionBar.action" class="action-button">
-        <ActionButtons
+        <AnnotationActionButtons
           :save-btn="documentActionBar.action !== null"
           :is-loading="documentActionBar.loading"
           :action-bar="true"
@@ -21,14 +21,14 @@
 
 <script>
 import { mapState } from "vuex";
-import ActionButtons from "../DocumentAnnotations/ActionButtons";
+import AnnotationActionButtons from "../DocumentAnnotations/AnnotationActionButtons";
 import ActionIcon from "../../assets/images/ActionIcon";
 
 export default {
   name: "ActionBar",
   components: {
     ActionIcon,
-    ActionButtons,
+    AnnotationActionButtons,
   },
   computed: {
     ...mapState("display", ["documentActionBar"]),

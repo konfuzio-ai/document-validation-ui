@@ -28,7 +28,13 @@
         </div>
       </div>
       <div
-        v-else-if="notFound(annotation)"
+        v-else-if="annotationIsNotFound(annotationSet, label)"
+        :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+      >
+        <NotFoundIcon />
+      </div>
+      <div
+        v-else-if="notExtracted(annotation)"
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
@@ -100,7 +106,7 @@
               </div>
             </div>
             <div
-              v-else-if="notFound(annotation)"
+              v-else-if="notExtracted(annotation)"
               :class="[
                 'annotation-details-icon',
                 animate ? 'animated-ripple' : '',
@@ -143,6 +149,7 @@ import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import QuestionMark from "../../assets/images/QuestionMark";
 import AcceptedUser from "../../assets/images/AcceptedUser";
 import UserIcon from "../../assets/images/UserIcon";
+import NotFoundIcon from "../../assets/images/NotFoundIcon";
 
 export default {
   name: "AnnotationDetails",
@@ -152,6 +159,7 @@ export default {
     AcceptedCheckMark,
     AcceptedUser,
     UserIcon,
+    NotFoundIcon,
   },
   props: {
     description: {
@@ -160,6 +168,14 @@ export default {
       required: false,
     },
     annotation: {
+      type: Object,
+      default: null,
+    },
+    annotationSet: {
+      type: Object,
+      default: null,
+    },
+    label: {
       type: Object,
       default: null,
     },
@@ -172,11 +188,12 @@ export default {
   computed: {
     ...mapGetters("document", [
       "confidence",
-      "notFound",
+      "notExtracted",
       "created",
       "edited",
       "accepted",
       "getUser",
+      "annotationIsNotFound",
     ]),
   },
   watch: {
@@ -200,7 +217,7 @@ export default {
   },
   methods: {
     getText() {
-      if (this.notFound(this.annotation)) {
+      if (this.notExtracted(this.annotation)) {
         return this.$t("not_found_in_document");
       } else if (this.created(this.annotation)) {
         return this.getUser(this.annotation)

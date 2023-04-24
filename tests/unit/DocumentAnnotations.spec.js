@@ -288,75 +288,7 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
   });
 
-  it("Should only show the Rejected title when there are rejected labels", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
-    const label = annotationSet.labels[0];
-    const handleReject = jest.fn().mockName("rejectMissingAnnotations");
-
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    const wrapper2 = mount(EmptyAnnotation, {
-      store,
-      mocks: {
-        $t,
-      },
-      props: {
-        label,
-        annotationSet,
-        handleReject,
-      },
-    });
-
-    const rejectedAnnotation = [
-      {
-        label_set: annotationSet.label_set.id,
-        label: label.id,
-        document: store.state.document.documentId,
-        annotation_set: annotationSet,
-      },
-    ];
-
-    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-
-    await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
-
-    await wrapper
-      .findComponent(
-        ".action-buttons .reject-decline-button-container .reject-btn"
-      )
-      .trigger("click");
-
-    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
-
-    expect(store.state.document.missingAnnotations.length).toEqual(1);
-
-    expect(await wrapper.findComponent(".rejected-labels-list").exists()).toBe(
-      true
-    );
-
-    expect(
-      await wrapper
-        .findAll(".rejected-labels-list .rejected-label-container .title")
-        .isVisible()
-    ).toBe(true);
-
-    await wrapper
-      .findAll(
-        ".rejected-labels-list .rejected-label-container .tags .is-delete"
-      )
-      .trigger("click");
-
-    await store.dispatch("document/setMissingAnnotations", []);
-
-    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-  });
-
-  it("Rejecting should remove item from the label list, and it should show under Rejected", async () => {
+  it("Rejecting should change the style of the Annotation row", async () => {
     const annotationSet = require("../mock/document.json").annotation_sets[0];
 
     const wrapper = mount(DocumentAnnotations, {
@@ -366,7 +298,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [
+    const rejectedLabel = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
@@ -375,22 +307,14 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+    await store.dispatch("document/setMissingAnnotations", rejectedLabel);
 
-    expect(
-      await wrapper.findAll(".annotation-row .label-name span").at(0).text()
-    ).not.toBe(
-      require("../mock/document.json").annotation_sets[0].labels[0].name
+    expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
+      "rejected"
     );
-
-    expect(
-      await wrapper.findAll(
-        ".rejected-labels-list .rejected-label-container .rejected-tag-container .tags .tags"
-      ).length
-    ).toBe(1);
   });
 
-  it("Clicking the X button should remove the label from rejected and back to the labels list", async () => {
+  it("Clicking the restore button should remove the specific class from the Annotation row", async () => {
     const annotationSet = require("../mock/document.json").annotation_sets[0];
 
     const wrapper = mount(DocumentAnnotations, {
@@ -400,7 +324,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedAnnotation = [
+    const rejectedLabel = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
@@ -409,19 +333,23 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
+    await store.dispatch("document/setMissingAnnotations", rejectedLabel);
+
+    expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
+      "rejected"
+    );
+
+    await wrapper.findComponent(".rejected").trigger("mouseover");
 
     await wrapper
-      .findAll(
-        ".rejected-labels-list .rejected-label-container .tags .is-delete"
-      )
+      .findComponent(".buttons-container .action-buttons .restore-btn")
       .trigger("click");
 
     await store.dispatch("document/setMissingAnnotations", []);
 
     expect(
-      await wrapper.findAll(".annotation-row .label-name span").at(0).text()
-    ).toBe(annotationSet.labels[0].name);
+      await wrapper.findComponent(".annotation-row").classes()
+    ).not.toContain("rejected");
   });
 
   it("Reject all empty button should always be visible", async () => {
@@ -548,7 +476,8 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    store.dispatch("document/setPublicView", true);
+    await store.dispatch("document/setPublicView", true);
+    await store.dispatch("document/setMissingAnnotations", []);
 
     const rejectAllButton = await wrapper.findAll(
       ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .reject-all .reject-all-btn"
@@ -563,7 +492,7 @@ describe("Document Annotations Component", () => {
     );
 
     const rejectButton = await wrapper.find(
-      ".annotation-set-list .annotation-set-group .labels .labelset-action-buttons .action-buttons .reject-all .reject-all-btn"
+      ".annotation-set-list .annotation-set-group .labels .labelset-action-buttons .action-buttons .reject-all .reject-btn"
     );
 
     const acceptButton = await wrapper.find(

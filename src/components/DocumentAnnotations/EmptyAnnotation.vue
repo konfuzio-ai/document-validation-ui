@@ -12,6 +12,7 @@
           'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
+        annotationIsNotFound(annotationSet, label) && 'rejected-label',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotationChanges"
@@ -20,6 +21,12 @@
     >
       <span v-if="span && span.offset_string && isEmptyAnnotationEditable()">
         {{ span.offset_string }}
+      </span>
+      <span
+        v-else-if="annotationIsNotFound(annotationSet, label)"
+        class="not-found-text"
+      >
+        {{ $t("not_found_in_document") }}
       </span>
       <span v-else>
         {{ $t("no_data_found") }}
@@ -68,6 +75,7 @@ export default {
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "getTextFromEntities",
+      "annotationIsNotFound",
     ]),
     ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
@@ -133,6 +141,7 @@ export default {
       }
     },
   },
+
   methods: {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
@@ -147,7 +156,11 @@ export default {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
-      if (this.publicView) return;
+      if (
+        this.publicView ||
+        this.annotationIsNotFound(this.annotationSet, this.label)
+      )
+        return;
 
       if (
         !this.publicView &&
@@ -190,8 +203,8 @@ export default {
           this.elementSelected === this.emptyAnnotationId() && !this.isLoading
         );
       } else if (
-        this.spanSelection &&
-        this.spanSelection[this.spanIndex] === 0
+        (this.spanSelection && this.spanSelection[this.spanIndex] === 0) ||
+        this.annotationIsNotFound(this.annotationSet, this.label)
       ) {
         return false;
       } else {

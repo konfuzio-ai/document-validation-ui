@@ -1,7 +1,7 @@
 <template>
   <div class="data-extraction-container">
     <div class="loading-container">
-      <ActionButtons
+      <AnnotationActionButtons
         :is-loading="true"
         :save-btn="false"
         :cancel-btn="false"
@@ -19,11 +19,11 @@
   </div>
 </template>
 <script>
-import ActionButtons from "./ActionButtons";
+import AnnotationActionButtons from "./AnnotationActionButtons";
 
 export default {
   name: "ExtractingData",
-  components: { ActionButtons }
+  components: { AnnotationActionButtons },
 };
 </script>
 <style scoped lang="scss" src="../../assets/scss/extracting_data.scss"></style>

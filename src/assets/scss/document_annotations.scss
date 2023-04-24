@@ -49,11 +49,6 @@
     overflow: auto;
     max-height: 100%;
 
-    &.showing-rejected {
-      height: calc(100% - 56px);
-      padding-bottom: 130px;
-    }
-
     .annotation-set-group {
       .label-set-header {
         display: flex;
@@ -268,6 +263,11 @@
             border-bottom: 1px solid $primary;
           }
 
+          .not-found-text {
+            color: $grey;
+            opacity: 0.3;
+          }
+
           .saving-changes {
             color: $grey;
           }
@@ -329,7 +329,8 @@
         width: 32px;
       }
 
-      &.accept-all-btn {
+      &.accept-all-btn,
+      &.restore-btn {
         color: $primary !important;
         font-size: 14px !important;
         font-weight: 500;
@@ -390,57 +391,6 @@
 
         &:focus {
           box-shadow: none !important;
-        }
-      }
-    }
-  }
-
-  .rejected-labels-list {
-    position: absolute;
-    bottom: 0;
-    background-color: $background;
-    max-height: 120px;
-    width: 100%;
-    border-top: $component-border;
-
-    .rejected-label-container {
-      margin-top: 15px;
-      margin-bottom: 5px;
-
-      .title {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        color: $text-color;
-        padding-bottom: 15px;
-        margin: 0;
-        padding-left: 15px;
-      }
-
-      .rejected-tag-container {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        overflow-y: scroll;
-        max-height: 60px;
-        padding-left: 15px;
-        padding-right: 35px;
-        padding-bottom: 15px;
-
-        .label-name {
-          &.loading {
-            margin-right: 24px;
-          }
-        }
-
-        .tag-loading-container {
-          position: relative;
-          right: 25px;
-          width: 20px;
-
-          .loading-background {
-            padding: 12px;
-          }
         }
       }
     }

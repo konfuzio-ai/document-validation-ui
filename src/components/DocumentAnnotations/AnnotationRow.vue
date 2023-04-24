@@ -3,19 +3,10 @@
     :class="[
       'annotation-row',
       isSelected && 'selected',
+      hoverEmptyLabelRows && 'hovered-empty-labels',
+      hoverPendingAnnotationRows && 'hovered-pending-annotations',
+      annotationIsNotFound(annotationSet, label) && 'rejected',
       isAnnotationInEditMode(annotationId()) && 'editing',
-      hoveredAnnotationSet &&
-        hoveredAnnotationSet.type == 'reject' &&
-        annotationSet.id === hoveredAnnotationSet.annotationSet.id &&
-        annotationSet.label_set.id ===
-          hoveredAnnotationSet.annotationSet.label_set.id &&
-        hoveredEmptyLabels() === label.id &&
-        'hovered-empty-labels',
-      hoveredAnnotationSet &&
-        hoveredAnnotationSet.type == 'accept' &&
-        annotation &&
-        hoveredPendingAnnotations() === annotation.id &&
-        'hovered-pending-annotations',
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"
@@ -29,8 +20,15 @@
       <AnnotationDetails
         :description="label.description"
         :annotation="annotation"
+        :annotation-set="annotationSet"
+        :label="label"
       />
-      <div class="label-name">
+      <div
+        :class="[
+          'label-name',
+          annotationIsNotFound(annotationSet, label) && 'not-found-text',
+        ]"
+      >
         <span>{{ label.name }} </span>
       </div>
     </div>
@@ -82,18 +80,20 @@
         </div>
       </div>
       <div class="buttons-container">
-        <ActionButtons
+        <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
-          :accept-btn="showAcceptAndDeclineButtons()"
-          :decline-btn="showAcceptAndDeclineButtons()"
+          :accept-btn="showAcceptButton()"
+          :decline-btn="showDeclineButton()"
           :show-reject="showRejectButton()"
           :save-btn="showSaveButton()"
+          :restore-btn="showRestoreButton()"
           :is-loading="isLoading"
           @reject="handleReject()"
           @save="handleSaveChanges()"
           @accept="handleSaveChanges()"
           @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton()"
+          @restore="handleRestore()"
         />
       </div>
     </div>
@@ -104,7 +104,7 @@ import { mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
-import ActionButtons from "./ActionButtons";
+import AnnotationActionButtons from "./AnnotationActionButtons";
 
 export default {
   name: "AnnotationRow",
@@ -112,7 +112,7 @@ export default {
     AnnotationDetails,
     AnnotationContent,
     EmptyAnnotation,
-    ActionButtons,
+    AnnotationActionButtons,
   },
   props: {
     annotationSet: {
@@ -150,9 +150,13 @@ export default {
       "rejectedMissingAnnotations",
       "documentId",
       "showActionError",
+      "missingAnnotations",
     ]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
-    ...mapGetters("document", ["isAnnotationInEditMode"]),
+    ...mapGetters("document", [
+      "isAnnotationInEditMode",
+      "annotationIsNotFound",
+    ]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
       if (
@@ -183,6 +187,25 @@ export default {
           this.annotationId(),
           this.editAnnotation.index
         )
+      );
+    },
+    hoverEmptyLabelRows() {
+      return (
+        this.hoveredAnnotationSet &&
+        this.hoveredAnnotationSet.type == "reject" &&
+        !this.annotationIsNotFound(this.annotationSet, this.label) &&
+        this.annotationSet.id === this.hoveredAnnotationSet.annotationSet.id &&
+        this.annotationSet.label_set.id ===
+          this.hoveredAnnotationSet.annotationSet.label_set.id &&
+        this.hoveredEmptyLabels() === this.label.id
+      );
+    },
+    hoverPendingAnnotationRows() {
+      return (
+        this.hoveredAnnotationSet &&
+        this.hoveredAnnotationSet.type == "accept" &&
+        this.annotation &&
+        this.hoveredPendingAnnotations() === this.annotation.id
       );
     },
   },
@@ -309,7 +332,7 @@ export default {
         return null;
       }
     },
-    showAcceptAndDeclineButtons() {
+    showAcceptButton() {
       return (
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
@@ -317,11 +340,26 @@ export default {
         this.hoveredAnnotation === this.annotation.id
       );
     },
+    showDeclineButton() {
+      return (
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        this.annotation &&
+        this.hoveredAnnotation === this.annotation.id
+      );
+    },
     showRejectButton() {
       return (
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
-        !this.annotation
+        !this.annotation &&
+        !this.annotationIsNotFound(this.annotationSet, this.label)
+      );
+    },
+    showRestoreButton() {
+      return (
+        this.hoveredAnnotation &&
+        !this.isAnnotationInEditMode(this.annotationId()) &&
+        this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
     showCancelButton() {
@@ -370,7 +408,8 @@ export default {
       if (this.publicView) return;
 
       if (
-        this.showAcceptAndDeclineButtons() ||
+        this.showAcceptButton() ||
+        this.showDeclineButton() ||
         this.isAnnotationInEditMode(
           this.annotationId(),
           this.editAnnotation.index
@@ -388,6 +427,30 @@ export default {
       ) {
         this.saveEmptyAnnotationChanges();
       }
+    },
+    handleRestore() {
+      this.isLoading = true;
+
+      const foundItem = this.missingAnnotations.find(
+        (item) =>
+          item.annotation_set === this.annotationSet.id &&
+          item.label === this.label.id &&
+          item.label_set === this.annotationSet.label_set.id
+      );
+
+      this.$store
+        .dispatch("document/deleteMissingAnnotation", foundItem.id)
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.closedTag = null;
+        });
     },
     handleSaveAnnotationChanges(
       annotation,
