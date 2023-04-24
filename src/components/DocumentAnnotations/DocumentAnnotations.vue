@@ -257,6 +257,18 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
+        // Skip rejected annotations
+        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+          for (let i = this.count; i < annotations.length; i++) {
+            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+              break;
+            }
+            this.count++;
+          }
+        }
+
+        if (!annotations[this.count]) return;
+
         annotations[this.count].click();
 
         // scroll to current annotation if not empty
@@ -278,6 +290,18 @@ export default {
         if (clickedAnnotations[0]) {
           this.count = currentAnnIndex - 1;
         }
+
+        // Skip rejected annotations
+        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+          for (let i = this.count; i < annotations.length; i--) {
+            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+              break;
+            }
+            this.count--;
+          }
+        }
+
+        if (!annotations[this.count]) return;
 
         annotations[this.count].click();
 
@@ -314,6 +338,10 @@ export default {
           return;
         }
       }
+    },
+
+    focusedAnnotationIsRejected(annotations, index) {
+      return annotations[index].classList.value.includes("rejected-label");
     },
 
     rejectMissingAnnotations(label, labelSet, annotationSet, rejectAll) {

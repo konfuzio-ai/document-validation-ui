@@ -314,19 +314,12 @@ const getters = {
     if (state.missingAnnotations.length === 0) {
       return false;
     } else {
-      let found;
-
-      if (annotationSet && annotationSet.id) {
-        found = state.missingAnnotations.filter(
-          (el) =>
-            el.label === label.id && el.annotation_set === annotationSet.id
-        );
-      } else {
-        found = state.missingAnnotations.filter(
-          (el) =>
-            el.label === label.id && el.label_set === annotationSet.label_set.id
-        );
-      }
+      const found = state.missingAnnotations.filter(
+        (el) =>
+          el.label === label.id &&
+          el.annotation_set === annotationSet.id &&
+          el.label_set === annotationSet.label_set.id
+      );
 
       if (found.length !== 0) {
         return true;

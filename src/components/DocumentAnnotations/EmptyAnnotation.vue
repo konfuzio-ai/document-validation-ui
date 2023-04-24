@@ -12,6 +12,7 @@
           'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
+        annotationIsNotFound(annotationSet, label) && 'rejected-label',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotationChanges"
@@ -140,6 +141,7 @@ export default {
       }
     },
   },
+
   methods: {
     emptyAnnotationId() {
       if (!this.annotationSet || !this.label) return;
