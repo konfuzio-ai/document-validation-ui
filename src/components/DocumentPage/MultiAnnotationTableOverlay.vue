@@ -66,7 +66,7 @@
         </template>
 
         <template #default="props">
-          <div class="annotation-content">
+          <div class="annotations-table">
             <AnnotationRow
               :annotation="props.row[item.field]"
               :label="item.label"
@@ -127,7 +127,7 @@ export default {
 
       this.annotationsSets().forEach((annotationSet) => {
         annotationSet.labels.forEach((label) => {
-          if (!labelAlreadyExists(label)) {
+          if (!labelAlreadyExists(label) && label.annotations.length > 0) {
             const column = {
               field: `${label.id}`,
               label: label,
