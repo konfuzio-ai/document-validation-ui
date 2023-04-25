@@ -135,6 +135,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("display", ["showAnnSetTable"]),
     ...mapState("document", [
       "documentId",
       "recalculatingAnnotations",
@@ -497,7 +498,11 @@ export default {
     },
 
     openAnnotationSetTable(tableSet) {
-      this.$store.dispatch("display/toggleAnnSetTable", tableSet);
+      if (this.showAnnSetTable && this.showAnnSetTable === tableSet) {
+        this.$store.dispatch("display/toggleAnnSetTable", tableSet);
+      } else {
+        this.$store.dispatch("display/showAnnSetTable", tableSet);
+      }
     },
   },
 };

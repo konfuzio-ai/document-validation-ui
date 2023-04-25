@@ -821,7 +821,7 @@ const actions = {
       id: annotation.id,
       span,
       page: span.page_index + 1,
-      labelName: label.name,
+      labelName: label ? label.name : "",
     };
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
   },

@@ -74,6 +74,10 @@
         align-items: center;
         width: fit-content;
         cursor: pointer;
+        &:not(:last-child) {
+          padding-bottom: 12px;
+        }
+
         .ann-set-table-icon {
           padding: 4px 8px;
           border-radius: 32px;

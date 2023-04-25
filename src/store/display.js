@@ -61,6 +61,31 @@ const getters = {
   imageScale: (state) => (page) => {
     return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
   },
+  bboxToPoint:
+    (state, getters) =>
+    (page, point, hasOffset = false) => {
+      const imageScale = getters.imageScale(page);
+      const { x, y } = point;
+      const pageHeight = new BigNumber(page.original_size[1]);
+      const newPoint = {
+        // left
+        x: new BigNumber(x)
+          .minus(hasOffset ? 1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        // top
+        y: pageHeight
+          .minus(new BigNumber(y))
+          .minus(hasOffset ? 17.1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+      };
+      return newPoint;
+    },
   bboxToRect:
     (state, getters) =>
     (page, bbox, hasOffset = false) => {
@@ -209,7 +234,7 @@ const actions = {
     );
   },
   showAnnSetTable({ commit }, tableSet) {
-    commit("SET_ANN_SET_TABLE", show);
+    commit("SET_ANN_SET_TABLE", tableSet);
   },
   toggleAnnSetTable({ commit }, tableSet) {
     commit("TOGGLE_ANN_SET_TABLE", tableSet);

@@ -9,9 +9,7 @@
       position="is-top-right"
     >
       <template #trigger>
-        <span class="ann-set-label-set-name">{{
-          firstAnnotationSet.label_set.name
-        }}</span>
+        <span class="ann-set-label-set-name">{{ labelSetName }}</span>
         <SettingsIcon />
       </template>
       <b-dropdown-item
@@ -34,30 +32,46 @@ export default {
   components: {
     SettingsIcon,
   },
+  props: {
+    page: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
     ...mapGetters("document", [
       "annotationSetsInTable",
       "annotationsInAnnotationsSets",
     ]),
+    ...mapGetters("display", ["bboxToPoint"]),
     ...mapState("display", ["showAnnSetTable"]),
-    firstAnnotationSet() {
-      return this.showAnnSetTable[0];
+    labelSetName() {
+      return this.showAnnSetTable[0].label_set.name;
     },
     coordinates() {
       let x = 0;
       let y = 0;
-      if (
-        this.firstAnnotationSet.labels &&
-        this.firstAnnotationSet.labels.length > 0 &&
-        this.firstAnnotationSet.labels[0].annotations &&
-        this.firstAnnotationSet.labels[0].annotations.length > 0 &&
-        this.firstAnnotationSet.labels[0].annotations[0].span &&
-        this.firstAnnotationSet.labels[0].annotations[0].span.length > 0
-      ) {
-        x = this.firstAnnotationSet.labels[0].annotations[0].span[0].x0;
-        y = this.firstAnnotationSet.labels[0].annotations[0].span[0].y0;
-      }
-      return { x, y: y - 40 };
+      const paddingTop = 55;
+
+      this.showAnnSetTable.forEach((annotationSet) => {
+        if (
+          annotationSet.labels &&
+          annotationSet.labels.length > 0 &&
+          annotationSet.labels[0].annotations
+        ) {
+          annotationSet.labels[0].annotations.forEach((annotation) => {
+            annotation.span.forEach((span) => {
+              if (x === 0 || span.x0 < x) {
+                x = span.x0;
+              }
+              if (y === 0 || span.y0 < y) {
+                y = span.y0 + paddingTop;
+              }
+            });
+          });
+        }
+      });
+      return this.bboxToPoint(this.page, { x, y });
     },
   },
   methods: {

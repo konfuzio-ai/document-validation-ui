@@ -27,7 +27,7 @@
       @close="closePopups"
     />
 
-    <AnnSetTableOptions v-if="showAnnSetTable" />
+    <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
 
     <v-stage
       v-if="image && scale"
@@ -76,7 +76,13 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation && !isSelecting">
+      <v-layer
+        v-if="
+          showFocusedAnnotation &&
+          !isSelecting &&
+          documentAnnotationSelected.labelName !== ''
+        "
+      >
         <v-label
           :key="`label${documentAnnotationSelected.id}`"
           :config="{

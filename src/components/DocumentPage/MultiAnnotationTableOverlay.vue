@@ -74,6 +74,7 @@
               :show-label="false"
               :show-buttons="false"
               :is-small="true"
+              :from-table="true"
             />
           </div>
         </template>
@@ -105,6 +106,12 @@ export default {
   },
   computed: {
     ...mapState("display", ["showAnnSetTable"]),
+  },
+  watch: {
+    showAnnSetTable() {
+      this.handleColumns();
+      this.handleRows();
+    },
   },
   mounted() {
     this.handleColumns();
@@ -214,8 +221,6 @@ export default {
     },
 
     onDropdownChange(column, open) {
-      console.log("open,", open);
-      console.log("coli,", column);
       this.editingLabels = [];
       if (open) {
         if (this.openDropdown) {

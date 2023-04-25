@@ -144,6 +144,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    showHover: {
+      type: Boolean,
+      default: true,
+    },
+    fromTable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -297,7 +305,7 @@ export default {
       if (span) {
         this.$store.dispatch("document/setDocumentAnnotationSelected", {
           annotation: this.annotation,
-          label: this.label,
+          label: this.fromTable ? null : this.label,
           span,
           scrollTo: false,
         });
@@ -307,6 +315,9 @@ export default {
       this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
     onAnnotationClick() {
+      if (!this.fromTable) {
+        this.$store.dispatch("display/showAnnSetTable", null);
+      }
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     },
     hoveredEmptyLabels() {
