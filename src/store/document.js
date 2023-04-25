@@ -28,7 +28,7 @@ const state = {
   newAcceptedAnnotations: null,
   selectedEntities: null,
   serverError: false,
-  splittingSuggestions: false,
+  splittingSuggestions: null,
 };
 
 const getters = {

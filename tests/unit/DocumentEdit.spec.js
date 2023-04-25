@@ -382,14 +382,14 @@ describe("Document Edit Component", () => {
   it("Smart Split is enabled if splitting suggestions & info bar appears", async () => {
     const suggestions = [
       {
-        name: require("../mock/document_data.json").data_file_name,
-        category: require("../mock/document_data.json").category,
-        pages: [require("../mock/document_data.json").pages[1]],
+        name: require("../mock/document.json").data_file_name,
+        category: require("../mock/document.json").category,
+        pages: [require("../mock/document.json").pages[1]],
       },
       {
-        name: require("../mock/document_data.json").data_file_name,
-        category: require("../mock/document_data.json").category,
-        pages: [require("../mock/document_data.json").pages[1]],
+        name: require("../mock/document.json").data_file_name,
+        category: require("../mock/document.json").category,
+        pages: [require("../mock/document.json").pages[1]],
       },
     ];
 

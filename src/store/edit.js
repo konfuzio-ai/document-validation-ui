@@ -161,6 +161,7 @@ const actions = {
         .then(async (response) => {
           if (response && response.status === 200) {
             const newId = response.data[0].id;
+            dispatch("document/setSplittingSuggestions", null, { root: true });
 
             if (newId !== oldId) {
               if (getURLQueryParam("document")) {

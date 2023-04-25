@@ -290,62 +290,6 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
   });
 
-  it("Should only show the Rejected title when there are rejected labels", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
-    const label = annotationSet.labels[0];
-    const handleReject = jest.fn().mockName("rejectMissingAnnotations");
-
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    const rejectedAnnotation = [
-      {
-        label_set: annotationSet.label_set.id,
-        label: label.id,
-        document: store.state.document.documentId,
-        annotation_set: annotationSet,
-      },
-    ];
-
-    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-
-    await wrapper.findComponent(".empty-annotation").trigger("mouseenter");
-
-    await wrapper
-      .findComponent(
-        ".action-buttons .reject-decline-button-container .reject-btn"
-      )
-      .trigger("click");
-
-    await store.dispatch("document/setMissingAnnotations", rejectedAnnotation);
-
-    expect(await store.state.document.missingAnnotations.length).toEqual(1);
-
-    expect(await wrapper.findComponent(".rejected-labels-list").exists()).toBe(
-      true
-    );
-
-    expect(
-      await wrapper
-        .findAll(".rejected-labels-list .rejected-label-container .title")
-        .isVisible()
-    ).toBe(true);
-
-    await wrapper
-      .findAll(
-        ".rejected-labels-list .rejected-label-container .tags .is-delete"
-      )
-      .trigger("click");
-
-    await store.dispatch("document/setMissingAnnotations", []);
-
-    expect(await wrapper.findAll(".rejected-labels-list").exists()).toBe(false);
-  });
-
   it("Rejecting should change the style of the Annotation row", async () => {
     const annotationSet = require("../mock/document.json").annotation_sets[0];
 

@@ -119,10 +119,9 @@ export default {
     },
   },
   mounted() {
-    this.switchStatus = this.splitSuggestionsEnabled;
-    this.tooltipInfo = this.$t("no_splitting_suggestions");
-
     this.$nextTick(() => {
+      this.switchStatus = this.splitSuggestionsEnabled;
+      this.tooltipInfo = this.$t("no_splitting_suggestions");
       if (this.newText) {
         this.newText = this.$t("new").toUpperCase();
       }

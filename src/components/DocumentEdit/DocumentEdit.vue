@@ -182,6 +182,7 @@ export default {
     setAutomaticSplitting() {
       // map over splitting suggestions to find the page number based on the page id
       // to update the splittingLines array with this data
+      if (!this.splittingSuggestions) return;
 
       this.splittingSuggestions.map((item) => {
         const firstPage = this.selectedDocument.pages.find(
