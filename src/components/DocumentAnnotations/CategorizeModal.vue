@@ -179,7 +179,9 @@ export default {
 
         // By default, if the document has no category, the categorize modal is shown
         // But if there is a category, we also need to check if there are splitting suggestions or not
-        this.show = !category || (category && !this.splittingSuggestions);
+        this.show =
+          (!category || (category && !this.splittingSuggestions)) &&
+          !this.categorizationIsConfirmed;
       }
     },
     canCloseModal() {
