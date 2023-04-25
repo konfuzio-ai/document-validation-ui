@@ -71,7 +71,6 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { nextTick } from "vue";
 import SidebarButtons from "./SidebarButtons";
 
 /**
@@ -120,14 +119,13 @@ export default {
     },
   },
   mounted() {
+    this.switchStatus = this.splitSuggestionsEnabled;
     this.tooltipInfo = this.$t("no_splitting_suggestions");
 
-    nextTick(() => {
+    this.$nextTick(() => {
       if (this.newText) {
         this.newText = this.$t("new").toUpperCase();
       }
-
-      this.switchStatus = this.splitSuggestionsEnabled;
     });
   },
   methods: {

@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import { nextTick } from "vue";
 import { mapGetters, mapState } from "vuex";
 import StarIcon from "../../assets/images/StarIcon";
 
@@ -85,7 +84,7 @@ export default {
       this.isModalActive = true;
     }
 
-    nextTick(() => {
+    this.$nextTick(() => {
       if (this.recommended) {
         this.recommended = this.recommended.toUpperCase();
       }

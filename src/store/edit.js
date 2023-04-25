@@ -153,7 +153,7 @@ const actions = {
 
     const oldId = rootState.document.documentId;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       HTTP.post(
         `/documents/${rootState.document.documentId}/postprocess/`,
         editedDocument

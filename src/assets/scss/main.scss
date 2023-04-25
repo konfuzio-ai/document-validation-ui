@@ -109,7 +109,7 @@ body {
         }
       }
 
-      &.rotate-button[disabled] {
+      &.edit-mode-btn[disabled] {
         border: 1px solid $detail;
       }
 
@@ -309,6 +309,10 @@ body {
           .modal-content {
             .modal-card-body {
               border-radius: 16px 16px 16px 16px !important;
+
+              &.split-modal {
+                padding-bottom: 0;
+              }
             }
           }
         }
@@ -492,6 +496,7 @@ body {
 
       &.bottom-aligned {
         width: 100%;
+        bottom: 10px;
 
         .tooltip-content {
           &::before {
@@ -506,6 +511,10 @@ body {
             border-top-color: $text-color !important;
           }
         }
+      }
+
+      &.split-tooltip {
+        width: 100%;
       }
     }
 
@@ -676,6 +685,19 @@ body {
               }
             }
           }
+        }
+      }
+    }
+
+    .switch {
+      input[type="checkbox"] {
+        &:checked + .check {
+          background: $primary !important;
+          box-shadow: none !important;
+        }
+
+        &:focus + .check {
+          box-shadow: none !important;
         }
       }
     }
