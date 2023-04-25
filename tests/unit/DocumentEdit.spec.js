@@ -23,7 +23,7 @@ describe("Document Edit Component", () => {
     Promise.all([
       store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch("document/setPages", pages),
-      store.dispatch("edit/setDocumentPagesListForEditMode", pages),
+      store.dispatch("edit/setPagesForPostprocess", pages),
       store.dispatch("edit/enableEditMode"),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
@@ -38,7 +38,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -61,6 +61,19 @@ describe("Document Edit Component", () => {
     ).toBe(true);
   });
 
+  it("The sidebar has 4 buttons", async () => {
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper.findAll(".buttons-container .sidebar-buttons").length
+    ).toBe(4);
+  });
+
   it("Clicking the cancel button should close edit view", async () => {
     const wrapper = mount(DocumentTopBarButtons, {
       store,
@@ -71,7 +84,7 @@ describe("Document Edit Component", () => {
 
     await wrapper.find(".buttons .button-cancel").trigger("click");
 
-    expect(store.state.edit.editMode).toBe(false);
+    expect(await store.state.edit.editMode).toBe(false);
   });
 
   it("Clicking on thumbnail should select it", async () => {
@@ -82,7 +95,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -93,7 +106,7 @@ describe("Document Edit Component", () => {
       .trigger("click");
 
     expect(
-      wrapper
+      await wrapper
         .find(
           ".document-grid .image-section .image-container .thumbnail .selected"
         )
@@ -109,7 +122,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -132,7 +145,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -158,9 +171,9 @@ describe("Document Edit Component", () => {
       buttonDisabled: false,
     });
 
-    expect(wrapper2.vm.buttonDisabled).toBe(false);
+    expect(await wrapper2.vm.buttonDisabled).toBe(false);
     expect(
-      wrapper2
+      await wrapper2
         .findAll(".buttons-container .rotate-selected .rotate-button")
         .at(0)
         .attributes("disabled")
@@ -175,7 +188,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -201,7 +214,7 @@ describe("Document Edit Component", () => {
 
     await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
-    expect(store.state.edit.updatedDocument.length).toBe(2);
+    expect(await store.state.edit.updatedDocument.length).toBe(2);
   });
 
   it("If document was split, go to overview", async () => {
@@ -212,7 +225,7 @@ describe("Document Edit Component", () => {
       },
       data() {
         return {
-          editPages: store.state.edit.documentPagesListForEditMode,
+          editPages: store.state.edit.pagesForPostprocess,
         };
       },
     });
@@ -236,7 +249,7 @@ describe("Document Edit Component", () => {
 
     await mockFn(require("../mock/page_1.json").number);
 
-    store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     const wrapper2 = mount(DocumentTopBarButtons, {
       store,
@@ -258,17 +271,17 @@ describe("Document Edit Component", () => {
       },
     });
 
-    store.dispatch("edit/setSplitOverview", true);
+    await store.dispatch("edit/setSplitOverview", true);
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -296,15 +309,15 @@ describe("Document Edit Component", () => {
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.data_file_name,
-        category: store.state.document.selectedDocument.category,
+        name: await store.state.document.selectedDocument.data_file_name,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
         name:
           require("../mock/document.json").data_file_name.split(".")[0] +
           "_copy",
-        category: store.state.document.selectedDocument.category,
+        category: await store.state.document.selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -317,9 +330,142 @@ describe("Document Edit Component", () => {
     await mockFn(subDocumentMock[1].name);
 
     expect(
-      wrapper
+      await wrapper
         .findAll(".document-details .doc-info .file-name-section .name-input")
         .at(0).element.value
     ).toBe("3AVAWS");
+  });
+
+  it("Confirmation modal is shown when trying to submit changes", async () => {
+    const wrapper = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(DocumentTopBarButtons, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await wrapper2.find(".buttons .is-primary").trigger("click");
+
+    expect(
+      await wrapper
+        .find(".confirmation-modal-container .edit-confirmation-modal")
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("Smart Split is visible & switch is disabled if no splitting suggestions", async () => {
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(await wrapper.find(".smart-split .b-tooltip").isVisible()).toBe(
+      true
+    );
+
+    expect(
+      await wrapper
+        .find(".smart-split .b-tooltip .tooltip-trigger .switch")
+        .attributes("disabled")
+    ).toBe("disabled");
+  });
+
+  it("Smart Split is enabled if splitting suggestions & info bar appears", async () => {
+    const suggestions = [
+      {
+        name: require("../mock/document.json").data_file_name,
+        category: require("../mock/document.json").category,
+        pages: [require("../mock/document.json").pages[1]],
+      },
+      {
+        name: require("../mock/document.json").data_file_name,
+        category: require("../mock/document.json").category,
+        pages: [require("../mock/document.json").pages[1]],
+      },
+    ];
+
+    const wrapper = mount(EditSidebar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    const wrapper2 = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    await store.dispatch("document/setSplittingSuggestions", suggestions);
+    await store.dispatch("edit/setSplitOverview", false);
+
+    expect(
+      await wrapper
+        .find(".smart-split .b-tooltip .tooltip-trigger .switch")
+        .attributes("disabled")
+    ).toBeUndefined;
+
+    await wrapper2.setData({
+      splitSuggestionsEnabled: true,
+    });
+
+    expect(
+      await wrapper2
+        .find(".pages-section .info-bar .split-info-bar")
+        .isVisible()
+    ).toBe(true);
+  });
+
+  it("Smart Split toggles between adding the suggestions and removing them", async () => {
+    const lines = [
+      { page: 1, origin: "AI" },
+      { page: 2, origin: null },
+    ];
+
+    const wrapper = mount(DocumentEdit, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          splitSuggestionsEnabled: false,
+          splittingLines: [],
+        };
+      },
+    });
+
+    await store.dispatch("edit/setSplitOverview", false);
+
+    await wrapper.setData({
+      splittingLines: [
+        { page: 0, origin: "AI" },
+        { page: 0, origin: null },
+      ],
+    });
+
+    expect(await wrapper.find(".image-section .active-split").exists()).toBe(
+      false
+    );
+
+    await wrapper.setData({
+      splitSuggestionsEnabled: true,
+      splittingLines: lines,
+    });
+
+    expect(await wrapper.find(".image-section .active-split").exists()).toBe(
+      true
+    );
   });
 });

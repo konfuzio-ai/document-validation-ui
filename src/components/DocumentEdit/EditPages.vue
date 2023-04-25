@@ -48,23 +48,29 @@
         <div
           :class="[
             'splitting-lines',
-            activeSplittingLines &&
-              activeSplittingLines[index] === page.number &&
+            splittingLines &&
+              splittingLines[index].page === page.number &&
               'active-split',
           ]"
-          @click="handleSplittingLines(page)"
+          @click="handleSplittingLines(page.number, 'manual')"
         >
           <div class="scissors-icon">
             <b-icon icon="scissors" class="is-small" />
           </div>
           <div
-            v-if="
-              activeSplittingLines &&
-              activeSplittingLines[index] === page.number
-            "
+            v-if="splittingLines && splittingLines[index].page === page.number"
             class="lines"
           >
-            <SplitZigZag />
+            <SplitZigZag
+              :color="
+                splittingLines &&
+                splittingLines[index].origin &&
+                splittingLines[index].origin === 'AI' &&
+                splitSuggestionsEnabled
+                  ? 'green'
+                  : 'dark'
+              "
+            />
           </div>
           <div v-else class="lines">
             <SplitLines />
@@ -98,9 +104,13 @@ export default {
     draggable,
   },
   props: {
-    activeSplittingLines: {
+    splittingLines: {
       type: Array,
       default: null,
+    },
+    splitSuggestionsEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -109,39 +119,41 @@ export default {
       selected: null,
     };
   },
+
   computed: {
     ...mapState("document", [
       "pages",
       "recalculatingAnnotations",
       "selectedDocument",
+      "splittingSuggestions",
     ]),
     ...mapState("edit", [
       "editMode",
-      "documentPagesListForEditMode",
+      "pagesForPostprocess",
       "splitOverview",
       "selectedPages",
       "splitOverview",
     ]),
   },
   watch: {
-    documentPagesListForEditMode(newValue, oldValue) {
+    pagesForPostprocess(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.editPages = newValue;
       }
     },
     editPages(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.$store.dispatch("edit/setDocumentPagesListForEditMode", newValue);
+        this.$store.dispatch("edit/setPagesForPostprocess", newValue);
       }
     },
     splitOverview(newValue) {
       if (newValue) {
-        this.editPages = this.documentPagesListForEditMode;
+        this.editPages = this.pagesForPostprocess;
       }
     },
   },
   mounted() {
-    this.editPages = this.documentPagesListForEditMode;
+    this.editPages = this.pagesForPostprocess;
   },
   methods: {
     handlePageChange(pageNumber) {
@@ -184,11 +196,10 @@ export default {
     },
     getRotation(pageId) {
       // rotate page
-      return this.documentPagesListForEditMode?.find((p) => p.id === pageId)
-        ?.angle;
+      return this.pagesForPostprocess?.find((p) => p.id === pageId)?.angle;
     },
-    handleSplittingLines(page) {
-      this.$emit("handle-splitting-lines", page);
+    handleSplittingLines(page, origin) {
+      this.$emit("handle-splitting-lines", page, origin);
     },
     checkMove(event) {
       this.$emit("check-move", event);

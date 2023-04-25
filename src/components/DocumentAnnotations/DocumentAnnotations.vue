@@ -14,7 +14,9 @@
 
     <!-- When there's no annotations in the label -->
     <div v-else-if="annotationSets.length === 0">
-      <CategorizeModal v-if="!publicView" />
+      <CategorizeModal
+        v-if="!publicView && !waitingForSplittingConfirmation(selectedDocument)"
+      />
       <EmptyState />
     </div>
 
@@ -113,12 +115,14 @@ export default {
       "loading",
       "labels",
       "selectedDocument",
+      "splittingSuggestions",
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "emptyLabelsLength",
       "annotationsWithPendingReviewLength",
+      "waitingForSplittingConfirmation",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;

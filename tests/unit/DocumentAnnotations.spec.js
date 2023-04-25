@@ -77,7 +77,7 @@ describe("Document Annotations Component", () => {
         $t,
       },
     });
-    const element = wrapper
+    const element = await wrapper
       .findAll(".annotation-row .annotation-details")
       .at(0);
     await element.find(".tooltip-trigger").trigger("mouseenter");
@@ -109,7 +109,9 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(store.state.selection.elementSelected).toEqual(emptyAnnotationId);
+    expect(await store.state.selection.elementSelected).toEqual(
+      emptyAnnotationId
+    );
   });
 
   it("Action buttons should appear when bbox is created in empty annotation", async () => {
@@ -182,7 +184,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(store.state.selection.elementSelected).toEqual(annotation.id);
+    expect(await store.state.selection.elementSelected).toEqual(annotation.id);
   });
 
   it("Action buttons should appear when annotation is in edit mode", async () => {

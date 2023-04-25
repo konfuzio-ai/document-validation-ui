@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <DocumentTopBar />
-    <div :class="['dashboard-viewer', editMode ? 'edit-mode' : '']">
+    <div :class="['dashboard-viewer', splitOverview ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
       <ScrollingDocument ref="scrollingDocument" class="dashboard-document" />
       <DocumentAnnotations v-if="!editMode" ref="annotations" />
@@ -18,7 +18,7 @@
       </transition>
     </div>
     <div v-if="showDocumentError" class="error-modal">
-      <DocumentError />
+      <DocumentErrorModal />
     </div>
     <div v-if="!optimalResolution" class="not-optimized">
       <NotOptimizedViewportModal />
@@ -27,6 +27,13 @@
       <div class="text">
         {{ $t("resolution_not_supported") }}
       </div>
+    </div>
+    <div
+      v-if="
+        selectedDocument && waitingForSplittingConfirmation(selectedDocument)
+      "
+    >
+      <SplittingSuggestionsModal />
     </div>
   </div>
 </template>
@@ -39,8 +46,9 @@ import { DocumentThumbnails } from "./DocumentThumbnails";
 import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
-import NotOptimizedViewportModal from "./NotOptimizedViewportModal";
-import DocumentError from "./DocumentError";
+import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
+import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
+import SplittingSuggestionsModal from "../components/DocumentModals/SplittingSuggestionsModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -56,7 +64,8 @@ export default {
     DocumentEdit,
     ErrorMessage,
     NotOptimizedViewportModal,
-    DocumentError,
+    DocumentErrorModal,
+    SplittingSuggestionsModal,
   },
   data() {
     return {
@@ -77,9 +86,11 @@ export default {
       "showDocumentError",
       "errorMessageWidth",
       "selectedDocument",
+      "splittingSuggestions",
     ]),
-    ...mapState("edit", ["editMode"]),
+    ...mapState("edit", ["editMode", "splitOverview"]),
     ...mapGetters("display", ["isMinimumWidth"]),
+    ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
   watch: {
     selectedDocument(newDocument, oldDocument) {

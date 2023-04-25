@@ -28,6 +28,7 @@ const state = {
   newAcceptedAnnotations: null,
   selectedEntities: null,
   serverError: false,
+  splittingSuggestions: null,
 };
 
 const getters = {
@@ -441,6 +442,20 @@ const getters = {
   },
 
   /**
+   * If automatic splitting is enabled for the project
+   */
+  waitingForSplittingConfirmation: () => (document) => {
+    return document && document.status_data === 41;
+  },
+
+  /**
+   * Show the Smart Split switch or not
+   */
+  documentHasProposedSplit: () => (document) => {
+    return document.proposed_split && document.proposed_split.length > 0;
+  },
+
+  /**
    * Joins all strings in a multi-entity Annotation array
    * to look like a single string
    */
@@ -610,6 +625,9 @@ const actions = {
   setSelectedEntities: ({ commit }, entities) => {
     commit("SET_SELECTED_ENTITIES", entities);
   },
+  setSplittingSuggestions: ({ commit }, value) => {
+    commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -654,6 +672,10 @@ const actions = {
             dispatch("project/setProjectId", response.data.project, {
               root: true,
             });
+          }
+
+          if (getters.documentHasProposedSplit(response.data)) {
+            commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
           }
 
           categoryId = response.data.category;
@@ -737,7 +759,7 @@ const actions = {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {
           if (response.status === 201) {
-            dispatch("fetchMissingAnnotations");
+            await dispatch("fetchMissingAnnotations");
             commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
             if (!getters.annotationSetExists(response.data.annotation_set)) {
@@ -850,11 +872,11 @@ const actions = {
 
   addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
     return new Promise((resolve, reject) => {
-      return HTTP.post(`/missing-annotations/`, missingAnnotations)
-        .then((response) => {
+      HTTP.post(`/missing-annotations/`, missingAnnotations)
+        .then(async (response) => {
           if (response.status === 201) {
             commit("SET_REJECTED_MISSING_ANNOTATIONS", null);
-            dispatch("fetchMissingAnnotations");
+            await dispatch("fetchMissingAnnotations");
           }
 
           resolve(response);
@@ -912,8 +934,11 @@ const actions = {
         `documents/${state.documentId}/?fields=status_data,labeling_available`
       )
         .then((response) => {
-          if (getters.isDocumentReadyToBeReviewed(response.data)) {
-            // ready
+          if (
+            getters.isDocumentReadyToBeReviewed(response.data) ||
+            getters.waitingForSplittingConfirmation(response.data)
+          ) {
+            // ready or has splitting suggestions
             return resolve(true);
           } else if (getters.documentHadErrorDuringExtraction(response.data)) {
             // error
@@ -1184,6 +1209,9 @@ const mutations = {
 
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
+  },
+  SET_SPLITTING_SUGGESTIONS: (state, array) => {
+    state.splittingSuggestions = array;
   },
 };
 

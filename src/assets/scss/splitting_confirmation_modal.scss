@@ -1,0 +1,41 @@
+@import "./imports.scss";
+
+.splitting-confirmation-modal {
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 15px;
+    font-weight: 500;
+    font-size: 18px;
+  }
+
+  .content {
+    text-align: left;
+    font-weight: 400;
+    font-size: 14px;
+    color: $text-color;
+  }
+
+  .modal-card-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .recommended {
+      font-weight: 600;
+      font-size: 11px;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 2px 5px;
+      border-radius: 36px;
+    }
+
+    .button {
+      width: 100%;
+
+      &.is-primary {
+        font-weight: 500;
+      }
+    }
+  }
+}

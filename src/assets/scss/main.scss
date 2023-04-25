@@ -109,7 +109,7 @@ body {
         }
       }
 
-      &.rotate-button[disabled] {
+      &.edit-mode-btn[disabled] {
         border: 1px solid $detail;
       }
 
@@ -309,6 +309,10 @@ body {
           .modal-content {
             .modal-card-body {
               border-radius: 16px 16px 16px 16px !important;
+
+              &.split-modal {
+                padding-bottom: 0;
+              }
             }
           }
         }
@@ -355,6 +359,49 @@ body {
       .modal-background {
         background-color: $full-black;
         opacity: 0.5;
+      }
+
+      &.edit-modal {
+        .modal-content {
+          max-width: 440px !important;
+
+          .header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 15px;
+            font-weight: 500;
+            font-size: 18px;
+          }
+
+          .content {
+            text-align: left;
+            font-weight: 400;
+            font-size: 14px;
+            color: $grey-blue;
+          }
+
+          .modal-card-foot {
+            display: flex;
+            gap: 5px;
+
+            .recommended {
+              font-weight: 600;
+              font-size: 11px;
+              background-color: rgba(255, 255, 255, 0.2);
+              padding: 2px 5px;
+              border-radius: 36px;
+            }
+
+            .button {
+              width: 100%;
+
+              &.is-primary {
+                font-weight: 500;
+              }
+            }
+          }
+        }
       }
     }
 
@@ -492,6 +539,7 @@ body {
 
       &.bottom-aligned {
         width: 100%;
+        bottom: 10px;
 
         .tooltip-content {
           &::before {
@@ -506,6 +554,10 @@ body {
             border-top-color: $text-color !important;
           }
         }
+      }
+
+      &.split-tooltip {
+        width: 100%;
       }
     }
 
@@ -676,6 +728,19 @@ body {
               }
             }
           }
+        }
+      }
+    }
+
+    .switch {
+      input[type="checkbox"] {
+        &:checked + .check {
+          background: $primary !important;
+          box-shadow: none !important;
+        }
+
+        &:focus + .check {
+          box-shadow: none !important;
         }
       }
     }
