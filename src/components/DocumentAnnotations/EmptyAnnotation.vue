@@ -12,7 +12,7 @@
           'error-editing',
         isEmptyAnnotationEditable() ? '' : 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
-        annotationIsNotFound(annotationSet, label) && 'rejected-label',
+        annotationIsNotFound(annotationSet, label) && 'missing-annotation',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotationChanges"
@@ -26,7 +26,7 @@
         v-else-if="annotationIsNotFound(annotationSet, label)"
         class="not-found-text"
       >
-        {{ $t("not_found_in_document") }}
+        {{ $t("missing_from_document") }}
       </span>
       <span v-else>
         {{ $t("no_data_found") }}

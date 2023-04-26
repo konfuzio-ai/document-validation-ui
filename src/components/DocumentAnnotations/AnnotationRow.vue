@@ -5,7 +5,7 @@
       isSelected && 'selected',
       hoverEmptyLabelRows && 'hovered-empty-labels',
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
-      annotationIsNotFound(annotationSet, label) && 'rejected',
+      annotationIsNotFound(annotationSet, label) && 'missing',
       isAnnotationInEditMode(annotationId()) && 'editing',
     ]"
     @click="onAnnotationClick"
@@ -84,11 +84,11 @@
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
           :decline-btn="showDeclineButton()"
-          :show-reject="showRejectButton()"
+          :show-missing-btn="showMissingButton()"
           :save-btn="showSaveButton()"
           :restore-btn="showRestoreButton()"
           :is-loading="isLoading"
-          @reject="handleReject()"
+          @mark-as-missing="handleMissingAnnotation()"
           @save="handleSaveChanges()"
           @accept="handleSaveChanges()"
           @decline="handleSaveChanges(true)"
@@ -147,7 +147,7 @@ export default {
       "publicView",
       "selectedEntities",
       "newAcceptedAnnotations",
-      "rejectedMissingAnnotations",
+      "annotationsMarkedAsMissing",
       "documentId",
       "showActionError",
       "missingAnnotations",
@@ -192,7 +192,7 @@ export default {
     hoverEmptyLabelRows() {
       return (
         this.hoveredAnnotationSet &&
-        this.hoveredAnnotationSet.type == "reject" &&
+        this.hoveredAnnotationSet.type == "missing" &&
         !this.annotationIsNotFound(this.annotationSet, this.label) &&
         this.annotationSet.id === this.hoveredAnnotationSet.annotationSet.id &&
         this.annotationSet.label_set.id ===
@@ -247,7 +247,7 @@ export default {
         this.isLoading = false;
       }
     },
-    rejectedMissingAnnotations(newValue) {
+    annotationsMarkedAsMissing(newValue) {
       if (newValue) {
         this.enableLoading();
       } else {
@@ -293,7 +293,7 @@ export default {
     },
     hoveredEmptyLabels() {
       // This method will change the style of the Empty Annotations in the same Label Set
-      // when the "Reject all" button is hovered
+      // when the "mark all as missing" button is hovered
       if (!this.hoveredAnnotationSet) return;
 
       const labels = this.hoveredAnnotationSet.annotationSet.labels.map(
@@ -347,7 +347,7 @@ export default {
         this.hoveredAnnotation === this.annotation.id
       );
     },
-    showRejectButton() {
+    showMissingButton() {
       return (
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
@@ -391,13 +391,13 @@ export default {
         }
       }
     },
-    handleReject() {
+    handleMissingAnnotation() {
       if (!this.label || !this.annotationSet) return;
 
       // will emit to the DocumentAnnotations component, where the method is handled
       // & dispatched to the store
       this.$parent.$emit(
-        "handle-reject",
+        "handle-missing-annotation",
         this.label.id,
         this.annotationSet.label_set.id,
         this.annotationSet.id,
@@ -638,15 +638,15 @@ export default {
 
       // Check for what empty annotations we want to show the loading
       // while waiting for it to be removed from the row
-      if (!this.rejectedMissingAnnotations) {
+      if (!this.annotationsMarkedAsMissing) {
         this.isLoading = false;
         this.saveChanges = false;
         return;
       }
 
-      if (this.rejectedMissingAnnotations.length > 0) {
-        this.rejectedMissingAnnotations.map((annotation) => {
-          // Check if the annotation set and label are rejected
+      if (this.annotationsMarkedAsMissing.length > 0) {
+        this.annotationsMarkedAsMissing.map((annotation) => {
+          // Check if the annotation set and label are marked as missing
           if (
             annotation.label_set === this.annotationSet.label_set.id &&
             annotation.annotation_set === this.annotationSet.id &&

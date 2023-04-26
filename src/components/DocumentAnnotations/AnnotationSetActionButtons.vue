@@ -1,19 +1,19 @@
 <template>
   <div class="action-buttons">
-    <!-- reject all labels -->
+    <!-- mark all empty labels as missing -->
     <div
       v-if="!publicView"
-      class="reject-decline-button-container reject-all"
-      @mouseenter="mouseenterAnnotationSet('reject')"
+      class="missing-decline-button-container all-missing"
+      @mouseenter="mouseenterAnnotationSet('missing')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
-        class="reject-decline-btn reject-btn reject-all-btn"
+        class="missing-decline-btn missing-btn all-missing-btn"
         :disabled="numberOfEmptyLabelsInAnnotationSet === 0"
-        @click.stop="rejectAllEmpty"
+        @click.stop="markAllAsMissing"
       >
-        {{ $t("reject_all_empty") }} ({{ numberOfEmptyLabelsInAnnotationSet }})
+        {{ $t("mark_all_missing") }} ({{ numberOfEmptyLabelsInAnnotationSet }})
       </b-button>
     </div>
 
@@ -57,8 +57,8 @@ export default {
   },
   methods: {
     mouseenterAnnotationSet(type) {
-      if (type == "reject") {
-        this.$emit("hover-annotation-set-to-reject");
+      if (type == "missing") {
+        this.$emit("hover-annotation-set-to-mark-missing");
       }
 
       if (type == "accept") {
@@ -67,10 +67,10 @@ export default {
     },
     mouseleaveAnnotationSet() {
       this.$emit("leave-annotation-set-to-accept");
-      this.$emit("leave-annotation-set-to-reject");
+      this.$emit("leave-annotation-set-to-mark-missing");
     },
-    rejectAllEmpty() {
-      this.$emit("reject-all-empty");
+    markAllAsMissing() {
+      this.$emit("mark-all-empty-missing");
     },
     acceptAllPending() {
       this.$emit("accept-all-pending-annotations");

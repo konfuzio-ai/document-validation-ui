@@ -38,7 +38,9 @@
 
               <div class="action-item">
                 <div class="key">{{ "DELETE" }}</div>
-                <div class="keyboard-action-text">{{ $t("delete_key") }}</div>
+                <div class="keyboard-action-text">
+                  {{ $t("missing_annotation") }}
+                </div>
               </div>
             </div>
           </div>
