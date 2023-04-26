@@ -43,13 +43,15 @@
               :number-of-pending-annotations-in-annotation-set="
                 annotationsWithPendingReviewLength(annotationSet)
               "
-              @reject-all-empty="
-                rejectMissingAnnotations(null, null, annotationSet, true)
+              @mark-all-empty-missing="
+                markAnnotationsAsMissing(null, null, annotationSet, true)
               "
-              @hover-annotation-set-to-reject="
-                handleHoverAnnotationSet(annotationSet, 'reject')
+              @hover-annotation-set-to-mark-missing="
+                handleHoverAnnotationSet(annotationSet, 'missing')
               "
-              @leave-annotation-set-to-reject="handleHoverAnnotationSet(null)"
+              @leave-annotation-set-to-mark-missing="
+                handleHoverAnnotationSet(null)
+              "
               @accept-all-pending-annotations="
                 acceptPendingAnnotationsInAnnotationSet(annotationSet)
               "
@@ -67,7 +69,7 @@
               :label="label"
               :annotation-set="annotationSet"
               :index-group="indexGroup"
-              @handle-reject="rejectMissingAnnotations"
+              @handle-missing-annotation="markAnnotationsAsMissing"
             />
           </div>
         </div>
@@ -261,10 +263,10 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
-        // Skip rejected annotations
-        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+        // Skip missing annotations
+        if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
           for (let i = this.count; i < annotations.length; i++) {
-            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+            if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
               break;
             }
             this.count++;
@@ -295,10 +297,10 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
-        // Skip rejected annotations
-        if (this.focusedAnnotationIsRejected(annotations, this.count)) {
+        // Skip missing annotations
+        if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
           for (let i = this.count; i < annotations.length; i--) {
-            if (!this.focusedAnnotationIsRejected(annotations, i)) {
+            if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
               break;
             }
             this.count--;
@@ -333,9 +335,9 @@ export default {
           annotations[currentAnnIndex].className.includes("label-empty") &&
           annotations[currentAnnIndex].className.includes("clicked")
         ) {
-          // Reject annotation
+          // Mark annotation as missing
           if (this.editAnnotation.id === annotations[currentAnnIndex].id) {
-            this.rejectMissingAnnotations();
+            this.markAnnotationsAsMissing();
           }
           this.jumpToNextAnnotation = true;
         } else {
@@ -344,17 +346,17 @@ export default {
       }
     },
 
-    focusedAnnotationIsRejected(annotations, index) {
-      return annotations[index].classList.value.includes("rejected-label");
+    focusedAnnotationIsMarkedAsMissing(annotations, index) {
+      return annotations[index].classList.value.includes("missing-annotation");
     },
 
-    rejectMissingAnnotations(label, labelSet, annotationSet, rejectAll) {
-      let rejected;
+    markAnnotationsAsMissing(label, labelSet, annotationSet, markAllMissing) {
+      let missing;
 
-      if (label && labelSet && !rejectAll) {
-        // if single rejection is triggered by clicking the button
+      if (label && labelSet && !markAllMissing) {
+        // if annotation is marked as missing by clicking the button
 
-        rejected = [
+        missing = [
           {
             document: parseInt(this.documentId),
             label: label,
@@ -363,24 +365,24 @@ export default {
           },
         ];
       } else if (this.editAnnotation && this.editAnnotation.id !== null) {
-        // if single rejection is triggered from "delete" key
+        // iif annotation is marked as missing from "delete" key
 
-        rejected = {
+        missing = {
           document: parseInt(this.documentId),
           label: this.editAnnotation.label,
           label_set: this.editAnnotation.labelSet,
           annotation_set: this.editAnnotation.annotationSet,
         };
-      } else if (annotationSet && rejectAll) {
-        // reject all labels in annotation set
+      } else if (annotationSet && markAllMissing) {
+        // mark all annotations as missing in annotation set
 
         const allEmptyLabels = annotationSet.labels.filter(
           (label) => label.annotations.length === 0
         );
 
-        // Check if any of the empty annotations was already rejected individually
+        // Check if any of the empty annotations was already marked as missing individually
         // and remove them
-        const toReject = [];
+        const toMarkAsMissing = [];
 
         allEmptyLabels.map((label) => {
           const found = this.missingAnnotations.find(
@@ -391,11 +393,11 @@ export default {
           );
 
           if (!found) {
-            toReject.push(label);
+            toMarkAsMissing.push(label);
           }
         });
 
-        rejected = toReject.map((label) => {
+        missing = toMarkAsMissing.map((label) => {
           return {
             document: parseInt(this.documentId),
             label: label.id,
@@ -405,10 +407,10 @@ export default {
         });
       }
 
-      this.$store.dispatch("document/setRejectedMissingAnnotations", rejected);
+      this.$store.dispatch("document/setAnnotationsMarkedAsMissing", missing);
 
       this.$store
-        .dispatch("document/addMissingAnnotations", rejected)
+        .dispatch("document/addMissingAnnotations", missing)
         .then((response) => {
           if (response) {
             this.jumpToNextAnnotation = true;
@@ -424,7 +426,7 @@ export default {
           });
         })
         .finally(() => {
-          this.$store.dispatch("document/setRejectedMissingAnnotations", null);
+          this.$store.dispatch("document/setAnnotationsMarkedAsMissing", null);
         });
     },
 

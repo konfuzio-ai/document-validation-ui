@@ -37,7 +37,7 @@ body {
         }
       }
 
-      &.reject-decline-btn {
+      &.missing-decline-btn {
         font-size: 14px;
         color: $grey-blue !important;
         font-weight: 500;
@@ -56,7 +56,7 @@ body {
         }
       }
 
-      &:not(.is-text, .is-primary, .reject-btn) {
+      &:not(.is-text, .is-primary, .missing-btn) {
         background-color: $white;
         color: $text-color;
       }
@@ -83,7 +83,7 @@ body {
         padding-right: 4px;
       }
 
-      &.reject-all-btn {
+      &.all-missing-btn {
         padding-right: 4px;
       }
 
@@ -558,48 +558,6 @@ body {
 
       &.split-tooltip {
         width: 100%;
-      }
-    }
-
-    .rejected-tag-container {
-      .tags {
-        margin: 0 !important;
-
-        .tag {
-          margin-bottom: 0 !important;
-          color: $dark;
-          font-weight: 400;
-          background-color: $detail;
-          border-style: none !important;
-
-          &:hover {
-            background-color: $detail !important;
-          }
-
-          &.is-delete {
-            cursor: pointer;
-
-            &::before {
-              height: 1.5px;
-              border-radius: 4px;
-            }
-
-            &::after {
-              width: 1.5px;
-              border-radius: 4px;
-            }
-          }
-        }
-
-        &.loading-active {
-          .is-delete {
-            display: none !important;
-          }
-
-          .tag {
-            border-radius: 4px;
-          }
-        }
       }
     }
 

@@ -34,11 +34,11 @@
     <!-- decline button -->
     <div
       v-if="declineBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
-      class="reject-decline-button-container"
+      class="missing-decline-button-container"
     >
       <b-button
         type="is-ghost"
-        class="reject-decline-btn decline-btn"
+        class="missing-decline-btn decline-btn"
         @click.stop="decline"
       >
         {{ $t("decline") }}
@@ -55,17 +55,19 @@
       {{ $t("accept") }}
     </b-button>
 
-    <!-- reject button -->
+    <!-- missing button -->
     <div
-      v-if="showReject && !isLoading && !cancelBtn && !saveBtn && !publicView"
-      class="reject-decline-button-container"
+      v-if="
+        showMissingBtn && !isLoading && !cancelBtn && !saveBtn && !publicView
+      "
+      class="missing-decline-button-container"
     >
       <b-button
         type="is-ghost"
-        class="reject-decline-btn reject-btn"
-        @click.stop="reject"
+        class="missing-decline-btn missing-btn"
+        @click.stop="markAsMissing"
       >
-        {{ $t("reject_label") }}
+        {{ $t("missing_annotation") }}
       </b-button>
     </div>
 
@@ -92,7 +94,7 @@ export default {
     cancelBtn: {
       type: Boolean,
     },
-    showReject: {
+    showMissingBtn: {
       type: Boolean,
     },
     isLoading: {
@@ -131,8 +133,8 @@ export default {
     accept() {
       this.$emit("accept");
     },
-    reject() {
-      this.$emit("reject");
+    markAsMissing() {
+      this.$emit("mark-as-missing");
     },
     decline() {
       this.$emit("decline");

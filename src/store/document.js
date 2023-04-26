@@ -21,7 +21,7 @@ const state = {
   showActionError: false,
   errorMessage: null,
   showDocumentError: false,
-  rejectedMissingAnnotations: null,
+  annotationsMarkedAsMissing: null,
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
   finishedReview: false,
@@ -310,7 +310,7 @@ const getters = {
   },
 
   annotationIsNotFound: (state) => (annotationSet, label) => {
-    // Check if the combined label and label set have been rejected
+    // Check if the combined label and label set have been marked as missing
     // or if the document is in public mode
     if (state.missingAnnotations.length === 0) {
       return false;
@@ -357,7 +357,7 @@ const getters = {
 
     // if all annotations have been revised
     // and if there are no empty annotations or
-    // all empty annotations were rejected,
+    // all empty annotations were marked as missing,
     // we can finish the review
     if (
       !emptyAnnotations ||
@@ -610,8 +610,8 @@ const actions = {
   setDocumentError: ({ commit }, value) => {
     commit("SET_DOCUMENT_ERROR", value);
   },
-  setRejectedMissingAnnotations: ({ commit }, annotations) => {
-    commit("SET_REJECTED_MISSING_ANNOTATIONS", annotations);
+  setAnnotationsMarkedAsMissing: ({ commit }, annotations) => {
+    commit("SET_ANNOTATIONS_MARKED_AS_MISSING", annotations);
   },
   setErrorMessageWidth: ({ commit }, width) => {
     commit("SET_ERROR_MESSAGE_WIDTH", width);
@@ -875,7 +875,7 @@ const actions = {
       HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then(async (response) => {
           if (response.status === 201) {
-            commit("SET_REJECTED_MISSING_ANNOTATIONS", null);
+            commit("SET_ANNOTATIONS_MARKED_AS_MISSING", null);
             await dispatch("fetchMissingAnnotations");
           }
 
@@ -1179,8 +1179,8 @@ const mutations = {
   SET_DOCUMENT_ERROR: (state, value) => {
     state.showDocumentError = value;
   },
-  SET_REJECTED_MISSING_ANNOTATIONS: (state, annotations) => {
-    state.rejectedMissingAnnotations = annotations;
+  SET_ANNOTATIONS_MARKED_AS_MISSING: (state, annotations) => {
+    state.annotationsMarkedAsMissing = annotations;
   },
   SET_ERROR_MESSAGE_WIDTH: (state, width) => {
     state.errorMessageWidth = width;

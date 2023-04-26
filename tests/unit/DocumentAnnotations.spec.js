@@ -290,7 +290,7 @@ describe("Document Annotations Component", () => {
     ).toBe(true);
   });
 
-  it("Rejecting should change the style of the Annotation row", async () => {
+  it("Marking as missing should change the style of the Annotation row", async () => {
     const annotationSet = require("../mock/document.json").annotation_sets[0];
 
     const wrapper = mount(DocumentAnnotations, {
@@ -300,7 +300,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedLabel = [
+    const missingAnnotation = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
@@ -309,10 +309,10 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", rejectedLabel);
+    await store.dispatch("document/setMissingAnnotations", missingAnnotation);
 
     expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
-      "rejected"
+      "missing"
     );
   });
 
@@ -326,7 +326,7 @@ describe("Document Annotations Component", () => {
       },
     });
 
-    const rejectedLabel = [
+    const missingAnnotation = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
@@ -335,13 +335,13 @@ describe("Document Annotations Component", () => {
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", rejectedLabel);
+    await store.dispatch("document/setMissingAnnotations", missingAnnotation);
 
     expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
-      "rejected"
+      "missing"
     );
 
-    await wrapper.findComponent(".rejected").trigger("mouseover");
+    await wrapper.findComponent(".missing").trigger("mouseover");
 
     await wrapper
       .findComponent(".buttons-container .action-buttons .restore-btn")
@@ -351,10 +351,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper.findComponent(".annotation-row").classes()
-    ).not.toContain("rejected");
+    ).not.toContain("missing");
   });
 
-  it("Reject all empty button should always be visible", async () => {
+  it("Mark all empty as missing button should always be visible", async () => {
     const wrapper = mount(DocumentAnnotations, {
       store,
       mocks: {
@@ -363,11 +363,13 @@ describe("Document Annotations Component", () => {
     });
 
     expect(
-      await wrapper.find(".action-buttons .reject-all .reject-btn").isVisible()
+      await wrapper
+        .find(".action-buttons .all-missing .missing-btn")
+        .isVisible()
     ).toBe(true);
   });
 
-  it("Reject all button should show how many empty labels are in the annotation set", async () => {
+  it("Mark all empty as missing button should show how many empty labels are in the annotation set", async () => {
     const annotationSet = store.state.document.annotationSets[0];
 
     const wrapper = mount(DocumentAnnotations, {
@@ -383,14 +385,16 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .reject-all .reject-btn")
+        .find(".action-buttons .all-missing .missing-btn")
         .text()
         .includes(emptyLabels.length)
     ).toBe(true);
   });
 
-  it("Clicking the 'reject all empty' button should send the request to the endpoint", async () => {
-    const handleReject = jest.fn().mockName("rejectMissingAnnotations");
+  it("Clicking the 'mark all empty as missing' button should send the request to the endpoint", async () => {
+    const markAnnotationsAsMissing = jest
+      .fn()
+      .mockName("markAnnotationsAsMissing");
 
     const wrapper = mount(DocumentAnnotations, {
       store,
@@ -400,12 +404,12 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper
-      .find(".action-buttons .reject-all .reject-btn")
+      .find(".action-buttons .all-missing .missing-btn")
       .trigger("click");
 
-    await handleReject();
+    await markAnnotationsAsMissing();
 
-    expect(handleReject).toHaveBeenCalledTimes(1);
+    expect(markAnnotationsAsMissing).toHaveBeenCalledTimes(1);
   });
 
   it("Accept all empty button should always be visible", async () => {
@@ -481,8 +485,8 @@ describe("Document Annotations Component", () => {
     await store.dispatch("document/setPublicView", true);
     await store.dispatch("document/setMissingAnnotations", []);
 
-    const rejectAllButton = await wrapper.findAll(
-      ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .reject-all .reject-all-btn"
+    const markAllMissingButton = await wrapper.findAll(
+      ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .all-missing .all-missing-btn"
     );
 
     const acceptAllButton = await wrapper.findAll(
@@ -493,8 +497,8 @@ describe("Document Annotations Component", () => {
       ".annotation-set-list .annotation-set-group .labels .label .annotation-row"
     );
 
-    const rejectButton = await wrapper.find(
-      ".annotation-set-list .annotation-set-group .labels .labelset-action-buttons .action-buttons .reject-all .reject-btn"
+    const missingButton = await wrapper.find(
+      ".annotation-set-list .annotation-set-group .labels .labelset-action-buttons .action-buttons .all-missing .missing-btn"
     );
 
     const acceptButton = await wrapper.find(
@@ -508,10 +512,10 @@ describe("Document Annotations Component", () => {
     await wrapper.findComponent(".annotation-value").trigger("click");
 
     expect(await store.state.document.missingAnnotations.length).toBe(0);
-    expect(rejectAllButton.exists()).toBe(false);
+    expect(markAllMissingButton.exists()).toBe(false);
     expect(acceptAllButton.exists()).toBe(false);
     await annotationRow.trigger("mouseenter");
-    expect(rejectButton.exists()).toBe(false);
+    expect(missingButton.exists()).toBe(false);
     expect(acceptButton.exists()).toBe(false);
     expect(declineButton.exists()).toBe(false);
     expect(await store.state.selection.elementSelected).not.toEqual(
