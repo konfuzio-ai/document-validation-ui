@@ -51,8 +51,7 @@
   "data_being_extracted": "New data is being extracted",
   "analysing_document": "We are analysing your document.",
   "few_minutes": "This might take a few minutes.",
-  "reject_label": "Reject",
-  "rejected": "Rejected",
+  "missing_annotation": "Mark as Missing",
   "ann_exists": "An annotation for this label and label set already exists.",
   "lite_mode": "Read Only",
   "limited_functionalities": "You are using the Read Only version with limited functionalities.",
@@ -89,7 +88,7 @@
   "categorize_document_no_category_description": "Ask the Project Manager to add a description of this Category to know more about this category.",
   "annotations_pending": "pending",
   "annotations_accepted": "accepted",
-  "reject_all_empty": "Reject all empty",
+  "mark_all_missing": "Mark all empty as Missing",
   "no_labels_to_choose": "No Labels",
   "accept_group": "Accept all",
   "new_ann_set_title": "New annotation set",
@@ -102,7 +101,6 @@
   "arrow_keys": "to Navigate",
   "esc_key": "Exit",
   "enter_key": "Accept or Save",
-  "delete_key": "Reject",
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
   "get_support": "Get Support",
@@ -111,7 +109,7 @@
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
   "error_creating_multi_ann": "Not all annotation sets were created successfully.",
-  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or rejected.",
+  "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or marked as Missing.",
   "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>.",
   "single_category_in_project": "The current project has only one category. To be able to change it, the new one should be first added to the project. For details on how to do this, visit <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>this link</a>.",
   "approved_annotations": "It is not possible to change the current category since the document has approved or manually created annotations.",
@@ -129,5 +127,6 @@
   "no": "No",
   "yes": "Yes",
   "prepare_document": "Prepare the document",
-  "split_modal_no_suggestions": "Do you need to split the document? <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost in the future."
+  "split_modal_no_suggestions": "Do you need to split the document? <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost in the future.",
+  "missing_from_document": "Missing from the document"
 }
