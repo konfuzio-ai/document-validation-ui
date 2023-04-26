@@ -870,13 +870,14 @@ const actions = {
     });
   },
 
-  addMissingAnnotations: ({ commit, dispatch }, missingAnnotations) => {
+  addMissingAnnotations: ({ commit, getters }, missingAnnotations) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/missing-annotations/`, missingAnnotations)
         .then(async (response) => {
           if (response.status === 201) {
             commit("SET_ANNOTATIONS_MARKED_AS_MISSING", null);
-            await dispatch("fetchMissingAnnotations");
+            commit("ADD_MISSING_ANNOTATIONS", response.data);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
           }
 
           resolve(response);
@@ -888,12 +889,13 @@ const actions = {
     });
   },
 
-  deleteMissingAnnotation: ({ commit, getters, dispatch }, id) => {
+  deleteMissingAnnotation: ({ commit, getters }, id) => {
     return new Promise((resolve, reject) => {
       return HTTP.delete(`/missing-annotations/${id}/`)
         .then((response) => {
           if (response.status === 204) {
-            dispatch("fetchMissingAnnotations");
+            commit("DELETE_MISSING_ANNOTATION", id);
+            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(true);
           }
         })
@@ -1169,7 +1171,20 @@ const mutations = {
   SET_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
     state.missingAnnotations = missingAnnotations;
   },
+  ADD_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
+    missingAnnotations.map((annotation) => {
+      state.missingAnnotations.push(annotation);
+    });
+  },
+  DELETE_MISSING_ANNOTATION: (state, id) => {
+    const indexOfAnnotationToDelete = state.missingAnnotations.findIndex(
+      (annotation) => annotation.id === id
+    );
 
+    if (indexOfAnnotationToDelete > -1) {
+      state.missingAnnotations.splice(indexOfAnnotationToDelete, 1);
+    }
+  },
   SET_SHOW_ACTION_ERROR: (state, value) => {
     state.showActionError = value;
   },
