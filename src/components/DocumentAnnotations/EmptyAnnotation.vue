@@ -1,7 +1,7 @@
 <template>
   <div class="empty-annotation">
     <span
-      v-if="!publicView"
+      v-if="!publicView && !documentIsReviewed"
       :id="emptyAnnotationId()"
       ref="emptyAnnotation"
       :class="[
@@ -84,6 +84,7 @@ export default {
       "publicView",
       "selectedEntities",
       "showActionError",
+      "documentIsReviewed",
     ]),
   },
   watch: {
@@ -158,12 +159,14 @@ export default {
     handleEditEmptyAnnotation() {
       if (
         this.publicView ||
+        this.documentIsReviewed ||
         this.annotationIsNotFound(this.annotationSet, this.label)
       )
         return;
 
       if (
         !this.publicView &&
+        !this.documentIsReviewed &&
         !this.isLoading &&
         this.elementSelected !== this.emptyAnnotationId()
       ) {
@@ -218,7 +221,7 @@ export default {
       }
     },
     saveEmptyAnnotationChanges(event) {
-      if (this.publicView) return;
+      if (this.publicView || this.documentIsReviewed) return;
 
       if (event) {
         event.preventDefault();

@@ -15,13 +15,17 @@
     <!-- When there's no annotations in the label -->
     <div v-else-if="annotationSets.length === 0">
       <CategorizeModal
-        v-if="!publicView && !waitingForSplittingConfirmation(selectedDocument)"
+        v-if="
+          !publicView &&
+          !documentIsReviewed &&
+          !waitingForSplittingConfirmation(selectedDocument)
+        "
       />
       <EmptyState />
     </div>
 
     <div v-else :class="['annotation-set-list']">
-      <CategorizeModal v-if="!publicView" />
+      <CategorizeModal v-if="!publicView || !documentIsReviewed" />
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
         :key="indexGroup"
@@ -118,6 +122,7 @@ export default {
       "labels",
       "selectedDocument",
       "splittingSuggestions",
+      "documentIsReviewed",
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
@@ -151,19 +156,6 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
-    showMissingAnnotations() {
-      if (
-        (this.publicView &&
-          this.selectedDocument &&
-          this.selectedDocument.is_reviewed) ||
-        !this.publicView
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-
     focusOnNextAnnotation() {
       const annotations = Array.from(
         document.getElementsByClassName("annotation-value")
@@ -211,7 +203,7 @@ export default {
 
     keyDownHandler(event) {
       // only allow keyboard navigation if we are not in public view mode
-      if (this.publicView) return;
+      if (this.publicView || this.documentIsReviewed) return;
 
       // get out of edit mode and navigation
       if (event.key === "Escape") {

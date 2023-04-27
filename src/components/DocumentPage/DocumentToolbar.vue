@@ -9,7 +9,7 @@
         class="top-aligned"
       >
         <div
-          v-if="!editMode && !publicView"
+          v-if="!editMode && !publicView && !documentIsReviewed"
           :class="[
             'icons icons-left',
             editModeDisabled && 'edit-mode-disabled',
@@ -22,7 +22,10 @@
           <span class="edit-text">{{ $t("edit") }}</span>
         </div>
       </b-tooltip>
-      <div v-if="!editMode && !publicView" class="toolbar-divider" />
+      <div
+        v-if="!editMode && !publicView && !documentIsReviewed"
+        class="toolbar-divider"
+      />
       <div class="icons icons-right">
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
@@ -74,6 +77,7 @@ export default {
       "selectedDocument",
       "recalculatingAnnotations",
       "publicView",
+      "documentIsReviewed",
     ]),
     ...mapGetters("document", ["documentCannotBeEdited"]),
   },

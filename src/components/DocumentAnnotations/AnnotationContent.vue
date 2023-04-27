@@ -1,7 +1,7 @@
 <template>
   <div :id="annotation.id" ref="annotation" class="annotation">
     <span
-      v-if="!publicView"
+      v-if="!publicView || !documentIsReviewed"
       :id="annotation.id"
       ref="contentEditable"
       :class="[
@@ -82,6 +82,7 @@ export default {
       "newAcceptedAnnotations",
       "selectedEntities",
       "showActionError",
+      "documentIsReviewed",
     ]),
     annotationText() {
       if (this.isAnnotationBeingEdited) {
@@ -155,7 +156,7 @@ export default {
       this.$refs.contentEditable.textContent = text;
     },
     handleEditAnnotation(event) {
-      if (this.publicView) return;
+      if (this.publicView || this.documentIsReviewed) return;
 
       if (event) {
         event.preventDefault();
@@ -163,6 +164,7 @@ export default {
 
       if (
         !this.publicView &&
+        !this.documentIsReviewed &&
         !this.isAnnotationBeingEdited &&
         !this.isLoading
       ) {
@@ -226,7 +228,7 @@ export default {
       event.preventDefault();
     },
     saveAnnotationChanges(event) {
-      if (this.publicView) return;
+      if (this.publicView || this.documentIsReviewed) return;
 
       if (event) {
         event.preventDefault();

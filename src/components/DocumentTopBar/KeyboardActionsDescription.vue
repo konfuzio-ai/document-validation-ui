@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!publicView && !selectedDocument.is_reviewed && !editMode"
+    v-if="!publicView && !documentIsReviewed && !editMode"
     class="keyboard-actions-description"
   >
     <section class="b-tooltips">
@@ -65,7 +65,11 @@ export default {
   },
   computed: {
     ...mapState("edit", ["editMode"]),
-    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapState("document", [
+      "selectedDocument",
+      "publicView",
+      "documentIsReviewed",
+    ]),
   },
 };
 </script>
