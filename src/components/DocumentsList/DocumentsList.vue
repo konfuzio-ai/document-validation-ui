@@ -24,7 +24,12 @@
       </div>
     </div>
     <div class="documents-list-bottom">
-      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
+      <b-carousel-list
+        :data="documentsAvailableToReview"
+        :items-to-show="5"
+        :arrow-hover="true"
+        :has-drag="true"
+      >
         <template #item="document">
           <div
             :class="[
@@ -71,6 +76,11 @@
 import { mapGetters, mapState } from "vuex";
 import ServerImage from "../../assets/images/ServerImage";
 import ErrorIcon from "../../assets/images/ErrorIcon";
+import {
+  getURLQueryParam,
+  navigateToNewDocumentURL,
+  getURLPath,
+} from "../../utils/utils";
 
 /**
  * This component creates a horizontal list of documents
@@ -105,8 +115,12 @@ export default {
   },
   methods: {
     changeDocument(documentId) {
-      this.$store.dispatch("document/setDocId", documentId);
-      this.$store.dispatch("document/fetchDocument");
+      if (getURLQueryParam("document") || getURLPath("docs")) {
+        navigateToNewDocumentURL(this.selectedDocument.id, documentId);
+      } else {
+        this.$store.dispatch("document/setDocId", documentId);
+        this.$store.dispatch("document/fetchDocument");
+      }
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");

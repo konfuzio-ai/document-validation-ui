@@ -1,5 +1,9 @@
 import myImports from "../api";
-import { getURLQueryParam, navigateToNewDocumentURL } from "../utils/utils";
+import {
+  getURLQueryParam,
+  navigateToNewDocumentURL,
+  getURLPath,
+} from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 
@@ -164,7 +168,7 @@ const actions = {
             dispatch("document/setSplittingSuggestions", null, { root: true });
 
             if (newId !== oldId) {
-              if (getURLQueryParam("document")) {
+              if (getURLQueryParam("document") || getURLPath("docs")) {
                 navigateToNewDocumentURL(oldId, newId);
               } else {
                 await dispatch("document/setDocId", newId, {
