@@ -15,7 +15,7 @@
       overflow: visible;
       .header-dropdown {
         cursor: pointer;
-        overflow: hidden;
+        overflow: visible;
         white-space: nowrap;
         text-overflow: ellipsis;
 
@@ -35,9 +35,9 @@
       .annotations-table {
         height: 22px;
         display: flex;
-        overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        overflow: visible;
       }
     }
   }

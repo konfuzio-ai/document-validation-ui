@@ -23,7 +23,7 @@
           :annotation="annotation"
           :annotation-set="annotationSet"
           :label="label"
-          :is-small="isSmall"
+          :from-table="fromTable"
         />
       </div>
 
