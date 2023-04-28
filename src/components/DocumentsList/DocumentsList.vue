@@ -24,12 +24,7 @@
       </div>
     </div>
     <div class="documents-list-bottom">
-      <b-carousel-list
-        :data="documentsAvailableToReview"
-        :items-to-show="5"
-        :arrow-hover="true"
-        :has-drag="true"
-      >
+      <b-carousel-list :data="documentsAvailableToReview" :items-to-show="5">
         <template #item="document">
           <div
             :class="[
