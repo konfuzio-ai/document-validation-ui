@@ -15,11 +15,13 @@ export function getURLQueryParam(param) {
 export function getURLPath(value) {
   const path = window.location.pathname;
 
+  if (!path.includes(value)) return;
+
   const id = path.split(value)[1].split("/")[1];
 
-  if (path.includes(value, 1)) {
-    return id;
-  }
+  if (id === "") return;
+
+  return id;
 }
 
 export function navigateToNewDocumentURL(oldId, newId) {
