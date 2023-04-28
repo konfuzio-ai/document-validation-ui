@@ -2,7 +2,7 @@
   <div class="action-buttons">
     <!-- mark all empty labels as missing -->
     <div
-      v-if="!publicView"
+      v-if="!publicView && !documentIsReviewed"
       class="missing-decline-button-container all-missing"
       @mouseenter="mouseenterAnnotationSet('missing')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -19,7 +19,7 @@
 
     <!-- accept all pending annotations -->
     <div
-      v-if="!publicView"
+      v-if="!publicView && !documentIsReviewed"
       class="accept-all"
       @mouseenter="mouseenterAnnotationSet('accept')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -53,7 +53,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("document", ["publicView"]),
+    ...mapState("document", ["publicView", "documentIsReviewed"]),
   },
   methods: {
     mouseenterAnnotationSet(type) {

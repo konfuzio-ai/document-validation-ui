@@ -3,7 +3,11 @@
     ref="pdfContainer"
     :class="[
       'pdf-page-container',
-      (categorizeModalIsActive || editMode || publicView) && 'default-cursor',
+      (categorizeModalIsActive ||
+        editMode ||
+        publicView ||
+        documentIsReviewed) &&
+        'default-cursor',
       page.number === currentPage && 'current-page',
     ]"
   >
@@ -42,7 +46,7 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group v-if="!publicView" ref="entities">
+          <v-group v-if="!publicView || !documentIsReviewed" ref="entities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
@@ -258,6 +262,7 @@ export default {
       "selectedDocument",
       "publicView",
       "selectedEntities",
+      "documentIsReviewed",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -311,7 +316,13 @@ export default {
     },
 
     onMouseDown(event) {
-      if (this.categorizeModalIsActive || this.editMode) return;
+      if (
+        this.categorizeModalIsActive ||
+        this.editMode ||
+        this.publicView ||
+        this.documentIsReviewed
+      )
+        return;
 
       this.closePopups();
 
@@ -327,9 +338,6 @@ export default {
         (event.target.getParent() &&
           event.target.getParent().className === "Transformer")
       ) {
-        return;
-      }
-      if (this.publicView) {
         return;
       }
 
@@ -379,7 +387,13 @@ export default {
     },
 
     handleClickedEntity(entity) {
-      if (!entity || this.categorizeModalIsActive) return;
+      if (
+        !entity ||
+        this.categorizeModalIsActive ||
+        this.publicView ||
+        this.documentIsReviewed
+      )
+        return;
 
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
@@ -417,7 +431,12 @@ export default {
     },
 
     onElementEnter() {
-      if (!this.categorizeModalIsActive) {
+      if (
+        !this.categorizeModalIsActive &&
+        !this.publicView &&
+        !this.editMode &&
+        !this.documentIsReviewed
+      ) {
         this.$refs.stage.$el.style.cursor = "pointer";
       }
     },

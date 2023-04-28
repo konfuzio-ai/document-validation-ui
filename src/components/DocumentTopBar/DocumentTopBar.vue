@@ -5,21 +5,23 @@
       class="document-top-bar"
     >
       <div v-if="!recalculatingAnnotations" class="left-bar-components">
-        <DocumentCategory v-if="categories && !editMode && !publicView" />
+        <DocumentCategory
+          v-if="categories && !editMode && !publicView && !documentIsReviewed"
+        />
       </div>
 
       <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
       <div v-if="!recalculatingAnnotations" class="right-bar-components">
         <div
-          v-if="!editMode && (!publicView || !selectedDocument.is_reviewed)"
+          v-if="!editMode && (!publicView || !documentIsReviewed)"
           class="keyboard-actions-info"
         >
           <KeyboardActionsDescription />
         </div>
 
         <div
-          v-if="!editMode && (publicView || selectedDocument.is_reviewed)"
+          v-if="!editMode && (publicView || documentIsReviewed)"
           class="read-only-info"
         >
           <b-tooltip
@@ -27,7 +29,7 @@
             position="is-bottom"
             class="right-aligned width-184"
           >
-            <span v-if="publicView && !selectedDocument.is_reviewed">
+            <span v-if="publicView && !documentIsReviewed">
               {{ $t("lite_mode") }}
             </span>
             <span v-else class="doc-reviewed">
@@ -36,15 +38,12 @@
             <b-icon
               :class="[
                 'info-icon is-small',
-                selectedDocument.is_reviewed && 'info-reviewed',
+                documentIsReviewed && 'info-reviewed',
               ]"
               icon="circle-info"
             />
             <template #content>
-              <div
-                v-if="!selectedDocument.is_reviewed"
-                class="read-only-details"
-              >
+              <div v-if="!documentIsReviewed" class="read-only-details">
                 {{ $t("limited_functionalities") }}
               </div>
               <div v-else class="read-only-details">
@@ -96,6 +95,7 @@ export default {
       "publicView",
       "loading",
       "recalculatingAnnotations",
+      "documentIsReviewed",
     ]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),

@@ -7,7 +7,7 @@
 <script>
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
-import { getURLQueryParam } from "../utils/utils";
+import { getURLQueryParam, getURLPath } from "../utils/utils";
 import API from "../api";
 
 export default {
@@ -49,6 +49,8 @@ export default {
     documentId() {
       if (getURLQueryParam("document")) {
         return getURLQueryParam("document");
+      } else if (getURLPath("docs")) {
+        return getURLPath("docs");
       } else if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {

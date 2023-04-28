@@ -24,7 +24,7 @@
     </div>
 
     <div
-      v-if="!editMode && !selectedDocument.is_reviewed && !publicView"
+      v-if="!editMode && !documentIsReviewed && !publicView"
       class="finish-review-button-container"
     >
       <b-tooltip
@@ -45,7 +45,7 @@
 
           <div v-else>
             <b-notification :closable="false" :class="['loading-background']">
-              <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+              <b-loading :active="isLoading" :is-full-page="false">
                 <b-icon
                   icon="spinner"
                   class="fa-spin loading-icon-size spinner"
@@ -80,6 +80,7 @@ export default {
       "publicView",
       "finishedReview",
       "annotationSets",
+      "documentIsReviewed",
     ]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
   },
@@ -92,7 +93,7 @@ export default {
         this.finishDisabled = true;
       }
     },
-    publicView(newValue) {
+    documentIsReviewed(newValue) {
       if (newValue) {
         this.finishDisabled = true;
       }

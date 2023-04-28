@@ -54,7 +54,7 @@ const actions = {
    */
   fetchDocumentList: ({ commit, rootState }, categoryId) => {
     return HTTP.get(
-      `documents/?category=${categoryId}&assignee=${rootState.project.currentUser}`
+      `documents/?category=${categoryId}&assignee=${rootState.project.currentUser}&limit=100`
     )
       .then((response) => {
         if (response.data.results) {

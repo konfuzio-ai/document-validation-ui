@@ -3,7 +3,7 @@
     <!-- loading -->
     <div v-if="isLoading">
       <b-notification :closable="false" class="loading-background">
-        <b-loading :active="isLoading" :is-full-page="loadingOnFullPage">
+        <b-loading :active="isLoading" :is-full-page="false">
           <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
         </b-loading>
       </b-notification>
@@ -11,7 +11,7 @@
 
     <!-- save button -->
     <b-button
-      v-if="saveBtn && !isLoading && !publicView"
+      v-if="saveBtn && !isLoading && !publicView && !documentIsReviewed"
       :class="[
         'annotation-save-btn text-btn',
         actionBar && 'action-bar-save-btn',
@@ -25,7 +25,7 @@
 
     <!-- cancel button -->
     <b-button
-      v-if="cancelBtn && !isLoading"
+      v-if="cancelBtn && !isLoading && !documentIsReviewed"
       class="is-small annotation-cancel-btn"
       icon-left="xmark"
       @click.stop="cancel"
@@ -33,7 +33,14 @@
 
     <!-- decline button -->
     <div
-      v-if="declineBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
+      v-if="
+        declineBtn &&
+        !isLoading &&
+        !saveBtn &&
+        !cancelBtn &&
+        !publicView &&
+        !documentIsReviewed
+      "
       class="missing-decline-button-container"
     >
       <b-button
@@ -47,7 +54,14 @@
 
     <!-- accept button -->
     <b-button
-      v-if="acceptBtn && !isLoading && !saveBtn && !cancelBtn && !publicView"
+      v-if="
+        acceptBtn &&
+        !isLoading &&
+        !saveBtn &&
+        !cancelBtn &&
+        !publicView &&
+        !documentIsReviewed
+      "
       class="annotation-accept-btn primary-button"
       type="is-primary"
       @click.stop="accept"
@@ -58,7 +72,12 @@
     <!-- missing button -->
     <div
       v-if="
-        showMissingBtn && !isLoading && !cancelBtn && !saveBtn && !publicView
+        showMissingBtn &&
+        !isLoading &&
+        !cancelBtn &&
+        !saveBtn &&
+        !publicView &&
+        !documentIsReviewed
       "
       class="missing-decline-button-container"
     >
@@ -73,7 +92,7 @@
 
     <!-- Restore not found annotations -->
     <b-button
-      v-if="restoreBtn && !isLoading && !publicView"
+      v-if="restoreBtn && !isLoading && !publicView && !documentIsReviewed"
       class="restore-btn"
       type="is-primary"
       @click.stop="restore"
@@ -115,13 +134,12 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      loadingOnFullPage: false,
-    };
-  },
   computed: {
-    ...mapState("document", ["publicView", "missingAnnotations"]),
+    ...mapState("document", [
+      "publicView",
+      "missingAnnotations",
+      "documentIsReviewed",
+    ]),
   },
   methods: {
     save() {

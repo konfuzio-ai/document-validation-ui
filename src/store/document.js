@@ -29,6 +29,7 @@ const state = {
   selectedEntities: null,
   serverError: false,
   splittingSuggestions: null,
+  documentIsReviewed: false,
 };
 
 const getters = {
@@ -628,6 +629,9 @@ const actions = {
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
   },
+  setDocumentIsReviewed: ({ commit }, value) => {
+    commit("SET_DOCUMENT_IS_REVIEWED", value);
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -658,11 +662,13 @@ const actions = {
           if (response.data.pages.length > 0) {
             dispatch("fetchDocumentPage", initialPage);
           }
+
           // set information on the store
           commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
+          commit("SET_DOCUMENT_IS_REVIEWED", response.data.is_reviewed);
           commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
           if (rootState.project.projectId) {
@@ -1158,7 +1164,7 @@ const mutations = {
   },
   SET_SELECTED_DOCUMENT: (state, document) => {
     if (document.is_reviewed === true) {
-      state.publicView = true;
+      state.documentIsReviewed = true;
     }
     state.selectedDocument = document;
 
@@ -1227,6 +1233,9 @@ const mutations = {
   },
   SET_SPLITTING_SUGGESTIONS: (state, array) => {
     state.splittingSuggestions = array;
+  },
+  SET_DOCUMENT_IS_REVIEWED: (state, value) => {
+    state.documentIsReviewed = value;
   },
 };
 
