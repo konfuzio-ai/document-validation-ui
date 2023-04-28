@@ -109,6 +109,8 @@ export default {
       "selectedDocument",
       "categorizeModalIsActive",
       "splittingSuggestions",
+      "publicView",
+      "documentIsReviewed",
     ]),
     ...mapGetters("category", ["category", "projectHasSingleCategory"]),
     ...mapGetters("document", ["categorizationIsConfirmed"]),
@@ -181,7 +183,9 @@ export default {
         // But if there is a category, we also need to check if there are splitting suggestions or not
         this.show =
           (!category || (category && !this.splittingSuggestions)) &&
-          !this.categorizationIsConfirmed;
+          !this.categorizationIsConfirmed &&
+          !this.publicView &&
+          !this.documentIsReviewed;
       }
     },
     canCloseModal() {

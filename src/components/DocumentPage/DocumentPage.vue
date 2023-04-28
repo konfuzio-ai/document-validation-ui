@@ -431,7 +431,12 @@ export default {
     },
 
     onElementEnter() {
-      if (!this.categorizeModalIsActive) {
+      if (
+        !this.categorizeModalIsActive &&
+        !this.publicView &&
+        !this.editMode &&
+        !this.documentIsReviewed
+      ) {
         this.$refs.stage.$el.style.cursor = "pointer";
       }
     },
