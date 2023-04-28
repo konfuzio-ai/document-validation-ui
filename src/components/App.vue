@@ -1,6 +1,6 @@
 <template>
   <div class="dv-ui-app-container dv-ui-theme">
-    <DocumentsList />
+    <DocumentsList v-if="showDocumentsList" />
     <DocumentDashboard />
   </div>
 </template>
@@ -87,6 +87,9 @@ export default {
       } else {
         return true;
       }
+    },
+    showDocumentsList() {
+      return process.env.VUE_APP_SHOW_DOCUMENTS_LIST;
     },
   },
   created() {
