@@ -22,12 +22,12 @@
     </div>
     <div v-if="!splitOverview" class="sidebar">
       <EditSidebar
+        :split-suggestions-enabled="splitSuggestionsEnabled"
         @rotate-left="rotatePage"
         @rotate-right="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
         @handle-splitting-suggestions="applySplittingSuggestions"
-        :split-suggestions-enabled="splitSuggestionsEnabled"
       />
     </div>
     <div class="confirmation-modal-container">

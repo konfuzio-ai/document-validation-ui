@@ -409,7 +409,7 @@ body {
       }
     }
 
-    .invisible-parent-modal {
+    &.invisible-parent-modal {
       background-color: transparent;
 
       .modal-content {

@@ -136,7 +136,7 @@ export default {
         hasModalCard: true,
         trapFocus: true,
         canCancel: false,
-        customClass: "invisible-parent-modal",
+        customClass: "dv-ui-theme invisible-parent-modal",
         props: { isMultipleAnnotations: true },
         events: {
           labelSet: this.submitAnnotations,
