@@ -15,9 +15,6 @@
       overflow: visible;
       .header-dropdown {
         cursor: pointer;
-        overflow: visible;
-        white-space: nowrap;
-        text-overflow: ellipsis;
 
         .icon.arrow {
           margin-left: 4px;
@@ -33,11 +30,8 @@
       }
 
       .annotations-table {
-        height: 22px;
+        min-height: 22px;
         display: flex;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: visible;
       }
     }
   }
