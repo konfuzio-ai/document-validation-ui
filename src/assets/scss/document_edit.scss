@@ -26,15 +26,14 @@
       gap: 20px;
 
       .image-section {
+        cursor: grab;
         width: 138px;
         height: 138px;
         display: flex;
         align-items: center;
 
         .img-container {
-          &:hover {
-            cursor: pointer;
-          }
+          cursor: pointer;
 
           .img-thumbnail {
             border: $component-border;
