@@ -144,6 +144,7 @@ export default {
       });
     },
     chooseLabelSet(labelSet) {
+      // TODO: deprecated with new multi ann set table
       const tableSelection = {
         labelSet,
         position: {
