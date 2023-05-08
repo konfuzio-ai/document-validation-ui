@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex">
+  <div v-observe-visibility="visibilityChanged" style="display: flex">
     <img v-show="loaded" ref="imgTag" :height="height" />
     <slot v-if="!loaded" />
   </div>
@@ -27,15 +27,15 @@ export default {
   data() {
     return {
       loaded: false,
+      isVisible: false,
     };
   },
   watch: {
     imageUrl() {
-      this.loadImage();
+      if (this.isVisible) {
+        this.loadImage();
+      }
     },
-  },
-  mounted() {
-    this.loadImage();
   },
   methods: {
     loadImage() {
@@ -55,6 +55,12 @@ export default {
         .catch((error) => {
           this.loaded = false;
         });
+    },
+    visibilityChanged(isVisible) {
+      if (!this.isVisible && isVisible) {
+        this.isVisible = isVisible;
+        this.loadImage();
+      }
     },
   },
 };
