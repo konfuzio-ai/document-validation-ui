@@ -140,14 +140,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    isSmall: {
-      type: Boolean,
-      default: false,
-    },
-    showHover: {
-      type: Boolean,
-      default: true,
-    },
     fromTable: {
       type: Boolean,
       default: false,

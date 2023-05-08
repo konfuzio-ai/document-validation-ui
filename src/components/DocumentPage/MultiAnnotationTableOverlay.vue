@@ -222,6 +222,8 @@ export default {
 
     onDropdownChange(column, open) {
       this.editingLabels = [];
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/resetEditAnnotation");
       if (open) {
         if (this.openDropdown) {
           this.$refs[this.openDropdown][0].toggle();

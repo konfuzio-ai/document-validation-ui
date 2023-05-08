@@ -498,6 +498,8 @@ export default {
     },
 
     openAnnotationSetTable(tableSet) {
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/resetEditAnnotation");
       if (this.showAnnSetTable && this.showAnnSetTable === tableSet) {
         this.$store.dispatch("display/toggleAnnSetTable", tableSet);
       } else {
