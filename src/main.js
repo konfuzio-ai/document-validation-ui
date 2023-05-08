@@ -8,6 +8,8 @@ import { Integrations } from "@sentry/tracing";
 import i18n from "./i18n";
 import store from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import VueObserveVisibility from "vue-observe-visibility";
+
 // internal icons
 import {
   faArrowUp,
@@ -55,6 +57,7 @@ Vue.use(Buefy, {
   defaultIconPack: "fas",
   defaultIconComponent: "vue-fontawesome",
 });
+Vue.use(VueObserveVisibility);
 
 // Sentry config
 if (process.env.NODE_ENV != "development") {
