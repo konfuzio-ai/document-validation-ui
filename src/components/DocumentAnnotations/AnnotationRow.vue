@@ -75,7 +75,7 @@
             />
           </div>
           <EmptyAnnotation
-            v-else
+            v-else-if="!fromTable"
             :label="label"
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"

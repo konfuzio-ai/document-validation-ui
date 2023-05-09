@@ -49,29 +49,31 @@ export default {
       return this.showAnnSetTable[0].label_set.name;
     },
     coordinates() {
-      let x = 0;
-      let y = 0;
-      const paddingTop = 55;
+      let xFinal = 0;
+      let yFinal = 0;
+      const paddingTop = 40;
 
       this.showAnnSetTable.forEach((annotationSet) => {
-        if (
-          annotationSet.labels &&
-          annotationSet.labels.length > 0 &&
-          annotationSet.labels[0].annotations
-        ) {
-          annotationSet.labels[0].annotations.forEach((annotation) => {
-            annotation.span.forEach((span) => {
-              if (x === 0 || span.x0 < x) {
-                x = span.x0;
-              }
-              if (y === 0 || span.y0 < y) {
-                y = span.y0 + paddingTop;
-              }
+        if (annotationSet.labels) {
+          annotationSet.labels.forEach((label) => {
+            label.annotations.forEach((annotation) => {
+              annotation.span.forEach((span) => {
+                const { x, y } = this.bboxToPoint(this.page, {
+                  x: span.x0,
+                  y: span.y0,
+                });
+                if (xFinal === 0 || x < xFinal) {
+                  xFinal = x;
+                }
+                if (yFinal === 0 || y < yFinal) {
+                  yFinal = y - paddingTop;
+                }
+              });
             });
           });
         }
       });
-      return this.bboxToPoint(this.page, { x, y });
+      return { x: xFinal, y: yFinal };
     },
   },
   methods: {

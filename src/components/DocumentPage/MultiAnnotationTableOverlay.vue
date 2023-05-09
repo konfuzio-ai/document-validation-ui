@@ -106,9 +106,15 @@ export default {
   },
   computed: {
     ...mapState("display", ["showAnnSetTable"]),
+    ...mapState("document", ["annotations"]),
   },
   watch: {
     showAnnSetTable() {
+      this.handleColumns();
+      this.handleRows();
+    },
+    annotations() {
+      // if there's a change in the annotations content, we update the table
       this.handleColumns();
       this.handleRows();
     },
@@ -151,14 +157,18 @@ export default {
 
       this.showAnnSetTable.forEach((annotationSet) => {
         let row = {};
+        let toAdd = false; // to not push empty labels
 
         annotationSet.labels.forEach((label) => {
           if (label.annotations.length > 0) {
             row[label.id] = label.annotations[0];
             this.orderedAnnotations.push(label.annotations[0]);
+            toAdd = true;
           }
         });
-        this.rows.push(row);
+        if (toAdd) {
+          this.rows.push(row);
+        }
       });
     },
 

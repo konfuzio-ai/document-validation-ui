@@ -197,6 +197,7 @@ export default {
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("error_creating_multi_ann"),
           });
+          this.$store.dispatch("selection/disableSelection");
           this.$emit("finished");
         });
     },
