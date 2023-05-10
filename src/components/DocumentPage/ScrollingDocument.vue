@@ -13,10 +13,10 @@
         <ScrollingPage
           v-for="page in editMode ? pagesForPostprocess : pages"
           :key="page.number"
+          ref="scrollingPage"
           :page="page"
           :client-height="clientHeight"
           :scroll-top="scrollTop"
-          ref="scrollingPage"
           class="scrolling-page"
           @page-jump="onPageJump"
         />
@@ -27,6 +27,7 @@
     </div>
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
+    <MultiAnnotationTableOverlay v-if="showAnnSetTable" />
   </div>
 </template>
 <script>
@@ -35,12 +36,14 @@ import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
 import ActionBar from "./ActionBar";
+import MultiAnnotationTableOverlay from "./MultiAnnotationTableOverlay";
 
 export default {
   components: {
     ScrollingPage,
     Toolbar,
     ActionBar,
+    MultiAnnotationTableOverlay,
   },
   directives: {
     scroll,
@@ -60,6 +63,7 @@ export default {
       "recalculatingAnnotations",
       "selectedDocument",
       "loading",
+      "annotationSets",
     ]),
     ...mapState("edit", [
       "editMode",
@@ -71,6 +75,7 @@ export default {
       "documentActionBar",
       "pageChangedFromThumbnail",
       "currentPage",
+      "showAnnSetTable",
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
 

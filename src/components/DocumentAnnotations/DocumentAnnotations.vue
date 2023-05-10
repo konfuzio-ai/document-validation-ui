@@ -27,7 +27,30 @@
     <div v-else :class="['annotation-set-list']">
       <CategorizeModal v-if="!publicView || !documentIsReviewed" />
       <div
-        v-for="(annotationSet, indexGroup) in annotationSets"
+        v-if="Object.entries(annotationSetsInTable()).length > 0"
+        class="annotation-set-group"
+      >
+        <div class="label-set-header">
+          <div class="label-set-name">{{ $t("table") }}</div>
+        </div>
+        <div
+          v-for="(tableSet, index) in Object.values(annotationSetsInTable())"
+          :key="index"
+          class="ann-set-table"
+          @click="openAnnotationSetTable(tableSet)"
+        >
+          <div class="ann-set-table-icon">
+            <GridIcon /><span class="ann-set-number">{{
+              tableSet.length
+            }}</span>
+          </div>
+          <span class="ann-set-table-label-set-name">{{
+            tableSet[0].label_set.name
+          }}</span>
+        </div>
+      </div>
+      <div
+        v-for="(annotationSet, indexGroup) in annotationSetsToShowInList()"
         :key="indexGroup"
         class="annotation-set-group"
       >
@@ -89,6 +112,7 @@ import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import LoadingAnnotations from "./LoadingAnnotations";
 import CategorizeModal from "./CategorizeModal";
+import GridIcon from "../../assets/images/GridIcon";
 
 /**
  * This component loads all annotations for one document
@@ -101,6 +125,7 @@ export default {
     DocumentLabel,
     LoadingAnnotations,
     CategorizeModal,
+    GridIcon,
   },
   data() {
     return {
@@ -110,6 +135,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("display", ["showAnnSetTable"]),
     ...mapState("document", [
       "documentId",
       "recalculatingAnnotations",
@@ -130,6 +156,8 @@ export default {
       "emptyLabelsLength",
       "annotationsWithPendingReviewLength",
       "waitingForSplittingConfirmation",
+      "annotationSetsToShowInList",
+      "annotationSetsInTable",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -466,6 +494,16 @@ export default {
               defaultErrorMessage: this.$t("edit_error"),
             });
           });
+      }
+    },
+
+    openAnnotationSetTable(tableSet) {
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/resetEditAnnotation");
+      if (this.showAnnSetTable && this.showAnnSetTable === tableSet) {
+        this.$store.dispatch("display/toggleAnnSetTable", tableSet);
+      } else {
+        this.$store.dispatch("display/showAnnSetTable", tableSet);
       }
     },
   },

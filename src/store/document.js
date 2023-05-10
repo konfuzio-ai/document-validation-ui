@@ -3,6 +3,7 @@ import { sleep } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
+export const table_reference_api = "api.v3.dvui.table";
 
 const state = {
   loading: true,
@@ -159,6 +160,78 @@ const getters = {
     return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
   },
 
+  /* Get annotation sets created in table */
+  annotationSetsInTable: (state) => () => {
+    const annotationSetsList = {};
+    state.annotationSets.forEach((annotationSet) => {
+      let addAnnotationSet = false;
+      if (annotationSet.labels) {
+        annotationSet.labels.forEach((label) => {
+          if (
+            label.annotations &&
+            label.annotations.find(
+              (annotation) =>
+                annotation.origin && annotation.origin === table_reference_api
+            )
+          ) {
+            addAnnotationSet = true;
+            return;
+          }
+        });
+      }
+      if (addAnnotationSet) {
+        // group by label set
+        if (annotationSetsList[`${annotationSet.label_set.id}`]) {
+          annotationSetsList[`${annotationSet.label_set.id}`].push(
+            annotationSet
+          );
+        } else {
+          annotationSetsList[`${annotationSet.label_set.id}`] = [annotationSet];
+        }
+      }
+    });
+    return annotationSetsList;
+  },
+
+  /* Get annotation sets without tables */
+  annotationSetsToShowInList: (state) => () => {
+    const annotationSetsList = [];
+    state.annotationSets.forEach((annotationSet) => {
+      let addAnnotationSet = true;
+      if (annotationSet.labels) {
+        annotationSet.labels.forEach((label) => {
+          if (
+            label.annotations &&
+            label.annotations.find(
+              (annotation) =>
+                annotation.origin && annotation.origin === table_reference_api
+            )
+          ) {
+            addAnnotationSet = false;
+            return;
+          }
+        });
+      }
+      if (addAnnotationSet) {
+        annotationSetsList.push(annotationSet);
+      }
+    });
+    return annotationSetsList;
+  },
+
+  /* Get annotations inside a list of annotation sets */
+  annotationsInAnnotationsSets: (state) => (annotationsSets) => {
+    const annotations = [];
+    annotationsSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((label) => {
+        label.annotations.forEach((annotation) => {
+          annotations.push(annotation);
+        });
+      });
+    });
+    return annotations;
+  },
+
   /* Process annotations and extract labels and sets */
   processAnnotationSets: (state, getters) => (annotationSets) => {
     // group annotations for sidebar
@@ -230,6 +303,7 @@ const getters = {
       });
       return found ? `${value + 1}` : "";
     }
+    return "";
   },
 
   /**
@@ -747,7 +821,7 @@ const actions = {
       id: annotation.id,
       span,
       page: span.page_index + 1,
-      labelName: label.name,
+      labelName: label ? label.name : "",
     };
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", value);
   },
@@ -1083,11 +1157,21 @@ const mutations = {
           (existingAnnotation) => existingAnnotation.id === annotation.id
         );
         if (indexOfAnnotationAnnotationSets > -1) {
-          label.annotations.splice(
-            indexOfAnnotationAnnotationSets,
-            1,
-            annotation
-          );
+          // checks if an annotation label was changed and add it to the new label
+          if (annotation.label && annotation.label.id !== label.id) {
+            label.annotations.splice(indexOfAnnotationAnnotationSets, 1);
+
+            const labelToAdd = annotationSet.labels.find(
+              (labelToAdd) => labelToAdd.id === annotation.label.id
+            );
+            labelToAdd.annotations.push(annotation);
+          } else {
+            label.annotations.splice(
+              indexOfAnnotationAnnotationSets,
+              1,
+              annotation
+            );
+          }
           updatedAnnotation = true;
           return;
         }

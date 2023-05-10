@@ -1,0 +1,38 @@
+@import "./imports.scss";
+
+.multi-ann-table-overlay {
+  position: absolute;
+  bottom: 0;
+  height: fit-content;
+  z-index: 40;
+  width: 100%;
+  background-color: $background;
+
+  .multi-ann-set-table {
+    padding-bottom: 6px;
+
+    .table-wrapper {
+      overflow: visible;
+      .header-dropdown {
+        cursor: pointer;
+
+        .icon.arrow {
+          margin-left: 4px;
+        }
+        .draggable {
+          margin-right: 4px;
+          cursor: move;
+        }
+
+        .delete-action {
+          color: $red;
+        }
+      }
+
+      .annotations-table {
+        min-height: 22px;
+        display: flex;
+      }
+    }
+  }
+}

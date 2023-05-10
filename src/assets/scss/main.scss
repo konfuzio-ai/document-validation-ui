@@ -251,6 +251,10 @@ body {
         background-color: $primary;
       }
 
+      a.dropdown-item.is-disabled {
+        color: $grey-blue !important;
+      }
+
       &.dropdown-menu-animation {
         a.navbar-item {
           color: $text-color;
@@ -405,7 +409,7 @@ body {
       }
     }
 
-    .invisible-parent-modal {
+    &.invisible-parent-modal {
       background-color: transparent;
 
       .modal-content {
@@ -462,6 +466,8 @@ body {
     }
 
     .b-tooltip {
+      height: 100%;
+      align-items: center;
       .tooltip-content {
         background-color: $text-color !important;
 
@@ -470,11 +476,14 @@ body {
           text-decoration: underline;
           font-weight: 500;
         }
+        &:before {
+          border-bottom-color: $text-color !important;
+        }
       }
 
       &.left-aligned {
         .tooltip-content {
-          left: 10px !important;
+          left: -3px !important;
           transform: none !important;
           padding: 8px 10px !important;
 
@@ -629,6 +638,9 @@ body {
     }
 
     .b-table {
+      .table-wrapper {
+        overflow: visible !important;
+      }
       &.full-height {
         height: 100%;
         .table-wrapper {
@@ -638,10 +650,34 @@ body {
           }
         }
       }
-      .table {
+
+      &.dark-header {
+        .table {
+          thead {
+            background-color: $black !important;
+            th {
+              font-weight: 400;
+              background-color: $black !important;
+            }
+          }
+        }
+      }
+
+      &.header-32 {
+        thead {
+          height: 32px;
+        }
+      }
+
+      .table,
+      .table-wrapper {
+        &.has-sticky-header {
+          max-height: 200px;
+          height: fit-content;
+        }
         cursor: text;
         thead {
-          background-color: #7b61ff;
+          background-color: $purple !important;
           font-weight: 500;
           font-size: 10px;
           line-height: 18px;
@@ -652,8 +688,8 @@ body {
                 margin: 0;
               }
             }
-            background-color: #7b61ff;
-            color: white;
+            background-color: $purple !important;
+            color: white !important;
             vertical-align: middle;
             &[draggable="true"] {
               cursor: move;

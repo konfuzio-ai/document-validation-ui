@@ -125,5 +125,9 @@
   "no": "No",
   "yes": "Sí",
   "split_modal_no_suggestions": "Do you need to split the document? <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost in the future.",
-  "missing_from_document": "Falta en el documento"
+  "missing_from_document": "Falta en el documento",
+  "edit_label": "Edit label",
+  "delete_label": "Delete label",
+  "table": "Table",
+  "delete_table": "Delete table"
 }

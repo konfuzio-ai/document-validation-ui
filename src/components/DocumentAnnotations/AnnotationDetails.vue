@@ -1,10 +1,10 @@
 <template>
   <b-tooltip
     :animated="false"
-    position="is-bottom"
-    class="left-aligned annotation-details"
+    :position="fromTable ? 'is-top' : 'is-bottom'"
+    :class="[!fromTable && 'left-aligned', 'annotation-details']"
   >
-    <div class="label-icon">
+    <div :class="['label-icon', fromTable && 'is-small']">
       <div v-if="created(annotation) || edited(annotation)">
         <div
           v-if="accepted(annotation)"
@@ -178,6 +178,10 @@ export default {
     label: {
       type: Object,
       default: null,
+    },
+    fromTable: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

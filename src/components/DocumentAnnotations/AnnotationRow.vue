@@ -17,13 +17,18 @@
       @mouseenter="onAnnotationHoverEnter(defaultSpan)"
       @mouseleave="onAnnotationHoverLeave"
     >
-      <AnnotationDetails
-        :description="label.description"
-        :annotation="annotation"
-        :annotation-set="annotationSet"
-        :label="label"
-      />
+      <div class="annotation-icon">
+        <AnnotationDetails
+          :description="label.description"
+          :annotation="annotation"
+          :annotation-set="annotationSet"
+          :label="label"
+          :from-table="fromTable"
+        />
+      </div>
+
       <div
+        v-if="showLabel"
         :class="[
           'label-name',
           annotationIsNotFound(annotationSet, label) && 'not-found-text',
@@ -70,7 +75,7 @@
             />
           </div>
           <EmptyAnnotation
-            v-else
+            v-else-if="!fromTable"
             :label="label"
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
@@ -79,7 +84,7 @@
           />
         </div>
       </div>
-      <div class="buttons-container">
+      <div v-if="showButtons" class="buttons-container">
         <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
@@ -126,6 +131,18 @@ export default {
     annotation: {
       type: Object,
       default: null,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
+    showButtons: {
+      type: Boolean,
+      default: true,
+    },
+    fromTable: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -280,7 +297,7 @@ export default {
       if (span) {
         this.$store.dispatch("document/setDocumentAnnotationSelected", {
           annotation: this.annotation,
-          label: this.label,
+          label: this.fromTable ? null : this.label,
           span,
           scrollTo: false,
         });
@@ -290,6 +307,9 @@ export default {
       this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
     onAnnotationClick() {
+      if (!this.fromTable) {
+        this.$store.dispatch("display/showAnnSetTable", null);
+      }
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     },
     hoveredEmptyLabels() {

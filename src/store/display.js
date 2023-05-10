@@ -30,6 +30,7 @@ const state = {
   documentActionBar: null, // document action bar properties
   categorizeModalIsActive: false,
   pageChangedFromThumbnail: false,
+  showAnnSetTable: null,
 };
 
 const getters = {
@@ -60,6 +61,31 @@ const getters = {
   imageScale: (state) => (page) => {
     return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
   },
+  bboxToPoint:
+    (state, getters) =>
+    (page, point, hasOffset = false) => {
+      const imageScale = getters.imageScale(page);
+      const { x, y } = point;
+      const pageHeight = new BigNumber(page.original_size[1]);
+      const newPoint = {
+        // left
+        x: new BigNumber(x)
+          .minus(hasOffset ? 1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+        // top
+        y: pageHeight
+          .minus(new BigNumber(y))
+          .minus(hasOffset ? 17.1 : 0)
+          .times(state.scale)
+          .times(imageScale)
+          .div(PIXEL_RATIO)
+          .toNumber(),
+      };
+      return newPoint;
+    },
   bboxToRect:
     (state, getters) =>
     (page, bbox, hasOffset = false) => {
@@ -207,6 +233,12 @@ const actions = {
       show ? { icon, text, action, loading } : null
     );
   },
+  showAnnSetTable({ commit }, tableSet) {
+    commit("SET_ANN_SET_TABLE", tableSet);
+  },
+  toggleAnnSetTable({ commit }, tableSet) {
+    commit("TOGGLE_ANN_SET_TABLE", tableSet);
+  },
   setCategorizeModalIsActive: ({ commit }, value) => {
     commit("SET_CATEGORIZE_MODAL_IS_ACTIVE", value);
   },
@@ -234,6 +266,18 @@ const mutations = {
 
   SET_DOCUMENT_ACTION_BAR: (state, actionBar) => {
     state.documentActionBar = actionBar;
+  },
+
+  SET_ANN_SET_TABLE: (state, tableSet) => {
+    state.showAnnSetTable = tableSet;
+  },
+
+  TOGGLE_ANN_SET_TABLE: (state, tableSet) => {
+    if (state.showAnnSetTable) {
+      state.showAnnSetTable = null;
+    } else {
+      state.showAnnSetTable = tableSet;
+    }
   },
 
   SET_CATEGORIZE_MODAL_IS_ACTIVE: (state, value) => {

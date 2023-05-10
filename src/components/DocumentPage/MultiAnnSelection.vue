@@ -45,6 +45,7 @@
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
 import { ChooseLabelSetModal } from "../DocumentAnnotations";
+import { table_reference_api } from "../../store/document";
 
 export default {
   props: {
@@ -114,6 +115,7 @@ export default {
       };
     },
     ...mapState("selection", ["selection", "isSelecting"]),
+    ...mapState("document", ["documentId"]),
     ...mapGetters("display", ["clientToBbox"]),
     ...mapGetters("document", ["entitiesOnSelection"]),
   },
@@ -134,14 +136,15 @@ export default {
         hasModalCard: true,
         trapFocus: true,
         canCancel: false,
-        customClass: "invisible-parent-modal",
+        customClass: "dv-ui-theme invisible-parent-modal",
         props: { isMultipleAnnotations: true },
         events: {
-          labelSet: this.chooseLabelSet,
+          labelSet: this.submitAnnotations,
         },
       });
     },
     chooseLabelSet(labelSet) {
+      // TODO: deprecated with new multi ann set table
       const tableSelection = {
         labelSet,
         position: {
@@ -154,6 +157,49 @@ export default {
       };
       this.$store.dispatch("selection/disableSelection");
       this.$emit("finished", tableSelection);
+    },
+
+    async submitAnnotations(labelSet) {
+      const columns = labelSet.labels.map((label) => {
+        return {
+          field: `${label.id}`,
+          label: label.name,
+          centered: true,
+        };
+      });
+
+      const orderedEntities = this.processRows(columns);
+
+      const annotations = [];
+
+      orderedEntities.forEach((orderedEntity) => {
+        annotations.push({
+          document: this.documentId,
+          span: orderedEntity.spans,
+          label: orderedEntity.label_id,
+          is_correct: true,
+          revised: false,
+          label_set: labelSet.id,
+          set_reference: orderedEntity.row_index,
+          origin: table_reference_api,
+        });
+      });
+
+      this.$store
+        .dispatch("document/createAnnotation", annotations)
+        .then(() => {
+          this.$store.dispatch("selection/disableSelection");
+          this.$emit("finished");
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_creating_multi_ann"),
+          });
+          this.$store.dispatch("selection/disableSelection");
+          this.$emit("finished");
+        });
     },
 
     onButtonEnter() {
@@ -296,6 +342,50 @@ export default {
 
       this.entities = cols;
     },
+
+    processRows(columns) {
+      const orderedEntities = []; // this will match the order of entities in the table so we have a way of tracking them once we submit
+      let rowIndex = 0;
+
+      Object.entries(this.entities).forEach(([key, groupedEntity]) => {
+        let row = null;
+        columns.forEach((column, index) => {
+          let spans = [];
+          if (
+            Object.entries(groupedEntity)[index] &&
+            Object.entries(groupedEntity)[index].length > 0
+          ) {
+            spans = Object.entries(groupedEntity)[index][1];
+          }
+          const entityExists = spans.length > 0;
+
+          let textContent = "";
+
+          spans.forEach((entity) => {
+            textContent = `${textContent} ${entity.offset_string}`;
+          });
+
+          row = {
+            ...row,
+            [column.field]: textContent,
+          };
+          if (entityExists) {
+            const customEntity = {
+              spans: [...spans],
+              label_id: column.field,
+              row_index: rowIndex,
+            };
+
+            orderedEntities.push(customEntity);
+          }
+        });
+        if (row !== null) {
+          rowIndex++;
+        }
+      });
+      return orderedEntities;
+    },
+
     ...mapActions("selection", ["moveSelection"]),
   },
 };

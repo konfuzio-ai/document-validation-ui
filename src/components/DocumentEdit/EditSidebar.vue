@@ -51,9 +51,9 @@
       >
         <b-field>
           <b-switch
+            v-model="switchStatus"
             :value="true"
             size="is-small"
-            v-model="switchStatus"
             :disabled="!documentHasProposedSplit(selectedDocument)"
           >
             <span class="switch-text">{{ $t("smart_split") }}</span>
@@ -82,6 +82,11 @@ export default {
   components: {
     SidebarButtons,
   },
+  props: {
+    splitSuggestionsEnabled: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       buttonDisabled: true,
@@ -89,11 +94,6 @@ export default {
       newText: this.$t("new"),
       switchStatus: true,
     };
-  },
-  props: {
-    splitSuggestionsEnabled: {
-      type: Boolean,
-    },
   },
   computed: {
     ...mapState("edit", ["selectedPages"]),

@@ -27,6 +27,8 @@
       @close="closePopups"
     />
 
+    <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
+
     <v-stage
       v-if="image && scale"
       ref="stage"
@@ -74,7 +76,13 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="showFocusedAnnotation && !isSelecting">
+      <v-layer
+        v-if="
+          showFocusedAnnotation &&
+          !isSelecting &&
+          documentAnnotationSelected.labelName !== ''
+        "
+      >
         <v-label
           :key="`label${documentAnnotationSelected.id}`"
           :config="{
@@ -129,6 +137,7 @@ import BoxSelection from "./BoxSelection";
 import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
 import MultiAnnotationTablePopup from "./MultiAnnotationTablePopup";
+import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
   name: "DocumentPage",
@@ -137,6 +146,7 @@ export default {
     MultiAnnSelection,
     NewAnnotation,
     MultiAnnotationTablePopup,
+    AnnSetTableOptions,
   },
 
   props: {
@@ -155,7 +165,7 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["currentPage"]),
+    ...mapState("display", ["currentPage", "showAnnSetTable"]),
 
     showFocusedAnnotation() {
       return (

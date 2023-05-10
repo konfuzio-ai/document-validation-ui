@@ -156,63 +156,36 @@ export default {
       }
     },
     async submitAnnotations() {
-      let errorMessageShown = false;
-      let previousAnnotationSetId = null;
-      let previousRowIndex = 0;
-
       this.$store.dispatch("display/showDocumentActionBar", {
         show: true,
         loading: false,
         action: true,
       });
 
-      // traditional for to await for every request
-      for (let i = 0; i < this.orderedEntities.length; i++) {
-        const groupedEntity = this.orderedEntities[i];
-
-        const annotationToCreate = {
+      this.orderedEntities.forEach((orderedEntity) => {
+        annotations.push({
           document: this.documentId,
-          span: groupedEntity.spans,
-          label: groupedEntity.label_id,
+          span: orderedEntity.spans,
+          label: orderedEntity.label_id,
           is_correct: true,
           revised: false,
-        };
+          label_set: labelSet.id,
+          set_reference: orderedEntity.row_index,
+        });
+      });
 
-        if (groupedEntity.row_index !== previousRowIndex) {
-          // if line changed then reset annotation set
-          previousAnnotationSetId = null;
-        }
-        previousRowIndex = groupedEntity.row_index;
-
-        if (previousAnnotationSetId) {
-          annotationToCreate.annotation_set = previousAnnotationSetId;
-        } else {
-          annotationToCreate.label_set = this.labelSet.id;
-        }
-
-        await this.$store
-          .dispatch("document/createAnnotation", annotationToCreate)
-          .then((response) => {
-            if (response) {
-              // set ann set id to use on the next labels on the same row
-              previousAnnotationSetId = response.data.annotation_set;
-            }
-          })
-          .catch((error) => {
-            if (!errorMessageShown) {
-              this.$store.dispatch("document/createErrorMessage", {
-                error,
-                serverErrorMessage: this.$t("server_error"),
-                defaultErrorMessage: this.$t("error_creating_multi_ann"),
-              });
-
-              // set to true to only show 1 error
-              // the first time it appears
-              errorMessageShown = true;
-            }
+      this.$store
+        .dispatch("document/createAnnotation", annotations)
+        .then(() => {
+          this.$emit("close");
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_creating_multi_ann"),
           });
-      }
-      this.$emit("close");
+        });
     },
     deleteRow(index) {
       this.rows.splice(index, 1);
