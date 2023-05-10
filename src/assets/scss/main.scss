@@ -678,10 +678,10 @@ body {
         cursor: text;
         thead {
           background-color: $purple !important;
-          font-weight: 500;
-          font-size: 10px;
-          line-height: 18px;
           th {
+            font-weight: 500;
+            font-size: 10px;
+            line-height: 18px;
             .th-wrap {
               text-transform: none;
               .icon {
@@ -698,13 +698,14 @@ body {
         }
         tbody {
           background-color: rgba(123, 97, 255, 0.1);
-          font-weight: 500;
-          font-size: 10px;
-          line-height: 18px;
           tr {
             background-color: white;
             color: black;
             td {
+              font-weight: 500;
+              font-size: 10px;
+              line-height: 18px;
+
               &.has-text-centered {
                 vertical-align: middle;
               }
