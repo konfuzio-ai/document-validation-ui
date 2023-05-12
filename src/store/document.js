@@ -927,8 +927,23 @@ const actions = {
           }
         })
         .catch((error) => {
-          reject(error.response);
           console.log(error);
+          // check if review error
+          if (
+            error.response &&
+            error.response.request &&
+            error.response.request.response
+          ) {
+            const is_reviewed = JSON.parse(error.request.response).is_reviewed;
+            if (is_reviewed && is_reviewed.length > 0) {
+              const errorData = {
+                data: [...is_reviewed],
+              };
+              reject(errorData);
+              return;
+            }
+          }
+          reject(error.response);
         });
     });
   },
@@ -1075,12 +1090,6 @@ const actions = {
     { commit, dispatch },
     { error, serverErrorMessage, defaultErrorMessage }
   ) => {
-    let errorAsString;
-
-    if (error && error.status) {
-      errorAsString = error.status.toString();
-    }
-
     // check type of error
     if (error && error.status === 500) {
       dispatch("setErrorMessage", serverErrorMessage);
