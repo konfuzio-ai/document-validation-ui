@@ -31,22 +31,7 @@
         height: 138px;
         display: flex;
         align-items: center;
-
-        .img-container {
-          cursor: pointer;
-
-          .img-thumbnail {
-            border: $component-border;
-            border-radius: 2px;
-          }
-
-          &.selected {
-            .img-thumbnail {
-              border-color: $text-color;
-              filter: contrast(0.7);
-            }
-          }
-        }
+        justify-content: space-between;
 
         .splitting-lines {
           cursor: pointer;
@@ -98,70 +83,6 @@
         &:last-child {
           .splitting-lines {
             display: none;
-          }
-        }
-
-        .image-container {
-          width: fit-content;
-          display: flex;
-          flex-direction: column;
-
-          .thumbnail {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 130px;
-            width: 138px;
-
-            &:hover {
-              .icon-container {
-                display: flex;
-              }
-            }
-
-            .icon-container {
-              position: absolute;
-              width: auto;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 6px;
-              display: none;
-
-              .action-icon {
-                border-radius: 60px;
-                background-color: $text-color;
-                width: 32px;
-                height: 32px;
-                color: $white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-
-                svg {
-                  height: 21px;
-                }
-              }
-            }
-          }
-
-          .page-number {
-            color: $text-lighter;
-            font-size: 12px;
-            line-height: 12px;
-            font-weight: 400;
-            align-self: center;
-            padding-bottom: 10px;
-          }
-
-          &.split-overview {
-            img {
-              height: 30px !important;
-              width: 30px !important;
-            }
           }
         }
       }
@@ -382,33 +303,6 @@
                         5px 5px $white, 6px 6px $detail;
                     }
                   }
-                }
-              }
-
-              .icon-container {
-                position: absolute;
-                display: none;
-
-                .action-icon {
-                  border-radius: 60px;
-                  background-color: $text-color;
-                  width: 28px;
-                  height: 28px;
-                  color: $white;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  cursor: pointer;
-
-                  svg {
-                    height: 21px;
-                  }
-                }
-              }
-
-              &:hover {
-                .icon-container {
-                  display: flex;
                 }
               }
             }

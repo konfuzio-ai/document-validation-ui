@@ -13,38 +13,12 @@
         :key="page.id"
         class="image-section"
         tabindex="0"
-        @focusout="clickOutside"
       >
-        <div
-          class="image-container"
-          :tabindex="index"
-          @click="selectPage(page)"
-        >
-          <div class="thumbnail">
-            <div
-              :class="[
-                'img-container',
-                selected && isPageSelected(page.id) === page.id && 'selected',
-              ]"
-            >
-              <ServerImage
-                class="img-thumbnail"
-                :image-url="`${page.thumbnail_url}?${page.updated_at}`"
-                :style="{
-                  transform: 'rotate(' + getRotation(page.id) + 'deg)',
-                }"
-              >
-                <b-skeleton width="57px" height="57px" />
-              </ServerImage>
-            </div>
-            <div class="icon-container">
-              <div class="action-icon">
-                <EyeIcon />
-              </div>
-            </div>
-          </div>
-          <span class="page-number">{{ page.number }}</span>
-        </div>
+        <EditPageThumbnail
+          :page="page"
+          :index="index"
+          :rotation="getRotation(page.id)"
+        />
         <div
           :class="[
             'splitting-lines',
@@ -88,19 +62,18 @@
  */
 
 import { mapState } from "vuex";
-import ServerImage from "../../assets/images/ServerImage";
 import SplitLines from "../../assets/images/SplitLines";
 import SplitZigZag from "../../assets/images/SplitZigZag";
-import EyeIcon from "../../assets/images/EyeIcon";
+import EditPageThumbnail from "./EditPageThumbnail";
+
 import draggable from "vuedraggable";
 
 export default {
   name: "EditPages",
   components: {
-    ServerImage,
     SplitLines,
     SplitZigZag,
-    EyeIcon,
+    EditPageThumbnail,
     draggable,
   },
   props: {
@@ -116,7 +89,6 @@ export default {
   data() {
     return {
       editPages: null,
-      selected: null,
     };
   },
 
@@ -131,7 +103,6 @@ export default {
       "editMode",
       "pagesForPostprocess",
       "splitOverview",
-      "selectedPages",
       "splitOverview",
     ]),
   },
@@ -156,42 +127,7 @@ export default {
     this.editPages = this.pagesForPostprocess;
   },
   methods: {
-    handlePageChange(pageNumber) {
-      this.$emit("change-page", pageNumber);
-    },
-    isPageSelected(id) {
-      if (this.selectedPages.length === 0) return;
-      const selectedPage = this.selectedPages.find((page) => page.id === id);
-      if (selectedPage) return selectedPage.id;
-    },
-    selectPage(page) {
-      if (!page) return;
-      this.$emit("change-page", page.number);
-      const selectedPage = {
-        id: page.id,
-        number: page.number,
-        thumbnail_url: page.thumbnail_url,
-      };
-      this.selected = true;
-
-      this.$store.dispatch("edit/setSelectedPages", selectedPage);
-    },
-    clickOutside(event) {
-      if (!event || this.selectedPages.length === 0) return;
-
-      // Check if user clicks in any element other than thumbnail or buttons to deselect the thumbnail
-      if (
-        event.target.className.includes("button") ||
-        event.target.className.includes("image-container") ||
-        event.target.className.includes("icon")
-      ) {
-        return;
-      }
-
-      this.deselect();
-    },
     deselect() {
-      this.selected = null;
       this.$store.dispatch("edit/setSelectedPages");
     },
     getRotation(pageId) {

@@ -4,7 +4,6 @@
       <EditPages
         :splitting-lines="splittingLines"
         :split-suggestions-enabled="splitSuggestionsEnabled"
-        @change-page="changePage"
         @handle-splitting-lines="handleSplittingLines"
         @check-move="checkMove"
         @handle-drag-end="handleDragEnd"
