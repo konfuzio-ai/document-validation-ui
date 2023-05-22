@@ -30,7 +30,10 @@
         <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
           <FitZoomIcon />
         </div>
-        <div class="zoom-in icon" @click.prevent.stop="zoomIn">
+        <div
+          :class="['zoom-in', 'icon', isZoomInExceeding && 'zoom-disabled']"
+          @click.prevent.stop="zoomIn"
+        >
           <PlusIcon />
         </div>
         <div class="zoom-out icon" @click.prevent.stop="zoomOut">
@@ -63,6 +66,7 @@ export default {
     return {
       defaultScale: null,
       currentPercentage: 100,
+      maxPercentage: 500,
       defaultPercentage: 0.25,
       fitPercentage: 0.5,
       toolbarModalOpen: true,
@@ -80,6 +84,12 @@ export default {
       "documentIsReviewed",
     ]),
     ...mapGetters("document", ["documentCannotBeEdited"]),
+    isZoomInExceeding() {
+      return (
+        this.currentPercentage + this.defaultPercentage * 100 >
+        this.maxPercentage
+      );
+    },
   },
   watch: {
     selectedDocument(newValue) {
@@ -110,8 +120,10 @@ export default {
       this.$store.dispatch("edit/enableEditMode");
     },
     zoomIn() {
-      this.currentPercentage += this.defaultPercentage * 100;
-      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
+      if (this.maxPercentage > this.defaultPercentage * 100) {
+        this.currentPercentage += this.defaultPercentage * 100;
+        this.updateScale((this.defaultScale * this.currentPercentage) / 100);
+      }
     },
     zoomOut() {
       if (this.currentPercentage === 25) {
