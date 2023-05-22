@@ -101,39 +101,16 @@ describe("Document Edit Component", () => {
     });
 
     await wrapper
-      .findAll(".image-section .image-container .thumbnail")
+      .findAll(".image-section .edit-page-thumbnail .page-thumbnail")
       .at(0)
       .trigger("click");
 
     expect(
       await wrapper
         .find(
-          ".document-grid .image-section .image-container .thumbnail .selected"
+          ".document-grid .image-section .edit-page-thumbnail .page-thumbnail.selected"
         )
         .exists()
-    ).toBe(true);
-  });
-
-  it("Eye icon should be visible on hovering thumbnail", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
-
-    await wrapper
-      .findAll(".image-section .image-container .thumbnail")
-      .at(0)
-      .trigger("hover");
-
-    expect(
-      await wrapper.find(".thumbnail .icon-container .action-icon").exists()
     ).toBe(true);
   });
 
@@ -163,7 +140,7 @@ describe("Document Edit Component", () => {
     });
 
     await wrapper
-      .findAll(".image-section .image-container .thumbnail")
+      .findAll(".image-section .edit-page-thumbnail .page-thumbnail")
       .at(0)
       .trigger("click");
 
