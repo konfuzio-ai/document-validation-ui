@@ -14,41 +14,48 @@
         class="image-section"
         tabindex="0"
       >
-        <EditPageThumbnail
-          :page="page"
-          :index="index"
-          :rotation="getRotation(page.id)"
-        />
-        <div
-          :class="[
-            'splitting-lines',
-            splittingLines &&
-              splittingLines[index].page === page.number &&
-              'active-split',
-          ]"
-          @click="handleSplittingLines(page.number, 'manual')"
-        >
-          <div class="scissors-icon">
-            <b-icon icon="scissors" class="is-small" />
-          </div>
+        <div class="top-section">
+          <EditPageThumbnail
+            :page="page"
+            :index="index"
+            :rotation="getRotation(page.id)"
+          />
           <div
-            v-if="splittingLines && splittingLines[index].page === page.number"
-            class="lines"
+            :class="[
+              'splitting-lines',
+              splittingLines &&
+                splittingLines[index].page === page.number &&
+                'active-split',
+            ]"
+            @click="handleSplittingLines(page.number, 'manual')"
           >
-            <SplitZigZag
-              :color="
-                splittingLines &&
-                splittingLines[index].origin &&
-                splittingLines[index].origin === 'AI' &&
-                splitSuggestionsEnabled
-                  ? 'green'
-                  : 'dark'
+            <div class="scissors-icon">
+              <b-icon icon="scissors" class="is-small" />
+            </div>
+            <div
+              v-if="
+                splittingLines && splittingLines[index].page === page.number
               "
-            />
+              class="lines"
+            >
+              <SplitZigZag
+                :color="
+                  splittingLines &&
+                  splittingLines[index].origin &&
+                  splittingLines[index].origin === 'AI' &&
+                  splitSuggestionsEnabled
+                    ? 'green'
+                    : 'dark'
+                "
+              />
+            </div>
+            <div v-else class="lines">
+              <SplitLines />
+            </div>
           </div>
-          <div v-else class="lines">
-            <SplitLines />
-          </div>
+        </div>
+        <div class="bottom-section">
+          <span class="page-number">{{ page.number }}</span>
         </div>
       </div>
     </draggable>

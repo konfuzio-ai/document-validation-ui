@@ -1,7 +1,7 @@
 @import "./imports.scss";
 
 .edit-page-thumbnail {
-  width: fit-content;
+  width: 80px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -48,22 +48,6 @@
       svg {
         height: 16px;
       }
-    }
-  }
-
-  .page-number {
-    margin-top: 8px;
-    color: $text-lighter;
-    font-size: 12px;
-    line-height: 12px;
-    font-weight: 400;
-    align-self: center;
-  }
-
-  &.split-overview {
-    img {
-      height: 30px !important;
-      width: 30px !important;
     }
   }
 }

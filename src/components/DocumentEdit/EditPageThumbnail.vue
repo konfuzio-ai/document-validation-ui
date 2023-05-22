@@ -1,22 +1,23 @@
 <template>
-  <div class="edit-page-thumbnail" :tabindex="index">
+  <div
+    class="edit-page-thumbnail"
+    :tabindex="index"
+    @mouseenter="isHover = true"
+    @mouseleave="isHover = false"
+  >
     <div
       :class="[
         'page-thumbnail',
         isVisible && 'visible',
         checkboxValue && 'selected',
       ]"
-      @mouseenter="isHover = true"
-      @mouseleave="isHover = false"
+      :style="{
+        transform: `rotate(${rotation}deg)`,
+      }"
       @click="selectPage()"
     >
-      <ServerImage
-        :image-url="`${page.thumbnail_url}?${page.updated_at}`"
-        :style="{
-          transform: `rotate(${rotation}deg)`,
-        }"
-      >
-        <b-skeleton width="57px" height="57px" />
+      <ServerImage :image-url="`${page.thumbnail_url}?${page.updated_at}`">
+        <b-skeleton width="80px" height="80px" />
       </ServerImage>
 
       <div v-if="isVisible" class="action-icon">
@@ -29,7 +30,6 @@
       class="action-checkbox"
       @input="checkboxInput"
     />
-    <span class="page-number">{{ page.number }}</span>
   </div>
 </template>
 
