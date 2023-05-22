@@ -275,6 +275,9 @@ body {
     }
 
     .b-checkbox.checkbox {
+      .check {
+        background-color: $white;
+      }
       &:hover input[type="checkbox"]:not(:disabled) + .check {
         border-color: $primary !important;
       }

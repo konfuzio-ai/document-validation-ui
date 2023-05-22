@@ -17,6 +17,12 @@ const state = {
   showEditConfirmationModal: false,
 };
 
+const getters = {
+  isPageSelected: (state) => (id) => {
+    return state.selectedPages.find((page) => page.id === id);
+  },
+};
+
 const actions = {
   enableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", true);
@@ -37,6 +43,27 @@ const actions = {
 
   setUpdatedDocument: ({ commit }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
+  },
+
+  selectPage: ({ state, commit }, page) => {
+    if (state.isMultipleSelection) {
+      commit("ADD_SELECTED_PAGE", page);
+    } else {
+      commit("SET_SELECTED_PAGES", []);
+      commit("ADD_SELECTED_PAGE", page);
+    }
+  },
+
+  unselectPage: ({ state, commit }, selectedPage) => {
+    const found = state.selectedPages.find(
+      (page) => page.id === selectedPage.id
+    );
+    if (found) {
+      const filtered = state.selectedPages.filter(
+        (page) => page.id !== selectedPage.id
+      );
+      commit("SET_SELECTED_PAGES", filtered);
+    }
   },
 
   setSelectedPages: ({ state, commit }, selectedPage) => {
@@ -230,4 +257,5 @@ export default {
   state,
   actions,
   mutations,
+  getters,
 };
