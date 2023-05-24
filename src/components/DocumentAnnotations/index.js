@@ -5,3 +5,4 @@ export { default as DocumentLabel } from "./DocumentLabel";
 export { default as AnnotationDetails } from "./AnnotationDetails";
 export { default as ChooseLabelSetModal } from "./ChooseLabelSetModal";
 export { default as AnnotationRow } from "./AnnotationRow";
+export { default as MultiAnnotationTableOverlay } from "./MultiAnnotationTableOverlay";

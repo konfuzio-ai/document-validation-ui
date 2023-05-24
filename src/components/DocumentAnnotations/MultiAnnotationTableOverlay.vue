@@ -1,5 +1,11 @@
 <template>
-  <div class="multi-ann-table-overlay">
+  <div
+    class="multi-ann-table-overlay"
+    :style="{
+      left: `${left}px`,
+      width: `${width === 0 ? '100%' : `${width}px`}`,
+    }"
+  >
     <b-table
       ref="table"
       class="multi-ann-set-table dark-header header-32"
@@ -93,6 +99,18 @@ export default {
   components: {
     AnnotationRow,
     DraggableIcon,
+  },
+  props: {
+    left: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    width: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
   },
   data() {
     return {

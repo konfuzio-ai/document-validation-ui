@@ -21,13 +21,13 @@
           @page-jump="onPageJump"
         />
       </div>
+
       <div v-else class="loading-page">
         <b-skeleton width="100%" height="1000px" />
       </div>
     </div>
     <Toolbar v-if="showToolbar" />
     <ActionBar v-if="showActionBar" />
-    <MultiAnnotationTableOverlay v-if="showAnnSetTable" />
   </div>
 </template>
 <script>
@@ -36,14 +36,12 @@ import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
 import ActionBar from "./ActionBar";
-import MultiAnnotationTableOverlay from "./MultiAnnotationTableOverlay";
 
 export default {
   components: {
     ScrollingPage,
     Toolbar,
     ActionBar,
-    MultiAnnotationTableOverlay,
   },
   directives: {
     scroll,
@@ -75,7 +73,6 @@ export default {
       "documentActionBar",
       "pageChangedFromThumbnail",
       "currentPage",
-      "showAnnSetTable",
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
 
