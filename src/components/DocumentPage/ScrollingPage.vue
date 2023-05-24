@@ -90,7 +90,7 @@ export default {
       return this.scrollTop + this.clientHeight;
     },
 
-    ...mapState("display", ["scale", "currentPage"]),
+    ...mapState("display", ["currentPage"]),
     ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
     ...mapState("edit", ["editMode"]),
   },

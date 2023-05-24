@@ -7,6 +7,12 @@
       <DocumentAnnotations v-if="!editMode" ref="annotations" />
       <DocumentEdit v-else ref="editView" />
 
+      <MultiAnnotationTableOverlay
+        v-if="showAnnSetTable"
+        :left="documentContainerLeftPadding"
+        :width="documentContainerWidth"
+      />
+
       <transition name="slide-fade">
         <div
           v-if="showActionError"
@@ -43,7 +49,10 @@ import { mapGetters, mapState } from "vuex";
 import { DocumentTopBar } from "./DocumentTopBar";
 import { ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
-import { DocumentAnnotations } from "./DocumentAnnotations";
+import {
+  DocumentAnnotations,
+  MultiAnnotationTableOverlay,
+} from "./DocumentAnnotations";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
@@ -66,11 +75,14 @@ export default {
     NotOptimizedViewportModal,
     DocumentErrorModal,
     SplittingSuggestionsModal,
+    MultiAnnotationTableOverlay,
   },
   data() {
     return {
       resizeObserver: null,
       unwatchSelectedDocument: null,
+      documentContainerLeftPadding: 0,
+      documentContainerWidth: 0,
     };
   },
   computed: {
@@ -80,6 +92,7 @@ export default {
       "optimalResolution",
       "pageWidthScale",
       "currentPage",
+      "showAnnSetTable",
     ]),
     ...mapState("document", [
       "showActionError",
@@ -125,6 +138,10 @@ export default {
       return elementsWidth;
     },
     onDocumentResize() {
+      this.documentContainerLeftPadding =
+        this.$refs.scrollingDocument.$el.getBoundingClientRect().left;
+      this.documentContainerWidth =
+        this.$refs.scrollingDocument.$el.offsetWidth;
       this.$store.dispatch(
         "display/updateOptimalResolution",
         this.$el.offsetWidth

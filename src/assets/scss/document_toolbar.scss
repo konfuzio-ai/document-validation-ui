@@ -83,6 +83,14 @@
           background: $low-opacity-white;
           border-radius: 4px;
         }
+        &.zoom-disabled {
+          opacity: 30%;
+
+          &:hover {
+            cursor: not-allowed !important;
+            background: inherit;
+          }
+        }
       }
     }
   }
