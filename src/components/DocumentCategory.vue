@@ -87,10 +87,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("category", {
-      categoryName: "categoryName",
-      projectHasSingleCategory: "projectHasSingleCategory",
-    }),
+    ...mapGetters("category", ["categoryName", "projectHasSingleCategory"]),
     ...mapGetters("document", [
       "documentCannotBeEdited",
       "documentHasCorrectAnnotations",
@@ -112,17 +109,8 @@ export default {
     },
   },
   watch: {
-    categories(newValue) {
-      newValue.map((category) => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            (cat) => cat.id === category.id
-          );
-          if (found) return;
-
-          this.currentProjectCategories.push(category);
-        }
-      });
+    categories() {
+      this.handleCategories();
     },
     annotations() {
       this.checkIfDropdownIsDisabled();
@@ -131,31 +119,29 @@ export default {
   },
   mounted() {
     if (this.categories) {
+      this.handleCategories();
+    }
+
+    if (this.projectHasSingleCategory()) {
+      this.tooltipIsShown = true;
+    }
+  },
+  updated() {
+    this.setTooltipText();
+    this.checkIfDropdownIsDisabled();
+  },
+  methods: {
+    handleCategories() {
       this.categories.map((category) => {
         if (category.project === this.selectedDocument.project) {
           const found = this.currentProjectCategories.find(
             (cat) => cat.id === category.id
           );
           if (found) return;
-
           this.currentProjectCategories.push(category);
         }
       });
-    }
-
-    if (this.projectHasSingleCategory()) {
-      this.tooltipIsShown = true;
-    }
-
-    this.$nextTick(() => {
-      this.setTooltipText();
-      this.checkIfDropdownIsDisabled();
-    });
-  },
-  updated() {
-    this.setTooltipText();
-  },
-  methods: {
+    },
     checkIfDropdownIsDisabled() {
       if (
         this.projectHasSingleCategory() ||
@@ -218,7 +204,7 @@ export default {
         tooltipText = this.$t("approved_annotations");
       } else if (this.projectHasSingleCategory()) {
         tooltipText = this.$t("single_category_in_project");
-        this.tooltipCloseDelay = 5000;
+        tooltipDelay = 5000;
       }
 
       this.tooltipCloseDelay = tooltipDelay;
