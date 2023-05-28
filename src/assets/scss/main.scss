@@ -1,28 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "./imports.scss";
+@import "~buefy/dist/buefy.css";
 
-body {
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0);
+  overflow-x: hidden;
+}
+
+.dv-ui-app-container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   margin: 0;
-  font-family: $font-family;
 
-  .overlay {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0);
-    overflow-x: hidden;
-  }
-
-  .dv-ui-app-container {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-  }
-
-  .dv-ui-theme {
+  &.dv-ui-theme {
+    font-family: $font-family;
     button {
       &.is-primary {
         background-color: $primary !important;
