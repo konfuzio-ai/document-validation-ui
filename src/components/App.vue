@@ -5,6 +5,8 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
+import * as Sentry from "@sentry/vue";
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
 import { getURLQueryParam, getURLPath } from "../utils/utils";
@@ -38,6 +40,30 @@ export default {
       type: String,
       required: false,
       default: "false",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    sentry_dsn: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    sentry_env: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    api_url: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    image_url: {
+      type: String,
+      required: false,
+      default: "",
     },
     locale: {
       type: String,
@@ -93,13 +119,40 @@ export default {
     },
   },
   created() {
+    // Sentry config
+    if (process.env.NODE_ENV != "development") {
+      Sentry.init({
+        Vue,
+        dsn: process.env.VUE_APP_SENTRY_DSN,
+        integrations: [new Integrations.BrowserTracing()],
+        environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
+
+        // We recommend adjusting this value in production, or using tracesSampler
+        // for finer control
+        tracesSampleRate: 1.0,
+
+        // If false, errors won't show up in devtools
+        logErrors: true,
+
+        tracingOptions: {
+          trackComponents: true,
+        },
+      });
+    }
+
     // locale config
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
     }
 
-    // user token config
+    // api config
     API.setAuthToken(this.userToken);
+    if (this.api_url !== "") {
+      API.setApiUrl(this.api_url);
+    }
+    if (this.image_url !== "") {
+      API.setImageUrl(this.image_url);
+    }
 
     // document and project config
     Promise.all([
