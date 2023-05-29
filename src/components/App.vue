@@ -128,5 +128,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss" src="../assets/scss/imports.scss"></style>
 <style lang="scss" src="../assets/scss/theme.scss"></style>
