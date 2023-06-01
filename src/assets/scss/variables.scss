@@ -1,6 +1,3 @@
-/* Theme */
-
-$konfuzio-green: #41af85;
 $green: #4bb543;
 $green-low-opacity: rgba(75, 181, 67, 0.11);
 $green-border: #67d19f;
@@ -30,7 +27,7 @@ $detail: #e2e3e4;
 $dark: #2f3032;
 $full-black: #000;
 
-$white: #fff;
+$white: var(--white);
 $low-opacity-white: rgba(255, 255, 255, 0.1);
 
 $yellow: #ffd600;
@@ -40,12 +37,6 @@ $blue: #2f80ed;
 $purple: #7b61ff;
 $purple-low-opacity: rgba(123, 97, 255, 0.08);
 $text-color: #1a1a1a;
-
-:root {
-  --primary-color: #{$konfuzio-green};
-  --primary-button: 4px;
-  --top-bar-background: #{$white};
-}
 
 $primary: var(--primary-color);
 $hover-style: brightness(0.8) contrast(160%) grayscale(0.4);
