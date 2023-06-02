@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Buefy from "buefy";
+import "buefy/dist/buefy.css";
 import VueKonva from "vue-konva";
 import App from "./components/App";
 import * as Sentry from "@sentry/vue";
