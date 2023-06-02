@@ -36,7 +36,10 @@
         >
           <PlusIcon />
         </div>
-        <div class="zoom-out icon" @click.prevent.stop="zoomOut">
+        <div
+          :class="['zoom-out icon', isZoomOutExceeding && 'zoom-disabled']"
+          @click.prevent.stop="zoomOut"
+        >
           <MinusIcon />
         </div>
         <div class="percentage">
@@ -85,10 +88,10 @@ export default {
     ]),
     ...mapGetters("document", ["documentCannotBeEdited"]),
     isZoomInExceeding() {
-      return (
-        this.currentPercentage + this.defaultPercentage * 100 >
-        this.maxPercentage
-      );
+      return this.currentPercentage === this.maxPercentage;
+    },
+    isZoomOutExceeding() {
+      return this.currentPercentage === this.defaultPercentage * 100;
     },
   },
   watch: {
@@ -120,13 +123,13 @@ export default {
       this.$store.dispatch("edit/enableEditMode");
     },
     zoomIn() {
-      if (this.maxPercentage > this.defaultPercentage * 100) {
-        this.currentPercentage += this.defaultPercentage * 100;
-        this.updateScale((this.defaultScale * this.currentPercentage) / 100);
-      }
+      if (this.currentPercentage === this.maxPercentage) return;
+
+      this.currentPercentage += this.defaultPercentage * 100;
+      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
     },
     zoomOut() {
-      if (this.currentPercentage === 25) {
+      if (this.currentPercentage === this.defaultPercentage * 100) {
         return;
       }
 
