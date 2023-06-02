@@ -1,21 +1,9 @@
-@use "sass:meta";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "./imports.scss";
 
-:root {
-  --konfuzio-green: #41af85;
-  --white: #fff;
-  --primary-color: var(--konfuzio-green);
-  --primary-button: 4px;
-  --top-bar-background: var(--white);
-}
-
-.dv-ui-app-container {
-  @include meta.load-css("../../../node_modules/buefy/dist/buefy.css");
-  display: flex;
-  height: 100%;
-  flex-direction: column;
+body {
   margin: 0;
+  font-family: $font-family;
 
   .overlay {
     height: 100%;
@@ -28,17 +16,13 @@
     overflow-x: hidden;
   }
 
-  &.dv-ui-theme {
-    font-family: $font-family;
+  .dv-ui-app-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
 
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    box-sizing: border-box;
-
+  .dv-ui-theme {
     button {
       &.is-primary {
         background-color: $primary !important;
@@ -291,7 +275,7 @@
     }
 
     .b-checkbox.checkbox {
-      input[type="checkbox"] + .check {
+      .check {
         background-color: $white;
       }
       &:hover input[type="checkbox"]:not(:disabled) + .check {
