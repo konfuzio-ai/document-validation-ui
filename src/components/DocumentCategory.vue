@@ -4,7 +4,11 @@
     :active="tooltipIsShown || dropdownIsDisabled"
     size="is-large"
     position="is-bottom"
-    :class="[editMode ? 'right-aligned full-height-tooltip' : 'left-aligned']"
+    :class="[
+      editMode
+        ? 'right-aligned full-height-tooltip'
+        : 'left-aligned full-height-tooltip',
+    ]"
     :close-delay="tooltipCloseDelay"
   >
     <template #content>

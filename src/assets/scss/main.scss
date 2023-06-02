@@ -296,6 +296,8 @@ body {
       }
 
       &.modal-400 {
+        position: absolute !important;
+
         .modal-content {
           max-width: 400px !important;
 
@@ -528,6 +530,12 @@ body {
         }
       }
 
+      &.full-height-tooltip {
+        .tooltip-trigger {
+          height: 100%;
+        }
+      }
+
       &.width-184 {
         .tooltip-content {
           width: 184px !important;
@@ -619,6 +627,7 @@ body {
       &.split-mode {
         .dropdown-trigger {
           font-size: 14px;
+          height: 38px;
         }
       }
 
