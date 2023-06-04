@@ -106,10 +106,12 @@ export default {
       if (y < this.selection.start.y) {
         y = this.selection.start.y;
       }
+      x = x - this.buttonWidth;
+      y = y + marginTop;
 
       return {
-        x: x - this.buttonWidth,
-        y: y + marginTop,
+        x: x > 0 ? x : 0,
+        y: y > 0 ? y : 0,
         height: this.buttonHeight,
         width: this.buttonWidth,
       };
