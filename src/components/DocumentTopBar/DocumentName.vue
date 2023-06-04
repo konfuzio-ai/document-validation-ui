@@ -22,7 +22,7 @@
     <div
       v-if="
         !publicView &&
-        !documentIsReviewed &&
+        !isDocumentReviewed &&
         showEditBtn &&
         !editMode &&
         !recalculatingAnnotations
@@ -61,7 +61,7 @@
 import ServerImage from "../../assets/images/ServerImage";
 import FileNameSaved from "../../assets/images/FileNameSavedImage";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "DocumentName",
@@ -95,10 +95,10 @@ export default {
       "selectedDocument",
       "publicView",
       "recalculatingAnnotations",
-      "documentIsReviewed",
     ]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
+    ...mapGetters("document", ["isDocumentReviewed"]),
     textContent() {
       if (this.isEditable) {
         return this.oldFileName;

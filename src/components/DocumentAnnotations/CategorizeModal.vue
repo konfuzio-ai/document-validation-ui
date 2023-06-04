@@ -110,10 +110,12 @@ export default {
       "categorizeModalIsActive",
       "splittingSuggestions",
       "publicView",
-      "documentIsReviewed",
     ]),
     ...mapGetters("category", ["category", "projectHasSingleCategory"]),
-    ...mapGetters("document", ["categorizationIsConfirmed"]),
+    ...mapGetters("document", [
+      "categorizationIsConfirmed",
+      "isDocumentReviewed",
+    ]),
 
     singleCategoryInProject() {
       // if only 1 category in the project, we don't enable the dropdown
@@ -185,7 +187,7 @@ export default {
           (!category || (category && !this.splittingSuggestions)) &&
           !this.categorizationIsConfirmed &&
           !this.publicView &&
-          !this.documentIsReviewed;
+          !this.isDocumentReviewed;
       }
     },
     canCloseModal() {

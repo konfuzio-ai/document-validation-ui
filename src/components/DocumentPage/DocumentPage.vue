@@ -6,7 +6,7 @@
       (categorizeModalIsActive ||
         editMode ||
         publicView ||
-        documentIsReviewed) &&
+        isDocumentReviewed) &&
         'default-cursor',
       page.number === currentPage && 'current-page',
     ]"
@@ -48,7 +48,7 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <v-group v-if="!publicView || !documentIsReviewed" ref="entities">
+          <v-group v-if="!publicView || !isDocumentReviewed" ref="entities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
               :key="index"
@@ -272,7 +272,6 @@ export default {
       "selectedDocument",
       "publicView",
       "selectedEntities",
-      "documentIsReviewed",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -281,6 +280,7 @@ export default {
       "isAnnotationInEditMode",
       "isDocumentReadyToBeReviewed",
       "entitiesOnSelection",
+      "isDocumentReviewed",
     ]),
   },
   watch: {
@@ -330,7 +330,7 @@ export default {
         this.categorizeModalIsActive ||
         this.editMode ||
         this.publicView ||
-        this.documentIsReviewed
+        this.isDocumentReviewed
       )
         return;
 
@@ -401,7 +401,7 @@ export default {
         !entity ||
         this.categorizeModalIsActive ||
         this.publicView ||
-        this.documentIsReviewed
+        this.isDocumentReviewed
       )
         return;
 
@@ -445,7 +445,7 @@ export default {
         !this.categorizeModalIsActive &&
         !this.publicView &&
         !this.editMode &&
-        !this.documentIsReviewed
+        !this.isDocumentReviewed
       ) {
         this.$refs.stage.$el.style.cursor = "pointer";
       }

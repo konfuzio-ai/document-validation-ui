@@ -11,7 +11,7 @@
 
     <!-- save button -->
     <b-button
-      v-if="saveBtn && !isLoading && !publicView && !documentIsReviewed"
+      v-if="saveBtn && !isLoading && !publicView && !isDocumentReviewed"
       :class="[
         'annotation-save-btn text-btn',
         actionBar && 'action-bar-save-btn',
@@ -25,7 +25,7 @@
 
     <!-- cancel button -->
     <b-button
-      v-if="cancelBtn && !isLoading && !documentIsReviewed"
+      v-if="cancelBtn && !isLoading && !isDocumentReviewed"
       class="is-small annotation-cancel-btn"
       icon-left="xmark"
       @click.stop="cancel"
@@ -39,7 +39,7 @@
         !saveBtn &&
         !cancelBtn &&
         !publicView &&
-        !documentIsReviewed
+        !isDocumentReviewed
       "
       class="missing-decline-button-container"
     >
@@ -60,7 +60,7 @@
         !saveBtn &&
         !cancelBtn &&
         !publicView &&
-        !documentIsReviewed
+        !isDocumentReviewed
       "
       class="annotation-accept-btn primary-button"
       type="is-primary"
@@ -77,7 +77,7 @@
         !cancelBtn &&
         !saveBtn &&
         !publicView &&
-        !documentIsReviewed
+        !isDocumentReviewed
       "
       class="missing-decline-button-container"
     >
@@ -92,7 +92,7 @@
 
     <!-- Restore not found annotations -->
     <b-button
-      v-if="restoreBtn && !isLoading && !publicView && !documentIsReviewed"
+      v-if="restoreBtn && !isLoading && !publicView && !isDocumentReviewed"
       class="restore-btn"
       type="is-primary"
       @click.stop="restore"
@@ -103,7 +103,7 @@
 </template>
 <script>
 /* Component for showing actions for each annotation row */
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "AnnotationActionButtons",
   props: {
@@ -135,11 +135,8 @@ export default {
     },
   },
   computed: {
-    ...mapState("document", [
-      "publicView",
-      "missingAnnotations",
-      "documentIsReviewed",
-    ]),
+    ...mapState("document", ["publicView", "missingAnnotations"]),
+    ...mapGetters("document", ["isDocumentReviewed"]),
   },
   methods: {
     save() {

@@ -168,12 +168,12 @@ export default {
       "documentId",
       "showActionError",
       "missingAnnotations",
-      "documentIsReviewed",
     ]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "annotationIsNotFound",
+      "isDocumentReviewed",
     ]),
     ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
@@ -426,7 +426,7 @@ export default {
       );
     },
     handleSaveChanges(decline) {
-      if (this.publicView || this.documentIsReviewed) return;
+      if (this.publicView || this.isDocumentReviewed) return;
 
       if (
         this.showAcceptButton() ||

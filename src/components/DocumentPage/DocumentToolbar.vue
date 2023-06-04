@@ -9,7 +9,7 @@
         class="top-aligned"
       >
         <div
-          v-if="!editMode && !publicView && !documentIsReviewed"
+          v-if="!editMode && !publicView && !isDocumentReviewed"
           :class="[
             'icons icons-left',
             editModeDisabled && 'edit-mode-disabled',
@@ -23,7 +23,7 @@
         </div>
       </b-tooltip>
       <div
-        v-if="!editMode && !publicView && !documentIsReviewed"
+        v-if="!editMode && !publicView && !isDocumentReviewed"
         class="toolbar-divider"
       />
       <div class="icons icons-right">
@@ -84,9 +84,8 @@ export default {
       "selectedDocument",
       "recalculatingAnnotations",
       "publicView",
-      "documentIsReviewed",
     ]),
-    ...mapGetters("document", ["documentCannotBeEdited"]),
+    ...mapGetters("document", ["documentCannotBeEdited", "isDocumentReviewed"]),
     isZoomInExceeding() {
       return this.currentPercentage === this.maxPercentage;
     },

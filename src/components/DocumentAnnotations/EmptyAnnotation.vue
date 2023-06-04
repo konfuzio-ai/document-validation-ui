@@ -1,7 +1,7 @@
 <template>
   <div class="empty-annotation">
     <span
-      v-if="!publicView && !documentIsReviewed"
+      v-if="!publicView && !isDocumentReviewed"
       :id="emptyAnnotationId()"
       ref="emptyAnnotation"
       :class="[
@@ -76,6 +76,7 @@ export default {
       "isAnnotationInEditMode",
       "getTextFromEntities",
       "annotationIsNotFound",
+      "isDocumentReviewed",
     ]),
     ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
@@ -84,7 +85,6 @@ export default {
       "publicView",
       "selectedEntities",
       "showActionError",
-      "documentIsReviewed",
     ]),
   },
   watch: {
@@ -159,14 +159,14 @@ export default {
     handleEditEmptyAnnotation() {
       if (
         this.publicView ||
-        this.documentIsReviewed ||
+        this.isDocumentReviewed ||
         this.annotationIsNotFound(this.annotationSet, this.label)
       )
         return;
 
       if (
         !this.publicView &&
-        !this.documentIsReviewed &&
+        !this.isDocumentReviewed &&
         !this.isLoading &&
         this.elementSelected !== this.emptyAnnotationId()
       ) {
@@ -221,7 +221,7 @@ export default {
       }
     },
     saveEmptyAnnotationChanges(event) {
-      if (this.publicView || this.documentIsReviewed) return;
+      if (this.publicView || this.isDocumentReviewed) return;
 
       if (event) {
         event.preventDefault();

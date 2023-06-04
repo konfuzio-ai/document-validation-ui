@@ -25,12 +25,10 @@ const state = {
   annotationsMarkedAsMissing: null,
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
-  finishedReview: false,
   newAcceptedAnnotations: null,
   selectedEntities: null,
   serverError: false,
   splittingSuggestions: null,
-  documentIsReviewed: false,
 };
 
 const getters = {
@@ -406,7 +404,7 @@ const getters = {
   },
 
   // Check if document is ready to be finished
-  isDocumentReviewFinished: (state) => () => {
+  isDocumentReadyToFinishReview: (state) => {
     // check if all annotations have been revised
     let notRevised;
 
@@ -443,8 +441,11 @@ const getters = {
     ) {
       return true;
     }
-
     return false;
+  },
+
+  isDocumentReviewed: (state) => {
+    return state.selectedDocument.is_reviewed;
   },
 
   /**
@@ -703,9 +704,6 @@ const actions = {
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
   },
-  setDocumentIsReviewed: ({ commit }, value) => {
-    commit("SET_DOCUMENT_IS_REVIEWED", value);
-  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -742,8 +740,6 @@ const actions = {
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
-          commit("SET_DOCUMENT_IS_REVIEWED", response.data.is_reviewed);
-          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
           if (rootState.project.projectId) {
             projectId = rootState.project.projectId;
@@ -840,7 +836,6 @@ const actions = {
         .then(async (response) => {
           if (response.status === 201) {
             await dispatch("fetchMissingAnnotations");
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
             if (!getters.annotationSetExists(response.data.annotation_set)) {
               const documentData = await dispatch("fetchDocumentData");
@@ -876,7 +871,6 @@ const actions = {
         .then(async (response) => {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
 
             resolve(true);
@@ -895,7 +889,6 @@ const actions = {
         .then(async (response) => {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
             resolve(true);
           }
@@ -918,7 +911,6 @@ const actions = {
               commit("UPDATE_FILE_NAME", response.data.data_file_name);
             } else {
               commit("SET_SELECTED_DOCUMENT", response.data);
-              commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
 
               dispatch("pollDocumentEndpoint");
             }
@@ -955,7 +947,6 @@ const actions = {
       )
         .then((response) => {
           commit("SET_MISSING_ANNOTATIONS", response.data.results);
-          commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
           resolve(true);
         })
         .catch((error) => {
@@ -972,7 +963,6 @@ const actions = {
           if (response.status === 201) {
             commit("SET_ANNOTATIONS_MARKED_AS_MISSING", null);
             commit("ADD_MISSING_ANNOTATIONS", response.data);
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
           }
 
           resolve(response);
@@ -990,7 +980,6 @@ const actions = {
         .then((response) => {
           if (response.status === 204) {
             commit("DELETE_MISSING_ANNOTATION", id);
-            commit("SET_FINISHED_REVIEW", getters.isDocumentReviewFinished());
             resolve(true);
           }
         })
@@ -1226,9 +1215,6 @@ const mutations = {
   SET_EDIT_ANNOTATION: (state, editAnnotation) => {
     state.editAnnotation = editAnnotation;
   },
-  SET_FINISHED_REVIEW: (state, finishedReview) => {
-    state.finishedReview = finishedReview;
-  },
   RESET_EDIT_ANNOTATION: (state) => {
     state.editAnnotation = null;
   },
@@ -1256,9 +1242,6 @@ const mutations = {
     }
   },
   SET_SELECTED_DOCUMENT: (state, document) => {
-    if (document.is_reviewed === true) {
-      state.documentIsReviewed = true;
-    }
     state.selectedDocument = document;
 
     // this is to handle cache when a document is edited or changed
@@ -1326,9 +1309,6 @@ const mutations = {
   },
   SET_SPLITTING_SUGGESTIONS: (state, array) => {
     state.splittingSuggestions = array;
-  },
-  SET_DOCUMENT_IS_REVIEWED: (state, value) => {
-    state.documentIsReviewed = value;
   },
 };
 

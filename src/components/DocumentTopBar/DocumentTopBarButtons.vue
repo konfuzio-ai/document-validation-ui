@@ -17,18 +17,17 @@
             : $t('submit')
         "
         type="is-primary"
-        :disabled="false"
         class="button-next primary-button"
         @click="handleButton"
       />
     </div>
 
     <div
-      v-if="!editMode && !documentIsReviewed && !publicView"
+      v-if="!editMode && !isDocumentReviewed && !publicView"
       class="finish-review-button-container"
     >
       <b-tooltip
-        :active="finishDisabled"
+        :active="!isReviewButtonActive"
         position="is-bottom"
         multilined
         class="right-aligned finish-review"
@@ -36,7 +35,7 @@
         <b-button
           :class="['finish-review-btn', 'text-btn', 'primary-button']"
           type="is-primary"
-          :disabled="finishDisabled"
+          :disabled="!isReviewButtonActive"
           @click.stop="handleFinishReview"
         >
           <span v-if="!isLoading">
@@ -62,13 +61,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "DocumentTopBarButtons",
   data() {
     return {
-      finishDisabled: true,
       emptyLabels: null,
       isLoading: false,
     };
@@ -78,29 +76,16 @@ export default {
     ...mapState("document", [
       "selectedDocument",
       "publicView",
-      "finishedReview",
       "annotationSets",
-      "documentIsReviewed",
     ]),
     ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
-  },
-
-  watch: {
-    finishedReview(newValue) {
-      if (newValue) {
-        this.finishDisabled = false;
-      } else {
-        this.finishDisabled = true;
-      }
+    ...mapGetters("document", [
+      "isDocumentReadyToFinishReview",
+      "isDocumentReviewed",
+    ]),
+    isReviewButtonActive() {
+      return this.isDocumentReadyToFinishReview;
     },
-    documentIsReviewed(newValue) {
-      if (newValue) {
-        this.finishDisabled = true;
-      }
-    },
-  },
-  mounted() {
-    this.finishDisabled = !this.finishedReview;
   },
   methods: {
     closeEditMode() {
