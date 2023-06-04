@@ -13,11 +13,20 @@ const $t = () => {};
 
 describe("Document Annotations Component", () => {
   beforeEach(() => {
+    const selectedDocument = require("../mock/document.json");
+    const annotations = [];
+    require("../mock/document.json").annotation_sets.map((annotationSet) => {
+      annotationSet.labels.map((label) => {
+        annotations.push(...label.annotations);
+      });
+    });
     Promise.all([
+      store.dispatch("document/setSelectedDocument", selectedDocument),
       store.dispatch(
         "document/setAnnotationSets",
         require("../mock/document.json").annotation_sets
       ),
+      store.dispatch("document/setAnnotations", annotations),
       store.dispatch("document/setPublicView", false),
       store.dispatch("document/endRecalculatingAnnotations"),
       store.dispatch("document/endLoading"),
