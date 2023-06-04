@@ -6,7 +6,7 @@
     >
       <div v-if="!recalculatingAnnotations" class="left-bar-components">
         <DocumentCategory
-          v-if="categories && !editMode && !publicView && !documentIsReviewed"
+          v-if="categories && !editMode && !publicView && !isDocumentReviewed"
         />
       </div>
 
@@ -14,14 +14,14 @@
 
       <div v-if="!recalculatingAnnotations" class="right-bar-components">
         <div
-          v-if="!editMode && (!publicView || !documentIsReviewed)"
+          v-if="!editMode && (!publicView || !isDocumentReviewed)"
           class="keyboard-actions-info"
         >
           <KeyboardActionsDescription />
         </div>
 
         <div
-          v-if="!editMode && (publicView || documentIsReviewed)"
+          v-if="!editMode && (publicView || isDocumentReviewed)"
           class="read-only-info"
         >
           <b-tooltip
@@ -29,7 +29,7 @@
             position="is-bottom"
             class="right-aligned width-184"
           >
-            <span v-if="publicView && !documentIsReviewed">
+            <span v-if="publicView && !isDocumentReviewed">
               {{ $t("lite_mode") }}
             </span>
             <span v-else class="doc-reviewed">
@@ -38,12 +38,12 @@
             <b-icon
               :class="[
                 'info-icon is-small',
-                documentIsReviewed && 'info-reviewed',
+                isDocumentReviewed && 'info-reviewed',
               ]"
               icon="circle-info"
             />
             <template #content>
-              <div v-if="!documentIsReviewed" class="read-only-details">
+              <div v-if="!isDocumentReviewed" class="read-only-details">
                 {{ $t("limited_functionalities") }}
               </div>
               <div v-else class="read-only-details">
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import DocumentCategory from "../../components/DocumentCategory";
 import DocumentName from "./DocumentName";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
@@ -95,10 +95,10 @@ export default {
       "publicView",
       "loading",
       "recalculatingAnnotations",
-      "documentIsReviewed",
     ]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
+    ...mapGetters("document", ["isDocumentReviewed"]),
   },
   created() {
     window.addEventListener("resize", this.handleResize);

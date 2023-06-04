@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!publicView && !documentIsReviewed && !editMode"
+    v-if="!publicView && !isDocumentReviewed && !editMode"
     class="keyboard-actions-description"
   >
     <section class="b-tooltips">
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import KeyboardIcon from "../../assets/images/KeyboardIcon";
 import ArrowUpKey from "../../assets/images/ArrowUpKey";
 import ArrowDownKey from "../../assets/images/ArrowDownKey";
@@ -65,11 +65,8 @@ export default {
   },
   computed: {
     ...mapState("edit", ["editMode"]),
-    ...mapState("document", [
-      "selectedDocument",
-      "publicView",
-      "documentIsReviewed",
-    ]),
+    ...mapState("document", ["selectedDocument", "publicView"]),
+    ...mapGetters("document", ["isDocumentReviewed"]),
   },
 };
 </script>

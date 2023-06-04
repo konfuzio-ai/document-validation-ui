@@ -17,7 +17,7 @@
       <CategorizeModal
         v-if="
           !publicView &&
-          !documentIsReviewed &&
+          !isDocumentReviewed &&
           !waitingForSplittingConfirmation(selectedDocument)
         "
       />
@@ -25,7 +25,7 @@
     </div>
 
     <div v-else :class="['annotation-set-list']">
-      <CategorizeModal v-if="!publicView || !documentIsReviewed" />
+      <CategorizeModal v-if="!publicView || !isDocumentReviewed" />
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
         class="annotation-set-group"
@@ -148,7 +148,6 @@ export default {
       "labels",
       "selectedDocument",
       "splittingSuggestions",
-      "documentIsReviewed",
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
@@ -158,6 +157,7 @@ export default {
       "waitingForSplittingConfirmation",
       "annotationSetsToShowInList",
       "annotationSetsInTable",
+      "isDocumentReviewed",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -231,7 +231,7 @@ export default {
 
     keyDownHandler(event) {
       // only allow keyboard navigation if we are not in public view mode
-      if (this.publicView || this.documentIsReviewed) return;
+      if (this.publicView || this.isDocumentReviewed) return;
 
       // get out of edit mode and navigation
       if (event.key === "Escape") {

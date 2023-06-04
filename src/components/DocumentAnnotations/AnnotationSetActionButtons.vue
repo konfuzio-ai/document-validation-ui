@@ -2,7 +2,7 @@
   <div class="action-buttons">
     <!-- mark all empty labels as missing -->
     <div
-      v-if="!publicView && !documentIsReviewed"
+      v-if="!publicView && !isDocumentReviewed"
       class="missing-decline-button-container all-missing"
       @mouseenter="mouseenterAnnotationSet('missing')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -19,7 +19,7 @@
 
     <!-- accept all pending annotations -->
     <div
-      v-if="!publicView && !documentIsReviewed"
+      v-if="!publicView && !isDocumentReviewed"
       class="accept-all"
       @mouseenter="mouseenterAnnotationSet('accept')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -40,20 +40,23 @@
 <script>
 /* Component for showing actions for each Annotation Set */
 
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "AnnotationSetActionButtons",
   props: {
     numberOfEmptyLabelsInAnnotationSet: {
       type: Number,
+      default: 0,
     },
     numberOfPendingAnnotationsInAnnotationSet: {
       type: Number,
+      default: 0,
     },
   },
   computed: {
-    ...mapState("document", ["publicView", "documentIsReviewed"]),
+    ...mapState("document", ["publicView"]),
+    ...mapGetters("document", ["isDocumentReviewed"]),
   },
   methods: {
     mouseenterAnnotationSet(type) {
