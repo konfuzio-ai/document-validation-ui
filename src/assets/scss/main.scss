@@ -245,14 +245,19 @@ body {
 
       .dropdown-menu {
         padding-top: 0px;
+        min-width: 40px;
       }
 
-      a.dropdown-item.is-active {
-        background-color: $primary;
-      }
+      a.dropdown-item {
+        padding-right: 16px;
 
-      a.dropdown-item.is-disabled {
-        color: $grey-blue !important;
+        &.is-active {
+          background-color: $primary;
+        }
+
+        &.is-disabled {
+          color: $grey-blue !important;
+        }
       }
 
       &.dropdown-menu-animation {

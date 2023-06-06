@@ -21,7 +21,7 @@
       @columndragleave="columndragleave"
     >
       <b-table-column
-        v-for="(item, index) in columns"
+        v-for="(item, index) in isLoading ? [columns[0]] : columns"
         :key="index"
         :field="item.field"
         :label="item.label.name"
@@ -31,14 +31,17 @@
             :ref="getDropdownReference(item)"
             aria-role="list"
             class="header-dropdown"
-            position="is-top-left"
+            position="is-top-right"
             :close-on-click="false"
             @active-change="(e) => onDropdownChange(item, e)"
           >
             <template #trigger="{ active }">
-              <DraggableIcon class="draggable" />
-              <span :class="active ? 'active' : ''">{{ column.label }} </span>
+              <DraggableIcon v-if="!isLoading" class="draggable" />
+              <span v-if="!isLoading" :class="active ? 'active' : ''"
+                >{{ column.label }}
+              </span>
               <b-icon
+                v-if="!isLoading"
                 :icon="active ? 'angle-up' : 'angle-down'"
                 size="is-small"
                 class="arrow"
@@ -63,7 +66,7 @@
                 :key="label.id"
                 aria-role="listitem"
                 :disabled="label.disabled"
-                ><span @click="changeLabel(item, label)">{{
+                ><span @click="!label.disabled && changeLabel(item, label)">{{
                   label.name
                 }}</span></b-dropdown-item
               >
@@ -73,7 +76,9 @@
 
         <template #default="props">
           <div class="annotations-table">
+            <b-skeleton v-if="isLoading" width="98%" height="90%" />
             <AnnotationRow
+              v-if="!isLoading"
               :annotation="props.row[item.field]"
               :label="item.label"
               :annotation-set="item.annotationSet"
@@ -120,6 +125,7 @@ export default {
       editingLabels: [],
       openDropdown: null,
       draggingColumnIndex: null,
+      isLoading: false,
     };
   },
   computed: {
@@ -135,6 +141,13 @@ export default {
       // if there's a change in the annotations content, we update the table
       this.handleColumns();
       this.handleRows();
+    },
+    columns(columns) {
+      if (!columns || (columns && columns.length === 0)) {
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("display/showAnnSetTable", null);
+      }
     },
   },
   mounted() {
@@ -212,6 +225,8 @@ export default {
     },
 
     async changeLabel(column, label) {
+      this.isLoading = true;
+      this.closeDropdown(column);
       for (let i = 0; i < this.rows.length; i++) {
         const annotationToUpdate = this.rows[i][column.label.id];
         await this.$store
@@ -227,12 +242,22 @@ export default {
             });
           });
       }
-      this.closeDropdown(column);
+      this.isLoading = false;
     },
 
     async deleteColumn(column) {
+      this.isLoading = true;
+      this.closeDropdown(column);
+
+      const annotationsToDelete = [];
       for (let i = 0; i < this.rows.length; i++) {
         const annotationToDelete = this.rows[i][column.label.id];
+        if (annotationToDelete && annotationToDelete.id) {
+          annotationsToDelete.push(annotationToDelete);
+        }
+      }
+
+      annotationsToDelete.forEach(async (annotationToDelete) => {
         await this.$store
           .dispatch("document/deleteAnnotation", {
             annotationId: annotationToDelete.id,
@@ -244,8 +269,9 @@ export default {
               defaultErrorMessage: this.$t("edit_error"),
             });
           });
-      }
-      this.closeDropdown(column);
+      });
+
+      this.isLoading = false;
     },
 
     onDropdownChange(column, open) {
@@ -253,7 +279,10 @@ export default {
       this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("document/resetEditAnnotation");
       if (open) {
-        if (this.openDropdown) {
+        if (
+          this.openDropdown &&
+          this.$refs[this.getDropdownReference(column)].length > 0
+        ) {
           this.$refs[this.openDropdown][0].toggle();
         }
         this.openDropdown = this.getDropdownReference(column);
@@ -265,7 +294,10 @@ export default {
     },
 
     closeDropdown(column) {
-      if (this.openDropdown) {
+      if (
+        this.openDropdown &&
+        this.$refs[this.getDropdownReference(column)].length > 0
+      ) {
         this.$refs[this.getDropdownReference(column)][0].toggle();
         this.openDropdown = null;
       }
