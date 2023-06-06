@@ -410,7 +410,7 @@ const getters = {
 
     const emptyAnnotations = [];
 
-    if (state.annotationSets) {
+    if (state.annotationSets && state.annotationSets.length > 0) {
       state.annotationSets.forEach((annSet) => {
         annSet.labels.map((label) => {
           // return only labels with empty annotations
