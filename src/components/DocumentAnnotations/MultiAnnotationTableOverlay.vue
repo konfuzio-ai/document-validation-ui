@@ -66,7 +66,7 @@
                 :key="label.id"
                 aria-role="listitem"
                 :disabled="label.disabled"
-                ><span @click="changeLabel(item, label)">{{
+                ><span @click="!label.disabled && changeLabel(item, label)">{{
                   label.name
                 }}</span></b-dropdown-item
               >
@@ -141,6 +141,13 @@ export default {
       // if there's a change in the annotations content, we update the table
       this.handleColumns();
       this.handleRows();
+    },
+    columns(columns) {
+      if (!columns || (columns && columns.length === 0)) {
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("display/showAnnSetTable", null);
+      }
     },
   },
   mounted() {
@@ -241,8 +248,16 @@ export default {
     async deleteColumn(column) {
       this.isLoading = true;
       this.closeDropdown(column);
+
+      const annotationsToDelete = [];
       for (let i = 0; i < this.rows.length; i++) {
         const annotationToDelete = this.rows[i][column.label.id];
+        if (annotationToDelete && annotationToDelete.id) {
+          annotationsToDelete.push(annotationToDelete);
+        }
+      }
+
+      annotationsToDelete.forEach(async (annotationToDelete) => {
         await this.$store
           .dispatch("document/deleteAnnotation", {
             annotationId: annotationToDelete.id,
@@ -254,7 +269,8 @@ export default {
               defaultErrorMessage: this.$t("edit_error"),
             });
           });
-      }
+      });
+
       this.isLoading = false;
     },
 
