@@ -99,9 +99,19 @@ const actions = {
     commit("SET_SPAN_SELECTION", span);
   },
 
-  getTextFromBboxes: ({ commit, rootState }, box) => {
+  getTextFromBboxes: ({ commit, rootState }, { box, entities }) => {
+    let span;
+
+    if (entities) {
+      span = box.flatMap((s) => {
+        return s.original;
+      });
+    } else {
+      span = [box];
+    }
+
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-      span: [box],
+      span,
     })
       .then((response) => {
         if (response.data.span.length && response.data.span.length > 0) {
@@ -126,6 +136,16 @@ const actions = {
         alert("Could not fetch the selected text from the backend");
       });
   },
+
+  getTextFromEntities: ({ commit, dispatch }, selectedEntities) => {
+    if (!selectedEntities) return;
+
+    return dispatch("getTextFromBboxes", {
+      box: selectedEntities,
+      entities: true,
+    });
+  },
+
   setSpanSelection: ({ commit }, span) => {
     commit("SET_SPAN_SELECTION", span);
   },

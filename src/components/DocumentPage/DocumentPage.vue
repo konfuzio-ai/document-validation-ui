@@ -221,7 +221,6 @@ export default {
           scaled: {
             ...box,
           },
-          clickSelected: false,
         };
       });
     },
@@ -292,10 +291,13 @@ export default {
     scale() {
       this.closePopups(true);
     },
-    selectedEntities(newValue) {
+    async selectedEntities(newValue) {
       if (!newValue) {
+        this.$store.dispatch("selection/setSpanSelection", null);
         this.closePopups(true);
       }
+
+      await this.$store.dispatch("selection/getTextFromEntities", newValue);
     },
     page(newValue, oldValue) {
       if (newValue.image_url !== oldValue.image_url) {
@@ -407,23 +409,20 @@ export default {
 
       // Check if we are creating a new Annotation
       // or if we are editing an existing or empty one
-      const entityToAdd = {
-        entity,
-        content: entity.original.offset_string,
-      };
+      const entityToAdd = entity;
 
       const found = this.newAnnotation.find(
         (ann) =>
-          ann.entity.scaled.width === entityToAdd.entity.scaled.width &&
-          ann.content === entityToAdd.content
+          ann.scaled.width === entityToAdd.scaled.width &&
+          ann.original.offset_string === entityToAdd.original.offset_string
       );
 
       if (found) {
         this.newAnnotation = [
           ...this.newAnnotation.filter(
             (ann) =>
-              ann.entity.scaled.width !== entityToAdd.entity.scaled.width &&
-              ann.content !== entityToAdd.content
+              ann.scaled.width !== entityToAdd.scaled.width &&
+              ann.original.offset_string !== entityToAdd.original.offset_string
           ),
         ];
       } else {
@@ -492,10 +491,10 @@ export default {
       if (this.newAnnotation && this.newAnnotation.length > 0) {
         entityIsSelected = this.newAnnotation.find((selectedEntity) => {
           return (
-            selectedEntity.entity.original.offset_string ===
+            selectedEntity.original.offset_string ===
               entity.original.offset_string &&
-            selectedEntity.entity.original.x0 === entity.original.x0 &&
-            selectedEntity.entity.original.y0 === entity.original.y0
+            selectedEntity.original.x0 === entity.original.x0 &&
+            selectedEntity.original.y0 === entity.original.y0
           );
         });
       }

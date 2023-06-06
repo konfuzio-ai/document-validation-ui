@@ -110,7 +110,7 @@ export default {
         this.cancelEmptyAnnotation(true);
       }
     },
-    selectedEntities(newValue) {
+    async selectedEntities(newValue) {
       if (!newValue && this.isAnnotationBeingEdited(this.emptyAnnotationId())) {
         this.setText(
           this.$t("draw_box_document", { label_name: this.label.name })
@@ -123,8 +123,7 @@ export default {
         this.editAnnotation &&
         this.emptyAnnotationId() === this.editAnnotation.id
       ) {
-        const text = this.getTextFromEntities();
-        this.setText(text);
+        await this.$store.dispatch("selection/getTextFromEntities", newValue);
       }
     },
     spanSelection(newValue) {

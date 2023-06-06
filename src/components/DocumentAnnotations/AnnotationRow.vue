@@ -195,7 +195,7 @@ export default {
     },
     spanFromSelectedEntities() {
       return this.selectedEntities.flatMap((ann) => {
-        return { ...ann.entity.original, offset_string: ann.content };
+        return { ...ann.original, offset_string: ann.content };
       });
     },
     isAnnotation() {

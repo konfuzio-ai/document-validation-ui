@@ -160,20 +160,21 @@ export default {
       "labelsFilteredForAnnotationCreation",
       "getTextFromEntities",
     ]),
+    ...mapState("selection", ["spanSelection"]),
     top() {
-      const top = this.newAnnotation[0].entity.scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
+      const top = this.newAnnotation[0].scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
 
       //check if the popup will not go off the container on the top
-      return this.newAnnotation[0].entity.scaled.y > heightOfPopup
+      return this.newAnnotation[0].scaled.y > heightOfPopup
         ? top
-        : this.newAnnotation[0].entity.scaled.y +
-            this.newAnnotation[0].entity.scaled.height +
+        : this.newAnnotation[0].scaled.y +
+            this.newAnnotation[0].scaled.height +
             margin;
     },
     left() {
       const left =
-        this.newAnnotation[0].entity.scaled.x +
-        this.newAnnotation[0].entity.scaled.width / 2 -
+        this.newAnnotation[0].scaled.x +
+        this.newAnnotation[0].scaled.width / 2 -
         widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
       //check if the popup will not go off the container
@@ -186,7 +187,9 @@ export default {
       }
     },
     textFromEntities() {
-      return this.getTextFromEntities();
+      if (!this.spanSelection) return;
+
+      return this.spanSelection[0].offset_string;
     },
   },
   watch: {
@@ -216,7 +219,10 @@ export default {
     save() {
       this.loading = true;
       const span = this.newAnnotation.flatMap((ann) => {
-        return { ...ann.entity.original, offset_string: ann.content };
+        return {
+          ...ann.original,
+          offset_string: ann.original.offset_string,
+        };
       });
 
       const annotationToCreate = {
