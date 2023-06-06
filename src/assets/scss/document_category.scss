@@ -4,25 +4,30 @@
   cursor: pointer;
 
   &.split-mode {
-    border: 1px solid $grey-detail;
+    border: 1px solid $grey-outline;
     border-radius: 4px;
     background-color: $white;
+
+    &:hover {
+      border-color: $grey-outline-dark;
+      background-color: transparent;
+    }
   }
 
   &.disabled {
     cursor: not-allowed;
   }
 
+  &:not(.split-mode) {
+    .category-drop-down {
+      border-right: $component-border;
+    }
+  }
   .category-drop-down {
     display: flex;
     height: 100%;
     align-items: center;
     padding: 0 8px 0 14px;
-    border-right: $component-border;
-
-    &:hover {
-      background-color: $background;
-    }
 
     .caret-section {
       padding-top: 5px;

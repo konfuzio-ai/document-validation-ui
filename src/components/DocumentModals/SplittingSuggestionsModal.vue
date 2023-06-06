@@ -52,12 +52,18 @@ export default {
   },
   computed: {
     ...mapState("document", ["splittingSuggestions", "selectedDocument"]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
   watch: {
     splittingSuggestions(newValue) {
       if (newValue) {
         this.isModalActive = true;
+      }
+    },
+    editMode(newValue) {
+      if (!newValue) {
+        this.showModal();
       }
     },
     isModalActive(newValue) {
@@ -80,9 +86,7 @@ export default {
     },
   },
   mounted() {
-    if (this.splittingSuggestions) {
-      this.isModalActive = true;
-    }
+    this.showModal();
 
     this.$nextTick(() => {
       if (this.recommended) {
@@ -91,6 +95,14 @@ export default {
     });
   },
   methods: {
+    showModal() {
+      if (
+        this.splittingSuggestions &&
+        this.waitingForSplittingConfirmation(this.selectedDocument)
+      ) {
+        this.isModalActive = true;
+      }
+    },
     closeModal() {
       const updatedDocument = [
         {

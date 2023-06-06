@@ -184,17 +184,11 @@ export default {
       if (!this.splittingSuggestions) return;
 
       this.splittingSuggestions.map((item) => {
-        const firstPage = this.selectedDocument.pages.find(
-          (page) => page.id === item.pages[0].id
+        const lastPage = this.selectedDocument.pages.find(
+          (page) => page.id === item.pages[item.pages.length - 1].id
         );
 
-        if (firstPage.number === 1 && item.pages.length > 1) {
-          // only add the active splitting line from the 1st page of the second document
-          // since it's the first splitting point
-          return;
-        }
-
-        this.handleSplittingLines(firstPage.number, "AI");
+        this.handleSplittingLines(lastPage.number, "AI");
       });
     },
     applySplittingSuggestions(value) {
@@ -342,7 +336,7 @@ export default {
       );
 
       const singleSplittingSuggestion = this.splittingSuggestions.find(
-        (item) => item.pages[0].id === foundPage.id
+        (item) => item.pages[item.pages.length - 1].id === foundPage.id
       );
 
       return this.splittingSuggestions.indexOf(singleSplittingSuggestion);
