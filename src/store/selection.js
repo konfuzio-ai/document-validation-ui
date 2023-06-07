@@ -129,7 +129,7 @@ const actions = {
            * an annotation on this empty area, adding the offset_string
            * attribute, ready to be filled.
            */
-          commit("SET_SPAN_SELECTION", box);
+          commit("SET_SPAN_SELECTION", span);
         }
       })
       .catch((error) => {
