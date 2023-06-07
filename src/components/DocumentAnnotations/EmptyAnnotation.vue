@@ -66,11 +66,7 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      isLoading: false,
-    };
-  },
+
   computed: {
     ...mapGetters("document", [
       "isAnnotationInEditMode",
@@ -127,17 +123,12 @@ export default {
       }
     },
     spanSelection(newValue) {
-      if (this.elementSelected === this.emptyAnnotationId() && newValue) {
-        const isSpanArray = Array.isArray(newValue);
+      if (!newValue) return;
 
-        // Check if the bbox is empty
-        if (
-          (isSpanArray && !newValue[0].offset_string) ||
-          (!isSpanArray && !newValue.offset_string)
-        ) {
-          this.$store.dispatch("document/resetEditAnnotation");
-          this.$store.dispatch("selection/disableSelection");
-        }
+      //   // Check if the bbox has no string
+      if (newValue[0] && !newValue[0].offset_string) {
+        this.$store.dispatch("document/resetEditAnnotation");
+        this.$store.dispatch("selection/disableSelection");
       }
     },
   },
@@ -166,7 +157,6 @@ export default {
       if (
         !this.publicView &&
         !this.isDocumentReviewed &&
-        !this.isLoading &&
         this.elementSelected !== this.emptyAnnotationId()
       ) {
         this.setText(
@@ -192,7 +182,6 @@ export default {
         this.$store.dispatch("selection/disableSelection");
       }
 
-      this.isLoading = false;
       this.$store.dispatch("document/setSelectedEntities", null);
 
       if (this.$refs.emptyAnnotation) {
@@ -201,9 +190,7 @@ export default {
     },
     isEmptyAnnotationEditable() {
       if (this.selectedEntities && this.selectedEntities.length > 0) {
-        return (
-          this.elementSelected === this.emptyAnnotationId() && !this.isLoading
-        );
+        return this.elementSelected === this.emptyAnnotationId();
       } else if (
         (this.spanSelection && this.spanSelection[this.spanIndex] === 0) ||
         this.annotationIsNotFound(this.annotationSet, this.label)
@@ -214,8 +201,7 @@ export default {
           this.elementSelected === this.emptyAnnotationId() &&
           this.spanSelection &&
           this.spanSelection[this.spanIndex] &&
-          this.spanSelection[this.spanIndex].offset_string != null &&
-          !this.isLoading
+          this.spanSelection[this.spanIndex].offset_string != null
         );
       }
     },
