@@ -1259,8 +1259,6 @@ const mutations = {
         state.missingAnnotations.push(annotation);
       }
     });
-
-    console.log("missing annotations", state.missingAnnotations);
   },
   DELETE_MISSING_ANNOTATION: (state, id) => {
     const indexOfAnnotationToDelete = state.missingAnnotations.findIndex(
