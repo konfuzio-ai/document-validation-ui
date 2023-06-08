@@ -26,7 +26,7 @@ const state = {
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
   newAcceptedAnnotations: null,
-  selectedEntities: null,
+
   serverError: false,
   splittingSuggestions: null,
 };
@@ -534,18 +534,6 @@ const getters = {
   },
 
   /**
-   * Joins all strings in a multi-entity Annotation array
-   * to look like a single string
-   */
-  getTextFromEntities: (state) => () => {
-    return state.selectedEntities
-      .map((entity) => {
-        return entity.content;
-      })
-      .join(" ");
-  },
-
-  /**
    * Check the level of confidence of an annotation
    */
   confidence: () => (annotation) => {
@@ -699,9 +687,6 @@ const actions = {
   },
   setNewAcceptedAnnotations: ({ commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
-  },
-  setSelectedEntities: ({ commit }, entities) => {
-    commit("SET_SELECTED_ENTITIES", entities);
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
@@ -1298,9 +1283,6 @@ const mutations = {
   },
   SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
     state.newAcceptedAnnotations = annotations;
-  },
-  SET_SELECTED_ENTITIES: (state, entities) => {
-    state.selectedEntities = entities;
   },
   SET_SERVER_ERROR: (state, value) => {
     state.serverError = value;

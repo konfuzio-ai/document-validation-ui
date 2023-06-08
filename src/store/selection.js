@@ -14,6 +14,7 @@ const state = {
   isSelecting: false,
   spanSelection: null,
   elementSelected: null, // selected element id
+  selectedEntities: null,
 };
 
 const getters = {
@@ -70,7 +71,7 @@ const actions = {
       commit("MOVE_SELECTION", points);
     }
 
-    dispatch("document/setSelectedEntities", null, { root: true });
+    commit("SET_SELECTED_ENTITIES", null);
   },
 
   endSelection: ({ commit, state }, end) => {
@@ -97,6 +98,10 @@ const actions = {
   setSelection: ({ commit }, { span, selection }) => {
     commit("SET_SELECTION", selection);
     commit("SET_SPAN_SELECTION", span);
+  },
+
+  setSelectedEntities: ({ commit }, entities) => {
+    commit("SET_SELECTED_ENTITIES", entities);
   },
 
   getTextFromBboxes: ({ commit, rootState }, { box, entities }) => {
@@ -186,6 +191,9 @@ const mutations = {
   },
   SET_SELECTION: (state, selection) => {
     state.selection = selection;
+  },
+  SET_SELECTED_ENTITIES: (state, entities) => {
+    state.selectedEntities = entities;
   },
 };
 
