@@ -257,6 +257,7 @@ export default {
       "isSelecting",
       "selectionFromBbox",
       "spanSelection",
+      "selectedEntities",
     ]),
     ...mapState("display", [
       "scale",
@@ -270,7 +271,6 @@ export default {
       "editAnnotation",
       "selectedDocument",
       "publicView",
-      "selectedEntities",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -408,7 +408,8 @@ export default {
         return;
 
       // Check if we are creating a new Annotation
-      // or if we are editing an existing or empty one
+      // or if we are removing a previously selected entity
+      // or editing empty one
       const entityToAdd = entity;
 
       const found = this.newAnnotation.find(
@@ -431,11 +432,11 @@ export default {
 
       if (this.newAnnotation.length > 0) {
         this.$store.dispatch(
-          "document/setSelectedEntities",
+          "selection/setSelectedEntities",
           this.newAnnotation
         );
       } else {
-        this.$store.dispatch("document/setSelectedEntities", null);
+        this.$store.dispatch("selection/setSelectedEntities", null);
       }
     },
 

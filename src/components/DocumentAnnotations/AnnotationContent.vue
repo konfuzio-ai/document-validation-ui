@@ -29,6 +29,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
+import { isElementArray } from "../../utils/utils";
 
 /**
  * This component is responsible for managing filled annotations.
@@ -70,41 +71,36 @@ export default {
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "pageAtIndex",
-      "getTextFromEntities",
       "isDocumentReviewed",
     ]),
     ...mapGetters("display", ["bboxToRect"]),
-    ...mapGetters("selection", ["isValueArray"]),
     ...mapState("selection", ["spanSelection"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
       "annotations",
       "newAcceptedAnnotations",
-      "selectedEntities",
       "showActionError",
     ]),
-    annotationText() {
-      if (this.isAnnotationBeingEdited) {
-        if (this.selectedEntities && this.selectedEntities.length > 0) {
-          return this.getTextFromEntities();
-        }
-        return this.$refs.contentEditable.textContent.trim();
-      } else {
-        return this.span.offset_string;
-      }
-    },
+
     isAnnotationDeleted() {
       return this.annotation.revised && !this.annotation.is_correct;
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
     },
+    annotationText() {
+      if (this.isAnnotationBeingEdited) {
+        return this.$refs.contentEditable.textContent.trim();
+      } else {
+        return this.span.offset_string;
+      }
+    },
   },
   watch: {
     span(newValue) {
       if (this.isAnnotationBeingEdited && newValue) {
-        if (this.isValueArray(newValue)) {
+        if (isElementArray(newValue)) {
           newValue.map((span) => {
             if (
               span.offset_string &&
@@ -135,16 +131,7 @@ export default {
         this.handleCancel(true);
       }
     },
-    selectedEntities(newValue) {
-      if (!newValue) return;
 
-      if (
-        this.editAnnotation &&
-        this.annotation.id === this.editAnnotation.id
-      ) {
-        this.setText(this.getTextFromEntities());
-      }
-    },
     saveChanges(newValue) {
       if (newValue) {
         this.saveAnnotationChanges();
@@ -221,7 +208,7 @@ export default {
         this.$refs.contentEditable.blur();
       }
 
-      this.$store.dispatch("document/setSelectedEntities", null);
+      this.$store.dispatch("selection/setSelectedEntities", null);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text

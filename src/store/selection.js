@@ -38,9 +38,6 @@ const getters = {
     }
     return null;
   },
-  isValueArray: () => (value) => {
-    return Array.isArray(value);
-  },
 };
 
 const actions = {

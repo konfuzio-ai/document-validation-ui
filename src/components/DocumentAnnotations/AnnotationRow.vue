@@ -110,6 +110,7 @@ import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
 import AnnotationActionButtons from "./AnnotationActionButtons";
+import { isElementArray } from "../../utils/utils";
 
 export default {
   name: "AnnotationRow",
@@ -162,20 +163,22 @@ export default {
       "hoveredAnnotationSet",
       "enableGroupingFeature",
       "publicView",
-      "selectedEntities",
       "newAcceptedAnnotations",
       "annotationsMarkedAsMissing",
       "documentId",
       "showActionError",
       "missingAnnotations",
     ]),
-    ...mapState("selection", ["spanSelection", "elementSelected"]),
+    ...mapState("selection", [
+      "spanSelection",
+      "elementSelected",
+      "selectedEntities",
+    ]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "annotationIsNotFound",
       "isDocumentReviewed",
     ]),
-    ...mapGetters("selection", ["isValueArray"]),
     defaultSpan() {
       if (
         this.annotation &&
@@ -189,15 +192,11 @@ export default {
     spanForEditing() {
       return (
         this.spanSelection &&
-        this.isValueArray(this.spanSelection) &&
+        isElementArray(this.spanSelection) &&
         this.isAnnotationInEditMode(this.annotationId())
       );
     },
-    spanFromSelectedEntities() {
-      return this.selectedEntities.flatMap((ann) => {
-        return { ...ann.original, offset_string: ann.content };
-      });
-    },
+
     isAnnotation() {
       return (
         this.annotation &&
@@ -277,7 +276,26 @@ export default {
         this.isLoading = false;
       }
     },
+    selectedEntities(newValue, oldValue) {
+      if (
+        newValue &&
+        newValue !== oldValue &&
+        this.isAnnotationInEditMode(this.annotationId())
+      ) {
+        this.isLoading = true;
+      } else {
+        this.isLoading = false;
+      }
+    },
+    spanSelection(newValue) {
+      // check if spanSelection has new value from entity selection
+      // to stop loading after the text appears in the field
+      if (newValue) {
+        this.isLoading = false;
+      }
+    },
   },
+
   methods: {
     annotationId() {
       if (!this.annotationSet || !this.label) return;
@@ -386,12 +404,15 @@ export default {
     showCancelButton() {
       if (!this.editAnnotation || this.isLoading) return;
 
-      if (this.isAnnotationInEditMode(this.annotationId())) {
+      if (
+        this.isAnnotationInEditMode(this.annotationId()) &&
+        this.spanSelection
+      ) {
         return true;
       }
     },
     showSaveButton() {
-      if (!this.editAnnotation || this.isLoading) return;
+      if (!this.editAnnotation || this.isLoading || !this.spanSelection) return;
 
       // Check if it's an Annotation or Empty Annotation
       if (this.isAnnotation) {
@@ -399,17 +420,11 @@ export default {
       } else {
         if (!this.isAnnotationInEditMode(this.annotationId())) return;
 
-        // Check if an entity was selected instead of bbox
-        if (this.selectedEntities && this.selectedEntities.length > 0) {
-          return this.elementSelected === this.annotationId();
-        } else {
-          // Check if an entity was selected instead of bbox
-          return (
-            this.elementSelected === this.annotationId() &&
-            this.spanSelection &&
-            Array.isArray(this.spanSelection)
-          );
-        }
+        return (
+          this.elementSelected === this.annotationId() &&
+          this.spanSelection &&
+          Array.isArray(this.spanSelection)
+        );
       }
     },
     handleMissingAnnotation() {
@@ -477,75 +492,36 @@ export default {
       annotation,
       spanIndex,
       annotationSpan,
-      annotationText
+      annotationContent
     ) {
-      let updatedString;
-
+      // This function deals with declining Annotations
+      // or editing an Annotation or a part of it (if multi line)
       this.isLoading = true;
 
-      // Check if we are deleting a single annotation that it's not multi-lined
+      let updatedString; // what will be sent to the API
+      let storeAction; // if it will be 'delete' or 'patch'
+
+      // Validate if we are deleting an Annotation that it's not multi-lined
       let isToDelete =
-        annotationText.length === 0 &&
-        (!this.isValueArray(annotation.span) || annotation.span.length === 1);
+        annotationContent.length === 0 &&
+        (!isElementArray(annotation.span) || annotation.span.length === 1);
 
-      let storeAction;
-
+      // Verify if we delete the entire Annotation or a part of the text
       if (isToDelete || this.toDecline) {
         storeAction = "document/deleteAnnotation";
       } else {
+        // Editing the Annotation
+        // Deleting part of multi-line Annotation
         storeAction = "document/updateAnnotation";
 
         let spans = [...annotation.span];
 
-        // Validations to consider span as an array (multiline annotations) or object
-        if (annotationText.length === 0 && this.isValueArray(annotation.span)) {
-          // if the annotation content in one row was deleted
-          // check if it it part of an array
-          // to only remove that string
+        const span = this.createSpan(annotationSpan, annotationContent);
+
+        spans[spanIndex] = span;
+
+        if (annotationContent.length === 0) {
           spans.splice(spanIndex, 1);
-        } else if (
-          this.spanSelection &&
-          this.isValueArray(this.spanSelection)
-        ) {
-          let span;
-
-          // Check if editing was from selecting an entity
-          if (this.selectedEntities && this.selectedEntities.length > 0) {
-            span = this.spanFromSelectedEntities;
-          } else {
-            spans = [...this.spanSelection];
-            span = this.createSpan(
-              this.spanSelection[spanIndex],
-              annotationText
-            );
-          }
-
-          // span is array, only update current one
-          spans[spanIndex] = {
-            ...spans[spanIndex],
-            span,
-          };
-        } else {
-          // if span is NOT an array, but an object
-          let span;
-
-          if (this.selectedEntities && this.selectedEntities.length > 0) {
-            spans = this.spanFromSelectedEntities;
-          } else if (this.spanSelection) {
-            span = this.createSpan(this.spanSelection, annotationText);
-
-            spans[spanIndex] = {
-              ...spans[spanIndex],
-              ...span,
-            };
-          } else {
-            span = this.createSpan(annotationSpan, annotationText);
-
-            spans[spanIndex] = {
-              ...spans[spanIndex],
-              ...span,
-            };
-          }
         }
 
         updatedString = {
@@ -571,13 +547,13 @@ export default {
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("selection/disableSelection");
-          this.$store.dispatch("document/setSelectedEntities", null);
+          this.$store.dispatch("selection/setSelectedEntities", null);
           this.toDecline = false;
         });
     },
-    createSpan(span, annotationText) {
+    createSpan(span, annotationContent) {
       return {
-        offset_string: annotationText,
+        offset_string: annotationContent,
         page_index: span.page_index,
         x0: span.x0,
         x1: span.x1,
@@ -589,18 +565,11 @@ export default {
     },
     saveEmptyAnnotationChanges() {
       let annotationToCreate;
-      let span;
-
-      if (this.selectedEntities && this.selectedEntities.length > 0) {
-        span = this.spanFromSelectedEntities;
-      } else {
-        span = this.spanSelection;
-      }
 
       if (this.annotationSet.id) {
         annotationToCreate = {
           document: this.documentId,
-          span: span,
+          span: this.spanSelection,
           label: this.label.id,
           annotation_set: this.annotationSet.id,
           is_correct: true,
@@ -610,7 +579,7 @@ export default {
         // if annotation set id is null
         annotationToCreate = {
           document: this.documentId,
-          span: span,
+          span: this.spanSelection,
           label: this.label.id,
           label_set: this.annotationSet.label_set.id,
           is_correct: true,
@@ -637,7 +606,7 @@ export default {
       this.$store.dispatch("document/resetEditAnnotation");
       if (this.elementSelected) {
         this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("document/setSelectedEntities", null);
+        this.$store.dispatch("selection/setSelectedEntities", null);
       }
     },
     enableLoading(annotations) {

@@ -36,6 +36,7 @@
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
+import { isElementArray } from "../../utils/utils";
 
 /**
  * This component is responsible for managing empty annotations (labels with no annotations).
@@ -70,23 +71,24 @@ export default {
   computed: {
     ...mapGetters("document", [
       "isAnnotationInEditMode",
-      "getTextFromEntities",
       "annotationIsNotFound",
       "isDocumentReviewed",
     ]),
-    ...mapGetters("selection", ["isValueArray"]),
-    ...mapState("selection", ["spanSelection", "elementSelected"]),
+    ...mapState("selection", [
+      "spanSelection",
+      "elementSelected",
+      "selectedEntities",
+    ]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
-      "selectedEntities",
       "showActionError",
     ]),
   },
   watch: {
     span(newValue) {
       if (this.elementSelected === this.emptyAnnotationId() && newValue) {
-        if (this.isValueArray(newValue))
+        if (isElementArray(newValue))
           newValue.map((span) => {
             if (span.offset_string) {
               span.offset_string =
@@ -104,22 +106,6 @@ export default {
       // one was selected before so we set the state to the previous one (like a cancel)
       if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
         this.cancelEmptyAnnotation(true);
-      }
-    },
-    async selectedEntities(newValue) {
-      if (!newValue && this.isAnnotationBeingEdited(this.emptyAnnotationId())) {
-        this.setText(
-          this.$t("draw_box_document", { label_name: this.label.name })
-        );
-        return;
-      }
-
-      if (
-        newValue &&
-        this.editAnnotation &&
-        this.emptyAnnotationId() === this.editAnnotation.id
-      ) {
-        await this.$store.dispatch("selection/getTextFromEntities", newValue);
       }
     },
     spanSelection(newValue) {
@@ -162,10 +148,12 @@ export default {
         this.setText(
           this.$t("draw_box_document", { label_name: this.label.name })
         );
+
         this.$store.dispatch(
           "selection/selectElement",
           this.emptyAnnotationId()
         );
+
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
           index: this.spanIndex,
@@ -182,16 +170,14 @@ export default {
         this.$store.dispatch("selection/disableSelection");
       }
 
-      this.$store.dispatch("document/setSelectedEntities", null);
+      this.$store.dispatch("selection/setSelectedEntities", null);
 
       if (this.$refs.emptyAnnotation) {
         this.$refs.emptyAnnotation.blur();
       }
     },
     isEmptyAnnotationEditable() {
-      if (this.selectedEntities && this.selectedEntities.length > 0) {
-        return this.elementSelected === this.emptyAnnotationId();
-      } else if (
+      if (
         (this.spanSelection && this.spanSelection[this.spanIndex] === 0) ||
         this.annotationIsNotFound(this.annotationSet, this.label)
       ) {

@@ -110,7 +110,7 @@
         type="is-primary"
         class="popup-button primary-button"
         :label="$t('save')"
-        :disabled="loading || !getTextFromEntities || !selectedLabel"
+        :disabled="loading || !spanSelection || !selectedLabel"
         @click.prevent="save"
       />
     </div>
@@ -158,7 +158,6 @@ export default {
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation",
-      "getTextFromEntities",
     ]),
     ...mapState("selection", ["spanSelection"]),
     top() {
@@ -189,7 +188,13 @@ export default {
     textFromEntities() {
       if (!this.spanSelection) return;
 
-      return this.spanSelection[0].offset_string;
+      // get array of all offset strings
+      let text = this.spanSelection.map((span) => {
+        return span.offset_string;
+      });
+
+      // join all the strings to become a single string of text
+      return text.join().split(",").join(" ");
     },
   },
   watch: {
@@ -213,7 +218,7 @@ export default {
   },
   methods: {
     close() {
-      this.$store.dispatch("document/setSelectedEntities", null);
+      this.$store.dispatch("selection/setSelectedEntities", null);
       this.$emit("close");
     },
     save() {

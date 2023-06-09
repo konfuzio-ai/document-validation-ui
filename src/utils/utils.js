@@ -29,3 +29,7 @@ export function navigateToNewDocumentURL(oldId, newId) {
   const newUrl = url.replace(oldId, newId);
   window.location.replace(newUrl);
 }
+
+export function isElementArray(element) {
+  return Array.isArray(element);
+}
