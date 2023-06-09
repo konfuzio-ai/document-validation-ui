@@ -205,6 +205,23 @@ describe("Document Top Bar", () => {
     ).toBe(true);
   });
 
+  it("Finish review button should be disabled if review is not done", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(
+          ".top-bar-buttons .finish-review-button-container .finish-review .finish-review-btn"
+        )
+        .attributes("disabled")
+    ).toBe("disabled");
+  });
+
   it("If document is in edit mode, button should not be visible", async () => {
     const wrapper = mount(DocumentTopBar, {
       store,
