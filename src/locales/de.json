@@ -55,6 +55,7 @@
   "limited_functionalities": "Sie verwenden die schreibgeschützte Version mit begrenzten Funktionalitäten.",
   "split": "Aufteilen",
   "reorder": "Umsortieren",
+  "rotate": "Rotate",
   "edit_error": "Die Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es später erneut.",
   "overview": "Übersicht",
   "select_pages": "Sie können nun Seiten drehen, neu sortieren und Dokumente splitten.",
@@ -130,5 +131,5 @@
   "edit_label": "Edit label",
   "delete_label": "Delete label",
   "table": "Table",
-  "delete_table": "Delete table"
+  "prepare_document": "Prepare the document"
 }
