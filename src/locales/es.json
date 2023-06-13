@@ -124,10 +124,12 @@
   "splitting_warning": "Ten en cuenta que se perderán las anotaciones que hayas confirmado en el documento.",
   "no": "No",
   "yes": "Sí",
-  "split_modal_no_suggestions": "Do you need to split the document? <strong>We strongly recommend</strong> splitting it at this stage, otherwise all the progress you’ve made will be lost in the future.",
+  "split_modal_no_suggestions": "¿Necesitas dividir el documento? <strong>Te recomendamos</strong> hacerlo en este momento, o de lo contrario se perderán los cambios realizados.",
   "missing_from_document": "Falta en el documento",
   "edit_label": "Edit label",
   "delete_label": "Delete label",
   "table": "Table",
-  "delete_table": "Delete table"
+  "new_multi_ann_description": "Selecciona un modelo de datos de los existentes, luego deselecciona las etiquetas que no existen en este documento.",
+  "new_multi_ann_title": "Crear múltiples anotaciones",
+  "prepare_document": "Prepara el documento"
 }
