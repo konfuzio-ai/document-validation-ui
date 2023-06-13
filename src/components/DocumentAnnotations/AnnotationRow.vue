@@ -276,18 +276,14 @@ export default {
         this.isLoading = false;
       }
     },
-    selectedEntities(newValue, oldValue) {
-      if (
-        newValue &&
-        newValue !== oldValue &&
-        this.isAnnotationInEditMode(this.annotationId())
-      ) {
+    selectedEntities(newValue) {
+      if (!newValue) return;
+
+      if (this.isAnnotationInEditMode(this.annotationId())) {
         this.isLoading = true;
-      } else {
-        this.isLoading = false;
       }
     },
-    spanSelection(newValue) {
+    spanSelection(newValue, oldValue) {
       // check if spanSelection has new value from entity selection
       // to stop loading after the text appears in the field
       if (newValue) {
