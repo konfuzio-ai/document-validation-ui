@@ -404,10 +404,7 @@ export default {
     showCancelButton() {
       if (!this.editAnnotation || this.isLoading) return;
 
-      if (
-        this.isAnnotationInEditMode(this.annotationId()) &&
-        this.spanSelection
-      ) {
+      if (this.isAnnotationInEditMode(this.annotationId())) {
         return true;
       }
     },
