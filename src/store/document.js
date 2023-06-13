@@ -26,7 +26,6 @@ const state = {
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
   newAcceptedAnnotations: null,
-
   serverError: false,
   splittingSuggestions: null,
 };
@@ -1241,24 +1240,28 @@ const mutations = {
     state.missingAnnotations = missingAnnotations;
   },
   ADD_MISSING_ANNOTATIONS: (state, annotations) => {
-    annotations.map((annotation) => {
-      // check if already in missingAnnotations
-      const found = state.missingAnnotations.find(
-        (missingAnnotation) => missingAnnotation.id === annotation.id
-      );
-
-      if (found) {
-        const indexOfAnnotation = state.missingAnnotations.findIndex(
+    if (annotations && annotations.length > 0) {
+      annotations.map((annotation) => {
+        // check if already in missingAnnotations
+        const found = state.missingAnnotations.find(
           (missingAnnotation) => missingAnnotation.id === annotation.id
         );
 
-        if (indexOfAnnotation > -1) {
-          state.missingAnnotations.splice(indexOfAnnotation, 1, annotation);
+        if (found) {
+          const indexOfAnnotation = state.missingAnnotations.findIndex(
+            (missingAnnotation) => missingAnnotation.id === annotation.id
+          );
+
+          if (indexOfAnnotation > -1) {
+            state.missingAnnotations.splice(indexOfAnnotation, 1, annotation);
+          }
+        } else {
+          state.missingAnnotations.push(annotation);
         }
-      } else {
-        state.missingAnnotations.push(annotation);
-      }
-    });
+      });
+    } else {
+      state.missingAnnotations.push(annotations);
+    }
   },
   DELETE_MISSING_ANNOTATION: (state, id) => {
     const indexOfAnnotationToDelete = state.missingAnnotations.findIndex(

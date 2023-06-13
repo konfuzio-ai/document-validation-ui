@@ -385,14 +385,16 @@ export default {
           },
         ];
       } else if (this.editAnnotation && this.editAnnotation.id !== null) {
-        // iif annotation is marked as missing from "delete" key
+        // if annotation is marked as missing from "delete" key
 
-        missing = {
-          document: parseInt(this.documentId),
-          label: this.editAnnotation.label,
-          label_set: this.editAnnotation.labelSet,
-          annotation_set: this.editAnnotation.annotationSet,
-        };
+        missing = [
+          {
+            document: parseInt(this.documentId),
+            label: this.editAnnotation.label,
+            label_set: this.editAnnotation.labelSet,
+            annotation_set: this.editAnnotation.annotationSet,
+          },
+        ];
       } else if (annotationSet && markAllMissing) {
         // mark all annotations as missing in annotation set
 
@@ -447,6 +449,8 @@ export default {
         })
         .finally(() => {
           this.$store.dispatch("document/setAnnotationsMarkedAsMissing", null);
+          this.$store.dispatch("document/resetEditAnnotation");
+          this.$store.dispatch("selection/disableSelection");
         });
     },
 

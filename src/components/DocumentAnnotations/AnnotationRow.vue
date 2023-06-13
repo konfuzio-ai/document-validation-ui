@@ -427,6 +427,8 @@ export default {
     handleMissingAnnotation() {
       if (!this.label || !this.annotationSet) return;
 
+      this.isLoading = true;
+
       // will emit to the DocumentAnnotations component, where the method is handled
       // & dispatched to the store
       this.$parent.$emit(

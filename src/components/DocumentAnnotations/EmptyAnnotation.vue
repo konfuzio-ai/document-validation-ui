@@ -10,7 +10,9 @@
           editAnnotation &&
           editAnnotation.id === emptyAnnotationId() &&
           'error-editing',
-        isEmptyAnnotationEditable() ? '' : 'label-empty',
+        !isEmptyAnnotationEditable() &&
+          !annotationIsNotFound(annotationSet, label) &&
+          'label-empty',
         isAnnotationBeingEdited() && 'clicked',
         annotationIsNotFound(annotationSet, label) && 'missing-annotation',
       ]"
@@ -74,17 +76,14 @@ export default {
       "annotationIsNotFound",
       "isDocumentReviewed",
     ]),
-    ...mapState("selection", [
-      "spanSelection",
-      "elementSelected",
-      "selectedEntities",
-    ]),
+    ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
       "showActionError",
     ]),
   },
+
   watch: {
     span(newValue) {
       if (this.elementSelected === this.emptyAnnotationId() && newValue) {
