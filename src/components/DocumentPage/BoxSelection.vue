@@ -102,7 +102,10 @@ export default {
         this.selection.start,
         this.selection.end
       );
-      this.$store.dispatch("selection/getTextFromBboxes", box);
+      this.$store.dispatch("selection/getTextFromBboxes", {
+        box,
+        entities: false,
+      });
     },
 
     /**

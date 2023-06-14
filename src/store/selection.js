@@ -14,6 +14,7 @@ const state = {
   isSelecting: false,
   spanSelection: null,
   elementSelected: null, // selected element id
+  selectedEntities: null,
 };
 
 const getters = {
@@ -36,9 +37,6 @@ const getters = {
       return state.selection;
     }
     return null;
-  },
-  isValueArray: () => (value) => {
-    return Array.isArray(value);
   },
 };
 
@@ -70,7 +68,7 @@ const actions = {
       commit("MOVE_SELECTION", points);
     }
 
-    dispatch("document/setSelectedEntities", null, { root: true });
+    commit("SET_SELECTED_ENTITIES", null);
   },
 
   endSelection: ({ commit, state }, end) => {
@@ -99,9 +97,23 @@ const actions = {
     commit("SET_SPAN_SELECTION", span);
   },
 
-  getTextFromBboxes: ({ commit, rootState }, box) => {
+  setSelectedEntities: ({ commit }, entities) => {
+    commit("SET_SELECTED_ENTITIES", entities);
+  },
+
+  getTextFromBboxes: ({ commit, rootState }, { box, entities }) => {
+    let span;
+
+    if (entities) {
+      span = box.flatMap((s) => {
+        return s.original;
+      });
+    } else {
+      span = [box];
+    }
+
     return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-      span: [box],
+      span,
     })
       .then((response) => {
         if (response.data.span.length && response.data.span.length > 0) {
@@ -119,13 +131,23 @@ const actions = {
            * an annotation on this empty area, adding the offset_string
            * attribute, ready to be filled.
            */
-          commit("SET_SPAN_SELECTION", box);
+          commit("SET_SPAN_SELECTION", span);
         }
       })
       .catch((error) => {
         alert("Could not fetch the selected text from the backend");
       });
   },
+
+  getTextFromEntities: ({ commit, dispatch }, selectedEntities) => {
+    if (!selectedEntities) return;
+
+    return dispatch("getTextFromBboxes", {
+      box: selectedEntities,
+      entities: true,
+    });
+  },
+
   setSpanSelection: ({ commit }, span) => {
     commit("SET_SPAN_SELECTION", span);
   },
@@ -166,6 +188,9 @@ const mutations = {
   },
   SET_SELECTION: (state, selection) => {
     state.selection = selection;
+  },
+  SET_SELECTED_ENTITIES: (state, entities) => {
+    state.selectedEntities = entities;
   },
 };
 
