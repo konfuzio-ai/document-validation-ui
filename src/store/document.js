@@ -26,7 +26,6 @@ const state = {
   errorMessageWidth: null,
   hoveredAnnotationSet: null,
   newAcceptedAnnotations: null,
-  selectedEntities: null,
   serverError: false,
   splittingSuggestions: null,
 };
@@ -534,18 +533,6 @@ const getters = {
   },
 
   /**
-   * Joins all strings in a multi-entity Annotation array
-   * to look like a single string
-   */
-  getTextFromEntities: (state) => () => {
-    return state.selectedEntities
-      .map((entity) => {
-        return entity.content;
-      })
-      .join(" ");
-  },
-
-  /**
    * Check the level of confidence of an annotation
    */
   confidence: () => (annotation) => {
@@ -699,9 +686,6 @@ const actions = {
   },
   setNewAcceptedAnnotations: ({ commit }, annotations) => {
     commit("SET_NEW_ACCEPTED_ANNOTATIONS", annotations);
-  },
-  setSelectedEntities: ({ commit }, entities) => {
-    commit("SET_SELECTED_ENTITIES", entities);
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
@@ -1255,10 +1239,29 @@ const mutations = {
   SET_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
     state.missingAnnotations = missingAnnotations;
   },
-  ADD_MISSING_ANNOTATIONS: (state, missingAnnotations) => {
-    missingAnnotations.map((annotation) => {
-      state.missingAnnotations.push(annotation);
-    });
+  ADD_MISSING_ANNOTATIONS: (state, annotations) => {
+    if (annotations && annotations.length > 0) {
+      annotations.map((annotation) => {
+        // check if already in missingAnnotations
+        const found = state.missingAnnotations.find(
+          (missingAnnotation) => missingAnnotation.id === annotation.id
+        );
+
+        if (found) {
+          const indexOfAnnotation = state.missingAnnotations.findIndex(
+            (missingAnnotation) => missingAnnotation.id === annotation.id
+          );
+
+          if (indexOfAnnotation > -1) {
+            state.missingAnnotations.splice(indexOfAnnotation, 1, annotation);
+          }
+        } else {
+          state.missingAnnotations.push(annotation);
+        }
+      });
+    } else {
+      state.missingAnnotations.push(annotations);
+    }
   },
   DELETE_MISSING_ANNOTATION: (state, id) => {
     const indexOfAnnotationToDelete = state.missingAnnotations.findIndex(
@@ -1298,9 +1301,6 @@ const mutations = {
   },
   SET_NEW_ACCEPTED_ANNOTATIONS: (state, annotations) => {
     state.newAcceptedAnnotations = annotations;
-  },
-  SET_SELECTED_ENTITIES: (state, entities) => {
-    state.selectedEntities = entities;
   },
   SET_SERVER_ERROR: (state, value) => {
     state.serverError = value;

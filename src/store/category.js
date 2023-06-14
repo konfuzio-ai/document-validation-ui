@@ -102,7 +102,7 @@ const actions = {
               state.documentsInProject[i]
             )
           ) {
-            dispatch("document/setDocumentError", true);
+            dispatch("document/setDocumentError", null, { root: true });
             // If error, add 1
             // Then go to next item
             errors += 1;
