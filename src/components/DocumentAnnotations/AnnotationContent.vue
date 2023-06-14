@@ -21,15 +21,11 @@
     >
       {{ span.offset_string }}
     </span>
-    <span v-else class="annotation-value">
-      {{ span.offset_string }}
-    </span>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import { isElementArray } from "../../utils/utils";
 
 /**
  * This component is responsible for managing filled annotations.
@@ -97,28 +93,8 @@ export default {
       }
     },
   },
+
   watch: {
-    span(newValue) {
-      if (this.isAnnotationBeingEdited && newValue) {
-        if (isElementArray(newValue)) {
-          newValue.map((span) => {
-            if (
-              span.offset_string &&
-              span.offset_string !== this.span.offset_string
-            )
-              this.setText(span.offset_string);
-          });
-        } else {
-          if (
-            (newValue.offset_string &&
-              newValue.offset_string !== this.span.offset_string) ||
-            newValue.offset_string !==
-              this.$refs.contentEditable.textContent.trim()
-          )
-            this.setText(newValue.offset_string);
-        }
-      }
-    },
     editAnnotation(newAnnotation, oldAnnotation) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
@@ -156,6 +132,7 @@ export default {
         !this.isLoading
       ) {
         this.$store.dispatch("selection/selectElement", this.annotation.id);
+
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
@@ -221,11 +198,18 @@ export default {
         event.preventDefault();
       }
 
+      let index;
+      if (this.editAnnotation && this.editAnnotation.index) {
+        index = this.editAnnotation.index;
+      } else {
+        index = this.spanIndex;
+      }
+
       // API call handled in parent component - AnnotationRow
       this.$emit(
         "save-annotation-changes",
         this.annotation,
-        this.spanIndex,
+        index,
         this.span,
         this.annotationText
       );

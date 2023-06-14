@@ -485,7 +485,7 @@ export default {
     },
     handleSaveAnnotationChanges(
       annotation,
-      spanIndex,
+      index,
       annotationSpan,
       annotationContent
     ) {
@@ -513,10 +513,10 @@ export default {
 
         const span = this.createSpan(annotationSpan, annotationContent);
 
-        spans[spanIndex] = span;
+        spans[index] = span;
 
         if (annotationContent.length === 0) {
-          spans.splice(spanIndex, 1);
+          spans.splice(index, 1);
         }
 
         updatedString = {
