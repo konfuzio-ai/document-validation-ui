@@ -393,12 +393,7 @@ const getters = {
           el.annotation_set === annotationSet.id &&
           el.label_set === annotationSet.label_set.id
       );
-
-      if (found.length !== 0) {
-        return true;
-      } else {
-        return false;
-      }
+      return found.length !== 0;
     }
   },
 
