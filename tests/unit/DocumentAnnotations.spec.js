@@ -99,6 +99,7 @@ describe("Document Annotations Component", () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
     let emptyAnnotationId;
+    const isMissingAnnotation = false;
 
     if (annotationSet.id) {
       emptyAnnotationId = `${annotationSet.id}_${label.id}`;
@@ -111,6 +112,7 @@ describe("Document Annotations Component", () => {
       propsData: {
         label,
         annotationSet,
+        isMissingAnnotation,
       },
       mocks: {
         $t,
@@ -127,12 +129,14 @@ describe("Document Annotations Component", () => {
     const annotationSet = store.state.document.annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = annotationSet.labels[0].annotations[0];
+    const isMissingAnnotation = false;
 
     const wrapper = mount(EmptyAnnotation, {
       store,
       propsData: {
         label,
         annotationSet,
+        isMissingAnnotation,
       },
       mocks: {
         $t,
