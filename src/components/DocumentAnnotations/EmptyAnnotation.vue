@@ -10,29 +10,32 @@
           editAnnotation &&
           editAnnotation.id === emptyAnnotationId() &&
           'error-editing',
-        !isEmptyAnnotationEditable() &&
-          !annotationIsNotFound(annotationSet, label) &&
-          'label-empty',
+        !isEmptyAnnotationEditable() && !isMissingAnnotation && 'label-empty',
         isAnnotationBeingEdited() && 'clicked',
-        annotationIsNotFound(annotationSet, label) && 'missing-annotation',
+        isMissingAnnotation && 'missing-annotation',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotationChanges"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
-    >
-      <span v-if="span && span.offset_string && isEmptyAnnotationEditable()">
-        {{ span.offset_string }}
+      ><!-- eslint-disable vue/no-v-html -->
+      <span
+        v-if="isFindingAnnotation"
+        v-html="$t('draw_box_document', { label_name: label.name })"
+      >
+      </span>
+      <span v-else-if="isMissingAnnotation" class="not-found-text">
+        {{ $t("missing_from_document") }}
       </span>
       <span
-        v-else-if="annotationIsNotFound(annotationSet, label)"
-        class="not-found-text"
+        v-else-if="span && span.offset_string && isEmptyAnnotationEditable()"
       >
-        {{ $t("missing_from_document") }}
+        {{ span.offset_string }}
       </span>
       <span v-else>
         {{ $t("no_data_found") }}
       </span>
+      <!--eslint-enable-->
     </span>
   </div>
 </template>
@@ -68,20 +71,27 @@ export default {
       type: Boolean,
       required: false,
     },
+    isMissingAnnotation: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
-
   computed: {
-    ...mapGetters("document", [
-      "isAnnotationInEditMode",
-      "annotationIsNotFound",
-      "isDocumentReviewed",
-    ]),
+    ...mapGetters("document", ["isAnnotationInEditMode", "isDocumentReviewed"]),
     ...mapState("selection", ["spanSelection", "elementSelected"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
       "showActionError",
     ]),
+    isFindingAnnotation() {
+      return (
+        this.editAnnotation &&
+        this.editAnnotation.id === this.emptyAnnotationId() &&
+        (!this.span || !this.span.offset_string)
+      );
+    },
   },
 
   watch: {
@@ -94,17 +104,8 @@ export default {
                 this.$refs.emptyAnnotation.textContent.trim();
               span.offset_string_original =
                 this.$refs.emptyAnnotation.textContent.trim();
-
-              this.setText(span.offset_string);
             }
           });
-      }
-    },
-    editAnnotation(newAnnotation, oldAnnotation) {
-      // verify if new annotation in edit mode is not this one and if this
-      // one was selected before so we set the state to the previous one (like a cancel)
-      if (oldAnnotation && oldAnnotation.id === this.emptyAnnotationId()) {
-        this.cancelEmptyAnnotation(true);
       }
     },
     spanSelection(newValue) {
@@ -135,7 +136,7 @@ export default {
       if (
         this.publicView ||
         this.isDocumentReviewed ||
-        this.annotationIsNotFound(this.annotationSet, this.label)
+        this.isMissingAnnotation
       )
         return;
 
@@ -144,10 +145,8 @@ export default {
         !this.isDocumentReviewed &&
         this.elementSelected !== this.emptyAnnotationId()
       ) {
-        this.setText(
-          this.$t("draw_box_document", { label_name: this.label.name })
-        );
-
+        this.$store.dispatch("selection/disableSelection");
+        this.$store.dispatch("selection/setSelectedEntities", null);
         this.$store.dispatch(
           "selection/selectElement",
           this.emptyAnnotationId()
@@ -162,23 +161,10 @@ export default {
         });
       }
     },
-    cancelEmptyAnnotation(wasOutsideClick = false) {
-      if (wasOutsideClick) {
-        this.setText(this.$t("no_data_found"));
-      } else {
-        this.$store.dispatch("selection/disableSelection");
-      }
-
-      this.$store.dispatch("selection/setSelectedEntities", null);
-
-      if (this.$refs.emptyAnnotation) {
-        this.$refs.emptyAnnotation.blur();
-      }
-    },
     isEmptyAnnotationEditable() {
       if (
         (this.spanSelection && this.spanSelection[this.spanIndex] === 0) ||
-        this.annotationIsNotFound(this.annotationSet, this.label)
+        this.isMissingAnnotation
       ) {
         return false;
       } else {
@@ -199,9 +185,6 @@ export default {
 
       // API call handled in parent component - AnnotationRow
       this.$emit("save-empty-annotation-changes");
-    },
-    setText(text) {
-      this.$refs.emptyAnnotation.innerHTML = text;
     },
   },
 };

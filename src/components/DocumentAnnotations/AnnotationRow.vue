@@ -71,6 +71,9 @@
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
               :save-changes="saveChanges"
+              :is-missing-annotation="
+                annotationIsNotFound(annotationSet, label)
+              "
               @save-empty-annotation-changes="saveEmptyAnnotationChanges"
             />
           </div>
@@ -80,6 +83,7 @@
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :save-changes="saveChanges"
+            :is-missing-annotation="annotationIsNotFound(annotationSet, label)"
             @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
