@@ -235,24 +235,28 @@ export default {
       if (
         newSidebarAnnotationSelected &&
         this.annotation &&
-        this.annotation.id === newSidebarAnnotationSelected.id
+        this.annotation.id === newSidebarAnnotationSelected.annotation.id
       ) {
         clearTimeout(this.annotationAnimationTimeout);
 
-        const runAnimation = () => {
-          this.$el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest",
-          });
-          this.isSelected = true;
-          // remove annotation selection after some time
-          this.annotationAnimationTimeout = setTimeout(() => {
-            this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-            this.isSelected = false;
-          }, 1500);
-        };
-        runAnimation();
+        this.isSelected = true;
+        // remove annotation selection after some time
+        this.annotationAnimationTimeout = setTimeout(() => {
+          this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+          this.isSelected = false;
+        }, 1500);
+
+        // Check if sidebarAnnotationSelected changed from a click or hover
+        if (newSidebarAnnotationSelected.trigger === "click") {
+          const runAnimation = () => {
+            this.$el.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+              inline: "nearest",
+            });
+          };
+          runAnimation();
+        }
       }
     },
     editAnnotation(newValue) {

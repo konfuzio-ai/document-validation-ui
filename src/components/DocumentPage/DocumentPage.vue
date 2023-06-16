@@ -68,8 +68,8 @@
                 v-if="!isAnnotationInEditMode(annotation.id)"
                 :key="'ann' + annotation.id + '-' + index"
                 :config="annotationRect(bbox, annotation.id)"
-                @click="handleClickedAnnotation(annotation)"
-                @mouseenter="onElementEnter"
+                @click="handleFocusedAnnotation(annotation, 'click')"
+                @mouseenter="handleFocusedAnnotation(annotation)"
                 @mouseleave="onElementLeave"
               />
             </template>
@@ -392,10 +392,16 @@ export default {
       });
     },
 
-    handleClickedAnnotation(annotation) {
-      this.closePopups(true);
+    handleFocusedAnnotation(annotation, trigger) {
       this.$store.dispatch("document/resetEditAnnotation");
-      this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
+      this.$store.dispatch("document/setSidebarAnnotationSelected", {
+        annotation,
+        trigger,
+      });
+
+      if (trigger && trigger === "click") {
+        this.closePopups(true);
+      }
     },
 
     handleClickedEntity(entity) {
