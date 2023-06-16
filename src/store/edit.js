@@ -15,6 +15,7 @@ const state = {
   selectedPages: [],
   updatedDocument: [],
   showEditConfirmationModal: false,
+  documentBeingSplit: false,
 };
 
 const getters = {
@@ -43,6 +44,10 @@ const actions = {
 
   setUpdatedDocument: ({ commit }, updatedDocument) => {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
+  },
+
+  setDocumentBeingSplit: ({ commit }, value) => {
+    commit("SET_DOCUMENT_BEING_SPLIT", value);
   },
 
   selectPage: ({ state, commit }, page) => {
@@ -177,10 +182,12 @@ const actions = {
     commit("SET_PAGES_FOR_POSTPROCESS", array);
   },
 
-  editDocument: ({ rootState, dispatch }, editedDocument) => {
+  editDocument: ({ rootState, commit, dispatch }, editedDocument) => {
     dispatch("document/startRecalculatingAnnotations", null, {
       root: true,
     });
+
+    commit("SET_DOCUMENT_BEING_SPLIT", true);
 
     const oldId = rootState.document.documentId;
 
@@ -193,6 +200,8 @@ const actions = {
           if (response && response.status === 200) {
             const newId = response.data[0].id;
             dispatch("document/setSplittingSuggestions", null, { root: true });
+
+            commit("SET_DOCUMENT_BEING_SPLIT", false);
 
             if (newId !== oldId) {
               if (getURLQueryParam("document") || getURLPath("docs")) {
@@ -249,6 +258,9 @@ const mutations = {
   },
   SET_SHOW_EDIT_CONFIRMATION_MODAL: (state, value) => {
     state.showEditConfirmationModal = value;
+  },
+  SET_DOCUMENT_BEING_SPLIT: (state, value) => {
+    state.documentBeingSplit = value;
   },
 };
 

@@ -231,7 +231,11 @@ export default {
       const newPage = { page: page, origin: origin };
       const removedPage = { page: 0, origin: origin };
 
-      if (
+      if (this.splitSuggestionsEnabled && origin === "AI") {
+        // if manual suggestions were added but we enable automatic splitting,
+        // this last one takes over
+        this.splittingLines.splice(page - 1, 1, newPage);
+      } else if (
         page === this.splittingLines.length ||
         (!this.splitSuggestionsEnabled && !found && origin === "AI")
       ) {
@@ -239,10 +243,6 @@ export default {
         // Or if splitting is switched off, but some of the suggestion lines
         // were removed manually
         return;
-      } else if (this.splitSuggestionsEnabled && origin === "AI") {
-        // if manual suggestions were added but we enable automatic splitting,
-        // this last one takes over
-        this.splittingLines.splice(page - 1, 1, newPage);
       } else if (found) {
         // If splitting is switched off and we have manual splits,
         // those should stay unchanged

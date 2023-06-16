@@ -36,7 +36,9 @@
     </div>
     <div
       v-if="
-        selectedDocument && waitingForSplittingConfirmation(selectedDocument)
+        selectedDocument &&
+        waitingForSplittingConfirmation(selectedDocument) &&
+        !documentBeingSplit
       "
     >
       <SplittingSuggestionsModal />
@@ -101,10 +103,11 @@ export default {
       "selectedDocument",
       "splittingSuggestions",
     ]),
-    ...mapState("edit", ["editMode", "splitOverview"]),
+    ...mapState("edit", ["editMode", "splitOverview", "documentBeingSplit"]),
     ...mapGetters("display", ["isMinimumWidth"]),
     ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
+
   watch: {
     selectedDocument(newDocument, oldDocument) {
       if (newDocument && !oldDocument) {
