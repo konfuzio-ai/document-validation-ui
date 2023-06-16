@@ -3,9 +3,10 @@
     :animated="false"
     :position="fromTable ? 'is-top' : 'is-bottom'"
     :class="[!fromTable && 'left-aligned', 'annotation-details']"
+    :active="!publicView"
   >
     <div :class="['label-icon', fromTable && 'is-small']">
-      <div v-if="created(annotation) || edited(annotation)">
+      <div v-if="(created(annotation) || edited(annotation)) && !publicView">
         <div
           v-if="accepted(annotation)"
           :class="[
@@ -28,13 +29,13 @@
         </div>
       </div>
       <div
-        v-else-if="annotationIsNotFound(annotationSet, label)"
+        v-else-if="annotationIsNotFound(annotationSet, label) && !publicView"
         :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
       >
         <NotFoundIcon />
       </div>
       <div
-        v-else-if="notExtracted(annotation)"
+        v-else-if="notExtracted(annotation) && !publicView"
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
@@ -45,7 +46,7 @@
       </div>
       <div v-else>
         <div
-          v-if="accepted(annotation)"
+          v-if="accepted(annotation) && !publicView"
           :class="[
             'annotation-details-icon success',
             animate ? 'animated-ripple' : '',
@@ -143,7 +144,7 @@
   </b-tooltip>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import CheckMark from "../../assets/images/CheckMark";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import QuestionMark from "../../assets/images/QuestionMark";
@@ -199,6 +200,7 @@ export default {
       "getUser",
       "annotationIsNotFound",
     ]),
+    ...mapState("document", ["publicView"]),
   },
   watch: {
     annotation(newAnnotation, oldAnnotation) {
