@@ -373,6 +373,7 @@ export default {
     },
     showAcceptButton() {
       return (
+        !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
         !this.annotation.revised &&
@@ -381,6 +382,7 @@ export default {
     },
     showDeclineButton() {
       return (
+        !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
         this.hoveredAnnotation === this.annotation.id
@@ -388,6 +390,7 @@ export default {
     },
     showMissingButton() {
       return (
+        !this.editAnnotation &&
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         !this.annotation &&
@@ -396,6 +399,7 @@ export default {
     },
     showRestoreButton() {
       return (
+        !this.editAnnotation &&
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotationIsNotFound(this.annotationSet, this.label)
