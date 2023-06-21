@@ -124,6 +124,9 @@ export default {
     zoomIn() {
       if (this.currentPercentage === this.maxPercentage) return;
 
+      // exit edit mode of Annotation if changing zoom during editing
+      this.cancelAnnotationEditMode();
+
       this.currentPercentage += this.defaultPercentage * 100;
       this.updateScale((this.defaultScale * this.currentPercentage) / 100);
     },
@@ -132,11 +135,17 @@ export default {
         return;
       }
 
+      // exit edit mode of Annotation if changing zoom during editing
+      this.cancelAnnotationEditMode();
+
       this.currentPercentage -= this.defaultPercentage * 100;
       this.updateScale((this.defaultScale * this.currentPercentage) / 100);
     },
     fitAuto() {
       if (this.currentPercentage === 50 || !this.defaultScale) return;
+
+      // exit edit mode of Annotation if changing zoom during editing
+      this.cancelAnnotationEditMode();
 
       // Always set to 50%
       this.updateScale(this.defaultScale * this.fitPercentage);
@@ -147,6 +156,11 @@ export default {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
         this.$store.dispatch("display/updateScale", { scale });
       });
+    },
+    cancelAnnotationEditMode() {
+      this.$store.dispatch("document/resetEditAnnotation");
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("selection/setSelectedEntities", null);
     },
   },
 };
