@@ -19,24 +19,20 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run test:unit
+      
+      - name: Git configuration
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
 
       - name: Bump pre-release version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm --no-git-tag-version version prepatch --preid=dev
+          npm version prerelease --preid=dev
           npm publish --tag prerelease
 
-      #- name: Save new pre-release version to env file on GitHub
-      #  run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
-
-      #- name: Commit package.json changes
-      #  run: |
-      #    git add "package.json"
-      #    git commit -m "prerelease ${{ env.PRERELEASE_VERSION }}"
-
-      #- name: Push changes to repository
-      #  run: |
-      #    git push origin
-      #  env:
-      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push changes to repository
+        run: git push origin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
