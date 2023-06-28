@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -22,8 +24,8 @@ jobs:
       
       - name: Git configuration
         run: |
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Actions"
+          git config --global user.email "fz@konfuzio.com"
+          git config --global user.name "Konfuzio Bot"
 
       - name: Bump pre-release version
         env:
@@ -34,5 +36,3 @@ jobs:
 
       - name: Push changes to repository
         run: git push origin
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
