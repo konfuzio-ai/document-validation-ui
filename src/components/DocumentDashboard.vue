@@ -1,11 +1,11 @@
 <template>
   <div class="dashboard">
     <DocumentTopBar />
-    <div :class="['dashboard-viewer', splitOverview ? 'edit-mode' : '']">
+    <div :class="['dashboard-viewer', renameAndCategorize ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
       <ScrollingDocument ref="scrollingDocument" class="dashboard-document" />
       <DocumentAnnotations v-if="!editMode" ref="annotations" />
-      <DocumentEdit v-else ref="editView" />
+      <DocumentEdit v-if="editMode" ref="editView" />
 
       <MultiAnnotationTableOverlay
         v-if="showAnnSetTable"
@@ -34,15 +34,6 @@
         {{ $t("resolution_not_supported") }}
       </div>
     </div>
-    <div
-      v-if="
-        selectedDocument &&
-        waitingForSplittingConfirmation(selectedDocument) &&
-        !documentBeingSplit
-      "
-    >
-      <SplittingSuggestionsModal />
-    </div>
   </div>
 </template>
 
@@ -59,7 +50,6 @@ import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
-import SplittingSuggestionsModal from "../components/DocumentModals/SplittingSuggestionsModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -76,7 +66,6 @@ export default {
     ErrorMessage,
     NotOptimizedViewportModal,
     DocumentErrorModal,
-    SplittingSuggestionsModal,
     MultiAnnotationTableOverlay,
   },
   data() {
@@ -103,7 +92,7 @@ export default {
       "selectedDocument",
       "splittingSuggestions",
     ]),
-    ...mapState("edit", ["editMode", "splitOverview", "documentBeingSplit"]),
+    ...mapState("edit", ["editMode", "renameAndCategorize"]),
     ...mapGetters("display", ["isMinimumWidth"]),
     ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },

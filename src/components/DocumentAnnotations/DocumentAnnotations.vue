@@ -14,18 +14,10 @@
 
     <!-- When there's no annotations in the label -->
     <div v-else-if="annotationSets.length === 0">
-      <CategorizeModal
-        v-if="
-          !publicView &&
-          !isDocumentReviewed &&
-          !waitingForSplittingConfirmation(selectedDocument)
-        "
-      />
       <EmptyState />
     </div>
 
     <div v-else :class="['annotation-set-list']">
-      <CategorizeModal v-if="!publicView || !isDocumentReviewed" />
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
         class="annotation-set-group"
@@ -114,7 +106,6 @@ import ExtractingData from "./ExtractingData";
 import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import LoadingAnnotations from "./LoadingAnnotations";
-import CategorizeModal from "./CategorizeModal";
 import GridIcon from "../../assets/images/GridIcon";
 
 /**
@@ -127,7 +118,6 @@ export default {
     AnnotationSetActionButtons,
     DocumentLabel,
     LoadingAnnotations,
-    CategorizeModal,
     GridIcon,
   },
   data() {

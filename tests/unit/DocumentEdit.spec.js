@@ -194,7 +194,7 @@ describe("Document Edit Component", () => {
     expect(await store.state.edit.updatedDocument.length).toBe(2);
   });
 
-  it("If document was split, go to overview", async () => {
+  it("If document was split, go to Rename and Categorize", async () => {
     const wrapper = mount(EditPages, {
       store,
       mocks: {
@@ -237,7 +237,7 @@ describe("Document Edit Component", () => {
 
     await wrapper2.find(".buttons .button-next").trigger("click");
 
-    expect(store.state.edit.splitOverview).toBe(true);
+    expect(store.state.edit.renameAndCategorize).toBe(true);
   });
 
   it("Number of rows based on number of split docs", async () => {
@@ -248,7 +248,7 @@ describe("Document Edit Component", () => {
       },
     });
 
-    await store.dispatch("edit/setSplitOverview", true);
+    await store.dispatch("edit/setRenameAndCategorize", true);
 
     const subDocumentMock = [
       {
@@ -266,7 +266,9 @@ describe("Document Edit Component", () => {
     await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     expect(
-      await wrapper.findAll(".document-details .overview-thumbnails").length
+      await wrapper.findAll(
+        ".document-details .rename-and-categorize-thumbnails"
+      ).length
     ).toBe(2);
     expect(
       await wrapper.findAll(".document-details .file-name-section").length
@@ -282,7 +284,7 @@ describe("Document Edit Component", () => {
       },
     });
 
-    await store.dispatch("edit/setSplitOverview", true);
+    await store.dispatch("edit/setRenameAndCategorize", true);
 
     const subDocumentMock = [
       {
@@ -385,7 +387,7 @@ describe("Document Edit Component", () => {
     });
 
     await store.dispatch("document/setSplittingSuggestions", suggestions);
-    await store.dispatch("edit/setSplitOverview", false);
+    await store.dispatch("edit/setRenameAndCategorize", false);
 
     expect(
       await wrapper
@@ -423,7 +425,7 @@ describe("Document Edit Component", () => {
       },
     });
 
-    await store.dispatch("edit/setSplitOverview", false);
+    await store.dispatch("edit/setRenameAndCategorize", false);
 
     await wrapper.setData({
       splittingLines: [

@@ -168,7 +168,7 @@ export default {
 
     handleChangeCategory(category) {
       // handling the category change will be different based on
-      // the dropdown being on the topbar or the split overview
+      // the dropdown being on the topbar or the Rename and Categorize view
       const updatedCategory = {
         category: category.id,
       };
@@ -192,7 +192,7 @@ export default {
         return;
       }
 
-      // Send the category ID to the split overview
+      // Send the category ID to the Rename and Categorize view
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
     },

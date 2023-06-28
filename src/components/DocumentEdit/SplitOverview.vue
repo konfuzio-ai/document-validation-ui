@@ -1,19 +1,19 @@
 <template>
-  <div class="split-overview">
+  <div class="rename-and-categorize">
     <div class="back-section" @click="handleBackButton">
       <div class="back-btn-section">
         <b-icon
           icon="arrow-left"
           class="is-small arrow"
-          :style="{ color: '#858C9A', cursor: 'pointer' }"
+          :style="{ color: '#1a1a1a', cursor: 'pointer' }"
         />
       </div>
       <div class="back-text">
-        {{ $t("back_to_edit") }}
+        {{ $t("rotate_split_reorder") }}
       </div>
     </div>
-    <div class="overview-title">
-      {{ $t("split_document") }}
+    <div class="rename-and-categorize-title">
+      {{ $t("rename_and_categorize") }}
     </div>
     <div class="new-documents-container">
       <div
@@ -21,7 +21,7 @@
         :key="index"
         class="document-details"
       >
-        <div class="overview-thumbnails">
+        <div class="rename-and-categorize-thumbnails">
           <div class="split-documents">
             <div
               class="image-container"
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     handleBackButton() {
-      this.$store.dispatch("edit/setSplitOverview", false);
+      this.$store.dispatch("edit/setRenameAndCategorize", false);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text

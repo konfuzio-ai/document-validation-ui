@@ -2,22 +2,16 @@
   <div class="buttons">
     <div v-if="editMode" class="edit-mode-buttons">
       <b-button
-        :label="$t('cancel')"
-        class="button-cancel primary-button"
+        :label="$t('back_to_annotations')"
+        class="button-cancel primary-button edit-mode-btn"
         type="is-default"
+        :disabled="!documentHasCategory"
         @click="closeEditMode"
       />
       <b-button
-        :label="
-          editMode &&
-          updatedDocument &&
-          updatedDocument.length > 1 &&
-          !splitOverview
-            ? $t('next')
-            : $t('submit')
-        "
+        :label="editMode && !renameAndCategorize ? $t('next') : $t('submit')"
         type="is-primary"
-        class="button-next primary-button"
+        class="button-next primary-button edit-mode-btn"
         @click="handleButton"
       />
     </div>
@@ -78,7 +72,7 @@ export default {
       "publicView",
       "annotationSets",
     ]),
-    ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
+    ...mapState("edit", ["editMode", "renameAndCategorize", "updatedDocument"]),
     ...mapGetters("document", [
       "isDocumentReadyToFinishReview",
       "isDocumentReviewed",
@@ -86,11 +80,14 @@ export default {
     isReviewButtonActive() {
       return this.isDocumentReadyToFinishReview;
     },
+    documentHasCategory() {
+      return this.selectedDocument.category;
+    },
   },
   methods: {
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode");
-      this.$store.dispatch("edit/setSplitOverview", false);
+      this.$store.dispatch("edit/setRenameAndCategorize", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
       this.$nextTick(() => {
@@ -99,21 +96,18 @@ export default {
       });
     },
     handleButton() {
-      // Check if we are not in the split overview
+      // Check if we are not in the Rename and Categorize view
       // and if we have a split document
-      if (
-        !this.splitOverview &&
-        this.updatedDocument &&
-        this.updatedDocument.length > 1
-      ) {
-        // Enable the "next" button to go to the overview
-        this.$store.dispatch("edit/setSplitOverview", true);
+      if (!this.renameAndCategorize) {
+        // Enable the "next" button
+        this.$store.dispatch("edit/setRenameAndCategorize", true);
         this.$store.dispatch("edit/setSelectedPages", null);
-      } else {
-        // If we are in the overview (so more than 1 doc)
-        // or in the edit mode (only 1 doc)
-        // Show confirmation modal to user
+      } else if (this.selectedDocument.category_is_revised) {
+        // Show confirmation modal to user if the document was split, reordered or rotated
         this.$store.dispatch("edit/setShowEditConfirmationModal", true);
+      } else {
+        // TODO: submit changes
+        this.$store.dispatch("edit/setSubmitEditChanges", true);
       }
     },
     handleFinishReview() {

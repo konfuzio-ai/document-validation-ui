@@ -1,6 +1,11 @@
 <template>
-  <div :class="['document-edit', splitOverview && 'split-overview-component']">
-    <div v-if="!splitOverview" class="pages-section">
+  <div
+    :class="[
+      'document-edit',
+      renameAndCategorize && 'rename-and-categorize-component',
+    ]"
+  >
+    <div v-if="!renameAndCategorize" class="pages-section">
       <EditPages
         :splitting-lines="splittingLines"
         :split-suggestions-enabled="splitSuggestionsEnabled"
@@ -12,14 +17,14 @@
         <SplitInfoBar v-if="splitSuggestionsEnabled" />
       </div>
     </div>
-    <div v-else class="split-overview-section">
+    <div v-else class="rename-and-categorize-section">
       <SplitOverview
         :file-name="fileName"
         :file-extension="fileExtension"
         @change-page="changePage"
       />
     </div>
-    <div v-if="!splitOverview" class="sidebar">
+    <div v-if="!renameAndCategorize" class="sidebar">
       <EditSidebar
         :split-suggestions-enabled="splitSuggestionsEnabled"
         @rotate-left="rotatePage"
@@ -75,8 +80,9 @@ export default {
       "editMode",
       "pagesForPostprocess",
       "updatedDocument",
-      "splitOverview",
+      "renameAndCategorize",
       "selectedPages",
+      "submitEditChanges",
     ]),
   },
   watch: {
@@ -85,7 +91,7 @@ export default {
 
       this.setPages();
     },
-    splitOverview(newValue) {
+    renameAndCategorize(newValue) {
       if (newValue) {
         this.splitFileNameFromExtension();
       }
@@ -103,6 +109,11 @@ export default {
       if (!aiSplit) {
         this.splitSuggestionsEnabled = false;
       }
+    },
+    submitEditChanges(newValue) {
+      if (!newValue) return;
+
+      this.saveEditChanges();
     },
   },
   mounted() {
@@ -382,7 +393,7 @@ export default {
 
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode");
-      this.$store.dispatch("edit/setSplitOverview", false);
+      this.$store.dispatch("edit/setRenameAndCategorize", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
       this.$nextTick(() => {
