@@ -16,18 +16,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run test:unit
 
       - name: Bump pre-release version
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm --no-git-tag-version version prepatch --preid=dev
           npm publish --tag prerelease
 
-      - name: Save new pre-release version to env file on GitHub
-        run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
+      #- name: Save new pre-release version to env file on GitHub
+      #  run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
 
       #- name: Commit package.json changes
       #  run: |
