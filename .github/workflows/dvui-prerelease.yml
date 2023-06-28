@@ -20,11 +20,11 @@ jobs:
       - run: npm run test:unit
 
       - name: Bump pre-release version
-      - run: |
-          npm version prepatch --preid=dev
-          npm publish --tag prerelease
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: |
+          npm version prepatch --preid=dev
+          npm publish --tag prerelease
 
       - name: Save new pre-release version to env file on GitHub
         run: echo "PRERELEASE_VERSION=$(npm view @konfuzio/document-validation-ui dist-tags --json).prerelease >> $GITHUB_ENV
