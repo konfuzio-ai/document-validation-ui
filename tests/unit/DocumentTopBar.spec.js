@@ -198,9 +198,7 @@ describe("Document Top Bar", () => {
 
     expect(
       await wrapper
-        .findComponent(
-          ".top-bar-buttons .finish-review-button-container .finish-review"
-        )
+        .findComponent(".top-bar-buttons .finish-review-button-container")
         .isVisible()
     ).toBe(true);
   });
@@ -216,7 +214,7 @@ describe("Document Top Bar", () => {
     expect(
       await wrapper
         .findComponent(
-          ".top-bar-buttons .finish-review-button-container .finish-review .finish-review-btn"
+          ".top-bar-buttons .finish-review-button-container .finish-review-btn"
         )
         .attributes("disabled")
     ).toBe("disabled");
