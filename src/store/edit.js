@@ -9,18 +9,36 @@ const HTTP = myImports.HTTP;
 
 const state = {
   editMode: false,
-  splitOverview: false,
+  renameAndCategorize: false,
   isMultipleSelection: false,
   pagesForPostprocess: [],
   selectedPages: [],
   updatedDocument: [],
   showEditConfirmationModal: false,
-  documentBeingSplit: false,
+  submitEditChanges: false,
 };
 
 const getters = {
   isPageSelected: (state) => (id) => {
     return state.selectedPages.find((page) => page.id === id);
+  },
+
+  documentShouldBePostprocessed: (state, _, rootState) => {
+    const foundRotatedPage = state.pagesForPostprocess.find(
+      (page) => page.angle !== 0
+    );
+
+    let foundReorderedPage;
+
+    state.pagesForPostprocess.map((page) => {
+      foundReorderedPage = rootState.document.selectedDocument.pages.find(
+        (p) => p.id === page.id && p.number !== page.number
+      );
+    });
+
+    return (
+      state.updatedDocument.length > 1 || foundRotatedPage || foundReorderedPage
+    );
   },
 };
 
@@ -31,11 +49,11 @@ const actions = {
 
   disableEditMode: ({ commit }) => {
     commit("SET_EDIT_MODE", false);
-    commit("SET_SPLIT_OVERVIEW", false);
+    commit("SET_RENAME_AND_CATEGORIZE", false);
   },
 
-  setSplitOverview: ({ commit }, overview) => {
-    commit("SET_SPLIT_OVERVIEW", overview);
+  setRenameAndCategorize: ({ commit }, value) => {
+    commit("SET_RENAME_AND_CATEGORIZE", value);
   },
 
   setPagesForPostprocess: ({ commit }, pages) => {
@@ -46,8 +64,8 @@ const actions = {
     commit("SET_UPDATED_DOCUMENT", updatedDocument);
   },
 
-  setDocumentBeingSplit: ({ commit }, value) => {
-    commit("SET_DOCUMENT_BEING_SPLIT", value);
+  setSubmitEditChanges: ({ commit }, value) => {
+    commit("SET_SUBMIT_EDIT_CHANGES", value);
   },
 
   selectPage: ({ state, commit }, page) => {
@@ -187,8 +205,6 @@ const actions = {
       root: true,
     });
 
-    commit("SET_DOCUMENT_BEING_SPLIT", true);
-
     const oldId = rootState.document.documentId;
 
     return new Promise((resolve, reject) => {
@@ -201,7 +217,7 @@ const actions = {
             const newId = response.data[0].id;
             dispatch("document/setSplittingSuggestions", null, { root: true });
 
-            commit("SET_DOCUMENT_BEING_SPLIT", false);
+            commit("SET_SUBMIT_EDIT_CHANGES", false);
 
             if (newId !== oldId) {
               if (getURLQueryParam("document") || getURLPath("docs")) {
@@ -239,8 +255,8 @@ const mutations = {
     state.editMode = option;
   },
 
-  SET_SPLIT_OVERVIEW: (state, overview) => {
-    state.splitOverview = overview;
+  SET_RENAME_AND_CATEGORIZE: (state, value) => {
+    state.renameAndCategorize = value;
   },
 
   SET_PAGES_FOR_POSTPROCESS: (state, pages) => {
@@ -259,8 +275,8 @@ const mutations = {
   SET_SHOW_EDIT_CONFIRMATION_MODAL: (state, value) => {
     state.showEditConfirmationModal = value;
   },
-  SET_DOCUMENT_BEING_SPLIT: (state, value) => {
-    state.documentBeingSplit = value;
+  SET_SUBMIT_EDIT_CHANGES: (state, value) => {
+    state.submitEditChanges = value;
   },
 };
 

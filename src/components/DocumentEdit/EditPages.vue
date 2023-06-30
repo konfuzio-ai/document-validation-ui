@@ -1,5 +1,8 @@
 <template>
   <div class="edit-pages">
+    <div class="grid-header">
+      <span class="header-title">{{ $t("rotate_split_reorder") }}</span>
+    </div>
     <draggable
       v-model="editPages"
       class="document-grid"
@@ -109,8 +112,7 @@ export default {
     ...mapState("edit", [
       "editMode",
       "pagesForPostprocess",
-      "splitOverview",
-      "splitOverview",
+      "renameAndCategorize",
     ]),
   },
   watch: {
@@ -124,7 +126,7 @@ export default {
         this.$store.dispatch("edit/setPagesForPostprocess", newValue);
       }
     },
-    splitOverview(newValue) {
+    renameAndCategorize(newValue) {
       if (newValue) {
         this.editPages = this.pagesForPostprocess;
       }

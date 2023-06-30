@@ -2,24 +2,30 @@
   <div class="buttons">
     <div v-if="editMode" class="edit-mode-buttons">
       <b-button
-        :label="$t('cancel')"
-        class="button-cancel primary-button"
+        :label="$t('back_to_annotations')"
+        class="button-cancel primary-button edit-mode-btn"
         type="is-default"
+        :disabled="
+          !documentHasCategory ||
+          waitingForSplittingConfirmation(selectedDocument)
+        "
         @click="closeEditMode"
       />
-      <b-button
-        :label="
-          editMode &&
-          updatedDocument &&
-          updatedDocument.length > 1 &&
-          !splitOverview
-            ? $t('next')
-            : $t('submit')
-        "
-        type="is-primary"
-        class="button-next primary-button"
-        @click="handleButton"
-      />
+
+      <b-tooltip
+        :active="!enableSubmit"
+        position="is-bottom"
+        :label="$t('select_category')"
+        class="right-aligned no-right-margin"
+      >
+        <b-button
+          :label="editMode && !renameAndCategorize ? $t('next') : $t('submit')"
+          type="is-primary"
+          class="button-next primary-button edit-mode-btn"
+          :disabled="renameAndCategorize && !enableSubmit"
+          @click="handleButton"
+        />
+      </b-tooltip>
     </div>
 
     <div
@@ -30,7 +36,7 @@
         :active="!isReviewButtonActive"
         position="is-bottom"
         multilined
-        class="right-aligned finish-review"
+        class="right-aligned no-right-margin"
       >
         <b-button
           :class="['finish-review-btn', 'text-btn', 'primary-button']"
@@ -69,6 +75,7 @@ export default {
     return {
       emptyLabels: null,
       isLoading: false,
+      enableSubmit: false,
     };
   },
 
@@ -77,20 +84,50 @@ export default {
       "selectedDocument",
       "publicView",
       "annotationSets",
+      "thumbnailIsLoaded",
     ]),
-    ...mapState("edit", ["editMode", "splitOverview", "updatedDocument"]),
+    ...mapState("edit", ["editMode", "renameAndCategorize", "updatedDocument"]),
     ...mapGetters("document", [
       "isDocumentReadyToFinishReview",
       "isDocumentReviewed",
+      "waitingForSplittingConfirmation",
     ]),
+    ...mapGetters("edit", ["documentShouldBePostprocessed"]),
     isReviewButtonActive() {
       return this.isDocumentReadyToFinishReview;
     },
+    documentHasCategory() {
+      return this.selectedDocument.category;
+    },
   },
+
+  watch: {
+    updatedDocument(newValue) {
+      if (!newValue) return;
+
+      this.submitValidation(newValue);
+    },
+  },
+
+  mounted() {
+    if (this.updatedDocument) {
+      this.submitValidation(this.updatedDocument);
+    }
+  },
+
   methods: {
+    submitValidation(document) {
+      const found = document.find((item) => !item.category);
+
+      if (!found) {
+        this.enableSubmit = true;
+      } else {
+        this.enableSubmit = false;
+      }
+    },
     closeEditMode() {
       this.$store.dispatch("edit/disableEditMode");
-      this.$store.dispatch("edit/setSplitOverview", false);
+      this.$store.dispatch("edit/setRenameAndCategorize", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
       this.$nextTick(() => {
@@ -99,21 +136,20 @@ export default {
       });
     },
     handleButton() {
-      // Check if we are not in the split overview
+      // Check if we are not in the Rename and Categorize view
       // and if we have a split document
-      if (
-        !this.splitOverview &&
-        this.updatedDocument &&
-        this.updatedDocument.length > 1
-      ) {
-        // Enable the "next" button to go to the overview
-        this.$store.dispatch("edit/setSplitOverview", true);
+      if (!this.renameAndCategorize) {
+        // Enable the "next" button
+        this.$store.dispatch("edit/setRenameAndCategorize", true);
         this.$store.dispatch("edit/setSelectedPages", null);
-      } else {
-        // If we are in the overview (so more than 1 doc)
-        // or in the edit mode (only 1 doc)
-        // Show confirmation modal to user
+      } else if (
+        this.selectedDocument.category_is_revised &&
+        this.documentShouldBePostprocessed
+      ) {
+        // Show confirmation modal to user if the document was split, reordered or rotated
         this.$store.dispatch("edit/setShowEditConfirmationModal", true);
+      } else {
+        this.$store.dispatch("edit/setSubmitEditChanges", true);
       }
     },
     handleFinishReview() {

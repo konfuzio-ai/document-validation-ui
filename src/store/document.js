@@ -502,17 +502,6 @@ const getters = {
     );
   },
 
-  documentHasNoCorrectAnnotations: (state) => () => {
-    if (
-      state.annotations &&
-      state.annotations.filter((ann) => ann.is_correct).length > 0
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  },
-
   /**
    * If automatic splitting is enabled for the project
    */
@@ -746,11 +735,24 @@ const actions = {
       });
 
     if (!state.publicView) {
-      dispatch("fetchMissingAnnotations");
+      await dispatch("fetchMissingAnnotations");
 
       await dispatch("project/fetchCurrentUser", null, {
         root: true,
       });
+
+      // Check if we first open the document dashboard or the edit mode
+      if (
+        !state.selectedDocument.category ||
+        (!state.selectedDocument.category_is_revised &&
+          !getters.documentHasCorrectAnnotations() &&
+          state.missingAnnotations.length === 0)
+      ) {
+        dispatch("edit/enableEditMode", null, {
+          root: true,
+        });
+        dispatch("edit/setRenameAndCategorize", true, { root: true });
+      }
 
       if (projectId) {
         await dispatch("category/fetchCategories", projectId, {

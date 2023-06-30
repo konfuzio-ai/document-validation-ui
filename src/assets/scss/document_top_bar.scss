@@ -119,6 +119,10 @@
           display: flex;
           align-items: center;
           margin-right: 16px;
+
+          .edit-mode-btn {
+            font-size: 14px;
+          }
         }
       }
     }
