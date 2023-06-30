@@ -147,7 +147,6 @@ export default {
       "numberOfAnnotationSetGroup",
       "emptyLabelsLength",
       "annotationsWithPendingReviewLength",
-      "waitingForSplittingConfirmation",
       "annotationSetsToShowInList",
       "annotationSetsInTable",
       "isDocumentReviewed",

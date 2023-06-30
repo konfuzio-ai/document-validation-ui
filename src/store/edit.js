@@ -22,6 +22,24 @@ const getters = {
   isPageSelected: (state) => (id) => {
     return state.selectedPages.find((page) => page.id === id);
   },
+
+  documentShouldBePostprocessed: (state, _, rootState) => {
+    const foundRotatedPage = state.pagesForPostprocess.find(
+      (page) => page.angle !== 0
+    );
+
+    let foundReorderedPage;
+
+    state.pagesForPostprocess.map((page) => {
+      foundReorderedPage = rootState.document.selectedDocument.pages.find(
+        (p) => p.id === page.id && p.number !== page.number
+      );
+    });
+
+    return (
+      state.updatedDocument.length > 1 || foundRotatedPage || foundReorderedPage
+    );
+  },
 };
 
 const actions = {

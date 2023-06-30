@@ -94,7 +94,6 @@ export default {
     ]),
     ...mapState("edit", ["editMode", "renameAndCategorize"]),
     ...mapGetters("display", ["isMinimumWidth"]),
-    ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
 
   watch: {

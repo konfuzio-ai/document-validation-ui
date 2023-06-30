@@ -83,7 +83,7 @@
   "categorized_as": "Dieses Dokument ist kategorisiert als",
   "not_categorized": "Nicht kategorisiert. Bitte wählen Sie vor dem Annotieren eine Kategorie aus: ",
   "choose_category": "Wählen Sie bitte eine Kategorie",
-  "select_category": "Wählen Sie bitte die richtige Kategorie aus.",
+  "select_category": "Wählen Sie bitte die richtige Kategorie aus",
   "categorized_error": "Wenn dies nicht die richtige Kategorie ist, ändern Sie diese bitte und wir fahren mit der erneuten Extraktion fort.",
   "categorize_document_no_category_description": "Bitten Sie den Projektmanager, eine Beschreibung dieser Kategorie hinzuzufügen, um mehr über diese Kategorie zu erfahren.",
   "annotations_pending": "Ausstehende Annotationen",

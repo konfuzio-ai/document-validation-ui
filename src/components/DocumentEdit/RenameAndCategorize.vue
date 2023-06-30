@@ -88,7 +88,7 @@ import ServerImage from "../../assets/images/ServerImage";
 import EyeIcon from "../../assets/images/EyeIcon";
 
 export default {
-  name: "SplitOverview",
+  name: "RenameAndCategorize",
   components: {
     DocumentCategory,
     ServerImage,
@@ -114,6 +114,7 @@ export default {
     ...mapState("document", ["selectedDocument", "pages"]),
     ...mapState("edit", ["updatedDocument", "pagesForPostprocess"]),
   },
+
   methods: {
     handleBackButton() {
       this.$store.dispatch("edit/setRenameAndCategorize", false);

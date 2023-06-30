@@ -18,7 +18,7 @@
       </div>
     </div>
     <div v-else class="rename-and-categorize-section">
-      <SplitOverview
+      <RenameAndCategorize
         :file-name="fileName"
         :file-extension="fileExtension"
         @change-page="changePage"
@@ -40,9 +40,9 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import EditSidebar from "./EditSidebar";
-import SplitOverview from "./SplitOverview";
+import RenameAndCategorize from "./RenameAndCategorize";
 import EditPages from "./EditPages";
 import SplitInfoBar from "./SplitInfoBar";
 import EditConfirmationModal from "./EditConfirmationModal";
@@ -54,7 +54,7 @@ export default {
   name: "DocumentEdit",
   components: {
     EditSidebar,
-    SplitOverview,
+    RenameAndCategorize,
     EditPages,
     SplitInfoBar,
     EditConfirmationModal,
@@ -74,6 +74,7 @@ export default {
       "recalculatingAnnotations",
       "selectedDocument",
       "splittingSuggestions",
+      "pages",
     ]),
     ...mapState("display", ["currentPage"]),
     ...mapState("edit", [
@@ -84,19 +85,15 @@ export default {
       "selectedPages",
       "submitEditChanges",
     ]),
+    ...mapGetters("edit", ["documentShouldBePostprocessed"]),
   },
   watch: {
-    pages() {
-      if (!this.selectedDocument) return;
-
-      this.setPages();
-    },
     renameAndCategorize(newValue) {
       if (newValue) {
         this.splitFileNameFromExtension();
       }
     },
-    pagesForPostprocess(newValue) {
+    pagesForPostprocess(newValue, oldValue) {
       if (newValue) {
         this.saveUpdatedDocuments();
       }
@@ -378,15 +375,60 @@ export default {
     /** SUBMIT CHANGES */
     // Send update request to the backend
     saveEditChanges() {
-      this.$store
-        .dispatch("edit/editDocument", this.updatedDocument)
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("edit_error"),
+      // Verify if there was splitting, rotating and/or reordering
+      if (this.documentShouldBePostprocessed) {
+        this.$store
+          .dispatch("edit/editDocument", this.updatedDocument)
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
           });
-        });
+      } else {
+        // Check if only the category changes:
+        const newCategory = this.updatedDocument[0].category;
+        const newName = this.updatedDocument[0].name;
+        let category = {};
+        let name = {};
+        let revisedCategory = {};
+
+        if (this.selectedDocument.category !== newCategory) {
+          Object.assign(category, {
+            category: newCategory,
+          });
+
+          this.$store.dispatch("document/startLoading");
+        }
+
+        if (!this.selectedDocument.category_is_revised && newCategory) {
+          Object.assign(revisedCategory, {
+            category_is_revised: true,
+          });
+        }
+
+        if (this.selectedDocument.data_file_name !== newName) {
+          Object.assign(name, { data_file_name: newName });
+        }
+
+        if (!category && !name) {
+          return;
+        }
+
+        const updatedValues = Object.assign(category, revisedCategory, name);
+
+        this.$store
+          .dispatch("document/updateDocument", updatedValues)
+          .catch((error) => {
+            this.$store.dispatch("document/endLoading");
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          });
+      }
 
       this.closeEditMode();
     },
@@ -396,6 +438,8 @@ export default {
       this.$store.dispatch("edit/setRenameAndCategorize", false);
       this.$store.dispatch("edit/setUpdatedDocument", null);
       this.$store.dispatch("edit/setSelectedPages", null);
+      this.$store.dispatch("edit/setSubmitEditChanges", false);
+      this.$store.dispatch("edit/setShowEditConfirmationModal", false);
       this.$nextTick(() => {
         // reset to first page
         this.$store.dispatch("display/updateCurrentPage", 1);

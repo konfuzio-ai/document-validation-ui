@@ -3,7 +3,7 @@ import {
   DocumentEdit,
   EditPages,
   EditSidebar,
-  SplitOverview,
+  RenameAndCategorize,
 } from "../../src/components/DocumentEdit";
 import { DocumentTopBarButtons } from "../../src/components/DocumentTopBar";
 import store from "../../src/store";
@@ -241,7 +241,7 @@ describe("Document Edit Component", () => {
   });
 
   it("Number of rows based on number of split docs", async () => {
-    const wrapper = mount(SplitOverview, {
+    const wrapper = mount(RenameAndCategorize, {
       store,
       mocks: {
         $t,
@@ -277,7 +277,7 @@ describe("Document Edit Component", () => {
   });
 
   it("First subdocument should have original file name", async () => {
-    const wrapper = mount(SplitOverview, {
+    const wrapper = mount(RenameAndCategorize, {
       store,
       mocks: {
         $t,
