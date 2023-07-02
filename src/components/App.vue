@@ -10,6 +10,7 @@ import * as Sentry from "@sentry/vue";
 import DocumentDashboard from "./DocumentDashboard";
 import { DocumentsList } from "./DocumentsList";
 import { getURLQueryParam, getURLPath } from "../utils/utils";
+import { Integrations } from "@sentry/tracing";
 import API from "../api";
 
 export default {
