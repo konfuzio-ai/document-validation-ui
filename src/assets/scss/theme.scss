@@ -52,6 +52,7 @@
         }
       }
 
+      // TODO: custom classes should have the styles under the component file
       &.missing-decline-btn {
         font-size: 14px;
         color: $grey-blue !important;
@@ -69,11 +70,6 @@
         &:focus {
           box-shadow: none;
         }
-      }
-
-      &:not(.is-text, .is-primary, .missing-btn) {
-        background-color: $white;
-        color: $text-color;
       }
 
       &.is-text {
@@ -235,8 +231,6 @@
     }
 
     .dropdown {
-      height: 100%;
-
       &.no-padding-bottom {
         .dropdown-content {
           padding-bottom: 0;
@@ -261,6 +255,7 @@
       .dropdown-menu {
         padding-top: 0px;
         min-width: 40px;
+        width: 100%;
       }
 
       a.dropdown-item {
@@ -579,7 +574,6 @@
 
       &.bottom-aligned {
         width: 100%;
-        bottom: 10px;
 
         .tooltip-content {
           &::before {
