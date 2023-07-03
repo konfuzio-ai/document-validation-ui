@@ -71,13 +71,18 @@ export default {
       required: false,
       default: "en",
     },
+    documents_list_path: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     documentId() {
       if (getURLQueryParam("document")) {
         return getURLQueryParam("document");
-      } else if (getURLPath("docs")) {
-        return getURLPath("docs");
+      } else if (getURLPath("d")) {
+        return getURLPath("d");
       } else if (process.env.VUE_APP_DOCUMENT_ID) {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {
@@ -117,6 +122,15 @@ export default {
     },
     showDocumentsList() {
       return process.env.VUE_APP_SHOW_DOCUMENTS_LIST;
+    },
+    documentsListPath() {
+      if (process.env.VUE_APP_DOCUMENTS_LIST_PATH) {
+        return process.env.VUE_APP_DOCUMENTS_LIST_PATH;
+      } else if (this.documents_list_path && this.documents_list_path !== "") {
+        return this.documents_list_path;
+      } else {
+        return null;
+      }
     },
   },
   created() {
@@ -160,6 +174,10 @@ export default {
       this.$store.dispatch("project/setProjectId", this.projectId),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
+      this.$store.dispatch(
+        "project/setDocumentsListPath",
+        this.documentsListPath
+      ),
     ]).finally(() => {
       this.$store.dispatch("document/fetchDocument");
     });
