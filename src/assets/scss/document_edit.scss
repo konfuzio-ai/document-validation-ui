@@ -3,7 +3,7 @@
 .document-edit {
   display: flex;
   flex: 1;
-  background-color: $background;
+  background-color: $light-grey-background;
 
   .pages-section {
     width: 100%;
@@ -13,6 +13,22 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .grid-header {
+      height: 60px;
+      background-color: $background;
+      border-bottom: $component-border;
+      display: flex;
+      align-items: center;
+
+      .header-title {
+        color: $text-color;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 18px;
+        padding-left: 28px;
+      }
+    }
 
     .document-grid {
       padding: 32px;
@@ -236,18 +252,18 @@
     }
   }
 
-  &.split-overview-component {
+  &.rename-and-categorize-component {
     background-color: $background;
     min-width: 600px;
 
-    .split-overview-section {
+    .rename-and-categorize-section {
       padding-left: 30px;
       padding-right: 10px;
       overflow-y: scroll;
       width: 100%;
     }
 
-    .split-overview {
+    .rename-and-categorize {
       margin-top: 20px;
       img {
         height: 30px !important;
@@ -263,7 +279,7 @@
         cursor: pointer;
 
         .back-btn-section {
-          padding-top: 5px;
+          padding-top: 4px;
         }
 
         .back-text {
@@ -274,7 +290,7 @@
         }
       }
 
-      .overview-title {
+      .rename-and-categorize-title {
         color: $text-color;
         font-size: 16px;
         font-weight: 600;
@@ -291,7 +307,7 @@
           gap: 20px;
           padding-bottom: 40px;
 
-          .overview-thumbnails {
+          .rename-and-categorize-thumbnails {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -317,6 +333,10 @@
                       box-shadow: 2px 2px $white, 3px 3px $detail,
                         5px 5px $white, 6px 6px $detail;
                     }
+                  }
+
+                  &:hover {
+                    cursor: pointer;
                   }
                 }
               }
