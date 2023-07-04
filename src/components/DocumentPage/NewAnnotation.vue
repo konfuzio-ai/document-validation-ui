@@ -5,6 +5,7 @@
       v-model="selectedSet"
       aria-role="list"
       :class="[
+        'annotation-dropdown',
         'no-padding-bottom',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
@@ -69,7 +70,7 @@
         v-model="selectedLabel"
         aria-role="list"
         :disabled="!labels || labels.length === 0"
-        class="label-dropdown"
+        class="label-dropdown annotation-dropdown"
       >
         <template #trigger>
           <b-button

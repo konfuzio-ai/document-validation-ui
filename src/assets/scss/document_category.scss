@@ -2,6 +2,7 @@
 
 .category-chooser {
   cursor: pointer;
+  height: 100%;
 
   &.split-mode {
     border: 1px solid $grey-outline;

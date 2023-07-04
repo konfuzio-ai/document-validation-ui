@@ -84,8 +84,8 @@
 
         <div v-for="label in annotationSet.labels" :key="label.id">
           <div
-            class="labels"
             v-if="!(label.annotations.length === 0 && publicView)"
+            class="labels"
           >
             <DocumentLabel
               :label="label"

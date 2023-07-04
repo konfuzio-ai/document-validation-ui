@@ -21,6 +21,14 @@ const setAuthToken = (token) => {
   authToken = token;
 };
 
+const setApiUrl = (url) => {
+  HTTP.defaults.baseURL = url;
+};
+
+const setImageUrl = (url) => {
+  IMG_REQUEST.defaults.baseURL = url;
+};
+
 const getInterceptorConfig = (config) => {
   if (authToken) {
     config.headers["Authorization"] = `Token ${authToken}`;
@@ -54,6 +62,8 @@ const makeImageRequest = (imageURL) => {
 
 export default {
   HTTP,
+  setApiUrl,
+  setImageUrl,
   makeImageRequest,
   setAuthToken,
 };
