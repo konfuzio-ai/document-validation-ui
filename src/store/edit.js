@@ -10,7 +10,7 @@ const HTTP = myImports.HTTP;
 const state = {
   editMode: false,
   renameAndCategorize: false,
-  isMultipleSelection: false,
+  isMultipleSelection: true,
   pagesForPostprocess: [],
   selectedPages: [],
   updatedDocument: [],
@@ -113,12 +113,12 @@ const actions = {
   },
 
   rotatePage: ({ state, commit }, { page, direction }) => {
-    if (state.pagesForPostprocess.find((p) => p.id === page[0].id)) {
+    if (state.pagesForPostprocess.find((p) => p.id === page.id)) {
       const pagesForPostprocess = state.pagesForPostprocess.map((p) => {
         let rotatedAngle;
         if (direction === "left") {
           rotatedAngle = p.angle - 90;
-          if (p.id === page[0].id) {
+          if (p.id === page.id) {
             if (rotatedAngle === -270) {
               rotatedAngle = 90;
             }
@@ -131,7 +131,7 @@ const actions = {
         }
         if (direction === "right") {
           rotatedAngle = p.angle + 90;
-          if (p.id === page[0].id) {
+          if (p.id === page.id) {
             if (rotatedAngle === 270) {
               rotatedAngle = -90;
             }
@@ -271,6 +271,7 @@ const mutations = {
   },
   ADD_SELECTED_PAGE: (state, selectedPage) => {
     state.selectedPages.push(selectedPage);
+    console.log(state.selectedPages);
   },
   SET_SHOW_EDIT_CONFIRMATION_MODAL: (state, value) => {
     state.showEditConfirmationModal = value;

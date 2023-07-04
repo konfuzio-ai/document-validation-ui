@@ -27,8 +27,7 @@
     <div v-if="!renameAndCategorize" class="sidebar">
       <EditSidebar
         :split-suggestions-enabled="splitSuggestionsEnabled"
-        @rotate-left="rotatePage"
-        @rotate-right="rotatePage"
+        @rotate="rotatePage"
         @rotate-all-left="handleRotationsToTheLeft"
         @rotate-all-right="handleRotationsToTheRight"
         @handle-splitting-suggestions="applySplittingSuggestions"
@@ -169,13 +168,11 @@ export default {
 
     /** ROTATE */
     rotatePage(direction) {
-      const page = this.selectedPages.map((page) => {
-        return page;
-      });
-
-      this.$store.dispatch("edit/rotatePage", {
-        page,
-        direction,
+      this.selectedPages.forEach((page) => {
+        this.$store.dispatch("edit/rotatePage", {
+          page,
+          direction,
+        });
       });
     },
     handleRotationsToTheLeft() {
