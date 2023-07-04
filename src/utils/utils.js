@@ -31,9 +31,16 @@ export function navigateToNewDocumentURL(oldId, newId) {
 }
 
 export function navigateToDocumentsList(projectId, path) {
-  if (!projectId || !path) return;
+  const isKonfuzioApp = window.location.href.includes("konfuzio");
+  let newPath;
 
-  const newPath = `/${path}/?project=${projectId}`;
+  if (isKonfuzioApp) {
+    newPath = `/admin/server/document/?project=${projectId}`;
+  } else if (path) {
+    newPath = path;
+  } else {
+    return;
+  }
 
   window.location.pathname = newPath;
 }
