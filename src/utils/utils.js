@@ -35,7 +35,8 @@ export function navigateToDocumentsList(projectId, path) {
   let newPath;
 
   if (isKonfuzioApp) {
-    newPath = `/admin/server/document/?project=${projectId}`;
+    // filters documents by project and by documents not reviewed
+    newPath = `/admin/server/document/?project=${projectId}&is_reviewed__exact=0`;
   } else if (path) {
     newPath = path;
   } else {
