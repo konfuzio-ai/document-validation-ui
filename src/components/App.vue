@@ -69,7 +69,6 @@ export default {
     locale: {
       type: String,
       required: false,
-      default: "en",
     },
   },
   computed: {
