@@ -15,7 +15,7 @@ export function getURLQueryParam(param) {
 export function getURLPath(value) {
   const path = window.location.pathname;
 
-  if (!path.includes(value)) return;
+  if (!path.includes(`/${value}/`)) return;
 
   const id = path.split(value)[1].split("/")[1];
 
@@ -28,6 +28,16 @@ export function navigateToNewDocumentURL(oldId, newId) {
   const url = window.location.href;
   const newUrl = url.replace(oldId, newId);
   window.location.replace(newUrl);
+}
+
+export function navigateToDocumentsList(path, projectId) {
+  if (!path) return;
+
+  const parameters = `?project=${projectId}&is_reviewed__exact=0`;
+
+  const newPath = `${path}/${parameters}`;
+
+  window.location.pathname = newPath;
 }
 
 export function isElementArray(element) {

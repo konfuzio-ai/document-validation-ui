@@ -4,6 +4,7 @@ const HTTP = myImports.HTTP;
 const state = {
   projectId: null,
   currentUser: null,
+  documentsListPath: null,
 };
 
 const getters = {
@@ -75,6 +76,10 @@ const actions = {
   setCurrentUser: ({ commit }, currentUser) => {
     commit("SET_CURRENT_USER", currentUser);
   },
+
+  setDocumentsListPath: ({ commit }, path) => {
+    commit("SET_DOCUMENTS_LIST_PATH", path);
+  },
 };
 
 const mutations = {
@@ -83,6 +88,9 @@ const mutations = {
   },
   SET_CURRENT_USER: (state, currentUser) => {
     state.currentUser = currentUser;
+  },
+  SET_DOCUMENTS_LIST_PATH: (state, path) => {
+    state.documentsListPath = path;
   },
 };
 

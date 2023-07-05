@@ -1063,7 +1063,7 @@ const actions = {
     { error, serverErrorMessage, defaultErrorMessage }
   ) => {
     // check type of error
-    if (error && error.status === 500) {
+    if (error && error.status >= 500 && error.status < 600) {
       dispatch("setErrorMessage", serverErrorMessage);
       commit("SET_SERVER_ERROR", true);
     } else if (error.data && error.data.length > 0) {

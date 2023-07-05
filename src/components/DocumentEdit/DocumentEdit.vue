@@ -46,6 +46,7 @@ import RenameAndCategorize from "./RenameAndCategorize";
 import EditPages from "./EditPages";
 import SplitInfoBar from "./SplitInfoBar";
 import EditConfirmationModal from "./EditConfirmationModal";
+import { navigateToDocumentsList } from "../../utils/utils";
 
 /**
  * This component shows a document thumbnail grid view and sidebar, to be able to edit the document.
@@ -85,6 +86,7 @@ export default {
       "selectedPages",
       "submitEditChanges",
     ]),
+    ...mapState("project", ["projectId", "documentsListPath"]),
     ...mapGetters("edit", ["documentShouldBePostprocessed"]),
   },
   watch: {
@@ -386,6 +388,8 @@ export default {
               defaultErrorMessage: this.$t("edit_error"),
             });
           });
+
+        navigateToDocumentsList(this.documentsListPath, this.projectId);
       } else {
         // Check if only the category changes:
         const newCategory = this.updatedDocument[0].category;
