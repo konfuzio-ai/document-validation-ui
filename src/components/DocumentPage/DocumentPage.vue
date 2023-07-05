@@ -393,7 +393,6 @@ export default {
     },
 
     handleFocusedAnnotation(annotation, trigger) {
-      this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("document/setSidebarAnnotationSelected", {
         annotation,
         trigger,

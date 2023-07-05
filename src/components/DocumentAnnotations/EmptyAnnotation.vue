@@ -111,7 +111,7 @@ export default {
     spanSelection(newValue) {
       if (!newValue) return;
 
-      //   // Check if the bbox has no string
+      // Check if the bbox has no string
       if (newValue[0] && !newValue[0].offset_string) {
         this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
