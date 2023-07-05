@@ -129,10 +129,10 @@ export default {
   },
   methods: {
     rotateLeft() {
-      this.$emit("rotate-left", "left");
+      this.$emit("rotate", "left");
     },
     rotateRight() {
-      this.$emit("rotate-right", "right");
+      this.$emit("rotate", "right");
     },
     rotateAllLeft() {
       this.$emit("rotate-all-left");
