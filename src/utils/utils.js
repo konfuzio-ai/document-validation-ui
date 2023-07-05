@@ -30,18 +30,12 @@ export function navigateToNewDocumentURL(oldId, newId) {
   window.location.replace(newUrl);
 }
 
-export function navigateToDocumentsList(projectId, path) {
-  const isKonfuzioApp = window.location.href.includes("konfuzio");
-  let newPath;
+export function navigateToDocumentsList(path, projectId) {
+  if (!path) return;
 
-  if (isKonfuzioApp) {
-    // filters documents by project and by documents not reviewed
-    newPath = `/admin/server/document/?project=${projectId}&is_reviewed__exact=0`;
-  } else if (path) {
-    newPath = path;
-  } else {
-    return;
-  }
+  const parameters = `?project=${projectId}&is_reviewed__exact=0`;
+
+  const newPath = `${path}/${parameters}`;
 
   window.location.pathname = newPath;
 }

@@ -389,7 +389,7 @@ export default {
             });
           });
 
-        navigateToDocumentsList(this.projectId, this.documentsListPath);
+        navigateToDocumentsList(this.documentsListPath, this.projectId);
       } else {
         // Check if only the category changes:
         const newCategory = this.updatedDocument[0].category;
