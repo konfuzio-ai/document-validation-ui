@@ -131,5 +131,6 @@
   "missing_from_document": "Missing from the document",
   "edit_label": "Edit label",
   "delete_label": "Delete label",
-  "table": "Table"
+  "table": "Table",
+  "delete_table": "Delete table"
 }
