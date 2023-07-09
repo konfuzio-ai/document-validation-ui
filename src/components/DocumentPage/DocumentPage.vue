@@ -109,7 +109,6 @@
           :page="page"
           @buttonEnter="onElementEnter"
           @buttonLeave="onElementLeave"
-          @finished="handleMultiAnnSelectionFinished"
         />
       </v-layer>
     </v-stage>

@@ -138,21 +138,6 @@ export default {
         finish: this.submitAnnotations,
       });
     },
-    chooseLabelSet(labelSet) {
-      // TODO: deprecated with new multi ann set table
-      const tableSelection = {
-        labelSet,
-        position: {
-          x: this.selection.start.x,
-          y: this.selection.start.y,
-          width: this.selection.end.x - this.selection.start.x,
-          height: this.selection.end.y - this.selection.start.y,
-        },
-        entities: this.entities,
-      };
-      this.$store.dispatch("selection/disableSelection");
-      this.$emit("finished", tableSelection);
-    },
 
     async submitAnnotations(labelSet) {
       const columns = labelSet.labels.map((label) => {
