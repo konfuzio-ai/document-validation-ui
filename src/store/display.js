@@ -31,6 +31,7 @@ const state = {
   categorizeModalIsActive: false,
   pageChangedFromThumbnail: false,
   showAnnSetTable: null,
+  showChooseLabelSetModal: null,
 };
 
 const getters = {
@@ -236,6 +237,9 @@ const actions = {
   showAnnSetTable({ commit }, tableSet) {
     commit("SET_ANN_SET_TABLE", tableSet);
   },
+  showChooseLabelSetModal({ commit }, options) {
+    commit("SET_SHOW_CHOOSE_LABEL_SET_MODAL", options);
+  },
   toggleAnnSetTable({ commit }, tableSet) {
     commit("TOGGLE_ANN_SET_TABLE", tableSet);
   },
@@ -285,6 +289,9 @@ const mutations = {
   },
   SET_PAGE_CHANGED_FROM_THUMBNAIL: (state, value) => {
     state.pageChangedFromThumbnail = value;
+  },
+  SET_SHOW_CHOOSE_LABEL_SET_MODAL: (state, options) => {
+    state.showChooseLabelSetModal = options;
   },
 };
 

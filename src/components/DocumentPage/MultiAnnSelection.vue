@@ -132,17 +132,10 @@ export default {
   },
   methods: {
     openMultiAnnotationModal() {
-      this.$buefy.modal.open({
-        parent: this.$parent,
-        component: ChooseLabelSetModal,
-        hasModalCard: true,
-        trapFocus: true,
-        canCancel: false,
-        customClass: "dv-ui-theme invisible-parent-modal",
-        props: { isMultipleAnnotations: true },
-        events: {
-          labelSet: this.submitAnnotations,
-        },
+      this.$store.dispatch("display/showChooseLabelSetModal", {
+        show: true,
+        isMultipleAnnotations: true,
+        finish: this.submitAnnotations,
       });
     },
     chooseLabelSet(labelSet) {

@@ -68,6 +68,7 @@
       box-shadow: none !important;
       color: $white !important;
       background-color: transparent !important;
+      text-decoration: none;
     }
   }
 
@@ -79,6 +80,7 @@
 
     .button.is-text {
       color: $white !important;
+      text-decoration: none;
     }
 
     .cancel-button {
@@ -86,6 +88,7 @@
 
       &:hover {
         border: 1px solid $grey-low-opacity;
+        background: transparent;
       }
     }
 

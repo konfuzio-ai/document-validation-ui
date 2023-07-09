@@ -100,7 +100,7 @@ import AnnotationRow from "../DocumentAnnotations/AnnotationRow";
 import DraggableIcon from "../../assets/images/DraggableIcon";
 
 export default {
-  name: "MultiAnnotationTablePopup",
+  name: "MultiAnnotationTableOverlay",
   components: {
     AnnotationRow,
     DraggableIcon,

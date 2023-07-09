@@ -18,14 +18,6 @@
       :container-height="scaledViewport.height"
       @close="closePopups"
     />
-    <MultiAnnotationTablePopup
-      v-if="newMultiAnnotationSetTable"
-      :table-position="newMultiAnnotationSetTable.position"
-      :page-size="scaledViewport"
-      :label-set="newMultiAnnotationSetTable.labelSet"
-      :grouped-entities="newMultiAnnotationSetTable.entities"
-      @close="closePopups"
-    />
 
     <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
 
@@ -136,7 +128,6 @@ import api from "../../api";
 import BoxSelection from "./BoxSelection";
 import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
-import MultiAnnotationTablePopup from "./MultiAnnotationTablePopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
@@ -145,7 +136,6 @@ export default {
     BoxSelection,
     MultiAnnSelection,
     NewAnnotation,
-    MultiAnnotationTablePopup,
     AnnSetTableOptions,
   },
 
@@ -160,7 +150,6 @@ export default {
     return {
       image: null,
       newAnnotation: [],
-      newMultiAnnotationSetTable: null,
     };
   },
 
@@ -460,10 +449,6 @@ export default {
       this.$refs.stage.$el.style.cursor = "inherit";
     },
 
-    handleMultiAnnSelectionFinished(newMultiAnnotationSetTable) {
-      this.newMultiAnnotationSetTable = newMultiAnnotationSetTable;
-    },
-
     /**
      * Konva draws pages like this.
      */
@@ -556,7 +541,6 @@ export default {
       };
     },
     closePopups(closeNewAnnotaton) {
-      this.newMultiAnnotationSetTable = null;
       if (closeNewAnnotaton) {
         this.newAnnotation = [];
       }
