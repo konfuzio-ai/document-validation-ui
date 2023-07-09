@@ -259,15 +259,7 @@ export default {
           this.loading = false;
         });
     },
-    disableLabelSetModalShowing() {
-      // timeout to stop propagation of click event
-      setTimeout(() => {
-        this.isAnnSetModalShowing = false;
-      }, 500);
-    },
     chooseLabelSet(labelSet) {
-      this.disableLabelSetModalShowing();
-
       const newSet = {
         label_set: labelSet,
         labels: labelSet.labels,
@@ -277,20 +269,10 @@ export default {
       this.selectedSet = newSet;
     },
     openAnnotationSetCreation() {
-      this.isAnnSetModalShowing = true;
-
-      this.$buefy.modal.open({
-        parent: this.$parent,
-        component: ChooseLabelSetModal,
-        hasModalCard: true,
-        trapFocus: true,
-        canCancel: false,
-        onCancel: this.disableLabelSetModalShowing,
-        customClass: "dv-ui-theme invisible-parent-modal",
-        events: {
-          labelSet: this.chooseLabelSet,
-          close: this.disableLabelSetModalShowing,
-        },
+      this.$store.dispatch("display/showChooseLabelSetModal", {
+        show: true,
+        isMultipleAnnotations: true,
+        finish: this.chooseLabelSet,
       });
     },
     setTooltipText() {

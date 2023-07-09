@@ -4,7 +4,7 @@
       ref="modal"
       v-model="show"
       :can-cancel="['x', 'outside']"
-      class="modal-absolute modal-400 modal-no-footer"
+      class="modal-absolute modal-400 modal-no-footer model-overflow-visible"
       :on-cancel="close"
     >
       <section class="modal-card-body">
@@ -149,7 +149,7 @@ export default {
         }
       );
 
-      this.$emit("labelSet", this.selectedLabelSet);
+      this.$emit("finish", this.selectedLabelSet);
       this.close();
     },
     setSelectedLabelSet(labelSet) {
@@ -157,6 +157,7 @@ export default {
       this.selectedLabelSet = labelSet;
     },
     close() {
+      this.$store.dispatch("display/showChooseLabelSetModal", null);
       this.$emit("close");
     },
     createLabelsList(labels) {

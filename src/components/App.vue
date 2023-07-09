@@ -69,7 +69,9 @@ export default {
     locale: {
       type: String,
       required: false,
+      default: "en",
     },
+    // eslint-disable-next-line vue/prop-name-casing
     documents_list_path: {
       type: String,
       required: false,

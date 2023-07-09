@@ -12,6 +12,11 @@
         :left="documentContainerLeftPadding"
         :width="documentContainerWidth"
       />
+      <ChooseLabelSetModal
+        v-if="showChooseLabelSetModal && showChooseLabelSetModal.show"
+        :is-multiple-annotations="showChooseLabelSetModal.isMultipleAnnotations"
+        @finish="showChooseLabelSetModal.finish"
+      />
 
       <transition name="slide-fade">
         <div
@@ -50,6 +55,7 @@ import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
+import ChooseLabelSetModal from "../components/DocumentAnnotations/ChooseLabelSetModal";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -67,6 +73,7 @@ export default {
     NotOptimizedViewportModal,
     DocumentErrorModal,
     MultiAnnotationTableOverlay,
+    ChooseLabelSetModal,
   },
   data() {
     return {
@@ -84,6 +91,7 @@ export default {
       "pageWidthScale",
       "currentPage",
       "showAnnSetTable",
+      "showChooseLabelSetModal",
     ]),
     ...mapState("document", [
       "showActionError",
