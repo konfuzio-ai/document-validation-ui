@@ -131,5 +131,6 @@
   "edit_label": "Label editieren",
   "delete_label": "Label löschen",
   "table": "Tabelle",
-  "prepare_document": "Dokument vorbereiten"
+  "prepare_document": "Dokument vorbereiten",
+  "delete_table": "Tabelle löschen"
 }
