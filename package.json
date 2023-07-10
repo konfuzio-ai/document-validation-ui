@@ -1,6 +1,6 @@
 {
   "name": "@konfuzio/document-validation-ui",
-  "version": "0.1.10-dev.12",
+  "version": "0.1.10-dev.13",
   "repository": "git://github.com:konfuzio-ai/document-validation-ui.git",
   "main": "dist/app.js",
   "scripts": {
