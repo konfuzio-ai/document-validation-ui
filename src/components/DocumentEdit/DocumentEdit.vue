@@ -87,6 +87,7 @@ export default {
     ]),
     ...mapState("project", ["projectId", "documentsListPath"]),
     ...mapGetters("edit", ["documentShouldBePostprocessed"]),
+    ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
   watch: {
     renameAndCategorize(newValue) {
@@ -375,7 +376,10 @@ export default {
     // Send update request to the backend
     saveEditChanges() {
       // Verify if there was splitting, rotating and/or reordering
-      if (this.documentShouldBePostprocessed) {
+      if (
+        this.documentShouldBePostprocessed ||
+        this.waitingForSplittingConfirmation(this.selectedDocument)
+      ) {
         this.$store
           .dispatch("edit/editDocument", this.updatedDocument)
           .catch((error) => {
@@ -386,9 +390,9 @@ export default {
             });
           });
 
-        navigateToDocumentsList(this.documentsListPath, this.projectId);
+        // navigateToDocumentsList(this.documentsListPath, this.projectId);
       } else {
-        // Check if only the category changes:
+        // Check if only the category and/or name changes:
         const newCategory = this.updatedDocument[0].category;
         const newName = this.updatedDocument[0].name;
         let category = {};

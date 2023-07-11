@@ -9,6 +9,10 @@
   gap: 12px;
   line-height: 20px;
 
+  &.document-name-edit-mode {
+    flex: 2;
+  }
+
   .document-icon {
     display: flex;
     align-items: center;

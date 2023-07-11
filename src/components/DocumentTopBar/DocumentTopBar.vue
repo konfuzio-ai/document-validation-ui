@@ -4,7 +4,10 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       class="document-top-bar"
     >
-      <div v-if="!recalculatingAnnotations" class="left-bar-components">
+      <div
+        v-if="!recalculatingAnnotations"
+        :class="['left-bar-components', , editMode && 'top-bar-in-edit-mode']"
+      >
         <DocumentCategory
           v-if="categories && !editMode && !publicView && !isDocumentReviewed"
         />

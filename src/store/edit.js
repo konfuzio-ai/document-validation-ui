@@ -219,6 +219,10 @@ const actions = {
 
             commit("SET_SUBMIT_EDIT_CHANGES", false);
 
+            dispatch("document/setSelectedDocument", response.data[0], {
+              root: true,
+            });
+
             if (newId !== oldId) {
               if (getURLQueryParam("document") || getURLPath("docs")) {
                 navigateToNewDocumentURL(oldId, newId);

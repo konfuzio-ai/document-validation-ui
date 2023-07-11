@@ -29,7 +29,10 @@
     .left-bar-components {
       flex-direction: row;
       display: flex;
-      flex: 1;
+
+      &.top-bar-in-edit-mode {
+        flex: 1;
+      }
     }
 
     .center-bar-components {
@@ -53,7 +56,6 @@
       align-items: center;
       justify-content: flex-end;
       display: flex;
-      flex: 1;
 
       .read-only-info {
         display: flex;
