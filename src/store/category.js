@@ -3,7 +3,7 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  documentsInProject: [],
+  createAvailableListOfDocuments: false,
   documentsAvailableToReview: [], // filtered by user
   categories: null,
 };
@@ -39,37 +39,21 @@ const getters = {
 };
 
 const actions = {
-  setDocumentsInProject: ({ commit }, documents) => {
-    commit("SET_DOCUMENTS_IN_PROJECT", documents);
-  },
   setDocumentsAvailableToReview: ({ commit }, documentsAvailableToReview) => {
     commit("SET_AVAILABLE_DOCUMENTS", documentsAvailableToReview);
   },
   setCategories: ({ commit }, categories) => {
     commit("SET_CATEGORIES", categories);
   },
-  /**
-   * Actions that use HTTP requests always return the axios promise,
-   * so they can be `await`ed (useful to set the `loading` status).
-   */
-  fetchDocumentList: ({ commit, rootState }, categoryId) => {
-    return HTTP.get(
-      `documents/?category=${categoryId}&assignee=${rootState.project.currentUser}&limit=100`
-    )
-      .then((response) => {
-        if (response.data.results) {
-          commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
-        }
-      })
-      .catch((error) => {
-        console.log(error, "Could not fetch document list from the backend");
-      });
-  },
 
   createAvailableDocumentsList: (
-    { commit, state, dispatch, rootGetters },
+    { commit, state, dispatch, rootState, rootGetters },
     { categoryId, user, poll }
   ) => {
+    if (!state.createAvailableListOfDocuments) return;
+
+    const parameters = `category=${categoryId}`;
+
     const sleep = (duration) =>
       new Promise((resolve) => setTimeout(resolve, duration));
 
@@ -80,10 +64,10 @@ const actions = {
       let errors = 0;
       count += 1;
 
-      return dispatch("fetchDocumentList", categoryId).then(() => {
-        for (let i = 0; i < state.documentsInProject.length; i++) {
+      return dispatch("project/fetchDocumentList", parameters).then(() => {
+        for (let i = 0; i < rootState.project.documentsInProject.length; i++) {
           const found = state.documentsAvailableToReview.find(
-            (doc) => doc.id === state.documentsInProject[i].id
+            (doc) => doc.id === rootState.project.documentsInProject[i].id
           );
 
           if (found) {
@@ -92,14 +76,17 @@ const actions = {
             continue;
           } else if (
             rootGetters["document/isDocumentReadyToBeReviewed"](
-              state.documentsInProject[i]
+              rootState.project.documentsInProject[i]
             )
           ) {
             // add available doc to the end of the array
-            commit("ADD_AVAILABLE_DOCUMENT", state.documentsInProject[i]);
+            commit(
+              "ADD_AVAILABLE_DOCUMENT",
+              rootState.project.documentsInProject[i]
+            );
           } else if (
             rootGetters["document/documentHadErrorDuringExtraction"](
-              state.documentsInProject[i]
+              rootState.project.documentsInProject[i]
             )
           ) {
             dispatch("document/setDocumentError", null, { root: true });
@@ -118,10 +105,10 @@ const actions = {
         // And if the difference is due to errors or to docs not ready
         if (
           poll &&
-          state.documentsInProject.length !==
+          rootState.project.documentsInProject.length !==
             state.documentsAvailableToReview.length &&
           state.documentsAvailableToReview.length + errors !==
-            state.documentsInProject.length
+            rootState.project.documentsInProject.length
         ) {
           if (count >= 10) return true;
 
@@ -137,8 +124,8 @@ const actions = {
 
     // Poll as long as the lengths are different
     if (
-      state.documentsInProject.length === 0 ||
-      state.documentsInProject.length !==
+      rootState.project.documentsInProject.length === 0 ||
+      rootState.project.documentsInProject.length !==
         state.documentsAvailableToReview.length
     ) {
       let duration;
@@ -169,9 +156,6 @@ const actions = {
 };
 
 const mutations = {
-  SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
-    state.documentsInProject = documents;
-  },
   SET_AVAILABLE_DOCUMENTS: (state, documentsAvailableToReview) => {
     state.documentsAvailableToReview = documentsAvailableToReview;
   },

@@ -10,7 +10,31 @@
         />
       </div>
 
-      <DocumentName :data-file-name="selectedDocument.data_file_name" />
+      <div class="center-bar-components">
+        <div
+          :class="[
+            'left-arrow navigation-arrow',
+            !previousDocument && 'navigation-disabled',
+          ]"
+          type="button"
+          @click="navigateToDocument(previousDocument)"
+        >
+          <b-icon icon="angle-left" size="is-small" />
+        </div>
+
+        <DocumentName :data-file-name="selectedDocument.data_file_name" />
+
+        <div
+          :class="[
+            'right-arrow navigation-arrow',
+            !nextDocument && 'navigation-disabled',
+          ]"
+          type="button"
+          @click="navigateToDocument(nextDocument)"
+        >
+          <b-icon icon="angle-right" size="is-small" />
+        </div>
+      </div>
 
       <div v-if="!recalculatingAnnotations" class="right-bar-components">
         <div
@@ -87,6 +111,8 @@ export default {
   data() {
     return {
       categoryError: false,
+      previousDocument: null,
+      nextDocument: null,
     };
   },
   computed: {
@@ -98,7 +124,19 @@ export default {
     ]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("document", ["isDocumentReviewed"]),
+    ...mapState("project", ["documentsInProject"]),
+    ...mapGetters("document", [
+      "isDocumentReviewed",
+      "isDocumentReadyToBeReviewed",
+      "waitingForSplittingConfirmation",
+    ]),
+  },
+  watch: {
+    documentsInProject(newValue) {
+      if (newValue && this.selectedDocument) {
+        this.getPreviousAndNextDocuments();
+      }
+    },
   },
   created() {
     window.addEventListener("resize", this.handleResize);
@@ -119,6 +157,42 @@ export default {
     },
     handleResize() {
       this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
+    },
+    getPreviousAndNextDocuments() {
+      // Only consider documents who have a status of "ready"
+      const filteredDocuments = this.documentsInProject.filter(
+        (document) =>
+          this.isDocumentReadyToBeReviewed(document) ||
+          this.waitingForSplittingConfirmation(document)
+      );
+
+      if (!filteredDocuments) return;
+
+      const found = filteredDocuments.find(
+        (document) => document.id === this.selectedDocument.id
+      );
+
+      const indexOfCurrentDocument = filteredDocuments.indexOf(found);
+
+      if (!(indexOfCurrentDocument < 0)) {
+        this.previousDocument = filteredDocuments[indexOfCurrentDocument - 1];
+        this.nextDocument = filteredDocuments[indexOfCurrentDocument + 1];
+      } else {
+        this.previousDocument = filteredDocuments[0];
+        this.nextDocument = filteredDocuments[1];
+      }
+    },
+    navigateToDocument(document) {
+      if (!document) return;
+
+      this.$store.dispatch("document/changeCurrentDocument", document.id);
+
+      if (this.editMode) {
+        // Reset edit mode when changing the document,
+        // in case the change was made from the arrows in the Edit Mode
+        // so that the user does not get stuck in this interface
+        this.$store.dispatch("edit/disableEditMode");
+      }
     },
   },
 };
