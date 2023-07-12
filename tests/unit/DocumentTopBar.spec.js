@@ -310,4 +310,40 @@ describe("Document Top Bar", () => {
       true
     );
   });
+
+  it("Shows arrows to navigate between documents", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(".center-bar-components .navigation-arrow")
+        .exists()
+    ).toBe(true);
+  });
+
+  it("Arrows are disabled if there are no documents to navigate to", async () => {
+    const wrapper = mount(DocumentTopBar, {
+      store,
+      mocks: {
+        $t,
+      },
+      data() {
+        return {
+          previousDocument: null,
+          nextDocument: null,
+        };
+      },
+    });
+
+    expect(
+      await wrapper
+        .findComponent(".center-bar-components .navigation-arrow")
+        .classes()
+    ).toContain("navigation-disabled");
+  });
 });
