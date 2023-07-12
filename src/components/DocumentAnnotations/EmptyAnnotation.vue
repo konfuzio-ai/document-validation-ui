@@ -67,10 +67,6 @@ export default {
       required: false,
       default: 0,
     },
-    saveChanges: {
-      type: Boolean,
-      required: false,
-    },
     isMissingAnnotation: {
       type: Boolean,
       required: true,

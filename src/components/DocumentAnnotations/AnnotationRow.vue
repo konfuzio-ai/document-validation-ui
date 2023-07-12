@@ -49,14 +49,14 @@
             @mouseleave="onAnnotationHoverLeave"
           >
             <AnnotationContent
+              :ref="`span_${annotation.id}_${index}`"
               :annotation="annotation"
               :span="span"
               :span-index="index"
               :label="label"
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
-              :save-changes="saveChanges"
-              @save-annotation-changes="handleSaveAnnotationChanges"
+              @save-annotation-changes="saveAnnotationChanges"
             />
           </div>
         </div>
@@ -70,7 +70,6 @@
               :label="label"
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
-              :save-changes="saveChanges"
               :is-missing-annotation="
                 annotationIsNotFound(annotationSet, label)
               "
@@ -82,7 +81,6 @@
             :label="label"
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
-            :save-changes="saveChanges"
             :is-missing-annotation="annotationIsNotFound(annotationSet, label)"
             @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
@@ -156,8 +154,6 @@ export default {
       isSelected: false,
       annotationAnimationTimeout: null,
       hoveredAnnotation: null,
-      saveChanges: false,
-      toDecline: false,
     };
   },
   computed: {
@@ -261,7 +257,6 @@ export default {
     },
     editAnnotation(newValue) {
       if (!newValue) {
-        this.saveChanges = false;
         this.isLoading = false;
       }
     },
@@ -451,20 +446,24 @@ export default {
       if (this.publicView || this.isDocumentReviewed) return;
 
       if (
-        this.showAcceptButton() ||
-        this.showDeclineButton() ||
-        this.isAnnotationInEditMode(
-          this.annotationId(),
-          this.editAnnotation.index
-        )
+        this.annotation &&
+        (this.showAcceptButton() ||
+          this.showDeclineButton() ||
+          this.isAnnotationInEditMode(
+            this.annotationId(),
+            this.editAnnotation.index
+          ))
       ) {
-        this.saveChanges = true;
-        if (decline) {
-          this.toDecline = true;
-        }
-      }
-
-      if (
+        // retrieve all edited spans from every AnnotationContent component
+        let spans = [];
+        Object.keys(this.$refs).forEach((ref) => {
+          if (ref.includes(`span_${this.annotation.id}`)) {
+            // call child component createSpan method
+            spans.push(this.$refs[ref][0].createSpan());
+          }
+        });
+        this.saveAnnotationChanges(spans, decline);
+      } else if (
         !this.annotation &&
         this.isAnnotationInEditMode(this.annotationId())
       ) {
@@ -495,12 +494,7 @@ export default {
           this.closedTag = null;
         });
     },
-    handleSaveAnnotationChanges(
-      annotation,
-      index,
-      annotationSpan,
-      annotationContent
-    ) {
+    saveAnnotationChanges(spans, isToDeleteOrDecline) {
       // This function deals with declining Annotations
       // or editing an Annotation or a part of it (if multi line)
       this.isLoading = true;
@@ -508,28 +502,13 @@ export default {
       let updatedString; // what will be sent to the API
       let storeAction; // if it will be 'delete' or 'patch'
 
-      // Validate if we are deleting an Annotation that it's not multi-lined
-      let isToDelete =
-        annotationContent.length === 0 &&
-        (!isElementArray(annotation.span) || annotation.span.length === 1);
-
       // Verify if we delete the entire Annotation or a part of the text
-      if (isToDelete || this.toDecline) {
+      if (isToDeleteOrDecline) {
         storeAction = "document/deleteAnnotation";
       } else {
         // Editing the Annotation
         // Deleting part of multi-line Annotation
         storeAction = "document/updateAnnotation";
-
-        let spans = [...annotation.span];
-
-        const span = this.createSpan(annotationSpan, annotationContent);
-
-        spans[index] = span;
-
-        if (annotationContent.length === 0) {
-          spans.splice(index, 1);
-        }
 
         updatedString = {
           is_correct: true,
@@ -555,20 +534,7 @@ export default {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("selection/disableSelection");
           this.$store.dispatch("selection/setSelectedEntities", null);
-          this.toDecline = false;
         });
-    },
-    createSpan(span, annotationContent) {
-      return {
-        offset_string: annotationContent,
-        page_index: span.page_index,
-        x0: span.x0,
-        x1: span.x1,
-        y0: span.y0,
-        y1: span.y1,
-        start_offset: span.start_offset,
-        end_offset: span.end_offset,
-      };
     },
     saveEmptyAnnotationChanges() {
       let annotationToCreate;
@@ -624,12 +590,10 @@ export default {
 
         if (found) {
           this.isLoading = true;
-          this.saveChanges = false;
           return;
         }
 
         this.isLoading = false;
-        this.saveChanges = false;
         return;
       }
 
@@ -637,7 +601,6 @@ export default {
       // while waiting for it to be removed from the row
       if (!this.annotationsMarkedAsMissing) {
         this.isLoading = false;
-        this.saveChanges = false;
         return;
       }
 
@@ -652,7 +615,6 @@ export default {
             // Check if we wanna add loading to all empty annotations
             if (this.hoveredAnnotationSet) {
               this.isLoading = true;
-              this.saveChanges = false;
               return;
             }
 
@@ -662,7 +624,6 @@ export default {
               annotation.label === this.label.id
             ) {
               this.isLoading = true;
-              this.saveChanges = false;
               return;
             }
           }
