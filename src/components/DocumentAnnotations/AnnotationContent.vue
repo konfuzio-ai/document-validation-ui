@@ -53,10 +53,6 @@ export default {
       type: Object,
       required: true,
     },
-    saveChanges: {
-      type: Boolean,
-      required: false,
-    },
   },
   data() {
     return {
@@ -105,12 +101,6 @@ export default {
         oldAnnotation.index === this.spanIndex
       ) {
         this.handleCancel(true);
-      }
-    },
-
-    saveChanges(newValue) {
-      if (newValue) {
-        this.saveAnnotationChanges();
       }
     },
   },
@@ -205,14 +195,40 @@ export default {
         index = this.spanIndex;
       }
 
+      let spans = [];
+
+      // Validate if we are deleting an Annotation that it's not multi-lined
+      let isToDelete =
+        this.annotationText.length === 0 &&
+        (!isElementArray(this.annotation.span) ||
+          this.annotation.span.length === 1);
+
+      if (!isToDelete) {
+        const span = this.createSpan();
+
+        spans = [...annotation.span];
+
+        spans[index] = span;
+
+        if (this.annotationText.length === 0) {
+          spans.splice(index, 1);
+        }
+      }
       // API call handled in parent component - AnnotationRow
-      this.$emit(
-        "save-annotation-changes",
-        this.annotation,
-        index,
-        this.span,
-        this.annotationText
-      );
+      this.$emit("save-annotation-changes", spans, isToDelete);
+    },
+
+    createSpan() {
+      return {
+        offset_string: this.annotationText,
+        page_index: this.span.page_index,
+        x0: this.span.x0,
+        x1: this.span.x1,
+        y0: this.span.y0,
+        y1: this.span.y1,
+        start_offset: this.span.start_offset,
+        end_offset: this.span.end_offset,
+      };
     },
   },
 };
