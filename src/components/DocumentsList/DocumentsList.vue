@@ -110,12 +110,7 @@ export default {
   },
   methods: {
     changeDocument(documentId) {
-      if (getURLQueryParam("document") || getURLPath("docs")) {
-        navigateToNewDocumentURL(this.selectedDocument.id, documentId);
-      } else {
-        this.$store.dispatch("document/setDocId", documentId);
-        this.$store.dispatch("document/fetchDocument");
-      }
+      this.$store.dispatch("document/changeCurrentDocument", documentId);
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");

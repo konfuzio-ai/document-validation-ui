@@ -271,7 +271,6 @@ const mutations = {
   },
   ADD_SELECTED_PAGE: (state, selectedPage) => {
     state.selectedPages.push(selectedPage);
-    console.log(state.selectedPages);
   },
   SET_SHOW_EDIT_CONFIRMATION_MODAL: (state, value) => {
     state.showEditConfirmationModal = value;

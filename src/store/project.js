@@ -5,6 +5,7 @@ const state = {
   projectId: null,
   currentUser: null,
   documentsListPath: null,
+  documentsInProject: null,
 };
 
 const getters = {
@@ -80,6 +81,24 @@ const actions = {
   setDocumentsListPath: ({ commit }, path) => {
     commit("SET_DOCUMENTS_LIST_PATH", path);
   },
+
+  setDocumentsInProject: ({ commit }, documents) => {
+    commit("SET_DOCUMENTS_IN_PROJECT", documents);
+  },
+
+  fetchDocumentList: ({ commit, state }, parameters) => {
+    return HTTP.get(
+      `documents/?project=${state.projectId}&assignee=${state.currentUser}&limit=100&${parameters}`
+    )
+      .then((response) => {
+        if (response.data.results) {
+          commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
+        }
+      })
+      .catch((error) => {
+        console.log(error, "Could not fetch document list from the backend");
+      });
+  },
 };
 
 const mutations = {
@@ -91,6 +110,9 @@ const mutations = {
   },
   SET_DOCUMENTS_LIST_PATH: (state, path) => {
     state.documentsListPath = path;
+  },
+  SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
+    state.documentsInProject = documents;
   },
 };
 

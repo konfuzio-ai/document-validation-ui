@@ -32,6 +32,23 @@
       flex: 1;
     }
 
+    .center-bar-components {
+      display: flex;
+      align-items: center;
+      gap: 38px;
+
+      .navigation-arrow {
+        &:hover {
+          cursor: pointer;
+        }
+
+        &.navigation-disabled {
+          cursor: not-allowed;
+          filter: opacity(0.5);
+        }
+      }
+    }
+
     .right-bar-components {
       align-items: center;
       justify-content: flex-end;

@@ -1,5 +1,10 @@
 import myImports from "../api";
-import { sleep } from "../utils/utils";
+import {
+  sleep,
+  getURLQueryParam,
+  navigateToNewDocumentURL,
+  getURLPath,
+} from "../utils/utils";
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
@@ -758,8 +763,13 @@ const actions = {
         await dispatch("category/fetchCategories", projectId, {
           root: true,
         });
+
+        // get list of documents not reviewed
+        await dispatch("project/fetchDocumentList", "is_reviewed=false", {
+          root: true,
+        });
       }
-      if (categoryId) {
+      if (categoryId && rootState.category.createAvailableListOfDocuments) {
         await dispatch(
           "category/createAvailableDocumentsList",
           {
@@ -1087,6 +1097,20 @@ const actions = {
     const fullUrl = `${url}?${params}`;
 
     window.open(fullUrl, "_blank");
+  },
+
+  changeCurrentDocument: ({ commit, state, dispatch }, newDocumentId) => {
+    // reset splitting suggestions
+    if (state.splittingSuggestions) {
+      commit("SET_SPLITTING_SUGGESTIONS", null);
+    }
+
+    if (getURLQueryParam("document") || getURLPath("d")) {
+      navigateToNewDocumentURL(state.selectedDocument.id, newDocumentId);
+    } else {
+      commit("SET_DOC_ID", newDocumentId);
+      dispatch("fetchDocument");
+    }
   },
 };
 
