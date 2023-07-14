@@ -85,7 +85,7 @@ export default {
       "selectedPages",
       "submitEditChanges",
     ]),
-    ...mapState("project", ["projectId", "documentsListPath"]),
+    ...mapState("project", ["projectId", "documentsListPath", "currentUser"]),
     ...mapGetters("edit", ["documentShouldBePostprocessed"]),
     ...mapGetters("document", ["waitingForSplittingConfirmation"]),
   },
@@ -390,7 +390,11 @@ export default {
             });
           });
 
-        // navigateToDocumentsList(this.documentsListPath, this.projectId);
+        navigateToDocumentsList(
+          this.documentsListPath,
+          this.projectId,
+          this.currentUser.id
+        );
       } else {
         // Check if only the category and/or name changes:
         const newCategory = this.updatedDocument[0].category;
