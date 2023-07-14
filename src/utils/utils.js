@@ -30,10 +30,10 @@ export function navigateToNewDocumentURL(oldId, newId) {
   window.location.replace(newUrl);
 }
 
-export function navigateToDocumentsList(path, projectId) {
+export function navigateToDocumentsList(path, projectId, userId) {
   if (!path) return;
 
-  const parameters = `?project=${projectId}&is_reviewed__exact=0`;
+  const parameters = `?project=${projectId}&is_reviewed__exact=0&assignee__id__exact=${userId}`;
 
   const newPath = `${path}/${parameters}`;
 

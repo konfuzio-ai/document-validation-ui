@@ -774,7 +774,7 @@ const actions = {
           "category/createAvailableDocumentsList",
           {
             categoryId,
-            user: rootState.project.currentUser,
+            user: rootState.project.currentUser.username,
             poll: pollDocumentList,
           },
           {
@@ -1093,7 +1093,7 @@ const actions = {
 
   contactSupport: ({ rootState }, error) => {
     const url = "https://konfuzio.com/support/";
-    const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser}&issue=${error}`;
+    const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser.username}&issue=${error}`;
     const fullUrl = `${url}?${params}`;
 
     window.open(fullUrl, "_blank");

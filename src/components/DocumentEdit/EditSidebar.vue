@@ -96,7 +96,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("edit", ["selectedPages"]),
+    ...mapState("edit", ["selectedPages", "updatedDocument"]),
     ...mapState("document", ["splittingSuggestions", "selectedDocument"]),
     ...mapGetters("document", ["documentHasProposedSplit"]),
   },
@@ -114,6 +114,11 @@ export default {
     },
     splitSuggestionsEnabled(newValue) {
       if (!newValue) {
+        this.switchStatus = false;
+      }
+    },
+    updatedDocument(newValue) {
+      if (newValue && newValue.length === 1) {
         this.switchStatus = false;
       }
     },

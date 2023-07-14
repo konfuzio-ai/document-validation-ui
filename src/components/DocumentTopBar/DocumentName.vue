@@ -1,5 +1,7 @@
 <template>
-  <div class="document-name-component">
+  <div
+    :class="['document-name-component', editMode && 'document-name-edit-mode']"
+  >
     <div class="document-icon">
       <ServerImage
         :height="'22px'"

@@ -28,12 +28,19 @@ const getters = {
       (page) => page.angle !== 0
     );
 
-    let foundReorderedPage;
+    let foundReorderedPage = false;
 
-    state.pagesForPostprocess.map((page) => {
-      foundReorderedPage = rootState.document.selectedDocument.pages.find(
-        (p) => p.id === page.id && p.number !== page.number
-      );
+    state.pagesForPostprocess.map((page, index) => {
+      if (
+        (page.id === rootState.document.selectedDocument.pages[index].id &&
+          page.number !==
+            rootState.document.selectedDocument.pages[index].number) ||
+        (page.id !== rootState.document.selectedDocument.pages[index].id &&
+          page.number ===
+            rootState.document.selectedDocument.pages[index].number)
+      ) {
+        foundReorderedPage = true;
+      }
     });
 
     return (
@@ -219,7 +226,7 @@ const actions = {
 
             commit("SET_SUBMIT_EDIT_CHANGES", false);
 
-            if (newId !== oldId) {
+            if (newId != oldId) {
               if (getURLQueryParam("document") || getURLPath("docs")) {
                 navigateToNewDocumentURL(oldId, newId);
               } else {
@@ -231,12 +238,17 @@ const actions = {
                   root: true,
                 });
               }
-            }
+            } else {
+              dispatch("document/setSelectedDocument", response.data[0], {
+                root: true,
+              });
 
-            resolve(null);
-          } else {
-            resolve(response);
+              dispatch("document/pollDocumentEndpoint", null, {
+                root: true,
+              });
+            }
           }
+          resolve(response);
         })
         .catch((error) => {
           reject(error.response);

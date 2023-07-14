@@ -66,7 +66,6 @@ export default {
       "isDocumentReviewed",
     ]),
     ...mapGetters("display", ["bboxToRect"]),
-    ...mapState("selection", ["spanSelection"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",

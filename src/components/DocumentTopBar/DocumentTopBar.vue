@@ -10,7 +10,12 @@
         />
       </div>
 
-      <div class="center-bar-components">
+      <div
+        :class="[
+          'center-bar-components',
+          recalculatingAnnotations && 'single-component',
+        ]"
+      >
         <div
           :class="[
             'left-arrow navigation-arrow',

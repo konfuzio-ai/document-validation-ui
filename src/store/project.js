@@ -67,7 +67,7 @@ const actions = {
   fetchCurrentUser: ({ commit }) => {
     return HTTP.get(`/auth/me/`)
       .then((response) => {
-        commit("SET_CURRENT_USER", response.data.username);
+        commit("SET_CURRENT_USER", response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -88,7 +88,7 @@ const actions = {
 
   fetchDocumentList: ({ commit, state }, parameters) => {
     return HTTP.get(
-      `documents/?project=${state.projectId}&assignee=${state.currentUser}&limit=100&${parameters}`
+      `documents/?project=${state.projectId}&assignee=${state.currentUser.username}&limit=100&${parameters}`
     )
       .then((response) => {
         if (response.data.results) {
