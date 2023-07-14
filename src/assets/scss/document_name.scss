@@ -1,17 +1,12 @@
 @import "./imports.scss";
 
 .document-name-component {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   gap: 12px;
   line-height: 20px;
-
-  &.document-name-edit-mode {
-    flex: 2;
-  }
 
   .document-icon {
     display: flex;
