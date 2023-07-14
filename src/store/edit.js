@@ -28,12 +28,19 @@ const getters = {
       (page) => page.angle !== 0
     );
 
-    let foundReorderedPage;
+    let foundReorderedPage = false;
 
-    state.pagesForPostprocess.map((page) => {
-      foundReorderedPage = rootState.document.selectedDocument.pages.find(
-        (p) => p.id === page.id && p.number !== page.number
-      );
+    state.pagesForPostprocess.map((page, index) => {
+      if (
+        (page.id === rootState.document.selectedDocument.pages[index].id &&
+          page.number !==
+            rootState.document.selectedDocument.pages[index].number) ||
+        (page.id !== rootState.document.selectedDocument.pages[index].id &&
+          page.number ===
+            rootState.document.selectedDocument.pages[index].number)
+      ) {
+        foundReorderedPage = true;
+      }
     });
 
     return (
