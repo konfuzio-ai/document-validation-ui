@@ -66,6 +66,7 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/require-default-prop
     locale: {
       type: String,
       required: false,
