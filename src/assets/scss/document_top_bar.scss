@@ -37,6 +37,12 @@
       align-items: center;
       gap: 38px;
 
+      &.single-component {
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+      }
+
       .navigation-arrow {
         &:hover {
           cursor: pointer;

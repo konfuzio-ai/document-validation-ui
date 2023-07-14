@@ -226,11 +226,7 @@ const actions = {
 
             commit("SET_SUBMIT_EDIT_CHANGES", false);
 
-            dispatch("document/setSelectedDocument", response.data[0], {
-              root: true,
-            });
-
-            if (newId !== oldId) {
+            if (newId != oldId) {
               if (getURLQueryParam("document") || getURLPath("docs")) {
                 navigateToNewDocumentURL(oldId, newId);
               } else {
@@ -242,12 +238,17 @@ const actions = {
                   root: true,
                 });
               }
-            }
+            } else {
+              dispatch("document/setSelectedDocument", response.data[0], {
+                root: true,
+              });
 
-            resolve(null);
-          } else {
-            resolve(response);
+              dispatch("document/pollDocumentEndpoint", null, {
+                root: true,
+              });
+            }
           }
+          resolve(response);
         })
         .catch((error) => {
           reject(error.response);
