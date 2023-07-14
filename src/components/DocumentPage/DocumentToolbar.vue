@@ -119,6 +119,7 @@ export default {
   methods: {
     handleEdit() {
       if (this.editModeDisabled) return;
+      this.$store.dispatch("selection/disableSelection");
       this.$store.dispatch("edit/enableEditMode");
     },
     zoomIn() {

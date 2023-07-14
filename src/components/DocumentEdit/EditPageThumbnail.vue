@@ -11,9 +11,7 @@
         isVisible && 'visible',
         checkboxValue && 'selected',
       ]"
-      :style="{
-        transform: `rotate(${rotation}deg)`,
-      }"
+      :style="`rotate:${rotation}deg`"
       @click="selectPage()"
     >
       <ServerImage :image-url="`${page.thumbnail_url}?${page.updated_at}`">
