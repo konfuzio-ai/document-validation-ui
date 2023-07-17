@@ -46,6 +46,7 @@ export default {
     },
     confirmChanges() {
       this.$emit("save-changes");
+      this.isModalActive = false;
     },
   },
 };
