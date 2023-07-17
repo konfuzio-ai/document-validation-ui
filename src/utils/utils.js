@@ -35,7 +35,7 @@ export function navigateToDocumentsList(path, projectId, userId) {
 
   const parameters = `?project=${projectId}&is_reviewed__exact=0&assignee__id__exact=${userId}`;
 
-  const newPath = `${path}/${parameters}`;
+  const newPath = `${path}${parameters}`;
 
   window.location.pathname = newPath;
 }
