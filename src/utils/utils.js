@@ -33,9 +33,16 @@ export function navigateToNewDocumentURL(oldId, newId) {
 export function navigateToDocumentsList(path, projectId, userId) {
   if (!path) return;
 
+  const lastCharOfString = path.charAt(path.length - 1);
+  let slash = "/";
+
+  if (lastCharOfString === slash) {
+    slash = "";
+  }
+
   const parameters = `?project=${projectId}&is_reviewed__exact=0&assignee__id__exact=${userId}`;
 
-  const newPath = `${path}${parameters}`;
+  const newPath = `${path}${slash}${parameters}`;
 
   window.location.pathname = newPath;
 }
