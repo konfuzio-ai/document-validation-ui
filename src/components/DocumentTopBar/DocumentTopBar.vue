@@ -17,10 +17,8 @@
         ]"
       >
         <div
-          :class="[
-            'left-arrow navigation-arrow',
-            !previousDocument && 'navigation-disabled',
-          ]"
+          v-if="previousDocument"
+          class="left-arrow navigation-arrow"
           type="button"
           @click="navigateToDocument(previousDocument)"
         >
@@ -30,10 +28,8 @@
         <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
         <div
-          :class="[
-            'right-arrow navigation-arrow',
-            !nextDocument && 'navigation-disabled',
-          ]"
+          v-if="nextDocument"
+          class="right-arrow navigation-arrow"
           type="button"
           @click="navigateToDocument(nextDocument)"
         >
