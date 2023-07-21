@@ -8,6 +8,7 @@ import {
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
+const multiAnnTableEnabled = false;
 export const table_reference_api = "api.v3.dvui.table";
 
 const state = {
@@ -165,33 +166,37 @@ const getters = {
   /* Get annotation sets created in table */
   annotationSetsInTable: (state) => () => {
     const annotationSetsList = {};
-    state.annotationSets.forEach((annotationSet) => {
-      let addAnnotationSet = false;
-      if (annotationSet.labels) {
-        annotationSet.labels.forEach((label) => {
-          if (
-            label.annotations &&
-            label.annotations.find(
-              (annotation) =>
-                annotation.origin && annotation.origin === table_reference_api
-            )
-          ) {
-            addAnnotationSet = true;
-            return;
-          }
-        });
-      }
-      if (addAnnotationSet) {
-        // group by label set
-        if (annotationSetsList[`${annotationSet.label_set.id}`]) {
-          annotationSetsList[`${annotationSet.label_set.id}`].push(
-            annotationSet
-          );
-        } else {
-          annotationSetsList[`${annotationSet.label_set.id}`] = [annotationSet];
+    if (multiAnnTableEnabled) {
+      state.annotationSets.forEach((annotationSet) => {
+        let addAnnotationSet = false;
+        if (annotationSet.labels) {
+          annotationSet.labels.forEach((label) => {
+            if (
+              label.annotations &&
+              label.annotations.find(
+                (annotation) =>
+                  annotation.origin && annotation.origin === table_reference_api
+              )
+            ) {
+              addAnnotationSet = true;
+              return;
+            }
+          });
         }
-      }
-    });
+        if (addAnnotationSet) {
+          // group by label set
+          if (annotationSetsList[`${annotationSet.label_set.id}`]) {
+            annotationSetsList[`${annotationSet.label_set.id}`].push(
+              annotationSet
+            );
+          } else {
+            annotationSetsList[`${annotationSet.label_set.id}`] = [
+              annotationSet,
+            ];
+          }
+        }
+      });
+    }
     return annotationSetsList;
   },
 
@@ -203,6 +208,7 @@ const getters = {
       if (annotationSet.labels) {
         annotationSet.labels.forEach((label) => {
           if (
+            multiAnnTableEnabled &&
             label.annotations &&
             label.annotations.find(
               (annotation) =>
