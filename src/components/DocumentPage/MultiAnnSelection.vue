@@ -44,7 +44,6 @@
 
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
-import { ChooseLabelSetModal } from "../DocumentAnnotations";
 import { table_reference_api } from "../../store/document";
 
 export default {

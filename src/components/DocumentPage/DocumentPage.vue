@@ -101,10 +101,10 @@
           />
         </v-label>
       </v-layer>
-      <v-layer v-if="selection && !isSelecting && isElementSelected">
+      <v-layer v-if="isBoxSelection">
         <box-selection :page="page" />
       </v-layer>
-      <v-layer v-else-if="selection && isSelectionValid">
+      <v-layer v-else-if="isMultiSelection">
         <multi-ann-selection
           :page="page"
           @buttonEnter="onElementEnter"
@@ -122,7 +122,7 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
-import { PIXEL_RATIO } from "../../constants";
+import { PIXEL_RATIO, MULTI_ANN_TABLE_FEATURE } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
 import MultiAnnSelection from "./MultiAnnSelection";
@@ -155,6 +155,12 @@ export default {
   computed: {
     ...mapState("display", ["currentPage", "showAnnSetTable"]),
 
+    isBoxSelection() {
+      return this.selection && !this.isSelecting && this.isElementSelected;
+    },
+    isMultiSelection() {
+      return MULTI_ANN_TABLE_FEATURE && this.selection && this.isSelectionValid;
+    },
     showFocusedAnnotation() {
       return (
         this.documentAnnotationSelected &&
@@ -169,7 +175,6 @@ export default {
         height: this.page.size[1] * this.scale,
       };
     },
-
     scaledViewport() {
       const { width: actualSizeWidth, height: actualSizeHeight } =
         this.actualSizeViewport;
