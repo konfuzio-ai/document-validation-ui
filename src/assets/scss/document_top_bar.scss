@@ -149,6 +149,23 @@
       }
     }
   }
+
+  @media (max-width: 1300px) {
+    .edit-mode-top-bar {
+      .center-bar-components {
+        flex: 1;
+        justify-content: right;
+      }
+
+      .right-bar-components {
+        flex: 2;
+      }
+
+      .left-bar-components {
+        display: none;
+      }
+    }
+  }
 }
 
 .btn-container {

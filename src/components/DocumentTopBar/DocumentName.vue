@@ -132,7 +132,11 @@ export default {
   },
   methods: {
     shortFilenameIfNeeded(filename) {
-      if (filename && (filename.length >= 70 || !this.optimalResolution)) {
+      if (
+        filename &&
+        (filename.length >= 70 ||
+          (filename.length >= 25 && !this.optimalResolution))
+      ) {
         return (
           filename.substr(0, 20) +
           "..." +
