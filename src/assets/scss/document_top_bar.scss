@@ -150,24 +150,15 @@
     }
   }
 
-  @media (max-width: 1150px) {
+  @media (max-width: 1300px) {
     .edit-mode-top-bar {
       .center-bar-components {
         flex: 1;
         justify-content: right;
       }
 
-      .left-bar-components {
-        display: none;
-      }
-    }
-  }
-
-  @media (max-width: 950px) {
-    .edit-mode-top-bar {
-      .center-bar-components {
-        flex: none;
-        margin-left: 15px;
+      .right-bar-components {
+        flex: 2;
       }
 
       .left-bar-components {
