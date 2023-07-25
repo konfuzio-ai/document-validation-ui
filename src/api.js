@@ -1,7 +1,7 @@
 import axios from "axios";
 import { cacheAdapterEnhancer } from "axios-extensions";
 
-let HTTP, IMG_REQUEST, authToken;
+let HTTP, IMG_REQUEST, authToken, appLocale;
 const DEFAULT_URL = "https://app.konfuzio.com";
 
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -29,9 +29,14 @@ const setImageUrl = (url) => {
   IMG_REQUEST.defaults.baseURL = url;
 };
 
+const setLocale = (locale) => {
+  appLocale = locale;
+};
+
 const getInterceptorConfig = (config) => {
   if (authToken) {
     config.headers["Authorization"] = `Token ${authToken}`;
+    config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
   }
   return config;
 };
@@ -66,4 +71,5 @@ export default {
   setImageUrl,
   makeImageRequest,
   setAuthToken,
+  setLocale,
 };

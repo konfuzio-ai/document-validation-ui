@@ -159,6 +159,8 @@ export default {
 
     // api config
     API.setAuthToken(this.userToken);
+    API.setLocale(this.$i18n.locale);
+
     if (this.api_url !== "") {
       API.setApiUrl(this.api_url);
     }
