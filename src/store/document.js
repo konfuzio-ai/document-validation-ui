@@ -1,4 +1,5 @@
 import myImports from "../api";
+import { MULTI_ANN_TABLE_FEATURE } from "../constants";
 import {
   sleep,
   getURLQueryParam,
@@ -8,7 +9,6 @@ import {
 
 const HTTP = myImports.HTTP;
 const documentPollDuration = 1000;
-const multiAnnTableEnabled = false;
 export const table_reference_api = "api.v3.dvui.table";
 
 const state = {
@@ -166,7 +166,7 @@ const getters = {
   /* Get annotation sets created in table */
   annotationSetsInTable: (state) => () => {
     const annotationSetsList = {};
-    if (multiAnnTableEnabled) {
+    if (MULTI_ANN_TABLE_FEATURE) {
       state.annotationSets.forEach((annotationSet) => {
         let addAnnotationSet = false;
         if (annotationSet.labels) {
@@ -208,7 +208,7 @@ const getters = {
       if (annotationSet.labels) {
         annotationSet.labels.forEach((label) => {
           if (
-            multiAnnTableEnabled &&
+            MULTI_ANN_TABLE_FEATURE &&
             label.annotations &&
             label.annotations.find(
               (annotation) =>
