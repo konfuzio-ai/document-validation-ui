@@ -1,6 +1,8 @@
 <template>
   <div class="split-info-bar">
-    <StarIcon />
+    <div class="bar-icon">
+      <StarIcon />
+    </div>
     <span> {{ $t("smart_split_suggestions") }}</span>
   </div>
 </template>

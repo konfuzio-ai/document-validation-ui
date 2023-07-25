@@ -149,6 +149,32 @@
       }
     }
   }
+
+  @media (max-width: 1150px) {
+    .edit-mode-top-bar {
+      .center-bar-components {
+        flex: 1;
+        justify-content: right;
+      }
+
+      .left-bar-components {
+        display: none;
+      }
+    }
+  }
+
+  @media (max-width: 950px) {
+    .edit-mode-top-bar {
+      .center-bar-components {
+        flex: none;
+        margin-left: 15px;
+      }
+
+      .left-bar-components {
+        display: none;
+      }
+    }
+  }
 }
 
 .btn-container {

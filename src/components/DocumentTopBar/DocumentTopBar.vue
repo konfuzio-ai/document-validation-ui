@@ -2,7 +2,7 @@
   <div ref="documentTopBar" class="document-top-bar-component">
     <div
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
-      class="document-top-bar"
+      :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
       <div v-if="!recalculatingAnnotations" class="left-bar-components">
         <DocumentCategory
