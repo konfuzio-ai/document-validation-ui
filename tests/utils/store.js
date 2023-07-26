@@ -8,15 +8,36 @@ export const init = () => {
   ];
   documentData.pages = pages;
 
+  const annotations = [];
+  const annotationSets = documentData.annotation_sets;
+  annotationSets.map((annotationSet) => {
+    annotationSet.labels.map((label) => {
+      annotations.push(...label.annotations);
+    });
+  });
+
+  // mock scale for scrolling pages
+  const scale = {
+    elementsWidth: 1,
+    client: {
+      width: 1600,
+      height: 1200,
+    },
+    viewport: {
+      width: pages[0].size[0],
+      height: pages[0].size[1],
+    },
+  };
+
   Promise.resolve(
     store.dispatch("document/setSelectedDocument", documentData),
-    store.dispatch(
-      "document/setAnnotationSets",
-      require("../mock/document.json").annotation_sets
-    ),
+    store.dispatch("document/setAnnotations", annotations),
+    store.dispatch("document/setAnnotationSets", annotationSets),
+    store.dispatch("document/setPages", pages),
     store.dispatch("document/setPublicView", false),
     store.dispatch("document/endRecalculatingAnnotations"),
-    store.dispatch("document/endLoading")
+    store.dispatch("document/endLoading"),
+    store.dispatch("display/updateScale", scale)
   );
 };
 
@@ -28,6 +49,13 @@ export const dispatch = (path, params) => {
 export const getData = (storeName) => {
   if (store) {
     return store.state[storeName];
+  }
+  return null;
+};
+
+export const getGetter = (getterName) => {
+  if (store) {
+    return store.getters[getterName];
   }
   return null;
 };
