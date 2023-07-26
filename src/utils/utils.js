@@ -44,7 +44,7 @@ export function navigateToDocumentsList(path, projectId, userId) {
 
   const newPath = `${path}${slash}${parameters}`;
 
-  window.location.pathname = newPath;
+  window.location.href = newPath;
 }
 
 export function isElementArray(element) {
