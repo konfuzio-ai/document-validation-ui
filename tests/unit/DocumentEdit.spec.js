@@ -1,4 +1,5 @@
-import { shallowMount, mount } from "@vue/test-utils";
+import { render } from "../utils/render";
+import { dispatch, getData } from "../utils/store";
 import {
   DocumentEdit,
   EditPages,
@@ -6,42 +7,22 @@ import {
   RenameAndCategorize,
 } from "../../src/components/DocumentEdit";
 import { DocumentTopBarButtons } from "../../src/components/DocumentTopBar";
-import store from "../../src/store";
-
-// mock i18n so we don't need to load the library
-const $t = () => {};
 
 describe("Document Edit Component", () => {
-  beforeEach(() => {
-    const pages = [
-      require("../mock/page_1.json"),
-      require("../mock/page_2.json"),
-    ];
-
-    const selectedDocument = require("../mock/document.json");
-    selectedDocument.pages = pages;
-    Promise.all([
-      store.dispatch("document/setSelectedDocument", selectedDocument),
-      store.dispatch("document/setPages", pages),
-      store.dispatch("edit/setPagesForPostprocess", pages),
-      store.dispatch("edit/enableEditMode"),
-      store.dispatch("document/endRecalculatingAnnotations"),
-      store.dispatch("document/endLoading"),
-    ]);
+  beforeEach(async () => {
+    await dispatch("edit/enableEditMode");
+    await dispatch("edit/setPagesForPostprocess", getData("document").pages);
   });
 
   it("check number of thumbnails", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
+    const wrapper = render(
+      EditPages,
+      false,
+      {},
+      {
+        editPages: getData("edit").pagesForPostprocess,
+      }
+    );
 
     expect(
       await wrapper.findAll(".edit-pages .document-grid .image-section").length
@@ -49,12 +30,7 @@ describe("Document Edit Component", () => {
   });
 
   it("the sidebar should be visible", async () => {
-    const wrapper = mount(DocumentEdit, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentEdit, false);
 
     expect(
       await wrapper.findAllComponents(".sidebar .edit-sidebar").isVisible()
@@ -62,12 +38,7 @@ describe("Document Edit Component", () => {
   });
 
   it("The sidebar has 4 buttons", async () => {
-    const wrapper = mount(EditSidebar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(EditSidebar, false);
 
     expect(
       await wrapper.findAll(".buttons-container .sidebar-buttons").length
@@ -75,33 +46,27 @@ describe("Document Edit Component", () => {
   });
 
   it("Clicking the cancel button should close edit view", async () => {
-    const wrapper = mount(DocumentTopBarButtons, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentTopBarButtons, false);
 
     await wrapper.find(".buttons .button-cancel").trigger("click");
 
-    expect(await store.state.edit.editMode).toBe(false);
+    expect(await getData("edit").editMode).toBe(false);
   });
 
   it("Clicking on thumbnail should select it", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
+    const wrapper = render(
+      EditPages,
+      false,
+      {},
+      {
+        editPages: getData("edit").pagesForPostprocess,
+      }
+    );
 
     await wrapper
-      .findAll(".image-section .edit-page-thumbnail .page-thumbnail")
+      .findAll(
+        ".document-grid .image-section .edit-page-thumbnail .page-thumbnail"
+      )
       .at(0)
       .trigger("click");
 
@@ -115,29 +80,23 @@ describe("Document Edit Component", () => {
   });
 
   it("Single page rotation buttons should be enabled when page is selected ", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
+    const wrapper = render(
+      EditPages,
+      false,
+      {},
+      {
+        editPages: getData("edit").pagesForPostprocess,
+      }
+    );
 
-    const wrapper2 = mount(EditSidebar, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          buttonDisabled: true,
-        };
-      },
-    });
+    const wrapper2 = render(
+      EditSidebar,
+      false,
+      {},
+      {
+        buttonDisabled: true,
+      }
+    );
 
     await wrapper
       .findAll(".image-section .edit-page-thumbnail .page-thumbnail")
@@ -158,27 +117,24 @@ describe("Document Edit Component", () => {
   });
 
   it("Number of subdocuments when splitting", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
+    const wrapper = render(
+      EditPages,
+      false,
+      {},
+      {
+        editPages: getData("edit").pagesForPostprocess,
+      }
+    );
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: getData("document").selectedDocument.name,
+        category: getData("document").selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: getData("document").selectedDocument.name,
+        category: getData("document").selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -189,33 +145,30 @@ describe("Document Edit Component", () => {
 
     await mockFn(require("../mock/page_1.json").number);
 
-    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await dispatch("edit/setUpdatedDocument", subDocumentMock);
 
-    expect(await store.state.edit.updatedDocument.length).toBe(2);
+    expect(await getData("edit").updatedDocument.length).toBe(2);
   });
 
   it("If document was split, go to Rename and Categorize", async () => {
-    const wrapper = mount(EditPages, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          editPages: store.state.edit.pagesForPostprocess,
-        };
-      },
-    });
+    const wrapper = render(
+      EditPages,
+      false,
+      {},
+      {
+        editPages: getData("edit").pagesForPostprocess,
+      }
+    );
 
     const subDocumentMock = [
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: getData("document").selectedDocument.name,
+        category: getData("document").selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: store.state.document.selectedDocument.name,
-        category: store.state.document.selectedDocument.category,
+        name: getData("document").selectedDocument.name,
+        category: getData("document").selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
@@ -226,44 +179,34 @@ describe("Document Edit Component", () => {
 
     await mockFn(require("../mock/page_1.json").number);
 
-    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await dispatch("edit/setUpdatedDocument", subDocumentMock);
 
-    const wrapper2 = mount(DocumentTopBarButtons, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper2 = render(DocumentTopBarButtons, false);
 
     await wrapper2.find(".buttons .button-next").trigger("click");
 
-    expect(store.state.edit.renameAndCategorize).toBe(true);
+    expect(getData("edit").renameAndCategorize).toBe(true);
   });
 
   it("Number of rows based on number of split docs", async () => {
-    const wrapper = mount(RenameAndCategorize, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(RenameAndCategorize, false);
 
-    await store.dispatch("edit/setRenameAndCategorize", true);
+    await dispatch("edit/setRenameAndCategorize", true);
 
     const subDocumentMock = [
       {
-        name: await store.state.document.selectedDocument.name,
-        category: await store.state.document.selectedDocument.category,
+        name: await getData("document").selectedDocument.name,
+        category: await getData("document").selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
-        name: await store.state.document.selectedDocument.name,
-        category: await store.state.document.selectedDocument.category,
+        name: await getData("document").selectedDocument.name,
+        category: await getData("document").selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
 
-    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     expect(
       await wrapper.findAll(
@@ -277,31 +220,26 @@ describe("Document Edit Component", () => {
   });
 
   it("First subdocument should have original file name", async () => {
-    const wrapper = mount(RenameAndCategorize, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(RenameAndCategorize, false);
 
-    await store.dispatch("edit/setRenameAndCategorize", true);
+    await dispatch("edit/setRenameAndCategorize", true);
 
     const subDocumentMock = [
       {
-        name: await store.state.document.selectedDocument.data_file_name,
-        category: await store.state.document.selectedDocument.category,
+        name: await getData("document").selectedDocument.data_file_name,
+        category: await getData("document").selectedDocument.category,
         pages: [require("../mock/page_1.json")],
       },
       {
         name:
           require("../mock/document.json").data_file_name.split(".")[0] +
           "_copy",
-        category: await store.state.document.selectedDocument.category,
+        category: await getData("document").selectedDocument.category,
         pages: [require("../mock/page_2.json")],
       },
     ];
 
-    await store.dispatch("edit/setUpdatedDocument", subDocumentMock);
+    await dispatch("edit/setUpdatedDocument", subDocumentMock);
 
     const mockFn = jest.fn().mockName("getFileName");
 
@@ -316,19 +254,9 @@ describe("Document Edit Component", () => {
   });
 
   it("Confirmation modal is shown when trying to submit changes", async () => {
-    const wrapper = mount(DocumentEdit, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentEdit, false);
 
-    const wrapper2 = mount(DocumentTopBarButtons, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper2 = render(DocumentTopBarButtons, false);
 
     await wrapper2.find(".buttons .is-primary").trigger("click");
 
@@ -340,12 +268,7 @@ describe("Document Edit Component", () => {
   });
 
   it("Smart Split is visible & switch is disabled if no splitting suggestions", async () => {
-    const wrapper = mount(EditSidebar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(EditSidebar, false);
 
     expect(await wrapper.find(".smart-split .b-tooltip").isVisible()).toBe(
       true
@@ -372,22 +295,12 @@ describe("Document Edit Component", () => {
       },
     ];
 
-    const wrapper = mount(EditSidebar, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(EditSidebar, false);
 
-    const wrapper2 = mount(DocumentEdit, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper2 = render(DocumentEdit, false);
 
-    await store.dispatch("document/setSplittingSuggestions", suggestions);
-    await store.dispatch("edit/setRenameAndCategorize", false);
+    await dispatch("document/setSplittingSuggestions", suggestions);
+    await dispatch("edit/setRenameAndCategorize", false);
 
     expect(
       await wrapper
@@ -412,20 +325,17 @@ describe("Document Edit Component", () => {
       { page: 2, origin: null },
     ];
 
-    const wrapper = mount(DocumentEdit, {
-      store,
-      mocks: {
-        $t,
-      },
-      data() {
-        return {
-          splitSuggestionsEnabled: false,
-          splittingLines: [],
-        };
-      },
-    });
+    const wrapper = render(
+      DocumentEdit,
+      false,
+      {},
+      {
+        splitSuggestionsEnabled: false,
+        splittingLines: [],
+      }
+    );
 
-    await store.dispatch("edit/setRenameAndCategorize", false);
+    await dispatch("edit/setRenameAndCategorize", false);
 
     await wrapper.setData({
       splittingLines: [
