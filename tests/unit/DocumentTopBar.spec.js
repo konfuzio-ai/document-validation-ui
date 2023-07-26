@@ -317,6 +317,12 @@ describe("Document Top Bar", () => {
       mocks: {
         $t,
       },
+      data() {
+        return {
+          previousDocument: {},
+          nextDocument: {},
+        };
+      },
     });
 
     expect(
@@ -343,7 +349,7 @@ describe("Document Top Bar", () => {
     expect(
       await wrapper
         .findComponent(".center-bar-components .navigation-arrow")
-        .classes()
-    ).toContain("navigation-disabled");
+        .exists()
+    ).toBe(false);
   });
 });
