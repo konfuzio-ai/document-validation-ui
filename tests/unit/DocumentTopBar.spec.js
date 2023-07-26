@@ -220,7 +220,7 @@ describe("Document Top Bar", () => {
     ).toBe(true);
   });
 
-  it("Arrows are disabled if there are no documents to navigate to", async () => {
+  it("Arrows are not visible if there are no documents to navigate to", async () => {
     const wrapper = render(
       DocumentTopBar,
       false,
