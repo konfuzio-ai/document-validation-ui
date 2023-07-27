@@ -1,4 +1,3 @@
-import { mount, shallowMount } from "@vue/test-utils";
 import {
   DocumentAnnotations,
   DocumentLabel,
@@ -6,42 +5,16 @@ import {
   AnnotationContent,
   AnnotationRow,
 } from "../../src/components/DocumentAnnotations";
-import store from "../../src/store";
-
-// mock i18n so we don't need to load the library
-const $t = () => {};
+import { render } from "../utils/render";
+import { dispatch, getData } from "../utils/store";
 
 describe("Document Annotations Component", () => {
-  beforeEach(() => {
-    const selectedDocument = require("../mock/document.json");
-    const annotations = [];
-    require("../mock/document.json").annotation_sets.map((annotationSet) => {
-      annotationSet.labels.map((label) => {
-        annotations.push(...label.annotations);
-      });
-    });
-    Promise.all([
-      store.dispatch("document/setSelectedDocument", selectedDocument),
-      store.dispatch(
-        "document/setAnnotationSets",
-        require("../mock/document.json").annotation_sets
-      ),
-      store.dispatch("document/setAnnotations", annotations),
-      store.dispatch("document/setPublicView", false),
-      store.dispatch("document/endRecalculatingAnnotations"),
-      store.dispatch("document/endLoading"),
-      store.dispatch("selection/disableSelection"),
-      store.dispatch("document/resetEditAnnotation"),
-    ]);
+  beforeEach(async () => {
+    await dispatch("selection/disableSelection");
+    await dispatch("document/resetEditAnnotation");
   });
-
   it("sidebar has group of label sets", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     expect(
       await wrapper.findAll(".annotation-set-group").length
@@ -49,30 +22,19 @@ describe("Document Annotations Component", () => {
   });
 
   it("label set name appears", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
     expect(await wrapper.findAll(".label-set-name").at(2).text()).toContain(
-      store.state.document.annotationSets[2].label_set.name
+      getData("document").annotationSets[2].label_set.name
     );
   });
 
   it("label name appears", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
 
-    const wrapper = mount(DocumentLabel, {
-      store,
-      mocks: {
-        $t,
-      },
-      propsData: {
-        annotationSet,
-        label,
-      },
+    const wrapper = render(DocumentLabel, false, {
+      annotationSet,
+      label,
     });
     expect(await wrapper.find(".annotation-row .label-name").text()).toContain(
       label.name
@@ -80,12 +42,7 @@ describe("Document Annotations Component", () => {
   });
 
   it("check if annotation info appears when hovering", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
     const element = await wrapper
       .findAll(".annotation-row .annotation-details")
       .at(0);
@@ -96,7 +53,7 @@ describe("Document Annotations Component", () => {
   });
 
   it("Click should trigger edit mode in empty annotation", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     let emptyAnnotationId;
     const isMissingAnnotation = false;
@@ -107,52 +64,34 @@ describe("Document Annotations Component", () => {
       emptyAnnotationId = `${annotationSet.label_set.id}_${label.id}`;
     }
 
-    const wrapper = mount(EmptyAnnotation, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        isMissingAnnotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(EmptyAnnotation, false, {
+      label,
+      annotationSet,
+      isMissingAnnotation,
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(await store.state.selection.elementSelected).toEqual(
+    expect(await getData("selection").elementSelected).toEqual(
       emptyAnnotationId
     );
   });
 
   it("Action buttons should appear when bbox is created in empty annotation", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = annotationSet.labels[0].annotations[0];
     const isMissingAnnotation = false;
 
-    const wrapper = mount(EmptyAnnotation, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        isMissingAnnotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(EmptyAnnotation, false, {
+      label,
+      annotationSet,
+      isMissingAnnotation,
     });
 
-    const wrapper2 = mount(AnnotationRow, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        annotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper2 = render(AnnotationRow, false, {
+      label,
+      annotationSet,
+      annotation,
     });
 
     const sampleBbox = {
@@ -171,66 +110,48 @@ describe("Document Annotations Component", () => {
     };
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    await store.dispatch("selection/setSpanSelection", sampleBbox);
+    await dispatch("selection/setSpanSelection", sampleBbox);
     expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
   });
 
   it("Click should trigger edit mode in annotation", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
     const span = annotation.span;
     const spanIndex = 0;
 
-    const wrapper = mount(AnnotationContent, {
-      store,
-      propsData: {
-        annotation,
-        label,
-        annotationSet,
-        span,
-        spanIndex,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(AnnotationContent, false, {
+      annotation,
+      label,
+      annotationSet,
+      span,
+      spanIndex,
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(await store.state.selection.elementSelected).toEqual(annotation.id);
+    expect(await getData("selection").elementSelected).toEqual(annotation.id);
   });
 
   it("Action buttons should appear when annotation is in edit mode", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
     const span = annotation.span;
     const spanIndex = 0;
 
-    const wrapper = mount(AnnotationContent, {
-      store,
-      propsData: {
-        annotation,
-        label,
-        annotationSet,
-        span,
-        spanIndex,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(AnnotationContent, false, {
+      annotation,
+      label,
+      annotationSet,
+      span,
+      spanIndex,
     });
 
-    const wrapper2 = mount(AnnotationRow, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        annotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper2 = render(AnnotationRow, false, {
+      label,
+      annotationSet,
+      annotation,
     });
 
     await wrapper.findComponent(".annotation-value").trigger("click");
@@ -238,20 +159,14 @@ describe("Document Annotations Component", () => {
   });
 
   it("Only show 'accept' button on hover on filled annotations", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
 
-    const wrapper = mount(AnnotationRow, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        annotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(AnnotationRow, false, {
+      label,
+      annotationSet,
+      annotation,
     });
 
     expect(
@@ -272,20 +187,14 @@ describe("Document Annotations Component", () => {
   });
 
   it("Only show 'decline' button on hover on filled annotations", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
 
-    const wrapper = mount(AnnotationRow, {
-      store,
-      propsData: {
-        label,
-        annotationSet,
-        annotation,
-      },
-      mocks: {
-        $t,
-      },
+    const wrapper = render(AnnotationRow, false, {
+      label,
+      annotationSet,
+      annotation,
     });
 
     expect(
@@ -304,25 +213,20 @@ describe("Document Annotations Component", () => {
   });
 
   it("Marking as missing should change the style of the Annotation row", async () => {
-    const annotationSet = require("../mock/document.json").annotation_sets[0];
+    const annotationSet = getData("document").annotationSets[0];
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     const missingAnnotation = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
-        document: store.state.document.documentId,
+        document: getData("document").documentId,
         annotation_set: annotationSet.id,
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", missingAnnotation);
+    await dispatch("document/setMissingAnnotations", missingAnnotation);
 
     expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
       "missing"
@@ -330,25 +234,20 @@ describe("Document Annotations Component", () => {
   });
 
   it("Clicking the restore button should remove the specific class from the Annotation row", async () => {
-    const annotationSet = require("../mock/document.json").annotation_sets[0];
+    const annotationSet = getData("document").annotationSets[0];
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     const missingAnnotation = [
       {
         label_set: annotationSet.label_set.id,
         label: annotationSet.labels[0].id,
-        document: store.state.document.documentId,
+        document: getData("document").documentId,
         annotation_set: annotationSet.id,
       },
     ];
 
-    await store.dispatch("document/setMissingAnnotations", missingAnnotation);
+    await dispatch("document/setMissingAnnotations", missingAnnotation);
 
     expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
       "missing"
@@ -360,7 +259,7 @@ describe("Document Annotations Component", () => {
       .findComponent(".buttons-container .action-buttons .restore-btn")
       .trigger("click");
 
-    await store.dispatch("document/setMissingAnnotations", []);
+    await dispatch("document/setMissingAnnotations", []);
 
     expect(
       await wrapper.findComponent(".annotation-row").classes()
@@ -368,12 +267,7 @@ describe("Document Annotations Component", () => {
   });
 
   it("Mark all empty as missing button should always be visible", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     expect(
       await wrapper
@@ -383,14 +277,9 @@ describe("Document Annotations Component", () => {
   });
 
   it("Mark all empty as missing button should show how many empty labels are in the annotation set", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     const emptyLabels = annotationSet.labels.filter(
       (label) => label.annotations.length === 0
@@ -409,12 +298,7 @@ describe("Document Annotations Component", () => {
       .fn()
       .mockName("markAnnotationsAsMissing");
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
       .find(".action-buttons .all-missing .missing-btn")
@@ -426,12 +310,7 @@ describe("Document Annotations Component", () => {
   });
 
   it("Accept all empty button should always be visible", async () => {
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     expect(
       await wrapper
@@ -441,18 +320,13 @@ describe("Document Annotations Component", () => {
   });
 
   it("Accept all button should show how many unrevised/unaccepted annotations are in the annotation set", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const labels = annotationSet.labels;
     const annotations = labels.flatMap((label) => {
       return label.annotations;
     });
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     const pendingAnnotations = annotations.filter((ann) => !ann.revised);
 
@@ -467,12 +341,7 @@ describe("Document Annotations Component", () => {
   it("Clicking the 'accept all empty' button should send the request to the endpoint", async () => {
     const updateAnnotations = jest.fn().mockName("updateMultipleAnnotations");
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
+    const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
       .find(".action-buttons .accept-all .accept-all-btn")
@@ -484,19 +353,13 @@ describe("Document Annotations Component", () => {
   });
 
   it("Missing annotations, buttons and edit options for annotations do not appear in public documents", async () => {
-    const annotationSet = store.state.document.annotationSets[0];
+    const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = label.annotations[0];
+    const wrapper = render(DocumentAnnotations, false);
 
-    const wrapper = mount(DocumentAnnotations, {
-      store,
-      mocks: {
-        $t,
-      },
-    });
-
-    await store.dispatch("document/setPublicView", true);
-    await store.dispatch("document/setMissingAnnotations", []);
+    await dispatch("document/setPublicView", true);
+    await dispatch("document/setMissingAnnotations", []);
 
     const markAllMissingButton = await wrapper.findAll(
       ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .all-missing .all-missing-btn"
@@ -524,14 +387,15 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
 
-    expect(await store.state.document.missingAnnotations.length).toBe(0);
+    expect(await getData("document").missingAnnotations.length).toBe(0);
     expect(markAllMissingButton.exists()).toBe(false);
     expect(acceptAllButton.exists()).toBe(false);
     await annotationRow.trigger("mouseenter");
     expect(missingButton.exists()).toBe(false);
     expect(acceptButton.exists()).toBe(false);
     expect(declineButton.exists()).toBe(false);
-    expect(await store.state.selection.elementSelected).not.toEqual(
+
+    expect(await getData("selection").elementSelected).not.toEqual(
       annotation.id
     );
   });
