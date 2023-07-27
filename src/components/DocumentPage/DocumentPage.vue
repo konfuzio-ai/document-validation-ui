@@ -246,12 +246,7 @@ export default {
       );
     },
 
-    ...mapState("selection", [
-      "isSelecting",
-      "selectionFromBbox",
-      "spanSelection",
-      "selectedEntities",
-    ]),
+    ...mapState("selection", ["isSelecting", "selectedEntities"]),
     ...mapState("display", [
       "scale",
       "optimalScale",
