@@ -205,7 +205,7 @@ export default {
       if (!isToDelete) {
         const span = this.createSpan();
 
-        spans = [...annotation.span];
+        spans = [...this.annotation.span];
 
         spans[index] = span;
 
