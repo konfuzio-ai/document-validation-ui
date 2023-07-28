@@ -208,7 +208,10 @@ describe("Document Top Bar", () => {
   });
 
   it("Shows arrows to navigate between documents", async () => {
-    const wrapper = render(DocumentTopBar, false);
+    const wrapper = render(DocumentTopBar, false, null, {
+      previousDocument: { id: 1 },
+      nextDocument: { id: 3 },
+    });
 
     expect(
       await wrapper
@@ -217,7 +220,7 @@ describe("Document Top Bar", () => {
     ).toBe(true);
   });
 
-  it("Arrows are disabled if there are no documents to navigate to", async () => {
+  it("Arrows are not visible if there are no documents to navigate to", async () => {
     const wrapper = render(
       DocumentTopBar,
       false,
@@ -231,7 +234,7 @@ describe("Document Top Bar", () => {
     expect(
       await wrapper
         .findComponent(".center-bar-components .navigation-arrow")
-        .classes()
-    ).toContain("navigation-disabled");
+        .exists()
+    ).toBe(false);
   });
 });
