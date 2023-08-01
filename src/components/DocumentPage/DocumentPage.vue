@@ -411,6 +411,9 @@ export default {
           ann.original.offset_string === entityToAdd.original.offset_string
       );
 
+      // reset the selection so that we don't have a drawn rectangle when editing based on entities
+      this.endSelection();
+
       if (found) {
         this.newAnnotation = [
           ...this.newAnnotation.filter(
