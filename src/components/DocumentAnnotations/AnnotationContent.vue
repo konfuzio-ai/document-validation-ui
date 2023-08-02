@@ -26,6 +26,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
+import { isElementArray } from "../../utils/utils";
 
 /**
  * This component is responsible for managing filled annotations.
@@ -95,14 +96,17 @@ export default {
       // one was selected before so we set the state to the previous one (like a cancel)
 
       if (
+        !newAnnotation &&
         oldAnnotation &&
-        oldAnnotation.id === this.annotation.id &&
-        oldAnnotation.index === this.spanIndex
+        oldAnnotation.id === this.annotation.id
       ) {
         this.handleCancel(true);
+      } else if (newAnnotation && newAnnotation.id === this.annotation.id) {
+        this.handleCancel();
       }
     },
   },
+
   methods: {
     setText(text) {
       this.$refs.contentEditable.textContent = text;
@@ -196,28 +200,29 @@ export default {
 
       let spans = [];
 
-      // Validate if we are deleting an Annotation that it's not multi-lined
+      // Validate if we are deleting an Annotation that is not multi-lined
       let isToDelete =
         this.annotationText.length === 0 &&
         (!isElementArray(this.annotation.span) ||
           this.annotation.span.length === 1);
 
       if (!isToDelete) {
-        const span = this.createSpan();
-
-        spans = [...this.annotation.span];
-
-        spans[index] = span;
-
         if (this.annotationText.length === 0) {
+          spans = [...this.annotation.span];
+          spans[index] = this.spanSelection;
           spans.splice(index, 1);
+        } else {
+          const span = this.createSpan();
+          spans.push(span);
         }
       }
+
       // API call handled in parent component - AnnotationRow
       this.$emit("save-annotation-changes", spans, isToDelete);
     },
-
     createSpan() {
+      if (this.annotationText.length === 0) return;
+
       return {
         offset_string: this.annotationText,
         page_index: this.span.page_index,
