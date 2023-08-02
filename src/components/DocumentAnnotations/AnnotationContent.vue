@@ -82,11 +82,7 @@ export default {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
     },
     annotationText() {
-      if (this.isAnnotationBeingEdited) {
-        return this.$refs.contentEditable.textContent.trim();
-      } else {
-        return this.span.offset_string;
-      }
+      return this.$refs.contentEditable.textContent.trim();
     },
   },
 
@@ -104,6 +100,10 @@ export default {
       } else if (newAnnotation && newAnnotation.id === this.annotation.id) {
         this.handleCancel();
       }
+    },
+    span() {
+      // span content changed, ex. from click on entity
+      this.setText(this.span.offset_string);
     },
   },
 
