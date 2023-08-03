@@ -206,6 +206,7 @@ export default {
       let spans = [];
 
       // Validate if we are deleting an Annotation that is not multi-lined
+      // by deleting the content instead of declining
       let isToDelete =
         this.annotationText.length === 0 &&
         (!isElementArray(this.annotation.span) ||
@@ -213,6 +214,8 @@ export default {
 
       if (!isToDelete) {
         if (this.annotationText.length === 0) {
+          // In annotations that have multiple lines
+          // remove only the deleted line from the annotation
           spans = [...this.annotation.span];
           spans[index] = this.spanSelection;
           spans.splice(index, 1);

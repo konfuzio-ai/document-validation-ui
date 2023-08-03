@@ -444,6 +444,7 @@ export default {
     handleSaveChanges(decline) {
       if (this.publicView || this.isDocumentReviewed) return;
 
+      // Verify if we are editing a filled or empty annotation
       if (
         this.annotation &&
         (this.showAcceptButton() ||
