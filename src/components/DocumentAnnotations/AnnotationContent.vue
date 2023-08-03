@@ -97,7 +97,12 @@ export default {
         oldAnnotation.id === this.annotation.id
       ) {
         this.handleCancel(true);
-      } else if (newAnnotation && newAnnotation.id === this.annotation.id) {
+      } else if (
+        newAnnotation &&
+        oldAnnotation &&
+        newAnnotation.id === this.annotation.id &&
+        newAnnotation.id !== oldAnnotation.id
+      ) {
         this.handleCancel();
       }
     },
