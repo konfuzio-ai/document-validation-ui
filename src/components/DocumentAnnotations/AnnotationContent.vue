@@ -196,37 +196,15 @@ export default {
         event.preventDefault();
       }
 
-      let index;
-      if (this.editAnnotation && this.editAnnotation.index) {
-        index = this.editAnnotation.index;
-      } else {
-        index = this.spanIndex;
-      }
-
-      let spans = [];
-
-      // Validate if we are deleting an Annotation that is not multi-lined
-      // by deleting the content instead of declining
-      let isToDelete =
+      // Validate if we are declining an Annotation that is not multi-lined
+      // by deleting the content instead of clicking the 'decline' button
+      let isToDecline =
         this.annotationText.length === 0 &&
         (!isElementArray(this.annotation.span) ||
           this.annotation.span.length === 1);
 
-      if (!isToDelete) {
-        if (this.annotationText.length === 0) {
-          // In annotations that have multiple lines
-          // remove only the deleted line from the annotation
-          spans = [...this.annotation.span];
-          spans[index] = this.spanSelection;
-          spans.splice(index, 1);
-        } else {
-          const span = this.createSpan();
-          spans.push(span);
-        }
-      }
-
       // API call handled in parent component - AnnotationRow
-      this.$emit("save-annotation-changes", spans, isToDelete);
+      this.$emit("save-annotation-changes", isToDecline);
     },
     createSpan() {
       if (this.annotationText.length === 0) return;

@@ -56,7 +56,7 @@
               :label="label"
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
-              @save-annotation-changes="saveAnnotationChanges"
+              @save-annotation-changes="handleSaveChanges"
             />
           </div>
         </div>
@@ -513,7 +513,7 @@ export default {
       let storeAction; // if it will be 'delete' or 'patch'
 
       // Verify if we delete the entire Annotation or a part of the text
-      if (isToDecline) {
+      if (isToDecline || spans.length === 0) {
         storeAction = "document/deleteAnnotation";
       } else {
         // Editing the Annotation
