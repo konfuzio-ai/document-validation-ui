@@ -246,12 +246,7 @@ export default {
       );
     },
 
-    ...mapState("selection", [
-      "isSelecting",
-      "selectionFromBbox",
-      "spanSelection",
-      "selectedEntities",
-    ]),
+    ...mapState("selection", ["isSelecting", "selectedEntities"]),
     ...mapState("display", [
       "scale",
       "optimalScale",
@@ -415,6 +410,9 @@ export default {
           ann.scaled.width === entityToAdd.scaled.width &&
           ann.original.offset_string === entityToAdd.original.offset_string
       );
+
+      // reset the selection so that we don't have a drawn rectangle when editing based on entities
+      this.endSelection();
 
       if (found) {
         this.newAnnotation = [

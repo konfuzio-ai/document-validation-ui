@@ -72,11 +72,18 @@ const actions = {
   },
 
   endSelection: ({ commit, state }, end) => {
-    const xDiff = Math.abs(state.selection.start.x - end.x);
-    const yDiff = Math.abs(state.selection.start.y - end.y);
-    // if start and end points are the same, or if we have a selection smaller than 5x5,
+    let xDiff;
+    let yDiff;
+
+    if (end) {
+      xDiff = Math.abs(state.selection.start.x - end.x);
+      yDiff = Math.abs(state.selection.start.y - end.y);
+    }
+
+    // if "end" is not provided, start and end points are the same, or if we have a selection smaller than 5x5,
     // just reset
     if (
+      !end ||
       (yDiff <= 5 && xDiff <= 5) ||
       (state.selection.start.x === end.x && state.selection.start.y == end.y)
     ) {

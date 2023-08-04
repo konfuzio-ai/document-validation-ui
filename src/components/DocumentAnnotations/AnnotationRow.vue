@@ -56,7 +56,7 @@
               :label="label"
               :annotation-set="annotationSet"
               :is-hovered="hoveredAnnotation"
-              @save-annotation-changes="saveAnnotationChanges"
+              @save-annotation-changes="handleSaveChanges"
             />
           </div>
         </div>
@@ -196,7 +196,6 @@ export default {
         this.isAnnotationInEditMode(this.annotationId())
       );
     },
-
     isAnnotation() {
       return (
         this.annotation &&
@@ -286,7 +285,7 @@ export default {
         this.isLoading = true;
       }
     },
-    spanSelection(newValue, oldValue) {
+    spanSelection(newValue) {
       // check if spanSelection has new value from entity selection
       // to stop loading after the text appears in the field
       if (newValue) {
@@ -412,7 +411,7 @@ export default {
       }
     },
     showSaveButton() {
-      if (!this.editAnnotation || this.isLoading || !this.spanSelection) return;
+      if (!this.editAnnotation || this.isLoading) return;
 
       // Check if it's an Annotation or Empty Annotation
       if (this.isAnnotation) {
@@ -445,6 +444,7 @@ export default {
     handleSaveChanges(decline) {
       if (this.publicView || this.isDocumentReviewed) return;
 
+      // Verify if we are editing a filled or empty annotation
       if (
         this.annotation &&
         (this.showAcceptButton() ||
@@ -454,14 +454,24 @@ export default {
             this.editAnnotation.index
           ))
       ) {
-        // retrieve all edited spans from every AnnotationContent component
         let spans = [];
-        Object.keys(this.$refs).forEach((ref) => {
-          if (ref.includes(`span_${this.annotation.id}`)) {
-            // call child component createSpan method
-            spans.push(this.$refs[ref][0].createSpan());
-          }
-        });
+
+        if (!decline) {
+          Object.keys(this.$refs).forEach((ref) => {
+            if (ref.includes(`span_${this.annotation.id}`)) {
+              // call child component createSpan method
+              if (!this.$refs[ref][0]) return;
+
+              const span = this.$refs[ref][0].createSpan();
+
+              // only add span if it's not null (offset_string not empty)
+              if (span) {
+                spans.push(span);
+              }
+            }
+          });
+        }
+
         this.saveAnnotationChanges(spans, decline);
       } else if (
         !this.annotation &&
@@ -494,7 +504,7 @@ export default {
           this.closedTag = null;
         });
     },
-    saveAnnotationChanges(spans, isToDeleteOrDecline) {
+    saveAnnotationChanges(spans, isToDecline) {
       // This function deals with declining Annotations
       // or editing an Annotation or a part of it (if multi line)
       this.isLoading = true;
@@ -503,7 +513,7 @@ export default {
       let storeAction; // if it will be 'delete' or 'patch'
 
       // Verify if we delete the entire Annotation or a part of the text
-      if (isToDeleteOrDecline) {
+      if (isToDecline || spans.length === 0) {
         storeAction = "document/deleteAnnotation";
       } else {
         // Editing the Annotation
