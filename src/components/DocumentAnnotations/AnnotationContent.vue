@@ -81,9 +81,6 @@ export default {
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
     },
-    annotationText() {
-      return this.$refs.contentEditable.textContent.trim();
-    },
   },
 
   watch: {
@@ -115,6 +112,9 @@ export default {
   methods: {
     setText(text) {
       this.$refs.contentEditable.textContent = text;
+    },
+    getAnnotationText() {
+      return this.$refs.contentEditable.textContent.trim();
     },
     handleEditAnnotation(event) {
       if (this.publicView || this.isDocumentReviewed) return;
@@ -199,18 +199,19 @@ export default {
       // Validate if we are declining an Annotation that is not multi-lined
       // by deleting the content instead of clicking the 'decline' button
       let isToDecline =
-        this.annotationText.length === 0 &&
+        this.getAnnotationText().length === 0 &&
         (!isElementArray(this.annotation.span) ||
           this.annotation.span.length === 1);
 
       // API call handled in parent component - AnnotationRow
       this.$emit("save-annotation-changes", isToDecline);
     },
-    createSpan(annotationString) {
-      if (!annotationString) return;
+    createSpan() {
+      const annotationText = this.getAnnotationText();
+      if (!annotationText) return;
 
       return {
-        offset_string: annotationString,
+        offset_string: annotationText,
         page_index: this.span.page_index,
         x0: this.span.x0,
         x1: this.span.x1,

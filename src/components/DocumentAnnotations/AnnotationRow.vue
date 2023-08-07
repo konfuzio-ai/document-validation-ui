@@ -462,9 +462,8 @@ export default {
               const refElement = this.$refs[ref][0];
               // call child component createSpan method
               if (!refElement) return;
-              const annotationString = refElement.$el.outerText;
 
-              const span = refElement.createSpan(annotationString);
+              const span = refElement.createSpan();
 
               // only add span if it's not null (offset_string not empty)
               if (span) {
