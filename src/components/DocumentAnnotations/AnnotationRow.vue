@@ -459,10 +459,12 @@ export default {
         if (!decline) {
           Object.keys(this.$refs).forEach((ref) => {
             if (ref.includes(`span_${this.annotation.id}`)) {
+              const refElement = this.$refs[ref][0];
               // call child component createSpan method
-              if (!this.$refs[ref][0]) return;
+              if (!refElement) return;
+              const annotationString = refElement.$el.outerText;
 
-              const span = this.$refs[ref][0].createSpan();
+              const span = refElement.createSpan(annotationString);
 
               // only add span if it's not null (offset_string not empty)
               if (span) {

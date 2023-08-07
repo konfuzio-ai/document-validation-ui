@@ -206,11 +206,11 @@ export default {
       // API call handled in parent component - AnnotationRow
       this.$emit("save-annotation-changes", isToDecline);
     },
-    createSpan() {
-      if (this.annotationText.length === 0) return;
+    createSpan(annotationString) {
+      if (!annotationString) return;
 
       return {
-        offset_string: this.annotationText,
+        offset_string: annotationString,
         page_index: this.span.page_index,
         x0: this.span.x0,
         x1: this.span.x1,
