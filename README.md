@@ -1,3 +1,15 @@
+<p align="center">
+    <a href="https://www.npmjs.com/package/@konfuzio/document-validation-ui"><img alt="npm" src="https://img.shields.io/npm/v/%40konfuzio%2Fdocument-validation-ui" />
+</a>
+        <a href="https://github.com/konfuzio-ai/document-validation-ui"><img alt="GitHub release (with filter)" src="https://img.shields.io/github/v/release/konfuzio-ai/document-validation-ui?label=Github"/>
+</a>
+      <a href="https://www.npmjs.com/package/@konfuzio/document-validation-ui">
+        <img alt="npm" src="https://img.shields.io/npm/dm/%40konfuzio%2Fdocument-validation-ui"/>
+    </a>
+    <a href="https://github.com/konfuzio-ai/document-validation-ui"><img alt="License" src="https://img.shields.io/github/license/konfuzio-ai/document-validation-ui" />
+</a>
+</p>
+
 # Konfuzio Document Validation UI
 
 The Document Validation UI is a powerful JavaScript-based document library that's part of the Konfuzio SDK. It provides a slick out-of-the-box responsive UI that interacts with the Konfuzio Server to view, annotate and manipulate PDFs that can be embedded into any web project.
