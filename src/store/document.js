@@ -34,6 +34,7 @@ const state = {
   newAcceptedAnnotations: null,
   serverError: false,
   splittingSuggestions: null,
+  enableGroupingFeature: true,
 };
 
 const getters = {
@@ -247,14 +248,11 @@ const getters = {
     const labels = [];
     const processedAnnotationSets = annotationSets.map((annotationSet) => {
       const annotationSetLabels = annotationSet.labels.map((label) => {
-        // filter label
-        const filteredLabel = getters.annotationsInLabelFiltered(label);
-
         // add annotations to the document array
-        annotations.push(...filteredLabel.annotations);
-        labels.push(filteredLabel);
+        annotations.push(...label.annotations);
+        labels.push(label);
         // add labels to the labels array
-        return filteredLabel;
+        return label;
       });
       annotationSet.labels = annotationSetLabels;
       return annotationSet;
@@ -475,12 +473,12 @@ const getters = {
           annotationsWithPendingReview.push(annotation);
         });
       }
-    });
 
-    // Check if we have grouped annotations by same label
-    if (state.enableGroupingFeature && label.annotations.length < 2) {
-      return annotationsWithPendingReview.length - label.annotations.length;
-    }
+      // Check if we have grouped annotations by same label
+      if (state.enableGroupingFeature && label.annotations.length < 2) {
+        return annotationsWithPendingReview.length - label.annotations.length;
+      }
+    });
 
     return annotationsWithPendingReview.length;
   },

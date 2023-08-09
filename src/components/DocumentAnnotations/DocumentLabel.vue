@@ -1,6 +1,6 @@
 <template>
   <div class="label">
-    <div v-if="enableGroupingFeature && isMultipleAnnotations">
+    <div v-if="enableGroupingFeature && nonMultipleAnnotationsExtracted">
       <div class="label-group" @click.stop="toggleGroup">
         <div class="label-group-left">
           <b-icon
@@ -36,7 +36,7 @@
         />
       </div>
     </div>
-    <div v-else-if="!enableGroupingFeature && hasAnnotations">
+    <div v-else-if="hasAnnotations">
       <AnnotationRow
         v-for="annotation in label.annotations"
         :key="annotation.id"
@@ -76,7 +76,7 @@ export default {
   },
   data() {
     return {
-      isMultipleAnnotations: false,
+      nonMultipleAnnotationsExtracted: false,
       acceptedAnnotationsGroupCounter: 0,
       showAnnotationsGroup: false,
     };
@@ -133,8 +133,12 @@ export default {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;
     },
     updateValues() {
-      this.isMultipleAnnotations = this.label.annotations.length > 1;
-      if (this.isMultipleAnnotations) {
+      // more than 1 Annotation extracted for a non multiple Label
+      this.nonMultipleAnnotationsExtracted =
+        this.label.annotations.length > 1 &&
+        !this.label.has_multiple_top_candidates;
+
+      if (this.nonMultipleAnnotationsExtracted) {
         this.acceptedAnnotationsGroupCounter =
           this.numberOfAcceptedAnnotationsInLabel(this.label);
       }
