@@ -85,6 +85,7 @@ export default {
     ...mapState("document", [
       "sidebarAnnotationSelected",
       "enableGroupingFeature",
+      "hoveredAnnotationSet",
     ]),
     ...mapGetters("document", ["numberOfAcceptedAnnotationsInLabel"]),
     singleAnnotation() {
@@ -121,6 +122,16 @@ export default {
         }
       }
     },
+    hoveredAnnotationSet(newValue) {
+      // Check if there are some unrevised Annotations within the group
+      if (
+        newValue &&
+        newValue.type === "accept" &&
+        this.labelHasPendingAnnotations(newValue)
+      ) {
+        this.showAnnotationsGroup = true;
+      }
+    },
   },
   mounted() {
     this.updateValues();
@@ -142,6 +153,13 @@ export default {
         this.acceptedAnnotationsGroupCounter =
           this.numberOfAcceptedAnnotationsInLabel(this.label);
       }
+    },
+    labelHasPendingAnnotations(hoveredSet) {
+      if (!hoveredSet) return;
+
+      const found = this.label.annotations.find((ann) => !ann.revised);
+
+      return this.annotationSet.id === hoveredSet.annotationSet.id && found;
     },
   },
 };
