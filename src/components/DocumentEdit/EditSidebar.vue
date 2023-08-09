@@ -55,14 +55,15 @@
             :value="true"
             size="is-small"
             :disabled="!documentHasProposedSplit(selectedDocument)"
-          >
+          />
+          <div class="switch-info">
             <span class="switch-text">{{ $t("smart_split") }}</span>
             <span
               v-if="documentHasProposedSplit(selectedDocument)"
               class="new-badge"
               >{{ newText }}</span
             >
-          </b-switch>
+          </div>
         </b-field>
       </b-tooltip>
     </div>
