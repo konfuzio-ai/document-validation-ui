@@ -177,9 +177,8 @@ export default {
   },
   methods: {
     focusOnNextAnnotation() {
-      const annotations = Array.from(
-        document.getElementsByClassName("annotation-value")
-      );
+      const annotations = this.createArray("annotation-value");
+
       if (annotations[this.count]) {
         annotations[this.count].click();
       } else {
@@ -221,43 +220,81 @@ export default {
       }
     },
 
+    exitEditMode() {
+      this.count = 0;
+      this.$store.dispatch("document/resetEditAnnotation");
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/endLoading");
+    },
+
+    skipAnnotationsMarkedAsMissing(annotations, countChange) {
+      if (!annotations || !countChange) return;
+
+      if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
+        for (let i = this.count; i < annotations.length; i++) {
+          if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
+            break;
+          }
+
+          if (countChange === "add") {
+            this.count++;
+          } else {
+            this.count--;
+          }
+        }
+      }
+    },
+
+    focusedAnnotationIsMarkedAsMissing(annotations, index) {
+      return annotations[index].classList.value.includes("missing-annotation");
+    },
+
+    createArray(className) {
+      return Array.from(document.getElementsByClassName(className));
+    },
+
     keyDownHandler(event) {
       // only allow keyboard navigation if we are not in public view mode
       if (this.publicView || this.isDocumentReviewed) return;
 
-      // get out of edit mode and navigation
+      // Exit edit mode and navigation
       if (event.key === "Escape") {
-        this.count = 0;
-        this.$store.dispatch("document/resetEditAnnotation");
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("document/endLoading");
+        this.exitEditMode();
         return;
       }
 
       // Not allow starting edit mode with ArrowUp key
       if (event.key === "ArrowUp" && !this.isAnnotationBeingEdited) return;
+      // Get all the annotation elements
+      const annotations = this.createArray("annotation-value");
 
-      // Create an array from the elements selected
-      // for easier management of data
-      const annotations = Array.from(
-        document.getElementsByClassName("annotation-value")
-      );
+      // Get all the label elements, and the children
+      const labels = this.createArray("label");
+
+      const flatLabels = labels.flatMap((label) => {
+        const newArray = Array.from(label.children[0].children);
+        return newArray.map((element) => {
+          return element;
+        });
+      });
+
       // Get clicked element to get the index
-      const clickedAnnotations = Array.from(
-        document.getElementsByClassName("clicked")
-      );
+      const clickedAnnotations = this.createArray("clicked");
 
       // get index of currently active element
       const currentAnnIndex = annotations.findIndex(
         (el) => el === clickedAnnotations[0]
       );
 
+      const currentLabelRow = flatLabels[this.count];
+      const indexOfRow = flatLabels.indexOf(currentLabelRow);
+
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
+        // Check if we are focusing on the Finish Review button
         if (this.count >= annotations.length) {
-          const finishBtn = Array.from(
-            document.getElementsByClassName("finish-review-btn")
-          );
+          const finishBtn = this.createArray("finish-review-btn");
+
           finishBtn[0].focus();
           this.$store.dispatch("document/resetEditAnnotation");
           this.count = 0;
@@ -275,23 +312,21 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
-        // Skip missing annotations
-        if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
-          for (let i = this.count; i < annotations.length; i++) {
-            if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
-              break;
-            }
-            this.count++;
-          }
-        }
+        // Skip annotations marked as missing
+        this.skipAnnotationsMarkedAsMissing(annotations, "add");
 
         if (!annotations[this.count]) return;
 
+        const classes = Array.from(currentLabelRow.classList);
+
+        if (classes.includes("label-group") && !classes.includes("clicked")) {
+          currentLabelRow.click();
+        }
+        // this.count = indexOfRow;
         annotations[this.count].click();
 
         // scroll to current annotation if not empty
         this.scrollToFocusedAnnotationFromKeyHandler();
-
         this.count++;
       } else if (event.key === "ArrowUp") {
         // Check if the event happened on the first element from the array
@@ -310,16 +345,16 @@ export default {
         }
 
         // Skip missing annotations
-        if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
-          for (let i = this.count; i < annotations.length; i--) {
-            if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
-              break;
-            }
-            this.count--;
-          }
-        }
+        this.skipAnnotationsMarkedAsMissing(annotations, "subtract");
 
         if (!annotations[this.count]) return;
+
+        if (
+          currentLabelRow.classList[0].includes("label-group") &&
+          !currentLabelRow.classList[0].includes("clicked")
+        ) {
+          currentLabelRow.click();
+        }
 
         annotations[this.count].click();
 
@@ -356,10 +391,6 @@ export default {
           return;
         }
       }
-    },
-
-    focusedAnnotationIsMarkedAsMissing(annotations, index) {
-      return annotations[index].classList.value.includes("missing-annotation");
     },
 
     markAnnotationsAsMissing(label, labelSet, annotationSet, markAllMissing) {

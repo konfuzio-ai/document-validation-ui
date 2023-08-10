@@ -1,7 +1,10 @@
 <template>
   <div class="label">
     <div v-if="enableGroupingFeature && nonMultipleAnnotationsExtracted">
-      <div class="label-group" @click.stop="toggleGroup">
+      <div
+        :class="['label-group', showAnnotationsGroup && 'clicked']"
+        @click.stop="toggleGroup"
+      >
         <div class="label-group-left">
           <b-icon
             :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
