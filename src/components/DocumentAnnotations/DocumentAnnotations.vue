@@ -17,7 +17,7 @@
       <EmptyState />
     </div>
 
-    <div v-else :class="['annotation-set-list']">
+    <div v-else ref="annotationList" :class="['annotation-set-list']">
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
         class="annotation-set-group"
@@ -162,7 +162,6 @@ export default {
       }
     },
     acceptAnnotation(newValue, oldValue) {
-      // TODO: rework this to be more generic
       if (!newValue && oldValue) {
         this.focusOnNextAnnotation();
         this.jumpToNextAnnotation = false;
@@ -177,7 +176,7 @@ export default {
   },
   methods: {
     focusOnNextAnnotation() {
-      const annotations = this.createArray("annotation-value");
+      const annotations = this.createArray("keyboard-nav");
 
       if (annotations[this.count]) {
         annotations[this.count].click();
@@ -227,30 +226,10 @@ export default {
       this.$store.dispatch("document/endLoading");
     },
 
-    skipAnnotationsMarkedAsMissing(annotations, countChange) {
-      if (!annotations || !countChange) return;
-
-      if (this.focusedAnnotationIsMarkedAsMissing(annotations, this.count)) {
-        for (let i = this.count; i < annotations.length; i++) {
-          if (!this.focusedAnnotationIsMarkedAsMissing(annotations, i)) {
-            break;
-          }
-
-          if (countChange === "add") {
-            this.count++;
-          } else {
-            this.count--;
-          }
-        }
-      }
-    },
-
-    focusedAnnotationIsMarkedAsMissing(annotations, index) {
-      return annotations[index].classList.value.includes("missing-annotation");
-    },
-
     createArray(className) {
-      return Array.from(document.getElementsByClassName(className));
+      return Array.from(
+        this.$refs.annotationList.getElementsByClassName(className)
+      );
     },
 
     keyDownHandler(event) {
@@ -266,28 +245,15 @@ export default {
       // Not allow starting edit mode with ArrowUp key
       if (event.key === "ArrowUp" && !this.isAnnotationBeingEdited) return;
       // Get all the annotation elements
-      const annotations = this.createArray("annotation-value");
-
-      // Get all the label elements, and the children
-      const labels = this.createArray("label");
-
-      const flatLabels = labels.flatMap((label) => {
-        const newArray = Array.from(label.children[0].children);
-        return newArray.map((element) => {
-          return element;
-        });
-      });
+      let annotations = this.createArray("keyboard-nav");
 
       // Get clicked element to get the index
-      const clickedAnnotations = this.createArray("clicked");
+      const clickedAnnotations = this.createArray("clicked-ann");
 
       // get index of currently active element
       const currentAnnIndex = annotations.findIndex(
         (el) => el === clickedAnnotations[0]
       );
-
-      const currentLabelRow = flatLabels[this.count];
-      const indexOfRow = flatLabels.indexOf(currentLabelRow);
 
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
@@ -312,22 +278,24 @@ export default {
           this.count = currentAnnIndex + 1;
         }
 
-        // Skip annotations marked as missing
-        this.skipAnnotationsMarkedAsMissing(annotations, "add");
-
-        if (!annotations[this.count]) return;
-
-        const classes = Array.from(currentLabelRow.classList);
-
-        if (classes.includes("label-group") && !classes.includes("clicked")) {
-          currentLabelRow.click();
+        const nextElement = annotations[this.count];
+        if (nextElement.className.includes("label-group")) {
+          // open group and then click on annotation
+          // index is the same since group is removed from keyboard nav
+          nextElement.click();
+          this.$nextTick(() => {
+            annotations = this.createArray("keyboard-nav");
+            annotations[this.count].click();
+            this.scrollToFocusedAnnotationFromKeyHandler();
+            this.count++;
+          });
+        } else if (annotations[this.count]) {
+          annotations[this.count].click();
+          this.scrollToFocusedAnnotationFromKeyHandler();
+          this.count++;
         }
-        // this.count = indexOfRow;
-        annotations[this.count].click();
 
         // scroll to current annotation if not empty
-        this.scrollToFocusedAnnotationFromKeyHandler();
-        this.count++;
       } else if (event.key === "ArrowUp") {
         // Check if the event happened on the first element from the array
         // If so, reset count to 0
@@ -344,24 +312,27 @@ export default {
           this.count = currentAnnIndex - 1;
         }
 
-        // Skip missing annotations
-        this.skipAnnotationsMarkedAsMissing(annotations, "subtract");
-
-        if (!annotations[this.count]) return;
-
-        if (
-          currentLabelRow.classList[0].includes("label-group") &&
-          !currentLabelRow.classList[0].includes("clicked")
-        ) {
-          currentLabelRow.click();
+        const previousElement = annotations[this.count];
+        if (previousElement.className.includes("label-group")) {
+          // open group and then click on annotation
+          // index is the same since group is removed from keyboard nav
+          previousElement.click();
+          this.$nextTick(() => {
+            annotations = this.createArray("keyboard-nav");
+            // since we are going backwards, we need to go to the last annotation of group
+            const currentAnnIndex = annotations.findIndex(
+              (el) => el === clickedAnnotations[0]
+            );
+            this.count = currentAnnIndex - 1;
+            annotations[this.count].click();
+            this.scrollToFocusedAnnotationFromKeyHandler();
+            this.count--;
+          });
+        } else if (annotations[this.count]) {
+          annotations[this.count].click();
+          this.scrollToFocusedAnnotationFromKeyHandler();
+          this.count--;
         }
-
-        annotations[this.count].click();
-
-        // scroll to current annotation if not empty
-        this.scrollToFocusedAnnotationFromKeyHandler();
-
-        this.count--;
       } else {
         // Check for ENTER or DELETE
         // Accept annotation

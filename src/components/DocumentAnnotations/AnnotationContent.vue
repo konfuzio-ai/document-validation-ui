@@ -6,12 +6,13 @@
       ref="contentEditable"
       :class="[
         'annotation-value',
+        'keyboard-nav',
         isLoading && 'saving-changes',
         showActionError &&
           editAnnotation &&
           editAnnotation.id === annotation.id &&
           'error-editing',
-        isAnnotationBeingEdited && 'clicked',
+        isAnnotationBeingEdited && 'clicked-ann',
       ]"
       role="textbox"
       :contenteditable="isAnnotationBeingEdited"

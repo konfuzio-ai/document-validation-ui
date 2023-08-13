@@ -2,7 +2,7 @@
   <div class="label">
     <div v-if="enableGroupingFeature && nonMultipleAnnotationsExtracted">
       <div
-        :class="['label-group', showAnnotationsGroup && 'clicked']"
+        :class="['label-group', !showAnnotationsGroup && 'keyboard-nav']"
         @click.stop="toggleGroup"
       >
         <div class="label-group-left">
