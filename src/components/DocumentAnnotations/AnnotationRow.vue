@@ -352,12 +352,8 @@ export default {
           return label.annotations;
         });
 
-      // Check if there are no annotations OR if there are annotations for the same label (grouped)
-      if (
-        annotations.length === 0 ||
-        (this.label.annotations.length > 1 && this.enableGroupingFeature)
-      )
-        return;
+      // Check if there are no annotations
+      if (annotations.length === 0) return;
 
       const found = annotations.find(
         (ann) => ann.id === this.annotation.id && !ann.revised

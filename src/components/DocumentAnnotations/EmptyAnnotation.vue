@@ -11,8 +11,9 @@
           editAnnotation.id === emptyAnnotationId() &&
           'error-editing',
         !isEmptyAnnotationEditable() && !isMissingAnnotation && 'label-empty',
-        isAnnotationBeingEdited() && 'clicked',
+        isAnnotationBeingEdited() && 'clicked-ann',
         isMissingAnnotation && 'missing-annotation',
+        !isMissingAnnotation && 'keyboard-nav',
       ]"
       :contenteditable="isEmptyAnnotationEditable()"
       @keypress.enter="saveEmptyAnnotationChanges"

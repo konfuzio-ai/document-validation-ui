@@ -1,7 +1,10 @@
 <template>
   <div class="label">
-    <div v-if="enableGroupingFeature && isMultipleAnnotations">
-      <div class="label-group" @click.stop="toggleGroup">
+    <div v-if="enableGroupingFeature && nonMultipleAnnotationsExtracted">
+      <div
+        :class="['label-group', !showAnnotationsGroup && 'keyboard-nav']"
+        @click.stop="toggleGroup"
+      >
         <div class="label-group-left">
           <b-icon
             :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
@@ -36,7 +39,7 @@
         />
       </div>
     </div>
-    <div v-else-if="!enableGroupingFeature && hasAnnotations">
+    <div v-else-if="hasAnnotations">
       <AnnotationRow
         v-for="annotation in label.annotations"
         :key="annotation.id"
@@ -76,7 +79,7 @@ export default {
   },
   data() {
     return {
-      isMultipleAnnotations: false,
+      nonMultipleAnnotationsExtracted: false,
       acceptedAnnotationsGroupCounter: 0,
       showAnnotationsGroup: false,
     };
@@ -85,6 +88,7 @@ export default {
     ...mapState("document", [
       "sidebarAnnotationSelected",
       "enableGroupingFeature",
+      "hoveredAnnotationSet",
     ]),
     ...mapGetters("document", ["numberOfAcceptedAnnotationsInLabel"]),
     singleAnnotation() {
@@ -121,6 +125,16 @@ export default {
         }
       }
     },
+    hoveredAnnotationSet(newValue) {
+      // Check if there are some unrevised Annotations within the group
+      if (
+        newValue &&
+        newValue.type === "accept" &&
+        this.labelHasPendingAnnotations(newValue)
+      ) {
+        this.showAnnotationsGroup = true;
+      }
+    },
   },
   mounted() {
     this.updateValues();
@@ -133,11 +147,22 @@ export default {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;
     },
     updateValues() {
-      this.isMultipleAnnotations = this.label.annotations.length > 1;
-      if (this.isMultipleAnnotations) {
+      // more than 1 Annotation extracted for a non multiple Label
+      this.nonMultipleAnnotationsExtracted =
+        this.label.annotations.length > 1 &&
+        !this.label.has_multiple_top_candidates;
+
+      if (this.nonMultipleAnnotationsExtracted) {
         this.acceptedAnnotationsGroupCounter =
           this.numberOfAcceptedAnnotationsInLabel(this.label);
       }
+    },
+    labelHasPendingAnnotations(hoveredSet) {
+      if (!hoveredSet) return;
+
+      const found = this.label.annotations.find((ann) => !ann.revised);
+
+      return this.annotationSet.id === hoveredSet.annotationSet.id && found;
     },
   },
 };

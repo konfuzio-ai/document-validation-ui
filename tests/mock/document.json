@@ -201,6 +201,41 @@
           "has_multiple_top_candidates": false,
           "annotations": [
             {
+              "id": 509286,
+              "document": 1369630,
+              "offset_string": "13.07.",
+              "offset_string_original": "13.07.",
+              "translated_string": null,
+              "normalized": "0000-07-13",
+              "confidence": 0.82,
+              "is_correct": false,
+              "revised": false,
+              "origin": "extraction",
+              "created_by": null,
+              "revised_by": null,
+              "span": [
+                {
+                  "x0": 172.764,
+                  "y0": 481.464,
+                  "x1": 196.0056,
+                  "y1": 491.5368,
+                  "page_index": 0,
+                  "start_offset": 1926,
+                  "end_offset": 1932,
+                  "offset_string": "13.07.",
+                  "offset_string_original": "13.07."
+                }
+              ],
+              "selection_bbox": {
+                "x0": 172.764,
+                "y0": 481.464,
+                "x1": 196.0056,
+                "y1": 491.5368,
+                "page_index": 0
+              },
+              "custom_offset_string": false
+            },
+            {
               "id": 509277,
               "document": 1369630,
               "offset_string": "13.07.2016",
@@ -627,43 +662,7 @@
           "api_name": "Datum",
           "description": "",
           "has_multiple_top_candidates": false,
-          "annotations": [
-            {
-              "id": 509286,
-              "document": 1369630,
-              "offset_string": "13.07.",
-              "offset_string_original": "13.07.",
-              "translated_string": null,
-              "normalized": "0000-07-13",
-              "confidence": 0.82,
-              "is_correct": false,
-              "revised": false,
-              "origin": "extraction",
-              "created_by": null,
-              "revised_by": null,
-              "span": [
-                {
-                  "x0": 172.764,
-                  "y0": 481.464,
-                  "x1": 196.0056,
-                  "y1": 491.5368,
-                  "page_index": 0,
-                  "start_offset": 1926,
-                  "end_offset": 1932,
-                  "offset_string": "13.07.",
-                  "offset_string_original": "13.07."
-                }
-              ],
-              "selection_bbox": {
-                "x0": 172.764,
-                "y0": 481.464,
-                "x1": 196.0056,
-                "y1": 491.5368,
-                "page_index": 0
-              },
-              "custom_offset_string": false
-            }
-          ]
+          "annotations": []
         },
         {
           "id": 89,
