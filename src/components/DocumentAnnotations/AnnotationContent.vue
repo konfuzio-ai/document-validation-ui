@@ -95,13 +95,6 @@ export default {
         oldAnnotation.id === this.annotation.id
       ) {
         this.handleCancel(true);
-      } else if (
-        newAnnotation &&
-        oldAnnotation &&
-        newAnnotation.id === this.annotation.id &&
-        newAnnotation.id !== oldAnnotation.id
-      ) {
-        this.handleCancel();
       }
     },
     span() {
@@ -174,9 +167,6 @@ export default {
     handleCancel(wasOutsideClick = false) {
       if (wasOutsideClick) {
         this.setText(this.span.offset_string);
-      } else {
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("document/endLoading");
       }
 
       this.isLoading = false;
