@@ -85,16 +85,11 @@ export default {
   },
 
   watch: {
-    editAnnotation(newAnnotation, oldAnnotation) {
+    isAnnotationBeingEdited(newState, oldState) {
       // verify if new annotation in edit mode is not this one and if this
       // one was selected before so we set the state to the previous one (like a cancel)
-
-      if (
-        !newAnnotation &&
-        oldAnnotation &&
-        oldAnnotation.id === this.annotation.id
-      ) {
-        this.handleCancel(true);
+      if (!newState && oldState) {
+        this.handleCancel();
       }
     },
     span() {
@@ -164,11 +159,8 @@ export default {
         }
       }
     },
-    handleCancel(wasOutsideClick = false) {
-      if (wasOutsideClick) {
-        this.setText(this.span.offset_string);
-      }
-
+    handleCancel() {
+      this.setText(this.span.offset_string);
       this.isLoading = false;
       if (this.$refs.contentEditable) {
         this.$refs.contentEditable.blur();
