@@ -399,4 +399,32 @@ describe("Document Annotations Component", () => {
       annotation.id
     );
   });
+
+  it("Expands and hides grouped annotations dropdown when clicking Label group name", async () => {
+    const annotationSet = getData("document").annotationSets[1];
+    const label = annotationSet.labels[0];
+
+    const wrapper = render(
+      DocumentLabel,
+      true,
+      { label: label, annotationSet: annotationSet },
+      {
+        showAnnotationsGroup: false,
+        nonMultipleAnnotationsExtracted: true,
+        acceptedAnnotationsGroupCounter: 0,
+      }
+    );
+
+    await wrapper.findAll(".label .label-group").trigger("click");
+
+    expect(
+      await wrapper.findComponent(" .label-group-annotation-list").exists()
+    ).toBe(true);
+
+    await wrapper.findAll(".label .label-group").trigger("click");
+
+    expect(
+      await wrapper.findComponent(" .label-group-annotation-list").exists()
+    ).toBe(false);
+  });
 });
