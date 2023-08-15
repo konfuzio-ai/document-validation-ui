@@ -104,6 +104,33 @@ export default {
       if (!this.splitMode) {
         return this.categoryName(this.selectedDocument.category);
       } else {
+        const missingCategory = this.updatedDocument.find(
+          (item) => !item.category
+        );
+
+        // if there is just 1 category in the project,
+        // and one or more sub-documents has no category,
+        // assign the only category by default
+        if (this.projectHasSingleCategory() && missingCategory) {
+          const updatedValuesForDocuments = this.updatedDocument.map(
+            (document) => {
+              if (!document.category && this.categories) {
+                document.category = this.categories[0].id;
+              }
+
+              return document;
+            }
+          );
+
+          // update the store state
+          // so that if the changes are saved the data sent to the API is updated
+          // instead of only handling the category name in this component
+          this.$store.dispatch(
+            "edit/setUpdatedDocument",
+            updatedValuesForDocuments
+          );
+        }
+
         const categoryName = this.categoryName(
           this.updatedDocument[this.index].category
         );

@@ -1,13 +1,15 @@
 <template>
   <section class="document-error-modal">
-    <b-modal v-model="isModalActive" :width="400">
+    <b-modal
+      v-model="isModalActive"
+      :width="400"
+      can-cancel="['x']"
+      :on-cancel="closeModal"
+    >
       <section class="modal-card-body">
         <div class="header">
           <div class="error-icon">
             <ErrorIcon class="icon" />
-          </div>
-          <div class="btn-container" type="button" @click="closeModal">
-            <b-icon icon="xmark" class="close-btn" size="is-small" />
           </div>
         </div>
         <div class="content">
