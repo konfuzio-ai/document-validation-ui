@@ -109,9 +109,18 @@ export default {
         !this.showAnnotationsGroup &&
         newSidebarAnnotationSelected
       ) {
+        let annotationSelected;
+
+        if (newSidebarAnnotationSelected.annotation) {
+          annotationSelected = newSidebarAnnotationSelected.annotation;
+        } else {
+          annotationSelected = newSidebarAnnotationSelected;
+        }
+
         const annotation = this.label.annotations.find(
-          (ann) => ann.id === newSidebarAnnotationSelected.id
+          (ann) => ann.id === annotationSelected.id
         );
+
         if (annotation) {
           this.showAnnotationsGroup = true;
           this.$store.dispatch("document/setSidebarAnnotationSelected", null);

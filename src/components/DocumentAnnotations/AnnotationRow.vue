@@ -227,19 +227,33 @@ export default {
   },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
-      if (
-        newSidebarAnnotationSelected &&
-        this.annotation &&
-        this.annotation.id === newSidebarAnnotationSelected.annotation.id
-      ) {
+      if (!newSidebarAnnotationSelected) return;
+
+      let annotationSelected;
+
+      if (newSidebarAnnotationSelected.annotation) {
+        annotationSelected = newSidebarAnnotationSelected.annotation;
+      } else {
+        annotationSelected = newSidebarAnnotationSelected;
+      }
+
+      if (this.annotation && this.annotation.id === annotationSelected.id) {
         clearTimeout(this.annotationAnimationTimeout);
+
+        let timeout;
+
+        if (!newSidebarAnnotationSelected.trigger) {
+          timeout = 600;
+        } else {
+          timeout = 1200;
+        }
 
         this.isSelected = true;
         // remove annotation selection after some time
         this.annotationAnimationTimeout = setTimeout(() => {
           this.$store.dispatch("document/setSidebarAnnotationSelected", null);
           this.isSelected = false;
-        }, 1500);
+        }, timeout);
 
         // Check if sidebarAnnotationSelected changed from a click or hover
         if (newSidebarAnnotationSelected.trigger === "click") {
