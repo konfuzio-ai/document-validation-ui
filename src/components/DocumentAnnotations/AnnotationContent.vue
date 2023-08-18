@@ -1,7 +1,6 @@
 <template>
   <div :id="annotation.id" ref="annotation" class="annotation">
     <span
-      v-if="!publicView || !isDocumentReviewed"
       :id="annotation.id"
       ref="contentEditable"
       :class="[

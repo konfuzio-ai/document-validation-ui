@@ -54,7 +54,7 @@
             position="is-bottom"
             class="right-aligned width-184"
           >
-            <span v-if="publicView && !isDocumentReviewed">
+            <span v-if="publicView">
               {{ $t("lite_mode") }}
             </span>
             <span v-else class="doc-reviewed">
@@ -63,12 +63,12 @@
             <b-icon
               :class="[
                 'info-icon is-small',
-                isDocumentReviewed && 'info-reviewed',
+                !publicView && isDocumentReviewed && 'info-reviewed',
               ]"
               icon="circle-info"
             />
             <template #content>
-              <div v-if="!isDocumentReviewed" class="read-only-details">
+              <div v-if="publicView" class="read-only-details">
                 {{ $t("limited_functionalities") }}
               </div>
               <div v-else class="read-only-details">

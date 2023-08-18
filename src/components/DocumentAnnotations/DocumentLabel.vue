@@ -15,14 +15,14 @@
           </div>
         </div>
         <div class="label-group-right">
-          <div class="label-annotations-pending">
+          <div class="label-annotations-pending" v-if="!publicView">
             {{
               `${
                 label.annotations.length - acceptedAnnotationsGroupCounter
               } ${$t("annotations_pending")}`
             }}
           </div>
-          <div class="label-annotations-accepted">
+          <div class="label-annotations-accepted" v-if="!publicView">
             {{
               `${acceptedAnnotationsGroupCounter} ${$t("annotations_accepted")}`
             }}
@@ -89,6 +89,7 @@ export default {
       "sidebarAnnotationSelected",
       "enableGroupingFeature",
       "hoveredAnnotationSet",
+      "publicView",
     ]),
     ...mapGetters("document", ["numberOfAcceptedAnnotationsInLabel"]),
     singleAnnotation() {
