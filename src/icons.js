@@ -17,6 +17,7 @@ import {
   faRepeat,
   faArrowLeft,
   faArrowRight,
+  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as Icons } from "@fortawesome/vue-fontawesome";
 
@@ -37,7 +38,8 @@ library.add(
   faScissors,
   faRepeat,
   faArrowLeft,
-  faArrowRight
+  faArrowRight,
+  faDownload
 );
 
 export default Icons;
