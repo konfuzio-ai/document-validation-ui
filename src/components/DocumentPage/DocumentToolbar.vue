@@ -27,7 +27,14 @@
         class="toolbar-divider"
       />
       <div class="icons icons-right">
-        <div class="fit-zoom icon" @click.prevent.stop="fitAuto">
+        <div
+          :class="[
+            'fit-zoom',
+            'icon',
+            currentPercentage === 100 && 'zoom-disabled',
+          ]"
+          @click.prevent.stop="fitAuto"
+        >
           <FitZoomIcon />
         </div>
         <div
@@ -67,7 +74,6 @@ export default {
   },
   data() {
     return {
-      defaultScale: null,
       currentPercentage: 100,
       maxPercentage: 500,
       defaultPercentage: 0.25,
@@ -101,8 +107,6 @@ export default {
     },
   },
   mounted() {
-    this.defaultScale = this.scale;
-
     if (this.selectedDocument) {
       if (this.documentCannotBeEdited(this.selectedDocument)) {
         this.editModeDisabled = true;
@@ -127,9 +131,8 @@ export default {
 
       // exit edit mode of Annotation if changing zoom during editing
       this.cancelAnnotationEditMode();
-
       this.currentPercentage += this.defaultPercentage * 100;
-      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
+      this.updateScale(this.scale + this.defaultPercentage);
     },
     zoomOut() {
       if (this.currentPercentage === this.defaultPercentage * 100) {
@@ -140,18 +143,15 @@ export default {
       this.cancelAnnotationEditMode();
 
       this.currentPercentage -= this.defaultPercentage * 100;
-      this.updateScale((this.defaultScale * this.currentPercentage) / 100);
+      this.updateScale(this.scale - this.defaultPercentage);
     },
     fitAuto() {
-      if (this.currentPercentage === 50 || !this.defaultScale) return;
-
       // exit edit mode of Annotation if changing zoom during editing
       this.cancelAnnotationEditMode();
 
-      // Always set to 50%
-      this.updateScale(this.defaultScale * this.fitPercentage);
-
-      this.currentPercentage = this.fitPercentage * 100;
+      // Always set to 100%
+      this.currentPercentage = 100;
+      this.$store.dispatch("display/updateFit", "width");
     },
     updateScale(scale) {
       this.$store.dispatch("display/updateFit", "custom").then(() => {

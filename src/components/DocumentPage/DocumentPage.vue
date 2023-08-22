@@ -247,11 +247,7 @@ export default {
     },
 
     ...mapState("selection", ["isSelecting", "selectedEntities"]),
-    ...mapState("display", [
-      "scale",
-      "optimalScale",
-      "categorizeModalIsActive",
-    ]),
+    ...mapState("display", ["scale", "categorizeModalIsActive"]),
     ...mapState("document", [
       "documentAnnotationSelected",
       "recalculatingAnnotations",
