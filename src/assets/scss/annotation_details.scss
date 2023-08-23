@@ -66,8 +66,11 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      border-bottom: 1px solid $low-opacity-white;
-      padding-bottom: 8px;
+
+      &:not(.tooltip-in-public-view) {
+        border-bottom: 1px solid $low-opacity-white;
+        padding-bottom: 8px;
+      }
 
       .value {
         color: $green;

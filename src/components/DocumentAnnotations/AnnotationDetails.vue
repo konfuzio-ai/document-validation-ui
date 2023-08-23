@@ -3,7 +3,6 @@
     :animated="false"
     :position="fromTable ? 'is-top' : 'is-bottom'"
     :class="[!fromTable && 'left-aligned', 'annotation-details']"
-    :active="!publicView"
   >
     <div :class="['label-icon', fromTable && 'is-small']">
       <div v-if="(created(annotation) || edited(annotation)) && !publicView">
@@ -68,7 +67,10 @@
         <div v-if="description" class="label-description">
           <span>{{ description }}</span>
         </div>
-        <div v-if="confidence(annotation)" class="confidence">
+        <div
+          v-if="confidence(annotation)"
+          :class="['confidence', publicView && 'tooltip-in-public-view']"
+        >
           <span>{{ $t("confidence") }}</span
           ><span
             :class="[
@@ -82,7 +84,7 @@
             >{{ Math.floor(confidence(annotation) * 100) / 100 }}</span
           >
         </div>
-        <div class="revision">
+        <div class="revision" v-if="!publicView">
           <div class="detail-icons">
             <div v-if="created(annotation) || edited(annotation)">
               <div
