@@ -31,7 +31,7 @@
           :class="[
             'fit-zoom',
             'icon',
-            currentPercentage === 100 && 'zoom-disabled',
+            currentPercentage === 50 && 'zoom-disabled',
           ]"
           @click.prevent.stop="fitAuto"
         >
@@ -149,9 +149,9 @@ export default {
       // exit edit mode of Annotation if changing zoom during editing
       this.cancelAnnotationEditMode();
 
-      // Always set to 100%
-      this.currentPercentage = 100;
-      this.$store.dispatch("display/updateFit", "width");
+      // Always set to 50%
+      this.currentPercentage = 50;
+      this.$store.dispatch("display/updateFit", "all");
     },
     updateScale(scale) {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
