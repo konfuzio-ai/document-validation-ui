@@ -22,7 +22,6 @@ const floor = (value, precision) => {
 
 const state = {
   scale: undefined,
-  optimalScale: undefined,
   fit: "width",
   currentPage: 1,
   optimalResolution: true,
@@ -202,6 +201,14 @@ const actions = {
         const autoScale = Math.min(pageWidthScale, pageHeightScale);
         commit("SET_SCALE", autoScale);
         break;
+      case "all": {
+        commit(
+          "SET_SCALE",
+          getters.pageWidthScale(elementsWidth, client.width, viewport.width) -
+            0.5
+        );
+        break;
+      }
       case "custom": {
         if (scale) {
           commit("SET_SCALE", scale);

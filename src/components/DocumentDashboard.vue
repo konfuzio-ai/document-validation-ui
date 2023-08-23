@@ -113,6 +113,11 @@ export default {
         this.onDocumentResize();
       }
     },
+    fit(newFit, oldFit) {
+      if (newFit !== oldFit) {
+        this.onDocumentResize();
+      }
+    },
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
