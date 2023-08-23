@@ -24,6 +24,16 @@
       display: none;
     }
 
+    .edit-mode-disabled,
+    .zoom-disabled {
+      opacity: 30%;
+
+      &:hover {
+        cursor: not-allowed !important;
+        background: inherit;
+      }
+    }
+
     .toolbar-divider {
       width: 1px;
       background-color: $grey-detail;
@@ -72,7 +82,6 @@
         padding: 7px;
         margin-right: 20px;
       }
-
       .icon {
         width: 32px;
         height: 32px;
@@ -83,13 +92,18 @@
           background: $low-opacity-white;
           border-radius: 4px;
         }
-        &.zoom-disabled {
-          opacity: 30%;
+      }
+    }
 
-          &:hover {
-            cursor: not-allowed !important;
-            background: inherit;
-          }
+    .download-file {
+      color: $toolbar-elements;
+
+      .is-active {
+        background: $low-opacity-white;
+        border-radius: 4px;
+
+        .icon:hover {
+          background: none;
         }
       }
     }

@@ -26,6 +26,28 @@
         v-if="!editMode && !publicView && !isDocumentReviewed"
         class="toolbar-divider"
       />
+
+      <div v-if="!editMode && !publicView" class="download-file icons">
+        <b-dropdown aria-role="list" position="is-top-right">
+          <template #trigger>
+            <b-icon icon="download" size="is-small" />
+          </template>
+
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="handleDownloadFile('original')"
+            >Original file</b-dropdown-item
+          >
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="handleDownloadFile('pdf')"
+            >PDF file</b-dropdown-item
+          >
+        </b-dropdown>
+      </div>
+
+      <div v-if="!editMode && !publicView" class="toolbar-divider" />
+
       <div class="icons icons-right">
         <div
           :class="[
@@ -63,6 +85,7 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
+import api from "../../api";
 
 export default {
   name: "DocumentToolbar",
@@ -157,6 +180,32 @@ export default {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
         this.$store.dispatch("display/updateScale", { scale });
       });
+    },
+    handleDownloadFile(fileType) {
+      let imageUrl;
+      const downloadTitle = this.selectedDocument.data_file_name;
+
+      if (fileType === "pdf") {
+        imageUrl = this.selectedDocument.file_url;
+      } else {
+        imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
+      }
+
+      return api
+        .makeImageRequest(imageUrl)
+        .then((myBlob) => {
+          console.log(myBlob);
+          const url = window.URL.createObjectURL(myBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("target", "_blank");
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => {
+          // TODO: show error message
+          console.log(error);
+        });
     },
     cancelAnnotationEditMode() {
       this.$store.dispatch("document/resetEditAnnotation");
