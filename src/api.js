@@ -72,4 +72,5 @@ export default {
   makeImageRequest,
   setAuthToken,
   setLocale,
+  IMG_REQUEST,
 };

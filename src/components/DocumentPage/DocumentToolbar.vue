@@ -27,26 +27,24 @@
         class="toolbar-divider"
       />
 
-      <div v-if="!editMode && !publicView" class="download-file icons">
+      <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right">
           <template #trigger>
-            <b-icon icon="download" size="is-small" />
+            <EyeIcon class="icon" />
           </template>
 
           <b-dropdown-item
             aria-role="listitem"
-            @click="handleDownloadFile('original')"
+            @click="handleViewFile('original')"
             >Original file</b-dropdown-item
           >
-          <b-dropdown-item
-            aria-role="listitem"
-            @click="handleDownloadFile('pdf')"
+          <b-dropdown-item aria-role="listitem" @click="handleViewFile('pdf')"
             >PDF file</b-dropdown-item
           >
         </b-dropdown>
       </div>
 
-      <div v-if="!editMode && !publicView" class="toolbar-divider" />
+      <div v-if="!publicView" class="toolbar-divider" />
 
       <div class="icons icons-right">
         <div
@@ -85,6 +83,7 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
+import EyeIcon from "../../assets/images/EyeIcon";
 import api from "../../api";
 
 export default {
@@ -94,6 +93,7 @@ export default {
     PlusIcon,
     MinusIcon,
     EditDocIcon,
+    EyeIcon,
   },
   data() {
     return {
@@ -181,9 +181,9 @@ export default {
         this.$store.dispatch("display/updateScale", { scale });
       });
     },
-    handleDownloadFile(fileType) {
+    handleViewFile(fileType) {
       let imageUrl;
-      const downloadTitle = this.selectedDocument.data_file_name;
+      const baseUrl = api.IMG_REQUEST.defaults.baseURL;
 
       if (fileType === "pdf") {
         imageUrl = this.selectedDocument.file_url;
@@ -191,21 +191,12 @@ export default {
         imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
 
-      return api
-        .makeImageRequest(imageUrl)
-        .then((myBlob) => {
-          console.log(myBlob);
-          const url = window.URL.createObjectURL(myBlob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("target", "_blank");
-          document.body.appendChild(link);
-          link.click();
-        })
-        .catch((error) => {
-          // TODO: show error message
-          console.log(error);
-        });
+      // Automatically open the image in a new tab
+      const link = document.createElement("a");
+      link.href = `${baseUrl}${imageUrl}`;
+      link.setAttribute("target", "_blank");
+      document.body.appendChild(link);
+      link.click();
     },
     cancelAnnotationEditMode() {
       this.$store.dispatch("document/resetEditAnnotation");
