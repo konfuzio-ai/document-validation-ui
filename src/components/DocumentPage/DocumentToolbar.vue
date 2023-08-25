@@ -35,10 +35,12 @@
 
           <b-dropdown-item
             aria-role="listitem"
-            @click="handleViewFile('original')"
+            @click="handleDownloadFile('original')"
             >Original file</b-dropdown-item
           >
-          <b-dropdown-item aria-role="listitem" @click="handleViewFile('pdf')"
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="handleDownloadFile('pdf')"
             >PDF file</b-dropdown-item
           >
         </b-dropdown>
@@ -179,7 +181,7 @@ export default {
         this.$store.dispatch("display/updateScale", { scale });
       });
     },
-    handleViewFile(fileType) {
+    handleDownloadFile(fileType) {
       let imageUrl;
       let fileName = this.getFileName(this.selectedDocument.data_file_name);
 
@@ -190,15 +192,25 @@ export default {
         imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
 
-      // Automatically open the image in a new tab
-      return api.makeImageRequest(imageUrl).then((myBlob) => {
-        const url = URL.createObjectURL(myBlob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      });
+      // Automatically download original or ocr files
+      return api
+        .makeImageRequest(imageUrl)
+        .then((myBlob) => {
+          const url = URL.createObjectURL(myBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_downloading_file"),
+          });
+          console.log(error);
+        });
     },
     getFileName(fileName) {
       return fileName.split(".").slice(0, -1).join(".");
