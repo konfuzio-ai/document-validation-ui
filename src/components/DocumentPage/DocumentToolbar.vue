@@ -30,7 +30,7 @@
       <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right">
           <template #trigger>
-            <EyeIcon class="icon" />
+            <b-icon icon="download" size="small" />
           </template>
 
           <b-dropdown-item
@@ -83,7 +83,6 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
-import EyeIcon from "../../assets/images/EyeIcon";
 import api from "../../api";
 
 export default {
@@ -93,7 +92,6 @@ export default {
     PlusIcon,
     MinusIcon,
     EditDocIcon,
-    EyeIcon,
   },
   data() {
     return {
@@ -183,20 +181,27 @@ export default {
     },
     handleViewFile(fileType) {
       let imageUrl;
-      const baseUrl = api.IMG_REQUEST.defaults.baseURL;
+      let fileName = this.getFileName(this.selectedDocument.data_file_name);
 
       if (fileType === "pdf") {
         imageUrl = this.selectedDocument.file_url;
+        fileName = `${fileName}_ocr`;
       } else {
         imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
 
       // Automatically open the image in a new tab
-      const link = document.createElement("a");
-      link.href = `${baseUrl}${imageUrl}`;
-      link.setAttribute("target", "_blank");
-      document.body.appendChild(link);
-      link.click();
+      return api.makeImageRequest(imageUrl).then((myBlob) => {
+        const url = URL.createObjectURL(myBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
+    },
+    getFileName(fileName) {
+      return fileName.split(".").slice(0, -1).join(".");
     },
     cancelAnnotationEditMode() {
       this.$store.dispatch("document/resetEditAnnotation");
