@@ -61,6 +61,9 @@ const makeImageRequest = (imageURL) => {
       })
       .then((myBlob) => {
         resolve(myBlob);
+      })
+      .catch((error) => {
+        reject(error);
       });
   });
 };
