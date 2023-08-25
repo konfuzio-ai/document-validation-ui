@@ -508,6 +508,7 @@
   .b-tooltip {
     height: 100%;
     align-items: center;
+
     .tooltip-content {
       background-color: $text-color !important;
 
@@ -782,6 +783,18 @@
 
       &:focus + .check {
         box-shadow: none !important;
+      }
+    }
+  }
+
+  .no-labels {
+    a {
+      color: (var(--primary-color));
+      text-decoration: underline;
+      font-weight: 500;
+
+      &:hover {
+        filter: brightness(0.8) contrast(160%) grayscale(0.4);
       }
     }
   }

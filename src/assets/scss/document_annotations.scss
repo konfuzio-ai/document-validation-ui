@@ -99,243 +99,259 @@
           line-height: 20px;
         }
       }
-    }
 
-    .labels {
-      .label {
-        .label-group {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid $grey-lightest;
-          min-height: 44px;
-          cursor: pointer;
-
-          .label-group-left {
+      .labels {
+        .label {
+          .label-group {
             display: flex;
             flex-direction: row;
-            padding-left: 28px;
-            color: $text-lighter;
+            justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid $grey-lightest;
+            min-height: 44px;
+            cursor: pointer;
 
-            .label-name {
-              padding-left: 20px;
-            }
-          }
-
-          .label-group-right {
-            display: flex;
-            flex-direction: row;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            padding-right: 16px;
-            cursor: default;
-
-            .label-annotations-pending {
-              padding: 0px 8px;
-              border-radius: 20px;
-              background: $grey-lighter-low-opacity;
+            .label-group-left {
+              display: flex;
+              flex-direction: row;
+              padding-left: 28px;
               color: $text-lighter;
-              margin-right: 4px;
+              align-items: center;
+
+              .label-name {
+                padding-left: 20px;
+              }
             }
 
-            .label-annotations-accepted {
-              padding: 0px 8px;
-              border-radius: 20px;
-              background: $green-low-opacity;
-              color: $green;
-            }
-          }
-        }
-
-        .label-group-annotation-list {
-          background-color: $grey-hover;
-
-          .annotation-row {
-            padding-left: 16px;
-          }
-        }
-
-        .label-name {
-          color: $text-lighter;
-          word-break: break-word;
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-        }
-
-        .annotation-row {
-          width: 100%;
-          border-bottom: 1px solid $grey-lightest;
-          transition: background-color 0.2s ease-out;
-          display: flex;
-          align-items: center;
-          padding-right: 5px;
-
-          .annotation-row-left {
-            flex: 1;
-            padding-left: 8px;
-            display: flex;
-            align-items: center;
-
-            .annotation-icon {
-              height: 40px;
-              padding: 0 15px;
-            }
-
-            .label-name {
-              padding: 10px 0;
-              padding-right: 4px;
-            }
-          }
-
-          .annotation-row-right {
-            width: 60%;
-            display: flex;
-            align-items: center;
-
-            .notification {
-              background-color: transparent;
-            }
-
-            .annotation-content {
-              width: 100%;
+            .label-group-right {
+              display: flex;
+              flex-direction: row;
+              font-weight: 400;
               font-size: 14px;
               line-height: 20px;
-              font-weight: 400;
+              padding-right: 16px;
+              cursor: default;
 
-              .annotation,
-              .empty-annotation {
-                min-height: 36px;
-                display: flex;
-                align-items: center;
+              .label-annotations-pending {
+                padding: 0px 8px;
+                border-radius: 20px;
+                background: $grey-lighter-low-opacity;
+                color: $text-lighter;
+                margin-right: 4px;
               }
 
-              .loading-container {
-                height: 20px;
-                display: flex;
-                align-items: center;
-
-                .loading-icon-size {
-                  width: 13px;
-                  height: 13px;
-                }
-              }
-
-              .spinner {
-                color: $grey;
-              }
-            }
-
-            .buttons-container {
-              display: flex;
-              gap: 8px;
-            }
-
-            .annotation-value {
-              display: inline-block;
-              color: $text;
-              padding: 0 8px;
-              border: none;
-              background-color: transparent;
-              inline-size: 100%;
-              overflow-wrap: break-word;
-              word-break: break-all;
-
-              &:focus {
-                outline: none;
-              }
-
-              &.label-empty {
-                font-weight: 500;
-                font-size: 14px;
-                color: $primary;
-
-                &.clicked-ann {
-                  font-weight: 400;
-                  color: $text-lighter;
-                }
+              .label-annotations-accepted {
+                padding: 0px 8px;
+                border-radius: 20px;
+                background: $green-low-opacity;
+                color: $green;
               }
             }
           }
 
-          .empty-annotation {
-            display: flex;
+          .label-group-annotation-list {
+            background-color: $grey-hover;
+
+            .annotation-row {
+              padding-left: 16px;
+            }
+          }
+
+          .label-name {
+            color: $text-lighter;
+            word-break: break-word;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 400;
+          }
+
+          .annotation-row {
             width: 100%;
-            justify-content: space-between;
-          }
+            border-bottom: 1px solid $grey-lightest;
+            transition: background-color 0.2s ease-out;
+            display: flex;
+            align-items: center;
+            padding-right: 5px;
 
-          &:hover,
-          &.selected {
-            background-color: $grey-lightest;
-          }
+            .annotation-row-left {
+              flex: 1;
+              padding-left: 8px;
+              display: flex;
+              align-items: center;
 
-          &.hovered-empty-labels {
-            background-color: $grey-lightest;
-            border-bottom-color: $grey-detail;
-          }
+              .annotation-icon {
+                height: 40px;
+                padding: 0 15px;
+              }
 
-          &.hovered-pending-annotations {
-            position: relative;
-            border-bottom-color: $primary;
+              .label-name {
+                padding: 10px 0;
+                padding-right: 4px;
+              }
+            }
 
-            &:before {
-              display: block;
-              content: "";
+            .annotation-row-right {
+              width: 60%;
+              display: flex;
+              align-items: center;
+
+              .notification {
+                background-color: transparent;
+              }
+
+              .annotation-content {
+                width: 100%;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 400;
+
+                .annotation,
+                .empty-annotation {
+                  min-height: 36px;
+                  display: flex;
+                  align-items: center;
+                }
+
+                .loading-container {
+                  height: 20px;
+                  display: flex;
+                  align-items: center;
+
+                  .loading-icon-size {
+                    width: 13px;
+                    height: 13px;
+                  }
+                }
+
+                .spinner {
+                  color: $grey;
+                }
+              }
+
+              .buttons-container {
+                display: flex;
+                gap: 8px;
+              }
+
+              .annotation-value {
+                display: inline-block;
+                color: $text;
+                padding: 0 8px;
+                border: none;
+                background-color: transparent;
+                inline-size: 100%;
+                overflow-wrap: break-word;
+                word-break: break-all;
+
+                &:focus {
+                  outline: none;
+                }
+
+                &.label-empty {
+                  font-weight: 500;
+                  font-size: 14px;
+                  color: $primary;
+
+                  &.clicked-ann {
+                    font-weight: 400;
+                    color: $text-lighter;
+                  }
+                }
+              }
+            }
+
+            .empty-annotation {
+              display: flex;
               width: 100%;
-              height: 100%;
-              background: $primary;
-              opacity: 0.1;
-              position: absolute;
-              top: 0;
-              left: 0;
-            }
-          }
-
-          &.editing {
-            background-color: $background;
-            border-bottom: 1px solid $primary;
-          }
-
-          .not-found-text {
-            color: $grey;
-            opacity: 0.3;
-          }
-
-          .saving-changes {
-            color: $grey;
-          }
-
-          .error-editing {
-            color: $red;
-            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-            transform: translate3d(0, 0, 0);
-          }
-
-          @keyframes shake {
-            10%,
-            90% {
-              transform: translate3d(-1px, 0, 0);
+              justify-content: space-between;
             }
 
-            20%,
-            80% {
-              transform: translate3d(2px, 0, 0);
+            &:hover,
+            &.selected {
+              background-color: $grey-lightest;
             }
 
-            30%,
-            50%,
-            70% {
-              transform: translate3d(-4px, 0, 0);
+            &.hovered-empty-labels {
+              background-color: $grey-lightest;
+              border-bottom-color: $grey-detail;
             }
 
-            40%,
-            60% {
-              transform: translate3d(4px, 0, 0);
+            &.hovered-pending-annotations {
+              position: relative;
+              border-bottom-color: $primary;
+
+              &:before {
+                display: block;
+                content: "";
+                width: 100%;
+                height: 100%;
+                background: $primary;
+                opacity: 0.1;
+                position: absolute;
+                top: 0;
+                left: 0;
+              }
+            }
+
+            &.editing {
+              background-color: $background;
+              border-bottom: 1px solid $primary;
+            }
+
+            .not-found-text {
+              color: $grey;
+              opacity: 0.3;
+            }
+
+            .saving-changes {
+              color: $grey;
+            }
+
+            .error-editing {
+              color: $red;
+              animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+              transform: translate3d(0, 0, 0);
+            }
+
+            @keyframes shake {
+              10%,
+              90% {
+                transform: translate3d(-1px, 0, 0);
+              }
+
+              20%,
+              80% {
+                transform: translate3d(2px, 0, 0);
+              }
+
+              30%,
+              50%,
+              70% {
+                transform: translate3d(-4px, 0, 0);
+              }
+
+              40%,
+              60% {
+                transform: translate3d(4px, 0, 0);
+              }
             }
           }
+        }
+      }
+
+      .no-labels {
+        display: flex;
+        gap: 5px;
+        padding-left: 28px;
+        color: $text-lighter;
+        font-size: 14px;
+        line-height: 20px;
+        min-height: 44px;
+
+        a {
+          color: $white;
+          text-decoration: underline;
+          font-weight: 500;
         }
       }
     }

@@ -54,7 +54,10 @@
               )}`
             }}
           </div>
-          <div class="labelset-action-buttons">
+          <div
+            class="labelset-action-buttons"
+            v-if="annotationSet.labels.length !== 0"
+          >
             <AnnotationSetActionButtons
               :number-of-empty-labels-in-annotation-set="
                 emptyLabelsLength(annotationSet)
@@ -82,18 +85,32 @@
           </div>
         </div>
 
-        <div v-for="label in annotationSet.labels" :key="label.id">
-          <div
-            v-if="!(label.annotations.length === 0 && publicView)"
-            class="labels"
-          >
-            <DocumentLabel
-              :label="label"
-              :annotation-set="annotationSet"
-              :index-group="indexGroup"
-              @handle-missing-annotation="markAnnotationsAsMissing"
-            />
+        <div v-if="annotationSet.labels.length > 0">
+          <div v-for="label in annotationSet.labels" :key="label.id">
+            <div
+              v-if="!(label.annotations.length === 0 && publicView)"
+              class="labels"
+            >
+              <DocumentLabel
+                :label="label"
+                :annotation-set="annotationSet"
+                :index-group="indexGroup"
+                @handle-missing-annotation="markAnnotationsAsMissing"
+              />
+            </div>
           </div>
+        </div>
+
+        <div v-if="annotationSet.labels.length === 0" class="no-labels">
+          <span> {{ $t("no_labels_in_set") }}</span>
+          <span v-if="!publicView" v-html="$t('link_to_add_labels')"></span>
+        </div>
+
+        <div
+          v-else-if="!annotationSetHasAnnotations(annotationSet) && publicView"
+          class="no-labels"
+        >
+          <span> {{ $t("no_annotations_in_annotation_set") }}</span>
         </div>
       </div>
     </div>
@@ -175,6 +192,14 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    annotationSetHasAnnotations(annotationSet) {
+      const found = annotationSet.labels.find(
+        (label) => label.annotations.length > 0
+      );
+
+      return found;
+    },
+
     focusOnNextAnnotation() {
       const annotations = this.createArray("keyboard-nav");
 
