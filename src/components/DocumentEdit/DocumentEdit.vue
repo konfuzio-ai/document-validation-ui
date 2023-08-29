@@ -390,11 +390,15 @@ export default {
             });
           });
 
-        navigateToDocumentsList(
+        const redirection = navigateToDocumentsList(
           this.documentsListPath,
           this.projectId,
           this.currentUser.id
         );
+
+        if (redirection) {
+          this.$store.dispatch("edit/setRedirectingUser", true);
+        }
       } else {
         // Check if only the category and/or name changes:
         const newCategory = this.updatedDocument[0].category;

@@ -16,6 +16,7 @@ const state = {
   updatedDocument: [],
   showEditConfirmationModal: false,
   submitEditChanges: false,
+  redirectingUser: false,
 };
 
 const getters = {
@@ -260,6 +261,10 @@ const actions = {
   setShowEditConfirmationModal: ({ commit }, value) => {
     commit("SET_SHOW_EDIT_CONFIRMATION_MODAL", value);
   },
+
+  setRedirectingUser: ({ commit }, value) => {
+    commit("SET_REDIRECTING_USER", value);
+  },
 };
 
 const mutations = {
@@ -289,6 +294,9 @@ const mutations = {
   },
   SET_SUBMIT_EDIT_CHANGES: (state, value) => {
     state.submitEditChanges = value;
+  },
+  SET_REDIRECTING_USER: (state, value) => {
+    state.redirectingUser = value;
   },
 };
 
