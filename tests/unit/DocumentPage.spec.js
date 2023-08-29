@@ -58,7 +58,7 @@ describe("Document Page Component", () => {
 
   it("Downloads file when clicking download menu option", async () => {
     const wrapper = render(ToolBar, false);
-    const url = "https://testing.konfuzio.com/doc/show/1369630/";
+    const url = "https://testing.konfuzio.com/doc/show-original/1369630/";
     const fileName = getData("document").selectedDocument.data_file_name;
 
     const link = {
@@ -76,7 +76,7 @@ describe("Document Page Component", () => {
     await wrapper
       .findComponent(".download-file .dropdown .dropdown-trigger")
       .trigger("click");
-    await wrapper.findAllComponents(".dropdown-item").at(1).trigger("click");
+    await wrapper.findAllComponents(".dropdown-item").at(0).trigger("click");
 
     wrapper.vm.$nextTick(() => {
       expect(wrapper.findComponent("a").exists()).toBe(true);
