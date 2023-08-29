@@ -3,7 +3,7 @@
     <b-modal
       v-model="isModalActive"
       :width="400"
-      can-cancel="['x']"
+      :can-cancel="['x']"
       :on-cancel="closeModal"
     >
       <section class="modal-card-body">
