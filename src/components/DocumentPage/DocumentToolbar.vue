@@ -40,7 +40,7 @@
           >
           <b-dropdown-item
             aria-role="listitem"
-            @click="handleDownloadFile('pdf')"
+            @click="handleDownloadFile('ocr')"
             >PDF file</b-dropdown-item
           >
         </b-dropdown>
@@ -185,9 +185,9 @@ export default {
       let imageUrl;
       let fileName = this.getFileName(this.selectedDocument.data_file_name);
 
-      if (fileType === "pdf") {
+      if (fileType === "ocr") {
         imageUrl = this.selectedDocument.file_url;
-        fileName = `${fileName}_ocr`;
+        fileName = `${fileName}_${fileType}`;
       } else {
         imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
@@ -200,8 +200,8 @@ export default {
           const link = document.createElement("a");
           link.href = url;
           link.setAttribute("download", fileName);
-          document.body.appendChild(link);
           link.click();
+          URL.revokeObjectURL(link.href);
         })
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
