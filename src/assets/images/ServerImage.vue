@@ -41,7 +41,7 @@ export default {
     loadImage() {
       if (!this.imageUrl) return;
       return api
-        .makeImageRequest(this.imageUrl)
+        .makeFileRequest(this.imageUrl)
         .then((myBlob) => {
           this.$refs.imgTag.src = URL.createObjectURL(myBlob);
           if (this.height) {
