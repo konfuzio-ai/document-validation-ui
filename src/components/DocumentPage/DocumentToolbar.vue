@@ -30,7 +30,7 @@
       <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right">
           <template #trigger>
-            <b-icon icon="download" size="small" />
+            <b-icon icon="download" size="small" class="download-file" />
           </template>
 
           <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()"
