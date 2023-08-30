@@ -133,5 +133,7 @@
   "new_multi_ann_title": "Crear múltiples anotaciones",
   "prepare_document": "Prepare el documento",
   "delete_table": "Eliminar tabla",
-  "error_downloading_file": "El documento no pudo ser descargado."
+  "error_downloading_file": "El documento no pudo ser descargado.",
+  "original_file": "Documento original",
+  "pdf_file": "Documento PDF"
 }

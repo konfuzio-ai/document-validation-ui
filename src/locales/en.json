@@ -133,5 +133,7 @@
   "delete_label": "Delete label",
   "table": "Table",
   "delete_table": "Delete table",
-  "error_downloading_file": "The file could not be downloaded."
+  "error_downloading_file": "The file could not be downloaded.",
+  "original_file": "Original file",
+  "pdf_file": "PDF file"
 }

@@ -33,13 +33,13 @@
             <b-icon icon="download" size="small" class="download-file" />
           </template>
 
-          <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()"
-            >Original file</b-dropdown-item
-          >
+          <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()">{{
+            $t("original_file")
+          }}</b-dropdown-item>
           <b-dropdown-item
             aria-role="listitem"
             @click="handleDownloadFile('ocr')"
-            >PDF file</b-dropdown-item
+            >{{ $t("pdf_file") }}</b-dropdown-item
           >
         </b-dropdown>
       </div>
