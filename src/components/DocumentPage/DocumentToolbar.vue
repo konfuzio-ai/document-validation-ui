@@ -26,6 +26,26 @@
         v-if="!editMode && !publicView && !isDocumentReviewed"
         class="toolbar-divider"
       />
+
+      <div v-if="!publicView" class="download-file icons">
+        <b-dropdown aria-role="list" position="is-top-right">
+          <template #trigger>
+            <b-icon icon="download" size="small" class="download-file" />
+          </template>
+
+          <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()">{{
+            $t("original_file")
+          }}</b-dropdown-item>
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="handleDownloadFile('ocr')"
+            >{{ $t("pdf_file") }}</b-dropdown-item
+          >
+        </b-dropdown>
+      </div>
+
+      <div v-if="!publicView" class="toolbar-divider" />
+
       <div class="icons icons-right">
         <div
           :class="[
@@ -63,6 +83,7 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
+import api from "../../api";
 
 export default {
   name: "DocumentToolbar",
@@ -157,6 +178,41 @@ export default {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
         this.$store.dispatch("display/updateScale", { scale });
       });
+    },
+    handleDownloadFile(fileType) {
+      let fileUrl;
+      // get the file name without the extension
+      let fileName = this.getFileName(this.selectedDocument.data_file_name);
+
+      if (fileType === "ocr") {
+        fileUrl = this.selectedDocument.file_url;
+        fileName = `${fileName}_${fileType}`;
+      } else {
+        fileUrl = `/doc/show-original/${this.selectedDocument.id}/`;
+      }
+
+      // Automatically download original or ocr files
+      return api
+        .makeFileRequest(fileUrl)
+        .then((myBlob) => {
+          const url = URL.createObjectURL(myBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", fileName);
+          link.click();
+          URL.revokeObjectURL(link.href);
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("error_downloading_file"),
+          });
+          console.log(error);
+        });
+    },
+    getFileName(fileName) {
+      return fileName.split(".").slice(0, -1).join(".");
     },
     cancelAnnotationEditMode() {
       this.$store.dispatch("document/resetEditAnnotation");

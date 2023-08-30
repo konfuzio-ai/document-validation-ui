@@ -459,7 +459,7 @@ export default {
         return;
       }
       api
-        .makeImageRequest(
+        .makeFileRequest(
           `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
         )
         .then((myBlob) => {

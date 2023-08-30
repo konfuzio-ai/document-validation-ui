@@ -28,8 +28,31 @@ describe("Document Page Component", () => {
 
     expect(await wrapper.findComponent(".edit-icon").exists()).toBe(true);
     expect(await wrapper.findComponent(".edit-text").exists()).toBe(true);
+    expect(await wrapper.findComponent(".download-file").exists()).toBe(true);
     expect(await wrapper.findComponent(".fit-zoom").exists()).toBe(true);
     expect(await wrapper.findComponent(".zoom-in").exists()).toBe(true);
     expect(await wrapper.findComponent(".zoom-out").exists()).toBe(true);
+  });
+
+  it("Opens a menu when clicking the download icon in the toolbar", async () => {
+    const wrapper = render(ToolBar, false);
+
+    await wrapper
+      .findComponent(".download-file .dropdown .dropdown-trigger")
+      .trigger("click");
+
+    expect(await wrapper.findComponent(".dropdown-content").exists()).toBe(
+      true
+    );
+  });
+
+  it("Shows 2 options in the download menu", async () => {
+    const wrapper = render(ToolBar, false);
+
+    await wrapper
+      .findComponent(".download-file .dropdown .dropdown-trigger")
+      .trigger("click");
+
+    expect(await wrapper.findAllComponents(".dropdown-item").length).toBe(2);
   });
 });

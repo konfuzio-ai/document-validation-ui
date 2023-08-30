@@ -132,5 +132,8 @@
   "delete_label": "Label löschen",
   "table": "Tabelle",
   "prepare_document": "Dokument vorbereiten",
-  "delete_table": "Tabelle löschen"
+  "delete_table": "Tabelle löschen",
+  "error_downloading_file": "Die Datei konnte nicht heruntergeladen werden.",
+  "original_file": "Originaldatei",
+  "pdf_file": "PDF Datei"
 }
