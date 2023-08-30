@@ -1,6 +1,6 @@
 import App from "./App.vue";
 
-describe("<App />", () => {
+describe("App", () => {
   it("renders the app", () => {
     cy.mount(App);
   });

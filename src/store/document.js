@@ -17,7 +17,7 @@ const state = {
   annotationSets: null,
   annotations: null,
   labels: [],
-  documentId: null,
+  documentId: process.env.VUE_APP_DOCUMENT_ID,
   sidebarAnnotationSelected: null,
   documentAnnotationSelected: null,
   selectedDocument: null,
@@ -1256,7 +1256,9 @@ const mutations = {
     state.selectedDocument = document;
 
     // this is to handle cache when a document is edited or changed
-    state.selectedDocument.downloaded_at = Date.now();
+    if (state.selectedDocument) {
+      state.selectedDocument.downloaded_at = Date.now();
+    }
   },
   SET_RECALCULATING_ANNOTATIONS: (state, recalculatingAnnotations) => {
     state.recalculatingAnnotations = recalculatingAnnotations;

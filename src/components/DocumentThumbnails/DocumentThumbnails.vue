@@ -1,5 +1,5 @@
 <template>
-  <div ref="documentThumbnails" class="document-pages">
+  <div id="document-pages" ref="documentThumbnails">
     <div v-if="selectedDocument">
       <div
         v-for="page in selectedDocument.pages"
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="document-thumbnail-loading">
       <div class="document-thumbnail">
         <div class="image-section">
           <div class="image-container">
