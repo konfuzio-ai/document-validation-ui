@@ -33,9 +33,7 @@
             <b-icon icon="download" size="small" />
           </template>
 
-          <b-dropdown-item
-            aria-role="listitem"
-            @click="handleDownloadFile('original')"
+          <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()"
             >Original file</b-dropdown-item
           >
           <b-dropdown-item
@@ -183,6 +181,7 @@ export default {
     },
     handleDownloadFile(fileType) {
       let fileUrl;
+      // get the file name without the extension
       let fileName = this.getFileName(this.selectedDocument.data_file_name);
 
       if (fileType === "ocr") {
