@@ -2,7 +2,7 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  projectId: null,
+  projectId: process.env.VUE_APP_PROJECT_ID,
   currentUser: null,
   documentsListPath: null,
   documentsInProject: null,
