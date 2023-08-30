@@ -133,5 +133,5 @@
   "table": "Tabelle",
   "prepare_document": "Dokument vorbereiten",
   "delete_table": "Tabelle löschen",
-  "error_downloading_file": "The file could not be downloaded."
+  "error_downloading_file": "Die Datei konnte nicht heruntergeladen werden."
 }
