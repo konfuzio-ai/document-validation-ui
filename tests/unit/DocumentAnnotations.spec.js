@@ -427,4 +427,36 @@ describe("Document Annotations Component", () => {
       await wrapper.findComponent(" .label-group-annotation-list").exists()
     ).toBe(false);
   });
+
+  it("Shows message to user if an annotation set has no labels", async () => {
+    const wrapper = render(DocumentAnnotations, false);
+
+    await dispatch("document/setPublicView", false);
+
+    expect(
+      await wrapper.findComponent(".annotation-set-group .no-labels").exists()
+    ).toBe(true);
+
+    expect(
+      await wrapper.findAll(".annotation-set-group .no-labels").length
+    ).toBe(1);
+  });
+
+  it("Shows message to user if public mode and annotation set has no filled labels", async () => {
+    const annotationSets = getData("document").annotationSets;
+    const annotationSetHasAnnotations = jest.fn();
+    const wrapper = render(DocumentAnnotations, true);
+
+    await dispatch("document/setPublicView", true);
+
+    annotationSets.map((annotationSet) => {
+      return annotationSetHasAnnotations(annotationSet);
+    });
+
+    expect(
+      await wrapper.findAll(".annotation-set-group .no-labels").length
+    ).toBeGreaterThan(2);
+
+    await dispatch("document/setPublicView", false);
+  });
 });
