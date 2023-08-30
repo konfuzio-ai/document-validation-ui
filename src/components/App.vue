@@ -165,7 +165,7 @@ export default {
       API.setApiUrl(this.api_url);
     }
     if (this.image_url !== "") {
-      API.setImageUrl(this.image_url);
+      API.setFileUrl(this.image_url);
     }
 
     // document and project config

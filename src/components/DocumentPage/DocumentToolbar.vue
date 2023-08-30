@@ -182,19 +182,19 @@ export default {
       });
     },
     handleDownloadFile(fileType) {
-      let imageUrl;
+      let fileUrl;
       let fileName = this.getFileName(this.selectedDocument.data_file_name);
 
       if (fileType === "ocr") {
-        imageUrl = this.selectedDocument.file_url;
+        fileUrl = this.selectedDocument.file_url;
         fileName = `${fileName}_${fileType}`;
       } else {
-        imageUrl = `/doc/show-original/${this.selectedDocument.id}/`;
+        fileUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
 
       // Automatically download original or ocr files
       return api
-        .makeImageRequest(imageUrl)
+        .makeFileRequest(fileUrl)
         .then((myBlob) => {
           const url = URL.createObjectURL(myBlob);
           const link = document.createElement("a");
