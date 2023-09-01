@@ -135,5 +135,10 @@
   "delete_table": "Eliminar tabla",
   "error_downloading_file": "El documento no pudo ser descargado.",
   "original_file": "Documento original",
-  "pdf_file": "Documento PDF"
+  "pdf_file": "Documento PDF",
+  "no_labels_in_set": "Este grupo de anotaciones no tiene etiquetas.",
+  "link_to_add_labels": "Para ver cómo agregarlas haga clic <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>aquí</a>.",
+  "no_annotations_in_annotation_set": "Este grupo de anotaciones no tiene anotaciones encontradas para sus respectivas etiquetas.",
+  "wait_title": "Por favor espere...",
+  "redirecting_to_documents_list": "Lo estamos redirigiendo a la lista de documentos, para que pueda continuar la revisión de sus documentos mientras procesamos los cambios realizados."
 }

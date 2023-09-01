@@ -1412,6 +1412,17 @@
           "annotations": []
         }
       ]
+    },
+    {
+      "id": 92319,
+      "label_set": {
+        "id": 53,
+        "name": "Test",
+        "api_name": "test",
+        "description": "",
+        "has_multiple_annotation_sets": false
+      },
+      "labels": []
     }
   ],
   "assignee": null,

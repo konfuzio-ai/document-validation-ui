@@ -135,5 +135,10 @@
   "delete_table": "Tabelle löschen",
   "error_downloading_file": "Die Datei konnte nicht heruntergeladen werden.",
   "original_file": "Originaldatei",
-  "pdf_file": "PDF Datei"
+  "pdf_file": "PDF Datei",
+  "no_labels_in_set": "Dieser Annotationssatz hat keine Beschriftungen.",
+  "link_to_add_labels": "Sehen Sie <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>hier</a>, wie Sie sie hinzufügen.",
+  "no_annotations_in_annotation_set": "Dieser Annotationssatz enthält keine extrahierten Annotationen für die jeweiligen Beschriftungen.",
+  "wait_title": "Bitte warten...",
+  "redirecting_to_documents_list": "Wir führen Sie zur Dokumentenliste, sodass Sie Ihre Dokumente weiter überprüfen können, während wir die vorgenommenen Änderungen verarbeiten."
 }
