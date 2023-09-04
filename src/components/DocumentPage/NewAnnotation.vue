@@ -9,6 +9,7 @@
         'no-padding-bottom',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
+      scrollable
     >
       <template #trigger>
         <b-button
@@ -70,6 +71,7 @@
         v-model="selectedLabel"
         aria-role="list"
         :disabled="!labels || labels.length === 0"
+        scrollable
         class="label-dropdown annotation-dropdown"
       >
         <template #trigger>

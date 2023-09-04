@@ -21,6 +21,7 @@
         selectedDocument.is_reviewed && 'disabled',
       ]"
       aria-role="list"
+      scrollable
       :disabled="dropdownIsDisabled"
     >
       <template #trigger>

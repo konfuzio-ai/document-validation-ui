@@ -34,6 +34,7 @@
             position="is-top-right"
             :close-on-click="false"
             @active-change="(e) => onDropdownChange(item, e)"
+            scrollable
           >
             <template #trigger="{ active }">
               <DraggableIcon v-if="!isLoading" class="draggable" />

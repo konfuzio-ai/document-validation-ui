@@ -28,7 +28,7 @@
       />
 
       <div v-if="!publicView" class="download-file icons">
-        <b-dropdown aria-role="list" position="is-top-right">
+        <b-dropdown aria-role="list" position="is-top-right" scrollable>
           <template #trigger>
             <b-icon icon="download" size="small" class="download-file" />
           </template>
