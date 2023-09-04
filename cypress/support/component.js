@@ -40,7 +40,7 @@ Cypress.Commands.add("store", () => store);
 
 Cypress.Commands.add("fetchDocument", () => {
   api.setApiUrl(process.env.VUE_APP_API_URL);
-  api.setImageUrl(process.env.VUE_APP_DOCUMENT_IMAGES_URL);
+  api.setFileUrl(process.env.VUE_APP_DOCUMENT_IMAGES_URL);
   api.setAuthToken(process.env.VUE_APP_GUEST_USER_TOKEN);
   cy.store().invoke("dispatch", "document/fetchDocument");
   cy.wait(1000);

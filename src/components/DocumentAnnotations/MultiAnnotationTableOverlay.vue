@@ -33,8 +33,8 @@
             class="header-dropdown"
             position="is-top-right"
             :close-on-click="false"
-            @active-change="(e) => onDropdownChange(item, e)"
             scrollable
+            @active-change="(e) => onDropdownChange(item, e)"
           >
             <template #trigger="{ active }">
               <DraggableIcon v-if="!isLoading" class="draggable" />

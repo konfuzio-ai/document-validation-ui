@@ -55,8 +55,8 @@
             }}
           </div>
           <div
+          v-if="annotationSet.labels.length !== 0"
             class="labelset-action-buttons"
-            v-if="annotationSet.labels.length !== 0"
           >
             <AnnotationSetActionButtons
               :number-of-empty-labels-in-annotation-set="

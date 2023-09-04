@@ -15,14 +15,14 @@
           </div>
         </div>
         <div class="label-group-right">
-          <div class="label-annotations-pending" v-if="!publicView">
+          <div v-if="!publicView" class="label-annotations-pending" >
             {{
               `${
                 label.annotations.length - acceptedAnnotationsGroupCounter
               } ${$t("annotations_pending")}`
             }}
           </div>
-          <div class="label-annotations-accepted" v-if="!publicView">
+          <div v-if="!publicView" class="label-annotations-accepted" >
             {{
               `${acceptedAnnotationsGroupCounter} ${$t("annotations_accepted")}`
             }}
