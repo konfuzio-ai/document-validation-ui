@@ -7,6 +7,7 @@
       aria-role="list"
       class="ann-set-table-header-dropdown"
       position="is-top-right"
+      scrollable
     >
       <template #trigger>
         <span class="ann-set-label-set-name">{{ labelSetName }}</span>

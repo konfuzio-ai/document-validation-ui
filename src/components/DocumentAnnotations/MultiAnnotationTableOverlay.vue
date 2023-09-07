@@ -33,6 +33,7 @@
             class="header-dropdown"
             position="is-top-right"
             :close-on-click="false"
+            scrollable
             @active-change="(e) => onDropdownChange(item, e)"
           >
             <template #trigger="{ active }">

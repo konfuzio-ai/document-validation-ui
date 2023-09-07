@@ -42,6 +42,7 @@
                 'label-set-dropdown',
                 labelSets.length === 0 && 'dropdown-disabled',
               ]"
+              scrollable
             >
               <template #trigger>
                 <div>
