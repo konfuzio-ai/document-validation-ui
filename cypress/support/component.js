@@ -46,6 +46,14 @@ Cypress.Commands.add("fetchDocument", () => {
   cy.wait(1000);
 });
 
+Cypress.Commands.add("setFullMode", () => {
+  cy.store().invoke("dispatch", "document/setPublicView", false);
+});
+
+Cypress.Commands.add("resetFit", () => {
+  cy.store().invoke("dispatch", "display/updateFit", "width");
+});
+
 Cypress.Commands.add("fetchCategories", (projectId) => {
   cy.store().invoke("dispatch", "category/fetchCategories", projectId);
   cy.wait(1000);
@@ -58,6 +66,10 @@ Cypress.Commands.add("fetchDocumentList", (parameters) => {
 
 Cypress.Commands.add("getStore", (store) => {
   cy.store().its("state").its(store);
+});
+
+Cypress.Commands.add("gettersStore", () => {
+  cy.store().its("getters");
 });
 
 Cypress.Commands.add("dispatchAction", (store, action, value) => {

@@ -502,14 +502,16 @@ const getters = {
    * or if it is Ready Only / Reviewed
    * and if so disable the option to edit the document
    */
-  documentCannotBeEdited: (state) => (document) => {
-    return (
-      document.dataset_status === 1 ||
-      document.dataset_status === 2 ||
-      document.dataset_status === 3 ||
-      document.is_reviewed
-    );
-  },
+  documentCannotBeEdited:
+    (state) =>
+    (document = state.selectedDocument) => {
+      return (
+        document.dataset_status === 1 ||
+        document.dataset_status === 2 ||
+        document.dataset_status === 3 ||
+        document.is_reviewed
+      );
+    },
 
   /**
    * If automatic splitting is enabled for the project

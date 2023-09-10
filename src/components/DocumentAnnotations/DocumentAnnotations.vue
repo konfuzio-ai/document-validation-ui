@@ -1,13 +1,20 @@
 <template>
-  <div id="labels-sidebar">
+  <div id="document-annotations">
     <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations" class="extracting-data">
       <ExtractingData />
     </div>
 
     <!-- When document data is still loading -->
-    <div v-else-if="!annotationSets || loading" class="document-annotations-loading">
-      <div v-for="n in numberOfLoadingAnnotations" :key="n" class="loading-annotation-set">
+    <div
+      v-else-if="!annotationSets || loading"
+      class="document-annotations-loading"
+    >
+      <div
+        v-for="n in numberOfLoadingAnnotations"
+        :key="n"
+        class="loading-annotation-set"
+      >
         <LoadingAnnotations />
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="scrolling-document">
     <div
       ref="scrollingDocument"
       v-scroll.immediate="updateScrollBounds"

@@ -3,10 +3,10 @@ import DocumentThumbnails from "./DocumentThumbnails.vue";
 describe("Document Thumbnails", () => {
   beforeEach(() => {
     cy.fetchDocument();
+    cy.mount(DocumentThumbnails);
   });
 
   it("shows thumbnails for all document pages", () => {
-    cy.mount(DocumentThumbnails);
     cy.get("#document-pages")
       .find(".document-thumbnail")
       .then(($elements) => {
@@ -20,7 +20,6 @@ describe("Document Thumbnails", () => {
 
   it("loads thumbnail pictures that are shown on screen", () => {
     cy.intercept("GET", "**/page/show-thumbnail/**").as("getThumbnail");
-    cy.mount(DocumentThumbnails);
 
     cy.get("#document-pages")
       .find(".document-thumbnail")
@@ -32,7 +31,6 @@ describe("Document Thumbnails", () => {
   });
 
   it("displays page number correctly", () => {
-    cy.mount(DocumentThumbnails);
     cy.get("#document-pages")
       .find(".document-thumbnail")
       .each(($row, index) => {
@@ -44,7 +42,6 @@ describe("Document Thumbnails", () => {
   });
 
   it("navigates to every document thumbnail", () => {
-    cy.mount(DocumentThumbnails);
     cy.get("#document-pages")
       .find(".document-thumbnail")
       .each(($row, index) => {

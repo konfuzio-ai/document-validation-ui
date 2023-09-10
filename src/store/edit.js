@@ -20,6 +20,13 @@ const state = {
 };
 
 const getters = {
+  isEditModeAvailable: (state, getters, rootState, rootGetters) => {
+    return (
+      !rootState.document.publicView &&
+      !rootGetters["document/isDocumentReviewed"] &&
+      !state.editMode
+    );
+  },
   isPageSelected: (state) => (id) => {
     return state.selectedPages.find((page) => page.id === id);
   },
