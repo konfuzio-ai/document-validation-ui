@@ -84,7 +84,7 @@
             >{{ Math.floor(confidence(annotation) * 100) / 100 }}</span
           >
         </div>
-        <div v-if="!publicView" class="revision" >
+        <div v-if="!publicView" class="revision">
           <div class="detail-icons">
             <div v-if="created(annotation) || edited(annotation)">
               <div
