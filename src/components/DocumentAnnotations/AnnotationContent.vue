@@ -12,6 +12,7 @@
           editAnnotation.id === annotation.id &&
           'error-editing',
         isAnnotationBeingEdited && 'clicked-ann',
+        !annotation.revised && 'not-revised'
       ]"
       role="textbox"
       :contenteditable="isAnnotationBeingEdited"

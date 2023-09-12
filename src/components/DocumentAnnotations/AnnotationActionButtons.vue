@@ -41,11 +41,11 @@
         !publicView &&
         !isDocumentReviewed
       "
-      class="missing-decline-button-container"
+      class="decline-button-container"
     >
       <b-button
         type="is-ghost"
-        class="missing-decline-btn decline-btn"
+        class="decline-btn"
         @click.stop="decline"
       >
         {{ $t("decline") }}
@@ -79,11 +79,11 @@
         !publicView &&
         !isDocumentReviewed
       "
-      class="missing-decline-button-container"
+      class="missing-button-container"
     >
       <b-button
         type="is-ghost"
-        class="missing-decline-btn missing-btn"
+        class="missing-btn"
         @click.stop="markAsMissing"
       >
         {{ $t("missing_annotation") }}

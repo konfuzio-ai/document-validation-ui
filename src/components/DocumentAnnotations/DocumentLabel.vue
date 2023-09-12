@@ -22,7 +22,7 @@
               } ${$t("annotations_pending")}`
             }}
           </div>
-          <div v-if="!publicView" class="label-annotations-accepted" >
+          <div v-if="!publicView" class="label-annotations-accepted">
             {{
               `${acceptedAnnotationsGroupCounter} ${$t("annotations_accepted")}`
             }}
