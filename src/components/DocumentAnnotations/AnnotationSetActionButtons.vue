@@ -3,13 +3,13 @@
     <!-- mark all empty labels as missing -->
     <div
       v-if="!publicView && !isDocumentReviewed"
-      class="missing-decline-button-container all-missing"
+      class="missing-button-container all-missing"
       @mouseenter="mouseenterAnnotationSet('missing')"
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
         type="is-ghost"
-        class="missing-decline-btn missing-btn all-missing-btn"
+        class="missing-btn all-missing-btn"
         :disabled="numberOfEmptyLabelsInAnnotationSet === 0"
         @click.stop="markAllAsMissing"
       >

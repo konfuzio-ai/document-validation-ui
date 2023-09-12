@@ -1,6 +1,6 @@
 @import "./imports.scss";
 
-.labels-sidebar {
+#labels-sidebar {
   font-family: $font-family;
   flex: 1;
   background-color: $background;
@@ -426,10 +426,10 @@
       }
     }
 
-    .missing-decline-button-container {
+    .missing-button-container, .decline-button-container {
       background-color: transparent;
 
-      .missing-decline-btn {
+      .missing-btn, .decline-btn {
         color: $grey-blue !important;
         font-size: 14px !important;
         font-weight: 500;

@@ -1,19 +1,19 @@
 <template>
-  <div class="labels-sidebar">
+  <div id="labels-sidebar">
     <!-- When extracting annotations after editing -->
-    <div v-if="recalculatingAnnotations">
+    <div v-if="recalculatingAnnotations" class="extracting-data">
       <ExtractingData />
     </div>
 
     <!-- When document data is still loading -->
-    <div v-else-if="!annotationSets || loading">
-      <div v-for="n in numberOfLoadingAnnotations" :key="n">
+    <div v-else-if="!annotationSets || loading" class="document-annotations-loading">
+      <div v-for="n in numberOfLoadingAnnotations" :key="n" class="loading-annotation-set">
         <LoadingAnnotations />
       </div>
     </div>
 
     <!-- When there's no annotations in the label -->
-    <div v-else-if="annotationSets.length === 0">
+    <div v-else-if="annotationSets.length === 0" class="empty-annotation-sets">
       <EmptyState />
     </div>
 
@@ -55,7 +55,7 @@
             }}
           </div>
           <div
-          v-if="annotationSet.labels.length !== 0"
+            v-if="annotationSet.labels.length !== 0"
             class="labelset-action-buttons"
           >
             <AnnotationSetActionButtons
