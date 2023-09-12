@@ -254,6 +254,9 @@ describe("Document Annotations", () => {
           
           cy.storeState("document", "missingAnnotations").its("length").should("not.eq", 0);
 
+          cy.wrap($annotation)
+            .trigger("mouseleave");
+
           cy.wait(1000);
         })
     });
