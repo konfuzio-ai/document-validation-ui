@@ -287,6 +287,7 @@ export default {
         const newDocument = {
           name: this.handleNewDocumentName(i),
           category: this.handleNewDocumentCategory(i, clickedLines),
+          categories: this.handleNewDocumentCategoriesAndConfidence(i, clickedLines),
           pages: this.handleNewDocumentPages(i, clickedLines),
         };
 
@@ -309,7 +310,7 @@ export default {
       return newFileName;
     },
     handleNewDocumentCategory(index, clickedLines) {
-      if (clickedLines[index].origin && clickedLines[index].origin === "AI") {
+      if (this.splitSuggestionsEnabled && clickedLines[index].origin && clickedLines[index].origin === "AI") {
         // get the index of the new document in the splitting suggestions
         // to return its category
         const i = this.indexOfSplittingSuggestion(index, clickedLines);
@@ -317,6 +318,17 @@ export default {
         return this.splittingSuggestions[i].category;
       } else {
         return this.selectedDocument.category;
+      }
+    },
+    handleNewDocumentCategoriesAndConfidence(index, clickedLines) {
+      if (this.splitSuggestionsEnabled && clickedLines[index].origin && clickedLines[index].origin === "AI") {
+        // get the index of the new document in the splitting suggestions
+        // to return its category
+        const i = this.indexOfSplittingSuggestion(index, clickedLines);
+
+        return this.splittingSuggestions[i].categories;
+      } else {
+        return null;
       }
     },
     handleNewDocumentPages(index, clickedLines) {
@@ -380,8 +392,13 @@ export default {
         this.documentShouldBePostprocessed ||
         this.waitingForSplittingConfirmation(this.selectedDocument)
       ) {
+        // delete the document categories since the backend doesn't need them
+        const documentToProcess = this.updatedDocument.map(document => {
+          delete document.categories;
+          return document;
+        })
         this.$store
-          .dispatch("edit/editDocument", this.updatedDocument)
+          .dispatch("edit/editDocument", documentToProcess)
           .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
               error,
