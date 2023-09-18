@@ -195,7 +195,7 @@ export default {
         return;
       }
 
-      return Math.floor(confidence * 100);
+      return (confidence * 100).toFixed(2);
     },
     checkIfDropdownIsDisabled() {
       if (
