@@ -115,7 +115,7 @@ export default {
       this.saveEditChanges();
     },
     updatedDocument(newValue, oldValue) {
-      if(newValue.length !== oldValue.length && newValue.length === 1) {
+      if(newValue && oldValue && newValue.length !== oldValue.length && newValue.length === 1) {
         this.saveUpdatedDocuments();
       }
     }
@@ -315,7 +315,7 @@ export default {
       return newFileName;
     },
     handleNewDocumentCategory(index, clickedLines) {
-      if (this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
+      if (this.updatedDocument && this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
         // get the index of the new document in the splitting suggestions
         // to return its category
         const i = this.indexOfSplittingSuggestion(index, clickedLines);
@@ -326,7 +326,7 @@ export default {
       }
     },
     handleNewDocumentCategoriesAndConfidence(index, clickedLines) {
-      if (this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
+      if (this.updatedDocument && this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
         // get the index of the new document in the splitting suggestions
         // to return its category
         const i = this.indexOfSplittingSuggestion(index, clickedLines);
