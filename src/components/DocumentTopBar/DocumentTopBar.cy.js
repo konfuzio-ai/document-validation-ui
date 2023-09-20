@@ -1,15 +1,20 @@
 import DocumentTopBar from "./DocumentTopBar";
-import store from "../../store";
 
 describe("Document Top Bar", () => {
-	let document;
-
+	let currentDocument;
 	beforeEach(() => {
-		cy.fetchDocument().then(() => {
-			document = store.state.document.selectedDocument; // TODO: change implementation to get the store state
-			const projectId = store.state.project.projectId;  // TODO: change implementation to get the store state
-			cy.fetchCategories(projectId); 
+
+		cy.fetchDocument().then(() => {			
+			cy.storeState("document").then($document => {
+				currentDocument = $document.selectedDocument;
+			});
+
+			
+			cy.storeState("project").then($project => {
+				cy.fetchCategories($project.projectId);
+			});
 		});
+
 		cy.dispatchAction("document", "setPublicView", false);
 	});
 
@@ -24,7 +29,7 @@ describe("Document Top Bar", () => {
 
 	it("Shows correct file name", () => {
 		cy.mount(DocumentTopBar);
-		const fileName = document.data_file_name;
+		const fileName = currentDocument.data_file_name
 
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
@@ -41,20 +46,22 @@ describe("Document Top Bar", () => {
 	it("Shows arrows if available documents to navigate to", () => {
 		cy.mount(DocumentTopBar);
 		cy.fetchDocumentList();
-		const assignee = document.assignee;
-		const documentsInProject = store.state.project.documentsInProject;  // TODO: change implementation to get the store state
-		const filteredDocuments = documentsInProject.filter(
-			(document) =>
-				(document.status_data === 41 || (document.status_data === 2 && document.labeling_available === 1)
-				) && document.assignee === assignee 
-		);
+		const assignee = currentDocument.assignee;
+		
+		cy.storeState("project").then($project => {
+			const filtered = $project.documentsInProject.filter(
+				(document) =>
+					(document.status_data === 41 || (document.status_data === 2 && document.labeling_available === 1)
+					) && document.assignee === assignee 
+			);
 
-		if(filteredDocuments.length > 0) {
-			cy.get("#document-top-bar-component")
-			.find(".center-bar-components")
-			.find(".navigation-arrow")
-			.should("be.visible");
-		}
+			if(filtered.length > 0) {
+				cy.get("#document-top-bar-component")
+				.find(".center-bar-components")
+				.find(".navigation-arrow")
+				.should("be.visible");
+			}
+		});
 	});
 
 	it("Shows keyboard icon", () => {
@@ -104,7 +111,7 @@ describe("Document Top Bar", () => {
 
 	it("Edits file name", () => {
 		cy.mount(DocumentTopBar);
-		const fileName = document.data_file_name.split(".").slice(0, -1).join(".");
+		const fileName = currentDocument.data_file_name.split(".").slice(0, -1).join(".");
 
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")

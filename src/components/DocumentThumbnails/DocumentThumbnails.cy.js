@@ -48,7 +48,10 @@ describe("Document Thumbnails", () => {
       .find(".document-thumbnail")
       .each(($row, index) => {
         cy.wrap($row).click();
-        cy.storeState("display", "currentPage").should("equal", index + 1);
+        cy.storeState("display").then($display => {
+          expect($display.currentPage).to.equal(index + 1);
+        });
+
         cy.wait(1000);
       });
   });

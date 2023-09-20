@@ -35,11 +35,11 @@ describe("Document Annotations", () => {
         cy.mount(DocumentAnnotations);
         cy.get("#labels-sidebar")
           .find(".annotation-set-group")
-          .then((elements) => {
-            cy.storeState("document", "annotationSets")
-              .its("length")
-              .should("equal", elements.length);
-            });
+          .then(($elements) => {
+            cy.storeState("document").then($document => {
+              expect($document.annotationSets).to.have.lengthOf($elements.length);
+            })
+          });
     });
 
     it("shows the empty state if there are no annotation sets", () => {
