@@ -34,7 +34,12 @@
               {{ $t("category") }}
             </p>
             <div class="category-name">
-              {{ setCategoryDefaultText }}
+              <span>
+                {{ setCategoryDefaultText }}
+              </span>
+              <span v-if="splitMode && setCategoryConfidence >= 0">
+                {{ `(${setCategoryConfidence}%)` }}
+              </span>
             </div>
           </div>
           <div :class="[!splitMode && 'caret-section']">
@@ -48,13 +53,14 @@
       </template>
 
       <b-dropdown-item
-        v-for="category in currentProjectCategories"
+        v-for="category in listOfCategories()"
         :key="category.id"
         aria-role="listitem"
         :disabled="handleOptionInDropdownDisabled(category)"
         @click="handleChangeCategory(category)"
       >
         <span>{{ category.name }}</span>
+        <span v-if="splitMode && category.confidence >= 0">{{ ` (${ category.confidence }%)` }}</span>
       </b-dropdown-item>
     </b-dropdown>
   </b-tooltip>
@@ -73,18 +79,17 @@ export default {
     splitMode: {
       type: Boolean,
     },
-    page: {
-      type: Object,
-      default: null,
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
+  page: {
+    type: Object,
+    default: null,
+  },
+  index: {
+    type: Number,
+    default: 0,
+  },
   },
   data() {
     return {
-      currentProjectCategories: [],
       categoryError: false,
       tooltipIsShown: false,
       tooltipCloseDelay: 0,
@@ -139,21 +144,24 @@ export default {
         return categoryName ? categoryName : this.$t("choose_category");
       }
     },
+
+    setCategoryConfidence() {
+      if (!this.updatedDocument[this.index].categories || !this.categoryName(
+          this.updatedDocument[this.index].category
+        )) return;
+
+      const found = this.updatedDocument[this.index].categories.find(category => category.id === this.updatedDocument[this.index].category);
+      
+      return this.handleCategoryConfidence(found.confidence);
+    }
   },
   watch: {
-    categories() {
-      this.handleCategories();
-    },
     annotations() {
       this.checkIfDropdownIsDisabled();
       this.setTooltipText();
     },
   },
   mounted() {
-    if (this.categories) {
-      this.handleCategories();
-    }
-
     if (this.projectHasSingleCategory()) {
       this.tooltipIsShown = true;
     }
@@ -163,16 +171,31 @@ export default {
     this.checkIfDropdownIsDisabled();
   },
   methods: {
-    handleCategories() {
-      this.categories.map((category) => {
-        if (category.project === this.selectedDocument.project) {
-          const found = this.currentProjectCategories.find(
-            (cat) => cat.id === category.id
-          );
-          if (found) return;
-          this.currentProjectCategories.push(category);
-        }
-      });
+    listOfCategories() {
+      let list;
+
+      if(this.splitMode && this.updatedDocument[this.index].categories) {
+        list = this.handleCategories(this.updatedDocument[this.index].categories);
+      } else if (this.categories) {
+        const filtered = this.categories.filter(category => category.project === this.selectedDocument.project)
+        list = this.handleCategories(filtered);
+      }
+
+      return list;
+    },
+    handleCategories(categories) {
+      return categories.map((category) => {
+          return {id: category.id, name: this.categoryName(category.id), confidence: this.handleCategoryConfidence(category.confidence)};
+        });
+    },
+    handleCategoryConfidence(confidence) {
+      if(!confidence) {
+        if(confidence === 0) return 0;
+
+        return;
+      }
+
+      return (confidence * 100).toFixed(2);
     },
     checkIfDropdownIsDisabled() {
       if (
@@ -193,7 +216,6 @@ export default {
 
       return category.id === this.updatedDocument[this.index].category;
     },
-
     handleChangeCategory(category) {
       // handling the category change will be different based on
       // the dropdown being on the topbar or the Rename and Categorize view
@@ -224,7 +246,6 @@ export default {
       // to update the new document category
       this.$emit("category-change", this.page, category.id);
     },
-
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
       let tooltipText;
