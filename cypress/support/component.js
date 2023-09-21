@@ -56,7 +56,7 @@ Cypress.Commands.add("fetchDocumentList", (parameters) => {
   cy.wait(1000);
 });
 
-Cypress.Commands.add("storeState", (store) => {
+Cypress.Commands.add("getStore", (store) => {
   cy.store().its("state").its(store);
 });
 

@@ -36,9 +36,10 @@ describe("Document Annotations", () => {
         cy.get("#labels-sidebar")
           .find(".annotation-set-group")
           .then(($elements) => {
-            cy.storeState("document").then($document => {
-              expect($document.annotationSets).to.have.lengthOf($elements.length);
-            })
+            cy.getStore("document")
+              .then($document => {
+                expect($document.annotationSets).to.have.lengthOf($elements.length);
+              })
           });
     });
 
@@ -240,7 +241,7 @@ describe("Document Annotations", () => {
         .find(".empty-annotation")
         .find(".annotation-value")
         .not(".missing-annotation")
-        .each(($annotation, index) => {
+        .each(($annotation) => {
           cy.wrap($annotation)
             .trigger("mouseover");
 
@@ -250,15 +251,26 @@ describe("Document Annotations", () => {
             .find(".action-buttons")
             .find(".missing-button-container")
             .find(".missing-btn")
-            .click();
-          
-          cy.storeState("document", "missingAnnotations").its("length").should("not.eq", 0);
+            .click();        
 
           cy.wrap($annotation)
             .trigger("mouseleave");
 
           cy.wait(1000);
-        })
+        });
+
+        cy.get("#labels-sidebar")
+          .find(".label")
+          .find(".annotation-row")
+          .find(".empty-annotation")
+          .then($elements => {
+
+            cy.getStore("document")
+              .then($document => {
+                expect($document.missingAnnotations)
+                  .to.have.lengthOf($elements.length);
+            });
+          })
     });
 
     it("restores empty annotation", () => {

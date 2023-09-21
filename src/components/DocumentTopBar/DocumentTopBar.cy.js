@@ -5,14 +5,16 @@ describe("Document Top Bar", () => {
 	beforeEach(() => {
 
 		cy.fetchDocument().then(() => {			
-			cy.storeState("document").then($document => {
-				currentDocument = $document.selectedDocument;
-			});
+			cy.getStore("document")
+				.then($document => {
+					currentDocument = $document.selectedDocument;
+				});
 
 			
-			cy.storeState("project").then($project => {
-				cy.fetchCategories($project.projectId);
-			});
+			cy.getStore("project")
+				.then($project => {
+				  cy.fetchCategories($project.projectId);
+			  });
 		});
 
 		cy.dispatchAction("document", "setPublicView", false);
@@ -48,20 +50,21 @@ describe("Document Top Bar", () => {
 		cy.fetchDocumentList();
 		const assignee = currentDocument.assignee;
 		
-		cy.storeState("project").then($project => {
-			const filtered = $project.documentsInProject.filter(
-				(document) =>
-					(document.status_data === 41 || (document.status_data === 2 && document.labeling_available === 1)
-					) && document.assignee === assignee 
-			);
+		cy.getStore("project")
+      .then($project => {
+				const filtered = $project.documentsInProject.filter(
+					(document) =>
+						(document.status_data === 41 || (document.status_data === 2 && document.labeling_available === 1)
+						) && document.assignee === assignee 
+				);
 
-			if(filtered.length > 0) {
-				cy.get("#document-top-bar-component")
-				.find(".center-bar-components")
-				.find(".navigation-arrow")
-				.should("be.visible");
-			}
-		});
+				if(filtered.length > 0) {
+					cy.get("#document-top-bar-component")
+					.find(".center-bar-components")
+					.find(".navigation-arrow")
+					.should("be.visible");
+				}
+			});
 	});
 
 	it("Shows keyboard icon", () => {
