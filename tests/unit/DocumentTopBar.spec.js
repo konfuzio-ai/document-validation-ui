@@ -10,7 +10,7 @@ describe("Document Top Bar", () => {
   it("Document Top Bar should be rendered", async () => {
     const wrapper = render(DocumentTopBar, true);
 
-    expect(await wrapper.getComponent(".document-top-bar-component"));
+    expect(await wrapper.getComponent("#document-top-bar-component"));
   });
 
   it("File name should be visible", () => {

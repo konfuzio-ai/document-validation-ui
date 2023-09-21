@@ -46,8 +46,18 @@ Cypress.Commands.add("fetchDocument", () => {
   cy.wait(1000);
 });
 
-Cypress.Commands.add("storeState", (store, state) => {
-  cy.store().its("state").its(store).its(state);
+Cypress.Commands.add("fetchCategories", (projectId) => {
+  cy.store().invoke("dispatch", "category/fetchCategories", projectId);
+  cy.wait(1000);
+});
+
+Cypress.Commands.add("fetchDocumentList", (parameters) => {
+  cy.store().invoke("dispatch", "project/fetchDocumentList", parameters);
+  cy.wait(1000);
+});
+
+Cypress.Commands.add("getStore", (store) => {
+  cy.store().its("state").its(store);
 });
 
 Cypress.Commands.add("dispatchAction", (store, action, value) => {

@@ -9,11 +9,12 @@ describe("Document Thumbnails", () => {
     cy.mount(DocumentThumbnails);
     cy.get("#document-pages")
       .find(".document-thumbnail")
-      .then((elements) => {
-        cy.storeState("document", "selectedDocument")
-          .its("pages")
-          .its("length")
-          .should("equal", elements.length);
+      .then(($elements) => {
+        cy.getStore("document")
+          .then($document => {
+            expect($document.selectedDocument.pages)
+              .to.have.lengthOf($elements.length);
+          });
       });
   });
 
@@ -48,7 +49,12 @@ describe("Document Thumbnails", () => {
       .find(".document-thumbnail")
       .each(($row, index) => {
         cy.wrap($row).click();
-        cy.storeState("display", "currentPage").should("equal", index + 1);
+        cy.getStore("display")
+          .then($display => {
+            expect($display.currentPage)
+              .to.equal(index + 1);
+          });
+
         cy.wait(1000);
       });
   });

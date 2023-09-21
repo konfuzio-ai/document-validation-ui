@@ -1,5 +1,5 @@
 <template>
-  <div ref="documentTopBar" class="document-top-bar-component">
+  <div ref="documentTopBar" id="document-top-bar-component">
     <div
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"

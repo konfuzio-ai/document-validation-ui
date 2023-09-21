@@ -21,7 +21,7 @@
         <b-button
           :label="editMode && !renameAndCategorize ? $t('next') : $t('submit')"
           type="is-primary"
-          class="button-next primary-button edit-mode-btn"
+          :class="['button-next primary-button edit-mode-btn', renameAndCategorize && 'submit-btn']"
           :disabled="renameAndCategorize && !enableSubmit"
           @click="handleButton"
         />
