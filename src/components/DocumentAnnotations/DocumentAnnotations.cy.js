@@ -304,4 +304,120 @@ describe("Document Annotations", () => {
         .find(".empty-annotation")
         .should("not.have.class", "missing-annotation");
     });
+
+    it("gets successfull response from the API when accepting annotation", () => {
+      cy.mount(DocumentAnnotations);
+
+      cy.get("#labels-sidebar")
+        .find(".label")
+        .find(".annotation-row")
+        .find(".not-revised")
+        .first()
+        .then(($element) => {
+          const annotationId = $element[0].id;
+       
+          cy.intercept('PATCH', `**/annotations/${annotationId}/`).as('updateAnnotation');
+          
+          cy.wrap($element)
+            .trigger("mouseover");
+
+          cy.wait(1000);
+
+          cy.get("#labels-sidebar")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-accept-btn")
+            .click();
+          
+          cy.wait("@updateAnnotation").its("response.statusCode").should("eq", 200);
+        })
+    });
+
+    it("gets successfull response from the API when declining annotation", () => {
+      cy.mount(DocumentAnnotations);
+
+      cy.get("#labels-sidebar")
+        .find(".label")
+        .find(".annotation-row")
+        .find(".annotation")
+        .first()
+        .then(($element) => {
+          const annotationId = $element[0].id;
+       
+          cy.intercept('DELETE', `**/annotations/${annotationId}/`).as('deleteAnnotation');
+          
+          cy.wrap($element)
+            .trigger("mouseover");
+
+          cy.wait(1000);
+
+          cy.get("#labels-sidebar")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".decline-btn")
+            .click();
+          
+          cy.wait("@deleteAnnotation").its("response.statusCode").should("eq", 204);
+        })
+    });
+
+    it("gets successfull response from the API when marking annotation as missing", () => {
+      cy.mount(DocumentAnnotations);
+
+      cy.get("#labels-sidebar")
+        .find(".label")
+        .find(".annotation-row")
+        .find(".empty-annotation")
+        .first()
+        .then(($element) => {       
+          cy.intercept('POST', `**/missing-annotations/`).as('addMissingAnnotations');
+          
+          cy.wrap($element)
+            .trigger("mouseover");
+
+          cy.wait(1000);
+
+          cy.get("#labels-sidebar")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".missing-btn")
+            .click();
+          
+          cy.wait("@addMissingAnnotations").its("response.statusCode").should("eq", 201);
+        })
+    });
+
+    it("gets successfull response from the API when restoring missing annotation", () => {
+      cy.mount(DocumentAnnotations);
+
+      cy.get("#labels-sidebar")
+        .find(".label")
+        .find(".annotation-row")
+        .find(".empty-annotation")
+        .find(".missing-annotation")
+        .first()
+        .then(($element) => {
+          
+          cy.getStore("document").then($document => {
+            cy.intercept('DELETE', `**/missing-annotations/${$document.missingAnnotations[0].id}/`).as('deleteMissingAnnotation');
+          })
+          
+          cy.wrap($element)
+            .trigger("mouseover");
+
+          cy.wait(1000);
+
+          cy.get("#labels-sidebar")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".restore-btn")
+            .click();
+          
+          cy.wait("@deleteMissingAnnotation").its("response.statusCode").should("eq", 204);
+        })
+    });
 });
