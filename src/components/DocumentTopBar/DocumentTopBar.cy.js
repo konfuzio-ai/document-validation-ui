@@ -22,6 +22,7 @@ describe("Document Top Bar", () => {
 
 	it("Shows category dropdown if not edit mode or reviewed", () => {
 		cy.mount(DocumentTopBar);
+		cy.dispatchAction("edit", "disableEditMode");
 
 		cy.get("#document-top-bar-component")
 			.find(".left-bar-components")
@@ -69,6 +70,7 @@ describe("Document Top Bar", () => {
 
 	it("Shows keyboard icon", () => {
 		cy.mount(DocumentTopBar);
+		cy.dispatchAction("edit", "disableEditMode");
 
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
@@ -78,6 +80,7 @@ describe("Document Top Bar", () => {
 
 	it("Shows disabled finish review button", () => {
 		cy.mount(DocumentTopBar);
+		cy.dispatchAction("edit", "disableEditMode");
 
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
