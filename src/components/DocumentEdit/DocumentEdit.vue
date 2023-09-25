@@ -1,9 +1,7 @@
 <template>
   <div
-    :class="[
-      'document-edit',
-      renameAndCategorize && 'rename-and-categorize-component',
-    ]"
+    id="document-edit"
+    :class="[renameAndCategorize && 'rename-and-categorize-component']"
   >
     <div v-if="!renameAndCategorize" class="pages-section">
       <EditPages
@@ -115,10 +113,15 @@ export default {
       this.saveEditChanges();
     },
     updatedDocument(newValue, oldValue) {
-      if(newValue && oldValue && newValue.length !== oldValue.length && newValue.length === 1) {
+      if (
+        newValue &&
+        oldValue &&
+        newValue.length !== oldValue.length &&
+        newValue.length === 1
+      ) {
         this.saveUpdatedDocuments();
       }
-    }
+    },
   },
   mounted() {
     this.setPages();
@@ -292,7 +295,10 @@ export default {
         const newDocument = {
           name: this.handleNewDocumentName(i),
           category: this.handleNewDocumentCategory(i, clickedLines),
-          categories: this.handleNewDocumentCategoriesAndConfidence(i, clickedLines),
+          categories: this.handleNewDocumentCategoriesAndConfidence(
+            i,
+            clickedLines
+          ),
           pages: this.handleNewDocumentPages(i, clickedLines),
         };
 
@@ -315,7 +321,12 @@ export default {
       return newFileName;
     },
     handleNewDocumentCategory(index, clickedLines) {
-      if (this.updatedDocument && this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
+      if (
+        this.updatedDocument &&
+        this.updatedDocument.length > 1 &&
+        clickedLines[index].origin &&
+        clickedLines[index].origin === "AI"
+      ) {
         // get the index of the new document in the splitting suggestions
         // to return its category
         const i = this.indexOfSplittingSuggestion(index, clickedLines);
@@ -326,7 +337,12 @@ export default {
       }
     },
     handleNewDocumentCategoriesAndConfidence(index, clickedLines) {
-      if (this.updatedDocument && this.updatedDocument.length > 1 && clickedLines[index].origin && clickedLines[index].origin === "AI") {
+      if (
+        this.updatedDocument &&
+        this.updatedDocument.length > 1 &&
+        clickedLines[index].origin &&
+        clickedLines[index].origin === "AI"
+      ) {
         // get the index of the new document in the splitting suggestions
         // to return its category
         const i = this.indexOfSplittingSuggestion(index, clickedLines);
@@ -398,10 +414,10 @@ export default {
         this.waitingForSplittingConfirmation(this.selectedDocument)
       ) {
         // delete the document categories since the backend doesn't need them
-        const documentToProcess = this.updatedDocument.map(document => {
+        const documentToProcess = this.updatedDocument.map((document) => {
           delete document.categories;
           return document;
-        })
+        });
         this.$store
           .dispatch("edit/editDocument", documentToProcess)
           .catch((error) => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar-container">
+  <div id="toolbar-container">
     <div :class="['toolbar', recalculatingAnnotations && 'hidden']">
       <b-tooltip
         :label="tooltipInfo"
@@ -9,7 +9,8 @@
         class="top-aligned"
       >
         <div
-          v-if="!editMode && !publicView && !isDocumentReviewed"
+          v-if="isEditModeAvailable"
+          id="edit-mode-button"
           :class="[
             'icons icons-left',
             editModeDisabled && 'edit-mode-disabled',
@@ -22,10 +23,7 @@
           <span class="edit-text">{{ $t("edit") }}</span>
         </div>
       </b-tooltip>
-      <div
-        v-if="!editMode && !publicView && !isDocumentReviewed"
-        class="toolbar-divider"
-      />
+      <div v-if="isEditModeAvailable" class="toolbar-divider" />
 
       <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right" scrollable>
@@ -33,10 +31,14 @@
             <b-icon icon="download" size="small" class="download-file" />
           </template>
 
-          <b-dropdown-item aria-role="listitem" @click="handleDownloadFile()">{{
-            $t("original_file")
-          }}</b-dropdown-item>
           <b-dropdown-item
+            class="original-file"
+            aria-role="listitem"
+            @click="handleDownloadFile()"
+            >{{ $t("original_file") }}</b-dropdown-item
+          >
+          <b-dropdown-item
+            class="ocr-file"
             aria-role="listitem"
             @click="handleDownloadFile('ocr')"
             >{{ $t("pdf_file") }}</b-dropdown-item
@@ -58,7 +60,7 @@
           <FitZoomIcon />
         </div>
         <div
-          :class="['zoom-in', 'icon', isZoomInExceeding && 'zoom-disabled']"
+          :class="['zoom-in icon', isZoomInExceeding && 'zoom-disabled']"
           @click.prevent.stop="zoomIn"
         >
           <PlusIcon />
@@ -69,7 +71,7 @@
         >
           <MinusIcon />
         </div>
-        <div class="percentage">
+        <div id="zoom-percentage" class="percentage">
           {{ `${currentPercentage}%` }}
         </div>
       </div>
@@ -106,13 +108,13 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
-    ...mapState("edit", ["editMode"]),
+    ...mapGetters("edit", ["isEditModeAvailable"]),
     ...mapState("document", [
       "selectedDocument",
       "recalculatingAnnotations",
       "publicView",
     ]),
-    ...mapGetters("document", ["documentCannotBeEdited", "isDocumentReviewed"]),
+    ...mapGetters("document", ["documentCannotBeEdited"]),
     isZoomInExceeding() {
       return this.currentPercentage === this.maxPercentage;
     },

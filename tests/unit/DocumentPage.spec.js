@@ -20,7 +20,7 @@ describe("Document Page Component", () => {
   it("Toolbar should be visible", async () => {
     const wrapper = render(ToolBar, true);
 
-    expect(await wrapper.findComponent(".toolbar-container"));
+    expect(await wrapper.findComponent("#toolbar-container"));
   });
 
   it("Toolbar should have icons and text visible", async () => {
