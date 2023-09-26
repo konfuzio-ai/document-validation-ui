@@ -2,26 +2,25 @@ import DocumentTopBar from "./DocumentTopBar";
 
 describe("Document Top Bar", () => {
 	let currentDocument;
-	beforeEach(() => {
 
+	beforeEach(() => {
 		cy.fetchDocument().then(() => {			
 			cy.getStore("document")
 				.then($document => {
 					currentDocument = $document.selectedDocument;
 				});
-
-			
+	
 			cy.getStore("project")
 				.then($project => {
 				  cy.fetchCategories($project.projectId);
 			  });
 		});
-
 		cy.dispatchAction("document", "setPublicView", false);
+		cy.dispatchAction("edit", "disableEditMode");
+		cy.mount(DocumentTopBar);
 	});
 
 	it("Shows category dropdown if not edit mode or reviewed", () => {
-		cy.mount(DocumentTopBar);
 		cy.dispatchAction("edit", "disableEditMode");
 
 		cy.get("#document-top-bar-component")
@@ -31,7 +30,6 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Shows correct file name", () => {
-		cy.mount(DocumentTopBar);
 		const fileName = currentDocument.data_file_name
 
 		cy.get("#document-top-bar-component")
@@ -46,42 +44,37 @@ describe("Document Top Bar", () => {
 			.contains(fileName);
 	});
 
-	it("Shows arrows if available documents to navigate to", () => {
-		cy.mount(DocumentTopBar);
+	it("Shows arrows if available documents to navigate to", () => {		
 		cy.fetchDocumentList();
 		const assignee = currentDocument.assignee;
 		
 		cy.getStore("project")
       .then($project => {
-				const filtered = $project.documentsInProject.filter(
-					(document) =>
-						(document.status_data === 41 || (document.status_data === 2 && document.labeling_available === 1)
-						) && document.assignee === assignee 
-				);
+				cy.gettersStore().then(($getters) => {
+					const filtered = $project.documentsInProject.filter(
+						(document) =>
+							($getters["document/waitingForSplittingConfirmation"](document) || $getters["document/isDocumentReadyToBeReviewed"](document)
+							) && document.assignee === assignee 
+					);
 
-				if(filtered.length > 0) {
-					cy.get("#document-top-bar-component")
-					.find(".center-bar-components")
-					.find(".navigation-arrow")
-					.should("be.visible");
-				}
+					if(filtered.length > 0) {
+						cy.get("#document-top-bar-component")
+						.find(".center-bar-components")
+						.find(".navigation-arrow")
+						.should("be.visible");
+					}
 			});
+		});
 	});
 
 	it("Shows keyboard icon", () => {
-		cy.mount(DocumentTopBar);
-		cy.dispatchAction("edit", "disableEditMode");
-
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
 			.find(".keyboard-actions-info")
 			.should("be.visible");
 	});
 
-	it("Shows disabled finish review button", () => {
-		cy.mount(DocumentTopBar);
-		cy.dispatchAction("edit", "disableEditMode");
-
+	it("Shows disabled finish review button", () => {		
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
 			.find(".top-bar-buttons")
@@ -97,7 +90,6 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Shows edit mode buttons", () => {
-		cy.mount(DocumentTopBar);
 		cy.dispatchAction("edit", "enableEditMode");
 
 		cy.get("#document-top-bar-component")
@@ -111,12 +103,9 @@ describe("Document Top Bar", () => {
 			.find(".top-bar-buttons")
 			.find(".edit-mode-buttons")
 			.should("be.visible");
-		
-		cy.dispatchAction("edit", "disableEditMode");
 	});
 
 	it("Edits file name", () => {
-		cy.mount(DocumentTopBar);
 		const fileName = currentDocument.data_file_name.split(".").slice(0, -1).join(".");
 
 		cy.get("#document-top-bar-component")
@@ -168,8 +157,6 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Shows tooltip when hovering over keyboard info", () => {
-		cy.mount(DocumentTopBar);
-
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
 			.find(".keyboard-actions-info")
@@ -187,8 +174,7 @@ describe("Document Top Bar", () => {
 			.trigger("mouseleave");
 	});
 
-	it("Closes edit mode when clicking 'back to annotaiton view' button", () => {
-		cy.mount(DocumentTopBar);
+	it("Closes edit mode when clicking 'back to annotaiton view' button", () => {	
 		cy.dispatchAction("edit", "enableEditMode");
 
 		cy.get("#document-top-bar-component")
@@ -211,7 +197,6 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Shows rename and categorize section when clicking 'next' button", () => {
-		cy.mount(DocumentTopBar);
 		cy.dispatchAction("edit", "enableEditMode");
 
 		cy.get("#document-top-bar-component")
@@ -226,6 +211,6 @@ describe("Document Top Bar", () => {
 			.find(".right-bar-components")
 			.find(".edit-mode-buttons")
 			.find(".submit-btn")
-			.should("be.visible")
+			.should("be.visible");
 	});
 });
