@@ -404,6 +404,8 @@ describe("Document Annotations Component", () => {
     const annotationSet = getData("document").annotationSets[1];
     const label = annotationSet.labels[0];
 
+    await dispatch("document/setPublicView", false);
+
     const wrapper = render(
       DocumentLabel,
       true,
