@@ -7,6 +7,7 @@
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
       annotationIsNotFound(annotationSet, label) && 'missing',
       isAnnotationInEditMode(annotationId()) && 'editing',
+      publicView && 'clickable-cursor'
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"

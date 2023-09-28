@@ -173,6 +173,10 @@
             align-items: center;
             padding-right: 5px;
 
+            &.clickable-cursor {
+              cursor: pointer;
+            }
+
             .annotation-row-left {
               flex: 1;
               padding-left: 8px;
