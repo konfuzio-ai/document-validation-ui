@@ -46,7 +46,7 @@
         multilined
         :active="!documentHasProposedSplit(selectedDocument)"
         position="is-bottom"
-        class="bottom-aligned"
+        class="bottom-aligned split-tooltip"
         :label="tooltipInfo"
       >
         <b-field>
@@ -55,6 +55,7 @@
             :value="true"
             size="is-small"
             :disabled="!documentHasProposedSplit(selectedDocument)"
+            class="split-switch"
           />
           <div class="switch-info">
             <span class="switch-text">{{ $t("smart_split") }}</span>
