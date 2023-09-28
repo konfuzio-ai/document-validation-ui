@@ -148,6 +148,10 @@ export default {
   },
   mounted() {
     this.updateValues();
+
+    if(this.publicView) {
+      this.showAnnotationsGroup = true;
+    }
   },
   updated() {
     this.updateValues();
