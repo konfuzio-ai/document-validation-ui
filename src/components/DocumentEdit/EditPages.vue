@@ -39,7 +39,7 @@
               v-if="
                 splittingLines && splittingLines[index].page === page.number
               "
-              class="lines"
+              class="lines active-split"
             >
               <SplitZigZag
                 :color="
@@ -52,7 +52,7 @@
                 "
               />
             </div>
-            <div v-else class="lines">
+            <div v-else class="lines not-active-split">
               <SplitLines />
             </div>
           </div>
