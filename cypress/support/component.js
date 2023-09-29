@@ -76,17 +76,6 @@ Cypress.Commands.add("dispatchAction", (store, action, value) => {
   cy.store().invoke("dispatch", `${store}/${action}`, value);
 });
 
-Cypress.Commands.add("dragElement", {prevSubject: "true"}, (subject, x, y) => {
-    Cypress.log({
-      name: "dragElement",
-    });
-    cy.wrap(subject)
-      .trigger("pointerdown", { button: 0 }, { force: true })
-      .trigger("pointermove", x, y, { force: true })
-      .trigger("pointerup", { force: true });
-  }
-);
-
 // Ignore resize observe error
 Cypress.on("uncaught:exception", (err, runnable) => {
   if (err.message.includes("ResizeObserver")) {
