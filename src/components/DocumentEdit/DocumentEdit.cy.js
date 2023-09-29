@@ -138,7 +138,7 @@ describe("Document Edit", () => {
     });
   });
 
-  it("Shows the splitting lines by default when no suggestions, and the visible lines should be number of pages - 1", () => {
+  it("Shows the splitting lines by default when no suggestions, and the visible lines should be number of pages, and last one not visible", () => {
     cy.getStore("document").then($document => {
       const pages = $document.selectedDocument.pages
       const pagesLength = pages.length;
@@ -151,7 +151,8 @@ describe("Document Edit", () => {
           .find(".lines")
           .should("have.class", "not-active-split")
           .and($lines => {
-            expect($lines).to.have.lengthOf(pagesLength - 1);
+            expect($lines).to.have.lengthOf(pagesLength);
+            expect($lines[pagesLength - 1]).not.to.be.visible;
           });
       }
     });

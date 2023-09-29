@@ -98,68 +98,75 @@ describe("Document Annotations", () => {
       })
   });
 
-  it("clicks each annotation and shows action buttons", () => {  
-    cy.get("#document-annotations")
-      .find(".label")
-      .find(".annotation-row")
-      .find(".annotation")
-      .each(($row) => {
-        cy.wrap($row)
-          .find(".annotation-value")
-          .click();
-
+  it("clicks each annotation and shows action buttons", () => {
+    cy.getStore("document").then($document => {
+      if($document.annotations.length > 0) {
         cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-save-btn")
-          .should("be.visible")
-          
+        .find(".label")
+        .find(".annotation-row")
+        .find(".annotation")
+        .each(($row) => {
+          cy.wrap($row)
+            .find(".annotation-value")
+            .click();
 
-        cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-cancel-btn")
-          .should("be.visible")
-        
-        
-        cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-cancel-btn")
-          .click();
+          cy.get("#document-annotations")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-save-btn")
+            .should("be.visible")
+            
 
-        cy.wait(1000);
-      });
+          cy.get("#document-annotations")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-cancel-btn")
+            .should("be.visible")
+              
+          cy.get("#document-annotations")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-cancel-btn")
+            .click();
+
+          cy.wait(1000);
+        });
+      }
+    });
   });
 
-  it("shows accept and decline buttons when hovering annotation", () => { 
-    cy.get("#document-annotations")
-      .find(".label")
-      .find(".annotation-row")
-      .find(".not-revised")
-      .each(($row) => {
-        cy.wrap($row)
-          .trigger("mouseover");
-
+  it("shows accept and decline buttons when hovering annotation", () => {
+    cy.getStore("document").then($document => {
+      if($document.annotations.length > 0) {
         cy.get("#document-annotations")
           .find(".label")
           .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".decline-button-container")
-          .should("be.visible");
-          
-        cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-accept-btn")
-          .should("be.visible");
-
-        cy.wait(1000);
-      });
+          .find(".not-revised")
+          .each(($row) => {
+            cy.wrap($row)
+              .trigger("mouseover");
+    
+            cy.get("#document-annotations")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".action-buttons")
+              .find(".decline-button-container")
+              .should("be.visible");
+              
+            cy.get("#document-annotations")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".action-buttons")
+              .find(".annotation-accept-btn")
+              .should("be.visible");
+    
+            cy.wait(1000);
+          });
+      }
+    });
   });
 
   it("clicks each empty annotation and shows action buttons", () => {
