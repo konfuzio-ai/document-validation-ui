@@ -190,7 +190,7 @@ export default {
     },
     handleCategoryConfidence(confidence) {
       if(!confidence) {
-        if(confidence === 0) return 0;
+        if(confidence === 0) return confidence.toFixed(2);
 
         return;
       }
