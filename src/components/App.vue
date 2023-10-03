@@ -25,11 +25,6 @@ export default {
       required: false,
       default: null,
     },
-    project: {
-      type: String,
-      required: false,
-      default: null,
-    },
     // eslint-disable-next-line vue/prop-name-casing
     user_token: {
       type: String,
@@ -88,15 +83,6 @@ export default {
         return process.env.VUE_APP_DOCUMENT_ID;
       } else if (this.document) {
         return this.document;
-      } else {
-        return null;
-      }
-    },
-    projectId() {
-      if (process.env.VUE_APP_PROJECT_ID) {
-        return process.env.VUE_APP_PROJECT_ID;
-      } else if (this.project) {
-        return this.project;
       } else {
         return null;
       }
@@ -170,7 +156,6 @@ export default {
 
     // document and project config
     Promise.all([
-      this.$store.dispatch("project/setProjectId", this.projectId),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch(

@@ -731,11 +731,13 @@ const actions = {
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
 
-          if (rootState.project.projectId) {
-            projectId = rootState.project.projectId;
-          } else {
+          if(response.data.project) {
             projectId = response.data.project;
-            dispatch("project/setProjectId", response.data.project, {
+
+            dispatch("project/setProjectId", projectId, {
+              root: true,
+            });
+            dispatch("project/fetchProjectDetails", projectId, {
               root: true,
             });
           }
