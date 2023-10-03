@@ -192,6 +192,43 @@
                 padding: 10px 0;
                 padding-right: 4px;
               }
+
+              .annotation-translation {
+                display: flex;
+                padding-left: 20px;
+
+                .icon {
+                  display: flex;
+                }
+
+                .translation-details {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+                  min-width: 100px;
+                  text-align: left;
+
+                  .translation-title {
+                    font-size: 14px;
+                    font-weight: 500;
+                  }
+
+                  .translation-info {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 8px;
+                    font-size: 12px;
+
+                    .annotation-details-link {
+                      color: $primary;
+
+                      &:hover {
+                        filter: $hover-style;
+                      }
+                    }
+                  }
+                }
+              }
             }
 
             .annotation-row-right {

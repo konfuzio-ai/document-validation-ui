@@ -76,4 +76,5 @@ export default {
   setAuthToken,
   setLocale,
   FILE_REQUEST,
+  DEFAULT_URL
 };
