@@ -399,4 +399,44 @@ describe("Document Annotations", () => {
         cy.wait("@deleteMissingAnnotation").its("response.statusCode").should("eq", 204);
       });
   });
+
+  it("shows details regarding translated strings if they are enabled for the project", () => {
+    cy.getStore("project").then($project => {      
+      if($project.translationsEnabled) {
+        cy.getStore("document").then($document => {
+          if($document.annotations.length > 0) {
+            cy.get("#document-annotations")
+              .find(".labels")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".annotation-row-left")
+              .find(".annotation-translation")
+              .first()
+              .find(".icon")
+              .should("be.visible");
+
+            cy.get("#document-annotations")
+              .find(".labels")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".annotation-row-left")
+              .find(".annotation-translation")
+              .first()
+              .trigger("mouseenter");
+
+            cy.get("#document-annotations")
+              .find(".labels")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".annotation-row-left")
+              .find(".annotation-translation")
+              .first()
+              .find(".tooltip-content")
+              .find(".translation-details")
+              .should("be.visible");
+          }
+        });
+      }
+    })
+  });
 });
