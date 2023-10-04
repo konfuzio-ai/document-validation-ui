@@ -8,6 +8,7 @@ import store from "../../src/store";
 import api from "../../src/api";
 import i18n from "../../src/i18n";
 import Icons from "../../src/icons";
+import "@4tw/cypress-drag-drop";
 
 Cypress.Commands.add("mount", (component, options = {}) => {
   // Setup options object
