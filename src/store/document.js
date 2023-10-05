@@ -408,8 +408,8 @@ const getters = {
 
   // Check if document is ready to be finished
   isDocumentReadyToFinishReview: (state) => {
-    // check if all annotations have been revised
-    let notRevised;
+    // check if all annotations are correct
+    let notCorrect;
 
     const emptyAnnotations = [];
 
@@ -430,7 +430,7 @@ const getters = {
     }
 
     if (state.annotations) {
-      notRevised = state.annotations.filter((a) => !a.revised);
+      notCorrect = state.annotations.filter((a) => !a.is_correct);
     }
 
     // if all annotations have been revised
@@ -440,8 +440,8 @@ const getters = {
     if (
       !emptyAnnotations ||
       !state.missingAnnotations ||
-      !notRevised ||
-      (notRevised.length === 0 &&
+      !notCorrect ||
+      (notCorrect.length === 0 &&
         state.missingAnnotations.length === emptyAnnotations.length)
     ) {
       return true;
