@@ -385,7 +385,7 @@ export default {
         !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
-        !this.annotation.revised &&
+        !this.annotation.is_correct &&
         this.hoveredAnnotation === this.annotation.id
       );
     },

@@ -456,7 +456,7 @@ const getters = {
   /**
    * Get number of annotations pending review per annotation set
    */
-  annotationsWithPendingReviewLength: () => (annotationSet) => {
+  notCorrectAnnotationsLength: () => (annotationSet) => {
     const labels = annotationSet.labels.filter(
       (label) => label.annotations.length > 0
     );
@@ -465,7 +465,7 @@ const getters = {
 
     labels.map((label) => {
       const foundPendingAnnotations = label.annotations.filter(
-        (ann) => !ann.revised
+        (ann) => !ann.is_correct
       );
 
       if (foundPendingAnnotations && foundPendingAnnotations.length > 0) {

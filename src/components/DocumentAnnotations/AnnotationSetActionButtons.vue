@@ -27,11 +27,11 @@
       <b-button
         type="is-primary"
         class="accept-all-btn"
-        :disabled="numberOfPendingAnnotationsInAnnotationSet === 0"
+        :disabled="numberOfNotCorrectAnnotationsInAnnotationSet === 0"
         @click.stop="acceptAllPending"
       >
         {{ $t("accept_group") }} ({{
-          numberOfPendingAnnotationsInAnnotationSet
+          numberOfNotCorrectAnnotationsInAnnotationSet
         }})
       </b-button>
     </div>
@@ -49,7 +49,7 @@ export default {
       type: Number,
       default: 0,
     },
-    numberOfPendingAnnotationsInAnnotationSet: {
+    numberOfNotCorrectAnnotationsInAnnotationSet: {
       type: Number,
       default: 0,
     },

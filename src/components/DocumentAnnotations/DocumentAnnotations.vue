@@ -69,8 +69,8 @@
               :number-of-empty-labels-in-annotation-set="
                 emptyLabelsLength(annotationSet)
               "
-              :number-of-pending-annotations-in-annotation-set="
-                annotationsWithPendingReviewLength(annotationSet)
+              :number-of-not-correct-annotations-in-annotation-set="
+                notCorrectAnnotationsLength(annotationSet)
               "
               @mark-all-empty-missing="
                 markAnnotationsAsMissing(null, null, annotationSet, true)
@@ -170,7 +170,7 @@ export default {
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "emptyLabelsLength",
-      "annotationsWithPendingReviewLength",
+      "notCorrectAnnotationsLength",
       "annotationSetsToShowInList",
       "annotationSetsInTable",
       "isDocumentReviewed",

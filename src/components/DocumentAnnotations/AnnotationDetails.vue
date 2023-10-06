@@ -7,7 +7,6 @@
     <div :class="['label-icon', fromTable && 'is-small']">
       <div v-if="(created(annotation) || edited(annotation)) && !publicView">
         <div
-          v-if="accepted(annotation)"
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
@@ -15,16 +14,6 @@
           ]"
         >
           <AcceptedUser />
-        </div>
-        <div
-          v-else
-          :class="[
-            'annotation-details-icon',
-            animate ? 'animated-ripple' : '',
-            'user-icon',
-          ]"
-        >
-          <UserIcon />
         </div>
       </div>
       <div
@@ -88,7 +77,6 @@
           <div class="detail-icons">
             <div v-if="created(annotation) || edited(annotation)">
               <div
-                v-if="accepted(annotation)"
                 :class="[
                   'annotation-details-icon',
                   animate ? 'animated-ripple' : '',
@@ -96,16 +84,6 @@
                 ]"
               >
                 <AcceptedUser />
-              </div>
-              <div
-                v-else
-                :class="[
-                  'annotation-details-icon',
-                  animate ? 'animated-ripple' : '',
-                  'user-icon',
-                ]"
-              >
-                <UserIcon />
               </div>
             </div>
             <div
@@ -151,7 +129,6 @@ import CheckMark from "../../assets/images/CheckMark";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import QuestionMark from "../../assets/images/QuestionMark";
 import AcceptedUser from "../../assets/images/AcceptedUser";
-import UserIcon from "../../assets/images/UserIcon";
 import NotFoundIcon from "../../assets/images/NotFoundIcon";
 
 export default {
@@ -161,7 +138,6 @@ export default {
     QuestionMark,
     AcceptedCheckMark,
     AcceptedUser,
-    UserIcon,
     NotFoundIcon,
   },
   props: {
