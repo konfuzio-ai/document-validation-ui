@@ -137,7 +137,7 @@ describe("Document Edit", () => {
       const pages = $document.selectedDocument.pages;
       const pagesLength = pages.length;
 
-      if (!$document.selectedDocument.proposed_split) {
+      if (!$document.selectedDocument.proposed_split && $document.pages.length > 1) {
         cy.get("#document-edit")
           .find(".pages-section")
           .find(".image-section")
@@ -154,27 +154,29 @@ describe("Document Edit", () => {
 
   it("Clicking splitting lines creates new documents", () => {
     cy.getStore("document").then(($document) => {
-      if ($document.selectedDocument.proposed_split) {
+      if ($document.pages.length > 1) {
+        if ($document.selectedDocument.proposed_split) {
+          cy.get("#document-edit")
+            .find(".sidebar")
+            .find(".smart-split")
+            .find(".split-switch")
+            .click();
+
+          cy.wait(1000);
+        }
+
         cy.get("#document-edit")
-          .find(".sidebar")
-          .find(".smart-split")
-          .find(".split-switch")
+          .find(".pages-section")
+          .find(".image-section")
+          .find(".splitting-lines")
+          .find(".lines")
+          .first()
           .click();
 
-        cy.wait(1000);
+        cy.getStore("edit").then(($edit) => {
+          expect($edit.updatedDocument).to.have.lengthOf(2);
+        });
       }
-
-      cy.get("#document-edit")
-        .find(".pages-section")
-        .find(".image-section")
-        .find(".splitting-lines")
-        .find(".lines")
-        .first()
-        .click();
-
-      cy.getStore("edit").then(($edit) => {
-        expect($edit.updatedDocument).to.have.lengthOf(2);
-      });
     });
   });
 
