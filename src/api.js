@@ -3,6 +3,7 @@ import { cacheAdapterEnhancer } from "axios-extensions";
 
 let HTTP, FILE_REQUEST, authToken, appLocale;
 const DEFAULT_URL = "https://app.konfuzio.com";
+const FILE_URL = process.env.VUE_APP_DOCUMENT_IMAGES_URL;
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -12,7 +13,7 @@ HTTP = axios.create({
 });
 
 FILE_REQUEST = axios.create({
-  baseURL: process.env.VUE_APP_DOCUMENT_IMAGES_URL || `${DEFAULT_URL}`,
+  baseURL: FILE_URL || `${DEFAULT_URL}`,
   responseType: "blob",
   adapter: cacheAdapterEnhancer(axios.defaults.adapter),
 });
@@ -76,5 +77,6 @@ export default {
   setAuthToken,
   setLocale,
   FILE_REQUEST,
-  DEFAULT_URL
+  DEFAULT_URL,
+  FILE_URL
 };

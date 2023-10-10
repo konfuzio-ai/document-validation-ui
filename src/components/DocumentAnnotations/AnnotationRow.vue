@@ -699,7 +699,8 @@ export default {
     editAnnotationTranslation(annotationId) {
       if(!annotationId) return;
 
-      const baseUrl = api.DEFAULT_URL;
+      const  baseUrl = api.FILE_URL ? api.FILE_URL : api.DEFAULT_URL;
+      
       const annotationDetailsUrl = `${baseUrl}/admin/server/sequenceannotation/${annotationId}/change/`;
 
       window.open(annotationDetailsUrl, "_blank");
