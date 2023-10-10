@@ -40,7 +40,7 @@
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
-        <div v-if="annotation">
+        <div v-if="annotation && !isNegative(annotation)">
           <div
             v-for="(span, index) in spanForEditing
               ? spanSelection
@@ -87,7 +87,7 @@
           />
         </div>
       </div>
-      <div v-if="showButtons" class="buttons-container">
+      <div class="buttons-container">
         <AnnotationActionButtons
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
@@ -140,10 +140,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    showButtons: {
-      type: Boolean,
-      default: true,
-    },
     fromTable: {
       type: Boolean,
       default: false,
@@ -179,10 +175,12 @@ export default {
       "isAnnotationInEditMode",
       "annotationIsNotFound",
       "isDocumentReviewed",
+      "isNegative"
     ]),
     defaultSpan() {
       if (
         this.annotation &&
+        !this.isNegative(this.annotation) &&
         this.annotation.span &&
         this.annotation.span.length > 0
       ) {
@@ -200,6 +198,7 @@ export default {
     isAnnotation() {
       return (
         this.annotation &&
+        !this.isNegative(this.annotation) &&
         this.isAnnotationInEditMode(
           this.annotationId(),
           this.editAnnotation.index
@@ -222,7 +221,8 @@ export default {
         this.hoveredAnnotationSet &&
         this.hoveredAnnotationSet.type == "accept" &&
         this.annotation &&
-        this.hoveredPendingAnnotations() === this.annotation.id
+        !this.isNegative(this.annotation) &&
+        this.hoveredNotCorrectAnnotations() === this.annotation.id
       );
     },
   },
@@ -238,7 +238,7 @@ export default {
         annotationSelected = newSidebarAnnotationSelected;
       }
 
-      if (this.annotation && this.annotation.id === annotationSelected.id) {
+      if (this.annotation && !this.isNegative(this.annotation) && this.annotation.id === annotationSelected.id) {
         clearTimeout(this.annotationAnimationTimeout);
 
         let timeout;
@@ -313,7 +313,7 @@ export default {
     annotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      if (this.annotation && this.annotation.id) return this.annotation.id;
+      if (this.annotation && this.annotation.id && !this.isNegative(this.annotation)) return this.annotation.id;
 
       let emptyAnnotationId;
 
@@ -354,10 +354,12 @@ export default {
         }
       );
       const found = labels.find((l) => l.id === this.label.id);
-      if (found && found.annotations.length === 0) return found.id;
+      const negativeAnnotations = found.annotations.find(annotation => this.isNegative(annotation));
+
+      if ((found && found.annotations.length === 0) || negativeAnnotations) return found.id;
       return null;
     },
-    hoveredPendingAnnotations() {
+    hoveredNotCorrectAnnotations() {
       // This method will change the style of Annotations in the same Label Set
       // when the "Accept all" button is hovered
       if (!this.hoveredAnnotationSet) return;
@@ -385,7 +387,8 @@ export default {
         !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
-        !this.annotation.revised &&
+        !this.isNegative(this.annotation) &&
+        !this.annotation.is_correct &&
         this.hoveredAnnotation === this.annotation.id
       );
     },
@@ -394,6 +397,7 @@ export default {
         !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
         this.annotation &&
+        !this.isNegative(this.annotation) &&
         this.hoveredAnnotation === this.annotation.id
       );
     },
@@ -402,7 +406,7 @@ export default {
         !this.editAnnotation &&
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.annotationId()) &&
-        !this.annotation &&
+        (!this.annotation || this.isNegative(this.annotation)) &&
         !this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
@@ -416,7 +420,6 @@ export default {
     },
     showCancelButton() {
       if (!this.editAnnotation || this.isLoading) return;
-
       if (this.isAnnotationInEditMode(this.annotationId())) {
         return true;
       }
@@ -457,7 +460,7 @@ export default {
 
       // Verify if we are editing a filled or empty annotation
       if (
-        this.annotation &&
+        this.annotation && !this.isNegative(this.annotation) &&
         (this.showAcceptButton() ||
           this.showDeclineButton() ||
           this.isAnnotationInEditMode(
@@ -486,7 +489,7 @@ export default {
 
         this.saveAnnotationChanges(spans, decline);
       } else if (
-        !this.annotation &&
+        (!this.annotation || this.isNegative(this.annotation)) &&
         this.isAnnotationInEditMode(this.annotationId())
       ) {
         this.saveEmptyAnnotationChanges();
@@ -582,9 +585,16 @@ export default {
         };
       }
       this.isLoading = true;
+      let negativeAnnotationId;
+
+      // check if the annotation to create comes from a negative annotation
+      // so we can create the new one and remove the negative one from the annotations array
+      if(this.isNegative(this.annotation)) {
+        negativeAnnotationId = this.annotation.id;
+      }
 
       this.$store
-        .dispatch("document/createAnnotation", annotationToCreate)
+        .dispatch("document/createAnnotation", {annotation: annotationToCreate, negativeAnnotationId: negativeAnnotationId})
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
             error,

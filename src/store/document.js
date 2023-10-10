@@ -248,6 +248,7 @@ const getters = {
     const labels = [];
     const processedAnnotationSets = annotationSets.map((annotationSet) => {
       const annotationSetLabels = annotationSet.labels.map((label) => {
+      
         // add annotations to the document array
         annotations.push(...label.annotations);
         labels.push(label);
@@ -367,27 +368,28 @@ const getters = {
   /**
    * Get number of empty labels per annotation set
    */
-  emptyLabelsLength: (state) => (annotationSet) => {
-    const labels = annotationSet.labels.filter(
-      (label) => label.annotations.length === 0
-    );
-
+  emptyLabels: (state, getters) => (annotationSet) => {
     const pendingEmpty = [];
 
-    labels.map((label) => {
-      const found = state.missingAnnotations.find(
+    annotationSet.labels.map((label) => {
+      const foundMissing = state.missingAnnotations.find(
         (l) =>
           l.label === label.id &&
           annotationSet.id === l.annotation_set &&
           annotationSet.label_set.id === l.label_set
       );
 
-      if (!found) {
+      const foundNegative = label.annotations.find(annotation => 
+        getters.isNegative(annotation)
+      );
+
+      if (!foundMissing && (label.annotations.length === 0 || foundNegative)) {
         pendingEmpty.push(label);
       }
+
     });
 
-    return pendingEmpty.length;
+    return pendingEmpty;
   },
 
   annotationIsNotFound: (state) => (annotationSet, label) => {
@@ -408,8 +410,8 @@ const getters = {
 
   // Check if document is ready to be finished
   isDocumentReadyToFinishReview: (state) => {
-    // check if all annotations have been revised
-    let notRevised;
+    // check if all annotations are correct
+    let notCorrect;
 
     const emptyAnnotations = [];
 
@@ -430,7 +432,7 @@ const getters = {
     }
 
     if (state.annotations) {
-      notRevised = state.annotations.filter((a) => !a.revised);
+      notCorrect = state.annotations.filter((a) => !a.is_correct);
     }
 
     // if all annotations have been revised
@@ -440,8 +442,8 @@ const getters = {
     if (
       !emptyAnnotations ||
       !state.missingAnnotations ||
-      !notRevised ||
-      (notRevised.length === 0 &&
+      !notCorrect ||
+      (notCorrect.length === 0 &&
         state.missingAnnotations.length === emptyAnnotations.length)
     ) {
       return true;
@@ -456,7 +458,7 @@ const getters = {
   /**
    * Get number of annotations pending review per annotation set
    */
-  annotationsWithPendingReviewLength: () => (annotationSet) => {
+  notCorrectAnnotations: () => (annotationSet) => {
     const labels = annotationSet.labels.filter(
       (label) => label.annotations.length > 0
     );
@@ -465,7 +467,7 @@ const getters = {
 
     labels.map((label) => {
       const foundPendingAnnotations = label.annotations.filter(
-        (ann) => !ann.revised
+        (ann) => !ann.is_correct && !ann.revised
       );
 
       if (foundPendingAnnotations && foundPendingAnnotations.length > 0) {
@@ -480,7 +482,7 @@ const getters = {
       }
     });
 
-    return annotationsWithPendingReview.length;
+    return annotationsWithPendingReview;
   },
 
   /**
@@ -573,6 +575,13 @@ const getters = {
   accepted: () => (annotation) => {
     if (annotation) {
       return annotation.revised && annotation.is_correct;
+    } else {
+      return null;
+    }
+  },
+  isNegative: () => (annotation) => {
+    if(annotation) {
+      return !annotation.is_correct && annotation.revised
     } else {
       return null;
     }
@@ -829,7 +838,7 @@ const actions = {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
-  createAnnotation: ({ commit, getters, dispatch }, annotation) => {
+  createAnnotation: ({ commit, getters, dispatch }, {annotation, negativeAnnotationId}) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {
@@ -847,6 +856,9 @@ const actions = {
               }
             } else {
               commit("ADD_ANNOTATION", response.data);
+              if(negativeAnnotationId) {
+                commit("DELETE_ANNOTATION", negativeAnnotationId);
+              }
             }
 
             resolve(response);
@@ -1142,6 +1154,7 @@ const mutations = {
             const exists = label.annotations.find(
               (existingAnnotation) => existingAnnotation.id === annotation.id
             );
+            
             if (!exists) {
               label.annotations.push(annotation);
               return;

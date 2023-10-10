@@ -67,10 +67,10 @@
           >
             <AnnotationSetActionButtons
               :number-of-empty-labels-in-annotation-set="
-                emptyLabelsLength(annotationSet)
+                emptyLabels(annotationSet).length
               "
-              :number-of-pending-annotations-in-annotation-set="
-                annotationsWithPendingReviewLength(annotationSet)
+              :number-of-not-correct-annotations-in-annotation-set="
+                notCorrectAnnotations(annotationSet).length
               "
               @mark-all-empty-missing="
                 markAnnotationsAsMissing(null, null, annotationSet, true)
@@ -110,7 +110,7 @@
 
         <div v-if="annotationSet.labels.length === 0" class="no-labels">
           <span> {{ $t("no_labels_in_set") }}</span>
-          <span v-if="!publicView" v-html="$t('link_to_add_labels')"></span>
+          <span v-if="!publicView && !isDocumentReviewed" v-html="$t('link_to_add_labels')"></span>
         </div>
 
         <div
@@ -169,8 +169,8 @@ export default {
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
-      "emptyLabelsLength",
-      "annotationsWithPendingReviewLength",
+      "emptyLabels",
+      "notCorrectAnnotations",
       "annotationSetsToShowInList",
       "annotationSetsInTable",
       "isDocumentReviewed",
@@ -424,26 +424,9 @@ export default {
       } else if (annotationSet && markAllMissing) {
         // mark all annotations as missing in annotation set
 
-        const allEmptyLabels = annotationSet.labels.filter(
-          (label) => label.annotations.length === 0
-        );
-
         // Check if any of the empty annotations was already marked as missing individually
         // and remove them
-        const toMarkAsMissing = [];
-
-        allEmptyLabels.map((label) => {
-          const found = this.missingAnnotations.find(
-            (l) =>
-              l.label === label.id &&
-              l.annotation_set === annotationSet.id &&
-              l.label_set === annotationSet.label_set.id
-          );
-
-          if (!found) {
-            toMarkAsMissing.push(label);
-          }
-        });
+        const toMarkAsMissing = this.emptyLabels(annotationSet);
 
         missing = toMarkAsMissing.map((label) => {
           return {
