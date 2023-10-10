@@ -55,7 +55,7 @@
               </div>
               <div  class="translation-info">
                 <span class="translated-string">{{ annotation.translated_string ? annotation.translated_string : $t("no_translated_string")}}</span>
-                <a class="annotation-details-link" @click="editAnnotationTranslation(annotation.id)">{{ annotation.translated_string ? $t("edit") : $t("add_translation")}}</a>
+                <a v-if=!isDocumentReviewed class="annotation-details-link" @click="editAnnotationTranslation(annotation.id)">{{ annotation.translated_string ? $t("edit") : $t("add_translation")}}</a>
               </div>
             </div> 
           </template>
@@ -258,7 +258,7 @@ export default {
     },
     showTranslationsDetails() {
       // Only show translation option for filled annotations and if the feature is enabled for the project
-      return this.annotation && this.translationsEnabled;
+      return this.annotation && this.translationsEnabled && !this.publicView;
     }
   },
   watch: {
