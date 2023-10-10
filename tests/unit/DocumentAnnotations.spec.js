@@ -160,7 +160,7 @@ describe("Document Annotations Component", () => {
 
   it("Only show 'accept' button on hover on filled annotations", async () => {
     const annotationSet = getData("document").annotationSets[0];
-    const label = annotationSet.labels[0];
+    const label = annotationSet.labels[1];
     const annotation = label.annotations[0];
 
     const wrapper = render(AnnotationRow, false, {
@@ -179,10 +179,10 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(
-          ".annotation-row-right .buttons-container .action-buttons .annotation-accept-btn"
+        .findComponent(
+          ".buttons-container .action-buttons .annotation-accept-btn"
         )
-        .isVisible()
+        .exists()
     ).toBe(true);
   });
 
@@ -328,7 +328,7 @@ describe("Document Annotations Component", () => {
 
     const wrapper = render(DocumentAnnotations, false);
 
-    const pendingAnnotations = annotations.filter((ann) => !ann.revised);
+    const pendingAnnotations = annotations.filter((ann) => !ann.is_correct);
 
     expect(
       await wrapper

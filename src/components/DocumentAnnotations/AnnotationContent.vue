@@ -11,9 +11,8 @@
           editAnnotation &&
           editAnnotation.id === annotation.id &&
           'error-editing',
-        isAnnotationBeingEdited && 'clicked-ann',
-        !annotation.revised && 'not-revised'
-      ]"
+        isAnnotationBeingEdited && 'clicked-ann'      
+        ]"
       role="textbox"
       :contenteditable="isAnnotationBeingEdited"
       @click="handleEditAnnotation"
@@ -75,10 +74,6 @@ export default {
       "newAcceptedAnnotations",
       "showActionError",
     ]),
-
-    isAnnotationDeleted() {
-      return this.annotation.revised && !this.annotation.is_correct;
-    },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
     },

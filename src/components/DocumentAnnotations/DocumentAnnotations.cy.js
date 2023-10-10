@@ -144,7 +144,7 @@ describe("Document Annotations", () => {
         cy.get("#document-annotations")
           .find(".label")
           .find(".annotation-row")
-          .find(".not-revised")
+          .find(".annotation")
           .each(($row) => {
             cy.wrap($row)
               .trigger("mouseover");
@@ -296,7 +296,7 @@ describe("Document Annotations", () => {
     cy.get("#document-annotations")
       .find(".label")
       .find(".annotation-row")
-      .find(".not-revised")
+      .find(".annotation")
       .first()
       .then(($element) => {
         const annotationId = $element[0].id;
