@@ -140,5 +140,8 @@
   "link_to_add_labels": "See how to add them <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>here</a>.",
   "no_annotations_in_annotation_set": "This annotation set has no annotations extracted for its respective labels.",
   "wait_title": "Please wait...",
-  "redirecting_to_documents_list": "We are taking you to the documents list, so you can continue reviewing your documents while we process the changes made."
+  "redirecting_to_documents_list": "We are taking you to the documents list, so you can continue reviewing your documents while we process the changes made.",
+  "translated_string_title": "Translated text",
+  "no_translated_string": "No translation exists yet.",
+  "add_translation": "Add one"
 }

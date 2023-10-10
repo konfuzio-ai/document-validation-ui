@@ -140,5 +140,8 @@
   "link_to_add_labels": "Para ver cómo agregarlas haga clic <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>aquí</a>.",
   "no_annotations_in_annotation_set": "Este grupo de anotaciones no tiene anotaciones encontradas para sus respectivas etiquetas.",
   "wait_title": "Por favor espere...",
-  "redirecting_to_documents_list": "Lo estamos redirigiendo a la lista de documentos, para que pueda continuar la revisión de sus documentos mientras procesamos los cambios realizados."
+  "redirecting_to_documents_list": "Lo estamos redirigiendo a la lista de documentos, para que pueda continuar la revisión de sus documentos mientras procesamos los cambios realizados.",
+  "translated_string_title": "Texto traducido",
+  "no_translated_string": "Aún no existe traducción.",
+  "add_translation": "Agregar"
 }

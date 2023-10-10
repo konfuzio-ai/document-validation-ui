@@ -37,6 +37,30 @@
       >
         <span>{{ label.name }} </span>
       </div>
+
+      <div v-if="showTranslationsDetails" class="annotation-translation">
+        <b-tooltip
+          :animated="false"
+          position="is-bottom"
+          :close-delay="2000"
+        >
+          <div class="icon">
+            <TranslateArrows :translation="annotation.translated_string && true"/>
+          </div>
+
+          <template #content> 
+            <div class="translation-details">
+              <div class="translation-title">
+                <span>{{ $t("translated_string_title") }}</span>
+              </div>
+              <div  class="translation-info">
+                <span class="translated-string">{{ annotation.translated_string ? annotation.translated_string : $t("no_translated_string")}}</span>
+                <a v-if=!isDocumentReviewed class="annotation-details-link" @click="editAnnotationTranslation(annotation.id)">{{ annotation.translated_string ? $t("edit") : $t("add_translation")}}</a>
+              </div>
+            </div> 
+          </template>
+        </b-tooltip>
+      </div>
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
@@ -113,7 +137,10 @@ import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
 import AnnotationActionButtons from "./AnnotationActionButtons";
+import TranslateArrows from "../../assets/images/TranslateArrows";
+
 import { isElementArray } from "../../utils/utils";
+import api from "../../api";
 
 export default {
   name: "AnnotationRow",
@@ -122,6 +149,7 @@ export default {
     AnnotationContent,
     EmptyAnnotation,
     AnnotationActionButtons,
+    TranslateArrows,
   },
   props: {
     annotationSet: {
@@ -170,6 +198,9 @@ export default {
       "spanSelection",
       "elementSelected",
       "selectedEntities",
+    ]),
+    ...mapState("project", [
+      "translationsEnabled"
     ]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
@@ -225,6 +256,10 @@ export default {
         this.hoveredNotCorrectAnnotations() === this.annotation.id
       );
     },
+    showTranslationsDetails() {
+      // Only show translation option for filled annotations and if the feature is enabled for the project
+      return this.annotation && this.translationsEnabled && !this.publicView;
+    }
   },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
@@ -308,7 +343,6 @@ export default {
       }
     },
   },
-
   methods: {
     annotationId() {
       if (!this.annotationSet || !this.label) return;
@@ -662,6 +696,15 @@ export default {
         });
       }
     },
+    editAnnotationTranslation(annotationId) {
+      if(!annotationId) return;
+
+      const  baseUrl = api.FILE_URL ? api.FILE_URL : api.DEFAULT_URL;
+      
+      const annotationDetailsUrl = `${baseUrl}/admin/server/sequenceannotation/${annotationId}/change/`;
+
+      window.open(annotationDetailsUrl, "_blank");
+    }
   },
 };
 </script>
