@@ -4,16 +4,16 @@ describe("Document Top Bar", () => {
 	let currentDocument;
 
 	beforeEach(() => {
-		cy.fetchDocument().then(() => {			
+		cy.fetchDocument().then(() => {
 			cy.getStore("document")
 				.then($document => {
 					currentDocument = $document.selectedDocument;
 				});
-	
+
 			cy.getStore("project")
 				.then($project => {
-				  cy.fetchCategories($project.projectId);
-			  });
+					cy.fetchCategories($project.projectId);
+				});
 		});
 		cy.dispatchAction("document", "setPublicView", false);
 		cy.dispatchAction("edit", "disableEditMode");
@@ -30,7 +30,7 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Shows correct file name", () => {
-		const fileName = currentDocument.data_file_name
+		const fileName = currentDocument.data_file_name;
 
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
@@ -44,27 +44,27 @@ describe("Document Top Bar", () => {
 			.contains(fileName);
 	});
 
-	it("Shows arrows if available documents to navigate to", () => {		
+	it("Shows arrows if available documents to navigate to", () => {
 		cy.fetchDocumentList();
 		const assignee = currentDocument.assignee;
-		
+
 		cy.getStore("project")
-      .then($project => {
+			.then($project => {
 				cy.gettersStore().then(($getters) => {
 					const filtered = $project.documentsInProject.filter(
 						(document) =>
 							($getters["document/waitingForSplittingConfirmation"](document) || $getters["document/isDocumentReadyToBeReviewed"](document)
-							) && document.assignee === assignee 
+							) && document.assignee === assignee
 					);
 
-					if(filtered.length > 0) {
+					if (filtered.length > 0) {
 						cy.get("#document-top-bar-component")
-						.find(".center-bar-components")
-						.find(".navigation-arrow")
-						.should("be.visible");
+							.find(".center-bar-components")
+							.find(".navigation-arrow")
+							.should("be.visible");
 					}
+				});
 			});
-		});
 	});
 
 	it("Shows keyboard icon", () => {
@@ -74,7 +74,7 @@ describe("Document Top Bar", () => {
 			.should("be.visible");
 	});
 
-	it("Shows disabled finish review button", () => {		
+	it("Shows disabled finish review button", () => {
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
 			.find(".top-bar-buttons")
@@ -106,7 +106,7 @@ describe("Document Top Bar", () => {
 	});
 
 	it("Edits file name", () => {
-		const fileName = currentDocument.data_file_name.split(".").slice(0, -1).join(".");
+		const newName = "test-name";
 
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
@@ -119,15 +119,15 @@ describe("Document Top Bar", () => {
 			.find(".document-name-component")
 			.find(".document-name")
 			.should("have.class", "is-editable");
-		
+
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
 			.find(".document-name-component")
 			.find(".document-name")
 			.type('{selectAll}')
 			.type('{backspace}')
-			.type("test-name");
-		
+			.type(newName);
+
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
 			.find(".document-name-component")
@@ -141,7 +141,7 @@ describe("Document Top Bar", () => {
 			.click();
 
 		cy.wait(1000);
-		
+
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
 			.find(".document-name-component")
@@ -153,7 +153,7 @@ describe("Document Top Bar", () => {
 		cy.get("#document-top-bar-component")
 			.find(".center-bar-components")
 			.find(".document-name-component")
-			.contains(fileName);
+			.contains(newName);
 	});
 
 	it("Shows tooltip when hovering over keyboard info", () => {
@@ -167,14 +167,14 @@ describe("Document Top Bar", () => {
 			.find(".keyboard-actions-info")
 			.find(".keyboard-actions-description")
 			.should("be.visible");
-		
+
 		cy.get("#document-top-bar-component")
 			.find(".right-bar-components")
 			.find(".keyboard-actions-info")
 			.trigger("mouseleave");
 	});
 
-	it("Closes edit mode when clicking 'back to annotaiton view' button", () => {	
+	it("Closes edit mode when clicking 'back to annotaiton view' button", () => {
 		cy.dispatchAction("edit", "enableEditMode");
 
 		cy.get("#document-top-bar-component")
