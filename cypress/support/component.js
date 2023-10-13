@@ -47,6 +47,11 @@ Cypress.Commands.add("fetchDocument", () => {
   cy.wait(1000);
 });
 
+Cypress.Commands.add("fetchPage", (index) => {
+  cy.store().invoke("dispatch", "document/fetchDocumentPage", index);
+  cy.wait(1000);
+});
+
 Cypress.Commands.add("setFullMode", () => {
   cy.store().invoke("dispatch", "document/setPublicView", false);
 });
