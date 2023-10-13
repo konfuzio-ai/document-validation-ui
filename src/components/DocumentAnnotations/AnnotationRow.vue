@@ -7,7 +7,7 @@
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
       annotationIsNotFound(annotationSet, label) && 'missing',
       isAnnotationInEditMode(annotationId()) && 'editing',
-      publicView && 'clickable-cursor'
+      publicView && 'clickable-cursor',
     ]"
     @click="onAnnotationClick"
     @mouseover="hoveredAnnotation = annotationId()"
@@ -39,25 +39,36 @@
       </div>
 
       <div v-if="showTranslationsDetails" class="annotation-translation">
-        <b-tooltip
-          :animated="false"
-          position="is-bottom"
-          :close-delay="2000"
-        >
+        <b-tooltip :animated="false" position="is-bottom" :close-delay="2000">
           <div class="icon">
-            <TranslateArrows :translation="annotation.translated_string && true"/>
+            <TranslateArrows
+              :translation="annotation.translated_string && true"
+            />
           </div>
 
-          <template #content> 
+          <template #content>
             <div class="translation-details">
               <div class="translation-title">
                 <span>{{ $t("translated_string_title") }}</span>
               </div>
-              <div  class="translation-info">
-                <span class="translated-string">{{ annotation.translated_string ? annotation.translated_string : $t("no_translated_string")}}</span>
-                <a v-if=!isDocumentReviewed class="annotation-details-link" @click="editAnnotationTranslation(annotation.id)">{{ annotation.translated_string ? $t("edit") : $t("add_translation")}}</a>
+              <div class="translation-info">
+                <span class="translated-string">{{
+                  annotation.translated_string
+                    ? annotation.translated_string
+                    : $t("no_translated_string")
+                }}</span>
+                <a
+                  v-if="!isDocumentReviewed"
+                  class="annotation-details-link"
+                  @click="editAnnotationTranslation(annotation.id)"
+                  >{{
+                    annotation.translated_string
+                      ? $t("edit")
+                      : $t("add_translation")
+                  }}</a
+                >
               </div>
-            </div> 
+            </div>
           </template>
         </b-tooltip>
       </div>
@@ -199,14 +210,12 @@ export default {
       "elementSelected",
       "selectedEntities",
     ]),
-    ...mapState("project", [
-      "translationsEnabled"
-    ]),
+    ...mapState("project", ["translationsEnabled"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "annotationIsNotFound",
       "isDocumentReviewed",
-      "isNegative"
+      "isNegative",
     ]),
     defaultSpan() {
       if (
@@ -258,8 +267,13 @@ export default {
     },
     showTranslationsDetails() {
       // Only show translation option for filled annotations and if the feature is enabled for the project
-      return this.annotation && this.translationsEnabled && !this.publicView;
-    }
+      return (
+        this.annotation &&
+        !this.isNegative(this.annotation) &&
+        this.translationsEnabled &&
+        !this.publicView
+      );
+    },
   },
   watch: {
     sidebarAnnotationSelected(newSidebarAnnotationSelected) {
@@ -273,7 +287,11 @@ export default {
         annotationSelected = newSidebarAnnotationSelected;
       }
 
-      if (this.annotation && !this.isNegative(this.annotation) && this.annotation.id === annotationSelected.id) {
+      if (
+        this.annotation &&
+        !this.isNegative(this.annotation) &&
+        this.annotation.id === annotationSelected.id
+      ) {
         clearTimeout(this.annotationAnimationTimeout);
 
         let timeout;
@@ -347,7 +365,12 @@ export default {
     annotationId() {
       if (!this.annotationSet || !this.label) return;
 
-      if (this.annotation && this.annotation.id && !this.isNegative(this.annotation)) return this.annotation.id;
+      if (
+        this.annotation &&
+        this.annotation.id &&
+        !this.isNegative(this.annotation)
+      )
+        return this.annotation.id;
 
       let emptyAnnotationId;
 
@@ -388,9 +411,12 @@ export default {
         }
       );
       const found = labels.find((l) => l.id === this.label.id);
-      const negativeAnnotations = found.annotations.find(annotation => this.isNegative(annotation));
+      const negativeAnnotations = found.annotations.find((annotation) =>
+        this.isNegative(annotation)
+      );
 
-      if ((found && found.annotations.length === 0) || negativeAnnotations) return found.id;
+      if ((found && found.annotations.length === 0) || negativeAnnotations)
+        return found.id;
       return null;
     },
     hoveredNotCorrectAnnotations() {
@@ -407,7 +433,7 @@ export default {
       if (annotations.length === 0) return;
 
       const found = annotations.find(
-        (ann) => ann.id === this.annotation.id && !ann.revised
+        (ann) => ann.id === this.annotation.id && !ann.is_correct
       );
 
       if (found) {
@@ -494,7 +520,8 @@ export default {
 
       // Verify if we are editing a filled or empty annotation
       if (
-        this.annotation && !this.isNegative(this.annotation) &&
+        this.annotation &&
+        !this.isNegative(this.annotation) &&
         (this.showAcceptButton() ||
           this.showDeclineButton() ||
           this.isAnnotationInEditMode(
@@ -623,12 +650,15 @@ export default {
 
       // check if the annotation to create comes from a negative annotation
       // so we can create the new one and remove the negative one from the annotations array
-      if(this.isNegative(this.annotation)) {
+      if (this.isNegative(this.annotation)) {
         negativeAnnotationId = this.annotation.id;
       }
 
       this.$store
-        .dispatch("document/createAnnotation", {annotation: annotationToCreate, negativeAnnotationId: negativeAnnotationId})
+        .dispatch("document/createAnnotation", {
+          annotation: annotationToCreate,
+          negativeAnnotationId: negativeAnnotationId,
+        })
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
             error,
@@ -697,14 +727,14 @@ export default {
       }
     },
     editAnnotationTranslation(annotationId) {
-      if(!annotationId) return;
+      if (!annotationId) return;
 
-      const  baseUrl = api.FILE_URL ? api.FILE_URL : api.DEFAULT_URL;
-      
+      const baseUrl = api.FILE_URL ? api.FILE_URL : api.DEFAULT_URL;
+
       const annotationDetailsUrl = `${baseUrl}/admin/server/sequenceannotation/${annotationId}/change/`;
 
       window.open(annotationDetailsUrl, "_blank");
-    }
+    },
   },
 };
 </script>

@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="label-group-right">
-          <div v-if="!publicView" class="label-annotations-pending" >
+          <div v-if="!publicView" class="label-annotations-pending">
             {{
               `${
                 label.annotations.length - acceptedAnnotationsGroupCounter
@@ -149,7 +149,7 @@ export default {
   mounted() {
     this.updateValues();
 
-    if(this.publicView) {
+    if (this.publicView) {
       this.showAnnotationsGroup = true;
     }
   },
@@ -174,7 +174,7 @@ export default {
     labelHasPendingAnnotations(hoveredSet) {
       if (!hoveredSet) return;
 
-      const found = this.label.annotations.find((ann) => !ann.revised);
+      const found = this.label.annotations.find((ann) => !ann.is_correct);
 
       return this.annotationSet.id === hoveredSet.annotationSet.id && found;
     },
