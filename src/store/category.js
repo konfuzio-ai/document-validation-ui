@@ -21,6 +21,16 @@ const getters = {
     return "";
   },
 
+  categoryConfidence: () => (confidence) => {
+    if (!confidence) {
+      if (confidence === 0) return confidence.toFixed(2);
+
+      return;
+    }
+
+    return (confidence * 100).toFixed(2);
+  },
+
   /**
    * Get the category for a given category ID
    */
@@ -106,9 +116,9 @@ const actions = {
         if (
           poll &&
           rootState.project.documentsInProject.length !==
-            state.documentsAvailableToReview.length &&
+          state.documentsAvailableToReview.length &&
           state.documentsAvailableToReview.length + errors !==
-            rootState.project.documentsInProject.length
+          rootState.project.documentsInProject.length
         ) {
           if (count >= 10) return true;
 
@@ -126,7 +136,7 @@ const actions = {
     if (
       rootState.project.documentsInProject.length === 0 ||
       rootState.project.documentsInProject.length !==
-        state.documentsAvailableToReview.length
+      state.documentsAvailableToReview.length
     ) {
       let duration;
       if (count <= 5) {
