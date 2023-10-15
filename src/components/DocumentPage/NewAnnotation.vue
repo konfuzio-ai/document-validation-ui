@@ -62,7 +62,6 @@
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
-      :close-delay="5000"
     >
       <template #content>
         <div ref="tooltipContent"></div>
