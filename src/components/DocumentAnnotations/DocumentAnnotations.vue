@@ -110,7 +110,8 @@
 
         <div v-if="annotationSet.labels.length === 0" class="no-labels">
           <span> {{ $t("no_labels_in_set") }}</span>
-          <span v-if="!publicView && !isDocumentReviewed" v-html="$t('link_to_add_labels')"></span>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <span v-if="isDocumentEditable" v-html="$t('link_to_add_labels')" />
         </div>
 
         <div
@@ -177,6 +178,9 @@ export default {
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
+    },
+    isDocumentEditable() {
+      return !this.publicView && !this.isDocumentReviewed;
     },
   },
   watch: {
@@ -266,7 +270,7 @@ export default {
 
     keyDownHandler(event) {
       // only allow keyboard navigation if we are not in public view mode
-      if (this.publicView || this.isDocumentReviewed) return;
+      if (!this.isDocumentEditable) return;
 
       // Exit edit mode and navigation
       if (event.key === "Escape") {
