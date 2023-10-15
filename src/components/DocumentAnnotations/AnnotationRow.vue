@@ -38,8 +38,16 @@
         <span>{{ label.name }} </span>
       </div>
 
-      <div v-if="showTranslationsDetails" class="annotation-translation">
-        <b-tooltip :animated="false" position="is-bottom" :close-delay="2000">
+      <div
+        v-if="showTranslationsDetails"
+        :class="['annotation-translation', !isDocumentReviewed && 'pointer']"
+        @click="editAnnotationTranslation(annotation.id)"
+      >
+        <b-tooltip
+          :animated="false"
+          position="is-bottom"
+          :active="showTranslationTooltip"
+        >
           <div class="icon">
             <TranslateArrows
               :translation="annotation.translated_string && true"
@@ -50,23 +58,27 @@
             <div class="translation-details">
               <div class="translation-title">
                 <span>{{ $t("translated_string_title") }}</span>
-              </div>
-              <div class="translation-info">
-                <span class="translated-string">{{
-                  annotation.translated_string
-                    ? annotation.translated_string
-                    : $t("no_translated_string")
-                }}</span>
-                <a
-                  v-if="!isDocumentReviewed"
-                  class="annotation-details-link"
-                  @click="editAnnotationTranslation(annotation.id)"
-                  >{{
-                    annotation.translated_string
-                      ? $t("edit")
-                      : $t("add_translation")
-                  }}</a
+                <span
+                  :class="[
+                    'translated-string',
+                    !annotation.translated_string && 'no-translation',
+                  ]"
                 >
+                  {{
+                    annotation.translated_string
+                      ? annotation.translated_string
+                      : $t("no_translated_string")
+                  }}
+                </span>
+              </div>
+            </div>
+            <div class="translation-info">
+              <div v-if="!isDocumentReviewed" class="annotation-details-link">
+                {{
+                  annotation.translated_string
+                    ? $t("edit_translation")
+                    : $t("add_translation")
+                }}
               </div>
             </div>
           </template>
@@ -727,7 +739,7 @@ export default {
       }
     },
     editAnnotationTranslation(annotationId) {
-      if (!annotationId) return;
+      if (!annotationId || this.isDocumentReviewed) return;
 
       const baseUrl = api.FILE_URL ? api.FILE_URL : api.DEFAULT_URL;
 

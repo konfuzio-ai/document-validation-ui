@@ -143,5 +143,6 @@
   "redirecting_to_documents_list": "Lo estamos redirigiendo a la lista de documentos, para que pueda continuar la revisión de sus documentos mientras procesamos los cambios realizados.",
   "translated_string_title": "Texto traducido",
   "no_translated_string": "Aún no existe traducción.",
-  "add_translation": "Agregar"
+  "add_translation": "Clic para agregar",
+  "edit_translation": "Clic para editar"
 }
