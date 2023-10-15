@@ -18,7 +18,7 @@
       :class="[
         'category-chooser',
         splitMode && 'split-mode',
-        selectedDocument.is_reviewed && 'disabled',
+        isDocumentReviewed && 'disabled',
       ]"
       aria-role="list"
       scrollable
@@ -60,7 +60,9 @@
         @click="handleChangeCategory(category)"
       >
         <span>{{ category.name }}</span>
-        <span v-if="splitMode && category.confidence >= 0">{{ ` (${ category.confidence }%)` }}</span>
+        <span v-if="splitMode && category.confidence >= 0">{{
+          ` (${category.confidence}%)`
+        }}</span>
       </b-dropdown-item>
     </b-dropdown>
   </b-tooltip>
@@ -79,14 +81,14 @@ export default {
     splitMode: {
       type: Boolean,
     },
-  page: {
-    type: Object,
-    default: null,
-  },
-  index: {
-    type: Number,
-    default: 0,
-  },
+    page: {
+      type: Object,
+      default: null,
+    },
+    index: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -101,6 +103,7 @@ export default {
     ...mapGetters("document", [
       "documentCannotBeEdited",
       "documentHasCorrectAnnotations",
+      "isDocumentReviewed",
     ]),
     ...mapState("document", ["selectedDocument", "annotations"]),
     ...mapState("category", ["categories"]),
@@ -117,7 +120,7 @@ export default {
         // if there is just 1 category in the project,
         // and one or more sub-documents has no category,
         // assign the only category by default
-        if (this.projectHasSingleCategory() && missingCategory) {
+        if (this.projectHasSingleCategory && missingCategory) {
           const updatedValuesForDocuments = this.updatedDocument.map(
             (document) => {
               if (!document.category && this.categories) {
@@ -146,14 +149,18 @@ export default {
     },
 
     setCategoryConfidence() {
-      if (!this.updatedDocument[this.index].categories || !this.categoryName(
-          this.updatedDocument[this.index].category
-        )) return;
+      if (
+        !this.updatedDocument[this.index].categories ||
+        !this.categoryName(this.updatedDocument[this.index].category)
+      )
+        return;
 
-      const found = this.updatedDocument[this.index].categories.find(category => category.id === this.updatedDocument[this.index].category);
-      
+      const found = this.updatedDocument[this.index].categories.find(
+        (category) => category.id === this.updatedDocument[this.index].category
+      );
+
       return this.handleCategoryConfidence(found.confidence);
-    }
+    },
   },
   watch: {
     annotations() {
@@ -162,7 +169,7 @@ export default {
     },
   },
   mounted() {
-    if (this.projectHasSingleCategory()) {
+    if (this.projectHasSingleCategory) {
       this.tooltipIsShown = true;
     }
   },
@@ -174,10 +181,14 @@ export default {
     listOfCategories() {
       let list;
 
-      if(this.splitMode && this.updatedDocument[this.index].categories) {
-        list = this.handleCategories(this.updatedDocument[this.index].categories);
+      if (this.splitMode && this.updatedDocument[this.index].categories) {
+        list = this.handleCategories(
+          this.updatedDocument[this.index].categories
+        );
       } else if (this.categories) {
-        const filtered = this.categories.filter(category => category.project === this.selectedDocument.project)
+        const filtered = this.categories.filter(
+          (category) => category.project === this.selectedDocument.project
+        );
         list = this.handleCategories(filtered);
       }
 
@@ -185,12 +196,16 @@ export default {
     },
     handleCategories(categories) {
       return categories.map((category) => {
-          return {id: category.id, name: this.categoryName(category.id), confidence: this.handleCategoryConfidence(category.confidence)};
-        });
+        return {
+          id: category.id,
+          name: this.categoryName(category.id),
+          confidence: this.handleCategoryConfidence(category.confidence),
+        };
+      });
     },
     handleCategoryConfidence(confidence) {
-      if(!confidence) {
-        if(confidence === 0) return confidence.toFixed(2);
+      if (!confidence) {
+        if (confidence === 0) return confidence.toFixed(2);
 
         return;
       }
@@ -199,9 +214,9 @@ export default {
     },
     checkIfDropdownIsDisabled() {
       if (
-        this.projectHasSingleCategory() ||
+        this.projectHasSingleCategory ||
         this.documentCannotBeEdited(this.selectedDocument) ||
-        (this.documentHasCorrectAnnotations() && !this.splitMode)
+        (this.documentHasCorrectAnnotations && !this.splitMode)
       ) {
         this.dropdownIsDisabled = true;
       } else {
@@ -253,9 +268,9 @@ export default {
 
       if (this.documentCannotBeEdited(this.selectedDocument)) {
         tooltipText = this.$t("edit_not_available");
-      } else if (this.documentHasCorrectAnnotations()) {
+      } else if (this.documentHasCorrectAnnotations) {
         tooltipText = this.$t("approved_annotations");
-      } else if (this.projectHasSingleCategory()) {
+      } else if (this.projectHasSingleCategory) {
         tooltipText = this.$t("single_category_in_project");
         tooltipDelay = 5000;
       }

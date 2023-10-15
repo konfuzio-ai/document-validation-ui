@@ -121,9 +121,9 @@ const getters = {
     let availableLabels = [];
     if (set.id && set.labels) {
       // check if label can be multiple, if there's already an annotation created & if it's a negative annotation
-      set.labels.map(label => {
+      set.labels.map((label) => {
         // check if we already added the same label to the array
-        const found = availableLabels.find(l => l.id === label.id);
+        const found = availableLabels.find((l) => l.id === label.id);
 
         if (found) return;
 
@@ -134,13 +134,12 @@ const getters = {
             availableLabels.push(label);
           } else {
             // if the label has negative annotations, we show the label
-            label.annotations.map(annotation => {
+            label.annotations.map((annotation) => {
               if (getters.isNegative(annotation)) {
                 availableLabels.push(label);
               }
             });
           }
-
         }
       });
     } else if (set.labels) {
@@ -255,7 +254,6 @@ const getters = {
     const labels = [];
     const processedAnnotationSets = annotationSets.map((annotationSet) => {
       const annotationSetLabels = annotationSet.labels.map((label) => {
-
         // add annotations to the document array
         annotations.push(...label.annotations);
         labels.push(label);
@@ -274,7 +272,7 @@ const getters = {
   },
 
   /* Checks if there are annotations correct in the document */
-  documentHasCorrectAnnotations: (state) => () => {
+  documentHasCorrectAnnotations: (state) => {
     if (
       !state.annotations ||
       (state.annotations &&
@@ -335,7 +333,7 @@ const getters = {
         // check which one has more confidence or if it's the same, then check if one is revised or not
         if (
           highestConfidenceAnnotation.confidence <
-          label.annotations[i].confidence ||
+            label.annotations[i].confidence ||
           (highestConfidenceAnnotation.confidence ===
             label.annotations[i].confidence &&
             label.annotations[i].revised)
@@ -360,17 +358,17 @@ const getters = {
    */
   isAnnotationInEditMode:
     (state) =>
-      (annotationId, index = null) => {
-        if (state.editAnnotation && annotationId) {
-          if (index != null) {
-            return (
-              state.editAnnotation.id === annotationId &&
-              state.editAnnotation.index === index
-            );
-          }
-          return state.editAnnotation.id === annotationId;
+    (annotationId, index = null) => {
+      if (state.editAnnotation && annotationId) {
+        if (index != null) {
+          return (
+            state.editAnnotation.id === annotationId &&
+            state.editAnnotation.index === index
+          );
         }
-      },
+        return state.editAnnotation.id === annotationId;
+      }
+    },
 
   /**
    * Get number of empty labels per annotation set
@@ -386,14 +384,13 @@ const getters = {
           annotationSet.label_set.id === l.label_set
       );
 
-      const foundNegative = label.annotations.find(annotation =>
+      const foundNegative = label.annotations.find((annotation) =>
         getters.isNegative(annotation)
       );
 
       if (!foundMissing && (label.annotations.length === 0 || foundNegative)) {
         pendingEmpty.push(label);
       }
-
     });
 
     return pendingEmpty;
@@ -442,7 +439,7 @@ const getters = {
       notCorrect = state.annotations.filter((a) => !a.is_correct);
 
       if (notCorrect) {
-        notCorrect.map(annotation => {
+        notCorrect.map((annotation) => {
           emptyAnnotations.push(annotation);
         });
       }
@@ -517,14 +514,14 @@ const getters = {
    */
   documentCannotBeEdited:
     (state) =>
-      (document = state.selectedDocument) => {
-        return (
-          document.dataset_status === 1 ||
-          document.dataset_status === 2 ||
-          document.dataset_status === 3 ||
-          document.is_reviewed
-        );
-      },
+    (document = state.selectedDocument) => {
+      return (
+        document.dataset_status === 1 ||
+        document.dataset_status === 2 ||
+        document.dataset_status === 3 ||
+        document.is_reviewed
+      );
+    },
 
   /**
    * If automatic splitting is enabled for the project
@@ -778,7 +775,7 @@ const actions = {
       if (
         !state.selectedDocument.category ||
         (!state.selectedDocument.category_is_revised &&
-          !getters.documentHasCorrectAnnotations() &&
+          !getters.documentHasCorrectAnnotations &&
           state.missingAnnotations.length === 0)
       ) {
         dispatch("edit/enableEditMode", null, {
@@ -851,7 +848,10 @@ const actions = {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
-  createAnnotation: ({ commit, getters, dispatch }, { annotation, negativeAnnotationId }) => {
+  createAnnotation: (
+    { commit, getters, dispatch },
+    { annotation, negativeAnnotationId }
+  ) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {

@@ -33,7 +33,7 @@ const getters = {
     return null;
   },
 
-  projectHasSingleCategory: (state) => () => {
+  projectHasSingleCategory: (state) => {
     return state.categories && state.categories.length === 1;
   },
 };
