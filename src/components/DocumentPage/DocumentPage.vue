@@ -232,7 +232,8 @@ export default {
           if (
             annotation.span.find(
               (span) => span.page_index + 1 === this.page.number
-            ) && !this.isNegative(annotation)
+            ) &&
+            !this.isNegative(annotation)
           ) {
             annotations.push(annotation);
           }
@@ -385,6 +386,8 @@ export default {
 
       if (trigger && trigger === "click") {
         this.closePopups(true);
+      } else {
+        this.onElementEnter();
       }
     },
 
