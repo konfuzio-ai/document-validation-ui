@@ -43,15 +43,9 @@
         :class="['annotation-translation', !isDocumentReviewed && 'pointer']"
         @click="editAnnotationTranslation(annotation.id)"
       >
-        <b-tooltip
-          :animated="false"
-          position="is-bottom"
-          :active="showTranslationTooltip"
-        >
+        <b-tooltip :animated="false" position="is-bottom">
           <div class="icon">
-            <TranslateArrows
-              :translation="annotation.translated_string && true"
-            />
+            <TranslateArrows :translation="annotation.translated_string" />
           </div>
 
           <template #content>
@@ -691,7 +685,7 @@ export default {
       }
     },
     enableLoading(annotations) {
-      if (annotations && this.annotation) {
+      if (annotations && this.annotation && !this.annotation.is_correct) {
         const found = annotations.find(
           (annotation) => annotation === this.annotation.id
         );

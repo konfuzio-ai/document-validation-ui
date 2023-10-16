@@ -24,8 +24,8 @@ export default {
   name: "TranslateArrows",
   props: {
     translation: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: null,
       required: false,
     },
   },
