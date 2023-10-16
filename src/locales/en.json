@@ -143,5 +143,6 @@
   "redirecting_to_documents_list": "We are taking you to the documents list, so you can continue reviewing your documents while we process the changes made.",
   "translated_string_title": "Translated text",
   "no_translated_string": "No translation exists yet.",
-  "add_translation": "Add one"
+  "add_translation": "Click to add one",
+  "edit_translation": "Click to edit"
 }
