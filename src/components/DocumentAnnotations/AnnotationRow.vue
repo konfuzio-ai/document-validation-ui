@@ -49,9 +49,7 @@
           :active="showTranslationTooltip"
         >
           <div class="icon">
-            <TranslateArrows
-              :translation="annotation.translated_string && true"
-            />
+            <TranslateArrows :translation="annotation.translated_string" />
           </div>
 
           <template #content>
