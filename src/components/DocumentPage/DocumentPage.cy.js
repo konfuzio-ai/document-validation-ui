@@ -1,5 +1,5 @@
 import DocumentDashboard from "../DocumentDashboard.vue";
-import DocumentPage from "../DocumentPage";
+import DocumentPage from "../DocumentPage/DocumentPage.vue";
 
 describe("Document Page", () => {
   beforeEach(() => {
@@ -12,10 +12,19 @@ describe("Document Page", () => {
       if ($document.selectedDocument.pages[0]) {
         console.log("document", $document.selectedDocument);
         console.log("page", $document.selectedDocument.pages[0]);
-        cy.mount(DocumentPage, {
-          props: {
-            page: $document.selectedDocument.pages[0],
-          },
+        cy.setScale($document.selectedDocument.pages[0]);
+        cy.fetchBlob(
+          `${$document.selectedDocument.pages[0].image_url}?${$document.selectedDocument.downloaded_at}`
+        ).then((blob) => {
+          console.log("blob", blob);
+          cy.mount(DocumentPage, {
+            propsData: {
+              page: $document.selectedDocument.pages[0],
+              imageBlob: blob,
+            },
+          }).then(({ wrapper, component }) => {
+            console.log("component", component);
+          });
         });
       }
     });

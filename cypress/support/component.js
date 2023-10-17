@@ -52,8 +52,26 @@ Cypress.Commands.add("fetchPage", (index) => {
   cy.wait(1000);
 });
 
+Cypress.Commands.add("fetchBlob", (fileUrl) => {
+  return api.makeFileRequest(fileUrl);
+});
+
 Cypress.Commands.add("setFullMode", () => {
   cy.store().invoke("dispatch", "document/setPublicView", false);
+});
+
+Cypress.Commands.add("setScale", (page) => {
+  cy.store().invoke("dispatch", "display/updateScale", {
+    elementsWidth: Cypress.config("viewportWidth") / 3,
+    client: {
+      width: Cypress.config("viewportWidth"),
+      height: Cypress.config("viewportHeight"),
+    },
+    viewport: {
+      width: page.size[0],
+      height: page.size[1],
+    },
+  });
 });
 
 Cypress.Commands.add("resetFit", () => {
