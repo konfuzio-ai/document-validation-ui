@@ -2,7 +2,12 @@ import DocumentEdit from "./DocumentEdit.vue";
 
 describe("Document Edit", () => {
   beforeEach(() => {
-    cy.fetchDocument();
+    cy.fetchDocument().then(() => {
+      cy.getStore("project")
+        .then($project => {
+          cy.fetchCategories($project.projectId);
+        });
+    });
     cy.setFullMode();
     cy.dispatchAction("edit", "enableEditMode");
     cy.dispatchAction("edit", "setRenameAndCategorize", false);
@@ -322,6 +327,214 @@ describe("Document Edit", () => {
         });
       } else {
         cy.log("Can't test drag and drop, this document has only one page");
+      }
+    });
+  });
+
+  it("Shows edit mode - rename and categorize view", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.get("#document-edit").find(".rename-and-categorize-section").should("be.visible");
+  });
+
+  it("Changes visible page when clicking the thumbnail", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".thumbnail")
+      .last()
+      .click();
+
+    cy.getStore("display").then($display => {
+      cy.getStore("edit").then($edit => {
+        const length = $edit.updatedDocument.length;
+        const page = $edit.updatedDocument[length - 1].pages[0].number;
+
+        expect($display.currentPage).to.equal(page);
+      });
+    });
+  });
+
+  it("Shows correct name for the new documents", () => {
+    let fileName;
+
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.getStore("document")
+      .then($document => {
+        fileName = $document.selectedDocument.data_file_name;
+        fileName = fileName.split(".").slice(0, -1).join(".");
+      });
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".document-details")
+      .find(".doc-info")
+      .find(".file-name-section")
+      .each(($document, index) => {
+        let name;
+        if (index === 0) {
+          name = fileName;
+        } else if (index === 1) {
+          name = `${fileName}_copy`;
+        } else {
+          name = `${fileName}_copy${index}`;
+        }
+
+        cy.wrap($document)
+          .find(".name-input")
+          .invoke('val')
+          .then($text => {
+            expect($text).to.equal(name);
+          });
+      });
+
+  });
+
+  it("Changes name of the first document", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    const randomName = `test-name-${Math.floor(Math.random() * 100)}`;
+    let inputValue;
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".document-details")
+      .find(".doc-info")
+      .find(".file-name-section")
+      .find(".name-input")
+      .first()
+      .then($firstInput => {
+        cy.wrap($firstInput)
+          .invoke('val')
+          .then($text => {
+            inputValue = $text;
+          });
+
+        cy.wrap($firstInput).click();
+      });
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".document-details")
+      .find(".doc-info")
+      .find(".file-name-section")
+      .find(".name-input")
+      .first()
+      .type('{selectAll}')
+      .type('{backspace}')
+      .type(randomName);
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".document-details")
+      .find(".doc-info")
+      .find(".file-name-section")
+      .find(".name-input")
+      .first()
+      .then($firstInput => {
+        cy.wrap($firstInput)
+          .invoke('val')
+          .then($text => {
+            expect($text).to.not.equal(inputValue);
+          });
+      });
+  });
+
+  it("Shows correct name for the new documents", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.get("#document-edit")
+      .find(".rename-and-categorize-section")
+      .find(".document-details")
+      .find(".doc-info")
+      .find(".category")
+      .each(($categoryRow, index) => {
+
+        cy.getStore("edit")
+          .then($edit => {
+            cy.gettersStore().then(($getters) => {
+              const categoryName = $getters["category/categoryName"]($edit.updatedDocument[index].category);
+
+              cy.wrap($categoryRow)
+                .find(".category-name")
+                .contains(categoryName);
+            });
+          });
+      });
+  });
+
+  it("Shows category confidence if automatic split", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.getStore("document").then(($document) => {
+      if ($document.selectedDocument.proposed_split) {
+
+        cy.get("#document-edit")
+          .find(".rename-and-categorize-section")
+          .find(".document-details")
+          .find(".doc-info")
+          .find(".category")
+          .each(($categoryRow, index) => {
+            cy.getStore("edit")
+              .then($edit => {
+                cy.gettersStore().then(($getters) => {
+                  const found = $edit.updatedDocument[index].categories.find(category =>
+                    category.id === $edit.updatedDocument[index].category
+                  );
+
+                  const confidence = $getters["category/categoryConfidence"](found.confidence);
+
+                  cy.wrap($categoryRow)
+                    .find(".category-name")
+                    .contains(confidence);
+                });
+              });
+          });
+
+      }
+    });
+  });
+
+  it("Can change the category from the dropdown", () => {
+    cy.dispatchAction("edit", "setRenameAndCategorize", true);
+
+    cy.getStore("document").then(($document) => {
+      if ($document.selectedDocument.proposed_split) {
+
+        cy.get("#document-edit")
+          .find(".rename-and-categorize-section")
+          .find(".document-details")
+          .find(".doc-info")
+          .find(".category")
+          .find(".category-drop-down")
+          .first()
+          .click();
+
+        cy.get("#document-edit")
+          .find(".rename-and-categorize-section")
+          .find(".document-details")
+          .find(".doc-info")
+          .find(".category")
+          .first()
+          .then($categoryRow => {
+            cy.getStore("edit")
+              .then($edit => {
+                cy.gettersStore().then(($getters) => {
+                  const categoryName = $getters["category/categoryName"]($edit.updatedDocument[0].category);
+
+                  cy.wrap($categoryRow)
+                    .find(".list-item")
+                    .first()
+                    .click();
+
+                  cy.wrap($categoryRow)
+                    .find(".category-name")
+                    .should("not.contain", categoryName);
+                });
+              });
+          });
       }
     });
   });

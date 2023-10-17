@@ -58,6 +58,7 @@
         aria-role="listitem"
         :disabled="handleOptionInDropdownDisabled(category)"
         @click="handleChangeCategory(category)"
+        class="list-item"
       >
         <span>{{ category.name }}</span>
         <span v-if="splitMode && category.confidence >= 0">{{
@@ -99,7 +100,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("category", ["categoryName", "projectHasSingleCategory"]),
+    ...mapGetters("category", [
+      "categoryName",
+      "projectHasSingleCategory",
+      "categoryConfidence",
+    ]),
     ...mapGetters("document", [
       "documentCannotBeEdited",
       "documentHasCorrectAnnotations",
@@ -159,7 +164,7 @@ export default {
         (category) => category.id === this.updatedDocument[this.index].category
       );
 
-      return this.handleCategoryConfidence(found.confidence);
+      return this.categoryConfidence(found.confidence);
     },
   },
   watch: {
@@ -199,18 +204,9 @@ export default {
         return {
           id: category.id,
           name: this.categoryName(category.id),
-          confidence: this.handleCategoryConfidence(category.confidence),
+          confidence: this.categoryConfidence(category.confidence),
         };
       });
-    },
-    handleCategoryConfidence(confidence) {
-      if (!confidence) {
-        if (confidence === 0) return confidence.toFixed(2);
-
-        return;
-      }
-
-      return (confidence * 100).toFixed(2);
     },
     checkIfDropdownIsDisabled() {
       if (
