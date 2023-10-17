@@ -16,7 +16,7 @@ describe("Document Annotations", () => {
       .its("length")
       .should("equal", 1);
 
-    
+
     cy.dispatchAction("document", "startLoading");
     cy.get("#document-annotations")
       .find(".document-annotations-loading")
@@ -32,20 +32,20 @@ describe("Document Annotations", () => {
       .should("equal", 3);
   });
 
-  it("shows all annotation sets", () => { 
+  it("shows all annotation sets", () => {
     cy.get("#document-annotations")
       .find(".annotation-set-group")
       .then(($elements) => {
         cy.getStore("document")
           .then($document => {
             expect($document.annotationSets).to.have.lengthOf($elements.length);
-          })
+          });
       });
   });
 
   it("shows the empty state if there are no annotation sets", () => {
     cy.dispatchAction("document", "setAnnotationSets", []);
-    
+
     cy.get("#document-annotations")
       .find(".empty-annotation-sets")
       .find(".empty-container")
@@ -55,7 +55,7 @@ describe("Document Annotations", () => {
 
   it("shows no annotation set action buttons if the document is read only", () => {
     cy.dispatchAction("document", "setPublicView", true);
-    
+
     cy.get("#document-annotations")
       .find(".labelset-action-buttons")
       .should("not.be.visible");
@@ -81,7 +81,7 @@ describe("Document Annotations", () => {
       .should("not.be.visible");
   });
 
-  it("clicks each annotation and empty annotation and checks that it is in edit mode", () => {  
+  it("clicks each annotation and empty annotation and checks that it is in edit mode", () => {
     cy.get("#document-annotations")
       .find(".label")
       .find(".annotation-row")
@@ -89,58 +89,58 @@ describe("Document Annotations", () => {
       .not(".missing-annotation")
       .each($annotation => {
         cy.wrap($annotation)
-          .should("not.have.class", "clicked-ann")
+          .should("not.have.class", "clicked-ann");
         cy.wrap($annotation)
           .click();
         cy.wrap($annotation)
-          .should("have.class", "clicked-ann")
+          .should("have.class", "clicked-ann");
         cy.wait(1000);
-      })
+      });
   });
 
   it("clicks each annotation and shows action buttons", () => {
     cy.getStore("document").then($document => {
-      if($document.annotations.length > 0) {
+      if ($document.annotations.length > 0) {
         cy.get("#document-annotations")
-        .find(".label")
-        .find(".annotation-row")
-        .find(".annotation")
-        .each(($row) => {
-          cy.wrap($row)
-            .find(".annotation-value")
-            .click();
+          .find(".label")
+          .find(".annotation-row")
+          .find(".annotation")
+          .each(($row) => {
+            cy.wrap($row)
+              .find(".annotation-value")
+              .click();
 
-          cy.get("#document-annotations")
-            .find(".label")
-            .find(".annotation-row")
-            .find(".action-buttons")
-            .find(".annotation-save-btn")
-            .should("be.visible")
-            
+            cy.get("#document-annotations")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".action-buttons")
+              .find(".annotation-save-btn")
+              .should("be.visible");
 
-          cy.get("#document-annotations")
-            .find(".label")
-            .find(".annotation-row")
-            .find(".action-buttons")
-            .find(".annotation-cancel-btn")
-            .should("be.visible")
-              
-          cy.get("#document-annotations")
-            .find(".label")
-            .find(".annotation-row")
-            .find(".action-buttons")
-            .find(".annotation-cancel-btn")
-            .click();
 
-          cy.wait(1000);
-        });
+            cy.get("#document-annotations")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".action-buttons")
+              .find(".annotation-cancel-btn")
+              .should("be.visible");
+
+            cy.get("#document-annotations")
+              .find(".label")
+              .find(".annotation-row")
+              .find(".action-buttons")
+              .find(".annotation-cancel-btn")
+              .click();
+
+            cy.wait(1000);
+          });
       }
     });
   });
 
   it("shows accept and decline buttons when hovering annotation", () => {
     cy.getStore("document").then($document => {
-      if($document.annotations.length > 0) {
+      if ($document.annotations.length > 0) {
         cy.get("#document-annotations")
           .find(".label")
           .find(".annotation-row")
@@ -148,21 +148,21 @@ describe("Document Annotations", () => {
           .each(($row) => {
             cy.wrap($row)
               .trigger("mouseover");
-    
+
             cy.get("#document-annotations")
               .find(".label")
               .find(".annotation-row")
               .find(".action-buttons")
               .find(".decline-button-container")
               .should("be.visible");
-              
+
             cy.get("#document-annotations")
               .find(".label")
               .find(".annotation-row")
               .find(".action-buttons")
               .find(".annotation-accept-btn")
               .should("be.visible");
-    
+
             cy.wait(1000);
           });
       }
@@ -180,25 +180,25 @@ describe("Document Annotations", () => {
           return;
         } else {
           cy.wrap($annotation)
-          .click();
+            .click();
 
-        cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-cancel-btn")
-          .should("be.visible");
-          
-        cy.get("#document-annotations")
-          .find(".label")
-          .find(".annotation-row")
-          .find(".action-buttons")
-          .find(".annotation-cancel-btn")
-          .click();
+          cy.get("#document-annotations")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-cancel-btn")
+            .should("be.visible");
 
-        cy.wait(1000);
+          cy.get("#document-annotations")
+            .find(".label")
+            .find(".annotation-row")
+            .find(".action-buttons")
+            .find(".annotation-cancel-btn")
+            .click();
+
+          cy.wait(1000);
         }
-      });     
+      });
   });
 
   it("shows mark as missing button when hovering empty annotation", () => {
@@ -218,12 +218,12 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".missing-button-container")
           .should("be.visible");
-          
+
         cy.wait(1000);
-      })
+      });
   });
 
-  it("marks empty annotation as missing", () => { 
+  it("marks empty annotation as missing", () => {
     cy.get("#document-annotations")
       .find(".label")
       .find(".annotation-row")
@@ -240,7 +240,7 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".missing-button-container")
           .find(".missing-btn")
-          .click();        
+          .click();
 
         cy.wrap($annotation)
           .trigger("mouseleave");
@@ -248,18 +248,18 @@ describe("Document Annotations", () => {
         cy.wait(1000);
       });
 
-      cy.get("#document-annotations")
-        .find(".label")
-        .find(".annotation-row")
-        .find(".empty-annotation")
-        .then($elements => {
+    cy.get("#document-annotations")
+      .find(".label")
+      .find(".annotation-row")
+      .find(".empty-annotation")
+      .then($elements => {
 
-          cy.getStore("document")
-            .then($document => {
-              expect($document.missingAnnotations)
-                .to.have.lengthOf($elements.length);
+        cy.getStore("document")
+          .then($document => {
+            expect($document.missingAnnotations)
+              .to.have.lengthOf($elements.length);
           });
-        });
+      });
   });
 
   it("restores empty annotation", () => {
@@ -300,9 +300,9 @@ describe("Document Annotations", () => {
       .first()
       .then(($element) => {
         const annotationId = $element[0].id;
-      
+
         cy.intercept('PATCH', `**/annotations/${annotationId}/`).as('updateAnnotation');
-        
+
         cy.wrap($element)
           .trigger("mouseover");
 
@@ -314,7 +314,7 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".annotation-accept-btn")
           .click();
-        
+
         cy.wait("@updateAnnotation").its("response.statusCode").should("eq", 200);
       });
   });
@@ -327,9 +327,9 @@ describe("Document Annotations", () => {
       .first()
       .then(($element) => {
         const annotationId = $element[0].id;
-      
+
         cy.intercept('DELETE', `**/annotations/${annotationId}/`).as('deleteAnnotation');
-        
+
         cy.wrap($element)
           .trigger("mouseover");
 
@@ -341,7 +341,7 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".decline-btn")
           .click();
-        
+
         cy.wait("@deleteAnnotation").its("response.statusCode").should("eq", 204);
       });
   });
@@ -352,9 +352,9 @@ describe("Document Annotations", () => {
       .find(".annotation-row")
       .find(".empty-annotation")
       .first()
-      .then(($element) => {       
+      .then(($element) => {
         cy.intercept('POST', `**/missing-annotations/`).as('addMissingAnnotations');
-        
+
         cy.wrap($element)
           .trigger("mouseover");
 
@@ -366,7 +366,7 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".missing-btn")
           .click();
-        
+
         cy.wait("@addMissingAnnotations").its("response.statusCode").should("eq", 201);
       });
   });
@@ -379,11 +379,11 @@ describe("Document Annotations", () => {
       .find(".missing-annotation")
       .first()
       .then(($element) => {
-        
+
         cy.getStore("document").then($document => {
           cy.intercept('DELETE', `**/missing-annotations/${$document.missingAnnotations[0].id}/`).as('deleteMissingAnnotation');
-        })
-        
+        });
+
         cy.wrap($element)
           .trigger("mouseover");
 
@@ -395,16 +395,16 @@ describe("Document Annotations", () => {
           .find(".action-buttons")
           .find(".restore-btn")
           .click();
-        
+
         cy.wait("@deleteMissingAnnotation").its("response.statusCode").should("eq", 204);
       });
   });
 
   it("shows details regarding translated strings if they are enabled for the project", () => {
-    cy.getStore("project").then($project => {      
-      if($project.translationsEnabled) {
+    cy.getStore("project").then($project => {
+      if ($project.translationsEnabled) {
         cy.getStore("document").then($document => {
-          if($document.annotations.length > 0) {
+          if ($document.annotations.length > 0) {
             cy.get("#document-annotations")
               .find(".labels")
               .find(".label")
@@ -437,6 +437,6 @@ describe("Document Annotations", () => {
           }
         });
       }
-    })
+    });
   });
 });

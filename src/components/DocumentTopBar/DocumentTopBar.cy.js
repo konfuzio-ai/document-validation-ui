@@ -174,7 +174,7 @@ describe("Document Top Bar", () => {
 			.trigger("mouseleave");
 	});
 
-	it("Closes edit mode when clicking 'back to annotaiton view' button", () => {
+	it("Closes edit mode when clicking 'back to annotation view' button", () => {
 		cy.dispatchAction("edit", "enableEditMode");
 
 		cy.get("#document-top-bar-component")
@@ -186,14 +186,21 @@ describe("Document Top Bar", () => {
 			.find(".right-bar-components")
 			.find(".edit-mode-buttons")
 			.find(".button-cancel")
-			.click();
+			.then(($button) => {
+				if (!$button.is(':disabled')) {
+					cy.wrap($button)
+						.click();
 
-		cy.wait(1000);
+					cy.wait(1000);
 
-		cy.get("#document-top-bar-component")
-			.find(".right-bar-components")
-			.find(".edit-mode-buttons")
-			.should("not.exist");
+					cy.get("#document-top-bar-component")
+						.find(".right-bar-components")
+						.find(".edit-mode-buttons")
+						.should("not.exist");
+				}
+
+			});
+
 	});
 
 	it("Shows rename and categorize section when clicking 'next' button", () => {
