@@ -614,6 +614,7 @@ export default {
         .dispatch(storeAction, {
           updatedValues: updatedString,
           annotationId: this.annotation.id,
+          annotationSet: this.annotationSet,
         })
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {

@@ -333,7 +333,7 @@ const getters = {
         // check which one has more confidence or if it's the same, then check if one is revised or not
         if (
           highestConfidenceAnnotation.confidence <
-            label.annotations[i].confidence ||
+          label.annotations[i].confidence ||
           (highestConfidenceAnnotation.confidence ===
             label.annotations[i].confidence &&
             label.annotations[i].revised)
@@ -358,17 +358,17 @@ const getters = {
    */
   isAnnotationInEditMode:
     (state) =>
-    (annotationId, index = null) => {
-      if (state.editAnnotation && annotationId) {
-        if (index != null) {
-          return (
-            state.editAnnotation.id === annotationId &&
-            state.editAnnotation.index === index
-          );
+      (annotationId, index = null) => {
+        if (state.editAnnotation && annotationId) {
+          if (index != null) {
+            return (
+              state.editAnnotation.id === annotationId &&
+              state.editAnnotation.index === index
+            );
+          }
+          return state.editAnnotation.id === annotationId;
         }
-        return state.editAnnotation.id === annotationId;
-      }
-    },
+      },
 
   /**
    * Get number of empty labels per annotation set
@@ -514,14 +514,14 @@ const getters = {
    */
   documentCannotBeEdited:
     (state) =>
-    (document = state.selectedDocument) => {
-      return (
-        document.dataset_status === 1 ||
-        document.dataset_status === 2 ||
-        document.dataset_status === 3 ||
-        document.is_reviewed
-      );
-    },
+      (document = state.selectedDocument) => {
+        return (
+          document.dataset_status === 1 ||
+          document.dataset_status === 2 ||
+          document.dataset_status === 3 ||
+          document.is_reviewed
+        );
+      },
 
   /**
    * If automatic splitting is enabled for the project
@@ -596,8 +596,8 @@ const getters = {
   },
 
   /**
-   * Check for user who created or revised the annotation
-   */
+  * Check for user who created or revised the annotation
+  */
   getUser: () => (annotation) => {
     if (annotation) {
       if (annotation.created_by && !annotation.revised) {
@@ -613,6 +613,35 @@ const getters = {
     } else {
       return null;
     }
+  },
+
+  /**
+  * Check if there is just one annotation set from a label set
+  */
+  isOnlyMultipleAnnotationSet: (state) => (annotationSet) => {
+    const sameSets = state.annotationSets.filter(set => set.label_set.id === annotationSet.label_set.id);
+
+    return sameSets.length === 1 ? true : false;
+  },
+
+  /**
+  * Check if the annotation set can appear multiple times
+  */
+  annotationSetCanBeMultiple: (_) => (annotationSet) => {
+    return annotationSet.label_set.has_multiple_annotation_sets;
+  },
+
+  /**
+  * Check if the annotation set has only empty labels
+  */
+  annotationSetHasNoFilledLabels: (_) => (annotationSet) => {
+    const annotations = annotationSet.labels.flatMap(label => {
+      return label.annotations;
+    });
+
+    console.log(annotations);
+
+    return annotations.length === 0 ? true : false;
   },
 };
 
@@ -907,12 +936,23 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters, dispatch }, { annotationId }) => {
+  deleteAnnotation: ({ commit, getters }, { annotationId, annotationSet }) => {
     return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(async (response) => {
           if (response.status === 204) {
             commit("DELETE_ANNOTATION", annotationId);
+
+            // Check if the deleted annotation was the last one in a multiple annotation set
+            // and if the annotation set has no annotations
+            if (annotationSet && getters.annotationSetCanBeMultiple(annotationSet) && getters.annotationSetHasNoFilledLabels(annotationSet)) {
+              // Check if there is still 1 or more multiple annotation sets for the same label set
+              if (getters.isOnlyMultipleAnnotationSet(annotationSet)) {
+                commit("UPDATE_ANNOTATION_SET", annotationSet);
+              } else {
+                commit("DELETE_ANNOTATION_SET", annotationSet);
+              }
+            }
 
             resolve(true);
           }
@@ -1244,6 +1284,26 @@ const mutations = {
   },
   SET_ANNOTATION_SETS: (state, annotationSets) => {
     state.annotationSets = annotationSets;
+  },
+  DELETE_ANNOTATION_SET: (state, annotationSet) => {
+    const indexOfSetToDelete = state.annotationSets.findIndex(
+      (existingAnnotationSet) => existingAnnotationSet.id === annotationSet.id
+    );
+
+    if (indexOfSetToDelete === -1) return;
+
+    state.annotationSets.splice(indexOfSetToDelete, 1);
+  },
+  UPDATE_ANNOTATION_SET: (state, annotationSet) => {
+    const indexOfExistingAnnotationSet = state.annotationSets.findIndex(
+      (existingAnnotationSet) => existingAnnotationSet.id === annotationSet.id
+    );
+
+    if (indexOfExistingAnnotationSet === -1) return;
+
+    const updatedSet = { ...annotationSet, id: null };
+
+    state.annotationSets.splice(indexOfExistingAnnotationSet, 1, updatedSet);
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;

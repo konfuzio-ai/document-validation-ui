@@ -262,6 +262,7 @@ export default {
         await this.$store
           .dispatch("document/deleteAnnotation", {
             annotationId: annotationToDelete.id,
+            annotationSet: null, // TODO: test if annotation set should be added if the feature is available again
           })
           .catch((error) => {
             this.$store.dispatch("document/createErrorMessage", {
