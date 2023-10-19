@@ -251,7 +251,10 @@ export default {
       // check if the selected label already has a negative annotation
       let negativeAnnotationId;
 
-      if (this.selectedLabel.annotations.length > 0) {
+      if (
+        this.selectedLabel.annotations &&
+        this.selectedLabel.annotations.length > 0
+      ) {
         const negativeAnnotation = this.selectedLabel.annotations.find(
           (annotation) => this.isNegative(annotation)
         );
