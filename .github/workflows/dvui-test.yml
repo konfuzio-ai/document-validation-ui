@@ -29,4 +29,6 @@ jobs:
       - run: npm run test:unit
       - name: Trigger Dev-Center build
         run: |
-          curl -X POST --fail -F token=${{ secrets.DEV_CENTER_TOKEN }} -F ref=main https://git.konfuzio.com/api/v4/projects/140/trigger/pipeline 
+          if [[ "${{ matrix.node-version }}" == "18.x" ]]; then # workaround to run this only once
+            curl -X POST --fail -F token=${{ secrets.DEV_CENTER_TOKEN }} -F ref=main https://git.konfuzio.com/api/v4/projects/140/trigger/pipeline 
+          fi
