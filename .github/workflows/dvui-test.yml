@@ -2,7 +2,7 @@ name: DVUI test
 
 on:
   push:
-    branches: ["main", "9691-integrate-documentation"]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
 
