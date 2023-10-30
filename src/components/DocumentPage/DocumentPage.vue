@@ -384,7 +384,6 @@ export default {
     },
 
     handleFocusedAnnotation(annotation, trigger) {
-      console.log("handleFocusedAnnotation");
       this.$store.dispatch("document/setSidebarAnnotationSelected", {
         annotation,
         trigger,
