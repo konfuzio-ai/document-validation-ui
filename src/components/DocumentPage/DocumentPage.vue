@@ -143,6 +143,11 @@ export default {
       type: Object,
       required: true,
     },
+    imageBlob: {
+      type: Blob,
+      required: false,
+      default: null,
+    },
   },
 
   data() {
@@ -458,22 +463,31 @@ export default {
       if (this.image && !force) {
         return;
       }
-      const image = new Image();
       if (process.env.NODE_ENV === "test") {
         return;
       }
-      api
-        .makeFileRequest(
-          `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
-        )
-        .then((myBlob) => {
-          image.src = URL.createObjectURL(myBlob);
-          image.onload = () => {
-            // set image only when it is loaded
-            this.image = image;
-          };
-        })
-        .catch((error) => {});
+
+      const convertBlob = (blob) => {
+        const image = new Image();
+        image.src = URL.createObjectURL(blob);
+        image.onload = () => {
+          // set image only when it is loaded
+          this.image = image;
+        };
+      };
+
+      if (!this.imageBlob) {
+        api
+          .makeFileRequest(
+            `${this.page.image_url}?${this.selectedDocument.downloaded_at}`
+          )
+          .then((myBlob) => {
+            convertBlob(myBlob);
+          })
+          .catch((error) => {});
+      } else {
+        convertBlob(this.imageBlob);
+      }
     },
 
     /**
