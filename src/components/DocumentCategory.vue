@@ -56,9 +56,9 @@
         v-for="category in listOfCategories()"
         :key="category.id"
         aria-role="listitem"
+        class="list-item"
         :disabled="handleOptionInDropdownDisabled(category)"
         @click="handleChangeCategory(category)"
-        class="list-item"
       >
         <span>{{ category.name }}</span>
         <span v-if="splitMode && category.confidence >= 0">{{
