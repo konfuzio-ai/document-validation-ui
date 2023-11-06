@@ -171,7 +171,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .annotation-accept-btn")
+        .find(
+          ".buttons-container .action-buttons .accept-decline-container .accept-btn"
+        )
         .exists()
     ).toBe(false);
 
@@ -180,7 +182,7 @@ describe("Document Annotations Component", () => {
     expect(
       await wrapper
         .findComponent(
-          ".buttons-container .action-buttons .annotation-accept-btn"
+          ".buttons-container .action-buttons .accept-decline-container .accept-btn"
         )
         .exists()
     ).toBe(true);
@@ -199,7 +201,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .decline-btn")
+        .find(
+          ".buttons-container .action-buttons .accept-decline-container .decline-btn"
+        )
         .exists()
     ).toBe(false);
 
@@ -207,7 +211,9 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".buttons-container .action-buttons .decline-btn")
+        .find(
+          ".buttons-container .action-buttons .accept-decline-container .decline-btn"
+        )
         .isVisible()
     ).toBe(true);
   });

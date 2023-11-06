@@ -34,6 +34,7 @@
     <div v-if="showHoverButton" class="accept-decline-container">
       <b-button
         v-if="declineBtn"
+        class="decline-btn"
         :title="$t('decline')"
         type="is-ghost"
         @click.stop="decline"
@@ -42,6 +43,7 @@
       </b-button>
       <b-button
         v-if="acceptBtn"
+        class="accept-btn"
         :title="$t('accept')"
         type="is-ghost"
         @click.stop="accept"
