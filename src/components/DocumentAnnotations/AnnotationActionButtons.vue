@@ -31,61 +31,30 @@
       @click.stop="cancel"
     />
 
-    <!-- decline button -->
-    <div
-      v-if="
-        declineBtn &&
-        !isLoading &&
-        !saveBtn &&
-        !cancelBtn &&
-        !publicView &&
-        !isDocumentReviewed
-      "
-      class="decline-button-container"
-    >
+    <div v-if="showHoverButton" class="accept-decline-container">
       <b-button
+        v-if="declineBtn"
+        :title="$t('decline')"
         type="is-ghost"
-        class="decline-btn"
         @click.stop="decline"
       >
-        {{ $t("decline") }}
+        <b-icon icon="xmark" class="decline-icon" />
+      </b-button>
+      <b-button
+        v-if="acceptBtn"
+        :title="$t('accept')"
+        type="is-ghost"
+        @click.stop="accept"
+      >
+        <AcceptedCheckMark />
       </b-button>
     </div>
-
-    <!-- accept button -->
-    <b-button
-      v-if="
-        acceptBtn &&
-        !isLoading &&
-        !saveBtn &&
-        !cancelBtn &&
-        !publicView &&
-        !isDocumentReviewed
-      "
-      class="annotation-accept-btn primary-button"
-      type="is-primary"
-      @click.stop="accept"
-    >
-      {{ $t("accept") }}
-    </b-button>
-
     <!-- missing button -->
     <div
-      v-if="
-        showMissingBtn &&
-        !isLoading &&
-        !cancelBtn &&
-        !saveBtn &&
-        !publicView &&
-        !isDocumentReviewed
-      "
+      v-if="showMissingBtn && showHoverButton"
       class="missing-button-container"
     >
-      <b-button
-        type="is-ghost"
-        class="missing-btn"
-        @click.stop="markAsMissing"
-      >
+      <b-button type="is-ghost" class="missing-btn" @click.stop="markAsMissing">
         {{ $t("missing_annotation") }}
       </b-button>
     </div>
@@ -104,8 +73,12 @@
 <script>
 /* Component for showing actions for each annotation row */
 import { mapGetters, mapState } from "vuex";
+import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 export default {
   name: "AnnotationActionButtons",
+  components: {
+    AcceptedCheckMark,
+  },
   props: {
     saveBtn: {
       type: Boolean,
@@ -137,6 +110,15 @@ export default {
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
     ...mapGetters("document", ["isDocumentReviewed"]),
+    showHoverButton() {
+      return (
+        !this.isLoading &&
+        !this.cancelBtn &&
+        !this.saveBtn &&
+        !this.publicView &&
+        !this.isDocumentReviewed
+      );
+    },
   },
   methods: {
     save() {
