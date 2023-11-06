@@ -419,8 +419,8 @@
     button {
       height: 32px;
 
-      &.annotation-save-btn,
-      &.annotation-accept-btn {
+      &.annotation-save-btn {
+        cursor: pointer;
         padding: 6px 14px 6px 14px;
         border-radius: 8px;
         font-weight: 500;
@@ -481,12 +481,33 @@
       }
     }
 
-    .missing-button-container,
-    .decline-button-container {
+    .accept-decline-container {
+      padding-right: 14px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      button {
+        padding: 6px;
+
+        .decline-icon {
+          height: 24px;
+          width: 24px;
+          padding: 6px;
+          color: $red;
+          vertical-align: middle;
+        }
+
+        svg {
+          vertical-align: middle;
+          height: 24px;
+        }
+      }
+    }
+
+    .missing-button-container {
       background-color: transparent;
 
-      .missing-btn,
-      .decline-btn {
+      .missing-btn {
         color: $grey-blue !important;
         font-size: 14px !important;
         font-weight: 500;
