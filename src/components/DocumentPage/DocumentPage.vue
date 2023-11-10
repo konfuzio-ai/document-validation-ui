@@ -18,6 +18,14 @@
       :container-height="scaledViewport.height"
       @close="closePopups"
     />
+    <EditAnnotation
+      v-if="editAnnotation"
+      :edit-annotation="editAnnotation"
+      :page="page"
+      :container-width="scaledViewport.width"
+      :container-height="scaledViewport.height"
+      @close="closePopups"
+    />
 
     <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
 
@@ -127,6 +135,7 @@ import api from "../../api";
 import BoxSelection from "./BoxSelection";
 import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
+import EditAnnotation from "./EditAnnotation";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
@@ -135,6 +144,7 @@ export default {
     BoxSelection,
     MultiAnnSelection,
     NewAnnotation,
+    EditAnnotation,
     AnnSetTableOptions,
   },
 
@@ -498,6 +508,7 @@ export default {
       if (this.newAnnotation && this.newAnnotation.length > 0) {
         entityIsSelected = this.newAnnotation.find((selectedEntity) => {
           return (
+            selectedEntity.original &&
             selectedEntity.original.offset_string ===
               entity.original.offset_string &&
             selectedEntity.original.x0 === entity.original.x0 &&

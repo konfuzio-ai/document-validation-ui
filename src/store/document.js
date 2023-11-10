@@ -333,7 +333,7 @@ const getters = {
         // check which one has more confidence or if it's the same, then check if one is revised or not
         if (
           highestConfidenceAnnotation.confidence <
-          label.annotations[i].confidence ||
+            label.annotations[i].confidence ||
           (highestConfidenceAnnotation.confidence ===
             label.annotations[i].confidence &&
             label.annotations[i].revised)
@@ -358,17 +358,17 @@ const getters = {
    */
   isAnnotationInEditMode:
     (state) =>
-      (annotationId, index = null) => {
-        if (state.editAnnotation && annotationId) {
-          if (index != null) {
-            return (
-              state.editAnnotation.id === annotationId &&
-              state.editAnnotation.index === index
-            );
-          }
-          return state.editAnnotation.id === annotationId;
+    (annotationId, index = null) => {
+      if (state.editAnnotation && annotationId) {
+        if (index != null) {
+          return (
+            state.editAnnotation.id === annotationId &&
+            state.editAnnotation.index === index
+          );
         }
-      },
+        return state.editAnnotation.id === annotationId;
+      }
+    },
 
   /**
    * Get number of empty labels per annotation set
@@ -514,14 +514,14 @@ const getters = {
    */
   documentCannotBeEdited:
     (state) =>
-      (document = state.selectedDocument) => {
-        return (
-          document.dataset_status === 1 ||
-          document.dataset_status === 2 ||
-          document.dataset_status === 3 ||
-          document.is_reviewed
-        );
-      },
+    (document = state.selectedDocument) => {
+      return (
+        document.dataset_status === 1 ||
+        document.dataset_status === 2 ||
+        document.dataset_status === 3 ||
+        document.is_reviewed
+      );
+    },
 
   /**
    * If automatic splitting is enabled for the project
@@ -596,8 +596,8 @@ const getters = {
   },
 
   /**
-  * Check for user who created or revised the annotation
-  */
+   * Check for user who created or revised the annotation
+   */
   getUser: () => (annotation) => {
     if (annotation) {
       if (annotation.created_by && !annotation.revised) {
@@ -616,26 +616,28 @@ const getters = {
   },
 
   /**
-  * Check if there is just one annotation set from a label set
-  */
+   * Check if there is just one annotation set from a label set
+   */
   isOnlyMultipleAnnotationSet: (state) => (annotationSet) => {
-    const sameSets = state.annotationSets.filter(set => set.label_set.id === annotationSet.label_set.id);
+    const sameSets = state.annotationSets.filter(
+      (set) => set.label_set.id === annotationSet.label_set.id
+    );
 
     return sameSets.length === 1 ? true : false;
   },
 
   /**
-  * Check if the annotation set can appear multiple times
-  */
+   * Check if the annotation set can appear multiple times
+   */
   annotationSetCanBeMultiple: (_) => (annotationSet) => {
     return annotationSet.label_set.has_multiple_annotation_sets;
   },
 
   /**
-  * Check if the annotation set has only empty labels
-  */
+   * Check if the annotation set has only empty labels
+   */
   annotationSetHasNoFilledLabels: (_) => (annotationSet) => {
-    const annotations = annotationSet.labels.flatMap(label => {
+    const annotations = annotationSet.labels.flatMap((label) => {
       return label.annotations;
     });
 
@@ -945,7 +947,11 @@ const actions = {
 
             // Check if the deleted annotation was the last one in a multiple annotation set
             // and if the annotation set has no annotations
-            if (annotationSet && getters.annotationSetCanBeMultiple(annotationSet) && getters.annotationSetHasNoFilledLabels(annotationSet)) {
+            if (
+              annotationSet &&
+              getters.annotationSetCanBeMultiple(annotationSet) &&
+              getters.annotationSetHasNoFilledLabels(annotationSet)
+            ) {
               // Check if there is still 1 or more multiple annotation sets for the same label set
               if (getters.isOnlyMultipleAnnotationSet(annotationSet)) {
                 commit("UPDATE_ANNOTATION_SET", annotationSet);
