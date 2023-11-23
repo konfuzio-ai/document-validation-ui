@@ -43,6 +43,11 @@
             @click="handleDownloadFile('ocr')"
             >{{ $t("pdf_file") }}</b-dropdown-item
           >
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="emimtDownloadRedactedFile"
+            >{{ $t("redacted_file") }}</b-dropdown-item
+          >
         </b-dropdown>
       </div>
 
@@ -85,6 +90,7 @@ import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
 import EditDocIcon from "../../assets/images/EditDocIcon";
+import { EventBus } from "@/eventBus";
 import api from "../../api";
 
 export default {
@@ -180,6 +186,9 @@ export default {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
         this.$store.dispatch("display/updateScale", { scale });
       });
+    },
+    emimtDownloadRedactedFile () {
+      EventBus.$emit("download-redacted-file");
     },
     handleDownloadFile(fileType) {
       let fileUrl;

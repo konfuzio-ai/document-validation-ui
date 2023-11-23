@@ -310,6 +310,20 @@ export default {
       "endSelection",
       "moveSelection",
     ]),
+
+    getLatestDataURL() {
+      const groupToHide = this.$refs.entities.getStage();
+      groupToHide.visible(false);
+
+      const offscreenStage = this.$refs.stage.getStage().clone();
+      groupToHide.visible(true);
+
+      return {
+        dataURL: offscreenStage.toDataURL(),
+        pageNumber: this.page.number,
+      }
+    },
+
     isAnnotationFocused(annotationId) {
       return (
         this.documentAnnotationSelected &&
