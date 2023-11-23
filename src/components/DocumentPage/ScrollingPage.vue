@@ -5,7 +5,7 @@
       :width="page.size[0]"
       :height="page.size[1]"
     />
-    <DocumentPage v-else :page="loadedPage" />
+    <DocumentPage v-else ref="documentPage" :page="loadedPage" />
   </div>
 </template>
 

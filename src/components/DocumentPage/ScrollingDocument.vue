@@ -36,6 +36,9 @@ import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
 import ActionBar from "./ActionBar";
+import {EventBus} from "@/eventBus";
+import {jsPDF} from "jspdf";
+import {PIXEL_RATIO} from "@/constants";
 
 export default {
   components: {
@@ -100,6 +103,10 @@ export default {
       this.scrollTop = 0;
     },
   },
+  created() {
+    EventBus.$on('download-redacted-file', this.handleDownloadRedactedFile)
+  },
+
   mounted() {
     this.$refs.scrollingDocument.addEventListener("scroll", this.handleScroll);
   },
@@ -137,6 +144,26 @@ export default {
           this.$store.dispatch("display/setPageChangedFromThumbnail", false);
         }
       }, 300);
+    },
+    handleDownloadRedactedFile () {
+      const [pixelWidth, pixelHeight] = this.pages[0].original_size.map(
+          (dim) => dim / PIXEL_RATIO
+      );
+      const pages = this.$refs.scrollingPage
+      const pdf = new jsPDF({
+        orientation: pixelWidth > pixelHeight ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [pixelHeight, pixelWidth]
+      });
+
+      for (let i = 0; i < pages.length; i++) {
+        const { dataURL } = pages[i].$refs.documentPage.getLatestDataURL()
+        if (i > 0) {
+          pdf.addPage();
+        }
+        pdf.addImage(dataURL, 'PNG', 0, 0, pixelWidth, pixelHeight);
+      }
+      pdf.save(this.selectedDocument.data_file_name);
     },
   },
 };
