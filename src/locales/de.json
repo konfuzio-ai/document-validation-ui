@@ -136,6 +136,7 @@
   "error_downloading_file": "Die Datei konnte nicht heruntergeladen werden.",
   "original_file": "Originaldatei",
   "pdf_file": "PDF Datei",
+  "redacted_file": "Redigierte Datei",
   "no_labels_in_set": "Dieser Annotationssatz hat keine Beschriftungen.",
   "link_to_add_labels": "Sehen Sie <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>hier</a>, wie Sie sie hinzufügen.",
   "no_annotations_in_annotation_set": "Dieser Annotationssatz enthält keine extrahierten Annotationen für die jeweiligen Beschriftungen.",

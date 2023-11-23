@@ -136,6 +136,7 @@
   "error_downloading_file": "El documento no pudo ser descargado.",
   "original_file": "Documento original",
   "pdf_file": "Documento PDF",
+  "redacted_file": "Archivo, Redactado",
   "no_labels_in_set": "Este grupo de anotaciones no tiene etiquetas.",
   "link_to_add_labels": "Para ver cómo agregarlas haga clic <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>aquí</a>.",
   "no_annotations_in_annotation_set": "Este grupo de anotaciones no tiene anotaciones encontradas para sus respectivas etiquetas.",

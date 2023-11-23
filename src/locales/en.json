@@ -136,6 +136,7 @@
   "error_downloading_file": "The file could not be downloaded.",
   "original_file": "Original file",
   "pdf_file": "PDF file",
+  "redacted_file": "Redacted file",
   "no_labels_in_set": "This annotation set has no labels.",
   "link_to_add_labels": "See how to add them <a href='https://help.konfuzio.com/modules/labels/index.html#add-a-label' target='_blank'>here</a>.",
   "no_annotations_in_annotation_set": "This annotation set has no annotations extracted for its respective labels.",
