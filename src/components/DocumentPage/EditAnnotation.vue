@@ -1,6 +1,9 @@
 <template>
-  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <span class="popup-input">{{ annotation.offset_string }}</span>
+  <div
+    v-if="annotation"
+    class="annotation-popup small"
+    :style="{ left: `${left}px`, top: `${top}px` }"
+  >
     <b-dropdown
       v-model="selectedSet"
       aria-role="list"
@@ -58,41 +61,34 @@
     </b-dropdown>
     <b-tooltip
       multilined
-      :active="selectedSet && (!labels || labels.length === 0)"
+      :active="selectedSet && (!labelsFiltered || labelsFiltered.length === 0)"
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
       :close-delay="5000"
     >
-      <template #content>
-        <div ref="tooltipContent"></div>
-      </template>
       <b-dropdown
+        v-if="selectedLabel"
         v-model="selectedLabel"
         aria-role="list"
-        :disabled="!labels || labels.length === 0"
+        :disabled="!labelsFiltered || labelsFiltered.length === 0"
         scrollable
         class="label-dropdown annotation-dropdown"
       >
         <template #trigger>
           <b-button
-            :class="['popup-input', selectedLabel ? '' : 'not-selected']"
+            class="popup-input"
+            :disabled="!labelsFiltered"
             type="is-text"
           >
-            {{
-              selectedLabel
-                ? selectedLabel.name
-                : labels && labels.length === 0
-                ? $t("no_labels_to_choose")
-                : $t("select_label")
-            }}
+            {{ selectedLabel.name }}
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>
           </b-button>
         </template>
         <b-dropdown-item
-          v-for="label in labels"
+          v-for="label in labelsFiltered"
           :key="label.id"
           aria-role="listitem"
           :value="label"
@@ -124,7 +120,7 @@
  * This component is used to show a popup
  * for creating a new annotation.
  */
-const heightOfPopup = 192;
+const heightOfPopup = 142;
 const margin = 12;
 const widthOfPopup = 205;
 
@@ -155,14 +151,14 @@ export default {
       annotation: null,
       selectedLabel: null,
       selectedSet: null,
-      labels: null,
+      labelsFiltered: null,
       loading: false,
       isAnnSetModalShowing: false,
       setsList: [],
     };
   },
   computed: {
-    ...mapState("document", ["annotationSets", "annotations"]),
+    ...mapState("document", ["annotationSets", "annotations", "labels"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation",
@@ -192,51 +188,64 @@ export default {
   },
   watch: {
     selectedSet(newValue) {
-      this.selectedLabel = null;
-      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
+      this.labelsFiltered = this.labelsFilteredForAnnotationCreation(newValue);
+    },
+    editAnnotation() {
+      this.loadInfo();
     },
   },
   mounted() {
-    console.log("span", this.annotationBox);
-    console.log("span", this.spanSelection);
-    console.log("editAnnotation", this.editAnnotation);
-    this.setsList = [...this.annotationSets];
-
-    this.selectedSet = this.annotationSets.find(
-      (annSet) => annSet.id === this.editAnnotation.annotationSet
-    );
-
-    this.labels = this.labelsFilteredForAnnotationCreation(this.selectedSet);
-    this.selectedLabel = this.labels.find(
-      (label) => label.id === this.editAnnotation.label
-    );
-
-    this.annotation = this.annotations.find(
-      (ann) => ann.id === this.editAnnotation.id
-    );
-    console.log("ann", this.annotation);
-
-    console.log("selected set", this.selectedSet);
-    console.log("selectedLabel", this.selectedLabel);
-    console.log("labels", this.labels);
+    this.loadInfo();
 
     setTimeout(() => {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
-
-    this.setTooltipText();
   },
   destroyed() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
+    loadInfo() {
+      this.setsList = [...this.annotationSets];
+
+      this.selectedSet = this.annotationSets.find(
+        (annSet) => annSet.id === this.editAnnotation.annotationSet.id
+      );
+
+      this.labelsFiltered = this.labelsFilteredForAnnotationCreation(
+        this.selectedSet
+      );
+
+      // if existing label is not able to be chosen we add it manually
+      if (!this.labelsFiltered.includes(this.editAnnotation.label)) {
+        this.labelsFiltered.push(this.editAnnotation.label);
+      }
+
+      this.selectedLabel = this.editAnnotation.label;
+
+      this.annotation = this.annotations.find(
+        (ann) => ann.id === this.editAnnotation.id
+      );
+    },
     close() {
-      // this.$store.dispatch("selection/setSelectedEntities", null);
+      this.$store.dispatch("document/resetEditAnnotation");
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("selection/setSelectedEntities", null);
       this.$emit("close");
     },
     save() {
       this.loading = true;
+
+      if (
+        this.editAnnotation.labelSet.id !== this.selectedSet.id ||
+        this.editAnnotation.label.id !== this.selectedLabel.id
+      ) {
+        // TODO: delete annotation
+        // TODO: create new one
+      } else {
+        this.close();
+      }
     },
     chooseLabelSet(labelSet) {
       const newSet = {
@@ -253,10 +262,6 @@ export default {
         isMultipleAnnotations: MULTI_ANN_TABLE_FEATURE,
         finish: this.chooseLabelSet,
       });
-    },
-    setTooltipText() {
-      // Text set from innerHTML vs 'label' due to html tag in locales file string
-      this.$refs.tooltipContent.innerHTML = this.$t("no_labels_available");
     },
   },
 };

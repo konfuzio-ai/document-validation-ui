@@ -666,7 +666,7 @@ const actions = {
   },
   setEditAnnotation: (
     { commit },
-    { id, index, label, labelSet, annotationSet }
+    { id, index, label, labelSet, annotationSet, pageNumber }
   ) => {
     const value = {
       id,
@@ -674,6 +674,7 @@ const actions = {
       label,
       labelSet,
       annotationSet,
+      pageNumber,
     };
     commit("SET_EDIT_ANNOTATION", value);
   },

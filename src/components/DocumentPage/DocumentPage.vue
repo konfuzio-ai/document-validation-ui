@@ -19,12 +19,15 @@
       @close="closePopups"
     />
     <EditAnnotation
-      v-if="editAnnotation"
+      v-if="
+        editAnnotation &&
+        editAnnotation.pageNumber &&
+        editAnnotation.pageNumber === currentPage
+      "
       :edit-annotation="editAnnotation"
       :page="page"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
-      @close="closePopups"
     />
 
     <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
