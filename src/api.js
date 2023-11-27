@@ -1,5 +1,4 @@
 import axios from "axios";
-import { cacheAdapterEnhancer } from "axios-extensions";
 
 let HTTP, FILE_REQUEST, authToken, appLocale;
 const DEFAULT_URL = "https://app.konfuzio.com";
@@ -15,7 +14,6 @@ HTTP = axios.create({
 FILE_REQUEST = axios.create({
   baseURL: FILE_URL || `${DEFAULT_URL}`,
   responseType: "blob",
-  adapter: cacheAdapterEnhancer(axios.defaults.adapter),
 });
 
 const setAuthToken = (token) => {
@@ -78,5 +76,5 @@ export default {
   setLocale,
   FILE_REQUEST,
   DEFAULT_URL,
-  FILE_URL
+  FILE_URL,
 };
