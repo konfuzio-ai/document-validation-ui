@@ -90,39 +90,42 @@ const getters = {
     (state, getters) =>
     (page, bbox, hasOffset = false) => {
       const imageScale = getters.imageScale(page);
-      const { x0, x1, y0, y1 } = bbox;
-      const pageHeight = new BigNumber(page.original_size[1]);
-      const rect = {
-        // left
-        x: new BigNumber(x0)
-          .minus(hasOffset ? 1 : 0)
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        // top
-        y: pageHeight
-          .minus(new BigNumber(y1))
-          .minus(hasOffset ? 17.1 : 0)
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        width: new BigNumber(x1)
-          .minus(x0)
-          .abs()
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        height: new BigNumber(y1)
-          .minus(y0)
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-      };
-      return rect;
+      if (bbox.x0 && bbox.y0) {
+        const { x0, x1, y0, y1 } = bbox;
+        const pageHeight = new BigNumber(page.original_size[1]);
+        const rect = {
+          // left
+          x: new BigNumber(x0)
+            .minus(hasOffset ? 1 : 0)
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+          // top
+          y: pageHeight
+            .minus(new BigNumber(y1))
+            .minus(hasOffset ? 17.1 : 0)
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+          width: new BigNumber(x1)
+            .minus(x0)
+            .abs()
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+          height: new BigNumber(y1)
+            .minus(y0)
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+        };
+        return rect;
+      }
+      return { x: 0, y: 0, width: 0, height: 0 };
     },
   clientToBbox: (state, getters) => (page, start, end) => {
     /**

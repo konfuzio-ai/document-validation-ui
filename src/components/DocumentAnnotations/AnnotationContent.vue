@@ -11,8 +11,8 @@
           editAnnotation &&
           editAnnotation.id === annotation.id &&
           'error-editing',
-        isAnnotationBeingEdited && 'clicked-ann'      
-        ]"
+        isAnnotationBeingEdited && 'clicked-ann',
+      ]"
       role="textbox"
       :contenteditable="isAnnotationBeingEdited"
       @click="handleEditAnnotation"
@@ -119,9 +119,10 @@ export default {
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
             index: this.spanIndex,
-            label: this.label.id,
-            labelSet: this.annotationSet.label_set.id,
-            annotationSet: this.annotationSet.id,
+            label: this.label,
+            labelSet: this.annotationSet.label_set,
+            annotationSet: this.annotationSet,
+            pageNumber: this.span.page_index + 1,
           })
           .then(() => {
             this.$refs.contentEditable.focus();

@@ -420,9 +420,9 @@ export default {
         missing = [
           {
             document: parseInt(this.documentId),
-            label: this.editAnnotation.label,
-            label_set: this.editAnnotation.labelSet,
-            annotation_set: this.editAnnotation.annotationSet,
+            label: this.editAnnotation.label.id,
+            label_set: this.editAnnotation.labelSet.id,
+            annotation_set: this.editAnnotation.annotationSet.id,
           },
         ];
       } else if (annotationSet && markAllMissing) {

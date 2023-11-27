@@ -152,9 +152,9 @@ export default {
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
           index: this.spanIndex,
-          label: this.label.id,
-          labelSet: this.annotationSet.label_set.id,
-          annotationSet: this.annotationSet.id,
+          label: this.label,
+          labelSet: this.annotationSet.label_set,
+          annotationSet: this.annotationSet,
         });
       }
     },
