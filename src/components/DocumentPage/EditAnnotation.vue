@@ -158,10 +158,16 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["annotationSets", "annotations", "labels"]),
+    ...mapState("document", [
+      "annotationSets",
+      "annotations",
+      "labels",
+      "documentId",
+    ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "labelsFilteredForAnnotationCreation",
+      "isNegative",
     ]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["spanSelection"]),
@@ -234,15 +240,75 @@ export default {
       this.$store.dispatch("selection/setSelectedEntities", null);
       this.$emit("close");
     },
-    save() {
+    async save() {
       this.loading = true;
 
       if (
         this.editAnnotation.labelSet.id !== this.selectedSet.id ||
         this.editAnnotation.label.id !== this.selectedLabel.id
       ) {
-        // TODO: delete annotation
-        // TODO: create new one
+        // first delete annotation, then create new one
+        await this.$store
+          .dispatch("document/deleteAnnotation", {
+            annotationId: this.annotation.id,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          });
+
+        const spans = this.annotation.span;
+        spans[this.editAnnotation.index] = this.spanSelection;
+
+        const annotationToCreate = {
+          document: this.documentId,
+          span: spans,
+          label: this.selectedLabel.id,
+          is_correct: true,
+          revised: false,
+        };
+
+        if (this.selectedSet.id) {
+          annotationToCreate.annotation_set = this.selectedSet.id;
+        } else {
+          annotationToCreate.label_set = this.selectedSet.label_set.id;
+        }
+
+        // check if the selected label already has a negative annotation
+        let negativeAnnotationId;
+
+        if (
+          this.selectedLabel.annotations &&
+          this.selectedLabel.annotations.length > 0
+        ) {
+          const negativeAnnotation = this.selectedLabel.annotations.find(
+            (annotation) => this.isNegative(annotation)
+          );
+
+          if (negativeAnnotation) {
+            negativeAnnotationId = negativeAnnotation.id;
+          }
+        }
+
+        this.$store
+          .dispatch("document/createAnnotation", {
+            annotation: annotationToCreate,
+            negativeAnnotationId: negativeAnnotationId,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("error_creating_annotation"),
+            });
+          })
+          .finally(() => {
+            this.close();
+            this.loading = false;
+          });
       } else {
         this.close();
       }
