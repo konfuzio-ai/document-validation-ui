@@ -170,17 +170,21 @@ export default {
       "isNegative",
     ]),
     ...mapGetters("display", ["bboxToRect"]),
-    ...mapState("selection", ["spanSelection"]),
+    ...mapState("selection", ["selection", "spanSelection"]),
     top() {
-      const bbox = this.bboxToRect(this.page, this.spanSelection);
-      const top = bbox.y - heightOfPopup; // subtract the height of the popup plus some margin
+      const top = this.selection.start.y - heightOfPopup; // subtract the height of the popup plus some margin
+
+      const height = this.selection.end.y - this.selection.start.y;
 
       //check if the popup will not go off the container on the top
-      return bbox.y > heightOfPopup ? top : bbox.y + bbox.height + margin;
+      return this.selection.start.y > heightOfPopup
+        ? top
+        : this.selection.start.y + height + margin;
     },
     left() {
-      const bbox = this.bboxToRect(this.page, this.spanSelection);
-      const left = bbox.x + bbox.width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+      const width = this.selection.end.x - this.selection.start.x;
+
+      const left = this.selection.start.x + width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
       //check if the popup will not go off the container
       if (left + widthOfPopup > this.containerWidth) {
