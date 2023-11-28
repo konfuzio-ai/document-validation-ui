@@ -112,7 +112,7 @@ export default {
         this.$nextTick(() => {
           // Scroll to the annotation
           this.scrollTo(
-            this.getYForBbox(this.documentAnnotationSelected.span),
+            this.getYForBbox(this.documentAnnotationSelected.span) - 100, // offset for edit annotation popup
             this.getXForBbox(this.documentAnnotationSelected.span)
           );
         });
