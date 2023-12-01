@@ -300,32 +300,22 @@ export default {
       ) {
         clearTimeout(this.annotationAnimationTimeout);
 
-        let timeout;
-
-        if (!newSidebarAnnotationSelected.trigger) {
-          timeout = 600;
-        } else {
-          timeout = 1200;
-        }
-
         this.isSelected = true;
         // remove annotation selection after some time
         this.annotationAnimationTimeout = setTimeout(() => {
           this.$store.dispatch("document/setSidebarAnnotationSelected", null);
           this.isSelected = false;
-        }, timeout);
+        }, 1200);
 
         // Check if sidebarAnnotationSelected changed from a click or hover
-        if (newSidebarAnnotationSelected.trigger === "click") {
-          const runAnimation = () => {
-            this.$el.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-              inline: "nearest",
-            });
-          };
-          runAnimation();
-        }
+        const runAnimation = () => {
+          this.$el.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest",
+          });
+        };
+        runAnimation();
       }
     },
     editAnnotation(newValue) {

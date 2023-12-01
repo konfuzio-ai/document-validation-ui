@@ -49,12 +49,19 @@
         </div>
       </div>
       <div
-        v-for="(annotationSet, indexGroup) in annotationSetsToShowInList()"
+        v-for="(annotationSet, indexGroup) in annotationSets"
         :key="indexGroup"
         class="annotation-set-group"
+        @click="toggleAccordion(indexGroup)"
       >
         <div class="label-set-header">
           <div class="label-set-name">
+            <b-icon
+              :icon="
+                annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
+              "
+            >
+            </b-icon>
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
                 annotationSet
@@ -66,6 +73,7 @@
             class="labelset-action-buttons"
           >
             <AnnotationSetActionButtons
+              v-if="annotationSetsAccordion[indexGroup] === true"
               :number-of-empty-labels-in-annotation-set="
                 emptyLabels(annotationSet).length
               "
@@ -92,34 +100,38 @@
           </div>
         </div>
 
-        <div v-if="annotationSet.labels.length > 0">
-          <div v-for="label in annotationSet.labels" :key="label.id">
-            <div
-              v-if="!(label.annotations.length === 0 && publicView)"
-              class="labels"
-            >
-              <DocumentLabel
-                :label="label"
-                :annotation-set="annotationSet"
-                :index-group="indexGroup"
-                @handle-missing-annotation="markAnnotationsAsMissing"
-              />
+        <b-collapse :open="annotationSetsAccordion[indexGroup] === true">
+          <div v-if="annotationSet.labels.length > 0">
+            <div v-for="label in annotationSet.labels" :key="label.id">
+              <div
+                v-if="!(label.annotations.length === 0 && publicView)"
+                class="labels"
+              >
+                <DocumentLabel
+                  :label="label"
+                  :annotation-set="annotationSet"
+                  :index-group="indexGroup"
+                  @handle-missing-annotation="markAnnotationsAsMissing"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div v-if="annotationSet.labels.length === 0" class="no-labels">
-          <span> {{ $t("no_labels_in_set") }}</span>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-if="isDocumentEditable" v-html="$t('link_to_add_labels')" />
-        </div>
+          <div v-if="annotationSet.labels.length === 0" class="no-labels">
+            <span> {{ $t("no_labels_in_set") }}</span>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <span v-if="isDocumentEditable" v-html="$t('link_to_add_labels')" />
+          </div>
 
-        <div
-          v-else-if="!annotationSetHasAnnotations(annotationSet) && publicView"
-          class="no-labels"
-        >
-          <span> {{ $t("no_annotations_in_annotation_set") }}</span>
-        </div>
+          <div
+            v-else-if="
+              !annotationSetHasAnnotations(annotationSet) && publicView
+            "
+            class="no-labels"
+          >
+            <span> {{ $t("no_annotations_in_annotation_set") }}</span>
+          </div>
+        </b-collapse>
       </div>
     </div>
   </div>
@@ -150,6 +162,7 @@ export default {
       count: 0,
       jumpToNextAnnotation: false,
       numberOfLoadingAnnotations: 3,
+      annotationSetsAccordion: [],
     };
   },
   computed: {
@@ -166,15 +179,16 @@ export default {
       "labels",
       "selectedDocument",
       "splittingSuggestions",
+      "sidebarAnnotationSelected",
     ]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "emptyLabels",
       "notCorrectAnnotations",
-      "annotationSetsToShowInList",
       "annotationSetsInTable",
       "isDocumentReviewed",
+      "annotationSetOfAnnotation",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -195,6 +209,70 @@ export default {
         this.jumpToNextAnnotation = false;
       }
     },
+    annotationSets(newAnnotationSets, oldAnnotationSets) {
+      if (newAnnotationSets) {
+        const newAnnotationSetsAccordion = [];
+        const annotationSetsOpened = [];
+        const annotationSetsCreated = [];
+        if (oldAnnotationSets) {
+          // when annotation sets changed, restore old state
+          // and check if new ones were created to be open by default
+
+          this.annotationSetsAccordion.forEach((isOpen, index) => {
+            if (isOpen) {
+              annotationSetsOpened.push(oldAnnotationSets[index]);
+            }
+          });
+
+          newAnnotationSets.forEach((newAnnotationSet) => {
+            const existed = oldAnnotationSets.find(
+              (oldAnnotationSet) =>
+                oldAnnotationSet.id &&
+                newAnnotationSet.id &&
+                oldAnnotationSet.id === newAnnotationSet.id
+            );
+            if (!existed && newAnnotationSet.id !== null) {
+              annotationSetsCreated.push(newAnnotationSet);
+            }
+          });
+        }
+
+        newAnnotationSets.forEach((newAnnotationSet, index) => {
+          const wasOpen = annotationSetsOpened.find(
+            (annotationSetOpened) =>
+              annotationSetOpened.id &&
+              newAnnotationSet.id &&
+              newAnnotationSet.id === annotationSetOpened.id
+          );
+
+          if (wasOpen) {
+            newAnnotationSetsAccordion[index] = wasOpen !== undefined;
+          } else {
+            const wasCreated = annotationSetsCreated.find(
+              (annotationSetCreated) =>
+                annotationSetCreated.id &&
+                newAnnotationSet.id &&
+                newAnnotationSet.id === annotationSetCreated.id
+            );
+            newAnnotationSetsAccordion[index] = wasCreated !== undefined;
+          }
+        });
+        this.annotationSetsAccordion = newAnnotationSetsAccordion;
+      }
+    },
+    sidebarAnnotationSelected(annotation) {
+      if (annotation) {
+        const annotationSet = this.annotationSetOfAnnotation(annotation);
+        if (annotationSet) {
+          const index = this.annotationSets.findIndex(
+            (annotationSetToFind) => annotationSetToFind.id === annotationSet.id
+          );
+          const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+          newAnnotationSetsAccordion[index] = true;
+          this.annotationSetsAccordion = newAnnotationSetsAccordion;
+        }
+      }
+    },
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -203,6 +281,18 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    toggleAccordion(index) {
+      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+      newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
+      this.annotationSetsAccordion = newAnnotationSetsAccordion;
+    },
+    openAllAccordions() {
+      const newAnnotationSetsAccordion = [];
+      this.annotationSetsAccordion.forEach((_, index) => {
+        newAnnotationSetsAccordion[index] = true;
+      });
+      this.annotationSetsAccordion = newAnnotationSetsAccordion;
+    },
     annotationSetHasAnnotations(annotationSet) {
       const found = annotationSet.labels.find(
         (label) => label.annotations.length > 0
@@ -280,6 +370,10 @@ export default {
 
       // Not allow starting edit mode with ArrowUp key
       if (event.key === "ArrowUp" && !this.isAnnotationBeingEdited) return;
+
+      // open accordions
+      this.openAllAccordions();
+
       // Get all the annotation elements
       let annotations = this.createArray("keyboard-nav");
 
