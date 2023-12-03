@@ -269,6 +269,28 @@ const getters = {
     return foundAnnotationSet;
   },
 
+  /* Get label for a given annotation */
+  labelOfAnnotation: (state) => (annotationToFind) => {
+    let foundLabel = null;
+    state.annotationSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((label) => {
+        label.annotations.forEach((annotation) => {
+          if (annotation.id === annotationToFind.id) {
+            foundLabel = label;
+            return;
+          }
+        });
+        if (foundLabel) {
+          return;
+        }
+      });
+      if (foundLabel) {
+        return;
+      }
+    });
+    return foundLabel;
+  },
+
   /* Process annotations and extract labels and sets */
   processAnnotationSets: (state, getters) => (annotationSets) => {
     // group annotations for sidebar
