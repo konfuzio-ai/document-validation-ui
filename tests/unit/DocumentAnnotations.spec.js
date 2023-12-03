@@ -28,6 +28,17 @@ describe("Document Annotations Component", () => {
     );
   });
 
+  it("annotation sets are collapsed by default", async () => {
+    const wrapper = render(DocumentAnnotations, false);
+
+    const annotationSets = await wrapper.findAll(".annotation-set-group")
+      .length;
+
+    expect(await wrapper.findAll(".annotation-set-group").length).toBe(
+      annotationSets
+    );
+  });
+
   it("label name appears", async () => {
     const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
@@ -272,8 +283,12 @@ describe("Document Annotations Component", () => {
     ).not.toContain("missing");
   });
 
-  it("Mark all empty as missing button should always be visible", async () => {
+  it("Mark all empty as missing button should be visible if annotation set group is open", async () => {
     const wrapper = render(DocumentAnnotations, false);
+
+    await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
 
     expect(
       await wrapper
@@ -291,6 +306,10 @@ describe("Document Annotations Component", () => {
       (label) => label.annotations.length === 0
     );
 
+    await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
+
     expect(
       await wrapper
         .find(".action-buttons .all-missing .missing-btn")
@@ -307,6 +326,10 @@ describe("Document Annotations Component", () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
+
+    await wrapper
       .find(".action-buttons .all-missing .missing-btn")
       .trigger("click");
 
@@ -315,8 +338,12 @@ describe("Document Annotations Component", () => {
     expect(markAnnotationsAsMissing).toHaveBeenCalledTimes(1);
   });
 
-  it("Accept all empty button should always be visible", async () => {
+  it("Accept all empty button should always be visible if annotation set group is open", async () => {
     const wrapper = render(DocumentAnnotations, false);
+
+    await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
 
     expect(
       await wrapper
@@ -336,6 +363,10 @@ describe("Document Annotations Component", () => {
 
     const pendingAnnotations = annotations.filter((ann) => !ann.is_correct);
 
+    await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
+
     expect(
       await wrapper
         .find(".action-buttons .accept-all .accept-all-btn")
@@ -348,6 +379,10 @@ describe("Document Annotations Component", () => {
     const updateAnnotations = jest.fn().mockName("updateMultipleAnnotations");
 
     const wrapper = render(DocumentAnnotations, false);
+
+    await wrapper
+      .findComponent(".annotation-set-group .label-set-header")
+      .trigger("click");
 
     await wrapper
       .find(".action-buttons .accept-all .accept-all-btn")
