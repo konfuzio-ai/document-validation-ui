@@ -52,9 +52,8 @@
         v-for="(annotationSet, indexGroup) in annotationSets"
         :key="indexGroup"
         class="annotation-set-group"
-        @click="toggleAccordion(indexGroup)"
       >
-        <div class="label-set-header">
+        <div class="label-set-header" @click="toggleAccordion(indexGroup)">
           <div class="label-set-name">
             <b-icon
               :icon="
@@ -273,6 +272,9 @@ export default {
         }
       }
     },
+    annotationSetsAccordion() {
+      console.log("annotationSetsAccordion", this.annotationSetsAccordion);
+    },
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -282,13 +284,14 @@ export default {
   },
   methods: {
     toggleAccordion(index) {
+      console.log("toggle");
       const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
       newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
     },
     openAllAccordions() {
-      const newAnnotationSetsAccordion = [];
-      this.annotationSetsAccordion.forEach((_, index) => {
+      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+      newAnnotationSetsAccordion.forEach((_, index) => {
         newAnnotationSetsAccordion[index] = true;
       });
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
@@ -391,7 +394,9 @@ export default {
         if (this.count >= annotations.length) {
           const finishBtn = this.createArray("finish-review-btn");
 
-          finishBtn[0].focus();
+          if (finishBtn && finishBtn[0]) {
+            finishBtn[0].focus();
+          }
           this.$store.dispatch("document/resetEditAnnotation");
           this.count = 0;
           if (event.key === "Enter" && !finishBtn.disabled) {
