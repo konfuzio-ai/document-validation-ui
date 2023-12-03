@@ -51,7 +51,11 @@
       <div
         v-for="(annotationSet, indexGroup) in annotationSets"
         :key="indexGroup"
-        class="annotation-set-group"
+        :class="[
+          'annotation-set-group',
+          !annotationSetsAccordion[indexGroup] === true &&
+            'annotation-set-collapsed',
+        ]"
       >
         <div class="label-set-header" @click="toggleAccordion(indexGroup)">
           <div class="label-set-name">
@@ -272,9 +276,6 @@ export default {
         }
       }
     },
-    annotationSetsAccordion() {
-      console.log("annotationSetsAccordion", this.annotationSetsAccordion);
-    },
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
@@ -284,7 +285,6 @@ export default {
   },
   methods: {
     toggleAccordion(index) {
-      console.log("toggle");
       const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
       newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
