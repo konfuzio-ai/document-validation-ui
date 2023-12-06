@@ -72,11 +72,15 @@
             }}
           </div>
           <div
-            v-if="annotationSet.labels.length !== 0"
+            v-if="
+              !publicView &&
+              !isDocumentReviewed &&
+              annotationSet.labels.length !== 0
+            "
             class="labelset-action-buttons"
           >
             <AnnotationSetActionButtons
-              v-if="annotationSetsAccordion[indexGroup] === true"
+              :is-placeholder="annotationSetsAccordion[indexGroup] === false"
               :number-of-empty-labels-in-annotation-set="
                 emptyLabels(annotationSet).length
               "
@@ -217,7 +221,10 @@ export default {
         const newAnnotationSetsAccordion = [];
         const annotationSetsOpened = [];
         const annotationSetsCreated = [];
-        if (oldAnnotationSets) {
+
+        const isFirstTime = oldAnnotationSets === null;
+
+        if (!isFirstTime) {
           // when annotation sets changed, restore old state
           // and check if new ones were created to be open by default
 
@@ -247,8 +254,10 @@ export default {
               newAnnotationSet.id &&
               newAnnotationSet.id === annotationSetOpened.id
           );
-
-          if (wasOpen) {
+          if (isFirstTime && index === 0) {
+            // open first one by default
+            newAnnotationSetsAccordion[index] = true;
+          } else if (wasOpen) {
             newAnnotationSetsAccordion[index] = wasOpen !== undefined;
           } else {
             const wasCreated = annotationSetsCreated.find(
