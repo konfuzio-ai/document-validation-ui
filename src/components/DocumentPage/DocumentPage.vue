@@ -72,7 +72,7 @@
                 :key="'ann' + annotation.id + '-' + index"
                 :config="annotationRect(bbox, annotation.id)"
                 @click="handleFocusedAnnotation(annotation)"
-                @mouseenter="onElementEnter"
+                @mouseenter="onElementEnter(annotation, bbox)"
                 @mouseleave="onElementLeave"
               />
             </template>
@@ -284,6 +284,7 @@ export default {
       "isDocumentReadyToBeReviewed",
       "entitiesOnSelection",
       "isDocumentReviewed",
+      "labelOfAnnotation",
     ]),
   },
   watch: {
@@ -446,7 +447,7 @@ export default {
       }
     },
 
-    onElementEnter() {
+    onElementEnter(annotation = null, span = null) {
       if (
         !this.categorizeModalIsActive &&
         !this.publicView &&
@@ -455,10 +456,23 @@ export default {
       ) {
         this.$refs.stage.$el.style.cursor = "pointer";
       }
+
+      if (annotation) {
+        const label = this.labelOfAnnotation(annotation);
+        if (label) {
+          this.$store.dispatch("document/setDocumentAnnotationSelected", {
+            annotation,
+            label,
+            span,
+            scrollTo: false,
+          });
+        }
+      }
     },
 
     onElementLeave() {
       this.$refs.stage.$el.style.cursor = "inherit";
+      this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
 
     /**
