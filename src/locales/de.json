@@ -89,6 +89,8 @@
   "annotations_pending": "Ausstehende Annotationen",
   "annotations_accepted": "Akzeptierte Annotationen",
   "mark_all_missing": "Alle leeren als fehlend markieren",
+  "missing_counter": "Fehlen",
+  "pending_counter": "Ausstehende",
   "no_labels_to_choose": "Keine Labels",
   "accept_group": "Alle akzeptieren",
   "use_your_keyboard": "Benutze deine Tastatur",
