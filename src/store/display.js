@@ -31,6 +31,10 @@ const state = {
   pageChangedFromThumbnail: false,
   showAnnSetTable: null,
   showChooseLabelSetModal: null,
+  searchEnabled: false,
+  searchResults: [],
+  searchLoading: false,
+  currentSearchResult: null,
 };
 
 const getters = {
@@ -52,6 +56,28 @@ const getters = {
     const nextPage =
       state.currentPage + 1 > pageCount ? pageCount : state.currentPage + 1;
     return [previousPage, state.currentPage, nextPage];
+  },
+
+  searchResultsForPage: (state, getters) => (pageNumber) => {
+    if (!state.searchEnabled || state.searchResults.length < 1) {
+      return [];
+    }
+
+    return state.searchResults.filter((r) => r.page_index + 1 === pageNumber);
+  },
+
+  currentSearchResultForPage: (state) => (pageNumber) => {
+    if (!state.searchEnabled || state.searchResults.length < 1) {
+      return false;
+    }
+
+    const currentResult = state.searchResults[state.currentSearchResult];
+
+    if (currentResult.page_index !== pageNumber - 1) {
+      return false;
+    }
+
+    return currentResult;
   },
 
   /**
@@ -259,6 +285,48 @@ const actions = {
   setPageChangedFromThumbnail: ({ commit }, value) => {
     commit("SET_PAGE_CHANGED_FROM_THUMBNAIL", value);
   },
+
+  debounceSearch: debounce(({ commit, dispatch }, query) => {
+    dispatch("search", query);
+  }, 300),
+
+  startSearchLoading({ commit }) {
+    commit("SET_SEARCH_LOADING", true);
+  },
+
+  search({ commit, rootState }, query) {
+    // only allow queries that are at least 3 characters long
+    if (query.length >= 3) {
+      return HTTP.post(`docs/${rootState.document.docId}/search/`, {
+        q: query,
+      }).then((response) => {
+        commit("SET_SEARCH_RESULTS", response.data);
+        commit("SET_SEARCH_LOADING", false);
+      });
+    } else {
+      commit("SET_SEARCH_RESULTS", []);
+      commit("SET_SEARCH_LOADING", false);
+    }
+  },
+
+  toggleSearch({ commit }) {
+    commit("TOGGLE_SEARCH");
+  },
+
+  setCurrentSearchResult({ commit, state }, n) {
+    let newSearchResult = state.currentSearchResult + n;
+    const searchResultsMaxIndex = state.searchResults.length - 1;
+
+    if (newSearchResult > searchResultsMaxIndex) {
+      // once we're at the end of the results, start again
+      newSearchResult = 0;
+    } else if (newSearchResult < 0) {
+      // once we're at the beginning of the results, go to the end
+      newSearchResult = searchResultsMaxIndex;
+    }
+
+    commit("SET_CURRENT_SEARCH_RESULT", newSearchResult);
+  },
 };
 
 const mutations = {
@@ -302,6 +370,22 @@ const mutations = {
   },
   SET_SHOW_CHOOSE_LABEL_SET_MODAL: (state, options) => {
     state.showChooseLabelSetModal = options;
+  },
+  SET_SEARCH_RESULTS: (state, searchResults) => {
+    state.currentSearchResult = 0;
+    state.searchResults = searchResults;
+  },
+
+  SET_SEARCH_LOADING: (state, loading) => {
+    state.searchLoading = loading;
+  },
+
+  TOGGLE_SEARCH: (state) => {
+    state.searchEnabled = !state.searchEnabled;
+  },
+
+  SET_CURRENT_SEARCH_RESULT: (state, n) => {
+    state.currentSearchResult = n;
   },
 };
 

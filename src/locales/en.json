@@ -146,5 +146,7 @@
   "translated_string_title": "Translated text",
   "no_translated_string": "No translation exists yet.",
   "add_translation": "Click to add one",
-  "edit_translation": "Click to edit"
+  "edit_translation": "Click to edit",
+  "search": "Search",
+  "no_results": "No results"
 }

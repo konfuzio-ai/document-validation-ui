@@ -18,6 +18,7 @@ import {
   faArrowLeft,
   faArrowRight,
   faDownload,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as Icons } from "@fortawesome/vue-fontawesome";
 
@@ -39,7 +40,8 @@ library.add(
   faRepeat,
   faArrowLeft,
   faArrowRight,
-  faDownload
+  faDownload,
+  faSearch
 );
 
 export default Icons;

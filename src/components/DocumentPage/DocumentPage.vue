@@ -51,6 +51,19 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
+          <template v-if="searchResults.length > 0">
+            <v-rect
+              v-for="(bbox, index) in searchResults"
+              :key="'sr' + index"
+              :config="{
+                ...selectionTextRect(bbox),
+                fill:
+                  bbox === currentSearchResultForPage
+                    ? 'mediumturquoise'
+                    : 'paleturquoise',
+              }"
+            ></v-rect>
+          </template>
           <v-group v-if="!publicView || !isDocumentReviewed" ref="entities">
             <v-rect
               v-for="(entity, index) in scaledEntities"
@@ -263,6 +276,18 @@ export default {
     selection() {
       return this.$store.getters["selection/getSelectionForPage"](
         this.page.number
+      );
+    },
+
+    searchResults() {
+      return this.$store.getters["display/searchResultsForPage"](
+        this.pageNumber
+      );
+    },
+
+    currentSearchResultForPage() {
+      return this.$store.getters["display/currentSearchResultForPage"](
+        this.page.pageNumber
       );
     },
 
@@ -493,6 +518,15 @@ export default {
       } else {
         convertBlob(this.imageBlob);
       }
+    },
+
+    selectionTextRect(bbox) {
+      return {
+        fill: "greenyellow",
+        globalCompositeOperation: "multiply",
+        draggable: true,
+        ...this.bboxToRect(bbox),
+      };
     },
 
     /**

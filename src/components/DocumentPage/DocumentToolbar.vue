@@ -46,6 +46,14 @@
         </b-dropdown>
       </div>
 
+      <div
+        v-if="!publicView"
+        class="search-document icons"
+        @click="toggleSearch"
+      >
+        <b-icon icon="search" size="small" class="search-icon" />
+      </div>
+
       <div v-if="!publicView" class="toolbar-divider" />
 
       <div class="icons icons-right">
@@ -80,7 +88,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import FitZoomIcon from "../../assets/images/FitZoomIcon";
 import PlusIcon from "../../assets/images/PlusIcon";
 import MinusIcon from "../../assets/images/MinusIcon";
@@ -144,6 +152,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions("display", ["toggleSearch"]),
     handleEdit() {
       if (this.editModeDisabled) return;
       this.$store.dispatch("selection/disableSelection");
