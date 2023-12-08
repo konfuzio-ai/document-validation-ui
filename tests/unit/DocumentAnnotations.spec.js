@@ -28,14 +28,14 @@ describe("Document Annotations Component", () => {
     );
   });
 
-  it("annotation sets are collapsed by default", async () => {
+  it("annotation sets are collapsed by default except the first one", async () => {
     const wrapper = render(DocumentAnnotations, false);
 
     const annotationSets = await wrapper.findAll(".annotation-set-group")
       .length;
 
-    expect(await wrapper.findAll(".annotation-set-group").length).toBe(
-      annotationSets
+    expect(await wrapper.findAll(".annotation-set-collapsed").length).toBe(
+      annotationSets - 1
     );
   });
 

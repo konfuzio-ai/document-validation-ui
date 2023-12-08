@@ -217,6 +217,45 @@ export default {
       }
     },
     annotationSets(newAnnotationSets, oldAnnotationSets) {
+      this.loadAccordions(newAnnotationSets, oldAnnotationSets);
+    },
+    sidebarAnnotationSelected(annotation) {
+      if (annotation) {
+        const annotationSet = this.annotationSetOfAnnotation(annotation);
+        if (annotationSet) {
+          const index = this.annotationSets.findIndex(
+            (annotationSetToFind) => annotationSetToFind.id === annotationSet.id
+          );
+          const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+          newAnnotationSetsAccordion[index] = true;
+          this.annotationSetsAccordion = newAnnotationSetsAccordion;
+        }
+      }
+    },
+  },
+  created() {
+    window.addEventListener("keydown", this.keyDownHandler);
+    if (this.annotationSets) {
+      this.loadAccordions(this.annotationSets);
+    }
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keyDownHandler);
+  },
+  methods: {
+    toggleAccordion(index) {
+      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+      newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
+      this.annotationSetsAccordion = newAnnotationSetsAccordion;
+    },
+    openAllAccordions() {
+      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
+      newAnnotationSetsAccordion.forEach((_, index) => {
+        newAnnotationSetsAccordion[index] = true;
+      });
+      this.annotationSetsAccordion = newAnnotationSetsAccordion;
+    },
+    loadAccordions(newAnnotationSets, oldAnnotationSets = null) {
       if (newAnnotationSets) {
         const newAnnotationSetsAccordion = [];
         const annotationSetsOpened = [];
@@ -272,44 +311,10 @@ export default {
         this.annotationSetsAccordion = newAnnotationSetsAccordion;
       }
     },
-    sidebarAnnotationSelected(annotation) {
-      if (annotation) {
-        const annotationSet = this.annotationSetOfAnnotation(annotation);
-        if (annotationSet) {
-          const index = this.annotationSets.findIndex(
-            (annotationSetToFind) => annotationSetToFind.id === annotationSet.id
-          );
-          const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-          newAnnotationSetsAccordion[index] = true;
-          this.annotationSetsAccordion = newAnnotationSetsAccordion;
-        }
-      }
-    },
-  },
-  created() {
-    window.addEventListener("keydown", this.keyDownHandler);
-  },
-  destroyed() {
-    window.removeEventListener("keydown", this.keyDownHandler);
-  },
-  methods: {
-    toggleAccordion(index) {
-      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-      newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
-      this.annotationSetsAccordion = newAnnotationSetsAccordion;
-    },
-    openAllAccordions() {
-      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-      newAnnotationSetsAccordion.forEach((_, index) => {
-        newAnnotationSetsAccordion[index] = true;
-      });
-      this.annotationSetsAccordion = newAnnotationSetsAccordion;
-    },
     annotationSetHasAnnotations(annotationSet) {
       const found = annotationSet.labels.find(
         (label) => label.annotations.length > 0
       );
-
       return found;
     },
 
