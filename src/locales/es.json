@@ -89,6 +89,8 @@
   "annotations_pending": "pendientes",
   "annotations_accepted": "aceptadas",
   "mark_all_missing": "Marcar todas las anotaciones vacías como Faltantes",
+  "missing_counter": "Faltantes",
+  "pending_counter": "Pendientes",
   "no_labels_to_choose": "Sin etiquetas",
   "accept_group": "Aceptar todas",
   "use_your_keyboard": "Use su teclado",

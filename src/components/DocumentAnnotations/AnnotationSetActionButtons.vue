@@ -2,7 +2,6 @@
   <div class="action-buttons">
     <!-- mark all empty labels as missing -->
     <div
-      v-if="!publicView && !isDocumentReviewed"
       class="missing-button-container all-missing"
       @mouseenter="mouseenterAnnotationSet('missing')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -11,15 +10,16 @@
         type="is-ghost"
         class="missing-btn all-missing-btn"
         :disabled="numberOfEmptyLabelsInAnnotationSet === 0"
-        @click.stop="markAllAsMissing"
+        @click="!isPlaceholder && markAllAsMissing"
       >
-        {{ $t("mark_all_missing") }} ({{ numberOfEmptyLabelsInAnnotationSet }})
+        {{ isPlaceholder ? $t("missing_counter") : $t("mark_all_missing") }} ({{
+          numberOfEmptyLabelsInAnnotationSet
+        }})
       </b-button>
     </div>
 
     <!-- accept all pending annotations -->
     <div
-      v-if="!publicView && !isDocumentReviewed"
       class="accept-all"
       @mouseenter="mouseenterAnnotationSet('accept')"
       @mouseleave="mouseleaveAnnotationSet"
@@ -28,9 +28,9 @@
         type="is-primary"
         class="accept-all-btn"
         :disabled="numberOfNotCorrectAnnotationsInAnnotationSet === 0"
-        @click.stop="acceptAllPending"
+        @click="!isPlaceholder && acceptAllPending"
       >
-        {{ $t("accept_group") }} ({{
+        {{ isPlaceholder ? $t("pending_counter") : $t("accept_group") }} ({{
           numberOfNotCorrectAnnotationsInAnnotationSet
         }})
       </b-button>
@@ -45,6 +45,10 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "AnnotationSetActionButtons",
   props: {
+    isPlaceholder: {
+      type: Boolean,
+      default: false,
+    },
     numberOfEmptyLabelsInAnnotationSet: {
       type: Number,
       default: 0,

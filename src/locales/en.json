@@ -89,6 +89,8 @@
   "annotations_pending": "pending",
   "annotations_accepted": "accepted",
   "mark_all_missing": "Mark all empty as Missing",
+  "missing_counter": "Missing",
+  "pending_counter": "Pending",
   "no_labels_to_choose": "No Labels",
   "accept_group": "Accept all",
   "new_ann_set_title": "New annotation set",
