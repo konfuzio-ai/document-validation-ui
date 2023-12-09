@@ -5,8 +5,9 @@
       v-scroll.immediate="updateScrollBounds"
       class="scrolling-document"
     >
-      <SearchBar v-if="searchEnabled" />
-
+      <transition :name="searchEnabled ? 'slide-down' : 'slide-up'">
+        <SearchBar v-if="searchEnabled" />
+      </transition>
       <div
         v-if="
           selectedDocument && scale && !loading && !recalculatingAnnotations

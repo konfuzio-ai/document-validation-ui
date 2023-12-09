@@ -63,8 +63,7 @@
               :icon="
                 annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
               "
-            >
-            </b-icon>
+            />
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
                 annotationSet

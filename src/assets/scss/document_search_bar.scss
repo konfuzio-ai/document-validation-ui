@@ -1,34 +1,70 @@
 @import "./imports.scss";
 .document-search {
-  position: fixed;
-  right: 26vw;
-  margin-top: 5px;
+  position: absolute;
+  right: 8px;
+  width: fit-content;
   z-index: 95;
 
   .search-container {
-    background-color: #2f3032;
-    color: white;
-    padding: 10px;
-    width: 300px;
-    border-radius: 4px;
+    background-color: $searchbar;
+    color: $white;
+    height: 40px;
+    padding: 8px 4px;
+    border-radius: 8px;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
 
+    .button {
+      background: none;
+      color: inherit;
+
+      &:disabled {
+        pointer-events: none;
+      }
+
+      &:hover {
+        background: $low-opacity-white;
+        border-radius: 4px;
+        color: inherit;
+      }
+      .icon {
+        vertical-align: middle;
+      }
+    }
+
     .search-input {
+      margin-left: 8px;
+      flex: 1;
       font-size: 14px;
       background: inherit;
       color: inherit;
       border: 0;
-      padding: 5px 8px;
-      width: 140px;
-      margin-right: 10px;
+      outline: none;
+    }
+
+    .search-no-results {
+      color: $text-lighter;
+      font-size: 12px;
+    }
+
+    .search-navigation {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .search-counters {
+        font-size: 12px;
+        margin-right: 6px;
+        color: $text-lighter;
+      }
     }
 
     .search-loading {
       margin-left: auto;
       font-size: 13px;
-      color: #8a8f8d;
+      color: $text-lighter;
     }
   }
 }
