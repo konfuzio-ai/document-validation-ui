@@ -73,6 +73,7 @@ export default {
   computed: {
     ...mapState("display", [
       "currentSearchResult",
+      "currentSearch",
       "searchEnabled",
       "searchResults",
       "searchLoading",
@@ -87,12 +88,17 @@ export default {
   },
   watch: {
     search(search) {
+      this.$store.dispatch("display/setCurrentSearch", search);
       if (search.length >= this.minSearchLength) {
         this.$store.dispatch("display/startSearchLoading");
+        this.$store.dispatch("display/debounceSearch", search);
       }
-      this.$store.dispatch("display/debounceSearch", search);
     },
-
+    currentSearch(search) {
+      if (this.search !== search) {
+        this.search = search;
+      }
+    },
     searchEnabled(enabled) {
       if (enabled) {
         this.$nextTick(() => {
@@ -100,6 +106,11 @@ export default {
         });
       }
     },
+  },
+  mounted() {
+    if (this.currentSearch !== this.search) {
+      this.search = this.currentSearch;
+    }
   },
   methods: {
     focusSearchResult(n) {

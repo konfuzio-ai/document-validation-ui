@@ -143,6 +143,7 @@
           @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton()"
           @restore="handleRestore()"
+          @search-label-in-document="searchLabelInDocument"
         />
       </div>
     </div>
@@ -731,6 +732,11 @@ export default {
       const annotationDetailsUrl = `${baseUrl}/admin/server/sequenceannotation/${annotationId}/change/`;
 
       window.open(annotationDetailsUrl, "_blank");
+    },
+    searchLabelInDocument() {
+      console.log("searchLabelInDocument");
+      this.$store.dispatch("display/enableSearch", true);
+      this.$store.dispatch("display/setCurrentSearch", this.label.name);
     },
   },
 };

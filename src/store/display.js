@@ -35,6 +35,7 @@ const state = {
   pageChangedFromThumbnail: false,
   showAnnSetTable: null,
   showChooseLabelSetModal: null,
+  currentSearch: "",
   searchEnabled: false,
   searchResults: [],
   searchLoading: false,
@@ -321,6 +322,10 @@ const actions = {
     commit("ENABLE_SEARCH", toEnable);
   },
 
+  setCurrentSearch({ commit }, currentSearch) {
+    commit("SET_CURRENT_SEARCH", currentSearch);
+  },
+
   setCurrentSearchResult({ commit, state }, n) {
     let newSearchResult = state.currentSearchResult + n;
     const searchResultsMaxIndex = state.searchResults.length - 1;
@@ -391,6 +396,9 @@ const mutations = {
   },
   ENABLE_SEARCH: (state, toEnable) => {
     state.searchEnabled = toEnable;
+  },
+  SET_CURRENT_SEARCH: (state, currentSearch) => {
+    state.currentSearch = currentSearch;
   },
   SET_CURRENT_SEARCH_RESULT: (state, n) => {
     state.currentSearchResult = n;

@@ -149,5 +149,6 @@
   "edit_translation": "Zum Bearbeiten anklicken",
   "search": "Suchen",
   "no_results": "Keine Ergebnisse",
-  "search_below_minimum": "Mindestens 3 Zeichen"
+  "search_below_minimum": "Mindestens 3 Zeichen",
+  "search_in_document": "Suche im Dokument"
 }

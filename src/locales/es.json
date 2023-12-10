@@ -149,5 +149,6 @@
   "edit_translation": "Clic para editar",
   "search": "Buscar",
   "no_results": "Sin resultados",
-  "search_below_minimum": "Mínimo 3 caracteres"
+  "search_below_minimum": "Mínimo 3 caracteres",
+  "search_in_document": "Buscar en documento"
 }
