@@ -24,6 +24,13 @@
         </div>
       </b-tooltip>
       <div v-if="isEditModeAvailable" class="toolbar-divider" />
+      <div
+        v-if="!publicView"
+        class="search-document icons"
+        @click="toggleSearch"
+      >
+        <b-icon icon="search" size="small" class="search-icon" />
+      </div>
 
       <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right" scrollable>
@@ -44,14 +51,6 @@
             >{{ $t("pdf_file") }}</b-dropdown-item
           >
         </b-dropdown>
-      </div>
-
-      <div
-        v-if="!publicView"
-        class="search-document icons"
-        @click="toggleSearch"
-      >
-        <b-icon icon="search" size="small" class="search-icon" />
       </div>
 
       <div v-if="!publicView" class="toolbar-divider" />

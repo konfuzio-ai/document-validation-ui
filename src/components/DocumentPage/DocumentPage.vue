@@ -56,11 +56,7 @@
               v-for="(bbox, index) in searchResults"
               :key="'sr' + index"
               :config="{
-                ...selectionTextRect(bbox),
-                fill:
-                  bbox === currentSearchResultForPage
-                    ? 'mediumturquoise'
-                    : 'paleturquoise',
+                ...selectionTextRect(bbox, bbox === currentSearchResultForPage),
               }"
             ></v-rect>
           </template>
@@ -280,19 +276,24 @@ export default {
     },
 
     searchResults() {
-      return this.$store.getters["display/searchResultsForPage"](
-        this.pageNumber
+      const results = this.$store.getters["display/searchResultsForPage"](
+        this.page.number
       );
+      return results;
     },
 
     currentSearchResultForPage() {
       return this.$store.getters["display/currentSearchResultForPage"](
-        this.page.pageNumber
+        this.page.number
       );
     },
 
     ...mapState("selection", ["isSelecting", "selectedEntities"]),
-    ...mapState("display", ["scale", "categorizeModalIsActive"]),
+    ...mapState("display", [
+      "scale",
+      "categorizeModalIsActive",
+      "searchEnabled",
+    ]),
     ...mapState("document", [
       "documentAnnotationSelected",
       "recalculatingAnnotations",
@@ -331,6 +332,11 @@ export default {
     page(newValue, oldValue) {
       if (newValue.image_url !== oldValue.image_url) {
         this.drawPage(true);
+      }
+    },
+    searchEnabled(isEnabled) {
+      if (isEnabled) {
+        this.closePopups(true);
       }
     },
   },
@@ -520,12 +526,12 @@ export default {
       }
     },
 
-    selectionTextRect(bbox) {
+    selectionTextRect(bbox, isFocused) {
       return {
-        fill: "greenyellow",
+        fill: isFocused ? "orange" : "greenyellow",
+        stroke: isFocused ? "orange" : "",
         globalCompositeOperation: "multiply",
-        draggable: true,
-        ...this.bboxToRect(bbox),
+        ...this.bboxToRect(this.page, bbox),
       };
     },
 

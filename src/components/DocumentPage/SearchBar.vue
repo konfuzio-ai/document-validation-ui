@@ -8,16 +8,31 @@
         class="search-input"
         @keyup.13="focusSearchResult(1)"
       />
-      <div v-if="searchLoading" class="search-loading"></div>
+      <div v-if="searchLoading" class="search-loading">
+        <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+      </div>
 
-      <div v-if="search.length >= 3" class="search-no-results">
+      <div
+        v-else-if="
+          searchResults.length === 0 && search.length >= minSearchLength
+        "
+        class="search-no-results"
+      >
         {{ $t("no_results") }}
       </div>
       <div v-else class="search-navigation">
-        <span class="search-counters"
-          >{{ currentSearchResult }}/{{ searchResults.length }}</span
+        <span v-if="searchBelowMinimum" class="search-counters">
+          {{ $t("search_below_minimum") }}
+        </span>
+        <span v-else class="search-counters"
+          >{{
+            currentSearchResult != null && searchResults.length > 0
+              ? currentSearchResult + 1
+              : 0
+          }}/{{ searchResults.length }}</span
         >
         <b-button
+          v-if="!searchBelowMinimum"
           class="is-ghost is-small"
           :disabled="!searchResults.length"
           @click="focusSearchResult(1)"
@@ -25,6 +40,7 @@
         /></b-button>
 
         <b-button
+          v-if="!searchBelowMinimum"
           class="is-ghost is-small"
           :disabled="!searchResults.length"
           @click="focusSearchResult(-1)"
@@ -51,6 +67,7 @@ export default {
   data() {
     return {
       search: "",
+      minSearchLength: 3,
     };
   },
   computed: {
@@ -60,10 +77,17 @@ export default {
       "searchResults",
       "searchLoading",
     ]),
+    searchBelowMinimum() {
+      return (
+        this.search &&
+        this.search.length > 0 &&
+        this.search.length < this.minSearchLength
+      );
+    },
   },
   watch: {
     search(search) {
-      if (search.length >= 3) {
+      if (search.length >= this.minSearchLength) {
         this.$store.dispatch("display/startSearchLoading");
       }
       this.$store.dispatch("display/debounceSearch", search);

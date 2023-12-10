@@ -94,7 +94,7 @@ export default {
 
     currentSearchResultForPage() {
       return this.$store.getters["display/currentSearchResultForPage"](
-        this.page.pageNumber
+        this.page.number
       );
     },
   },

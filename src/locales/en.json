@@ -148,5 +148,6 @@
   "add_translation": "Click to add one",
   "edit_translation": "Click to edit",
   "search": "Search",
-  "no_results": "No results"
+  "no_results": "No results",
+  "search_below_minimum": "Minimum 3 characters"
 }

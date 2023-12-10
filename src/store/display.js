@@ -1,10 +1,14 @@
 import BigNumber from "bignumber.js";
+import myImports from "../api";
 import {
   PIXEL_RATIO,
   VIEWPORT_RATIO,
   MINIMUM_APP_WIDTH,
   MINIMUM_OPTIMIZED_APP_WIDTH,
 } from "../constants";
+
+const HTTP = myImports.HTTP;
+
 const debounce = (cb, duration) => {
   let timer;
   return (...args) => {
@@ -73,7 +77,7 @@ const getters = {
 
     const currentResult = state.searchResults[state.currentSearchResult];
 
-    if (currentResult.page_index !== pageNumber - 1) {
+    if (!currentResult || currentResult.page_index !== pageNumber - 1) {
       return false;
     }
 
@@ -297,10 +301,10 @@ const actions = {
   search({ commit, rootState }, query) {
     // only allow queries that are at least 3 characters long
     if (query.length >= 3) {
-      return HTTP.post(`docs/${rootState.document.docId}/search/`, {
+      return HTTP.post(`documents/${rootState.document.documentId}/search/`, {
         q: query,
       }).then((response) => {
-        commit("SET_SEARCH_RESULTS", response.data);
+        commit("SET_SEARCH_RESULTS", response.data.span);
         commit("SET_SEARCH_LOADING", false);
       });
     } else {
@@ -311,6 +315,10 @@ const actions = {
 
   toggleSearch({ commit }) {
     commit("TOGGLE_SEARCH");
+  },
+
+  enableSearch({ commit }, toEnable) {
+    commit("ENABLE_SEARCH", toEnable);
   },
 
   setCurrentSearchResult({ commit, state }, n) {
@@ -375,15 +383,15 @@ const mutations = {
     state.currentSearchResult = 0;
     state.searchResults = searchResults;
   },
-
   SET_SEARCH_LOADING: (state, loading) => {
     state.searchLoading = loading;
   },
-
   TOGGLE_SEARCH: (state) => {
     state.searchEnabled = !state.searchEnabled;
   },
-
+  ENABLE_SEARCH: (state, toEnable) => {
+    state.searchEnabled = toEnable;
+  },
   SET_CURRENT_SEARCH_RESULT: (state, n) => {
     state.currentSearchResult = n;
   },

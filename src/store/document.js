@@ -663,8 +663,6 @@ const getters = {
       return label.annotations;
     });
 
-    console.log(annotations);
-
     return annotations.length === 0 ? true : false;
   },
 };
@@ -672,6 +670,7 @@ const getters = {
 const actions = {
   startLoading: ({ commit }) => {
     commit("SET_LOADING", true);
+    commit("display/ENABLE_SEARCH", false, { root: true });
   },
   endLoading: ({ commit }) => {
     commit("SET_LOADING", false);

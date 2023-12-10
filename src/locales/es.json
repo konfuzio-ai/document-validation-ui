@@ -146,5 +146,8 @@
   "translated_string_title": "Texto traducido",
   "no_translated_string": "Aún no existe traducción.",
   "add_translation": "Clic para agregar",
-  "edit_translation": "Clic para editar"
+  "edit_translation": "Clic para editar",
+  "search": "Buscar",
+  "no_results": "Sin resultados",
+  "search_below_minimum": "Mínimo 3 caracteres"
 }
