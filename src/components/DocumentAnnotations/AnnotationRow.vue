@@ -734,7 +734,6 @@ export default {
       window.open(annotationDetailsUrl, "_blank");
     },
     searchLabelInDocument() {
-      console.log("searchLabelInDocument");
       this.$store.dispatch("display/enableSearch", true);
       this.$store.dispatch("display/setCurrentSearch", this.label.name);
     },

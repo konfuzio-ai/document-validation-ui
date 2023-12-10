@@ -1,5 +1,5 @@
 <template>
-  <div class="document-search">
+  <div id="document-search">
     <div class="search-container">
       <input
         ref="searchInput"
@@ -25,24 +25,20 @@
           {{ $t("search_below_minimum") }}
         </span>
         <span v-else class="search-counters"
-          >{{
-            currentSearchResult != null && searchResults.length > 0
-              ? currentSearchResult + 1
-              : 0
-          }}/{{ searchResults.length }}</span
+          >{{ currentCounter }}/{{ searchResults.length }}</span
         >
         <b-button
           v-if="!searchBelowMinimum"
-          class="is-ghost is-small"
-          :disabled="!searchResults.length"
+          class="is-ghost is-small next-search"
+          :disabled="!searchResults.length || searchResults.length <= 1"
           @click="focusSearchResult(1)"
           ><b-icon icon="angle-down" class="is-small"
         /></b-button>
 
         <b-button
           v-if="!searchBelowMinimum"
-          class="is-ghost is-small"
-          :disabled="!searchResults.length"
+          class="is-ghost is-small previous-search"
+          :disabled="!searchResults.length || searchResults.length <= 1"
           @click="focusSearchResult(-1)"
           ><b-icon icon="angle-up" class="is-small"
         /></b-button>
@@ -84,6 +80,11 @@ export default {
         this.search.length > 0 &&
         this.search.length < this.minSearchLength
       );
+    },
+    currentCounter() {
+      return this.currentSearchResult != null && this.searchResults.length > 0
+        ? this.currentSearchResult + 1
+        : 0;
     },
   },
   watch: {

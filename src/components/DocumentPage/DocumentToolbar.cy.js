@@ -6,6 +6,18 @@ describe("Document Toolbar", () => {
     cy.setFullMode();
   });
 
+  it("open document search", () => {
+    cy.mount(DocumentDashboard).then(({ wrapper, component }) => {
+      component.onDocumentResize();
+      cy.get("#toolbar-container").find(".search-document").first().click();
+
+      cy.getStore("display").then(($display) => {
+        expect($display.searchEnabled).to.eql(true);
+        cy.get("#document-search").should("exist");
+      });
+    });
+  });
+
   it("downloads the original file", () => {
     cy.mount(DocumentDashboard).then(({ wrapper, component }) => {
       component.onDocumentResize();
