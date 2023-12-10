@@ -27,6 +27,8 @@
 
         <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
+        <b-button @click="openDocumentDetails">Details</b-button>
+
         <div
           v-if="nextDocument"
           class="right-arrow navigation-arrow"
@@ -95,6 +97,7 @@ import DocumentCategory from "../../components/DocumentCategory";
 import DocumentName from "./DocumentName";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
 import KeyboardActionsDescription from "./KeyboardActionsDescription";
+import { getDocumentDetailsLink } from "../../utils/utils";
 
 /**
  * This component has different functionalities
@@ -122,6 +125,7 @@ export default {
       "publicView",
       "loading",
       "recalculatingAnnotations",
+      "documentId",
     ]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
@@ -194,6 +198,9 @@ export default {
         // so that the user does not get stuck in this interface
         this.$store.dispatch("edit/disableEditMode");
       }
+    },
+    openDocumentDetails() {
+      window.location.href = getDocumentDetailsLink(this.documentId);
     },
   },
 };
