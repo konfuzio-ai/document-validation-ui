@@ -16,6 +16,7 @@
   "set_status": "Establecer estado",
   "status_error": "No ha sido posible cambiar el estado del documento. Por favor, inténtelo de nuevo más tarde.",
   "edit": "Editar",
+  "rename": "Rebautizar",
   "save": "Guardar",
   "autosaving": "Auto guardando...",
   "saved": "Guardado",
@@ -150,5 +151,6 @@
   "search": "Buscar",
   "no_results": "Sin resultados",
   "search_below_minimum": "Mínimo 3 caracteres",
-  "search_in_document": "Buscar en documento"
+  "search_in_document": "Buscar en documento",
+  "document_details": "Detalles"
 }

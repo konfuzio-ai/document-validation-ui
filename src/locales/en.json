@@ -16,6 +16,7 @@
   "set_status": "Set a status",
   "status_error": "We couldn’t change the status. Please try again later.",
   "edit": "Edit",
+  "rename": "Rename",
   "save": "Save",
   "autosaving": "Auto saving...",
   "saved": "Saved",
@@ -150,5 +151,6 @@
   "search": "Search",
   "no_results": "No results",
   "search_below_minimum": "Minimum 3 characters",
-  "search_in_document": "Search document"
+  "search_in_document": "Search document",
+  "document_details": "Details"
 }

@@ -49,9 +49,13 @@ export function navigateToDocumentsList(path, projectId, userId) {
   return true;
 }
 
+export function isKonfuzioDomain() {
+  return window.location.hostname.includes("konfuzio.com");
+}
+
 export function getDocumentDetailsLink(docId) {
   const domain = window.location.hostname;
-  return `${domain}/admin/server/document/${docId}/change`;
+  return `https://${domain}/admin/server/document/${docId}/change`;
 }
 
 export function isElementArray(element) {

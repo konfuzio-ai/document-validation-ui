@@ -16,6 +16,7 @@
   "set_status": "Setzen Sie bitte einen Status",
   "status_error": "Wir konnten den Status nicht ändern. Bitte versuchen Sie es später erneut.",
   "edit": "Bearbeiten",
+  "rename": "Umbenennen",
   "save": "Speichern",
   "autosaving": "Automatisches Speichern...",
   "saved": "Gespeichert",
@@ -150,5 +151,6 @@
   "search": "Suchen",
   "no_results": "Keine Ergebnisse",
   "search_below_minimum": "Mindestens 3 Zeichen",
-  "search_in_document": "Suche im Dokument"
+  "search_in_document": "Suche im Dokument",
+  "document_details": "Einzelheiten"
 }
