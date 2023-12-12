@@ -44,10 +44,7 @@
         /></b-button>
       </div>
       <div class="search-close">
-        <b-button
-          class="is-ghost is-small"
-          @click="$store.dispatch('display/toggleSearch')"
-        >
+        <b-button class="is-ghost is-small" @click="closeSearch">
           <b-icon icon="xmark" class="is-small" />
         </b-button>
       </div>
@@ -89,11 +86,12 @@ export default {
   },
   watch: {
     search(search) {
+      console.log("search", search);
       this.$store.dispatch("display/setCurrentSearch", search);
       if (search.length >= this.minSearchLength) {
         this.$store.dispatch("display/startSearchLoading");
-        this.$store.dispatch("display/debounceSearch", search);
       }
+      this.$store.dispatch("display/debounceSearch", search);
     },
     currentSearch(search) {
       if (this.search !== search) {
@@ -116,6 +114,10 @@ export default {
   methods: {
     focusSearchResult(n) {
       this.$store.dispatch("display/setCurrentSearchResult", n);
+    },
+    closeSearch() {
+      this.$store.dispatch("display/resetSearch");
+      this.$store.dispatch("display/toggleSearch");
     },
   },
 };

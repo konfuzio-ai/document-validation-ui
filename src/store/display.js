@@ -314,6 +314,12 @@ const actions = {
     }
   },
 
+  resetSearch({ commit }) {
+    commit("SET_CURRENT_SEARCH", "");
+    commit("SET_SEARCH_RESULTS", []);
+    commit("SET_SEARCH_LOADING", false);
+  },
+
   toggleSearch({ commit }) {
     commit("TOGGLE_SEARCH");
   },
