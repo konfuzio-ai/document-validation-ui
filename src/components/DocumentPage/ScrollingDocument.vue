@@ -5,6 +5,9 @@
       v-scroll.immediate="updateScrollBounds"
       class="scrolling-document"
     >
+      <transition :name="searchEnabled ? 'slide-down' : 'slide-up'">
+        <SearchBar v-if="searchEnabled" />
+      </transition>
       <div
         v-if="
           selectedDocument && scale && !loading && !recalculatingAnnotations
@@ -36,12 +39,14 @@ import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
 import ActionBar from "./ActionBar";
+import SearchBar from "./SearchBar";
 
 export default {
   components: {
     ScrollingPage,
     Toolbar,
     ActionBar,
+    SearchBar,
   },
   directives: {
     scroll,
@@ -73,6 +78,7 @@ export default {
       "documentActionBar",
       "pageChangedFromThumbnail",
       "currentPage",
+      "searchEnabled",
     ]),
     ...mapGetters("display", ["visiblePageRange"]),
 

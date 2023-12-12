@@ -1,8 +1,12 @@
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <input v-model="textFromEntities" class="popup-input" type="text" />
+    <div v-if="!textFromEntities" class="popup-input">
+      <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+    </div>
+    <input v-else v-model="textFromEntities" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
+      :disabled="!textFromEntities"
       aria-role="list"
       :class="[
         'annotation-dropdown',
@@ -70,7 +74,7 @@
       <b-dropdown
         v-model="selectedLabel"
         aria-role="list"
-        :disabled="!labels || labels.length === 0"
+        :disabled="!textFromEntities || !labels || labels.length === 0"
         scrollable
         class="label-dropdown annotation-dropdown"
       >

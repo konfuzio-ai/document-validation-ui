@@ -137,12 +137,13 @@
           :save-btn="showSaveButton()"
           :restore-btn="showRestoreButton()"
           :is-loading="isLoading"
-          @mark-as-missing="handleMissingAnnotation()"
-          @save="handleSaveChanges()"
-          @accept="handleSaveChanges()"
+          @mark-as-missing="handleMissingAnnotation"
+          @save="handleSaveChanges"
+          @accept="handleSaveChanges"
           @decline="handleSaveChanges(true)"
-          @cancel="handleCancelButton()"
-          @restore="handleRestore()"
+          @cancel="handleCancelButton"
+          @restore="handleRestore"
+          @search-label-in-document="searchLabelInDocument"
         />
       </div>
     </div>
@@ -511,7 +512,7 @@ export default {
         false
       );
     },
-    handleSaveChanges(decline) {
+    handleSaveChanges(decline = false) {
       if (this.publicView || this.isDocumentReviewed) return;
 
       // Verify if we are editing a filled or empty annotation
@@ -731,6 +732,10 @@ export default {
       const annotationDetailsUrl = `${baseUrl}/admin/server/sequenceannotation/${annotationId}/change/`;
 
       window.open(annotationDetailsUrl, "_blank");
+    },
+    searchLabelInDocument() {
+      this.$store.dispatch("display/enableSearch", true);
+      this.$store.dispatch("display/setCurrentSearch", this.label.name);
     },
   },
 };

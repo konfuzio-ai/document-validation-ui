@@ -49,7 +49,9 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["pageChangedFromThumbnail"]),
+    ...mapState("display", ["pageChangedFromThumbnail", "currentPage"]),
+    ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
     ...mapGetters("document", ["scrollDocumentToAnnotation"]),
 
@@ -90,9 +92,11 @@ export default {
       return this.scrollTop + this.clientHeight;
     },
 
-    ...mapState("display", ["currentPage"]),
-    ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
-    ...mapState("edit", ["editMode"]),
+    currentSearchResultForPage() {
+      return this.$store.getters["display/currentSearchResultForPage"](
+        this.page.number
+      );
+    },
   },
 
   watch: {
@@ -127,6 +131,24 @@ export default {
       if (this.page.number === number && !this.isElementFocused) {
         this.$emit("page-jump", this.elementTop, 0);
       }
+    },
+    /**
+     * Scroll to the search result if the current one changes and it's on this page.
+     */
+    currentSearchResultForPage(res) {
+      // skip page jump if the result is null (the current search result is not on this page)
+      if (!res) {
+        return;
+      }
+      const y = this.getYForBbox(res); // y of the search result
+      const totalY = y + this.elementTop; // y of search result + page top
+      // skip page jump if the search result is already visible on this page
+      if (totalY < this.scrollBottom && totalY > this.scrollTop) {
+        return;
+      }
+      this.$nextTick(function () {
+        this.scrollTo(y);
+      });
     },
   },
   mounted() {

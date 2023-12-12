@@ -253,7 +253,8 @@
       width: 100%;
 
       .icon {
-        &.download-file {
+        &.download-file,
+        &.search-icon {
           svg {
             height: 100% !important;
             width: 100% !important;

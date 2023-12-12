@@ -63,8 +63,7 @@
               :icon="
                 annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
               "
-            >
-            </b-icon>
+            />
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
                 annotationSet
@@ -388,9 +387,6 @@ export default {
       // Not allow starting edit mode with ArrowUp key
       if (event.key === "ArrowUp" && !this.isAnnotationBeingEdited) return;
 
-      // open accordions
-      this.openAllAccordions();
-
       // Get all the annotation elements
       let annotations = this.createArray("keyboard-nav");
 
@@ -404,6 +400,9 @@ export default {
 
       // navigate with the arrow up or down keys
       if (event.key === "ArrowDown") {
+        // open accordions
+        this.openAllAccordions();
+
         // Check if we are focusing on the Finish Review button
         if (this.count >= annotations.length) {
           const finishBtn = this.createArray("finish-review-btn");

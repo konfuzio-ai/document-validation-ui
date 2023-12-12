@@ -59,6 +59,13 @@
       <b-button type="is-ghost" class="missing-btn" @click.stop="markAsMissing">
         {{ $t("missing_annotation") }}
       </b-button>
+      <b-button
+        type="is-ghost"
+        class="search-btn"
+        @click.stop="searchInDocument"
+      >
+        {{ $t("search_in_document") }}
+      </b-button>
     </div>
 
     <!-- Restore not found annotations -->
@@ -140,6 +147,9 @@ export default {
     },
     restore() {
       this.$emit("restore");
+    },
+    searchInDocument() {
+      this.$emit("search-label-in-document");
     },
   },
 };

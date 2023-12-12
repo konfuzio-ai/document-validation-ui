@@ -515,8 +515,12 @@
 
     .missing-button-container {
       background-color: transparent;
+      display: flex;
+      flex-direction: row;
 
-      .missing-btn {
+      .missing-btn,
+      .search-btn {
+        padding: 6px;
         color: $grey-blue !important;
         font-size: 14px !important;
         font-weight: 500;
