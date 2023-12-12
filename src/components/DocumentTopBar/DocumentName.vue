@@ -32,7 +32,7 @@
       class="edit-btn btn"
       @click="handleEdit"
     >
-      {{ $t("edit") }}
+      {{ $t("rename") }}
     </div>
     <div
       v-if="showSaveBtn && !editMode"
@@ -56,6 +56,14 @@
       <span v-else class="cloud-icon"><FileNameNotSaved /></span>
       <span>{{ saved ? $t("saved") : $t("not_saved") }}</span>
     </div>
+
+    <div
+      v-if="showDetailsButton"
+      class="details-btn btn"
+      @click="openDocumentDetails"
+    >
+      {{ $t("document_details") }}
+    </div>
   </div>
 </template>
 
@@ -63,6 +71,7 @@
 import ServerImage from "../../assets/images/ServerImage";
 import FileNameSaved from "../../assets/images/FileNameSavedImage";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage";
+import { isKonfuzioDomain, getDocumentDetailsLink } from "../../utils/utils";
 import { mapGetters, mapState } from "vuex";
 
 export default {
@@ -93,10 +102,16 @@ export default {
     };
   },
   computed: {
+    showDetailsButton() {
+      return isKonfuzioDomain();
+    },
+  },
+  computed: {
     ...mapState("document", [
       "selectedDocument",
       "publicView",
       "recalculatingAnnotations",
+      "documentId",
     ]),
     ...mapState("display", ["optimalResolution"]),
     ...mapState("edit", ["editMode"]),
@@ -228,6 +243,9 @@ export default {
       if (contentNotEditable) {
         contentNotEditable.blur();
       }
+    },
+    openDocumentDetails() {
+      window.location.href = getDocumentDetailsLink(this.documentId);
     },
   },
 };
