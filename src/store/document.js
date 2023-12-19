@@ -282,51 +282,38 @@ const getters = {
       let annotations = [];
       let labels = [];
       let processedAnnotationSets = [];
-      console.log("processAnnotationSets", annotationSets);
       annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
           annotations = [];
-          let addedAnnotation = false;
+          let addLabel = false;
           if (!showEmpty || !showFeedbackNeeded || !showAccepted) {
-            label.annotations.forEach((annotation) => {
-              console.log("annotation", annotation);
-              console.log("showEmpty", showEmpty);
-              console.log("showFeedbackNeeded", showFeedbackNeeded);
-              console.log("showAccepted", showAccepted);
-              if (
-                showEmpty &&
-                (getters.notExtracted(annotation) ||
-                  getters.isNegative(annotation))
-              ) {
-                console.log("enter showEmpty");
-                annotations.push(annotation);
-                addedAnnotation = true;
+            if (!label.annotations || label.annotations.length === 0) {
+              if (showEmpty) {
+                addLabel = true;
               }
-              if (showFeedbackNeeded && annotation.revised === false) {
-                console.log("enter showFeedbackNeeded");
-                annotations.push(annotation);
-                addedAnnotation = true;
-              }
-              if (showAccepted && annotation.revised === true) {
-                console.log("enter showAccepted");
-                annotations.push(annotation);
-                addedAnnotation = true;
-              }
-            });
+            } else {
+              label.annotations.forEach((annotation) => {
+                if (showFeedbackNeeded && annotation.revised === false) {
+                  annotations.push(annotation);
+                  addLabel = true;
+                }
+                if (showAccepted && annotation.revised === true) {
+                  annotations.push(annotation);
+                  addLabel = true;
+                }
+              });
+            }
           } else {
             // add annotations to the document array
-            console.log("add annotations", label.annotations);
             annotations.push(...label.annotations);
-            addedAnnotation = true;
+            addLabel = true;
           }
-          // if (addedAnnotation) {
-          labels.annotations = annotations;
-          labels.push(label);
-          // }
+          if (addLabel) {
+            labels.push({ ...label, annotations });
+          }
         });
-        annotationSet.labels = labels;
-        processedAnnotationSets.push(annotationSet);
+        processedAnnotationSets.push({ ...annotationSet, labels });
       });
 
       return {

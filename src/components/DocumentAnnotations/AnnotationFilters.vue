@@ -28,15 +28,12 @@ export default {
   },
   watch: {
     feedbackNeeded() {
-      console.log("feedbackNeeded");
       this.filterAnnotations();
     },
     missingAnnotations() {
-      console.log("missingAnnotations");
       this.filterAnnotations();
     },
     acceptedAnnotations() {
-      console.log("acceptedAnnotations");
       this.filterAnnotations();
     },
   },
