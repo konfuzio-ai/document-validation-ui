@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "AnnotationFilters",
   data() {
@@ -20,10 +20,41 @@ export default {
       feedbackNeeded: true,
       missingAnnotations: true,
       acceptedAnnotations: true,
+      originalAnnotationSets: [],
     };
   },
-  computed: {},
-  methods: {},
+  computed: {
+    ...mapState("document", ["annotationSets"]),
+  },
+  watch: {
+    feedbackNeeded() {
+      console.log("feedbackNeeded");
+      this.filterAnnotations();
+    },
+    missingAnnotations() {
+      console.log("missingAnnotations");
+      this.filterAnnotations();
+    },
+    acceptedAnnotations() {
+      console.log("acceptedAnnotations");
+      this.filterAnnotations();
+    },
+  },
+  mounted() {
+    this.originalAnnotationSets = JSON.parse(
+      JSON.stringify(this.annotationSets)
+    );
+  },
+  methods: {
+    filterAnnotations() {
+      this.$store.dispatch("document/filterAnnotations", {
+        originalAnnotationSets: this.originalAnnotationSets,
+        showEmpty: this.missingAnnotations,
+        showFeedbackNeeded: this.feedbackNeeded,
+        showAccepted: this.acceptedAnnotations,
+      });
+    },
+  },
 };
 </script>
 

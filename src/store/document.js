@@ -270,28 +270,71 @@ const getters = {
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: (state, getters) => (annotationSets) => {
-    // group annotations for sidebar
-    const annotations = [];
-    const labels = [];
-    const processedAnnotationSets = annotationSets.map((annotationSet) => {
-      const annotationSetLabels = annotationSet.labels.map((label) => {
-        // add annotations to the document array
-        annotations.push(...label.annotations);
-        labels.push(label);
-        // add labels to the labels array
-        return label;
+  processAnnotationSets:
+    (state, getters) =>
+    (
+      annotationSets,
+      showEmpty = true,
+      showFeedbackNeeded = true,
+      showAccepted = true
+    ) => {
+      // group annotations for sidebar
+      let annotations = [];
+      let labels = [];
+      let processedAnnotationSets = [];
+      console.log("processAnnotationSets", annotationSets);
+      annotationSets.forEach((annotationSet) => {
+        labels = [];
+        annotationSet.labels.forEach((label) => {
+          annotations = [];
+          let addedAnnotation = false;
+          if (!showEmpty || !showFeedbackNeeded || !showAccepted) {
+            label.annotations.forEach((annotation) => {
+              console.log("annotation", annotation);
+              console.log("showEmpty", showEmpty);
+              console.log("showFeedbackNeeded", showFeedbackNeeded);
+              console.log("showAccepted", showAccepted);
+              if (
+                showEmpty &&
+                (getters.notExtracted(annotation) ||
+                  getters.isNegative(annotation))
+              ) {
+                console.log("enter showEmpty");
+                annotations.push(annotation);
+                addedAnnotation = true;
+              }
+              if (showFeedbackNeeded && annotation.revised === false) {
+                console.log("enter showFeedbackNeeded");
+                annotations.push(annotation);
+                addedAnnotation = true;
+              }
+              if (showAccepted && annotation.revised === true) {
+                console.log("enter showAccepted");
+                annotations.push(annotation);
+                addedAnnotation = true;
+              }
+            });
+          } else {
+            // add annotations to the document array
+            console.log("add annotations", label.annotations);
+            annotations.push(...label.annotations);
+            addedAnnotation = true;
+          }
+          // if (addedAnnotation) {
+          labels.annotations = annotations;
+          labels.push(label);
+          // }
+        });
+        annotationSet.labels = labels;
+        processedAnnotationSets.push(annotationSet);
       });
-      annotationSet.labels = annotationSetLabels;
-      return annotationSet;
-    });
 
-    return {
-      annotationSets: processedAnnotationSets,
-      labels,
-      annotations,
-    };
-  },
+      return {
+        annotationSets: processedAnnotationSets,
+        labels,
+        annotations,
+      };
+    },
 
   /* Checks if there are annotations correct in the document */
   documentHasCorrectAnnotations: (state) => {
@@ -754,6 +797,21 @@ const actions = {
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
+  filterAnnotations: (
+    { commit, getters },
+    { originalAnnotationSets, showEmpty, showFeedbackNeeded, showAccepted }
+  ) => {
+    const { labels, annotations, annotationSets } =
+      getters.processAnnotationSets(
+        originalAnnotationSets,
+        showEmpty,
+        showFeedbackNeeded,
+        showAccepted
+      );
+    commit("SET_ANNOTATION_SETS", annotationSets);
+    commit("SET_ANNOTATIONS", annotations);
+    commit("SET_LABELS", labels);
   },
 
   /**
@@ -1448,7 +1506,6 @@ const mutations = {
   SET_SERVER_ERROR: (state, value) => {
     state.serverError = value;
   },
-
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
   },
