@@ -41,9 +41,6 @@
     >
       {{ $t("save") }}
     </div>
-    <a v-if="detailsUrl" class="btn" :href="detailsUrl">
-      {{ $t("details") }}
-    </a>
     <div v-if="saving" class="message-container">
       <span class="loading-container">
         <b-notification :closable="false" class="loading-background">
@@ -60,11 +57,7 @@
       <span>{{ saved ? $t("saved") : $t("not_saved") }}</span>
     </div>
 
-    <div
-      v-if="showDetailsButton"
-      class="details-btn btn"
-      @click="openDocumentDetails"
-    >
+    <div v-if="detailsUrl" class="details-btn btn" @click="openDocumentDetails">
       {{ $t("document_details") }}
     </div>
   </div>
@@ -74,7 +67,6 @@
 import ServerImage from "../../assets/images/ServerImage";
 import FileNameSaved from "../../assets/images/FileNameSavedImage";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage";
-import { isKonfuzioDomain, getDocumentDetailsLink } from "../../utils/utils";
 import { mapGetters, mapState } from "vuex";
 
 export default {
@@ -103,11 +95,6 @@ export default {
       changed: false,
       saved: false,
     };
-  },
-  computed: {
-    showDetailsButton() {
-      return isKonfuzioDomain();
-    },
   },
   computed: {
     ...mapState("document", [
@@ -248,7 +235,7 @@ export default {
       }
     },
     openDocumentDetails() {
-      window.location.href = getDocumentDetailsLink(this.documentId);
+      window.location.href = this.detailsUrl;
     },
   },
 };
