@@ -40,6 +40,7 @@ const state = {
   searchResults: [],
   searchLoading: false,
   currentSearchResult: null,
+  detailsUrl: null,
 };
 
 const getters = {
@@ -291,6 +292,10 @@ const actions = {
     commit("SET_PAGE_CHANGED_FROM_THUMBNAIL", value);
   },
 
+  setDetailsUrl: ({ commit }, value) => {
+    commit("SET_DETAILS_URL", value);
+  },
+
   debounceSearch: debounce(({ commit, dispatch }, query) => {
     dispatch("search", query);
   }, 300),
@@ -408,6 +413,9 @@ const mutations = {
   },
   SET_CURRENT_SEARCH_RESULT: (state, n) => {
     state.currentSearchResult = n;
+  },
+  SET_DETAILS_URL: (state, value) => {
+    state.detailsUrl = value;
   },
 };
 

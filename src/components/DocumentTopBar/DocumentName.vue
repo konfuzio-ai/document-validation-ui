@@ -57,11 +57,7 @@
       <span>{{ saved ? $t("saved") : $t("not_saved") }}</span>
     </div>
 
-    <div
-      v-if="showDetailsButton"
-      class="details-btn btn"
-      @click="openDocumentDetails"
-    >
+    <div v-if="detailsUrl" class="details-btn btn" @click="openDocumentDetails">
       {{ $t("document_details") }}
     </div>
   </div>
@@ -71,7 +67,6 @@
 import ServerImage from "../../assets/images/ServerImage";
 import FileNameSaved from "../../assets/images/FileNameSavedImage";
 import FileNameNotSaved from "../../assets/images/FileNameNotSavedImage";
-import { isKonfuzioDomain, getDocumentDetailsLink } from "../../utils/utils";
 import { mapGetters, mapState } from "vuex";
 
 export default {
@@ -102,18 +97,13 @@ export default {
     };
   },
   computed: {
-    showDetailsButton() {
-      return isKonfuzioDomain();
-    },
-  },
-  computed: {
     ...mapState("document", [
       "selectedDocument",
       "publicView",
       "recalculatingAnnotations",
       "documentId",
     ]),
-    ...mapState("display", ["optimalResolution"]),
+    ...mapState("display", ["optimalResolution", "detailsUrl"]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("document", ["isDocumentReviewed"]),
     textContent() {
@@ -245,7 +235,7 @@ export default {
       }
     },
     openDocumentDetails() {
-      window.location.href = getDocumentDetailsLink(this.documentId);
+      window.location.href = this.detailsUrl;
     },
   },
 };

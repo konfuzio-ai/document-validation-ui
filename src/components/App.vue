@@ -72,6 +72,12 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    details_url: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     documentId() {
@@ -111,6 +117,15 @@ export default {
         return process.env.VUE_APP_DOCUMENTS_LIST_PATH;
       } else if (this.documents_list_path && this.documents_list_path !== "") {
         return this.documents_list_path;
+      } else {
+        return null;
+      }
+    },
+    detailsUrl() {
+      if (process.env.VUE_APP_DOCUMENT_DETAILS_URL) {
+        return process.env.VUE_APP_DOCUMENT_DETAILS_URL;
+      } else if (this.details_url) {
+        return this.details_url;
       } else {
         return null;
       }
@@ -156,6 +171,7 @@ export default {
 
     // document and project config
     Promise.all([
+      this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch(
