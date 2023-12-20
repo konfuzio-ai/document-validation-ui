@@ -285,7 +285,7 @@ const getters = {
       annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
-          annotations = [];
+          const labelAnnotations = [];
           let addLabel = false;
           if (!showEmpty || !showFeedbackNeeded || !showAccepted) {
             if (!label.annotations || label.annotations.length === 0) {
@@ -295,23 +295,24 @@ const getters = {
             } else {
               label.annotations.forEach((annotation) => {
                 if (showFeedbackNeeded && annotation.revised === false) {
-                  annotations.push(annotation);
+                  labelAnnotations.push(annotation);
                   addLabel = true;
                 }
                 if (showAccepted && annotation.revised === true) {
-                  annotations.push(annotation);
+                  labelAnnotations.push(annotation);
                   addLabel = true;
                 }
               });
             }
           } else {
             // add annotations to the document array
-            annotations.push(...label.annotations);
+            labelAnnotations.push(...label.annotations);
             addLabel = true;
           }
           if (addLabel) {
-            labels.push({ ...label, annotations });
+            labels.push({ ...label, annotations: labelAnnotations });
           }
+          annotations.push(...labelAnnotations);
         });
         processedAnnotationSets.push({ ...annotationSet, labels });
       });

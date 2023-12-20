@@ -153,5 +153,8 @@
   "no_results": "No results",
   "search_below_minimum": "Minimum 3 characters",
   "search_in_document": "Search document",
-  "document_details": "Details"
+  "document_details": "Details",
+  "human_feedback_needed": "Human Feedback needed",
+  "label_missing_annotations": "Missing Annotations",
+  "accepted_annotations": "Accepted Annotations"
 }

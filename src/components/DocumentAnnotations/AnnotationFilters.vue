@@ -1,14 +1,14 @@
 <template>
   <div id="annotation-filters">
-    <b-switch v-model="feedbackNeeded" class="is-small"
-      >Human Feedback needed</b-switch
-    >
-    <b-switch v-model="missingAnnotations" class="is-small"
-      >Missing Annotations</b-switch
-    >
-    <b-switch v-model="acceptedAnnotations" class="is-small"
-      >Accepted Annotations</b-switch
-    >
+    <b-switch v-model="feedbackNeeded" class="is-small">{{
+      $t("human_feedback_needed")
+    }}</b-switch>
+    <b-switch v-model="missingAnnotations" class="is-small">{{
+      $t("label_missing_annotations")
+    }}</b-switch>
+    <b-switch v-model="acceptedAnnotations" class="is-small">{{
+      $t("accepted_annotations")
+    }}</b-switch>
   </div>
 </template>
 <script>
