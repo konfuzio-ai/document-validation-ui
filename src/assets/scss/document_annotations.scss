@@ -49,6 +49,17 @@
     overflow: auto;
     max-height: 100%;
 
+    #annotation-filters {
+      padding: 16px 16px 0px 16px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 12px;
+      span {
+        font-size: 14px;
+      }
+    }
+
     .annotation-set-group {
       .label-set-header {
         cursor: pointer;

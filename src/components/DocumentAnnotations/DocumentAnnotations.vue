@@ -19,12 +19,14 @@
       </div>
     </div>
 
-    <!-- When there's no annotations in the label -->
+    <!-- When there's no annotation sets -->
     <div v-else-if="annotationSets.length === 0" class="empty-annotation-sets">
       <EmptyState />
     </div>
 
     <div v-else ref="annotationList" :class="['annotation-set-list']">
+      <AnnotationFilters v-if="isDocumentEditable" />
+
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
         class="annotation-set-group"
@@ -148,6 +150,7 @@ import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
+import AnnotationFilters from "./AnnotationFilters";
 import LoadingAnnotations from "./LoadingAnnotations";
 import GridIcon from "../../assets/images/GridIcon";
 
@@ -162,6 +165,7 @@ export default {
     DocumentLabel,
     LoadingAnnotations,
     GridIcon,
+    AnnotationFilters,
   },
   data() {
     return {

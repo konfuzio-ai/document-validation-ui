@@ -270,28 +270,59 @@ const getters = {
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: (state, getters) => (annotationSets) => {
-    // group annotations for sidebar
-    const annotations = [];
-    const labels = [];
-    const processedAnnotationSets = annotationSets.map((annotationSet) => {
-      const annotationSetLabels = annotationSet.labels.map((label) => {
-        // add annotations to the document array
-        annotations.push(...label.annotations);
-        labels.push(label);
-        // add labels to the labels array
-        return label;
+  processAnnotationSets:
+    (state, getters) =>
+    (
+      annotationSets,
+      showEmpty = true,
+      showFeedbackNeeded = true,
+      showAccepted = true
+    ) => {
+      // group annotations for sidebar
+      let annotations = [];
+      let labels = [];
+      let processedAnnotationSets = [];
+      annotationSets.forEach((annotationSet) => {
+        labels = [];
+        annotationSet.labels.forEach((label) => {
+          const labelAnnotations = [];
+          let addLabel = false;
+          if (!showEmpty || !showFeedbackNeeded || !showAccepted) {
+            if (!label.annotations || label.annotations.length === 0) {
+              if (showEmpty) {
+                addLabel = true;
+              }
+            } else {
+              label.annotations.forEach((annotation) => {
+                if (showFeedbackNeeded && annotation.revised === false) {
+                  labelAnnotations.push(annotation);
+                  addLabel = true;
+                }
+                if (showAccepted && annotation.revised === true) {
+                  labelAnnotations.push(annotation);
+                  addLabel = true;
+                }
+              });
+            }
+          } else {
+            // add annotations to the document array
+            labelAnnotations.push(...label.annotations);
+            addLabel = true;
+          }
+          if (addLabel) {
+            labels.push({ ...label, annotations: labelAnnotations });
+          }
+          annotations.push(...labelAnnotations);
+        });
+        processedAnnotationSets.push({ ...annotationSet, labels });
       });
-      annotationSet.labels = annotationSetLabels;
-      return annotationSet;
-    });
 
-    return {
-      annotationSets: processedAnnotationSets,
-      labels,
-      annotations,
-    };
-  },
+      return {
+        annotationSets: processedAnnotationSets,
+        labels,
+        annotations,
+      };
+    },
 
   /* Checks if there are annotations correct in the document */
   documentHasCorrectAnnotations: (state) => {
@@ -754,6 +785,21 @@ const actions = {
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
+  filterAnnotations: (
+    { commit, getters },
+    { originalAnnotationSets, showEmpty, showFeedbackNeeded, showAccepted }
+  ) => {
+    const { labels, annotations, annotationSets } =
+      getters.processAnnotationSets(
+        originalAnnotationSets,
+        showEmpty,
+        showFeedbackNeeded,
+        showAccepted
+      );
+    commit("SET_ANNOTATION_SETS", annotationSets);
+    commit("SET_ANNOTATIONS", annotations);
+    commit("SET_LABELS", labels);
   },
 
   /**
@@ -1448,7 +1494,6 @@ const mutations = {
   SET_SERVER_ERROR: (state, value) => {
     state.serverError = value;
   },
-
   UPDATE_FILE_NAME: (state, value) => {
     state.selectedDocument.data_file_name = value;
   },
