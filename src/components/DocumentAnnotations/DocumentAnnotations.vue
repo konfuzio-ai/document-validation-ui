@@ -191,7 +191,6 @@ export default {
       "splittingSuggestions",
       "sidebarAnnotationSelected",
     ]),
-    ...mapGetters("category", ["category"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "emptyLabels",
