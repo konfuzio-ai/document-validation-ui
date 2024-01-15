@@ -198,6 +198,7 @@ export default {
         y1: this.span.y1,
         start_offset: this.span.start_offset,
         end_offset: this.span.end_offset,
+        is_custom: this.span.offset_string !== annotationText,
       };
     },
   },

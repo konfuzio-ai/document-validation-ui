@@ -527,6 +527,7 @@ export default {
           ))
       ) {
         let spans = [];
+        let showAiWarning = false;
 
         if (!decline) {
           Object.keys(this.$refs).forEach((ref) => {
@@ -539,13 +540,24 @@ export default {
 
               // only add span if it's not null (offset_string not empty)
               if (span) {
+                showAiWarning = span.is_custom;
                 spans.push(span);
               }
             }
           });
         }
 
-        this.saveAnnotationChanges(spans, decline);
+        if (showAiWarning) {
+          this.$buefy.dialog.confirm({
+            container: "#app .dv-ui-app-container",
+            canCancel: "button",
+            message: this.$t("edit_ann_content_warning"),
+            onConfirm: () => this.saveAnnotationChanges(spans, decline),
+            onCancel: () => this.handleCancelButton(),
+          });
+        } else {
+          this.saveAnnotationChanges(spans, decline);
+        }
       } else if (
         (!this.annotation || this.isNegative(this.annotation)) &&
         this.isAnnotationInEditMode(this.annotationId())
