@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="annotation"
+    v-if="annotation && !hide"
     class="annotation-popup small"
     :style="{ left: `${left}px`, top: `${top}px` }"
   >
@@ -101,15 +101,15 @@
       <b-button
         type="is-text"
         class="cancel-button popup-button primary-button"
-        :label="$t('cancel')"
+        :label="$t('hide')"
         :disabled="loading"
-        @click.prevent="close"
+        @click.prevent="hide = true"
       />
       <b-button
         type="is-primary"
         class="popup-button primary-button"
         :label="$t('save')"
-        :disabled="loading || !spanSelection || !selectedLabel"
+        :disabled="loading || !spanSelection || !selectedLabel || !wasChanged"
         @click.prevent="save"
       />
     </div>
@@ -155,6 +155,7 @@ export default {
       loading: false,
       isAnnSetModalShowing: false,
       setsList: [],
+      hide: false,
     };
   },
   computed: {
@@ -195,12 +196,19 @@ export default {
         return left > 0 ? left : 0;
       }
     },
+    wasChanged() {
+      return (
+        this.editAnnotation.annotationSet.id !== this.selectedSet.id ||
+        this.editAnnotation.label.id !== this.selectedLabel.id
+      );
+    },
   },
   watch: {
     selectedSet(newValue) {
       this.labelsFiltered = this.labelsFilteredForAnnotationCreation(newValue);
     },
     editAnnotation() {
+      this.hide = false;
       this.loadInfo();
     },
   },
@@ -247,10 +255,7 @@ export default {
     async save() {
       this.loading = true;
 
-      if (
-        this.editAnnotation.labelSet.id !== this.selectedSet.id ||
-        this.editAnnotation.label.id !== this.selectedLabel.id
-      ) {
+      if (this.wasChanged) {
         // first delete annotation, then create new one
         await this.$store
           .dispatch("document/deleteAnnotation", {
