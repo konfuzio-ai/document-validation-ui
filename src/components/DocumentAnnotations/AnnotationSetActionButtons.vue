@@ -10,7 +10,7 @@
         type="is-ghost"
         class="missing-btn all-missing-btn"
         :disabled="numberOfEmptyLabelsInAnnotationSet === 0"
-        @click="!isPlaceholder && markAllAsMissing"
+        @click="markAllAsMissing"
       >
         {{ isPlaceholder ? $t("missing_counter") : $t("mark_all_missing") }} ({{
           numberOfEmptyLabelsInAnnotationSet
@@ -28,7 +28,7 @@
         type="is-primary"
         class="accept-all-btn"
         :disabled="numberOfNotCorrectAnnotationsInAnnotationSet === 0"
-        @click="!isPlaceholder && acceptAllPending"
+        @click="acceptAllPending"
       >
         {{ isPlaceholder ? $t("pending_counter") : $t("accept_group") }} ({{
           numberOfNotCorrectAnnotationsInAnnotationSet
@@ -76,11 +76,17 @@ export default {
       this.$emit("leave-annotation-set-to-accept");
       this.$emit("leave-annotation-set-to-mark-missing");
     },
-    markAllAsMissing() {
-      this.$emit("mark-all-empty-missing");
+    markAllAsMissing(e) {
+      if (!this.isPlaceholder) {
+        e.stopPropagation();
+        this.$emit("mark-all-empty-missing");
+      }
     },
-    acceptAllPending() {
-      this.$emit("accept-all-pending-annotations");
+    acceptAllPending(e) {
+      if (!this.isPlaceholder) {
+        e.stopPropagation();
+        this.$emit("accept-all-pending-annotations");
+      }
     },
   },
 };
