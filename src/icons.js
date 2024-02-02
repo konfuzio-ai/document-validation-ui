@@ -19,6 +19,7 @@ import {
   faArrowRight,
   faDownload,
   faSearch,
+  faSquareCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as Icons } from "@fortawesome/vue-fontawesome";
 
@@ -41,7 +42,8 @@ library.add(
   faArrowLeft,
   faArrowRight,
   faDownload,
-  faSearch
+  faSearch,
+  faSquareCheck
 );
 
 export default Icons;
