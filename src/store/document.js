@@ -304,6 +304,7 @@ const getters = {
       let annotations = [];
       let labels = [];
       let processedAnnotationSets = [];
+      let processedLabels = [];
       annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
@@ -333,15 +334,22 @@ const getters = {
           }
           if (addLabel) {
             labels.push({ ...label, annotations: labelAnnotations });
+            let addProcessedLabel = true;
+            processedLabels.forEach((processedLabel) => {
+              if (processedLabel.id === label.id) {
+                addProcessedLabel = false;
+                return;
+              }
+            });
+            processedLabels.push(label);
           }
           annotations.push(...labelAnnotations);
         });
         processedAnnotationSets.push({ ...annotationSet, labels });
       });
-
       return {
         annotationSets: processedAnnotationSets,
-        labels,
+        labels: processedLabels,
         annotations,
       };
     },
