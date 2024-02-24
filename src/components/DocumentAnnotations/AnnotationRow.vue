@@ -25,7 +25,6 @@
           :annotation-set="annotationSet"
           :label="label"
           :from-table="fromTable"
-          :is-checkbox-label="true"
         />
       </div>
 
