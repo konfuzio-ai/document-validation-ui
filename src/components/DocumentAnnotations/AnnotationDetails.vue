@@ -135,7 +135,7 @@
       </template>
     </b-tooltip>
     <b-tooltip
-      v-if="isCheckboxLabel"
+      v-if="label.is_linked_to_checkbox"
       :animated="false"
       :position="'is-bottom'"
       :class="['left-aligned', 'annotation-details']"
@@ -190,10 +190,6 @@ export default {
       default: null,
     },
     fromTable: {
-      type: Boolean,
-      default: false,
-    },
-    isCheckboxLabel: {
       type: Boolean,
       default: false,
     },

@@ -280,12 +280,17 @@
                 font-size: 14px;
                 line-height: 20px;
                 font-weight: 400;
+                padding: 0 8px;
 
                 .annotation,
                 .empty-annotation {
                   min-height: 36px;
                   display: flex;
                   align-items: center;
+
+                  .annotation-checkbox {
+                    margin-right: 0px;
+                  }
                 }
 
                 .loading-container {
@@ -312,7 +317,7 @@
               .annotation-value {
                 display: inline-block;
                 color: $text;
-                padding: 0 8px;
+                padding: 0;
                 border: none;
                 background-color: transparent;
                 inline-size: 100%;
