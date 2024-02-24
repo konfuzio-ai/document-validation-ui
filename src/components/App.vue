@@ -78,6 +78,12 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    review_filter: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     documentId() {
@@ -130,6 +136,15 @@ export default {
         return null;
       }
     },
+    reviewFilter() {
+      if (process.env.VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER) {
+        return process.env.VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER;
+      } else if (this.review_filter) {
+        return this.review_filter;
+      } else {
+        return null;
+      }
+    },
   },
   created() {
     // Sentry config
@@ -172,6 +187,7 @@ export default {
     // document and project config
     Promise.all([
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
+      this.$store.dispatch("display/setReviewFilter", this.reviewFilter),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch(
