@@ -41,7 +41,7 @@ const state = {
   searchLoading: false,
   currentSearchResult: null,
   detailsUrl: null,
-  reviewFilter: null,
+  reviewFilter: false,
 };
 
 const getters = {
@@ -423,9 +423,7 @@ const mutations = {
     state.detailsUrl = value;
   },
   SET_REVIEW_FILTER: (state, value) => {
-    if (value !== "") {
-      state.reviewFilter = value;
-    }
+    state.reviewFilter = value;
   },
 };
 

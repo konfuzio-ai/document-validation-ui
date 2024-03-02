@@ -80,9 +80,9 @@ export default {
     },
     // eslint-disable-next-line vue/prop-name-casing
     review_filter: {
-      type: String,
+      type: Boolean,
       required: false,
-      default: "",
+      default: false,
     },
   },
   computed: {
