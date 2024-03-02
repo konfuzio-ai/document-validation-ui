@@ -41,6 +41,7 @@ Some other optional variables you can include are:
 - Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_ENVIRONMENT`
 - The path to a list of Documents in the application: `VUE_APP_DOCUMENTS_LIST_PATH`. This variable will be used to redirect the user to the specified list of Documents in the application so that they can continue with the review process of other Documents after certain changes like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or sorting. A `/` character should be added both at the start and end of the pathname.
 - The path to the document details page where you can change other options not available on the app (for example, permissions) or see logs related to the document: `VUE_APP_DOCUMENT_DETAILS_URL`. If not set, the button will not appear.
+- There's an option to filter the navigation of the documents by the ones which are already reviewed. The property is: `VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER`. This variable is a boolean that indicates if only review documents should appear when moving forward or backward in the list.
 
 You can also set the Document id through the URL query parameters like `?document=ID`. This will have priority over any other Document id that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority from the ones defined in the HTML.
 
