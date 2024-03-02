@@ -123,6 +123,7 @@ export default {
       "loading",
       "recalculatingAnnotations",
     ]),
+    ...mapState("display", ["reviewFilter"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
     ...mapState("project", ["documentsInProject"]),
@@ -163,7 +164,7 @@ export default {
       // Only consider documents who have a status of "ready"
       const filteredDocuments = this.documentsInProject.filter(
         (document) =>
-          this.isDocumentReadyToBeReviewed(document) ||
+          (this.reviewFilter && this.isDocumentReadyToBeReviewed(document)) ||
           this.waitingForSplittingConfirmation(document)
       );
 
