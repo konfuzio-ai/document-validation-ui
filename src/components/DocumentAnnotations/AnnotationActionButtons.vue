@@ -20,7 +20,10 @@
       type="is-primary"
       @click.stop="save"
     >
-      {{ $t("save") }}
+      <span v-if="showText">{{ $t("save") }}</span>
+      <b-tooltip v-else position="is-left" :label="$t('save')">
+        <b-icon icon="floppy-disk" size="small" class="button-icon" />
+      </b-tooltip>
     </b-button>
 
     <!-- cancel button -->
@@ -57,14 +60,20 @@
       class="missing-button-container"
     >
       <b-button type="is-ghost" class="missing-btn" @click.stop="markAsMissing">
-        {{ $t("missing_annotation") }}
+        <span v-if="showText">{{ $t("missing_annotation") }}</span>
+        <b-tooltip v-else position="is-left" :label="$t('missing_annotation')">
+          <b-icon icon="xmark" size="small" class="button-icon" />
+        </b-tooltip>
       </b-button>
       <b-button
         type="is-ghost"
         class="search-btn"
         @click.stop="searchInDocument"
       >
-        {{ $t("search_in_document") }}
+        <span v-if="showText">{{ $t("search_in_document") }}</span>
+        <b-tooltip v-else position="is-left" :label="$t('search_in_document')">
+          <b-icon icon="search" size="small" class="button-icon" />
+        </b-tooltip>
       </b-button>
     </div>
 
@@ -75,7 +84,10 @@
       type="is-primary"
       @click.stop="restore"
     >
-      {{ $t("restore") }}
+      <span v-if="showText">{{ $t("restore") }}</span>
+      <b-tooltip v-else position="is-left" :label="$t('restore')">
+        <b-icon icon="trash-arrow-up" size="small" class="button-icon" />
+      </b-tooltip>
     </b-button>
   </div>
 </template>
@@ -83,6 +95,7 @@
 /* Component for showing actions for each annotation row */
 import { mapGetters, mapState } from "vuex";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
+import { TEXT_BREAKPOINT_WIDTH } from "../../constants";
 export default {
   name: "AnnotationActionButtons",
   components: {
@@ -116,6 +129,11 @@ export default {
       required: false,
     },
   },
+  data() {
+    return {
+      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH,
+    };
+  },
   computed: {
     ...mapState("document", ["publicView", "missingAnnotations"]),
     ...mapGetters("document", ["isDocumentReviewed"]),
@@ -129,7 +147,17 @@ export default {
       );
     },
   },
+  created() {
+    window.addEventListener("resize", this.resize);
+  },
+
+  destroyed() {
+    window.removeEventListener("resize", this.resize);
+  },
   methods: {
+    resize() {
+      this.showText = window.innerWidth > TEXT_BREAKPOINT_WIDTH;
+    },
     save() {
       this.$emit("save");
     },
