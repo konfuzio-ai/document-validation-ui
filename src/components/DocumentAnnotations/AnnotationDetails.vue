@@ -5,7 +5,13 @@
     :class="[!fromTable && 'left-aligned', 'annotation-details']"
   >
     <div :class="['label-icon', fromTable && 'is-small']">
-      <div v-if="(created(annotation) || edited(annotation)) && !isNegative(annotation) && !publicView">
+      <div
+        v-if="
+          (created(annotation) || edited(annotation)) &&
+          !isNegative(annotation) &&
+          !publicView
+        "
+      >
         <div
           :class="[
             'annotation-details-icon',
@@ -23,7 +29,9 @@
         <NotFoundIcon />
       </div>
       <div
-        v-else-if="notExtracted(annotation) || isNegative(annotation) && !publicView"
+        v-else-if="
+          notExtracted(annotation) || (isNegative(annotation) && !publicView)
+        "
         :class="[
           'annotation-details-icon',
           animate ? 'animated-ripple' : '',
@@ -202,7 +210,10 @@ export default {
   },
   methods: {
     getText() {
-      if (this.notExtracted(this.annotation) || this.isNegative(this.annotation)) {
+      if (
+        this.notExtracted(this.annotation) ||
+        this.isNegative(this.annotation)
+      ) {
         return this.$t("not_found_in_document");
       } else if (this.created(this.annotation)) {
         return this.getUser(this.annotation)
