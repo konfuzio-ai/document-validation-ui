@@ -160,5 +160,6 @@
   "edit_ann_content_warning": "Wenn Sie den Text ändern, kann die KI diese Annotation nicht verwenden. Dadurch werden auch die Trainingsdaten ungültig. Versuchen Sie, die Auswahl zu verändern, um den Text zu erfassen,bevor Sie ihn manuell hinzufügen, oder drücken Sie OK, um trotzdem fortzufahren.",
   "annotation_deleted": "Diese Annotation wurde gelöscht.",
   "annotation_link": "Kopieren Sie den permanenten Link zu dieser Annotationen",
-  "copied": "Kopiert"
+  "copied": "Kopiert",
+  "checkbox_ann_details": "Für dieses Label wird ein Kästchen extrahiert."
 }
