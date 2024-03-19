@@ -146,8 +146,8 @@
 
       <template #content>
         <div class="label-details">
-          <div v-if="description" class="label-description">
-            <span>{{ description }}</span>
+          <div class="label-description">
+            <span>{{ $t("checkbox_ann_details") }}</span>
           </div>
         </div>
       </template>

@@ -161,5 +161,6 @@
   "edit_ann_content_warning": "If you change the text, the AI cannot use this Annotation. You will also invalidate the training data. Try to change the selection to capture the text before adding it manually, or press OK to continue anyway.",
   "annotation_deleted": "This annotation has been deleted.",
   "annotation_link": "Copy the permanent link to this annotation",
-  "copied": "Copied"
+  "copied": "Copied",
+  "checkbox_ann_details": "A checkbox will be extracted for this label."
 }

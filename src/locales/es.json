@@ -160,5 +160,6 @@
   "edit_ann_content_warning": "Si cambia el texto, la IA no puede utilizar esta anotación. También invalidarás los datos del entrenamiento. Intente cambiar la selección para capturar el texto antes de agregarlo manualmente, o presione OK para continuar de todos modos.",
   "annotation_deleted": "Esta anotación ha sido eliminada.",
   "annotation_link": "Copia el enlace permanente a esta anotación.",
-  "copied": "Copiada"
+  "copied": "Copiada",
+  "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta."
 }
