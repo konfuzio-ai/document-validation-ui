@@ -108,8 +108,25 @@ export default {
       return this.$refs.contentEditable.textContent.trim();
     },
     handleCheckboxChanged(value) {
-      console.log("value", value);
-      // TODO: send value to API
+      this.$store
+        .dispatch("document/updateAnnotation", {
+          updatedValues: {
+            metadata: {
+              omr: {
+                is_checked: value,
+              },
+            },
+          },
+          annotationId: this.annotation.id,
+          annotationSet: this.annotationSet,
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        });
     },
     handleEditAnnotation(event) {
       if (this.publicView || this.isDocumentReviewed) return;
