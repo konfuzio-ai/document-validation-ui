@@ -162,11 +162,12 @@ export default {
     },
     getPreviousAndNextDocuments() {
       // Only consider documents who have a status of "ready"
-      const filteredDocuments = this.documentsInProject.filter(
+      const filteredDocuments =
+        this.documentsInProject; /*this.documentsInProject.filter(
         (document) =>
           (this.reviewFilter && this.isDocumentReadyToBeReviewed(document)) ||
           this.waitingForSplittingConfirmation(document)
-      );
+      );*/
 
       if (!filteredDocuments) return;
 
