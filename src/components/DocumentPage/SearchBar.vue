@@ -86,7 +86,6 @@ export default {
   },
   watch: {
     search(search) {
-      console.log("search", search);
       this.$store.dispatch("display/setCurrentSearch", search);
       if (search.length >= this.minSearchLength) {
         this.$store.dispatch("display/startSearchLoading");

@@ -29,13 +29,13 @@
         class="search-document icons"
         @click="toggleSearch"
       >
-        <b-icon icon="search" size="small" class="search-icon" />
+        <b-icon icon="search" size="is-small" class="search-icon" />
       </div>
 
       <div v-if="!publicView" class="download-file icons">
         <b-dropdown aria-role="list" position="is-top-right" scrollable>
           <template #trigger>
-            <b-icon icon="download" size="small" class="download-file" />
+            <b-icon icon="download" size="is-small" class="download-file" />
           </template>
 
           <b-dropdown-item
