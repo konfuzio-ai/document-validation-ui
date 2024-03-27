@@ -70,6 +70,7 @@
               :icon="
                 annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
               "
+              size="is-12"
             />
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
@@ -265,7 +266,6 @@ export default {
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
     },
     loadAccordions(newAnnotationSets, oldAnnotationSets = null) {
-      console.log("newanns", newAnnotationSets);
       if (newAnnotationSets) {
         const newAnnotationSetsAccordion = [];
         const annotationSetsOpened = [];

@@ -42,7 +42,7 @@
         type="is-ghost"
         @click.stop="decline"
       >
-        <b-icon icon="xmark" class="decline-icon" />
+        <b-icon icon="xmark" size="is-24" class="decline-icon" />
       </b-button>
       <b-button
         v-if="acceptBtn"
@@ -62,7 +62,7 @@
       <b-button type="is-ghost" class="missing-btn" @click.stop="markAsMissing">
         <span v-if="showText">{{ $t("missing_annotation") }}</span>
         <b-tooltip v-else position="is-left" :label="$t('missing_annotation')">
-          <b-icon icon="xmark" size="small" class="button-icon" />
+          <b-icon icon="xmark" size="is-small" class="button-icon" />
         </b-tooltip>
       </b-button>
       <b-button
@@ -72,7 +72,7 @@
       >
         <span v-if="showText">{{ $t("search_in_document") }}</span>
         <b-tooltip v-else position="is-left" :label="$t('search_in_document')">
-          <b-icon icon="search" size="small" class="button-icon" />
+          <b-icon icon="search" size="is-small" class="button-icon" />
         </b-tooltip>
       </b-button>
     </div>
@@ -86,7 +86,7 @@
     >
       <span v-if="showText">{{ $t("restore") }}</span>
       <b-tooltip v-else position="is-left" :label="$t('restore')">
-        <b-icon icon="trash-arrow-up" size="small" class="button-icon" />
+        <b-icon icon="trash-arrow-up" size="is-small" class="button-icon" />
       </b-tooltip>
     </b-button>
   </div>
