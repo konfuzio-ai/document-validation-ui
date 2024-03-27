@@ -39,6 +39,16 @@
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
   box-sizing: border-box;
+
+  h1 {
+    font-size: 48px;
+    color: $text-color;
+  }
+  h2 {
+    font-size: 24px;
+    color: $text-color;
+  }
+
   button {
     &.is-primary {
       background-color: $primary !important;
@@ -619,6 +629,13 @@
 
   .no-icon-margin .icon {
     margin: 0 !important;
+  }
+
+  .icon.is-48 {
+    svg {
+      height: 48px;
+      width: 48px;
+    }
   }
 
   .icon.is-24 {

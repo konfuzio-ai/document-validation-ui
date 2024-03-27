@@ -1,13 +1,16 @@
 <template>
   <div class="dv-ui-app-container dv-ui-theme">
     <DocumentsList v-if="showDocumentsList" />
-    <DocumentDashboard />
+    <DocumentDashboard v-if="!pageError" />
+    <ErrorPage v-else :error="pageError" />
   </div>
 </template>
 <script>
 import Vue from "vue";
+import { mapState } from "vuex";
 import * as Sentry from "@sentry/vue";
 import DocumentDashboard from "./DocumentDashboard";
+import ErrorPage from "./ErrorPage";
 import { DocumentsList } from "./DocumentsList";
 import { getURLQueryParam, getURLPath } from "../utils/utils";
 import { Integrations } from "@sentry/tracing";
@@ -18,6 +21,7 @@ export default {
   components: {
     DocumentsList,
     DocumentDashboard,
+    ErrorPage,
   },
   props: {
     document: {
@@ -86,6 +90,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("display", ["pageError"]),
     documentId() {
       if (getURLQueryParam("document")) {
         return getURLQueryParam("document");
