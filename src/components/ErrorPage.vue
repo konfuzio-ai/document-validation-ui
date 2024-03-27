@@ -1,6 +1,6 @@
 <template>
   <div class="error-page">
-    <b-icon icon="circle-exclamation" size="is-large" class="error-icon" />
+    <b-icon icon="circle-exclamation" size="is-48" class="error-icon" />
     <h1>
       {{ $t("document_error_title") }}
     </h1>

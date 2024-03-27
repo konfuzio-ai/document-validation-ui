@@ -631,6 +631,13 @@
     margin: 0 !important;
   }
 
+  .icon.is-48 {
+    svg {
+      height: 48px;
+      width: 48px;
+    }
+  }
+
   .icon.is-24 {
     svg {
       height: 24px;
