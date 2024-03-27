@@ -180,8 +180,33 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["currentPage", "showAnnSetTable"]),
-    ...mapGetters("document", ["isNegative"]),
+    ...mapState("selection", ["isSelecting", "selectedEntities"]),
+    ...mapState("display", [
+      "scale",
+      "categorizeModalIsActive",
+      "searchEnabled",
+      "currentPage",
+      "showAnnSetTable",
+    ]),
+    ...mapState("document", [
+      "documentAnnotationSelected",
+      "recalculatingAnnotations",
+      "editAnnotation",
+      "selectedDocument",
+      "publicView",
+    ]),
+    ...mapState("edit", ["editMode"]),
+    ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+    ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
+    ...mapGetters("document", [
+      "getAnnotationsFiltered",
+      "isAnnotationInEditMode",
+      "isDocumentReadyToBeReviewed",
+      "entitiesOnSelection",
+      "isDocumentReviewed",
+      "labelOfAnnotation",
+      "isNegative",
+    ]),
 
     isBoxSelection() {
       return this.selection && !this.isSelecting && this.isElementSelected;
@@ -254,8 +279,8 @@ export default {
      */
     pageAnnotations() {
       const annotations = [];
-      if (this.annotations) {
-        this.annotations.map((annotation) => {
+      if (this.getAnnotationsFiltered.annotations) {
+        this.getAnnotationsFiltered.annotations.map((annotation) => {
           if (
             annotation.span.find(
               (span) => span.page_index + 1 === this.page.number
@@ -287,31 +312,6 @@ export default {
         this.page.number
       );
     },
-
-    ...mapState("selection", ["isSelecting", "selectedEntities"]),
-    ...mapState("display", [
-      "scale",
-      "categorizeModalIsActive",
-      "searchEnabled",
-    ]),
-    ...mapState("document", [
-      "documentAnnotationSelected",
-      "recalculatingAnnotations",
-      "annotations",
-      "editAnnotation",
-      "selectedDocument",
-      "publicView",
-    ]),
-    ...mapState("edit", ["editMode"]),
-    ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
-    ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
-    ...mapGetters("document", [
-      "isAnnotationInEditMode",
-      "isDocumentReadyToBeReviewed",
-      "entitiesOnSelection",
-      "isDocumentReviewed",
-      "labelOfAnnotation",
-    ]),
   },
   watch: {
     recalculatingAnnotations(newState) {
