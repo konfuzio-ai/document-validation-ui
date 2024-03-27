@@ -39,6 +39,16 @@
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
   box-sizing: border-box;
+
+  h1 {
+    font-size: 48px;
+    color: $text-color;
+  }
+  h2 {
+    font-size: 24px;
+    color: $text-color;
+  }
+
   button {
     &.is-primary {
       background-color: $primary !important;

@@ -907,6 +907,9 @@ const actions = {
       })
       .catch((error) => {
         console.log(error, "Could not fetch document details from the backend");
+        dispatch("display/setPageError", error.response.data.detail, {
+          root: true,
+        });
         return;
       });
 

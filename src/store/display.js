@@ -42,6 +42,7 @@ const state = {
   currentSearchResult: null,
   detailsUrl: null,
   reviewFilter: false,
+  pageError: null,
 };
 
 const getters = {
@@ -342,6 +343,10 @@ const actions = {
     commit("SET_CURRENT_SEARCH", currentSearch);
   },
 
+  setPageError({ commit }, value) {
+    commit("SET_PAGE_ERROR", value);
+  },
+
   setCurrentSearchResult({ commit, state }, n) {
     let newSearchResult = state.currentSearchResult + n;
     const searchResultsMaxIndex = state.searchResults.length - 1;
@@ -424,6 +429,9 @@ const mutations = {
   },
   SET_REVIEW_FILTER: (state, value) => {
     state.reviewFilter = value;
+  },
+  SET_PAGE_ERROR: (state, value) => {
+    state.pageError = value;
   },
 };
 
