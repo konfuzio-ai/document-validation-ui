@@ -25,7 +25,7 @@
       </b-tooltip>
       <div v-if="isEditModeAvailable" class="toolbar-divider" />
       <div
-        v-if="!publicView"
+        v-if="!publicView && !editMode"
         class="search-document icons"
         @click="toggleSearch"
       >
@@ -115,6 +115,7 @@ export default {
   },
   computed: {
     ...mapState("display", ["scale"]),
+    ...mapState("edit", ["editMode"]),
     ...mapGetters("edit", ["isEditModeAvailable"]),
     ...mapState("document", [
       "selectedDocument",
