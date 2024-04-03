@@ -21,6 +21,7 @@ import {
   faSearch,
   faTrashArrowUp,
   faFloppyDisk,
+  faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as Icons } from "@fortawesome/vue-fontawesome";
 
@@ -45,7 +46,8 @@ library.add(
   faDownload,
   faSearch,
   faTrashArrowUp,
-  faFloppyDisk
+  faFloppyDisk,
+  faCircleExclamation
 );
 
 export default Icons;
