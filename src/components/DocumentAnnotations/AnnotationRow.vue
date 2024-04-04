@@ -217,7 +217,6 @@ export default {
       "elementSelected",
       "selectedEntities",
     ]),
-    ...mapState("project", ["translationsEnabled"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "annotationIsNotFound",
@@ -277,7 +276,7 @@ export default {
       return (
         this.annotation &&
         !this.isNegative(this.annotation) &&
-        this.translationsEnabled &&
+        this.annotation.hasOwnProperty("translated_string") &&
         !this.publicView
       );
     },

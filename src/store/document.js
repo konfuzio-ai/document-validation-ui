@@ -891,9 +891,6 @@ const actions = {
             dispatch("project/setProjectId", projectId, {
               root: true,
             });
-            dispatch("project/fetchProjectDetails", projectId, {
-              root: true,
-            });
           }
 
           if (getters.documentHasProposedSplit(response.data)) {

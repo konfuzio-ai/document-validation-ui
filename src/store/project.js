@@ -6,7 +6,6 @@ const state = {
   currentUser: null,
   documentsListPath: null,
   documentsInProject: null,
-  translationsEnabled: false,
 };
 
 const getters = {
@@ -100,20 +99,6 @@ const actions = {
         console.log(error, "Could not fetch document list from the backend");
       });
   },
-
-  fetchProjectDetails: ({commit}, projectId) => {
-    return HTTP.get(
-      `projects/${projectId}/`
-    )
-      .then((response) => {
-        if (response.data.enable_translated_strings) {
-          commit("SET_TRANSLATIONS_ENABLED", true);
-        }
-      })
-      .catch((error) => {
-        console.log(error, "Could not fetch project details from the backend");
-      });
-  }
 };
 
 const mutations = {
@@ -129,9 +114,6 @@ const mutations = {
   SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
     state.documentsInProject = documents;
   },
-  SET_TRANSLATIONS_ENABLED: (state, value) => {
-    state.translationsEnabled = value;
-  }
 };
 
 export default {
