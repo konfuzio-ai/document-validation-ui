@@ -7,7 +7,7 @@
 
     <!-- When document data is still loading -->
     <div
-      v-else-if="!annotationSets || loading"
+      v-else-if="!getAnnotationsFiltered.annotationSets || loading"
       class="document-annotations-loading"
     >
       <div
@@ -20,7 +20,10 @@
     </div>
 
     <!-- When there's no annotation sets -->
-    <div v-else-if="annotationSets.length === 0" class="empty-annotation-sets">
+    <div
+      v-else-if="getAnnotationsFiltered.annotationSets.length === 0"
+      class="empty-annotation-sets"
+    >
       <EmptyState />
     </div>
 
@@ -51,7 +54,9 @@
         </div>
       </div>
       <div
-        v-for="(annotationSet, indexGroup) in annotationSets"
+        v-for="(
+          annotationSet, indexGroup
+        ) in getAnnotationsFiltered.annotationSets"
         :key="indexGroup"
         :class="[
           'annotation-set-group',
@@ -65,6 +70,7 @@
               :icon="
                 annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
               "
+              size="is-12"
             />
             {{
               `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
@@ -178,13 +184,11 @@ export default {
   computed: {
     ...mapState("display", ["showAnnSetTable"]),
     ...mapState("document", [
+      "annotationSets",
       "documentId",
       "recalculatingAnnotations",
-      "missingAnnotations",
       "publicView",
-      "annotations",
       "editAnnotation",
-      "annotationSets",
       "loading",
       "labels",
       "selectedDocument",
@@ -193,6 +197,7 @@ export default {
     ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
+      "getAnnotationsFiltered",
       "emptyLabels",
       "notCorrectAnnotations",
       "annotationSetsInTable",
@@ -219,7 +224,10 @@ export default {
       }
     },
     annotationSets(newAnnotationSets, oldAnnotationSets) {
-      this.loadAccordions(newAnnotationSets, oldAnnotationSets);
+      this.loadAccordions(
+        this.getAnnotationsFiltered.annotationSets,
+        oldAnnotationSets
+      );
     },
     sidebarAnnotationSelected(annotation) {
       if (annotation) {
@@ -237,8 +245,8 @@ export default {
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
-    if (this.annotationSets) {
-      this.loadAccordions(this.annotationSets);
+    if (this.getAnnotationsFiltered.annotationSets) {
+      this.loadAccordions(this.getAnnotationsFiltered.annotationSets);
     }
   },
   destroyed() {
@@ -348,7 +356,7 @@ export default {
         }
       });
 
-      const currentAnnotation = this.annotations.find(
+      const currentAnnotation = this.getAnnotationsFiltered.annotations.find(
         (ann) => ann.id === this.editAnnotation.id
       );
 
@@ -488,9 +496,10 @@ export default {
         // Check for ENTER or DELETE
         // Accept annotation
         if (event.key === "Enter") {
-          if (!this.annotations || !this.editAnnotation) return;
+          if (!this.getAnnotationsFiltered.annotations || !this.editAnnotation)
+            return;
 
-          const currentAnn = this.annotations.find(
+          const currentAnn = this.getAnnotationsFiltered.annotations.find(
             (a) => a.id === this.editAnnotation.id
           );
 

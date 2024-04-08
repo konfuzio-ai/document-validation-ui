@@ -1,12 +1,12 @@
 <template>
   <div id="annotation-filters">
-    <b-switch v-model="feedbackNeeded" class="is-small">{{
+    <b-switch v-model="annotationFilters.showFeedbackNeeded" class="is-small">{{
       $t("human_feedback_needed")
     }}</b-switch>
-    <b-switch v-model="missingAnnotations" class="is-small">{{
+    <b-switch v-model="annotationFilters.showEmpty" class="is-small">{{
       $t("label_missing_annotations")
     }}</b-switch>
-    <b-switch v-model="acceptedAnnotations" class="is-small">{{
+    <b-switch v-model="annotationFilters.showAccepted" class="is-small">{{
       $t("accepted_annotations")
     }}</b-switch>
   </div>
@@ -15,42 +15,8 @@
 import { mapState } from "vuex";
 export default {
   name: "AnnotationFilters",
-  data() {
-    return {
-      feedbackNeeded: true,
-      missingAnnotations: true,
-      acceptedAnnotations: true,
-      originalAnnotationSets: [],
-    };
-  },
   computed: {
-    ...mapState("document", ["annotationSets"]),
-  },
-  watch: {
-    feedbackNeeded() {
-      this.filterAnnotations();
-    },
-    missingAnnotations() {
-      this.filterAnnotations();
-    },
-    acceptedAnnotations() {
-      this.filterAnnotations();
-    },
-  },
-  mounted() {
-    this.originalAnnotationSets = JSON.parse(
-      JSON.stringify(this.annotationSets)
-    );
-  },
-  methods: {
-    filterAnnotations() {
-      this.$store.dispatch("document/filterAnnotations", {
-        originalAnnotationSets: this.originalAnnotationSets,
-        showEmpty: this.missingAnnotations,
-        showFeedbackNeeded: this.feedbackNeeded,
-        showAccepted: this.acceptedAnnotations,
-      });
-    },
+    ...mapState("document", ["annotationSets", "annotationFilters"]),
   },
 };
 </script>

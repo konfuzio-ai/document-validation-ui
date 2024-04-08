@@ -35,6 +35,11 @@ const state = {
   serverError: false,
   splittingSuggestions: null,
   enableGroupingFeature: true,
+  annotationFilters: {
+    showFeedbackNeeded: true,
+    showEmpty: true,
+    showAccepted: true,
+  },
 };
 
 const getters = {
@@ -291,37 +296,41 @@ const getters = {
     return foundLabel;
   },
 
-  /* Process annotations and extract labels and sets */
-  processAnnotationSets:
-    (state, getters) =>
-    (
-      annotationSets,
-      showEmpty = true,
-      showFeedbackNeeded = true,
-      showAccepted = true
-    ) => {
-      // group annotations for sidebar
-      let annotations = [];
-      let labels = [];
-      let processedAnnotationSets = [];
-      let processedLabels = [];
-      annotationSets.forEach((annotationSet) => {
+  getAnnotationsFiltered: (state) => {
+    // group annotations for sidebar
+    let annotations = [];
+    let labels = [];
+    let processedAnnotationSets = [];
+    let processedLabels = [];
+
+    if (state.annotationSets) {
+      state.annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
           const labelAnnotations = [];
           let addLabel = false;
-          if (!showEmpty || !showFeedbackNeeded || !showAccepted) {
+          if (
+            !state.annotationFilters.showEmpty ||
+            !state.annotationFilters.showFeedbackNeeded ||
+            !state.annotationFilters.showAccepted
+          ) {
             if (!label.annotations || label.annotations.length === 0) {
-              if (showEmpty) {
+              if (state.annotationFilters.showEmpty) {
                 addLabel = true;
               }
             } else {
               label.annotations.forEach((annotation) => {
-                if (showFeedbackNeeded && annotation.revised === false) {
+                if (
+                  state.annotationFilters.showFeedbackNeeded &&
+                  annotation.revised === false
+                ) {
                   labelAnnotations.push(annotation);
                   addLabel = true;
                 }
-                if (showAccepted && annotation.revised === true) {
+                if (
+                  state.annotationFilters.showAccepted &&
+                  annotation.revised === true
+                ) {
                   labelAnnotations.push(annotation);
                   addLabel = true;
                 }
@@ -334,25 +343,48 @@ const getters = {
           }
           if (addLabel) {
             labels.push({ ...label, annotations: labelAnnotations });
-            let addProcessedLabel = true;
-            processedLabels.forEach((processedLabel) => {
-              if (processedLabel.id === label.id) {
-                addProcessedLabel = false;
-                return;
-              }
-            });
             processedLabels.push(label);
           }
           annotations.push(...labelAnnotations);
         });
         processedAnnotationSets.push({ ...annotationSet, labels });
       });
-      return {
-        annotationSets: processedAnnotationSets,
-        labels: processedLabels,
-        annotations,
-      };
-    },
+    }
+
+    return {
+      annotationSets: processedAnnotationSets,
+      labels: processedLabels,
+      annotations,
+    };
+  },
+
+  /* Process annotations and extract labels and sets */
+  processAnnotationSets: () => (annotationSets) => {
+    // group annotations for sidebar
+    let annotations = [];
+    let labels = [];
+    let processedAnnotationSets = [];
+    let processedLabels = [];
+
+    annotationSets.forEach((annotationSet) => {
+      labels = [];
+      annotationSet.labels.forEach((label) => {
+        const labelAnnotations = [];
+
+        // add annotations to the document array
+        labelAnnotations.push(...label.annotations);
+        labels.push({ ...label, annotations: labelAnnotations });
+        processedLabels.push(label);
+        annotations.push(...labelAnnotations);
+      });
+      processedAnnotationSets.push({ ...annotationSet, labels });
+    });
+    return {
+      annotationSets: processedAnnotationSets,
+      labels: processedLabels,
+      annotations,
+    };
+  },
 
   /* Checks if there are annotations correct in the document */
   documentHasCorrectAnnotations: (state) => {
@@ -816,21 +848,6 @@ const actions = {
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
   },
-  filterAnnotations: (
-    { commit, getters },
-    { originalAnnotationSets, showEmpty, showFeedbackNeeded, showAccepted }
-  ) => {
-    const { labels, annotations, annotationSets } =
-      getters.processAnnotationSets(
-        originalAnnotationSets,
-        showEmpty,
-        showFeedbackNeeded,
-        showAccepted
-      );
-    commit("SET_ANNOTATION_SETS", annotationSets);
-    commit("SET_ANNOTATIONS", annotations);
-    commit("SET_LABELS", labels);
-  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -890,6 +907,9 @@ const actions = {
       })
       .catch((error) => {
         console.log(error, "Could not fetch document details from the backend");
+        dispatch("display/setPageError", error.response.data.detail, {
+          root: true,
+        });
         return;
       });
 
