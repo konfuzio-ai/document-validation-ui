@@ -7,8 +7,14 @@
 
 There are two options to manage users in the Document Validation UI:
 
-- The first option is to [create a single user](https://app.konfuzio.com/accounts/signup/) with limited permissions (i.e. with the [Reader role](https://help.konfuzio.com/modules/superuserroles/index.html)) and [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create), that anyone who interacts with the user interface can use in a Project. Since the token will be public, this option is best suited for a read-only view.
-- The second one is to create as many users as needed, each with its token. This is best suited for Projects that use [single sign-on authentication](https://dev.konfuzio.com/web/api-v3.html#single-sign-on-sso-authentication) and/or where users will be interacting with the Documents (annotating and revising) since it allows for fine-grained control over who can access what, and it allows the application to keep a record of the different actions performed by them.
+- The first option is to [create a single user](https://app.konfuzio.com/accounts/signup/) with limited permissions (
+  i.e. with the [Reader role](https://help.konfuzio.com/modules/superuserroles/index.html))
+  and [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create), that anyone who interacts with the user
+  interface can use in a Project. Since the token will be public, this option is best suited for a read-only view.
+- The second one is to create as many users as needed, each with its token. This is best suited for Projects that
+  use [single sign-on authentication](https://dev.konfuzio.com/web/api-v3.html#single-sign-on-sso-authentication) and/or
+  where users will be interacting with the Documents (annotating and revising) since it allows for fine-grained control
+  over who can access what, and it allows the application to keep a record of the different actions performed by them.
 
 ## Read Only Mode vs. Full Mode
 
@@ -16,17 +22,29 @@ The Konfuzio Document Validation UI can be configured to be run as Read Only or 
 
 ### Read Only Mode
 
-This is the default mode of the app. In this mode, you will have a sample Document with Annotations that you can only preview. Unless configured, it uses the default API endpoint at https://app.konfuzio.com and no user account is needed.
+This is the default mode of the app. In this mode, you will have a sample Document with Annotations that you can only
+preview. Unless configured, it uses the default API endpoint at https://app.konfuzio.com and no user account is needed.
 
 ### Full Mode
 
-If you want to run the widget in full mode to be able to interact with the Document by editing Annotations, Document Pages, and other functionalities, you will need to have a user account created (more information in our [Managing users](/dvui/explanations.html#managing-users-in-the-konfuzio-document-validation-ui) section). Then, you should generate a user token by accessing the [Konfuzio API version 3 Auth Request](https://app.konfuzio.com/v3/swagger/) and making a request with your username and password. If the provided credentials are correct, then a Token will be generated that you can copy and add to the `.env` file (see below for more details).
+If you want to run the widget in full mode to be able to interact with the Document by editing Annotations, Document
+Pages, and other functionalities, you will need to have a user account created (more information in
+our [Managing users](/dvui/explanations.html#managing-users-in-the-konfuzio-document-validation-ui) section). Then, you
+should generate a user token by accessing
+the [Konfuzio API version 3 Auth Request](https://app.konfuzio.com/v3/swagger/) and making a request with your username
+and password. If the provided credentials are correct, then a Token will be generated that you can copy and add to
+the `.env` file (see below for more details).
 
-You will also need a [Document uploaded](https://app.konfuzio.com/v3/swagger/#/documents/documents_create) and a Document id, and will need to be logged in to [Konfuzio](https://app.konfuzio.com/)) before being able to upload the Document. After successfully uploading it, if you want to show it on the Document Validation UI, you can copy the Document id from the URL, as shown in the image below:
+You will also need a [Document uploaded](https://app.konfuzio.com/v3/swagger/#/documents/documents_create) and a
+Document id, and will need to be logged in to [Konfuzio](https://app.konfuzio.com/)) before being able to upload the
+Document. After successfully uploading it, if you want to show it on the Document Validation UI, you can copy the
+Document id from the URL, as shown in the image below:
 
 .. image:: ./images/docid.png
 
-To complete the setup, create an environment variables file `.env` on the root of the repository based on the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/main/.env.example) for specifying the following required values:
+To complete the setup, create an environment variables file `.env` on the root of the repository based on
+the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/main/.env.example) for specifying the
+following required values:
 
 - The user token: `VUE_APP_GUEST_USER_TOKEN`
 - The Document id: `VUE_APP_DOCUMENT_ID`
@@ -35,19 +53,37 @@ Some other optional variables you can include are:
 
 - The API URL: `VUE_APP_API_URL`. It will be `https://app.konfuzio.com/api/v3` if left empty.
 - The images URL: `VUE_APP_DOCUMENT_IMAGES_URL`. It will be `https://app.konfuzio.com` if left empty.
-- The language of the application: `VUE_APP_I18N_LOCALE`. The default will be `en` if none is provided in this file or in the `HTML`.
-- The default language of the application: `VUE_APP_I18N_FALLBACK_LOCALE`. The same as for the language of the application applies.
-- Sentry [DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_DSN`
-- Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_ENVIRONMENT`
-- The path to a list of Documents in the application: `VUE_APP_DOCUMENTS_LIST_PATH`. This variable will be used to redirect the user to the specified list of Documents in the application so that they can continue with the review process of other Documents after certain changes like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or sorting. A `/` character should be added both at the start and end of the pathname.
-- The path to the document details page where you can change other options not available on the app (for example, permissions) or see logs related to the document: `VUE_APP_DOCUMENT_DETAILS_URL`. If not set, the button will not appear.
-- There's an option to filter the navigation of the documents by the ones which are already reviewed. The property is: `VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER`. This variable is a boolean that indicates if only review documents should appear when moving forward or backward in the list.
+- The language of the application: `VUE_APP_I18N_LOCALE`. The default will be `en` if none is provided in this file or
+  in the `HTML`.
+- The default language of the application: `VUE_APP_I18N_FALLBACK_LOCALE`. The same as for the language of the
+  application applies.
+-
 
-You can also set the Document id through the URL query parameters like `?document=ID`. This will have priority over any other Document id that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority from the ones defined in the HTML.
+Sentry [DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_DSN`
+-
+Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_ENVIRONMENT`
+
+- The path to a list of Documents in the application: `VUE_APP_DOCUMENTS_LIST_PATH`. This variable will be used to
+  redirect the user to the specified list of Documents in the application so that they can continue with the review
+  process of other Documents after certain changes
+  like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or
+  sorting. A `/` character should be added both at the start and end of the pathname.
+- The path to the document details page where you can change other options not available on the app (for example,
+  permissions) or see logs related to the document: `VUE_APP_DOCUMENT_DETAILS_URL`. If not set, the button will not
+  appear.
+- There's an option to filter the navigation of the documents by the ones which are already reviewed. The property
+  is: `VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER`. This variable is a boolean that indicates if only review documents should
+  appear when moving forward or backward in the list.
+
+You can also set the Document id through the URL query parameters like `?document=ID`. This will have priority over any
+other Document id that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority
+from the ones defined in the HTML.
 
 ## Multilingual User Interface
 
-The Document Validation UI can currently be used in three languages: German (de), English (en), and Spanish (es). As mentioned in the previous section, you can specify what the default language of the application will be in the `.env` file, like so:
+The Document Validation UI can currently be used in three languages: German (de), English (en), and Spanish (es). As
+mentioned in the previous section, you can specify what the default language of the application will be in the `.env`
+file, like so:
 
 ```
 VUE_APP_I18N_LOCALE=
@@ -64,31 +100,19 @@ You can also specify the language in the `HTML` file:
 
 If left empty, then the default `en` will be used.
 
-You are also welcome to create a new locales file for a language not currently provided by us, considering the data from [our existing files](https://github.com/konfuzio-ai/document-validation-ui/tree/main/src/locales), and share it with us via a [Support Ticket](https://konfuzio.com/en/support/) or create a Pull Request to add it to the repository.
+You are also welcome to create a new locales file for a language not currently provided by us, considering the data
+from [our existing files](https://github.com/konfuzio-ai/document-validation-ui/tree/main/src/locales), and share it
+with us via a [Support Ticket](https://konfuzio.com/en/support/) or create a Pull Request to add it to the repository.
 
 ## How to integrate the Document Validation UI into custom solutions?
 
-The application requires `node` and `npm` to run. It also requires a connection to the [Konfuzio Server API version 3](https://app.konfuzio.com/v3/swagger/). See [full documentation](https://dev.konfuzio.com/web/api-v3.html).
+The application requires `node` and `npm` to run. It also requires a connection to
+the [Konfuzio Server API version 3](https://app.konfuzio.com/v3/swagger/).
+See [full documentation](https://dev.konfuzio.com/web/api-v3.html).
 
-There are a few different options to integrate the Document Validation UI into your Project, which we will explain next.
+There are a few different options to integrate the Document Validation UI into your Project, which can be read about in
+more detail in our tutorial section [here](https://dev.konfuzio.com/dvui/tutorials.html).
 
-
-### Integrate with CDN
-
-An alternative to using `npm` is to load JavaScript and CSS bundles from [CDN](https://en.wikipedia.org/wiki/Content_delivery_network).
-
-You can simply add the corresponding links in the `script` and `link` tags in your `HTML`, as shown in the following example:
-
-```
-<script defer="defer" src="https://unpkg.com/@konfuzio/document-validation-ui@latest/dist/js/chunk-vendors.js"></script>
-<script defer="defer" src="https://unpkg.com/@konfuzio/document-validation-ui@latest/dist/js/app.js"></script>
-<link href="https://unpkg.com/@konfuzio/document-validation-ui@latest/dist/css/chunk-vendors.css" rel="stylesheet">
-<link href="https://unpkg.com/@konfuzio/document-validation-ui@latest/dist/css/app.css" rel="stylesheet">
-
-<div id="app" style="height: 100vh">
-  <app document="document_id" user_token=”user_token” locale="de/en/es"
-></app>
-</div>
 ```
 
 
@@ -126,6 +150,7 @@ _Please note that the default values from the examples below are based on Konfuz
 #### HTML
 
 ```
+
 <div id="app">
    <app document="id" locale="de/en/es" user_token="token" documents_list_path="/document_list_path/"></app>
  </div>
@@ -136,6 +161,7 @@ _Please note that the default values from the examples below are based on Konfuz
     --primary-button: 4px;
   }
 </style>
+
 ```
 
 .. \_custom-variables-css:
@@ -143,10 +169,12 @@ _Please note that the default values from the examples below are based on Konfuz
 #### CSS file
 
 ```
+
 :root {
-    --primary-color: #41AF85 !important;
-    --primary-button: 4px !important;
-  }
+--primary-color: #41AF85 !important;
+--primary-button: 4px !important;
+}
+
 ```
 
 ### Try it out before adding it to your project
