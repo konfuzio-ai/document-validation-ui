@@ -59,13 +59,6 @@ deployment, and minimal maintenance, making it the optimal choice for a broad ra
         </div>
     ```
 
-### Understanding the Integration Logic Flow
-
-To include a section that outlines the logic flow based on the diagram you provided, we could title the section "
-Understanding the Integration Logic Flow". Here's how you might incorporate it into your documentation:
-
----
-
 ## Understanding the Integration Logic Flow
 
 To fully grasp how the Konfuzio Document Validation UI (DVUI) integrates into your application's workflow, it's
@@ -103,12 +96,6 @@ sequenceDiagram
     K-->>W: Send callback
 
 ```
-
----
-
-Please replace the placeholder for the diagram image with the actual path to where it should be stored or embedded in
-your documentation. If the diagram is meant to be inserted directly into this text, then include it at the indicated
-position.
 
 ## Alternative Integration Methods
 
