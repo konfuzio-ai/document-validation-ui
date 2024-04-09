@@ -113,29 +113,37 @@ See [full documentation](https://dev.konfuzio.com/web/api-v3.html).
 There are a few different options to integrate the Document Validation UI into your Project, which can be read about in
 more detail in our tutorial section [here](https://dev.konfuzio.com/dvui/tutorials.html).
 
-```
-
-
 ### Run the Document Validation UI in non-Vue applications
 
-If your application is developed using technologies other than Vue (for example React or Angular), you can build the Document Validation UI application into a package, as described in our [configuration example](#configure-the-application), and import it to your existing project, or install it as an npm package.
+If your application is developed using technologies other than Vue (for example React or Angular), you can build the
+Document Validation UI application into a package, as described in
+our [configuration example](#configure-the-application), and import it to your existing project, or install it as an npm
+package.
 
 #### Run in React
 
-You can find a full example of using the Document Validation UI in a React application [here](https://medium.com/@pateldhruv020/using-vue-component-in-react-9161f30d29a0).
+You can find a full example of using the Document Validation UI in a React
+application [here](https://medium.com/@pateldhruv020/using-vue-component-in-react-9161f30d29a0).
 
 #### Run in Angular
 
-At [this link](https://www.ais.com/using-a-vue-component-in-an-angular-app/) you will see a step-by-step on how to use the Document Validation UI in an Angular application.
-
+At [this link](https://www.ais.com/using-a-vue-component-in-an-angular-app/) you will see a step-by-step on how to use
+the Document Validation UI in an Angular application.
 
 ## How to customize the Document Validation UI?
 
-With our software, you can change the primary color of the user interface to match your brand. This allows you to create a seamless experience for your users and reinforce your brand identity.
-To change the primary color, simply add a `:root` pseudo-class to your `CSS` file or inside a `<style>` tag in your `index.html`, inside which you can set the variable `--primary-color` to your custom hue to match your exact brand color (see an example [here](#how-to-add-the-custom-variables-to-your-project)).
-Once you’ve selected your desired color, the user interface will update in real-time to reflect your changes. This means that you can easily experiment with different color options until you find the perfect match for your brand.
+With our software, you can change the primary color of the user interface to match your brand. This allows you to create
+a seamless experience for your users and reinforce your brand identity.
+To change the primary color, simply add a `:root` pseudo-class to your `CSS` file or inside a `<style>` tag in
+your `index.html`, inside which you can set the variable `--primary-color` to your custom hue to match your exact brand
+color (see an example [here](#how-to-add-the-custom-variables-to-your-project)).
+Once you’ve selected your desired color, the user interface will update in real-time to reflect your changes. This means
+that you can easily experiment with different color options until you find the perfect match for your brand.
 
-In addition to the primary color, you also have the ability to customize other aspects of the user interface, such as the button border-radius. Whether your brand has sharp angles or soft curves, we allow you to make the perfect adjustments to achieve the look and feel that you want. For this customization, all you have to do is set a second variable `--primary-button` to the desired value.
+In addition to the primary color, you also have the ability to customize other aspects of the user interface, such as
+the button border-radius. Whether your brand has sharp angles or soft curves, we allow you to make the perfect
+adjustments to achieve the look and feel that you want. For this customization, all you have to do is set a second
+variable `--primary-button` to the desired value.
 
 ![buttons.png](./images/buttons.png)
 
@@ -179,8 +187,13 @@ _Please note that the default values from the examples below are based on Konfuz
 
 ### Try it out before adding it to your project
 
-If you want to test the final result before making changes to your application, you can do so [here](https://codepen.io/konfuzio/pen/QWVpKVE).
+If you want to test the final result before making changes to your application, you can do
+so [here](https://codepen.io/konfuzio/pen/QWVpKVE).
 
-_The example from Codepen shows the Read only mode of the Document Validation UI, which has limited functionalities. To see all the features the UI has to offer, you can add your [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and change the Document id in the `app` tag._
+_The example from Codepen shows the Read only mode of the Document Validation UI, which has limited functionalities. To
+see all the features the UI has to offer, you can add
+your [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and change the Document id in the `app` tag._
 
-We hope this feature will help you take your branding to the next level and provide an even more engaging experience for your users. If you have any questions or need assistance with customization, please don’t hesitate to contact [support](https://konfuzio.com/en/support/).
+We hope this feature will help you take your branding to the next level and provide an even more engaging experience for
+your users. If you have any questions or need assistance with customization, please don’t hesitate to
+contact [support](https://konfuzio.com/en/support/).
