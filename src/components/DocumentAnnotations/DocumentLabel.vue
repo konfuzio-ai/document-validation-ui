@@ -104,6 +104,32 @@ export default {
   },
   watch: {
     annotationId(newAnnotationId) {
+      this.checkAnnotationSelected(newAnnotationId);
+    },
+    hoveredAnnotationSet(newValue) {
+      // Check if there are some unrevised Annotations within the group
+      if (
+        newValue &&
+        newValue.type === "accept" &&
+        this.labelHasPendingAnnotations(newValue)
+      ) {
+        this.showAnnotationsGroup = true;
+      }
+    },
+  },
+  mounted() {
+    this.updateValues();
+    this.checkAnnotationSelected(this.annotationId);
+
+    if (this.publicView) {
+      this.showAnnotationsGroup = true;
+    }
+  },
+  updated() {
+    this.updateValues();
+  },
+  methods: {
+    checkAnnotationSelected(newAnnotationId) {
       // check if annotation is inside a label group and open it
       if (
         this.enableGroupingFeature &&
@@ -127,28 +153,6 @@ export default {
         }
       }
     },
-    hoveredAnnotationSet(newValue) {
-      // Check if there are some unrevised Annotations within the group
-      if (
-        newValue &&
-        newValue.type === "accept" &&
-        this.labelHasPendingAnnotations(newValue)
-      ) {
-        this.showAnnotationsGroup = true;
-      }
-    },
-  },
-  mounted() {
-    this.updateValues();
-
-    if (this.publicView) {
-      this.showAnnotationsGroup = true;
-    }
-  },
-  updated() {
-    this.updateValues();
-  },
-  methods: {
     toggleGroup() {
       this.showAnnotationsGroup = !this.showAnnotationsGroup;
     },

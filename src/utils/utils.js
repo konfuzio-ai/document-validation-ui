@@ -36,7 +36,9 @@ export function getURLValueFromHash(value) {
 }
 
 export function setURLAnnotationHash(annotationId) {
-  window.location.hash = `ann${annotationId}`;
+  if (annotationId) {
+    window.location.hash = `ann${annotationId}`;
+  }
 }
 
 export function navigateToNewDocumentURL(oldId, newId) {

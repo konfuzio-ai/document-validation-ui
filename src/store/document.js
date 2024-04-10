@@ -531,13 +531,23 @@ const getters = {
   isAnnotationInAnnotationSet: (state) => (annotationSet, annotationId) => {
     // Check if the annotation exists in the annotation set
     let exists = false;
-    annotationSet.labels.forEach((label) => {
-      exists = label.annotations.find((ann) => ann.id == annotationId) != null;
-      if (exists) {
-        return;
+    for (let i = 0; i < annotationSet.labels.length; i++) {
+      const label = annotationSet.labels[i];
+      for (let j = 0; j < label.annotations.length; j++) {
+        exists = label.annotations[j].id == annotationId;
+        if (exists) {
+          break;
+        }
       }
-    });
+      if (exists) {
+        break;
+      }
+    }
     return exists;
+  },
+
+  annotationById: (state) => (annotationId) => {
+    return state.annotations.find((ann) => ann.id == annotationId);
   },
 
   // Check if document is ready to be finished
