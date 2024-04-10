@@ -38,12 +38,22 @@ const state = {
   splittingSuggestions: null,
   enableGroupingFeature: true,
   annotationFilters: {
-    showFeedbackNeeded: true,
-    showEmpty: true,
-    showAccepted: true,
+    showFeedbackNeeded:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect" ||
+      true,
+    showEmpty:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect"
+        ? false
+        : true,
+    showAccepted:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect"
+        ? false
+        : true,
   },
 };
-
 const getters = {
   /**
    * Get entities inside a box
