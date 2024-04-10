@@ -20,6 +20,7 @@ const state = {
   labels: [],
   documentId: process.env.VUE_APP_DOCUMENT_ID,
   annotationId: null,
+  annotationSetId: null,
   documentAnnotationSelected: null,
   selectedDocument: null,
   recalculatingAnnotations: false,
@@ -799,6 +800,9 @@ const actions = {
     commit("SET_ANNOTATION_ID", id);
     setURLAnnotationHash(id);
   },
+  setAnnotationSetId: ({ commit }, id) => {
+    commit("SET_ANNOTATION_SET_ID", id);
+  },
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
   },
@@ -1344,6 +1348,9 @@ const mutations = {
   },
   SET_ANNOTATION_ID: (state, id) => {
     state.annotationId = id;
+  },
+  SET_ANNOTATION_SET_ID: (state, id) => {
+    state.annotationSetId = id;
   },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);

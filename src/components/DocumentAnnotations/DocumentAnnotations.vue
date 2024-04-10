@@ -187,6 +187,7 @@ export default {
       "annotationSets",
       "documentId",
       "annotationId",
+      "annotationSetId",
       "recalculatingAnnotations",
       "publicView",
       "editAnnotation",
@@ -304,7 +305,10 @@ export default {
               newAnnotationSet.id &&
               newAnnotationSet.id === annotationSetOpened.id
           );
-          if (isFirstTime && this.annotationId) {
+          if (isFirstTime && this.annotationSetId) {
+            newAnnotationSetsAccordion[index] =
+              newAnnotationSet.id == this.annotationSetId;
+          } else if (isFirstTime && this.annotationId) {
             newAnnotationSetsAccordion[index] =
               this.isAnnotationInAnnotationSet(
                 newAnnotationSet,

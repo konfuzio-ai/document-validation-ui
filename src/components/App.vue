@@ -98,6 +98,12 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    annotationSet: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     ...mapState("display", ["pageError"]),
@@ -169,6 +175,15 @@ export default {
         return null;
       }
     },
+    annotationSetId() {
+      if (getURLValueFromHash("templ")) {
+        return getURLValueFromHash("templ");
+      } else if (this.annotationSet) {
+        return this.annotationSet;
+      } else {
+        return null;
+      }
+    },
   },
   created() {
     // Sentry config
@@ -215,6 +230,7 @@ export default {
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),
+      this.$store.dispatch("document/setAnnotationSetId", this.annotationSetId),
       this.$store.dispatch(
         "project/setDocumentsListPath",
         this.documentsListPath
