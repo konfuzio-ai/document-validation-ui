@@ -429,7 +429,7 @@ export default {
     },
 
     handleFocusedAnnotation(annotation) {
-      this.$store.dispatch("document/setSidebarAnnotationSelected", annotation);
+      this.$store.dispatch("document/setAnnotationId", annotation.id);
       this.closePopups(true);
     },
 

@@ -6,11 +6,11 @@
       hoverEmptyLabelRows && 'hovered-empty-labels',
       hoverPendingAnnotationRows && 'hovered-pending-annotations',
       annotationIsNotFound(annotationSet, label) && 'missing',
-      isAnnotationInEditMode(annotationId()) && 'editing',
+      isAnnotationInEditMode(currentAnnotationId()) && 'editing',
       publicView && 'clickable-cursor',
     ]"
     @click="onAnnotationClick"
-    @mouseover="hoveredAnnotation = annotationId()"
+    @mouseover="hoveredAnnotation = currentAnnotationId()"
     @mouseleave="hoveredAnnotation = null"
   >
     <div
@@ -103,7 +103,11 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="spanSelection && isAnnotationInEditMode(annotationId())">
+          <div
+            v-if="
+              spanSelection && isAnnotationInEditMode(currentAnnotationId())
+            "
+          >
             <EmptyAnnotation
               v-for="(span, index) in spanSelection"
               :key="index"
@@ -195,14 +199,14 @@ export default {
     return {
       isLoading: false,
       isSelected: false,
-      annotationAnimationTimeout: null,
+      // annotationAnimationTimeout: null,
       hoveredAnnotation: null,
     };
   },
   computed: {
     ...mapState("document", [
       "editAnnotation",
-      "sidebarAnnotationSelected",
+      "annotationId",
       "hoveredAnnotationSet",
       "enableGroupingFeature",
       "publicView",
@@ -239,7 +243,7 @@ export default {
       return (
         this.spanSelection &&
         isElementArray(this.spanSelection) &&
-        this.isAnnotationInEditMode(this.annotationId())
+        this.isAnnotationInEditMode(this.currentAnnotationId())
       );
     },
     isAnnotation() {
@@ -247,7 +251,7 @@ export default {
         this.annotation &&
         !this.isNegative(this.annotation) &&
         this.isAnnotationInEditMode(
-          this.annotationId(),
+          this.currentAnnotationId(),
           this.editAnnotation.index
         )
       );
@@ -283,41 +287,8 @@ export default {
     },
   },
   watch: {
-    sidebarAnnotationSelected(newSidebarAnnotationSelected) {
-      if (!newSidebarAnnotationSelected) return;
-
-      let annotationSelected;
-
-      if (newSidebarAnnotationSelected.annotation) {
-        annotationSelected = newSidebarAnnotationSelected.annotation;
-      } else {
-        annotationSelected = newSidebarAnnotationSelected;
-      }
-
-      if (
-        this.annotation &&
-        !this.isNegative(this.annotation) &&
-        this.annotation.id === annotationSelected.id
-      ) {
-        clearTimeout(this.annotationAnimationTimeout);
-
-        this.isSelected = true;
-        // remove annotation selection after some time
-        this.annotationAnimationTimeout = setTimeout(() => {
-          this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-          this.isSelected = false;
-        }, 1200);
-
-        // Check if sidebarAnnotationSelected changed from a click or hover
-        const runAnimation = () => {
-          this.$el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest",
-          });
-        };
-        runAnimation();
-      }
+    annotationId(newAnnotationId) {
+      this.checkAnnotationSelection(newAnnotationId);
     },
     editAnnotation(newValue) {
       if (!newValue) {
@@ -346,7 +317,7 @@ export default {
     selectedEntities(newValue) {
       if (!newValue) return;
 
-      if (this.isAnnotationInEditMode(this.annotationId())) {
+      if (this.isAnnotationInEditMode(this.currentAnnotationId())) {
         this.isLoading = true;
       }
     },
@@ -358,8 +329,38 @@ export default {
       }
     },
   },
+  mounted() {
+    this.checkAnnotationSelection(this.annotationId);
+  },
   methods: {
-    annotationId() {
+    checkAnnotationSelection(newAnnotationId) {
+      if (
+        newAnnotationId &&
+        this.annotation &&
+        !this.isNegative(this.annotation) &&
+        this.annotation.id == newAnnotationId
+      ) {
+        this.isSelected = true;
+        // remove annotation selection after some time
+        // this.annotationAnimationTimeout = setTimeout(() => {
+        //   this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+        //   this.isSelected = false;
+        // }, 1200);
+
+        // Check if sidebarAnnotationSelected changed from a click or hover
+        const runAnimation = () => {
+          this.$el.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest",
+          });
+        };
+        runAnimation();
+      } else {
+        this.isSelected = false;
+      }
+    },
+    currentAnnotationId() {
       if (!this.annotationSet || !this.label) return;
 
       if (
@@ -442,7 +443,7 @@ export default {
     showAcceptButton() {
       return (
         !this.editAnnotation &&
-        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
         !this.isNegative(this.annotation) &&
         !this.annotation.is_correct &&
@@ -452,7 +453,7 @@ export default {
     showDeclineButton() {
       return (
         !this.editAnnotation &&
-        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
         !this.isNegative(this.annotation) &&
         this.hoveredAnnotation === this.annotation.id
@@ -462,7 +463,7 @@ export default {
       return (
         !this.editAnnotation &&
         this.hoveredAnnotation &&
-        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         (!this.annotation || this.isNegative(this.annotation)) &&
         !this.annotationIsNotFound(this.annotationSet, this.label)
       );
@@ -471,13 +472,13 @@ export default {
       return (
         !this.editAnnotation &&
         this.hoveredAnnotation &&
-        !this.isAnnotationInEditMode(this.annotationId()) &&
+        !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
     showCancelButton() {
       if (!this.editAnnotation || this.isLoading) return;
-      if (this.isAnnotationInEditMode(this.annotationId())) {
+      if (this.isAnnotationInEditMode(this.currentAnnotationId())) {
         return true;
       }
     },
@@ -488,10 +489,10 @@ export default {
       if (this.isAnnotation) {
         return true;
       } else {
-        if (!this.isAnnotationInEditMode(this.annotationId())) return;
+        if (!this.isAnnotationInEditMode(this.currentAnnotationId())) return;
 
         return (
-          this.elementSelected === this.annotationId() &&
+          this.elementSelected === this.currentAnnotationId() &&
           this.spanSelection &&
           Array.isArray(this.spanSelection)
         );
@@ -522,7 +523,7 @@ export default {
         (this.showAcceptButton() ||
           this.showDeclineButton() ||
           this.isAnnotationInEditMode(
-            this.annotationId(),
+            this.currentAnnotationId(),
             this.editAnnotation.index
           ))
       ) {
@@ -560,7 +561,7 @@ export default {
         }
       } else if (
         (!this.annotation || this.isNegative(this.annotation)) &&
-        this.isAnnotationInEditMode(this.annotationId())
+        this.isAnnotationInEditMode(this.currentAnnotationId())
       ) {
         this.saveEmptyAnnotationChanges();
       }

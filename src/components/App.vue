@@ -12,7 +12,11 @@ import * as Sentry from "@sentry/vue";
 import DocumentDashboard from "./DocumentDashboard";
 import ErrorPage from "./ErrorPage";
 import { DocumentsList } from "./DocumentsList";
-import { getURLQueryParam, getURLPath } from "../utils/utils";
+import {
+  getURLQueryParam,
+  getURLPath,
+  getURLValueFromHash,
+} from "../utils/utils";
 import { Integrations } from "@sentry/tracing";
 import API from "../api";
 
@@ -88,6 +92,12 @@ export default {
       required: false,
       default: false,
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    annotation: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     ...mapState("display", ["pageError"]),
@@ -150,6 +160,15 @@ export default {
         return null;
       }
     },
+    annotationId() {
+      if (getURLValueFromHash("ann")) {
+        return getURLValueFromHash("ann");
+      } else if (this.annotation) {
+        return this.annotation;
+      } else {
+        return null;
+      }
+    },
   },
   created() {
     // Sentry config
@@ -195,6 +214,7 @@ export default {
       this.$store.dispatch("display/setReviewFilter", this.reviewFilter),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
+      this.$store.dispatch("document/setAnnotationId", this.annotationId),
       this.$store.dispatch(
         "project/setDocumentsListPath",
         this.documentsListPath

@@ -186,6 +186,7 @@ export default {
     ...mapState("document", [
       "annotationSets",
       "documentId",
+      "annotationId",
       "recalculatingAnnotations",
       "publicView",
       "editAnnotation",
@@ -193,7 +194,6 @@ export default {
       "labels",
       "selectedDocument",
       "splittingSuggestions",
-      "sidebarAnnotationSelected",
     ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
@@ -203,6 +203,7 @@ export default {
       "annotationSetsInTable",
       "isDocumentReviewed",
       "annotationSetOfAnnotation",
+      "isAnnotationInAnnotationSet",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -229,9 +230,9 @@ export default {
         oldAnnotationSets
       );
     },
-    sidebarAnnotationSelected(annotation) {
-      if (annotation) {
-        const annotationSet = this.annotationSetOfAnnotation(annotation);
+    annotationId(newAnnotationId) {
+      if (newAnnotationId) {
+        const annotationSet = this.annotationSetOfAnnotation(newAnnotationId);
         if (annotationSet) {
           const index = this.annotationSets.findIndex(
             (annotationSetToFind) => annotationSetToFind.id === annotationSet.id
@@ -303,7 +304,13 @@ export default {
               newAnnotationSet.id &&
               newAnnotationSet.id === annotationSetOpened.id
           );
-          if (isFirstTime && index === 0) {
+          if (isFirstTime && this.annotationId) {
+            newAnnotationSetsAccordion[index] =
+              this.isAnnotationInAnnotationSet(
+                newAnnotationSet,
+                this.annotationId
+              );
+          } else if (isFirstTime && index === 0) {
             // open first one by default
             newAnnotationSetsAccordion[index] = true;
           } else if (wasOpen) {

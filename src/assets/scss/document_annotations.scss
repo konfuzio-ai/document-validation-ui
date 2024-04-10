@@ -341,7 +341,9 @@
               justify-content: space-between;
             }
 
-            &:hover,
+            &:hover {
+              background-color: $grey-hover !important;
+            }
             &.selected {
               background-color: $grey-lightest;
             }

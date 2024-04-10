@@ -5,6 +5,7 @@ import {
   getURLQueryParam,
   navigateToNewDocumentURL,
   getURLPath,
+  setURLAnnotationHash,
 } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
@@ -18,7 +19,7 @@ const state = {
   annotations: null,
   labels: [],
   documentId: process.env.VUE_APP_DOCUMENT_ID,
-  sidebarAnnotationSelected: null,
+  annotationId: null,
   documentAnnotationSelected: null,
   selectedDocument: null,
   recalculatingAnnotations: false,
@@ -253,12 +254,12 @@ const getters = {
   },
 
   /* Get annotation set for a given annotation */
-  annotationSetOfAnnotation: (state) => (annotationToFind) => {
+  annotationSetOfAnnotation: (state) => (annotationIdToFind) => {
     let foundAnnotationSet = null;
     state.annotationSets.forEach((annotationSet) => {
       annotationSet.labels.forEach((label) => {
         label.annotations.forEach((annotation) => {
-          if (annotation.id === annotationToFind.id) {
+          if (annotation.id === annotationIdToFind) {
             foundAnnotationSet = annotationSet;
             return;
           }
@@ -527,6 +528,18 @@ const getters = {
     }
   },
 
+  isAnnotationInAnnotationSet: (state) => (annotationSet, annotationId) => {
+    // Check if the annotation exists in the annotation set
+    let exists = false;
+    annotationSet.labels.forEach((label) => {
+      exists = label.annotations.find((ann) => ann.id == annotationId) != null;
+      if (exists) {
+        return;
+      }
+    });
+    return exists;
+  },
+
   // Check if document is ready to be finished
   isDocumentReadyToFinishReview: (state) => {
     // check if all annotations are correct
@@ -772,8 +785,9 @@ const actions = {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setSidebarAnnotationSelected: ({ commit }, annotation) => {
-    commit("SET_ANNOTATION_SELECTED", annotation);
+  setAnnotationId: ({ commit }, id) => {
+    commit("SET_ANNOTATION_ID", id);
+    setURLAnnotationHash(id);
   },
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
@@ -1318,6 +1332,9 @@ const mutations = {
       state.documentId = id;
     }
   },
+  SET_ANNOTATION_ID: (state, id) => {
+    state.annotationId = id;
+  },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);
     state.annotationSets.map((annotationSet) => {
@@ -1431,9 +1448,6 @@ const mutations = {
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;
-  },
-  SET_ANNOTATION_SELECTED: (state, annotation) => {
-    state.sidebarAnnotationSelected = annotation;
   },
   SET_EDIT_ANNOTATION: (state, editAnnotation) => {
     state.editAnnotation = editAnnotation;

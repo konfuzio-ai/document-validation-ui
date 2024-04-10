@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     ...mapState("document", [
-      "sidebarAnnotationSelected",
+      "annotationId",
       "enableGroupingFeature",
       "hoveredAnnotationSet",
       "publicView",
@@ -103,35 +103,27 @@ export default {
     },
   },
   watch: {
-    sidebarAnnotationSelected(newSidebarAnnotationSelected) {
+    annotationId(newAnnotationId) {
       // check if annotation is inside a label group and open it
       if (
         this.enableGroupingFeature &&
         !this.showAnnotationsGroup &&
-        newSidebarAnnotationSelected
+        newAnnotationId
       ) {
-        let annotationSelected;
-
-        if (newSidebarAnnotationSelected.annotation) {
-          annotationSelected = newSidebarAnnotationSelected.annotation;
-        } else {
-          annotationSelected = newSidebarAnnotationSelected;
-        }
-
         const annotation = this.label.annotations.find(
-          (ann) => ann.id === annotationSelected.id
+          (ann) => ann.id == newAnnotationId
         );
 
         if (annotation) {
           this.showAnnotationsGroup = true;
-          this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-          // run in next render because we need to open the group first
-          this.$nextTick(() => {
-            this.$store.dispatch(
-              "document/setSidebarAnnotationSelected",
-              annotation
-            );
-          });
+          // this.$store.dispatch("document/setSidebarAnnotationSelected", null);
+          // // run in next render because we need to open the group first
+          // this.$nextTick(() => {
+          //   this.$store.dispatch(
+          //     "document/setSidebarAnnotationSelected",
+          //     annotation
+          //   );
+          // });
         }
       }
     },
