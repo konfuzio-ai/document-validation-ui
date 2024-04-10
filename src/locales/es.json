@@ -157,5 +157,6 @@
   "human_feedback_needed": "Necesita feedback humano",
   "label_missing_annotations": "Anotaciones faltantes",
   "accepted_annotations": "Anotaciones aceptadas",
-  "edit_ann_content_warning": "Si cambia el texto, la IA no puede utilizar esta anotación. También invalidarás los datos del entrenamiento. Intente cambiar la selección para capturar el texto antes de agregarlo manualmente, o presione OK para continuar de todos modos."
+  "edit_ann_content_warning": "Si cambia el texto, la IA no puede utilizar esta anotación. También invalidarás los datos del entrenamiento. Intente cambiar la selección para capturar el texto antes de agregarlo manualmente, o presione OK para continuar de todos modos.",
+  "annotation_deleted": "Esta anotación ha sido eliminada."
 }

@@ -157,5 +157,6 @@
   "human_feedback_needed": "Menschliches Feedback erforderlich",
   "label_missing_annotations": "Fehlende Annotationen",
   "accepted_annotations": "Akzeptierte Annotationen",
-  "edit_ann_content_warning": "Wenn Sie den Text ändern, kann die KI diese Annotation nicht verwenden. Dadurch werden auch die Trainingsdaten ungültig. Versuchen Sie, die Auswahl zu verändern, um den Text zu erfassen,bevor Sie ihn manuell hinzufügen, oder drücken Sie OK, um trotzdem fortzufahren."
+  "edit_ann_content_warning": "Wenn Sie den Text ändern, kann die KI diese Annotation nicht verwenden. Dadurch werden auch die Trainingsdaten ungültig. Versuchen Sie, die Auswahl zu verändern, um den Text zu erfassen,bevor Sie ihn manuell hinzufügen, oder drücken Sie OK, um trotzdem fortzufahren.",
+  "annotation_deleted": "Diese Annotation wurde gelöscht."
 }
