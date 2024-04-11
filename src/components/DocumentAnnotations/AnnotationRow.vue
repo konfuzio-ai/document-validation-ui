@@ -134,12 +134,14 @@
       </div>
       <div class="buttons-container">
         <AnnotationActionButtons
+          :annotation="annotation"
           :cancel-btn="showCancelButton()"
           :accept-btn="showAcceptButton()"
           :decline-btn="showDeclineButton()"
           :show-missing-btn="showMissingButton()"
           :save-btn="showSaveButton()"
           :restore-btn="showRestoreButton()"
+          :link-btn="showLinkButton()"
           :is-loading="isLoading"
           @mark-as-missing="handleMissingAnnotation"
           @save="handleSaveChanges"
@@ -439,6 +441,9 @@ export default {
       } else {
         return null;
       }
+    },
+    showLinkButton() {
+      return this.annotation && this.hoveredAnnotation === this.annotation.id;
     },
     showAcceptButton() {
       return (

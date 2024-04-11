@@ -1,6 +1,16 @@
 <template>
   <div class="action-buttons">
     <!-- loading -->
+    <b-button
+      v-if="linkBtn"
+      type="is-ghost"
+      class="link-button"
+      @click="copyAnnotationLink"
+    >
+      <b-tooltip position="is-left" :label="$t('annotation_link')">
+        <b-icon size="is-20" icon="link" />
+      </b-tooltip>
+    </b-button>
     <div v-if="isLoading">
       <b-notification :closable="false" class="loading-background">
         <b-loading :active="isLoading" :is-full-page="false">
@@ -96,12 +106,17 @@
 import { mapGetters, mapState } from "vuex";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import { TEXT_BREAKPOINT_WIDTH } from "../../constants";
+import { setURLAnnotationHash } from "../../utils/utils";
 export default {
   name: "AnnotationActionButtons",
   components: {
     AcceptedCheckMark,
   },
   props: {
+    annotation: {
+      type: Object,
+      default: null,
+    },
     saveBtn: {
       type: Boolean,
     },
@@ -125,6 +140,10 @@ export default {
       required: false,
     },
     restoreBtn: {
+      type: Boolean,
+      required: false,
+    },
+    linkBtn: {
       type: Boolean,
       required: false,
     },
@@ -155,6 +174,16 @@ export default {
     window.removeEventListener("resize", this.resize);
   },
   methods: {
+    copyAnnotationLink() {
+      if (this.annotation) {
+        setURLAnnotationHash(this.annotation.id);
+        navigator.clipboard.writeText(window.location.href);
+        this.$buefy.toast.open({
+          container: "#app .dv-ui-app-container",
+          message: "Something happened",
+        });
+      }
+    },
     resize() {
       this.showText = window.innerWidth > TEXT_BREAKPOINT_WIDTH;
     },
