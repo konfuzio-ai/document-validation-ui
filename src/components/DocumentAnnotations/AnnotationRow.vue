@@ -35,7 +35,7 @@
           annotationIsNotFound(annotationSet, label) && 'not-found-text',
         ]"
       >
-        <span>{{ label.name }} </span>
+        <span @click="selectAnnotation">{{ label.name }} </span>
       </div>
 
       <div
@@ -443,7 +443,11 @@ export default {
       }
     },
     showLinkButton() {
-      return this.annotation && this.hoveredAnnotation === this.annotation.id;
+      return (
+        !this.editAnnotation &&
+        this.annotation &&
+        this.hoveredAnnotation === this.annotation.id
+      );
     },
     showAcceptButton() {
       return (
@@ -754,6 +758,12 @@ export default {
     searchLabelInDocument() {
       this.$store.dispatch("display/enableSearch", true);
       this.$store.dispatch("display/setCurrentSearch", this.label.name);
+    },
+    selectAnnotation(event) {
+      event.stopPropagation();
+      if (this.annotation) {
+        this.$store.dispatch("document/setAnnotationId", this.annotation.id);
+      }
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div id="document-annotations">
+  <div id="document-annotations" @click="cleanSelection">
     <!-- When extracting annotations after editing -->
     <div v-if="recalculatingAnnotations" class="extracting-data">
       <ExtractingData />
@@ -657,6 +657,9 @@ export default {
       } else {
         this.$store.dispatch("display/showAnnSetTable", tableSet);
       }
+    },
+    cleanSelection() {
+      this.$store.dispatch("document/setAnnotationId", null);
     },
   },
 };

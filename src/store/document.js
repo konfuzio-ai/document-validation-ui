@@ -1056,6 +1056,9 @@ const actions = {
               }
             } else {
               commit("ADD_ANNOTATION", response.data);
+              if (response.data && response.data.id) {
+                dispatch("setAnnotationId", response.data.id);
+              }
               if (negativeAnnotationId) {
                 commit("DELETE_ANNOTATION", negativeAnnotationId);
               }

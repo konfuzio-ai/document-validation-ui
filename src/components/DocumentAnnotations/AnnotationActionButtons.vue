@@ -174,13 +174,14 @@ export default {
     window.removeEventListener("resize", this.resize);
   },
   methods: {
-    copyAnnotationLink() {
+    copyAnnotationLink(event) {
       if (this.annotation) {
-        setURLAnnotationHash(this.annotation.id);
+        event.stopPropagation();
+        this.$store.dispatch("document/setAnnotationId", this.annotation.id);
         navigator.clipboard.writeText(window.location.href);
         this.$buefy.toast.open({
           container: "#app .dv-ui-app-container",
-          message: "Something happened",
+          message: this.$t("copied"),
         });
       }
     },
