@@ -24,6 +24,23 @@ export function getURLPath(value) {
   return id;
 }
 
+export function getURLValueFromHash(value) {
+  const hash = window.location.hash;
+  if (!hash.includes(`#${value}`)) return;
+
+  const id = hash.split(`#${value}`)[1].replace("/", "");
+
+  if (id === "") return;
+
+  return id;
+}
+
+export function setURLAnnotationHash(annotationId) {
+  if (annotationId) {
+    window.location.hash = `ann${annotationId}`;
+  }
+}
+
 export function navigateToNewDocumentURL(oldId, newId) {
   const url = window.location.href;
   const newUrl = url.replace(oldId, newId);

@@ -341,7 +341,9 @@
               justify-content: space-between;
             }
 
-            &:hover,
+            &:hover {
+              background-color: $grey-hover !important;
+            }
             &.selected {
               background-color: $grey-lightest;
             }
@@ -435,9 +437,16 @@
   .action-buttons {
     display: flex;
     gap: 6px;
-
     button {
       height: 32px;
+
+      &.link-button {
+        color: $grey-blue;
+        padding: 8px;
+        .icon {
+          vertical-align: middle;
+        }
+      }
 
       &.annotation-save-btn {
         cursor: pointer;
