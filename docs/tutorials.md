@@ -171,8 +171,7 @@ In the `HTML`, we should load the script we created with Webpack or the compiled
 customize the variables we want. Please note that customizing the variables is optional and that any variable in
 the `.env` will have priority from the variables defined in the `index.html`.
 
-The following examples, based on the two configuration options mentioned before, include the custom variables (Document
-id, user token, locale), but it is not mandatory to add these, which should still be added to the `.env` file.
+The following examples, based on the two configuration options mentioned before, include the custom variables (Document ID, user token, locale), but it is not mandatory to add these, which should still be added to the `.env` file.
 
 ###### Imports from the dist folder
 
@@ -288,7 +287,7 @@ sets, Label sets, Labels). Any modification you make to the Document in the Docu
 Currently, this public view is not allowed to be indexed by search engines.
 
 If you need to programmatically generate public links, you can use the format `https://app.konfuzio.com/d/<id>/`. You
-can retrieve the ID of a Document from your Konfuzio dashboard or the API. Document ids that don’t exist or are not
+can retrieve the ID of a Document from your Konfuzio dashboard or the API. Document IDs that don’t exist or are not
 public will return a 404 error.
 
 #### Embed a Konfuzio Document on another website

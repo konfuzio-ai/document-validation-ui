@@ -36,9 +36,9 @@ and password. If the provided credentials are correct, then a Token will be gene
 the `.env` file (see below for more details).
 
 You will also need a [Document uploaded](https://app.konfuzio.com/v3/swagger/#/documents/documents_create) and a
-Document id, and will need to be logged in to [Konfuzio](https://app.konfuzio.com/)) before being able to upload the
+Document ID, and will need to be logged in to [Konfuzio](https://app.konfuzio.com/)) before being able to upload the
 Document. After successfully uploading it, if you want to show it on the Document Validation UI, you can copy the
-Document id from the URL, as shown in the image below:
+Document ID from the URL, as shown in the image below:
 
 .. image:: ./images/docid.png
 
@@ -47,7 +47,7 @@ the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/ma
 following required values:
 
 - The user token: `VUE_APP_GUEST_USER_TOKEN`
-- The Document id: `VUE_APP_DOCUMENT_ID`
+- The Document ID: `VUE_APP_DOCUMENT_ID`
 
 Some other optional variables you can include are:
 
@@ -75,8 +75,8 @@ Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?
   is: `VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER`. This variable is a boolean that indicates if only review documents should
   appear when moving forward or backward in the list.
 
-You can also set the Document id through the URL query parameters like `?document=ID`. This will have priority over any
-other Document id that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority
+You can also set the Document ID through the URL query parameters like `?document=ID`. This will have priority over any
+other Document ID that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority
 from the ones defined in the HTML.
 
 ## Multilingual User Interface
@@ -192,7 +192,7 @@ so [here](https://codepen.io/konfuzio/pen/QWVpKVE).
 
 _The example from Codepen shows the Read only mode of the Document Validation UI, which has limited functionalities. To
 see all the features the UI has to offer, you can add
-your [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and change the Document id in the `app` tag._
+your [user token](https://app.konfuzio.com/v3/swagger/#/auth/auth_create) and change the Document ID in the `app` tag._
 
 We hope this feature will help you take your branding to the next level and provide an even more engaging experience for
 your users. If you have any questions or need assistance with customization, please don’t hesitate to
