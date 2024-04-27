@@ -87,12 +87,6 @@ export default {
       default: "",
     },
     // eslint-disable-next-line vue/prop-name-casing
-    review_filter: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // eslint-disable-next-line vue/prop-name-casing
     annotation: {
       type: String,
       required: false,
@@ -112,8 +106,8 @@ export default {
         return getURLQueryParam("document");
       } else if (getURLPath("d")) {
         return getURLPath("d");
-      } else if (process.env.VUE_APP_DOCUMENT_ID) {
-        return process.env.VUE_APP_DOCUMENT_ID;
+      } else if (process.env.VUE_APP_DOCUMENT) {
+        return process.env.VUE_APP_DOCUMENT;
       } else if (this.document) {
         return this.document;
       } else {
@@ -121,16 +115,25 @@ export default {
       }
     },
     userToken() {
-      if (process.env.VUE_APP_GUEST_USER_TOKEN) {
-        return process.env.VUE_APP_GUEST_USER_TOKEN;
+      if (process.env.VUE_APP_USER_TOKEN) {
+        return process.env.VUE_APP_USER_TOKEN;
       } else if (this.user_token) {
         return this.user_token;
       } else {
         return null;
       }
     },
+    fullMode() {
+      if (process.env.VUE_APP_FULL_MODE) {
+        return process.env.VUE_APP_FULL_MODE;
+      } else if (this.full_mode && this.full_mode === "true") {
+        return this.full_mode;
+      } else {
+        return null;
+      }
+    },
     isPublicView() {
-      if (this.userToken || (this.full_mode && this.full_mode === "true")) {
+      if (this.userToken || this.fullMode) {
         return false;
       } else {
         return true;
@@ -149,19 +152,10 @@ export default {
       }
     },
     detailsUrl() {
-      if (process.env.VUE_APP_DOCUMENT_DETAILS_URL) {
-        return process.env.VUE_APP_DOCUMENT_DETAILS_URL;
+      if (process.env.VUE_APP_DETAILS_URL) {
+        return process.env.VUE_APP_DETAILS_URL;
       } else if (this.details_url) {
         return this.details_url;
-      } else {
-        return null;
-      }
-    },
-    reviewFilter() {
-      if (process.env.VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER) {
-        return process.env.VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER;
-      } else if (this.review_filter) {
-        return this.review_filter;
       } else {
         return null;
       }
@@ -169,6 +163,8 @@ export default {
     annotationId() {
       if (getURLValueFromHash("ann")) {
         return getURLValueFromHash("ann");
+      } else if (process.env.VUE_APP_ANNOTATION) {
+        return process.env.VUE_APP_ANNOTATION;
       } else if (this.annotation) {
         return this.annotation;
       } else {
@@ -178,6 +174,8 @@ export default {
     annotationSetId() {
       if (getURLValueFromHash("templ")) {
         return getURLValueFromHash("templ");
+      } else if (process.env.VUE_APP_ANNOTATION_SET) {
+        return process.env.VUE_APP_ANNOTATION_SET;
       } else if (this.annotationSet) {
         return this.annotationSet;
       } else {
@@ -192,7 +190,7 @@ export default {
         Vue,
         dsn: process.env.VUE_APP_SENTRY_DSN,
         integrations: [new Integrations.BrowserTracing()],
-        environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
+        environment: process.env.VUE_APP_SENTRY_ENV,
 
         // We recommend adjusting this value in production, or using tracesSampler
         // for finer control
@@ -226,7 +224,6 @@ export default {
     // document and project config
     Promise.all([
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
-      this.$store.dispatch("display/setReviewFilter", this.reviewFilter),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),

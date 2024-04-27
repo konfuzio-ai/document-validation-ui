@@ -2,7 +2,7 @@ import axios from "axios";
 
 let HTTP, FILE_REQUEST, authToken, appLocale;
 const DEFAULT_URL = "https://app.konfuzio.com";
-const FILE_URL = process.env.VUE_APP_DOCUMENT_IMAGES_URL;
+const FILE_URL = process.env.VUE_APP_IMAGE_URL;
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";

@@ -18,7 +18,7 @@ const state = {
   annotationSets: null,
   annotations: null,
   labels: [],
-  documentId: process.env.VUE_APP_DOCUMENT_ID,
+  documentId: process.env.VUE_APP_DOCUMENT,
   annotationId: null,
   annotationSetId: null,
   documentAnnotationSelected: null,
