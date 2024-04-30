@@ -40,7 +40,7 @@ jobs:
         run: |
           npm version patch
           npm publish
-
+          
       - name: Push changes to repository
         if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         run: git push origin
