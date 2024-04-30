@@ -56,7 +56,6 @@ export default {
     return {
       scrollTop: 0,
       clientHeight: 0,
-      isScolling: false,
       scrollTimeout: null,
     };
   },
