@@ -6,6 +6,7 @@ const state = {
   currentUser: null,
   documentsListPath: null,
   documentsInProject: null,
+  showAnnotationTranslations: false,
 };
 
 const getters = {
@@ -86,6 +87,10 @@ const actions = {
     commit("SET_DOCUMENTS_IN_PROJECT", documents);
   },
 
+  setShowAnnotationTranslations: ({ commit }, show) => {
+    commit("SET_SHOW_ANNOTATION_TRANSLATIONS", show);
+  },
+
   fetchDocumentList: ({ commit, state }, parameters) => {
     return HTTP.get(
       `documents/?project=${state.projectId}&assignee=${state.currentUser.username}&limit=100&${parameters}`
@@ -113,6 +118,9 @@ const mutations = {
   },
   SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
     state.documentsInProject = documents;
+  },
+  SET_SHOW_ANNOTATION_TRANSLATIONS: (state, show) => {
+    state.showAnnotationTranslations = show;
   },
 };
 

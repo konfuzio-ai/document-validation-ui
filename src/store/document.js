@@ -891,6 +891,14 @@ const actions = {
             dispatch("project/setProjectId", projectId, {
               root: true,
             });
+
+            dispatch(
+              "project/setShowAnnotationTranslations",
+              response.data.enable_translated_strings,
+              {
+                root: true,
+              }
+            );
           }
 
           if (getters.documentHasProposedSplit(response.data)) {
