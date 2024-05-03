@@ -41,7 +41,6 @@ const state = {
   searchLoading: false,
   currentSearchResult: null,
   detailsUrl: null,
-  reviewFilter: false,
   pageError: null,
 };
 
@@ -298,10 +297,6 @@ const actions = {
     commit("SET_DETAILS_URL", value);
   },
 
-  setReviewFilter: ({ commit }, value) => {
-    commit("SET_REVIEW_FILTER", value);
-  },
-
   debounceSearch: debounce(({ commit, dispatch }, query) => {
     dispatch("search", query);
   }, 300),
@@ -426,9 +421,6 @@ const mutations = {
   },
   SET_DETAILS_URL: (state, value) => {
     state.detailsUrl = value;
-  },
-  SET_REVIEW_FILTER: (state, value) => {
-    state.reviewFilter = value;
   },
   SET_PAGE_ERROR: (state, value) => {
     state.pageError = value;

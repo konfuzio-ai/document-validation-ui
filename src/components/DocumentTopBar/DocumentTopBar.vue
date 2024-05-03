@@ -123,7 +123,6 @@ export default {
       "loading",
       "recalculatingAnnotations",
     ]),
-    ...mapState("display", ["reviewFilter"]),
     ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
     ...mapState("project", ["documentsInProject"]),
@@ -165,7 +164,7 @@ export default {
       const filteredDocuments =
         this.documentsInProject; /*this.documentsInProject.filter(
         (document) =>
-          (this.reviewFilter && this.isDocumentReadyToBeReviewed(document)) ||
+          (this.isDocumentReadyToBeReviewed(document)) ||
           this.waitingForSplittingConfirmation(document)
       );*/
 
