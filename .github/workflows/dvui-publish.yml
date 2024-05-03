@@ -33,7 +33,6 @@ jobs:
           echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' --perl-regexp --author='^((?!Konfuzio Bot).*)$' | wc -l)" >> $GITHUB_ENV
 
       - name: Bump version & Release
-        if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -41,5 +40,4 @@ jobs:
           npm publish
           
       - name: Push changes to repository
-        if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         run: git push --tags origin
