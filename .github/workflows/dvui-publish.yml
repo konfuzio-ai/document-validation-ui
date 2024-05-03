@@ -4,8 +4,7 @@
 name: DVUI release
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
 
 jobs:
   build-and-publish-npm:
@@ -33,7 +32,7 @@ jobs:
           set +H
           echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' --perl-regexp --author='^((?!Konfuzio Bot).*)$' | wc -l)" >> $GITHUB_ENV
 
-      - name: Bump version
+      - name: Bump version & Release
         if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -43,4 +42,4 @@ jobs:
           
       - name: Push changes to repository
         if: ${{ env.NEW_COMMIT_COUNT > 0 }}
-        run: git push origin
+        run: git push --tags origin
