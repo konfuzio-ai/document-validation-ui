@@ -50,10 +50,15 @@ export default {
 
   computed: {
     ...mapState("display", ["pageChangedFromThumbnail", "currentPage"]),
-    ...mapState("document", ["pages", "documentAnnotationSelected", "loading"]),
+    ...mapState("document", [
+      "pages",
+      "documentAnnotationSelected",
+      "loading",
+      "annotationId",
+    ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
-    ...mapGetters("document", ["scrollDocumentToAnnotation"]),
+    ...mapGetters("document", ["scrollDocumentToAnnotation", "annotationById"]),
 
     loadedPage() {
       if (this.editMode) {
@@ -97,11 +102,28 @@ export default {
         this.page.number
       );
     },
+    spanForAnnotationSelected() {
+      if (this.annotationId) {
+        const annotation = this.annotationById(this.annotationId);
+        if (
+          annotation &&
+          annotation.span &&
+          annotation.span.length > 0 &&
+          annotation.span[0].page_index + 1 === this.page.number
+        ) {
+          return annotation.span[0];
+        }
+      }
+      return null;
+    },
   },
 
   watch: {
     scrollTop: "updateElementBounds",
     clientHeight: "updateElementBounds",
+    annotationId() {
+      this.scrollDocumentToPosition(this.spanForAnnotationSelected);
+    },
 
     /**
      * Scroll to the focused annotation if it changes and it's on this page.
@@ -111,15 +133,7 @@ export default {
         isToScroll &&
         this.documentAnnotationSelected.page === this.page.number
       ) {
-        // We wait for the page to be focused before actually scrolling
-        // to the focused annotation.
-        this.$nextTick(() => {
-          // Scroll to the annotation
-          this.scrollTo(
-            this.getYForBbox(this.documentAnnotationSelected.span) - 100, // offset for edit annotation popup
-            this.getXForBbox(this.documentAnnotationSelected.span)
-          );
-        });
+        this.scrollDocumentToPosition(this.documentAnnotationSelected.span);
       }
     },
     isElementFocused(focused) {
@@ -153,6 +167,7 @@ export default {
   },
   mounted() {
     this.updateElementBounds();
+    this.scrollDocumentToPosition(this.spanForAnnotationSelected);
   },
 
   methods: {
@@ -169,6 +184,19 @@ export default {
         this.currentPage === page.number ||
         this.visiblePageRange.includes(page.number)
       );
+    },
+    scrollDocumentToPosition(span) {
+      if (span) {
+        // We wait for the page to be focused before actually scrolling
+        // to the focused annotation.
+        this.$nextTick(() => {
+          // Scroll to the annotation
+          this.scrollTo(
+            this.getYForBbox(span) - 100, // offset for edit annotation popup
+            this.getXForBbox(span)
+          );
+        });
+      }
     },
     updateElementBounds() {
       const { offsetTop, offsetHeight } = this.$el;

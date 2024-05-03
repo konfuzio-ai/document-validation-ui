@@ -76,14 +76,41 @@
                 (bbox) => bbox.page_index + 1 == page.number
               )"
             >
-              <v-rect
-                v-if="!isAnnotationInEditMode(annotation.id)"
-                :key="'ann' + annotation.id + '-' + index"
-                :config="annotationRect(bbox, annotation.id)"
-                @click="handleFocusedAnnotation(annotation)"
-                @mouseenter="onElementEnter(annotation, bbox)"
-                @mouseleave="onElementLeave"
-              />
+              <v-group :key="'ann' + annotation.id + '-' + index">
+                <v-label
+                  v-if="annotation.id == annotationId && !searchEnabled"
+                  :key="`label${annotation.id}`"
+                  :config="{
+                    listening: false,
+                    ...annotationLabelRect(bbox),
+                  }"
+                >
+                  <v-tag
+                    :config="{
+                      fill: '#1A1A1A',
+                      lineJoin: 'round',
+                      hitStrokeWidth: 0,
+                      listening: false,
+                    }"
+                  />
+                  <v-text
+                    :config="{
+                      padding: 4,
+                      text: labelOfAnnotation(annotation).name,
+                      fill: 'white',
+                      fontSize: 12,
+                      listening: false,
+                    }"
+                  />
+                </v-label>
+                <v-rect
+                  v-if="!isAnnotationInEditMode(annotation.id)"
+                  :config="annotationRect(bbox, annotation.id)"
+                  @click="handleFocusedAnnotation(annotation)"
+                  @mouseenter="onElementEnter(annotation, bbox)"
+                  @mouseleave="onElementLeave"
+                />
+              </v-group>
             </template>
           </template>
         </template>
@@ -194,6 +221,7 @@ export default {
       "editAnnotation",
       "selectedDocument",
       "publicView",
+      "annotationId",
     ]),
     ...mapState("edit", ["editMode"]),
     ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
@@ -585,13 +613,19 @@ export default {
      * Builds the konva config object for the annotation.
      */
     annotationRect(bbox, annotationId, draggable) {
+      const selected = this.annotationId == annotationId && !this.searchEnabled;
       const focused = this.isAnnotationFocused(annotationId);
       let fillColor = "yellow";
       let strokeWidth = 0;
       let strokeColor = "";
 
-      // if hovered
-      if (focused) {
+      // if annotation is selected
+      if (selected) {
+        fillColor = "orange";
+        strokeWidth = 1;
+        strokeColor = "black";
+      } // if hovered
+      else if (focused) {
         fillColor = "#67E9B7";
         strokeWidth = 1;
         strokeColor = "black";
