@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0 # Required to count the commits
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: npm run test:unit
@@ -25,19 +25,16 @@ jobs:
         run: |
           git config --global user.email "fz@konfuzio.com"
           git config --global user.name "Konfuzio Bot"
-
-      - name: Get new commits
-        # Disable history expansion to avoid issues with the `!` character
-        run: |
-          set +H
-          echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' --perl-regexp --author='^((?!Konfuzio Bot).*)$' | wc -l)" >> $GITHUB_ENV
-
-      - name: Bump version & Release
+          
+      - name: Bump version & Release NPM
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
         run: |
           npm version patch
           npm publish
           
       - name: Push changes to repository
-        run: git push --tags origin
+        if: ${{ env.NEW_COMMIT_COUNT > 0 }}
+        run: | 
+          git push --tags origin
+          git push origin
