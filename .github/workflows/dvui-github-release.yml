@@ -1,4 +1,4 @@
-name: Create Github release
+name: DVUI Github Release
 
 on:
   push:
