@@ -39,7 +39,7 @@
       </div>
 
       <div
-        v-if="showTranslationsDetails"
+        v-if="showAnnotationTranslations"
         :class="['annotation-translation', !isDocumentReviewed && 'pointer']"
         @click="editAnnotationTranslation(annotation.id)"
       >
@@ -223,7 +223,7 @@ export default {
       "elementSelected",
       "selectedEntities",
     ]),
-    ...mapState("project", ["translationsEnabled"]),
+    ...mapState("project", ["showAnnotationTranslations"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
       "annotationIsNotFound",
@@ -276,15 +276,6 @@ export default {
         this.annotation &&
         !this.isNegative(this.annotation) &&
         this.hoveredNotCorrectAnnotations() === this.annotation.id
-      );
-    },
-    showTranslationsDetails() {
-      // Only show translation option for filled annotations and if the feature is enabled for the project
-      return (
-        this.annotation &&
-        !this.isNegative(this.annotation) &&
-        this.translationsEnabled &&
-        !this.publicView
       );
     },
   },
