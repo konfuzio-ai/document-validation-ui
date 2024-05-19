@@ -86,8 +86,7 @@ If your application is developed using technologies other than Vue (for example 
 
 #### Run in React
 
-You can find a full example of using the Document Validation UI in a React
-application [here](https://medium.com/@pateldhruv020/using-vue-component-in-react-9161f30d29a0).
+You can find a full example of using the Document Validation UI in a React application [here](https://medium.com/@pateldhruv020/using-vue-component-in-react-9161f30d29a0).
 
 #### Run in Angular
 
