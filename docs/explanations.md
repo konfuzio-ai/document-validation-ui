@@ -98,10 +98,7 @@ With our software, you can change the primary color of the user interface to mat
 To change the primary color, simply add a `:root` pseudo-class to your `CSS` file or inside a `<style>` tag in your `index.html`, inside which you can set the variable `--primary-color` to your custom hue to match your exact brand color (see an example [here](#how-to-add-the-custom-variables-to-your-project)).
 Once you’ve selected your desired color, the user interface will update in real-time to reflect your changes. This means that you can easily experiment with different color options until you find the perfect match for your brand.
 
-In addition to the primary color, you also have the ability to customize other aspects of the user interface, such as
-the button border-radius. Whether your brand has sharp angles or soft curves, we allow you to make the perfect
-adjustments to achieve the look and feel that you want. For this customization, all you have to do is set a second
-variable `--primary-button` to the desired value.
+In addition to the primary color, you also have the ability to customize other aspects of the user interface, such as the button border-radius. Whether your brand has sharp angles or soft curves, we allow you to make the perfect adjustments to achieve the look and feel that you want. For this customization, all you have to do is set a second variable `--primary-button` to the desired value.
 
 ![buttons.png](./images/buttons.png)
 
