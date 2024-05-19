@@ -34,6 +34,9 @@
     <div v-if="!optimalResolution" class="not-optimized">
       <NotOptimizedViewportModal />
     </div>
+    <div>
+      <AnnotationDeletedModal />
+    </div>
     <div v-if="!isMinimumWidth" class="not-supported">
       <div class="text">
         {{ $t("resolution_not_supported") }}
@@ -54,6 +57,7 @@ import {
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
+import AnnotationDeletedModal from "../components/DocumentModals/AnnotationDeletedModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
 import ChooseLabelSetModal from "../components/DocumentAnnotations/ChooseLabelSetModal";
 
@@ -74,6 +78,7 @@ export default {
     DocumentErrorModal,
     MultiAnnotationTableOverlay,
     ChooseLabelSetModal,
+    AnnotationDeletedModal,
   },
   data() {
     return {

@@ -46,9 +46,9 @@ You can test the application by running `npm run test:unit`. Tests are developed
 For Integration Tests you can run `npm run cypress:open` which will open the [Cypress](https://www.cypress.io/) application. There you can choose Component testing and the browser of choice. All of the available components for testing are then listed in the specs tabs.
 Since the Integration Tests connect to the Konfuzio API, an environment file is needed to provide the required parameters. You should create a `.env.test` on the root of the repository based on the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/main/.env.example) and specify, at least, the following required values:
 
-- The user token: `VUE_APP_GUEST_USER_TOKEN`
-- The document id: `VUE_APP_DOCUMENT_ID`
+- The user token: `VUE_APP_USER_TOKEN`
+- The document id: `VUE_APP_DOCUMENT`
 - The API URL: `VUE_APP_API_URL`
-- The document images download URL: `VUE_APP_DOCUMENT_IMAGES_URL`
+- The document images download URL: `VUE_APP_IMAGE_URL`
 
 To create new tests, you just need to add a file next to the component you want to test with the `*.cy.js` name. For example, if you want to create tests for the `App.vue` component, a file named `App.cy.js` should be created and it will automatically appear in the Cypress list.

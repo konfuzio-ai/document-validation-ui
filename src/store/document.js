@@ -5,6 +5,7 @@ import {
   getURLQueryParam,
   navigateToNewDocumentURL,
   getURLPath,
+  setURLAnnotationHash,
 } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
@@ -17,8 +18,9 @@ const state = {
   annotationSets: null,
   annotations: null,
   labels: [],
-  documentId: process.env.VUE_APP_DOCUMENT_ID,
-  sidebarAnnotationSelected: null,
+  documentId: process.env.VUE_APP_DOCUMENT,
+  annotationId: null,
+  annotationSetId: null,
   documentAnnotationSelected: null,
   selectedDocument: null,
   recalculatingAnnotations: false,
@@ -36,12 +38,22 @@ const state = {
   splittingSuggestions: null,
   enableGroupingFeature: true,
   annotationFilters: {
-    showFeedbackNeeded: true,
-    showEmpty: true,
-    showAccepted: true,
+    showFeedbackNeeded:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect" ||
+      true,
+    showEmpty:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect"
+        ? false
+        : true,
+    showAccepted:
+      window.location.hash === "#unrevised" ||
+      window.location.hash === "#possiblyIncorrect"
+        ? false
+        : true,
   },
 };
-
 const getters = {
   /**
    * Get entities inside a box
@@ -253,12 +265,12 @@ const getters = {
   },
 
   /* Get annotation set for a given annotation */
-  annotationSetOfAnnotation: (state) => (annotationToFind) => {
+  annotationSetOfAnnotation: (state) => (annotationIdToFind) => {
     let foundAnnotationSet = null;
     state.annotationSets.forEach((annotationSet) => {
       annotationSet.labels.forEach((label) => {
         label.annotations.forEach((annotation) => {
-          if (annotation.id === annotationToFind.id) {
+          if (annotation.id === annotationIdToFind) {
             foundAnnotationSet = annotationSet;
             return;
           }
@@ -527,6 +539,28 @@ const getters = {
     }
   },
 
+  isAnnotationInAnnotationSet: (state) => (annotationSet, annotationId) => {
+    // Check if the annotation exists in the annotation set
+    let exists = false;
+    for (let i = 0; i < annotationSet.labels.length; i++) {
+      const label = annotationSet.labels[i];
+      for (let j = 0; j < label.annotations.length; j++) {
+        exists = label.annotations[j].id == annotationId;
+        if (exists) {
+          break;
+        }
+      }
+      if (exists) {
+        break;
+      }
+    }
+    return exists;
+  },
+
+  annotationById: (state) => (annotationId) => {
+    return state.annotations.find((ann) => ann.id == annotationId);
+  },
+
   // Check if document is ready to be finished
   isDocumentReadyToFinishReview: (state) => {
     // check if all annotations are correct
@@ -772,8 +806,12 @@ const actions = {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setSidebarAnnotationSelected: ({ commit }, annotation) => {
-    commit("SET_ANNOTATION_SELECTED", annotation);
+  setAnnotationId: ({ commit }, id) => {
+    commit("SET_ANNOTATION_ID", id);
+    setURLAnnotationHash(id);
+  },
+  setAnnotationSetId: ({ commit }, id) => {
+    commit("SET_ANNOTATION_SET_ID", id);
   },
   setAnnotationSets: ({ commit }, annotationSets) => {
     commit("SET_ANNOTATION_SETS", annotationSets);
@@ -891,9 +929,14 @@ const actions = {
             dispatch("project/setProjectId", projectId, {
               root: true,
             });
-            dispatch("project/fetchProjectDetails", projectId, {
-              root: true,
-            });
+
+            dispatch(
+              "project/setShowAnnotationTranslations",
+              response.data.enable_translated_strings,
+              {
+                root: true,
+              }
+            );
           }
 
           if (getters.documentHasProposedSplit(response.data)) {
@@ -1018,6 +1061,9 @@ const actions = {
               }
             } else {
               commit("ADD_ANNOTATION", response.data);
+              if (response.data && response.data.id) {
+                dispatch("setAnnotationId", response.data.id);
+              }
               if (negativeAnnotationId) {
                 commit("DELETE_ANNOTATION", negativeAnnotationId);
               }
@@ -1318,6 +1364,12 @@ const mutations = {
       state.documentId = id;
     }
   },
+  SET_ANNOTATION_ID: (state, id) => {
+    state.annotationId = id;
+  },
+  SET_ANNOTATION_SET_ID: (state, id) => {
+    state.annotationSetId = id;
+  },
   ADD_ANNOTATION: (state, annotation) => {
     state.annotations.push(annotation);
     state.annotationSets.map((annotationSet) => {
@@ -1431,9 +1483,6 @@ const mutations = {
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;
-  },
-  SET_ANNOTATION_SELECTED: (state, annotation) => {
-    state.sidebarAnnotationSelected = annotation;
   },
   SET_EDIT_ANNOTATION: (state, editAnnotation) => {
     state.editAnnotation = editAnnotation;

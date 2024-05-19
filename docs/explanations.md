@@ -42,61 +42,49 @@ Document ID from the URL, as shown in the image below:
 
 .. image:: ./images/docid.png
 
-To complete the setup, create an environment variables file `.env` on the root of the repository based on
-the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/main/.env.example) for specifying the
-following required values:
+#### Environment variables
 
-- The user token: `VUE_APP_GUEST_USER_TOKEN`
-- The Document ID: `VUE_APP_DOCUMENT_ID`
+To complete the setup, create an environment variables file `.env` on the root of the repository based on the [.env.example](https://github.com/konfuzio-ai/document-validation-ui/blob/main/.env.example). You can also add the same variables as parameters to the application in the `HTML`, see the
+Any variable defined in the `.env` will have priority from the ones defined in the [HTML](https://github.com/konfuzio-ai/document-validation-ui/blob/main/public/index.html).
 
-Some other optional variables you can include are:
+Required variables:
 
-- The API URL: `VUE_APP_API_URL`. It will be `https://app.konfuzio.com/api/v3` if left empty.
-- The images URL: `VUE_APP_DOCUMENT_IMAGES_URL`. It will be `https://app.konfuzio.com` if left empty.
-- The language of the application: `VUE_APP_I18N_LOCALE`. The default will be `en` if none is provided in this file or
-  in the `HTML`.
-- The default language of the application: `VUE_APP_I18N_FALLBACK_LOCALE`. The same as for the language of the
-  application applies.
--
+- document: Document ID to load, is possible to also set the Document ID through the URL query parameters like `?document=ID`.
 
-Sentry [DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_DSN`
--
-Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F): `VUE_APP_SENTRY_ENVIRONMENT`
+Optional variables:
 
-- The path to a list of Documents in the application: `VUE_APP_DOCUMENTS_LIST_PATH`. This variable will be used to
-  redirect the user to the specified list of Documents in the application so that they can continue with the review
-  process of other Documents after certain changes
-  like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or
-  sorting. A `/` character should be added both at the start and end of the pathname.
-- The path to the document details page where you can change other options not available on the app (for example,
-  permissions) or see logs related to the document: `VUE_APP_DOCUMENT_DETAILS_URL`. If not set, the button will not
-  appear.
-- There's an option to filter the navigation of the documents by the ones which are already reviewed. The property
-  is: `VUE_APP_DOCUMENTS_LIST_REVIEW_FILTER`. This variable is a boolean that indicates if only review documents should
-  appear when moving forward or backward in the list.
+- user_token: User token for API authenticated requests.
+- api_url: The API URL, will be `https://app.konfuzio.com/api/v3` if left empty.
+- image_url: The files URL, will be `https://app.konfuzio.com` if left empty.
+- locale: The language of the application, the default will be `en` if left empty.
+- full_mode: If no User token is set, you can force full mode by setting this variable to true.
+- sentry_dsn: Sentry [DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/?original_referrer=https%3A%2F%2Fwww.google.com%2F)
+- sentry_environment: Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F)
+- documents_list_path: The path to a list of Documents in the application. This variable will be used to redirect the user to the specified list of Documents in the application so that they can continue with the review process of other Documents after certain changes like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or sorting. A `/` character should be added both at the start and end of the pathname.
+- details_url: The path to the document details page where you can change other options not available on the app (for example, permissions) or see logs related to the document. If not set, the button will not appear.
+- annotation: Annotation ID of the desired annotation that should be selected on the list.
+- annotation_set: Annotation Set ID of the desired annotation set that should be selected on the list.
 
-You can also set the Document ID through the URL query parameters like `?document=ID`. This will have priority over any
-other Document ID that is set on `.env` or in `index.html`. For the other variables, the `.env` will also have priority
-from the ones defined in the HTML.
+To define this variables in the `.env`, they should be in uppercase and with the prefix `VUE_APP_`.
+Examples:
 
-## Multilingual User Interface
-
-The Document Validation UI can currently be used in three languages: German (de), English (en), and Spanish (es). As
-mentioned in the previous section, you can specify what the default language of the application will be in the `.env`
-file, like so:
+Defining in the `.env` file:
 
 ```
-VUE_APP_I18N_LOCALE=
-VUE_APP_I18N_FALLBACK_LOCALE=
+VUE_APP_LOCALE=
 ```
 
-You can also specify the language in the `HTML` file:
+Defining in the `HTML` file:
 
 ```
 <div id="app">
     <app locale="de/en/es"></app>
   </div>
 ```
+
+## Multilingual User Interface
+
+The Document Validation UI can currently be used in three languages: German (de), English (en), and Spanish (es). As mentioned in the previous section, you can specify what the default language of the application will be.
 
 If left empty, then the default `en` will be used.
 
