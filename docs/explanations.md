@@ -90,8 +90,7 @@ You can find a full example of using the Document Validation UI in a React appli
 
 #### Run in Angular
 
-At [this link](https://www.ais.com/using-a-vue-component-in-an-angular-app/) you will see a step-by-step on how to use
-the Document Validation UI in an Angular application.
+At [this link](https://www.ais.com/using-a-vue-component-in-an-angular-app/) you will see a step-by-step on how to use the Document Validation UI in an Angular application.
 
 ## How to customize the Document Validation UI?
 
