@@ -113,7 +113,6 @@ _Please note that the default values from the examples below are based on Konfuz
 #### HTML
 
 ```
-
 <div id="app">
    <app document="id" locale="de/en/es" user_token="token" documents_list_path="/document_list_path/"></app>
  </div>
@@ -124,7 +123,6 @@ _Please note that the default values from the examples below are based on Konfuz
     --primary-button: 4px;
   }
 </style>
-
 ```
 
 .. \_custom-variables-css:
@@ -132,12 +130,10 @@ _Please note that the default values from the examples below are based on Konfuz
 #### CSS file
 
 ```
-
 :root {
---primary-color: #41AF85 !important;
---primary-button: 4px !important;
-}
-
+    --primary-color: #41AF85 !important;
+    --primary-button: 4px !important;
+  }
 ```
 
 ### Try it out before adding it to your project
