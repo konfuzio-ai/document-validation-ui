@@ -1,8 +1,6 @@
 # Integrating the Konfuzio Document Validation UI into Your Application
 
-Welcome to the guide for integrating the Konfuzio Document Validation UI (DVUI) into your application. To
-ensure a seamless and efficient integration process, we've outlined the most straightforward and effective method for
-incorporating DVUI, alongside alternative options tailored for specific scenarios.
+Welcome to the guide for integrating the Konfuzio Document Validation UI (DVUI) into your application. To ensure a seamless and efficient integration process, we've outlined the most straightforward and effective method for incorporating DVUI, alongside alternative options tailored for specific scenarios.
 
 ## Prerequisites
 
@@ -11,8 +9,7 @@ incorporating DVUI, alongside alternative options tailored for specific scenario
 
 ## Our Recommendation: CDN Integration
 
-For most users and applications, we strongly recommend CDN integration. This method stands out for its simplicity, rapid
-deployment, and minimal maintenance, making it the optimal choice for a broad range of projects.
+For most users and applications, we strongly recommend CDN integration. This method stands out for its simplicity, rapid deployment, and minimal maintenance, making it the optimal choice for a broad range of projects.
 
 ### Why Choose CDN Integration?
 
@@ -61,9 +58,7 @@ deployment, and minimal maintenance, making it the optimal choice for a broad ra
 
 ## Understanding the Integration Logic Flow
 
-To fully grasp how the Konfuzio Document Validation UI (DVUI) integrates into your application's workflow, it's
-important to understand the logic flow involved. The process is outlined in the sequence diagram below, which shows the
-interactions between your application, the Konfuzio Server, and the DVUI.
+To fully grasp how the Konfuzio Document Validation UI (DVUI) integrates into your application's workflow, it's important to understand the logic flow involved. The process is outlined in the sequence diagram below, which shows the interactions between your application, the Konfuzio Server, and the DVUI.
 
 ### Step-by-Step Flow:
 
@@ -79,8 +74,7 @@ interactions between your application, the Konfuzio Server, and the DVUI.
 
 ### Diagram:
 
-By following this logic flow, you ensure that documents are processed efficiently and that users can interact with the
-DVUI for a seamless document validation experience.
+By following this logic flow, you ensure that documents are processed efficiently and that users can interact with the DVUI for a seamless document validation experience.
 
 ```mermaid
 sequenceDiagram
@@ -99,8 +93,7 @@ sequenceDiagram
 
 ## Alternative Integration Methods
 
-While CDN integration is suitable for most, certain scenarios might call for alternative methods. Below, we outline
-other options and their specific use cases.
+While CDN integration is suitable for most, certain scenarios might call for alternative methods. Below, we outline other options and their specific use cases.
 
 ### NPM Package Integration
 
@@ -109,8 +102,7 @@ other options and their specific use cases.
 - **Considerations**: Requires familiarity with Vue.js and npm, alongside potential for more complex updates and
   maintenance.
 
-If you want to integrate the Document Validation UI into an existing application, you can run the following command in
-your terminal to install our [npm package](https://www.npmjs.com/package/@konfuzio/document-validation-ui):
+If you want to integrate the Document Validation UI into an existing application, you can run the following command in your terminal to install our [npm package](https://www.npmjs.com/package/@konfuzio/document-validation-ui):
 
 `npm i @konfuzio/document-validation-ui`
 
@@ -120,16 +112,13 @@ Once the package is installed, you can configure the application in two ways:
 
 ##### Pointing to the dist folder
 
-You can use the compiled version under the `dist` folder on the package source, by pointing to it from the `index.html`
-and making any necessary changes to the `HTML` properties on the `App` tag. See an
-example [here](#imports-from-the-dist-folder).
+You can use the compiled version under the `dist` folder on the package source, by pointing to it from the `index.html` and making any necessary changes to the `HTML` properties on the `App` tag. See an example [here](#imports-from-the-dist-folder).
 
 ![dist-npm-package.png](./images/dist-npm-package.png)
 
 ##### Using a JavaScript bundler
 
-If you want more integration with your current configuration, you can use a JavaScript bundler. You can find an example
-using [Webpack](https://webpack.js.org/guides/getting-started/) below:
+If you want more integration with your current configuration, you can use a JavaScript bundler. You can find an example using [Webpack](https://webpack.js.org/guides/getting-started/) below:
 
 ###### webpack.config.js
 
@@ -167,9 +156,7 @@ See how to add it in the `HTML` [in this example](#webpack-bundle).
 
 ##### HTML
 
-In the `HTML`, we should load the script we created with Webpack or the compiled version under the `dist` folder, and
-customize the variables we want. Please note that customizing the variables is optional and that any variable in
-the `.env` will have priority from the variables defined in the `index.html`.
+In the `HTML`, we should load the script we created with Webpack or the compiled version under the `dist` folder, and customize the variables we want. Please note that customizing the variables is optional and that any variable in the `.env` will have priority from the variables defined in the `index.html`.
 
 The following examples, based on the two configuration options mentioned before, include the custom variables (Document ID, user token, locale), but it is not mandatory to add these, which should still be added to the `.env` file.
 
@@ -250,9 +237,7 @@ If you want to deploy this application in a web server environment then you shou
 
 `npm run build`
 
-When succeeded, you should export the `dist` folder generated from that command to the destination source in the host
-server and configure the web server engine to have the `index.html` file as the entry point. If everything is correctly
-configured you should be able to open the server URL and the application will load.
+When succeeded, you should export the `dist` folder generated from that command to the destination source in the host server and configure the web server engine to have the `index.html` file as the entry point. If everything is correctly configured you should be able to open the server URL and the application will load.
 
 ![dist.png](./images/dist.png)
 
@@ -264,38 +249,29 @@ If you want to serve the application locally to run on a browser (default URL: h
 
 ### Iframe Integration
 
-- **Ideal for**: Simple embedding of DVUI into websites without direct interaction with the application's backend or for
-  rapidly prototyping.
+- **Ideal for**: Simple embedding of DVUI into websites without direct interaction with the application's backend or for rapidly prototyping.
 - **Advantages**: Easy to implement.
-- **Considerations**: Limited customization options and potential security concerns. Best for read-only document viewing
-  or when other integration methods are not feasible.
+- **Considerations**: Limited customization options and potential security concerns. Best for read-only document viewing   or when other integration methods are not feasible.
 
 #### HTML iframe as Public Document
 
-You can mark your Documents as public. Marking Documents as "public" will generate a read-only, publicly accessible URL
-that does not require authentication. This allows you to share a link to the Document and its extracted data, or embed
-it in another website. See [Read Only mode](#read-only-mode) for reference.
+You can mark your Documents as public. Marking Documents as "public" will generate a read-only, publicly accessible URL that does not require authentication. This allows you to share a link to the Document and its extracted data, or embed it in another website. See [Read Only mode](#read-only-mode) for reference.
 
 ##### Share a Document with a link
 
-From the details page, you can copy a public URL to your Document, which you can share with other people. Apart from the
-URL, it does not contain any Konfuzio branding.
+From the details page, you can copy a public URL to your Document, which you can share with other people. Apart from the URL, it does not contain any Konfuzio branding.
 
-This lightweight version contains an image version of the PDF pages, and its currently extracted metadata (Annotation
-sets, Label sets, Labels). Any modification you make to the Document in the Document Validation UI is reflected here.
+This lightweight version contains an image version of the PDF pages, and its currently extracted metadata (Annotation Sets, Label Sets, Labels). Any modification you make to the Document in the Document Validation UI is reflected here.
 
 Currently, this public view is not allowed to be indexed by search engines.
 
-If you need to programmatically generate public links, you can use the format `https://app.konfuzio.com/d/<id>/`. You
-can retrieve the ID of a Document from your Konfuzio dashboard or the API. Document IDs that don’t exist or are not
-public will return a 404 error.
+If you need to programmatically generate public links, you can use the format `https://app.konfuzio.com/d/<id>/`. You can retrieve the ID of a Document from your Konfuzio dashboard or the API. Document IDs that don’t exist or are not public will return a 404 error.
 
 #### Embed a Konfuzio Document on another website
 
 From the details page, you can copy an example HTML snippet that allows you to embed a public Document within an iframe.
-Visually, it looks the same as the above-mentioned public Document view, and in fact, its internal implementation is the
-same. However, to prevent abuse, you first need to configure your Project’s “domain whitelist” setting. This only needs
-to be done once per Project for each domain you want to allow.
+Visually, it looks the same as the above-mentioned public Document view, and in fact, its internal implementation is the same. 
+However, to prevent abuse, you first need to configure your Project’s “domain whitelist” setting. This only needs to be done once per Project for each domain you want to allow.
 
 #### Add your domain(s) to the Project’s domain whitelist
 
@@ -307,8 +283,7 @@ Click on the Project associated with the Document(s) you want to make public.
 
 ![project.png](./images/project.png)
 
-In the “Domain whitelist” field, add the domains where you’re going to embed your Document(s), one per line and without
-“http” or “https”.
+In the “Domain whitelist” field, add the domains where you’re going to embed your Document(s), one per line and without “http” or “https”.
 
 For example, if you want to embed a Document on https://www.example.org, you should add www.example.org to the list.
 
@@ -318,9 +293,7 @@ Click “Save”.
 
 ![save.png](./images/save.png)
 
-_It is important to note that this process will NOT make all your Projects’ Documents public by default. It simply
-establishes which domains are allowed to embed public Documents for this Project. You will still need to mark Documents
-as public by yourself._
+_It is important to note that this process will NOT make all your Projects’ Documents public by default. It simply establishes which domains are allowed to embed public Documents for this Project. You will still need to mark Documents as public by yourself._
 
 #### Customize the iframe
 
@@ -328,12 +301,9 @@ By default, we provide a bare-bones HTML snippet that looks similar to this:
 
 `<iframe src="https://app.konfuzio.com/d/<id>/?embed=1" width="100%" height="600" frameborder="0"></iframe>`
 
-This creates on your page an iframe with 100% width (full width of its container) and a height of 600 pixels that don't
-have a border. The `embed` parameter forces the DVUI to render without the Konfuzio header, so it blends easily into an
-existing page.
+This creates on your page an iframe with 100% width (full width of its container) and a height of 600 pixels that don't have a border. The `embed` parameter forces the DVUI to render without the Konfuzio header, so it blends easily into an existing page.
 
-You can customize the iframe‘s size and other options by changing these and other attributes (
-see [iframe documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe)).
+You can customize the iframe‘s size and other options by changing these and other attributes (see [iframe documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe)).
 
 ![public_dvui.png](./images/public_dvui.png)
 
@@ -341,10 +311,7 @@ see [iframe documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Ele
 
 Regardless of the chosen integration method, consider the following to ensure a secure and maintainable implementation:
 
-- **Security**: Always secure user tokens and API access. For iframe integrations, ensure your content security policy (
-  CSP) is appropriately configured.
-- **Maintenance**: While CDN and NPM methods benefit from automatic updates, direct source code integration will require
-  manual updates to stay current with DVUI enhancements.
+- **Security**: Always secure user tokens and API access. For iframe integrations, ensure your content security policy (CSP) is appropriately configured.
+- **Maintenance**: While CDN and NPM methods benefit from automatic updates, direct source code integration will require manual updates to stay current with DVUI enhancements.
 
-By following these guidelines and focusing on the recommended CDN integration, you'll achieve a seamless integration of
-the Konfuzio DVUI into your application, ensuring a robust and user-friendly document validation experience.
+By following these guidelines and focusing on the recommended CDN integration, you'll achieve a seamless integration of the Konfuzio DVUI into your application, ensuring a robust and user-friendly document validation experience.
