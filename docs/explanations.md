@@ -76,12 +76,9 @@ You are also welcome to create a new locales file for a language not currently p
 
 ## How to integrate the Document Validation UI into custom solutions?
 
-The application requires `node` and `npm` to run. It also requires a connection to
-the [Konfuzio Server API version 3](https://app.konfuzio.com/v3/swagger/).
-See [full documentation](https://dev.konfuzio.com/web/api-v3.html).
+The application requires `node` and `npm` to run. It also requires a connection to the [Konfuzio Server API version 3](https://app.konfuzio.com/v3/swagger/). See [full documentation](https://dev.konfuzio.com/web/api-v3.html).
 
-There are a few different options to integrate the Document Validation UI into your Project, which can be read about in
-more detail in our tutorial section [here](https://dev.konfuzio.com/dvui/tutorials.html).
+There are a few different options to integrate the Document Validation UI into your Project, which can be read about in more detail in our tutorial section [here](https://dev.konfuzio.com/dvui/tutorials.html).
 
 ### Run the Document Validation UI in non-Vue applications
 
