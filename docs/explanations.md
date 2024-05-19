@@ -16,8 +16,7 @@ The Konfuzio Document Validation UI can be configured to be run as Read Only or 
 
 ### Read Only Mode
 
-This is the default mode of the app. In this mode, you will have a sample Document with Annotations that you can only
-preview. Unless configured, it uses the default API endpoint at https://app.konfuzio.com and no user account is needed.
+This is the default mode of the app. In this mode, you will have a sample Document with Annotations that you can only preview. Unless configured, it uses the default API endpoint at https://app.konfuzio.com and no user account is needed.
 
 ### Full Mode
 
