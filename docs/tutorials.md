@@ -15,8 +15,7 @@ For most users and applications, we strongly recommend CDN integration. This met
 
 - **Ease of Use**: With just a few lines of HTML, your application can harness the full power of DVUI.
 - **Quick Setup**: Integration can be completed in minutes, not hours.
-- **Low Maintenance**: Updates and improvements are handled by Konfuzio, ensuring you always have access to the latest
-  features without any additional effort.
+- **Low Maintenance**: Updates and improvements are handled by Konfuzio, ensuring you always have access to the latest features without any additional effort.
 
 ### How to Integrate Using CDN
 
@@ -99,8 +98,7 @@ While CDN integration is suitable for most, certain scenarios might call for alt
 
 - **Ideal for**: Projects already using Vue.js or those requiring deeper integration within a web application.
 - **Advantages**: Greater control over the integration and customization.
-- **Considerations**: Requires familiarity with Vue.js and npm, alongside potential for more complex updates and
-  maintenance.
+- **Considerations**: Requires familiarity with Vue.js and npm.
 
 If you want to integrate the Document Validation UI into an existing application, you can run the following command in your terminal to install our [npm package](https://www.npmjs.com/package/@konfuzio/document-validation-ui):
 
@@ -158,7 +156,7 @@ See how to add it in the `HTML` [in this example](#webpack-bundle).
 
 In the `HTML`, we should load the script we created with Webpack or the compiled version under the `dist` folder, and customize the variables we want. Please note that customizing the variables is optional and that any variable in the `.env` will have priority from the variables defined in the `index.html`.
 
-The following examples, based on the two configuration options mentioned before, include the custom variables (Document ID, user token, locale), but it is not mandatory to add these, which should still be added to the `.env` file.
+The following examples, based on the two configuration options mentioned before, include the custom variables (Document ID, User Token, locale), but it is not mandatory to add these, which should still be added to the `.env` file.
 
 ###### Imports from the dist folder
 
@@ -202,11 +200,9 @@ The following examples, based on the two configuration options mentioned before,
 
 ### Direct Source Code Integration
 
-- **Ideal for**: Applications needing the utmost control over DVUI, including custom functionalities not supported via
-  CDN or NPM.
+- **Ideal for**: Applications needing the utmost control over DVUI, including custom functionalities not supported via CDN or NPM.
 - **Advantages**: Complete control over the codebase.
-- **Considerations**: Significantly higher setup and maintenance effort. Recommended only for teams with specific needs
-  and the capacity to manage the integration long-term.
+- **Considerations**: Significantly higher setup and maintenance effort. Recommended only for teams with specific needs and the capacity to manage the integration long-term.
 
 #### Integrate by deploying the application
 
@@ -311,7 +307,7 @@ You can customize the iframe‘s size and other options by changing these and ot
 
 Regardless of the chosen integration method, consider the following to ensure a secure and maintainable implementation:
 
-- **Security**: Always secure user tokens and API access. For iframe integrations, ensure your content security policy (CSP) is appropriately configured.
+- **Security**: Always secure User Tokens and API access. For iframe integrations, ensure your content security policy (CSP) is appropriately configured.
 - **Maintenance**: While CDN and NPM methods benefit from automatic updates, direct source code integration will require manual updates to stay current with DVUI enhancements.
 
 By following these guidelines and focusing on the recommended CDN integration, you'll achieve a seamless integration of the Konfuzio DVUI into your application, ensuring a robust and user-friendly document validation experience.
