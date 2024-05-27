@@ -1,7 +1,7 @@
 .. meta::
 :description: this section contains tutorials for the Document Validation UI
 
-# Integrating the Konfuzio Document Validation UI into Your Application
+# Integration Guide
 
 Welcome to the guide for integrating the Konfuzio Document Validation UI (DVUI) into your application. To ensure a seamless and efficient integration process, we've outlined the most straightforward and effective method for incorporating DVUI, alongside alternative options tailored for specific scenarios.
 
