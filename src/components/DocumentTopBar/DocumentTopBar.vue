@@ -160,13 +160,7 @@ export default {
       this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
     },
     getPreviousAndNextDocuments() {
-      // Only consider documents who have a status of "ready"
-      const filteredDocuments =
-        this.documentsInProject; /*this.documentsInProject.filter(
-        (document) =>
-          (this.isDocumentReadyToBeReviewed(document)) ||
-          this.waitingForSplittingConfirmation(document)
-      );*/
+      const filteredDocuments = this.documentsInProject;
 
       if (!filteredDocuments) return;
 

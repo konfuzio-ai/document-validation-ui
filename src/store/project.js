@@ -93,7 +93,7 @@ const actions = {
 
   fetchDocumentList: ({ commit, state }, parameters) => {
     return HTTP.get(
-      `documents/?project=${state.projectId}&assignee=${state.currentUser.username}&limit=100&${parameters}`
+      `documents/?project=${state.projectId}&limit=100&${parameters}`
     )
       .then((response) => {
         if (response.data.results) {
