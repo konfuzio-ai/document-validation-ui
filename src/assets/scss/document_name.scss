@@ -6,6 +6,7 @@
   justify-content: center;
   gap: 12px;
   line-height: 20px;
+  width: 400px;
 
   .document-icon {
     display: flex;
@@ -17,6 +18,9 @@
   .document-name {
     display: inline-block;
     vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &.is-editable {
       display: inline-block;
@@ -25,7 +29,6 @@
       border-radius: 8px;
       padding: 6px 14px 6px 14px;
       outline: 1px solid $grey-outline;
-      max-width: 420px;
     }
   }
 
