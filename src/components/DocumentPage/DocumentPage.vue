@@ -62,7 +62,7 @@
           </template>
           <v-group v-if="!publicView || !isDocumentReviewed" ref="entities">
             <v-rect
-              v-for="(entity, index) in scaledEntities"
+              v-for="(entity, index) in scaledEntities(page.entities, page)"
               :key="index"
               :config="entityRect(entity)"
               @click="handleClickedEntity(entity)"
@@ -148,10 +148,13 @@
           />
         </v-label>
       </v-layer>
-      <v-layer v-if="isBoxSelection">
-        <box-selection :page="page" />
+      <v-layer v-if="page.number === selectionPage">
+        <box-selection
+          :page="page"
+          @createAnnotations="handleCreateAnnotationsFromSelection"
+        />
       </v-layer>
-      <v-layer v-else-if="isMultiSelection">
+      <v-layer v-if="isMultiSelection">
         <multi-ann-selection
           :page="page"
           @buttonEnter="onElementEnter"
@@ -224,19 +227,31 @@ export default {
       "annotationId",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapGetters("display", ["visiblePageRange", "bboxToRect"]),
+    ...mapGetters("display", [
+      "visiblePageRange",
+      "bboxToRect",
+      "scaledEntities",
+    ]),
     ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
     ...mapGetters("document", [
       "getAnnotationsFiltered",
       "isAnnotationInEditMode",
       "isDocumentReadyToBeReviewed",
-      "entitiesOnSelection",
       "isDocumentReviewed",
       "labelOfAnnotation",
       "isNegative",
     ]),
-
+    selectionPage() {
+      return this.selection && this.selection.pageNumber;
+    },
     isBoxSelection() {
+      if (!MULTI_ANN_TABLE_FEATURE) {
+        return (
+          true &&
+          this.selection &&
+          this.selection.pageNumber === this.currentPage
+        );
+      }
       return this.selection && !this.isSelecting && this.isElementSelected;
     },
     isMultiSelection() {
@@ -272,31 +287,6 @@ export default {
 
     pageInVisibleRange() {
       return this.visiblePageRange.includes(this.page.number);
-    },
-
-    /**
-     * We take the entities from the backend and resize them according
-     * to the `scale` (zoom), the `imageScale` (proportion between the original
-     * document and the served image) and `PIXEL_RATIO` (in case of retina displays).
-     * We also change the original bbox format to something that can be used with CSS.
-     * The original is stored inside the `original` property, since it can be reused
-     * when we're sending the entity to the backend for selection or saving.
-     */
-    scaledEntities() {
-      // entities are either not loaded yet or empty
-      if (!this.page.hasOwnProperty("entities") || !this.page.entities) {
-        return [];
-      }
-
-      return this.page.entities.map((entity) => {
-        const box = this.bboxToRect(this.page, entity);
-        return {
-          original: entity,
-          scaled: {
-            ...box,
-          },
-        };
-      });
     },
 
     /**
@@ -459,6 +449,31 @@ export default {
     handleFocusedAnnotation(annotation) {
       this.$store.dispatch("document/setAnnotationId", annotation.id);
       this.closePopups(true);
+    },
+
+    handleCreateAnnotationsFromSelection(entities) {
+      if (
+        this.categorizeModalIsActive ||
+        this.publicView ||
+        this.isDocumentReviewed
+      )
+        return;
+      this.newAnnotation = [];
+      this.endSelection();
+
+      const normalizedEntities = this.scaledEntities(entities, this.page);
+      if (normalizedEntities) {
+        this.newAnnotation.push(...normalizedEntities);
+      }
+
+      if (this.newAnnotation.length > 0) {
+        this.$store.dispatch(
+          "selection/setSelectedEntities",
+          this.newAnnotation
+        );
+      } else {
+        this.$store.dispatch("selection/setSelectedEntities", null);
+      }
     },
 
     handleClickedEntity(entity) {
