@@ -338,12 +338,12 @@ export default {
       }
     },
     scale() {
-      this.closePopups(true);
+      this.closePopups();
     },
     async selectedEntities(newValue) {
       if (!newValue) {
         this.$store.dispatch("selection/setSpanSelection", null);
-        this.closePopups(true);
+        this.closePopups();
       }
 
       await this.$store.dispatch("selection/getTextFromEntities", newValue);
@@ -355,7 +355,7 @@ export default {
     },
     searchEnabled(isEnabled) {
       if (isEnabled) {
-        this.closePopups(true);
+        this.closePopups();
       }
     },
   },
@@ -390,7 +390,15 @@ export default {
       )
         return;
 
-      this.closePopups();
+      if (
+        event.target.getParent() &&
+        event.target.getParent().className === "Transformer"
+      ) {
+        // if we are editing a box then close popups
+        this.closePopups();
+
+        return;
+      }
 
       // check if element and delegate to it
       if (
@@ -400,9 +408,7 @@ export default {
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
         event.target.name() === "boxSelection" ||
-        event.target.name() === "boxTransformer" ||
-        (event.target.getParent() &&
-          event.target.getParent().className === "Transformer")
+        event.target.name() === "boxTransformer"
       ) {
         return;
       }
@@ -448,7 +454,7 @@ export default {
 
     handleFocusedAnnotation(annotation) {
       this.$store.dispatch("document/setAnnotationId", annotation.id);
-      this.closePopups(true);
+      this.closePopups();
     },
 
     handleCreateAnnotationsFromSelection(entities) {
@@ -459,7 +465,7 @@ export default {
       )
         return;
       this.newAnnotation = [];
-      this.endSelection();
+      // this.endSelection();
 
       const normalizedEntities = this.scaledEntities(entities, this.page);
       if (normalizedEntities) {
@@ -665,10 +671,8 @@ export default {
         y: rect.y,
       };
     },
-    closePopups(closeNewAnnotaton) {
-      if (closeNewAnnotaton) {
-        this.newAnnotation = [];
-      }
+    closePopups() {
+      this.newAnnotation = [];
     },
   },
 };

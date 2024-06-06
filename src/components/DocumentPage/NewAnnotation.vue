@@ -167,30 +167,47 @@ export default {
       "labelsFilteredForAnnotationCreation",
       "isNegative",
     ]),
-    ...mapState("selection", ["spanSelection"]),
+    ...mapState("selection", ["spanSelection", "selection"]),
     top() {
-      const top = this.newAnnotation[0].scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
+      if (this.selection && this.selection.end) {
+        const top = this.selection.end.y + margin;
+        //check if the popup will not go off the container on the top
+        return top + heightOfPopup < this.containerHeight
+          ? top
+          : this.selection.end.y - heightOfPopup;
+      } else {
+        const top = this.newAnnotation[0].scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
 
-      //check if the popup will not go off the container on the top
-      return this.newAnnotation[0].scaled.y > heightOfPopup
-        ? top
-        : this.newAnnotation[0].scaled.y +
-            this.newAnnotation[0].scaled.height +
-            margin;
+        //check if the popup will not go off the container on the top
+        return this.newAnnotation[0].scaled.y > heightOfPopup
+          ? top
+          : this.newAnnotation[0].scaled.y +
+              this.newAnnotation[0].scaled.height +
+              margin;
+      }
     },
     left() {
-      const left =
-        this.newAnnotation[0].scaled.x +
-        this.newAnnotation[0].scaled.width / 2 -
-        widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
-
-      //check if the popup will not go off the container
-      if (left + widthOfPopup > this.containerWidth) {
-        // on the right side
-        return this.containerWidth - widthOfPopup;
+      if (this.selection && this.selection.start && this.selection.end) {
+        const left = this.selection.start.x;
+        //check if the popup will not go off the container on the right
+        return left + widthOfPopup < this.containerWidth
+          ? left
+          : this.containerWidth - widthOfPopup;
+        return this.selection.start.x;
       } else {
-        // on the left side
-        return left > 0 ? left : 0;
+        const left =
+          this.newAnnotation[0].scaled.x +
+          this.newAnnotation[0].scaled.width / 2 -
+          widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+
+        //check if the popup will not go off the container
+        if (left + widthOfPopup > this.containerWidth) {
+          // on the right side
+          return this.containerWidth - widthOfPopup;
+        } else {
+          // on the left side
+          return left > 0 ? left : 0;
+        }
       }
     },
     textFromEntities() {
@@ -227,6 +244,7 @@ export default {
   methods: {
     close() {
       this.$store.dispatch("selection/setSelectedEntities", null);
+      this.$store.dispatch("selection/endSelection");
       this.$emit("close");
     },
     save() {
