@@ -88,6 +88,31 @@ const getters = {
   },
 
   /**
+   * We take the entities from the backend and resize them according
+   * to the `scale` (zoom), the `imageScale` (proportion between the original
+   * document and the served image) and `PIXEL_RATIO` (in case of retina displays).
+   * We also change the original bbox format to something that can be used with CSS.
+   * The original is stored inside the `original` property, since it can be reused
+   * when we're sending the entity to the backend for selection or saving.
+   */
+  scaledEntities: (state, getters) => (entities, page) => {
+    // entities are either not loaded yet or empty
+    if (!entities || entities.length === 0) {
+      return [];
+    }
+
+    return entities.map((entity) => {
+      const box = getters.bboxToRect(page, entity);
+      return {
+        original: entity,
+        scaled: {
+          ...box,
+        },
+      };
+    });
+  },
+
+  /**
    * The proportion between the original size of the page and the
    * image rendering.
    */

@@ -52,16 +52,34 @@ export default {
         anchorSize: 6,
       };
     },
-    ...mapState("selection", ["selection", "isSelecting"]),
+    ...mapState("selection", [
+      "selection",
+      "isSelecting",
+      "elementSelected",
+      "spanSelection",
+    ]),
     ...mapGetters("display", ["clientToBbox"]),
-    ...mapGetters("selection", ["isSelectionValid"]),
+    ...mapGetters("selection", ["isSelectionValid", "entitiesOnSelection"]),
   },
-  mounted() {
-    this.updateTransformer();
-
-    if (this.selection.custom) {
-      this.getBoxSelectionContent();
-    }
+  watch: {
+    isSelecting(isSelecting) {
+      if (!isSelecting) {
+        this.updateTransformer();
+        if (!this.elementSelected) {
+          const box = this.clientToBbox(
+            this.page,
+            this.selection.start,
+            this.selection.end
+          );
+          this.$emit(
+            "createAnnotations",
+            this.entitiesOnSelection(box, this.page)
+          );
+        } else {
+          this.getBoxSelectionContent();
+        }
+      }
+    },
   },
   methods: {
     updateTransformer() {
@@ -97,15 +115,17 @@ export default {
     },
 
     getBoxSelectionContent() {
-      const box = this.clientToBbox(
-        this.page,
-        this.selection.start,
-        this.selection.end
-      );
-      this.$store.dispatch("selection/getTextFromBboxes", {
-        box,
-        entities: false,
-      });
+      if (!this.isSelecting) {
+        const box = this.clientToBbox(
+          this.page,
+          this.selection.start,
+          this.selection.end
+        );
+        this.$store.dispatch("selection/getTextFromBboxes", {
+          box,
+          entities: false,
+        });
+      }
     },
 
     /**
