@@ -65,23 +65,32 @@ export default {
     isSelecting(isSelecting) {
       if (!isSelecting) {
         this.updateTransformer();
-        if (!this.elementSelected) {
-          const box = this.clientToBbox(
-            this.page,
-            this.selection.start,
-            this.selection.end
-          );
-          this.$emit(
-            "createAnnotations",
-            this.entitiesOnSelection(box, this.page)
-          );
-        } else {
-          this.getBoxSelectionContent();
-        }
+        this.handleSelection();
       }
     },
   },
+  mounted() {
+    if (!this.selection.custom) {
+      // if annotation was selected, then add transformer
+      this.updateTransformer();
+    }
+  },
   methods: {
+    handleSelection() {
+      if (!this.elementSelected) {
+        const box = this.clientToBbox(
+          this.page,
+          this.selection.start,
+          this.selection.end
+        );
+        this.$emit(
+          "createAnnotations",
+          this.entitiesOnSelection(box, this.page)
+        );
+      } else {
+        this.getBoxSelectionContent();
+      }
+    },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node
       const transformer = this.$refs.boxTransformer;
@@ -164,7 +173,7 @@ export default {
       node.scaleX(1);
       node.scaleY(1);
 
-      this.getBoxSelectionContent();
+      this.handleSelection();
     },
     ...mapActions("selection", ["moveSelection"]),
   },
