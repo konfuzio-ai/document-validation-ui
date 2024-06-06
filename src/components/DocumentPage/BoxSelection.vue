@@ -69,6 +69,12 @@ export default {
       }
     },
   },
+  mounted() {
+    if (!this.selection.custom) {
+      // if annotation was selected, then add transformer
+      this.updateTransformer();
+    }
+  },
   methods: {
     handleSelection() {
       if (!this.elementSelected) {
