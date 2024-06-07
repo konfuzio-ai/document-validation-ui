@@ -65,6 +65,10 @@
 
       <template #content>
         <div class="label-details">
+          <div v-if="label.is_linked_to_checkbox" class="label-description">
+            <b-icon size="is-small" icon="square-check" />
+            <span> {{ $t("checkbox_ann_details") }}</span>
+          </div>
           <div v-if="description" class="label-description">
             <span>{{ description }}</span>
           </div>
@@ -130,24 +134,6 @@
               </div>
               {{ getText() }}
             </div>
-          </div>
-        </div>
-      </template>
-    </b-tooltip>
-    <b-tooltip
-      v-if="label.is_linked_to_checkbox"
-      :animated="false"
-      :position="'is-bottom'"
-      :class="['left-aligned', 'annotation-details']"
-    >
-      <div :class="['label-icon']">
-        <b-icon icon="square-check" />
-      </div>
-
-      <template #content>
-        <div class="label-details">
-          <div class="label-description">
-            <span>{{ $t("checkbox_ann_details") }}</span>
           </div>
         </div>
       </template>

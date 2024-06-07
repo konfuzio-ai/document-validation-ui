@@ -56,6 +56,9 @@
       word-wrap: break-all;
       white-space: normal;
       width: 216px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .confidence {
