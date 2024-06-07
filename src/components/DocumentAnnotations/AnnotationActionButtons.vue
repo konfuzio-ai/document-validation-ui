@@ -52,7 +52,7 @@
         type="is-ghost"
         @click.stop="decline"
       >
-        <b-icon icon="xmark" size="is-24" class="decline-icon" />
+        <b-icon icon="xmark" size="is-20" class="decline-icon" />
       </b-button>
       <b-button
         v-if="acceptBtn"
@@ -106,7 +106,6 @@
 import { mapGetters, mapState } from "vuex";
 import AcceptedCheckMark from "../../assets/images/AcceptedCheckMark";
 import { TEXT_BREAKPOINT_WIDTH } from "../../constants";
-import { setURLAnnotationHash } from "../../utils/utils";
 export default {
   name: "AnnotationActionButtons",
   components: {
@@ -150,7 +149,7 @@ export default {
   },
   data() {
     return {
-      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH,
+      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH(this.$i18n.locale),
     };
   },
   computed: {
@@ -186,7 +185,8 @@ export default {
       }
     },
     resize() {
-      this.showText = window.innerWidth > TEXT_BREAKPOINT_WIDTH;
+      this.showText =
+        window.innerWidth > TEXT_BREAKPOINT_WIDTH(this.$i18n.locale);
     },
     save() {
       this.$emit("save");
