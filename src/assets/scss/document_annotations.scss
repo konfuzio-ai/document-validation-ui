@@ -517,15 +517,14 @@
     }
 
     .accept-decline-container {
-      padding-right: 14px;
       display: flex;
       flex-direction: row;
+      gap: 6px;
       justify-content: center;
       button {
-        padding: 6px;
+        padding: 0px;
 
         .decline-icon {
-          padding: 6px;
           color: $red;
           vertical-align: middle;
         }
