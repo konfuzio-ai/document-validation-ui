@@ -213,20 +213,20 @@ You can also deploy the application by following the steps below:
 
 1. Clone the repository
 
-You can download the application by cloning
-our [GitHub repository](https://github.com/konfuzio-ai/document-validation-ui) or downloading the source code.
+  You can download the application by cloning
+  our [GitHub repository](https://github.com/konfuzio-ai/document-validation-ui) or downloading the source code.
 
-`git clone git@github.com:konfuzio-ai/document-validation-ui.git`
+  `git clone git@github.com:konfuzio-ai/document-validation-ui.git`
 
 2. Configure the Application
 
-Decide if the application will be run as [Read Only or Full Mode](#read-only-mode-vs-full-mode).
+  Decide if the application will be run as [Read Only or Full Mode](#read-only-mode-vs-full-mode).
 
 3. Install all packages
 
-Install all the dependencies by running:
+  Install all the dependencies by running:
 
-`npm install`
+  `npm install`
 
 4. Run the Application
 
