@@ -17,7 +17,7 @@
         ]"
       >
         <div
-          v-if="previousDocument"
+          :style="`visibility: ${previousDocument ? 'visible' : 'hidden'}`"
           class="left-arrow navigation-arrow"
           type="button"
           @click="navigateToDocument(previousDocument)"
@@ -28,8 +28,8 @@
         <DocumentName :data-file-name="selectedDocument.data_file_name" />
 
         <div
-          v-if="nextDocument"
           class="right-arrow navigation-arrow"
+          :style="`visibility: ${nextDocument ? 'visible' : 'hidden'}`"
           type="button"
           @click="navigateToDocument(nextDocument)"
         >
@@ -84,7 +84,7 @@
       </div>
     </div>
     <div v-else class="loading-top-bar">
-      <b-skeleton position="is-centered" width="25%" height="60%" />
+      <b-skeleton position="is-centered" width="20%" height="60%" />
     </div>
   </div>
 </template>

@@ -234,7 +234,7 @@ describe("Document Top Bar", () => {
     expect(
       await wrapper
         .findComponent(".center-bar-components .navigation-arrow")
-        .exists()
+        .isVisible()
     ).toBe(false);
   });
 });

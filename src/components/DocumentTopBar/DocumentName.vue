@@ -10,17 +10,26 @@
         <b-skeleton width="15px" height="22px" :rounded="false" />
       </ServerImage>
     </div>
-    <span class="file-name-section">
-      <span
-        :class="['document-name', isEditable && 'is-editable']"
-        :contenteditable="isEditable"
-        @input="handleInput"
-        @paste="handlePaste"
-        @keydown.enter="handleSave"
-        @blur="handleSave"
-        >{{ textContent }}</span
-      >
-    </span>
+    <b-tooltip
+      :label="fullText"
+      multilined
+      :active="isFileNameBiggerThanMaxSize && !isEditable"
+      size="is-large"
+      position="is-bottom"
+    >
+      <span class="file-name-section">
+        <span
+          :class="['document-name', isEditable && 'is-editable']"
+          :contenteditable="isEditable"
+          @input="handleInput"
+          @paste="handlePaste"
+          @keydown.enter="handleSave"
+          @blur="handleSave"
+          >{{ textContent }}</span
+        >
+      </span>
+    </b-tooltip>
+
     <div
       v-if="
         !publicView &&
@@ -84,6 +93,7 @@ export default {
   },
   data() {
     return {
+      maxFilenameChars: 26,
       isEditable: false,
       showEditBtn: true,
       showSaveBtn: false,
@@ -117,6 +127,20 @@ export default {
         return this.shortFilenameIfNeeded(this.dataFileName);
       }
     },
+    fullText() {
+      if (this.fileName) {
+        return this.fileName;
+      } else {
+        return this.dataFileName;
+      }
+    },
+    isFileNameBiggerThanMaxSize() {
+      if (this.fileName) {
+        return this.fileName.length >= this.maxFilenameChars;
+      } else {
+        return this.dataFileName.length >= this.maxFilenameChars;
+      }
+    },
   },
   updated() {
     const contentEditable = document.querySelector(".document-name");
@@ -137,15 +161,14 @@ export default {
   },
   methods: {
     shortFilenameIfNeeded(filename) {
-      if (
-        filename &&
-        (filename.length >= 70 ||
-          (filename.length >= 25 && !this.optimalResolution))
-      ) {
+      if (filename && filename.length >= this.maxFilenameChars) {
         return (
-          filename.substr(0, 20) +
+          filename.substr(0, this.maxFilenameChars / 2) +
           "..." +
-          filename.substr(filename.length - 10, filename.length)
+          filename.substr(
+            filename.length - this.maxFilenameChars / 2,
+            filename.length
+          )
         );
       }
       return filename;

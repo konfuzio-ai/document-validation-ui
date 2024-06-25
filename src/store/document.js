@@ -1332,6 +1332,7 @@ const actions = {
     if (state.splittingSuggestions) {
       commit("SET_SPLITTING_SUGGESTIONS", null);
     }
+    commit("SET_RECALCULATING_ANNOTATIONS", false);
 
     if (getURLQueryParam("document") || getURLPath("d")) {
       navigateToNewDocumentURL(state.selectedDocument.id, newDocumentId);
