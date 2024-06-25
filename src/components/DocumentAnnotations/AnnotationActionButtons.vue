@@ -149,7 +149,9 @@ export default {
   },
   data() {
     return {
-      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH(this.$i18n.locale),
+      showText:
+        window.innerWidth >
+        TEXT_BREAKPOINT_WIDTH(this.$i18n ? this.$i18n.locale : "en"),
     };
   },
   computed: {
