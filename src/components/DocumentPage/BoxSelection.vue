@@ -130,6 +130,7 @@ export default {
           this.selection.start,
           this.selection.end
         );
+        this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
         this.$store.dispatch("selection/getTextFromBboxes", {
           box,
           entities: false,

@@ -152,6 +152,7 @@
         <box-selection
           :page="page"
           @createAnnotations="handleCreateAnnotationsFromSelection"
+          @selectEntities="handleEntitiesFromSelection"
         />
       </v-layer>
       <v-layer v-if="isMultiSelection">
@@ -465,7 +466,6 @@ export default {
       )
         return;
       this.newAnnotation = [];
-      // this.endSelection();
 
       const normalizedEntities = this.scaledEntities(entities, this.page);
       if (normalizedEntities) {
@@ -476,6 +476,25 @@ export default {
         this.$store.dispatch(
           "selection/setSelectedEntities",
           this.newAnnotation
+        );
+      } else {
+        this.$store.dispatch("selection/setSelectedEntities", null);
+      }
+    },
+
+    handleEntitiesFromSelection(entities) {
+      if (
+        this.categorizeModalIsActive ||
+        this.publicView ||
+        this.isDocumentReviewed
+      )
+        return;
+
+      const normalizedEntities = this.scaledEntities(entities, this.page);
+      if (normalizedEntities.length > 0) {
+        this.$store.dispatch(
+          "selection/setSelectedEntities",
+          normalizedEntities
         );
       } else {
         this.$store.dispatch("selection/setSelectedEntities", null);
@@ -603,8 +622,8 @@ export default {
      */
     entityRect(entity) {
       let entityIsSelected = false;
-      if (this.newAnnotation && this.newAnnotation.length > 0) {
-        entityIsSelected = this.newAnnotation.find((selectedEntity) => {
+      if (this.selectedEntities && this.selectedEntities.length > 0) {
+        entityIsSelected = this.selectedEntities.find((selectedEntity) => {
           return (
             selectedEntity.original &&
             selectedEntity.original.offset_string ===
