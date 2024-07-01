@@ -37,7 +37,7 @@ jobs:
       - name: Bump pre-release version
         if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
         run: |
           npm version prerelease --preid=dev
           npm publish --tag prerelease
