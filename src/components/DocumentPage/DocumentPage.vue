@@ -112,6 +112,29 @@
                 />
               </v-group>
             </template>
+            <template
+              v-if="annotation.metadata && annotation.metadata.checkbox"
+            >
+              <v-group :key="'ann' + annotation.id + '-checkbox'">
+                <v-rect
+                  v-if="!isAnnotationInEditMode(annotation.id)"
+                  :config="
+                    annotationRect(
+                      annotation.metadata.checkbox.bbox,
+                      annotation.id
+                    )
+                  "
+                  @click="handleFocusedAnnotation(annotation)"
+                  @mouseenter="
+                    onElementEnter(
+                      annotation,
+                      annotation.metadata.checkbox.bbox
+                    )
+                  "
+                  @mouseleave="onElementLeave"
+                />
+              </v-group>
+            </template>
           </template>
         </template>
       </v-layer>

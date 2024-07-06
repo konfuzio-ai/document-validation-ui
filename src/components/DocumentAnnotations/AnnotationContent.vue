@@ -1,7 +1,7 @@
 <template>
   <div :id="annotation.id" ref="annotation" class="annotation">
     <b-checkbox
-      v-if="!label.is_linked_to_checkbox"
+      v-if="annotation.metadata && annotation.metadata.checkbox"
       class="annotation-checkbox"
       :native-value="isChecked"
       @input="handleCheckboxChanged"
@@ -112,7 +112,7 @@ export default {
         .dispatch("document/updateAnnotation", {
           updatedValues: {
             metadata: {
-              omr: {
+              checkbox: {
                 is_checked: value,
               },
             },

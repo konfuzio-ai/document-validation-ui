@@ -65,7 +65,12 @@
 
       <template #content>
         <div class="label-details">
-          <div v-if="label.is_linked_to_checkbox" class="label-description">
+          <div
+            v-if="
+              annotation && annotation.metadata && annotation.metadata.checkbox
+            "
+            class="label-description"
+          >
             <b-icon size="is-small" icon="square-check" />
             <span> {{ $t("checkbox_ann_details") }}</span>
           </div>
