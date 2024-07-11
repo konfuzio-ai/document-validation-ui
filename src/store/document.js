@@ -372,24 +372,6 @@ const getters = {
 
         // add annotations to the document array
         labelAnnotations.push(...label.annotations);
-
-        // TODO: remove (testing only)
-        labelAnnotations.forEach((ann) => {
-          ann.metadata = {
-            checkbox: {
-              bbox: {
-                x0: 70,
-                x1: 82,
-                y0: 758,
-                y1: 770,
-              },
-              confidence: 0.963968813419342,
-              is_checked: false,
-            },
-          };
-        });
-        //
-
         labels.push({ ...label, annotations: labelAnnotations });
         processedLabels.push(label);
         annotations.push(...labelAnnotations);
