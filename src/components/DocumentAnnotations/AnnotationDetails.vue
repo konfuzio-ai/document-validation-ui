@@ -1,135 +1,149 @@
 <template>
-  <b-tooltip
-    :animated="false"
-    :position="fromTable ? 'is-top' : 'is-bottom'"
-    :class="[!fromTable && 'left-aligned', 'annotation-details']"
-  >
-    <div :class="['label-icon', fromTable && 'is-small']">
-      <div
-        v-if="
-          (created(annotation) || edited(annotation)) &&
-          !isNegative(annotation) &&
-          !publicView
-        "
-      >
+  <div>
+    <b-tooltip
+      :animated="false"
+      :position="fromTable ? 'is-top' : 'is-bottom'"
+      :class="[!fromTable && 'left-aligned', 'annotation-details']"
+    >
+      <div :class="['label-icon', fromTable && 'is-small']">
         <div
+          v-if="
+            (created(annotation) || edited(annotation)) &&
+            !isNegative(annotation) &&
+            !publicView
+          "
+        >
+          <div
+            :class="[
+              'annotation-details-icon',
+              animate ? 'animated-ripple' : '',
+              'user-icon',
+            ]"
+          >
+            <AcceptedUser />
+          </div>
+        </div>
+        <div
+          v-else-if="annotationIsNotFound(annotationSet, label) && !publicView"
+          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
+        >
+          <NotFoundIcon />
+        </div>
+        <div
+          v-else-if="
+            notExtracted(annotation) || (isNegative(annotation) && !publicView)
+          "
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
-            'user-icon',
+            'question-icon',
           ]"
         >
-          <AcceptedUser />
+          <QuestionMark />
         </div>
-      </div>
-      <div
-        v-else-if="annotationIsNotFound(annotationSet, label) && !publicView"
-        :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
-      >
-        <NotFoundIcon />
-      </div>
-      <div
-        v-else-if="
-          notExtracted(annotation) || (isNegative(annotation) && !publicView)
-        "
-        :class="[
-          'annotation-details-icon',
-          animate ? 'animated-ripple' : '',
-          'question-icon',
-        ]"
-      >
-        <QuestionMark />
-      </div>
-      <div v-else>
-        <div
-          v-if="accepted(annotation) && !publicView"
-          :class="[
-            'annotation-details-icon success',
-            animate ? 'animated-ripple' : '',
-          ]"
-        >
-          <AcceptedCheckMark />
-        </div>
-        <div
-          v-else
-          :class="['annotation-details-icon', animate ? 'animated-ripple' : '']"
-        >
-          <CheckMark class="pending" />
-        </div>
-      </div>
-    </div>
-
-    <template #content>
-      <div class="label-details">
-        <div v-if="description" class="label-description">
-          <span>{{ description }}</span>
-        </div>
-        <div
-          v-if="confidence(annotation) && !isNegative(annotation)"
-          :class="['confidence', publicView && 'tooltip-in-public-view']"
-        >
-          <span>{{ $t("confidence") }}</span
-          ><span
+        <div v-else>
+          <div
+            v-if="accepted(annotation) && !publicView"
             :class="[
-              'value',
-              confidence(annotation) <= 0.2
-                ? 'red'
-                : confidence(annotation) <= 0.5
-                ? 'yellow'
-                : '',
+              'annotation-details-icon success',
+              animate ? 'animated-ripple' : '',
             ]"
-            >{{ Math.floor(confidence(annotation) * 100) / 100 }}</span
           >
-        </div>
-        <div v-if="!publicView" class="revision">
-          <div class="detail-icons">
-            <div v-if="created(annotation) || edited(annotation)">
-              <div
-                :class="[
-                  'annotation-details-icon',
-                  animate ? 'animated-ripple' : '',
-                  'user-icon',
-                ]"
-              >
-                <AcceptedUser />
-              </div>
-            </div>
-            <div
-              v-else-if="notExtracted(annotation)"
-              :class="[
-                'annotation-details-icon',
-                animate ? 'animated-ripple' : '',
-                'question-icon',
-              ]"
-            >
-              <QuestionMark />
-            </div>
-            <div v-else>
-              <div
-                v-if="accepted(annotation)"
-                :class="[
-                  'annotation-details-icon',
-                  animate ? 'animated-ripple' : '',
-                ]"
-              >
-                <AcceptedCheckMark />
-              </div>
-              <div
-                v-else
-                :class="[
-                  'annotation-details-icon',
-                  animate ? 'animated-ripple' : '',
-                ]"
-              >
-                <CheckMark />
-              </div>
-            </div>
-            {{ getText() }}
+            <AcceptedCheckMark />
+          </div>
+          <div
+            v-else
+            :class="[
+              'annotation-details-icon',
+              animate ? 'animated-ripple' : '',
+            ]"
+          >
+            <CheckMark class="pending" />
           </div>
         </div>
       </div>
-    </template>
-  </b-tooltip>
+
+      <template #content>
+        <div class="label-details">
+          <div
+            v-if="
+              annotation && annotation.metadata && annotation.metadata.checkbox
+            "
+            class="label-description"
+          >
+            <b-icon size="is-small" icon="square-check" />
+            <span> {{ $t("checkbox_ann_details") }}</span>
+          </div>
+          <div v-if="description" class="label-description">
+            <span>{{ description }}</span>
+          </div>
+          <div
+            v-if="confidence(annotation) && !isNegative(annotation)"
+            :class="['confidence', publicView && 'tooltip-in-public-view']"
+          >
+            <span>{{ $t("confidence") }}</span
+            ><span
+              :class="[
+                'value',
+                confidence(annotation) <= 0.2
+                  ? 'red'
+                  : confidence(annotation) <= 0.5
+                  ? 'yellow'
+                  : '',
+              ]"
+              >{{ Math.floor(confidence(annotation) * 100) / 100 }}</span
+            >
+          </div>
+          <div v-if="!publicView" class="revision">
+            <div class="detail-icons">
+              <div v-if="created(annotation) || edited(annotation)">
+                <div
+                  :class="[
+                    'annotation-details-icon',
+                    animate ? 'animated-ripple' : '',
+                    'user-icon',
+                  ]"
+                >
+                  <AcceptedUser />
+                </div>
+              </div>
+              <div
+                v-else-if="notExtracted(annotation)"
+                :class="[
+                  'annotation-details-icon',
+                  animate ? 'animated-ripple' : '',
+                  'question-icon',
+                ]"
+              >
+                <QuestionMark />
+              </div>
+              <div v-else>
+                <div
+                  v-if="accepted(annotation)"
+                  :class="[
+                    'annotation-details-icon',
+                    animate ? 'animated-ripple' : '',
+                  ]"
+                >
+                  <AcceptedCheckMark />
+                </div>
+                <div
+                  v-else
+                  :class="[
+                    'annotation-details-icon',
+                    animate ? 'animated-ripple' : '',
+                  ]"
+                >
+                  <CheckMark />
+                </div>
+              </div>
+              {{ getText() }}
+            </div>
+          </div>
+        </div>
+      </template>
+    </b-tooltip>
+  </div>
 </template>
 <script>
 import { mapGetters, mapState } from "vuex";

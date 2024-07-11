@@ -1,5 +1,11 @@
 <template>
   <div :id="annotation.id" ref="annotation" class="annotation">
+    <b-checkbox
+      v-if="annotation.metadata && annotation.metadata.checkbox"
+      class="annotation-checkbox"
+      :native-value="isChecked"
+      @input="handleCheckboxChanged"
+    />
     <span
       :id="annotation.id"
       ref="contentEditable"
@@ -58,6 +64,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isChecked: false, //this.annotation.metadata.omr.is_checked,
     };
   },
   computed: {
@@ -99,6 +106,27 @@ export default {
     },
     getAnnotationText() {
       return this.$refs.contentEditable.textContent.trim();
+    },
+    handleCheckboxChanged(value) {
+      this.$store
+        .dispatch("document/updateAnnotation", {
+          updatedValues: {
+            metadata: {
+              checkbox: {
+                is_checked: value,
+              },
+            },
+          },
+          annotationId: this.annotation.id,
+          annotationSet: this.annotationSet,
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        });
     },
     handleEditAnnotation(event) {
       if (this.publicView || this.isDocumentReviewed) return;
