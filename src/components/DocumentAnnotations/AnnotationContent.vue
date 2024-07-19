@@ -3,7 +3,7 @@
     <b-checkbox
       v-if="annotation.metadata && annotation.metadata.checkbox"
       class="annotation-checkbox"
-      :native-value="isChecked"
+      :value="isChecked"
       @input="handleCheckboxChanged"
     />
     <span
@@ -64,7 +64,11 @@ export default {
   data() {
     return {
       isLoading: false,
-      isChecked: false, //this.annotation.metadata.omr.is_checked,
+      isChecked:
+        this.annotation &&
+        this.annotation.metadata &&
+        this.annotation.metadata.checkbox &&
+        this.annotation.metadata.checkbox.is_checked,
     };
   },
   computed: {
