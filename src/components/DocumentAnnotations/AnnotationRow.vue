@@ -39,7 +39,11 @@
       </div>
 
       <div
-        v-if="showAnnotationTranslations"
+        v-if="
+          showAnnotationTranslations &&
+          annotation &&
+          annotation.translated_string
+        "
         :class="['annotation-translation', !isDocumentReviewed && 'pointer']"
         @click="editAnnotationTranslation(annotation.id)"
       >
