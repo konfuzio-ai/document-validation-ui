@@ -2,9 +2,8 @@
   <div :id="annotation.id" ref="annotation" class="annotation">
     <b-checkbox
       v-if="annotation.metadata && annotation.metadata.checkbox"
+      v-model="isChecked"
       class="annotation-checkbox"
-      :value="isChecked"
-      @input="handleCheckboxChanged"
     />
     <span
       :id="annotation.id"
@@ -62,13 +61,16 @@ export default {
     },
   },
   data() {
+    const checkboxValue =
+      this.annotation &&
+      this.annotation.metadata &&
+      this.annotation.metadata.checkbox &&
+      this.annotation.metadata.checkbox.is_checked;
     return {
       isLoading: false,
-      isChecked:
-        this.annotation &&
-        this.annotation.metadata &&
-        this.annotation.metadata.checkbox &&
-        this.annotation.metadata.checkbox.is_checked,
+      checkboxDefaultValue: checkboxValue,
+      isCheckboxAvailable: false,
+      isChecked: checkboxValue,
     };
   },
   computed: {
@@ -102,15 +104,29 @@ export default {
       // span content changed, ex. from click on entity
       this.setText(this.span.offset_string);
     },
+    isChecked() {
+      if (this.isCheckboxAvailable) {
+        this.handleCheckboxChanged(this.isChecked);
+      } else {
+        if (this.isChecked !== this.checkboxDefaultValue) {
+          this.$buefy.dialog.confirm({
+            container: "#app .dv-ui-app-container",
+            canCancel: ["button"],
+            message: this.$t("edit_ann_content_warning"),
+            onConfirm: () => {
+              this.isCheckboxAvailable = true;
+              this.handleCheckboxChanged(this.isChecked);
+            },
+            onCancel: () => {
+              this.isChecked = !this.isChecked;
+            },
+          });
+        }
+      }
+    },
   },
 
   methods: {
-    setText(text) {
-      this.$refs.contentEditable.textContent = text;
-    },
-    getAnnotationText() {
-      return this.$refs.contentEditable.textContent.trim();
-    },
     handleCheckboxChanged(value) {
       this.$store
         .dispatch("document/updateAnnotation", {
@@ -131,6 +147,12 @@ export default {
             defaultErrorMessage: this.$t("edit_error"),
           });
         });
+    },
+    setText(text) {
+      this.$refs.contentEditable.textContent = text;
+    },
+    getAnnotationText() {
+      return this.$refs.contentEditable.textContent.trim();
     },
     handleEditAnnotation(event) {
       if (this.publicView || this.isDocumentReviewed) return;

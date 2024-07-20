@@ -158,7 +158,7 @@
   "human_feedback_needed": "Human Feedback needed",
   "label_missing_annotations": "Missing Annotations",
   "accepted_annotations": "Accepted Annotations",
-  "edit_ann_content_warning": "If you change the text, the AI cannot use this Annotation. You will also invalidate the training data. Try to change the selection to capture the text before adding it manually, or press OK to continue anyway.",
+  "edit_ann_content_warning": "If you change the content, the AI cannot use this Annotation. You will also invalidate the training data. Try to change the selection to capture the content before adding it manually, or press OK to continue anyway.",
   "annotation_deleted": "This annotation has been deleted.",
   "annotation_link": "Copy the permanent link to this annotation",
   "copied": "Copied",
