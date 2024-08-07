@@ -25,16 +25,15 @@ jobs:
         run: |
           git config --global user.email "fz@konfuzio.com"
           git config --global user.name "Konfuzio Bot"
-          
+
       - name: Bump version & Release NPM
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
         run: |
           npm version patch
           npm publish
-          
+
       - name: Push changes to repository
-        if: ${{ env.NEW_COMMIT_COUNT > 0 }}
-        run: | 
+        run: |
           git push --tags origin
           git push origin
