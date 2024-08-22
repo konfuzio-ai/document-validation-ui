@@ -307,6 +307,11 @@
                 .spinner {
                   color: $grey;
                 }
+
+                .annotation-items {
+                  display: flex;
+                  flex-direction: row;
+                }
               }
 
               .buttons-container {

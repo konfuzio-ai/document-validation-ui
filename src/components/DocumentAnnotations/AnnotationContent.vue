@@ -1,10 +1,5 @@
 <template>
   <div :id="annotation.id" ref="annotation" class="annotation">
-    <b-checkbox
-      v-if="annotation.metadata && annotation.metadata.checkbox"
-      v-model="isChecked"
-      class="annotation-checkbox"
-    />
     <span
       :id="annotation.id"
       ref="contentEditable"
@@ -61,16 +56,8 @@ export default {
     },
   },
   data() {
-    const checkboxValue =
-      this.annotation &&
-      this.annotation.metadata &&
-      this.annotation.metadata.checkbox &&
-      this.annotation.metadata.checkbox.is_checked;
     return {
       isLoading: false,
-      checkboxDefaultValue: checkboxValue,
-      isCheckboxAvailable: false,
-      isChecked: checkboxValue,
     };
   },
   computed: {
@@ -104,50 +91,9 @@ export default {
       // span content changed, ex. from click on entity
       this.setText(this.span.offset_string);
     },
-    isChecked() {
-      if (this.isCheckboxAvailable) {
-        this.handleCheckboxChanged(this.isChecked);
-      } else {
-        if (this.isChecked !== this.checkboxDefaultValue) {
-          this.$buefy.dialog.confirm({
-            container: "#app .dv-ui-app-container",
-            canCancel: ["button"],
-            message: this.$t("edit_ann_content_warning"),
-            onConfirm: () => {
-              this.isCheckboxAvailable = true;
-              this.handleCheckboxChanged(this.isChecked);
-            },
-            onCancel: () => {
-              this.isChecked = !this.isChecked;
-            },
-          });
-        }
-      }
-    },
   },
 
   methods: {
-    handleCheckboxChanged(value) {
-      this.$store
-        .dispatch("document/updateAnnotation", {
-          updatedValues: {
-            metadata: {
-              checkbox: {
-                is_checked: value,
-              },
-            },
-          },
-          annotationId: this.annotation.id,
-          annotationSet: this.annotationSet,
-        })
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("edit_error"),
-          });
-        });
-    },
     setText(text) {
       this.$refs.contentEditable.textContent = text;
     },

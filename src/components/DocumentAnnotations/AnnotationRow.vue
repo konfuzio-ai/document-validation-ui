@@ -85,25 +85,35 @@
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
-        <div v-if="annotation && !isNegative(annotation)">
-          <div
-            v-for="(span, index) in spanForEditing
-              ? spanSelection
-              : annotation.span"
-            :key="index"
-            @mouseenter="onAnnotationHoverEnter(span)"
-            @mouseleave="onAnnotationHoverLeave"
-          >
-            <AnnotationContent
-              :ref="`span_${annotation.id}_${index}`"
-              :annotation="annotation"
-              :span="span"
-              :span-index="index"
-              :label="label"
-              :annotation-set="annotationSet"
-              :is-hovered="hoveredAnnotation"
-              @save-annotation-changes="handleSaveChanges"
-            />
+        <div
+          v-if="annotation && !isNegative(annotation)"
+          class="annotation-items"
+        >
+          <b-checkbox
+            v-if="annotation.metadata && annotation.metadata.checkbox"
+            v-model="isChecked"
+            class="annotation-checkbox"
+          />
+          <div class="annotation-spans">
+            <div
+              v-for="(span, index) in spanForEditing
+                ? spanSelection
+                : annotation.span"
+              :key="index"
+              @mouseenter="onAnnotationHoverEnter(span)"
+              @mouseleave="onAnnotationHoverLeave"
+            >
+              <AnnotationContent
+                :ref="`span_${annotation.id}_${index}`"
+                :annotation="annotation"
+                :span="span"
+                :span-index="index"
+                :label="label"
+                :annotation-set="annotationSet"
+                :is-hovered="hoveredAnnotation"
+                @save-annotation-changes="handleSaveChanges"
+              />
+            </div>
           </div>
         </div>
         <div v-else>
@@ -202,11 +212,19 @@ export default {
     },
   },
   data() {
+    const checkboxValue =
+      this.annotation &&
+      this.annotation.metadata &&
+      this.annotation.metadata.checkbox &&
+      this.annotation.metadata.checkbox.is_checked;
     return {
       isLoading: false,
       isSelected: false,
       // annotationAnimationTimeout: null,
       hoveredAnnotation: null,
+      checkboxDefaultValue: checkboxValue,
+      isCheckboxAvailable: false,
+      isChecked: checkboxValue,
     };
   },
   computed: {
@@ -325,11 +343,52 @@ export default {
         this.isLoading = false;
       }
     },
+    isChecked() {
+      if (this.isCheckboxAvailable) {
+        this.handleCheckboxChanged(this.isChecked);
+      } else {
+        if (this.isChecked !== this.checkboxDefaultValue) {
+          this.$buefy.dialog.confirm({
+            container: "#app .dv-ui-app-container",
+            canCancel: ["button"],
+            message: this.$t("edit_ann_content_warning"),
+            onConfirm: () => {
+              this.isCheckboxAvailable = true;
+              this.handleCheckboxChanged(this.isChecked);
+            },
+            onCancel: () => {
+              this.isChecked = !this.isChecked;
+            },
+          });
+        }
+      }
+    },
   },
   mounted() {
     this.checkAnnotationSelection(this.annotationId);
   },
   methods: {
+    handleCheckboxChanged(value) {
+      this.$store
+        .dispatch("document/updateAnnotation", {
+          updatedValues: {
+            metadata: {
+              checkbox: {
+                is_checked: value,
+              },
+            },
+          },
+          annotationId: this.annotation.id,
+          annotationSet: this.annotationSet,
+        })
+        .catch((error) => {
+          this.$store.dispatch("document/createErrorMessage", {
+            error,
+            serverErrorMessage: this.$t("server_error"),
+            defaultErrorMessage: this.$t("edit_error"),
+          });
+        });
+    },
     checkAnnotationSelection(newAnnotationId) {
       if (
         newAnnotationId &&
