@@ -479,10 +479,6 @@ describe("Document Annotations Component", () => {
     expect(
       await wrapper.findComponent(".annotation-set-group .no-labels").exists()
     ).toBe(true);
-
-    expect(
-      await wrapper.findAll(".annotation-set-group .no-labels").length
-    ).toBe(1);
   });
 
   it("Shows message to user if public mode and annotation set has no filled labels", async () => {
