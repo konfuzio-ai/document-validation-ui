@@ -28,7 +28,10 @@
     </div>
 
     <div v-else ref="annotationList" :class="['annotation-set-list']">
-      <AnnotationFilters v-if="isDocumentEditable" />
+      <AnnotationFilters
+        v-if="isDocumentEditable"
+        @openAll="openAllAccordions"
+      />
 
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"

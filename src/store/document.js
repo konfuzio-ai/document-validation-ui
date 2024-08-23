@@ -53,6 +53,7 @@ const state = {
         ? false
         : true,
   },
+  annotationSearch: "",
 };
 const getters = {
   /**
@@ -302,6 +303,25 @@ const getters = {
     let processedAnnotationSets = [];
     let processedLabels = [];
 
+    // search feature
+    const addAnnotation = (listToAdd, annotation) => {
+      if (state.annotationSearch != "") {
+        if (
+          annotation.offset_string &&
+          annotation.offset_string
+            .toLowerCase()
+            .includes(state.annotationSearch.toLowerCase())
+        ) {
+          listToAdd.push(annotation);
+          return true;
+        }
+      } else {
+        listToAdd.push(annotation);
+        return true;
+      }
+      return false;
+    };
+
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
         labels = [];
@@ -323,22 +343,34 @@ const getters = {
                   state.annotationFilters.showFeedbackNeeded &&
                   annotation.revised === false
                 ) {
-                  labelAnnotations.push(annotation);
-                  addLabel = true;
+                  const added = addAnnotation(labelAnnotations, annotation);
+                  // labelAnnotations.push(annotation);
+                  if (added) {
+                    addLabel = true;
+                  }
                 }
                 if (
                   state.annotationFilters.showAccepted &&
                   annotation.revised === true
                 ) {
-                  labelAnnotations.push(annotation);
-                  addLabel = true;
+                  const added = addAnnotation(labelAnnotations, annotation);
+                  // labelAnnotations.push(annotation);
+                  if (added) {
+                    addLabel = true;
+                  }
                 }
               });
             }
           } else {
             // add annotations to the document array
-            labelAnnotations.push(...label.annotations);
-            addLabel = true;
+            label.annotations.forEach((annotation) => {
+              const added = addAnnotation(labelAnnotations, annotation);
+              if (added) {
+                addLabel = true;
+              }
+            });
+            // labelAnnotations.push(...label.annotations);
+            // addLabel = true;
           }
           if (addLabel) {
             labels.push({ ...label, annotations: labelAnnotations });
@@ -872,6 +904,9 @@ const actions = {
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
+  setAnnotationSearch: ({ commit }, value) => {
+    commit("SET_ANNOTATION_SEARCH", value);
   },
 
   /**
@@ -1586,6 +1621,9 @@ const mutations = {
   },
   SET_SPLITTING_SUGGESTIONS: (state, array) => {
     state.splittingSuggestions = array;
+  },
+  SET_ANNOTATION_SEARCH: (state, search) => {
+    state.annotationSearch = search;
   },
 };
 
