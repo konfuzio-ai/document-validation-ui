@@ -47,7 +47,9 @@ export default {
       if (this.search != "") {
         this.$emit("openAll");
       }
-      this.$store.dispatch("document/setAnnotationSearch", this.search);
+      if (this.search != this.annotationSearch) {
+        this.$store.dispatch("document/setAnnotationSearch", this.search);
+      }
     },
   },
   mounted() {
