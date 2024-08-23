@@ -6,6 +6,7 @@ import {
   navigateToNewDocumentURL,
   getURLPath,
   setURLAnnotationHash,
+  setURLQueryParam,
 } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
@@ -53,7 +54,7 @@ const state = {
         ? false
         : true,
   },
-  annotationSearch: "",
+  annotationSearch: getURLQueryParam("search") || "",
 };
 const getters = {
   /**
@@ -1624,6 +1625,7 @@ const mutations = {
   },
   SET_ANNOTATION_SEARCH: (state, search) => {
     state.annotationSearch = search;
+    setURLQueryParam("search", search);
   },
 };
 

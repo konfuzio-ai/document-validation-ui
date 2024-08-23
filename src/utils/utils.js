@@ -35,6 +35,16 @@ export function getURLValueFromHash(value) {
   return id;
 }
 
+export function setURLQueryParam(query, value) {
+  const url = new URL(window.location.href);
+  if (value != "") {
+    url.searchParams.set(query, value);
+  } else {
+    url.searchParams.delete(query);
+  }
+  window.history.pushState(null, "", url.toString());
+}
+
 export function setURLAnnotationHash(annotationId) {
   if (annotationId) {
     window.location.hash = `ann${annotationId}`;
