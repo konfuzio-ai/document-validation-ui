@@ -230,6 +230,9 @@ export default {
   },
   mounted() {
     this.setsList = [...this.annotationSets];
+    if (this.setsList.length === 1) {
+      this.selectedSet = this.setsList[0];
+    }
 
     setTimeout(() => {
       // prevent click propagation when opening the popup
