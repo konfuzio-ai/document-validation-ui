@@ -305,7 +305,11 @@ const getters = {
     let processedLabels = [];
 
     // search feature
-    const addAnnotation = (listToAdd, annotation) => {
+    const addAnnotation = (listToAdd, annotation, force) => {
+      if (force) {
+        listToAdd.push(annotation);
+        return true;
+      }
       if (state.annotationSearch != "") {
         if (
           annotation.offset_string &&
@@ -323,12 +327,29 @@ const getters = {
       return false;
     };
 
+    const labelHasSearchText = (label) => {
+      if (state.annotationSearch != "") {
+        if (
+          label.name &&
+          label.name
+            .toLowerCase()
+            .includes(state.annotationSearch.toLowerCase())
+        ) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+      return false;
+    };
+
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
           const labelAnnotations = [];
           let addLabel = false;
+          const labelHasSearch = labelHasSearchText(label);
           if (
             !state.annotationFilters.showEmpty ||
             !state.annotationFilters.showFeedbackNeeded ||
@@ -344,8 +365,11 @@ const getters = {
                   state.annotationFilters.showFeedbackNeeded &&
                   annotation.revised === false
                 ) {
-                  const added = addAnnotation(labelAnnotations, annotation);
-                  // labelAnnotations.push(annotation);
+                  const added = addAnnotation(
+                    labelAnnotations,
+                    annotation,
+                    labelHasSearch
+                  );
                   if (added) {
                     addLabel = true;
                   }
@@ -354,8 +378,11 @@ const getters = {
                   state.annotationFilters.showAccepted &&
                   annotation.revised === true
                 ) {
-                  const added = addAnnotation(labelAnnotations, annotation);
-                  // labelAnnotations.push(annotation);
+                  const added = addAnnotation(
+                    labelAnnotations,
+                    annotation,
+                    labelHasSearch
+                  );
                   if (added) {
                     addLabel = true;
                   }
@@ -365,7 +392,11 @@ const getters = {
           } else {
             // add annotations to the document array
             label.annotations.forEach((annotation) => {
-              const added = addAnnotation(labelAnnotations, annotation);
+              const added = addAnnotation(
+                labelAnnotations,
+                annotation,
+                labelHasSearch
+              );
               if (added) {
                 addLabel = true;
               }
