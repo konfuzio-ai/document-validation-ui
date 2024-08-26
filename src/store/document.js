@@ -518,6 +518,13 @@ const getters = {
     },
 
   /**
+   * Checks if it's currently searching for annotations
+   */
+  isSearchingAnnotationList: (state) => {
+    return state.annotationSearch && state.annotationSearch !== "";
+  },
+
+  /**
    * Get number of empty labels per annotation set
    */
   emptyLabels: (state, getters) => (annotationSet) => {

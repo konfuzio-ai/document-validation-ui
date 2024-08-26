@@ -135,9 +135,18 @@
           </div>
 
           <div v-if="annotationSet.labels.length === 0" class="no-labels">
-            <span> {{ $t("no_labels_in_set") }}</span>
+            <span>
+              {{
+                isSearchingAnnotationList
+                  ? $t("no_results")
+                  : $t("no_labels_in_set")
+              }}</span
+            >
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-if="isDocumentEditable" v-html="$t('link_to_add_labels')" />
+            <span
+              v-if="isDocumentEditable && !isSearchingAnnotationList"
+              v-html="$t('link_to_add_labels')"
+            />
           </div>
 
           <div
@@ -208,6 +217,7 @@ export default {
       "isDocumentReviewed",
       "annotationSetOfAnnotation",
       "isAnnotationInAnnotationSet",
+      "isSearchingAnnotationList",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
