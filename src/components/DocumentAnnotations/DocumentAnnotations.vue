@@ -143,10 +143,7 @@
               }}</span
             >
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span
-              v-if="isDocumentEditable && !isSearchingAnnotationList"
-              v-html="$t('link_to_add_labels')"
-            />
+            <span v-if="isDocumentEditable && !isSearchingAnnotationList" v-html="$t('link_to_add_labels')" />
           </div>
 
           <div
