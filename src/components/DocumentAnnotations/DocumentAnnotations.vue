@@ -155,7 +155,7 @@
                   : $t("no_labels_in_set")
               }}</span
             >
-            <!-- eslint-disable-next-line vue/no-v-html -->
+            <!-- eslint-disable vue/no-v-html -->
             <span
               v-if="isDocumentEditable && !isSearchingAnnotationList"
               v-html="$t('link_to_add_labels')"
