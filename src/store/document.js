@@ -410,7 +410,11 @@ const getters = {
           }
           annotations.push(...labelAnnotations);
         });
-        processedAnnotationSets.push({ ...annotationSet, labels });
+
+        // if in search do not add the annotation set
+        if (!(state.annotationSearch != "" && labels.length === 0)) {
+          processedAnnotationSets.push({ ...annotationSet, labels });
+        }
       });
     }
 

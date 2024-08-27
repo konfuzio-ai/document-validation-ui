@@ -21,7 +21,10 @@
 
     <!-- When there's no annotation sets -->
     <div
-      v-else-if="getAnnotationsFiltered.annotationSets.length === 0"
+      v-else-if="
+        getAnnotationsFiltered.annotationSets.length === 0 &&
+        !isSearchingAnnotationList
+      "
       class="empty-annotation-sets"
     >
       <EmptyState />
@@ -32,6 +35,16 @@
         v-if="isDocumentEditable"
         @openAll="openAllAccordions"
       />
+
+      <div
+        v-if="
+          getAnnotationsFiltered.annotationSets.length === 0 &&
+          isSearchingAnnotationList
+        "
+        class="empty-annotation-sets"
+      >
+        <EmptyState :is-search="true" />
+      </div>
 
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
@@ -134,7 +147,7 @@
             </div>
           </div>
 
-          <div v-if="annotationSet.labels.length === 0" class="no-labels">
+          <div v-else-if="annotationSet.labels.length === 0" class="no-labels">
             <span>
               {{
                 isSearchingAnnotationList
@@ -143,7 +156,10 @@
               }}</span
             >
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-if="isDocumentEditable && !isSearchingAnnotationList" v-html="$t('link_to_add_labels')" />
+            <span
+              v-if="isDocumentEditable && !isSearchingAnnotationList"
+              v-html="$t('link_to_add_labels')"
+            />
           </div>
 
           <div
@@ -265,6 +281,11 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    annotationSetShouldAppear(annotationSet) {
+      return !(
+        annotationSet.labels.length === 0 && this.isSearchingAnnotationList
+      );
+    },
     toggleAccordion(index) {
       const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
       newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
