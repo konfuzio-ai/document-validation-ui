@@ -52,14 +52,9 @@
     .annotation-options {
       display: flex;
       justify-content: space-between;
+      flex-direction: column;
       padding: 16px 16px 0px 16px;
       gap: 16px;
-
-      #annotation-search {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
 
       #annotation-filters {
         display: flex;
