@@ -118,7 +118,7 @@
 <script>
 /**
  * This component is used to show a popup
- * for creating a new annotation.
+ * for editing an annotation.
  */
 const heightOfPopup = 142;
 const margin = 12;
@@ -179,7 +179,7 @@ export default {
 
       //check if the popup will not go off the container on the top
       return this.selection.start.y > heightOfPopup
-        ? top
+        ? top - margin
         : this.selection.start.y + height + margin;
     },
     left() {

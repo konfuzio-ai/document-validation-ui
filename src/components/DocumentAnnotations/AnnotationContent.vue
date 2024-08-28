@@ -148,6 +148,17 @@ export default {
             custom: false,
           };
 
+          // check if this is part of a group of spans to show the whole bounding box as a placeholder
+          if (
+            this.annotation.selection_bbox &&
+            this.annotation.span.length > 1
+          ) {
+            selection.placeholderBox = this.bboxToRect(
+              page,
+              this.annotation.selection_bbox
+            );
+          }
+
           this.$store.dispatch("selection/setSelection", {
             selection,
             span: this.span,
