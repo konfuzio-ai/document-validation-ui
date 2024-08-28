@@ -402,8 +402,6 @@ const getters = {
                 addLabel = true;
               }
             });
-            // labelAnnotations.push(...label.annotations);
-            // addLabel = true;
           }
           if (addLabel) {
             labels.push({ ...label, annotations: labelAnnotations });
