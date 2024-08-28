@@ -10,6 +10,7 @@ const state = {
     start: null,
     end: null,
     custom: false, // if the box was created by user in document or it comes from an annotation
+    placeholderBox: null, // show a not editable placeholder box
   },
   isSelecting: false,
   spanSelection: null,
@@ -183,6 +184,7 @@ const mutations = {
     state.selection.pageNumber = pageNumber;
     state.selection.custom = true;
     state.selection.start = start;
+    state.selection.placeholderBox = null;
   },
   MOVE_SELECTION: (state, points) => {
     const { start, end } = points;
@@ -202,6 +204,7 @@ const mutations = {
     state.selection.pageNumber = null;
     state.selection.start = null;
     state.selection.end = null;
+    state.selection.placeholderBox = null;
   },
   SET_SPAN_SELECTION: (state, span) => {
     state.spanSelection = span;
