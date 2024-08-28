@@ -7,6 +7,7 @@ import {
   getURLPath,
   setURLAnnotationHash,
   setURLQueryParam,
+  debounce,
 } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
@@ -948,9 +949,9 @@ const actions = {
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
   },
-  setAnnotationSearch: ({ commit }, value) => {
+  setAnnotationSearch: debounce(({ commit }, value) => {
     commit("SET_ANNOTATION_SEARCH", value);
-  },
+  }, 300),
 
   /**
    * Actions that use HTTP requests always return the axios promise,

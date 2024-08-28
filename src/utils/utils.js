@@ -79,3 +79,13 @@ export function navigateToDocumentsList(path, projectId, userId) {
 export function isElementArray(element) {
   return Array.isArray(element);
 }
+
+export function debounce(cb, duration) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      cb(...args);
+    }, duration);
+  };
+}
