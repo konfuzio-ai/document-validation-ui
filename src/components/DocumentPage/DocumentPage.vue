@@ -16,6 +16,7 @@
       :new-annotation="newAnnotation"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
+      :page="page"
       @close="closePopups"
     />
     <EditAnnotation
