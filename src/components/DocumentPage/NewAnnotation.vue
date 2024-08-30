@@ -149,6 +149,10 @@ export default {
       type: Number,
       required: true,
     },
+    page: {
+      required: true,
+      type: Object,
+    },
   },
   data() {
     return {
@@ -167,6 +171,7 @@ export default {
       "labelsFilteredForAnnotationCreation",
       "isNegative",
     ]),
+    ...mapGetters("display", ["clientToBbox"]),
     ...mapState("selection", ["spanSelection", "selection"]),
     top() {
       if (this.selection && this.selection.end) {
@@ -259,12 +264,19 @@ export default {
         };
       });
 
+      const selection_bbox = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
+
       const annotationToCreate = {
         document: this.documentId,
         span: span,
         label: this.selectedLabel.id,
         is_correct: true,
         revised: false,
+        selection_bbox,
       };
 
       if (this.selectedSet.id) {

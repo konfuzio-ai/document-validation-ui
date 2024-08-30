@@ -8,7 +8,16 @@
       @dragend="onChange"
       @transformend="onChange"
     />
-    <v-transformer ref="boxTransformer" :config="transformerConfig" />
+    <v-transformer
+      v-if="editable"
+      ref="boxTransformer"
+      :config="transformerConfig"
+    />
+    <v-rect
+      v-if="selection.placeholderBox"
+      ref="placeholderSelection"
+      :config="placeholderConfig"
+    />
   </v-group>
 </template>
 
@@ -20,6 +29,11 @@ export default {
     page: {
       required: true,
       type: Object,
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
@@ -40,6 +54,21 @@ export default {
         shadowForStrokeEnabled: false,
         name: "boxSelection",
         draggable: true,
+      };
+    },
+    placeholderConfig() {
+      return {
+        x: this.selection.placeholderBox.x,
+        y: this.selection.placeholderBox.y,
+        width: this.selection.placeholderBox.width,
+        height: this.selection.placeholderBox.height,
+        fill: "transparent",
+        stroke: "#41af85",
+        strokeWidth: 3,
+        globalCompositeOperation: "multiply",
+        shadowForStrokeEnabled: false,
+        name: "placeholderSelection",
+        draggable: false,
       };
     },
     transformerConfig() {
