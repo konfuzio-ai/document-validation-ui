@@ -45,7 +45,7 @@ export default {
 
   watch: {
     search() {
-      if (this.search != "") {
+      if (this.search.length > 0) {
         this.$emit("openAll");
       }
       if (this.search != this.annotationSearch) {
