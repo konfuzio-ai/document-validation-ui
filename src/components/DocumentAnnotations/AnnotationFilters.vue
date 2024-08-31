@@ -2,12 +2,13 @@
   <div class="annotation-options">
     <div id="annotation-search">
       <b-field>
-        <b-input
+        <b-taginput
           v-model="search"
-          :placeholder="$t('search')"
-          type="search"
+          ellipsis
           icon="search"
-        />
+          :placeholder="$t('search')"
+        >
+        </b-taginput>
       </b-field>
     </div>
     <div id="annotation-filters">
@@ -31,7 +32,7 @@ export default {
   name: "AnnotationFilters",
   data() {
     return {
-      search: "",
+      search: [],
     };
   },
   computed: {
