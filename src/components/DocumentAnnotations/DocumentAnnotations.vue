@@ -257,6 +257,12 @@ export default {
         oldAnnotationSets
       );
     },
+    getAnnotationsFiltered(newFiltered, oldFiltered) {
+      this.loadAccordions(
+        newFiltered.annotationSets,
+        oldFiltered.annotationSets
+      );
+    },
     annotationId(newAnnotationId) {
       if (newAnnotationId) {
         const annotationSet = this.annotationSetOfAnnotation(newAnnotationId);
@@ -319,11 +325,13 @@ export default {
           newAnnotationSets.forEach((newAnnotationSet) => {
             const existed = oldAnnotationSets.find(
               (oldAnnotationSet) =>
+                oldAnnotationSet &&
+                newAnnotationSet &&
                 oldAnnotationSet.id &&
                 newAnnotationSet.id &&
                 oldAnnotationSet.id === newAnnotationSet.id
             );
-            if (!existed && newAnnotationSet.id !== null) {
+            if (!existed && newAnnotationSet && newAnnotationSet.id !== null) {
               annotationSetsCreated.push(newAnnotationSet);
             }
           });
@@ -332,6 +340,7 @@ export default {
         newAnnotationSets.forEach((newAnnotationSet, index) => {
           const wasOpen = annotationSetsOpened.find(
             (annotationSetOpened) =>
+              annotationSetOpened &&
               annotationSetOpened.id &&
               newAnnotationSet.id &&
               newAnnotationSet.id === annotationSetOpened.id
