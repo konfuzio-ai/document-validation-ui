@@ -309,6 +309,12 @@
       }
     }
   }
+  .taginput-container {
+    &.is-focused {
+      box-shadow: none !important;
+      border-color: $primary !important;
+    }
+  }
   .field {
     input {
       box-shadow: none !important;

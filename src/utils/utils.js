@@ -35,9 +35,12 @@ export function getURLValueFromHash(value) {
   return id;
 }
 
-export function setURLQueryParam(query, value) {
+export function setURLQueryParam(query, value, deleteParam = "") {
   const url = new URL(window.location.href);
   if (value != "") {
+    if (deleteParam != "") {
+      url.searchParams.delete(deleteParam);
+    }
     url.searchParams.set(query, value);
   } else {
     url.searchParams.delete(query);

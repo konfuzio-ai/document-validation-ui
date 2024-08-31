@@ -55,9 +55,8 @@ const state = {
         ? false
         : true,
   },
-  annotationSearch: getURLQueryParam("search") || "",
-  annotationIdSearch:
-    (getURLQueryParam("ann") && getURLQueryParam("ann").split(",")) || "",
+  annotationSearch:
+    (getURLQueryParam("search") && getURLQueryParam("search").split(",")) || [],
 };
 const getters = {
   /**
@@ -313,20 +312,20 @@ const getters = {
         listToAdd.push(annotation);
         return true;
       }
-      if (state.annotationSearch != "") {
+      if (state.annotationSearch.length > 0) {
         if (
           annotation.offset_string &&
-          annotation.offset_string
-            .toLowerCase()
-            .includes(state.annotationSearch.toLowerCase())
+          state.annotationSearch.find((search) =>
+            annotation.offset_string
+              .toLowerCase()
+              .includes(search.toLowerCase())
+          )
         ) {
           listToAdd.push(annotation);
           return true;
-        }
-      } else if (state.annotationIdSearch != "") {
-        if (
+        } else if (
           annotation.id &&
-          state.annotationIdSearch.includes(`${annotation.id}`)
+          state.annotationSearch.find((search) => `${annotation.id}` === search)
         ) {
           listToAdd.push(annotation);
           return true;
@@ -339,12 +338,12 @@ const getters = {
     };
 
     const labelHasSearchText = (label) => {
-      if (state.annotationSearch != "") {
+      if (state.annotationSearch.length > 0) {
         if (
           label.name &&
-          label.name
-            .toLowerCase()
-            .includes(state.annotationSearch.toLowerCase())
+          state.annotationSearch.find((search) =>
+            label.name.toLowerCase().includes(search.toLowerCase())
+          )
         ) {
           return true;
         }
@@ -421,12 +420,7 @@ const getters = {
         });
 
         // if in search do not add the annotation set
-        if (
-          !(
-            (state.annotationSearch != "" || state.annotationIdSearch) &&
-            labels.length === 0
-          )
-        ) {
+        if (!(state.annotationSearch.length > 0 && labels.length === 0)) {
           processedAnnotationSets.push({ ...annotationSet, labels });
         }
       });
@@ -570,10 +564,7 @@ const getters = {
    * Checks if it's currently searching for annotations
    */
   isSearchingAnnotationList: (state) => {
-    return (
-      (state.annotationSearch && state.annotationSearch !== "") ||
-      (state.annotationIdSearch && state.annotationIdSearch !== "")
-    );
+    return state.annotationSearch && state.annotationSearch.length > 0;
   },
 
   /**
@@ -965,9 +956,9 @@ const actions = {
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
   },
-  setAnnotationSearch: debounce(({ commit }, value) => {
+  setAnnotationSearch: ({ commit }, value) => {
     commit("SET_ANNOTATION_SEARCH", value);
-  }, 300),
+  },
 
   /**
    * Actions that use HTTP requests always return the axios promise,
@@ -1684,8 +1675,7 @@ const mutations = {
   },
   SET_ANNOTATION_SEARCH: (state, search) => {
     state.annotationSearch = search;
-    state.annotationIdSearch = "";
-    setURLQueryParam("search", search, "ann");
+    setURLQueryParam("search", search);
   },
 };
 
