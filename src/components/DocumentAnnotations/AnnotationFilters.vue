@@ -8,6 +8,9 @@
           icon="search"
           :placeholder="$t('search')"
         >
+          <template #tag="props">
+            <span>{{ labelNameForAnnotationId(props.tag) || props.tag }}</span>
+          </template>
         </b-taginput>
       </b-field>
     </div>
@@ -27,7 +30,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "AnnotationFilters",
   data() {
@@ -41,6 +44,7 @@ export default {
       "annotationFilters",
       "annotationSearch",
     ]),
+    ...mapGetters("document", ["annotationById", "labelOfAnnotation"]),
   },
 
   watch: {
@@ -55,6 +59,18 @@ export default {
   },
   mounted() {
     this.search = this.annotationSearch;
+  },
+  methods: {
+    labelNameForAnnotationId(annotationId) {
+      const annotation = this.annotationById(Number(annotationId));
+      if (annotation) {
+        const label = this.labelOfAnnotation(annotation);
+        if (label) {
+          return label.name;
+        }
+      }
+      return false;
+    },
   },
 };
 </script>
