@@ -6,6 +6,8 @@ import {
   navigateToNewDocumentURL,
   getURLPath,
   setURLAnnotationHash,
+  setURLQueryParam,
+  debounce,
 } from "../utils/utils";
 
 const HTTP = myImports.HTTP;
@@ -53,6 +55,8 @@ const state = {
         ? false
         : true,
   },
+  annotationSearch:
+    (getURLQueryParam("search") && getURLQueryParam("search").split(",")) || [],
 };
 const getters = {
   /**
@@ -302,12 +306,60 @@ const getters = {
     let processedAnnotationSets = [];
     let processedLabels = [];
 
+    // search feature
+    const addAnnotation = (listToAdd, annotation, force) => {
+      if (force) {
+        listToAdd.push(annotation);
+        return true;
+      }
+      if (state.annotationSearch.length > 0) {
+        if (
+          annotation.offset_string &&
+          state.annotationSearch.find((search) =>
+            annotation.offset_string
+              .toLowerCase()
+              .includes(search.toLowerCase())
+          )
+        ) {
+          listToAdd.push(annotation);
+          return true;
+        } else if (
+          annotation.id &&
+          state.annotationSearch.find((search) => `${annotation.id}` === search)
+        ) {
+          listToAdd.push(annotation);
+          return true;
+        }
+      } else {
+        listToAdd.push(annotation);
+        return true;
+      }
+      return false;
+    };
+
+    const labelHasSearchText = (label) => {
+      if (state.annotationSearch.length > 0) {
+        if (
+          label.name &&
+          state.annotationSearch.find((search) =>
+            label.name.toLowerCase().includes(search.toLowerCase())
+          )
+        ) {
+          return true;
+        }
+      } else {
+        return false;
+      }
+      return false;
+    };
+
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
         labels = [];
         annotationSet.labels.forEach((label) => {
           const labelAnnotations = [];
           let addLabel = false;
+          const labelHasSearch = labelHasSearchText(label);
           if (
             !state.annotationFilters.showEmpty ||
             !state.annotationFilters.showFeedbackNeeded ||
@@ -323,22 +375,42 @@ const getters = {
                   state.annotationFilters.showFeedbackNeeded &&
                   annotation.revised === false
                 ) {
-                  labelAnnotations.push(annotation);
-                  addLabel = true;
+                  const added = addAnnotation(
+                    labelAnnotations,
+                    annotation,
+                    labelHasSearch
+                  );
+                  if (added) {
+                    addLabel = true;
+                  }
                 }
                 if (
                   state.annotationFilters.showAccepted &&
                   annotation.revised === true
                 ) {
-                  labelAnnotations.push(annotation);
-                  addLabel = true;
+                  const added = addAnnotation(
+                    labelAnnotations,
+                    annotation,
+                    labelHasSearch
+                  );
+                  if (added) {
+                    addLabel = true;
+                  }
                 }
               });
             }
           } else {
             // add annotations to the document array
-            labelAnnotations.push(...label.annotations);
-            addLabel = true;
+            label.annotations.forEach((annotation) => {
+              const added = addAnnotation(
+                labelAnnotations,
+                annotation,
+                labelHasSearch
+              );
+              if (added) {
+                addLabel = true;
+              }
+            });
           }
           if (addLabel) {
             labels.push({ ...label, annotations: labelAnnotations });
@@ -346,7 +418,11 @@ const getters = {
           }
           annotations.push(...labelAnnotations);
         });
-        processedAnnotationSets.push({ ...annotationSet, labels });
+
+        // if in search do not add the annotation set
+        if (!(state.annotationSearch.length > 0 && labels.length === 0)) {
+          processedAnnotationSets.push({ ...annotationSet, labels });
+        }
       });
     }
 
@@ -483,6 +559,13 @@ const getters = {
         return state.editAnnotation.id === annotationId;
       }
     },
+
+  /**
+   * Checks if it's currently searching for annotations
+   */
+  isSearchingAnnotationList: (state) => {
+    return state.annotationSearch && state.annotationSearch.length > 0;
+  },
 
   /**
    * Get number of empty labels per annotation set
@@ -872,6 +955,9 @@ const actions = {
   },
   setSplittingSuggestions: ({ commit }, value) => {
     commit("SET_SPLITTING_SUGGESTIONS", value);
+  },
+  setAnnotationSearch: ({ commit }, value) => {
+    commit("SET_ANNOTATION_SEARCH", value);
   },
 
   /**
@@ -1586,6 +1672,10 @@ const mutations = {
   },
   SET_SPLITTING_SUGGESTIONS: (state, array) => {
     state.splittingSuggestions = array;
+  },
+  SET_ANNOTATION_SEARCH: (state, search) => {
+    state.annotationSearch = search;
+    setURLQueryParam("search", search);
   },
 };
 

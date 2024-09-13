@@ -309,6 +309,28 @@
       }
     }
   }
+  .taginput-container {
+    &.is-focused {
+      box-shadow: none !important;
+      border-color: $primary !important;
+    }
+  }
+  .field {
+    input {
+      box-shadow: none !important;
+      &:focus {
+        border-color: $primary;
+      }
+    }
+    .control.has-icons-left {
+      .icon {
+        svg {
+          height: 20px;
+          width: 20px;
+        }
+      }
+    }
+  }
 
   .b-checkbox.checkbox {
     input[type="checkbox"] + .check {

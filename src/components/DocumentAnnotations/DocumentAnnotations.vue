@@ -21,14 +21,30 @@
 
     <!-- When there's no annotation sets -->
     <div
-      v-else-if="getAnnotationsFiltered.annotationSets.length === 0"
+      v-else-if="
+        getAnnotationsFiltered.annotationSets.length === 0 &&
+        !isSearchingAnnotationList
+      "
       class="empty-annotation-sets"
     >
       <EmptyState />
     </div>
 
     <div v-else ref="annotationList" :class="['annotation-set-list']">
-      <AnnotationFilters v-if="isDocumentEditable" />
+      <AnnotationFilters
+        v-if="isDocumentEditable"
+        @openAll="openAllAccordions"
+      />
+
+      <div
+        v-if="
+          getAnnotationsFiltered.annotationSets.length === 0 &&
+          isSearchingAnnotationList
+        "
+        class="empty-annotation-sets"
+      >
+        <EmptyState :is-search="true" />
+      </div>
 
       <div
         v-if="Object.entries(annotationSetsInTable()).length > 0"
@@ -131,10 +147,19 @@
             </div>
           </div>
 
-          <div v-if="annotationSet.labels.length === 0" class="no-labels">
-            <span> {{ $t("no_labels_in_set") }}</span>
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-if="isDocumentEditable" v-html="$t('link_to_add_labels')" />
+          <div v-else-if="annotationSet.labels.length === 0" class="no-labels">
+            <span>
+              {{
+                isSearchingAnnotationList
+                  ? $t("no_results")
+                  : $t("no_labels_in_set")
+              }}</span
+            >
+            <!-- eslint-disable vue/no-v-html -->
+            <span
+              v-if="isDocumentEditable && !isSearchingAnnotationList"
+              v-html="$t('link_to_add_labels')"
+            />
           </div>
 
           <div
@@ -205,6 +230,7 @@ export default {
       "isDocumentReviewed",
       "annotationSetOfAnnotation",
       "isAnnotationInAnnotationSet",
+      "isSearchingAnnotationList",
     ]),
     isAnnotationBeingEdited() {
       return this.editAnnotation && this.editAnnotation.id;
@@ -231,6 +257,12 @@ export default {
         oldAnnotationSets
       );
     },
+    getAnnotationsFiltered(newFiltered, oldFiltered) {
+      this.loadAccordions(
+        newFiltered.annotationSets,
+        oldFiltered.annotationSets
+      );
+    },
     annotationId(newAnnotationId) {
       if (newAnnotationId) {
         const annotationSet = this.annotationSetOfAnnotation(newAnnotationId);
@@ -255,6 +287,11 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    annotationSetShouldAppear(annotationSet) {
+      return !(
+        annotationSet.labels.length === 0 && this.isSearchingAnnotationList
+      );
+    },
     toggleAccordion(index) {
       const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
       newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
@@ -288,11 +325,13 @@ export default {
           newAnnotationSets.forEach((newAnnotationSet) => {
             const existed = oldAnnotationSets.find(
               (oldAnnotationSet) =>
+                oldAnnotationSet &&
+                newAnnotationSet &&
                 oldAnnotationSet.id &&
                 newAnnotationSet.id &&
                 oldAnnotationSet.id === newAnnotationSet.id
             );
-            if (!existed && newAnnotationSet.id !== null) {
+            if (!existed && newAnnotationSet && newAnnotationSet.id !== null) {
               annotationSetsCreated.push(newAnnotationSet);
             }
           });
@@ -301,6 +340,7 @@ export default {
         newAnnotationSets.forEach((newAnnotationSet, index) => {
           const wasOpen = annotationSetsOpened.find(
             (annotationSetOpened) =>
+              annotationSetOpened &&
               annotationSetOpened.id &&
               newAnnotationSet.id &&
               newAnnotationSet.id === annotationSetOpened.id

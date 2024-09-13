@@ -7,17 +7,9 @@ import {
   MINIMUM_OPTIMIZED_APP_WIDTH,
 } from "../constants";
 
-const HTTP = myImports.HTTP;
+import { debounce } from "../utils/utils";
 
-const debounce = (cb, duration) => {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      cb(...args);
-    }, duration);
-  };
-};
+const HTTP = myImports.HTTP;
 
 const floor = (value, precision) => {
   const multiplier = Math.pow(10, precision || 0);

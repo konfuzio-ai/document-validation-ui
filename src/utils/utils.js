@@ -35,6 +35,19 @@ export function getURLValueFromHash(value) {
   return id;
 }
 
+export function setURLQueryParam(query, value, deleteParam = "") {
+  const url = new URL(window.location.href);
+  if (value != "") {
+    if (deleteParam != "") {
+      url.searchParams.delete(deleteParam);
+    }
+    url.searchParams.set(query, value);
+  } else {
+    url.searchParams.delete(query);
+  }
+  window.history.pushState(null, "", url.toString());
+}
+
 export function setURLAnnotationHash(annotationId) {
   if (annotationId) {
     window.location.hash = `ann${annotationId}`;
@@ -68,4 +81,14 @@ export function navigateToDocumentsList(path, projectId, userId) {
 
 export function isElementArray(element) {
   return Array.isArray(element);
+}
+
+export function debounce(cb, duration) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      cb(...args);
+    }, duration);
+  };
 }
