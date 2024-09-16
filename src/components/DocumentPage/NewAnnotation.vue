@@ -264,11 +264,15 @@ export default {
         };
       });
 
-      const selection_bbox = this.clientToBbox(
-        this.page,
-        this.selection.start,
-        this.selection.end
-      );
+      let selection_bbox = null;
+
+      if (this.selection && this.selection.start && this.selection.end) {
+        selection_bbox = this.clientToBbox(
+          this.page,
+          this.selection.start,
+          this.selection.end
+        );
+      }
 
       const annotationToCreate = {
         document: this.documentId,
@@ -276,8 +280,11 @@ export default {
         label: this.selectedLabel.id,
         is_correct: true,
         revised: false,
-        selection_bbox,
       };
+
+      if (selection_bbox) {
+        annotationToCreate.selection_bbox = selection_bbox;
+      }
 
       if (this.selectedSet.id) {
         annotationToCreate.annotation_set = this.selectedSet.id;
