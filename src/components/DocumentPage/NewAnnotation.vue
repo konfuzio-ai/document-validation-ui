@@ -11,6 +11,7 @@
       :class="[
         'annotation-dropdown',
         'no-padding-bottom',
+        'no-padding-top',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
       scrollable
@@ -34,6 +35,14 @@
           </span>
         </b-button>
       </template>
+      <b-button
+        type="is-ghost"
+        :class="['add-ann-set', 'dropdown-item', 'no-icon-margin']"
+        icon-left="plus"
+        @click="openAnnotationSetCreation"
+      >
+        {{ $t("new_ann_set_title") }}
+      </b-button>
       <b-dropdown-item
         v-for="(set, index) in setsList"
         :key="`${set.label_set.id}_${index}`"
@@ -46,19 +55,6 @@
           }`
         }}</span>
       </b-dropdown-item>
-      <b-button
-        type="is-ghost"
-        :class="[
-          'add-ann-set',
-          'dropdown-item',
-          'no-icon-margin',
-          setsList.length > 0 ? 'has-border' : '',
-        ]"
-        icon-left="plus"
-        @click="openAnnotationSetCreation"
-      >
-        {{ $t("new_ann_set_title") }}
-      </b-button>
     </b-dropdown>
     <b-tooltip
       multilined
