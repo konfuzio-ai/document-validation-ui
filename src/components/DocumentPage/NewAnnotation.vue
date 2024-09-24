@@ -129,7 +129,6 @@ const margin = 12;
 const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
-import { MULTI_ANN_TABLE_FEATURE } from "../../constants";
 
 export default {
   props: {
@@ -227,6 +226,9 @@ export default {
     selectedSet(newValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
+      if (this.labels.length === 1) {
+        this.selectedLabel = this.labels[0];
+      }
     },
   },
   mounted() {
@@ -333,7 +335,6 @@ export default {
     openAnnotationSetCreation() {
       this.$store.dispatch("display/showChooseLabelSetModal", {
         show: true,
-        isMultipleAnnotations: MULTI_ANN_TABLE_FEATURE,
         finish: this.chooseLabelSet,
       });
     },
