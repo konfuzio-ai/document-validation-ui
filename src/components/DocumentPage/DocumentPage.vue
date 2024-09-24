@@ -179,13 +179,6 @@
           @selectEntities="handleEntitiesFromSelection"
         />
       </v-layer>
-      <v-layer v-if="isMultiSelection">
-        <multi-ann-selection
-          :page="page"
-          @buttonEnter="onElementEnter"
-          @buttonLeave="onElementLeave"
-        />
-      </v-layer>
     </v-stage>
     <b-skeleton
       v-else
@@ -197,10 +190,9 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
-import { PIXEL_RATIO, MULTI_ANN_TABLE_FEATURE } from "../../constants";
+import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
-import MultiAnnSelection from "./MultiAnnSelection";
 import NewAnnotation from "./NewAnnotation";
 import EditAnnotation from "./EditAnnotation";
 import AnnSetTableOptions from "./AnnSetTableOptions";
@@ -209,7 +201,6 @@ export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    MultiAnnSelection,
     NewAnnotation,
     EditAnnotation,
     AnnSetTableOptions,
@@ -268,19 +259,6 @@ export default {
     ]),
     selectionPage() {
       return this.selection && this.selection.pageNumber;
-    },
-    isBoxSelection() {
-      if (!MULTI_ANN_TABLE_FEATURE) {
-        return (
-          true &&
-          this.selection &&
-          this.selection.pageNumber === this.currentPage
-        );
-      }
-      return this.selection && !this.isSelecting && this.isElementSelected;
-    },
-    isMultiSelection() {
-      return MULTI_ANN_TABLE_FEATURE && this.selection && this.isSelectionValid;
     },
     showFocusedAnnotation() {
       return (

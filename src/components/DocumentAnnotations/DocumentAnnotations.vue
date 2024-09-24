@@ -45,30 +45,6 @@
       >
         <EmptyState :is-search="true" />
       </div>
-
-      <div
-        v-if="Object.entries(annotationSetsInTable()).length > 0"
-        class="annotation-set-group"
-      >
-        <div class="label-set-header">
-          <div class="label-set-name">{{ $t("table") }}</div>
-        </div>
-        <div
-          v-for="(tableSet, index) in Object.values(annotationSetsInTable())"
-          :key="index"
-          class="ann-set-table"
-          @click="openAnnotationSetTable(tableSet)"
-        >
-          <div class="ann-set-table-icon">
-            <GridIcon /><span class="ann-set-number">{{
-              tableSet.length
-            }}</span>
-          </div>
-          <span class="ann-set-table-label-set-name">{{
-            tableSet[0].label_set.name
-          }}</span>
-        </div>
-      </div>
       <div
         v-for="(
           annotationSet, indexGroup
@@ -183,7 +159,6 @@ import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import AnnotationFilters from "./AnnotationFilters";
 import LoadingAnnotations from "./LoadingAnnotations";
-import GridIcon from "../../assets/images/GridIcon";
 
 /**
  * This component loads all annotations for one document
@@ -195,7 +170,6 @@ export default {
     AnnotationSetActionButtons,
     DocumentLabel,
     LoadingAnnotations,
-    GridIcon,
     AnnotationFilters,
   },
   data() {
@@ -226,7 +200,6 @@ export default {
       "getAnnotationsFiltered",
       "emptyLabels",
       "notCorrectAnnotations",
-      "annotationSetsInTable",
       "isDocumentReviewed",
       "annotationSetOfAnnotation",
       "isAnnotationInAnnotationSet",

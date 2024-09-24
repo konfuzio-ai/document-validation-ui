@@ -1,5 +1,4 @@
 import myImports from "../api";
-import { MULTI_ANN_TABLE_FEATURE } from "../constants";
 import {
   sleep,
   getURLQueryParam,
@@ -181,41 +180,38 @@ const getters = {
   /* Get annotation sets created in table */
   annotationSetsInTable: (state) => () => {
     const annotationSetsList = {};
-    if (MULTI_ANN_TABLE_FEATURE) {
-      state.annotationSets.forEach((annotationSet) => {
-        let addAnnotationSet = false;
-        if (annotationSet.labels) {
-          annotationSet.labels.forEach((label) => {
-            if (
-              label.annotations &&
-              label.annotations.find(
-                (annotation) =>
-                  annotation.origin && annotation.origin === table_reference_api
-              )
-            ) {
-              addAnnotationSet = true;
-              return;
-            }
-          });
-        }
-        if (addAnnotationSet) {
-          // group by label set
-          if (annotationSetsList[`${annotationSet.label_set.id}`]) {
-            annotationSetsList[`${annotationSet.label_set.id}`].push(
-              annotationSet
-            );
-          } else {
-            annotationSetsList[`${annotationSet.label_set.id}`] = [
-              annotationSet,
-            ];
+    state.annotationSets.forEach((annotationSet) => {
+      let addAnnotationSet = false;
+      if (annotationSet.labels) {
+        annotationSet.labels.forEach((label) => {
+          if (
+            label.annotations &&
+            label.annotations.find(
+              (annotation) =>
+                annotation.origin && annotation.origin === table_reference_api
+            )
+          ) {
+            addAnnotationSet = true;
+            return;
           }
+        });
+      }
+      if (addAnnotationSet) {
+        // group by label set
+        if (annotationSetsList[`${annotationSet.label_set.id}`]) {
+          annotationSetsList[`${annotationSet.label_set.id}`].push(
+            annotationSet
+          );
+        } else {
+          annotationSetsList[`${annotationSet.label_set.id}`] = [annotationSet];
         }
-      });
-    }
+      }
+    });
+
     return annotationSetsList;
   },
 
-  /* Get annotation sets without tables */
+  /* Get annotation sets */
   annotationSetsToShowInList: (state) => () => {
     const annotationSetsList = [];
     state.annotationSets.forEach((annotationSet) => {
@@ -223,7 +219,6 @@ const getters = {
       if (annotationSet.labels) {
         annotationSet.labels.forEach((label) => {
           if (
-            MULTI_ANN_TABLE_FEATURE &&
             label.annotations &&
             label.annotations.find(
               (annotation) =>
