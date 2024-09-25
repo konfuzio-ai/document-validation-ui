@@ -36,7 +36,11 @@
                     type="is-secondary"
                     @click="submit(labelSetItem)"
                   >
-                    {{ labelSetItem.name }}
+                    {{
+                      `${labelSetItem.name} ${numberOfLabelSetGroup(
+                        labelSetItem
+                      )}`
+                    }}
                   </b-button>
                   <div class="labels-list">
                     <span
@@ -82,6 +86,7 @@ export default {
   computed: {
     ...mapState("document", ["annotationSets"]),
     ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
+    ...mapGetters("document", ["numberOfLabelSetGroup"]),
   },
   mounted() {
     this.$store.dispatch("project/fetchLabelSets").then((data) => {

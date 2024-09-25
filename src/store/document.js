@@ -506,6 +506,27 @@ const getters = {
   },
 
   /**
+   * Checks if theres a group of annotation sets with this label set
+   */
+  numberOfLabelSetGroup: (state) => (labelSet) => {
+    let found = false;
+    let index = 0;
+    if (state.annotationSets) {
+      state.annotationSets.map((annotationSetTemp) => {
+        if (
+          annotationSetTemp.label_set.id === labelSet.id &&
+          annotationSetTemp.label_set.name === labelSet.name
+        ) {
+          found = true;
+          index++;
+        }
+      });
+      return found ? `${index + 1}` : "";
+    }
+    return "";
+  },
+
+  /**
    * Get label with annotations filtered if the label supports multiple or not
    */
   annotationsInLabelFiltered: (state) => (label) => {

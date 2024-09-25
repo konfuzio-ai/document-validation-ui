@@ -26,7 +26,9 @@
               ? `${selectedSet.label_set.name} ${
                   selectedSet.id
                     ? numberOfAnnotationSetGroup(selectedSet)
-                    : `(${$t("new")})`
+                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                        "new"
+                      )})`
                 }`
               : $t("select_annotation_set")
           }}
@@ -51,7 +53,9 @@
       >
         <span>{{
           `${set.label_set.name} ${
-            set.id ? numberOfAnnotationSetGroup(set) : `(${$t("new")})`
+            set.id
+              ? numberOfAnnotationSetGroup(set)
+              : `${numberOfLabelSetGroup(set.label_set)} (${$t("new")})`
           }`
         }}</span>
       </b-dropdown-item>
@@ -163,6 +167,7 @@ export default {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
+      "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
       "isNegative",
     ]),
