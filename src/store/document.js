@@ -437,17 +437,19 @@ const getters = {
     let processedLabels = [];
 
     annotationSets.forEach((annotationSet) => {
-      labels = [];
-      annotationSet.labels.forEach((label) => {
-        const labelAnnotations = [];
+      if (annotationSet.id) {
+        labels = [];
+        annotationSet.labels.forEach((label) => {
+          const labelAnnotations = [];
 
-        // add annotations to the document array
-        labelAnnotations.push(...label.annotations);
-        labels.push({ ...label, annotations: labelAnnotations });
-        processedLabels.push(label);
-        annotations.push(...labelAnnotations);
-      });
-      processedAnnotationSets.push({ ...annotationSet, labels });
+          // add annotations to the document array
+          labelAnnotations.push(...label.annotations);
+          labels.push({ ...label, annotations: labelAnnotations });
+          processedLabels.push(label);
+          annotations.push(...labelAnnotations);
+        });
+        processedAnnotationSets.push({ ...annotationSet, labels });
+      }
     });
     return {
       annotationSets: processedAnnotationSets,
