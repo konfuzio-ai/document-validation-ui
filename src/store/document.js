@@ -486,7 +486,11 @@ const getters = {
     let value = 0;
     let index = 0;
     if (state.annotationSets) {
-      state.annotationSets.map((annotationSetTemp) => {
+      let orderedAnnotationSets = [...state.annotationSets];
+      orderedAnnotationSets.sort((a, b) => {
+        return a.id - b.id || a.label_set.name.localeCompare(b.label_set.name);
+      });
+      orderedAnnotationSets.map((annotationSetTemp) => {
         if (
           annotationSetTemp.id !== annotationSet.id &&
           annotationSetTemp.label_set.id === annotationSet.label_set.id &&
@@ -512,7 +516,11 @@ const getters = {
     let found = false;
     let index = 0;
     if (state.annotationSets) {
-      state.annotationSets.map((annotationSetTemp) => {
+      let orderedAnnotationSets = [...state.annotationSets];
+      orderedAnnotationSets.sort((a, b) => {
+        return a.id - b.id || a.label_set.name.localeCompare(b.label_set.name);
+      });
+      orderedAnnotationSets.map((annotationSetTemp) => {
         if (
           annotationSetTemp.label_set.id === labelSet.id &&
           annotationSetTemp.label_set.name === labelSet.name
