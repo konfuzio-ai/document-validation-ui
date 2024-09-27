@@ -16,17 +16,15 @@
       color: $text-strong;
     }
 
-    .label-set-dropdown {
-      width: 100%;
-      border: 1px solid $grey-outline;
-      height: 40px;
-      cursor: pointer;
-      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
-      border-radius: 8px;
-      margin-bottom: 4px;
+    .label-set-list {
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
 
-      &.dropdown-disabled {
-        cursor: not-allowed;
+      button.full-width {
+        width: 100%;
       }
     }
 
@@ -35,17 +33,6 @@
       font-size: 14px;
       font-weight: 400;
       line-height: 20px;
-
-      .labels-select {
-        padding: 12px;
-        overflow: scroll;
-        height: 154px;
-        border: 1px solid $grey-detail;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
     }
 
     .next-step-description {
@@ -55,11 +42,6 @@
       text-align: center;
       color: $text-color;
       margin-top: 8px;
-    }
-
-    .submit-ann-set {
-      margin-top: 16px;
-      width: 100%;
     }
   }
 }

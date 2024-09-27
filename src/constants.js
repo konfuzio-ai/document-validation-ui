@@ -9,4 +9,3 @@ export const TEXT_BREAKPOINT_WIDTH = (locale) => {
     return 1800;
   }
 };
-export const MULTI_ANN_TABLE_FEATURE = false;

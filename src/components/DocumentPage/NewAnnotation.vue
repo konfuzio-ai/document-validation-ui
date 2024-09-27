@@ -11,6 +11,7 @@
       :class="[
         'annotation-dropdown',
         'no-padding-bottom',
+        'no-padding-top',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
       scrollable
@@ -25,7 +26,9 @@
               ? `${selectedSet.label_set.name} ${
                   selectedSet.id
                     ? numberOfAnnotationSetGroup(selectedSet)
-                    : `(${$t("new")})`
+                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                        "new"
+                      )})`
                 }`
               : $t("select_annotation_set")
           }}
@@ -34,6 +37,14 @@
           </span>
         </b-button>
       </template>
+      <b-button
+        type="is-ghost"
+        :class="['add-ann-set', 'dropdown-item', 'no-icon-margin']"
+        icon-left="plus"
+        @click="openAnnotationSetCreation"
+      >
+        {{ $t("new_ann_set_title") }}
+      </b-button>
       <b-dropdown-item
         v-for="(set, index) in setsList"
         :key="`${set.label_set.id}_${index}`"
@@ -42,23 +53,12 @@
       >
         <span>{{
           `${set.label_set.name} ${
-            set.id ? numberOfAnnotationSetGroup(set) : `(${$t("new")})`
+            set.id
+              ? numberOfAnnotationSetGroup(set)
+              : `${numberOfLabelSetGroup(set.label_set)} (${$t("new")})`
           }`
         }}</span>
       </b-dropdown-item>
-      <b-button
-        type="is-ghost"
-        :class="[
-          'add-ann-set',
-          'dropdown-item',
-          'no-icon-margin',
-          setsList.length > 0 ? 'has-border' : '',
-        ]"
-        icon-left="plus"
-        @click="openAnnotationSetCreation"
-      >
-        {{ $t("new_ann_set_title") }}
-      </b-button>
     </b-dropdown>
     <b-tooltip
       multilined
@@ -133,7 +133,6 @@ const margin = 12;
 const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
-import { MULTI_ANN_TABLE_FEATURE } from "../../constants";
 
 export default {
   props: {
@@ -168,6 +167,7 @@ export default {
     ...mapState("document", ["annotationSets", "documentId"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
+      "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
       "isNegative",
     ]),
@@ -231,6 +231,9 @@ export default {
     selectedSet(newValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
+      if (this.labels.length === 1) {
+        this.selectedLabel = this.labels[0];
+      }
     },
   },
   mounted() {
@@ -337,7 +340,6 @@ export default {
     openAnnotationSetCreation() {
       this.$store.dispatch("display/showChooseLabelSetModal", {
         show: true,
-        isMultipleAnnotations: MULTI_ANN_TABLE_FEATURE,
         finish: this.chooseLabelSet,
       });
     },

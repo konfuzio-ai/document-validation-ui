@@ -45,132 +45,115 @@
       >
         <EmptyState :is-search="true" />
       </div>
-
-      <div
-        v-if="Object.entries(annotationSetsInTable()).length > 0"
-        class="annotation-set-group"
-      >
-        <div class="label-set-header">
-          <div class="label-set-name">{{ $t("table") }}</div>
-        </div>
+      <div v-if="annotationSetsAccordion">
         <div
-          v-for="(tableSet, index) in Object.values(annotationSetsInTable())"
-          :key="index"
-          class="ann-set-table"
-          @click="openAnnotationSetTable(tableSet)"
+          v-for="(
+            annotationSet, indexGroup
+          ) in getAnnotationsFiltered.annotationSets"
+          :key="indexGroup"
+          :class="[
+            'annotation-set-group',
+            !annotationSetsAccordion[indexGroup] === true &&
+              'annotation-set-collapsed',
+          ]"
         >
-          <div class="ann-set-table-icon">
-            <GridIcon /><span class="ann-set-number">{{
-              tableSet.length
-            }}</span>
-          </div>
-          <span class="ann-set-table-label-set-name">{{
-            tableSet[0].label_set.name
-          }}</span>
-        </div>
-      </div>
-      <div
-        v-for="(
-          annotationSet, indexGroup
-        ) in getAnnotationsFiltered.annotationSets"
-        :key="indexGroup"
-        :class="[
-          'annotation-set-group',
-          !annotationSetsAccordion[indexGroup] === true &&
-            'annotation-set-collapsed',
-        ]"
-      >
-        <div class="label-set-header" @click="toggleAccordion(indexGroup)">
-          <div class="label-set-name">
-            <b-icon
-              :icon="
-                annotationSetsAccordion[indexGroup] ? 'angle-up' : 'angle-down'
+          <div class="label-set-header" @click="toggleAccordion(indexGroup)">
+            <div class="label-set-name">
+              <b-icon
+                :icon="
+                  annotationSetsAccordion[indexGroup]
+                    ? 'angle-up'
+                    : 'angle-down'
+                "
+                size="is-12"
+              />
+              {{
+                `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
+                  annotationSet
+                )}`
+              }}
+            </div>
+            <div
+              v-if="
+                !publicView &&
+                !isDocumentReviewed &&
+                annotationSet.labels.length !== 0
               "
-              size="is-12"
-            />
-            {{
-              `${annotationSet.label_set.name} ${numberOfAnnotationSetGroup(
-                annotationSet
-              )}`
-            }}
-          </div>
-          <div
-            v-if="
-              !publicView &&
-              !isDocumentReviewed &&
-              annotationSet.labels.length !== 0
-            "
-            class="labelset-action-buttons"
-          >
-            <AnnotationSetActionButtons
-              :is-placeholder="annotationSetsAccordion[indexGroup] === false"
-              :number-of-empty-labels-in-annotation-set="
-                emptyLabels(annotationSet).length
-              "
-              :number-of-not-correct-annotations-in-annotation-set="
-                notCorrectAnnotations(annotationSet).length
-              "
-              @mark-all-empty-missing="
-                markAnnotationsAsMissing(null, null, annotationSet, true)
-              "
-              @hover-annotation-set-to-mark-missing="
-                handleHoverAnnotationSet(annotationSet, 'missing')
-              "
-              @leave-annotation-set-to-mark-missing="
-                handleHoverAnnotationSet(null)
-              "
-              @accept-all-pending-annotations="
-                acceptPendingAnnotationsInAnnotationSet(annotationSet)
-              "
-              @hover-annotation-set-to-accept="
-                handleHoverAnnotationSet(annotationSet, 'accept')
-              "
-              @leave-annotation-set-to-accept="handleHoverAnnotationSet(null)"
-            />
-          </div>
-        </div>
-
-        <b-collapse :open="annotationSetsAccordion[indexGroup] === true">
-          <div v-if="annotationSet.labels.length > 0">
-            <div v-for="label in annotationSet.labels" :key="label.id">
-              <div
-                v-if="!(label.annotations.length === 0 && publicView)"
-                class="labels"
-              >
-                <DocumentLabel
-                  :label="label"
-                  :annotation-set="annotationSet"
-                  :index-group="indexGroup"
-                  @handle-missing-annotation="markAnnotationsAsMissing"
-                />
-              </div>
+              class="labelset-action-buttons"
+            >
+              <AnnotationSetActionButtons
+                :is-placeholder="annotationSetsAccordion[indexGroup] === false"
+                :number-of-empty-labels-in-annotation-set="
+                  emptyLabels(annotationSet).length
+                "
+                :number-of-not-correct-annotations-in-annotation-set="
+                  notCorrectAnnotations(annotationSet).length
+                "
+                @mark-all-empty-missing="
+                  markAnnotationsAsMissing(null, null, annotationSet, true)
+                "
+                @hover-annotation-set-to-mark-missing="
+                  handleHoverAnnotationSet(annotationSet, 'missing')
+                "
+                @leave-annotation-set-to-mark-missing="
+                  handleHoverAnnotationSet(null)
+                "
+                @accept-all-pending-annotations="
+                  acceptPendingAnnotationsInAnnotationSet(annotationSet)
+                "
+                @hover-annotation-set-to-accept="
+                  handleHoverAnnotationSet(annotationSet, 'accept')
+                "
+                @leave-annotation-set-to-accept="handleHoverAnnotationSet(null)"
+              />
             </div>
           </div>
 
-          <div v-else-if="annotationSet.labels.length === 0" class="no-labels">
-            <span>
-              {{
-                isSearchingAnnotationList
-                  ? $t("no_results")
-                  : $t("no_labels_in_set")
-              }}</span
-            >
-            <!-- eslint-disable vue/no-v-html -->
-            <span
-              v-if="isDocumentEditable && !isSearchingAnnotationList"
-              v-html="$t('link_to_add_labels')"
-            />
-          </div>
+          <b-collapse :open="annotationSetsAccordion[indexGroup] === true">
+            <div v-if="annotationSet.labels.length > 0">
+              <div v-for="label in annotationSet.labels" :key="label.id">
+                <div
+                  v-if="!(label.annotations.length === 0 && publicView)"
+                  class="labels"
+                >
+                  <DocumentLabel
+                    :label="label"
+                    :annotation-set="annotationSet"
+                    :index-group="indexGroup"
+                    @handle-missing-annotation="markAnnotationsAsMissing"
+                  />
+                </div>
+              </div>
+            </div>
 
-          <div
-            v-else-if="
-              !annotationSetHasAnnotations(annotationSet) && publicView
-            "
-            class="no-labels"
-          >
-            <span> {{ $t("no_annotations_in_annotation_set") }}</span>
-          </div>
-        </b-collapse>
+            <div
+              v-else-if="annotationSet.labels.length === 0"
+              class="no-labels"
+            >
+              <span>
+                {{
+                  isSearchingAnnotationList
+                    ? $t("no_results")
+                    : $t("no_labels_in_set")
+                }}</span
+              >
+              <!-- eslint-disable vue/no-v-html -->
+              <span
+                v-if="isDocumentEditable && !isSearchingAnnotationList"
+                v-html="$t('link_to_add_labels')"
+              />
+            </div>
+
+            <div
+              v-else-if="
+                !annotationSetHasAnnotations(annotationSet) && publicView
+              "
+              class="no-labels"
+            >
+              <span> {{ $t("no_annotations_in_annotation_set") }}</span>
+            </div>
+          </b-collapse>
+        </div>
       </div>
     </div>
   </div>
@@ -183,7 +166,6 @@ import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
 import DocumentLabel from "./DocumentLabel";
 import AnnotationFilters from "./AnnotationFilters";
 import LoadingAnnotations from "./LoadingAnnotations";
-import GridIcon from "../../assets/images/GridIcon";
 
 /**
  * This component loads all annotations for one document
@@ -195,7 +177,6 @@ export default {
     AnnotationSetActionButtons,
     DocumentLabel,
     LoadingAnnotations,
-    GridIcon,
     AnnotationFilters,
   },
   data() {
@@ -203,9 +184,10 @@ export default {
       count: 0,
       jumpToNextAnnotation: false,
       numberOfLoadingAnnotations: 3,
-      annotationSetsAccordion: [],
+      annotationSetsAccordion: null,
     };
   },
+
   computed: {
     ...mapState("display", ["showAnnSetTable"]),
     ...mapState("document", [
@@ -226,7 +208,6 @@ export default {
       "getAnnotationsFiltered",
       "emptyLabels",
       "notCorrectAnnotations",
-      "annotationSetsInTable",
       "isDocumentReviewed",
       "annotationSetOfAnnotation",
       "isAnnotationInAnnotationSet",
@@ -251,12 +232,7 @@ export default {
         this.jumpToNextAnnotation = false;
       }
     },
-    annotationSets(newAnnotationSets, oldAnnotationSets) {
-      this.loadAccordions(
-        this.getAnnotationsFiltered.annotationSets,
-        oldAnnotationSets
-      );
-    },
+
     getAnnotationsFiltered(newFiltered, oldFiltered) {
       this.loadAccordions(
         newFiltered.annotationSets,
@@ -279,7 +255,12 @@ export default {
   },
   created() {
     window.addEventListener("keydown", this.keyDownHandler);
-    if (this.getAnnotationsFiltered.annotationSets) {
+
+    // validation for when page is hot reloaded and data reinitialize
+    if (
+      this.getAnnotationsFiltered.annotationSets &&
+      this.getAnnotationsFiltered.annotationSets.length > 0
+    ) {
       this.loadAccordions(this.getAnnotationsFiltered.annotationSets);
     }
   },
@@ -292,6 +273,7 @@ export default {
         annotationSet.labels.length === 0 && this.isSearchingAnnotationList
       );
     },
+
     toggleAccordion(index) {
       const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
       newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
@@ -306,11 +288,10 @@ export default {
     },
     loadAccordions(newAnnotationSets, oldAnnotationSets = null) {
       if (newAnnotationSets) {
+        const isFirstTime = this.annotationSetsAccordion === null;
         const newAnnotationSetsAccordion = [];
         const annotationSetsOpened = [];
         const annotationSetsCreated = [];
-
-        const isFirstTime = oldAnnotationSets === null;
 
         if (!isFirstTime) {
           // when annotation sets changed, restore old state
