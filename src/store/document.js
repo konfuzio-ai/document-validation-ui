@@ -368,7 +368,8 @@ const getters = {
               label.annotations.forEach((annotation) => {
                 if (
                   state.annotationFilters.showFeedbackNeeded &&
-                  annotation.revised === false
+                  annotation.revised === false &&
+                  !annotation.created_by
                 ) {
                   const added = addAnnotation(
                     labelAnnotations,
@@ -378,10 +379,9 @@ const getters = {
                   if (added) {
                     addLabel = true;
                   }
-                }
-                if (
+                } else if (
                   state.annotationFilters.showAccepted &&
-                  annotation.revised === true
+                  (annotation.revised === true || annotation.created_by)
                 ) {
                   const added = addAnnotation(
                     labelAnnotations,
