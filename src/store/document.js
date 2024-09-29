@@ -590,6 +590,13 @@ const getters = {
    * Checks if it's currently searching for annotations
    */
   isSearchingAnnotationList: (state) => {
+    if (
+      !state.annotationFilters.showFeedbackNeeded ||
+      !state.annotationFilters.showEmpty ||
+      !state.annotationFilters.showAccepted
+    ) {
+      return true;
+    }
     return state.annotationSearch && state.annotationSearch.length > 0;
   },
 
