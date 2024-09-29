@@ -5,6 +5,7 @@
         <b-taginput
           v-model="search"
           ellipsis
+          attached
           icon="search"
           :placeholder="$t('search')"
         >
