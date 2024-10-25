@@ -60,7 +60,7 @@ export function navigateToNewDocumentURL(oldId, newId) {
   window.location.replace(newUrl);
 }
 
-export function navigateToDocumentsList(path, projectId, userId) {
+export function navigateToDocumentsList(path, projectId) {
   if (!path) return;
 
   const lastCharOfString = path.charAt(path.length - 1);
