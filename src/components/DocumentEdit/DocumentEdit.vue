@@ -430,8 +430,7 @@ export default {
 
         const redirection = navigateToDocumentsList(
           this.documentsListPath,
-          this.projectId,
-          this.currentUser.id
+          this.projectId
         );
 
         if (redirection) {
