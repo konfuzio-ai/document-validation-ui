@@ -355,45 +355,43 @@ const getters = {
           const labelAnnotations = [];
           let addLabel = false;
           const labelHasSearch = labelHasSearchText(label);
-          if (
+          if (!label.annotations || label.annotations.length === 0) {
+            if (state.annotationFilters.showEmpty) {
+              addLabel = true;
+            }
+          } else if (
             !state.annotationFilters.showEmpty ||
             !state.annotationFilters.showFeedbackNeeded ||
             !state.annotationFilters.showAccepted
           ) {
-            if (!label.annotations || label.annotations.length === 0) {
-              if (state.annotationFilters.showEmpty) {
-                addLabel = true;
-              }
-            } else {
-              label.annotations.forEach((annotation) => {
-                if (
-                  state.annotationFilters.showFeedbackNeeded &&
-                  annotation.revised === false &&
-                  !annotation.created_by
-                ) {
-                  const added = addAnnotation(
-                    labelAnnotations,
-                    annotation,
-                    labelHasSearch
-                  );
-                  if (added) {
-                    addLabel = true;
-                  }
-                } else if (
-                  state.annotationFilters.showAccepted &&
-                  (annotation.revised === true || annotation.created_by)
-                ) {
-                  const added = addAnnotation(
-                    labelAnnotations,
-                    annotation,
-                    labelHasSearch
-                  );
-                  if (added) {
-                    addLabel = true;
-                  }
+            label.annotations.forEach((annotation) => {
+              if (
+                state.annotationFilters.showFeedbackNeeded &&
+                annotation.revised === false &&
+                !annotation.created_by
+              ) {
+                const added = addAnnotation(
+                  labelAnnotations,
+                  annotation,
+                  labelHasSearch
+                );
+                if (added) {
+                  addLabel = true;
                 }
-              });
-            }
+              } else if (
+                state.annotationFilters.showAccepted &&
+                (annotation.revised === true || annotation.created_by)
+              ) {
+                const added = addAnnotation(
+                  labelAnnotations,
+                  annotation,
+                  labelHasSearch
+                );
+                if (added) {
+                  addLabel = true;
+                }
+              }
+            });
           } else {
             // add annotations to the document array
             label.annotations.forEach((annotation) => {
