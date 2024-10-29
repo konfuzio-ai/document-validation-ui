@@ -5,9 +5,7 @@
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
       <div v-if="!recalculatingAnnotations" class="left-bar-components">
-        <DocumentCategory
-          v-if="categories && !editMode && !publicView && !isDocumentReviewed"
-        />
+        <DocumentSetChooser />
       </div>
 
       <div
@@ -91,7 +89,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import DocumentCategory from "../../components/DocumentCategory";
+import DocumentSetChooser from "./DocumentSetChooser";
 import DocumentName from "./DocumentName";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
 import KeyboardActionsDescription from "./KeyboardActionsDescription";
@@ -104,14 +102,13 @@ import KeyboardActionsDescription from "./KeyboardActionsDescription";
 export default {
   name: "DocumentTopBar",
   components: {
-    DocumentCategory,
+    DocumentSetChooser,
     DocumentName,
     DocumentTopBarButtons,
     KeyboardActionsDescription,
   },
   data() {
     return {
-      categoryError: false,
       previousDocument: null,
       nextDocument: null,
     };
@@ -123,7 +120,6 @@ export default {
       "loading",
       "recalculatingAnnotations",
     ]),
-    ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
     ...mapState("project", ["documentsInProject"]),
     ...mapGetters("document", [
