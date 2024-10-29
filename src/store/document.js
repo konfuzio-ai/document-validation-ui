@@ -20,6 +20,7 @@ const state = {
   annotations: null,
   labels: [],
   documentId: process.env.VUE_APP_DOCUMENT,
+  documentSet: null,
   annotationId: null,
   annotationSetId: null,
   documentAnnotationSelected: null,
@@ -1000,6 +1001,7 @@ const actions = {
     pollDocumentList = false
   ) => {
     let projectId = null;
+    let documentSetId = null;
     let categoryId = null;
     let isRecalculatingAnnotations = false;
 
@@ -1026,6 +1028,7 @@ const actions = {
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", response.data);
+          commit("SET_DOC_SET", response.data.document_set);
 
           if (response.data.project) {
             projectId = response.data.project;
@@ -1047,6 +1050,7 @@ const actions = {
             commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
           }
 
+          documentSetId = response.data.document_set;
           categoryId = response.data.category;
           // TODO: add this validation to a method
           isRecalculatingAnnotations = response.data.labeling_available !== 1;
@@ -1078,6 +1082,10 @@ const actions = {
           root: true,
         });
         dispatch("edit/setRenameAndCategorize", true, { root: true });
+      }
+
+      if (documentSetId) {
+        await dispatch("fetchDocumentSet", documentSetId);
       }
 
       if (projectId) {
@@ -1116,6 +1124,17 @@ const actions = {
     return HTTP.get(`documents/${state.documentId}/pages/${page}/`)
       .then((response) => {
         commit("ADD_PAGE", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+
+  // Get document set data
+  fetchDocumentSet: ({ commit, state }, documentSetId) => {
+    return HTTP.get(`document-sets/${documentSetId}/`)
+      .then((response) => {
+        commit("SET_DOC_SET", response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -1468,6 +1487,9 @@ const mutations = {
     if (id !== state.documentId) {
       state.documentId = id;
     }
+  },
+  SET_DOC_SET: (state, documentSet) => {
+    state.documentSet = documentSet;
   },
   SET_ANNOTATION_ID: (state, id) => {
     state.annotationId = id;
