@@ -60,7 +60,7 @@ export function navigateToNewDocumentURL(oldId, newId) {
   window.location.replace(newUrl);
 }
 
-export function navigateToDocumentsList(path, projectId, userId) {
+export function navigateToDocumentsList(path, projectId) {
   if (!path) return;
 
   const lastCharOfString = path.charAt(path.length - 1);
@@ -70,7 +70,7 @@ export function navigateToDocumentsList(path, projectId, userId) {
     slash = "";
   }
 
-  const parameters = `?project=${projectId}&is_reviewed__exact=0&assignee__id__exact=${userId}`;
+  const parameters = `?project=${projectId}`;
 
   const newPath = `${path}${slash}${parameters}`;
 
