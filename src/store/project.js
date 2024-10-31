@@ -21,9 +21,9 @@ const getters = {
           // check if label set has multiple and if not, if there's already an annotation set created
           if (!labelSet.has_multiple_annotation_sets) {
             const existingAnnotationSet = annotationSets.find((annSet) => {
-              return annSet.id === labelSet.id;
+              return annSet.label_set.id === labelSet.id;
             });
-            return existingAnnotationSet;
+            return !existingAnnotationSet;
           } else {
             return true;
           }
