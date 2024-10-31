@@ -35,7 +35,7 @@ For most users and applications, we strongly recommend CDN integration. This met
 
 2. **Set Up Access**
 
-   Provide the Document ID and User Token to connect to the Konfuzio Server API:
+   Provide the Document ID and User Token to connect to the Konfuzio Server API.
 
    ```html
    <div id="app" style="height: 100vh">
@@ -46,6 +46,10 @@ For most users and applications, we strongly recommend CDN integration. This met
 3. **Display DVUI**
 
    Combine the steps above in your HTML. You're now ready to use DVUI in your application.
+   
+   > Note: \
+   > Make sure to set the height of the #app div according to your implementation, this will avoid scroll bar and scaling issues. \
+   > The following html takes the full height of the viewport.  
 
     ```html
         <script defer="defer" src="https://unpkg.com/@konfuzio/document-validation-ui@latest/dist/js/chunk-vendors.js"></script>
