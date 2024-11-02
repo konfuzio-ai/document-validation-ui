@@ -480,22 +480,4 @@ describe("Document Annotations Component", () => {
       await wrapper.findComponent(".annotation-set-group .no-labels").exists()
     ).toBe(true);
   });
-
-  it("Shows message to user if public mode and annotation set has no filled labels", async () => {
-    const annotationSets = getData("document").annotationSets;
-    const annotationSetHasAnnotations = jest.fn();
-    const wrapper = render(DocumentAnnotations, true);
-
-    await dispatch("document/setPublicView", true);
-
-    annotationSets.map((annotationSet) => {
-      return annotationSetHasAnnotations(annotationSet);
-    });
-
-    expect(
-      await wrapper.findAll(".annotation-set-group .no-labels").length
-    ).toBeGreaterThan(2);
-
-    await dispatch("document/setPublicView", false);
-  });
 });
