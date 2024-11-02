@@ -9,15 +9,12 @@
       :on-cancel="close"
     >
       <section class="modal-card-body">
-        <b-loading :active="loading" :is-full-page="false">
-          <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
-        </b-loading>
-        <div v-if="!loading" class="content">
+        <div class="content">
           <h3>
             {{ $t("new_ann_set_title") }}
           </h3>
           <div>
-            <div v-if="labelSets.length === 0">
+            <div v-if="labelSetsFilteredForAnnotationSetCreation.length === 0">
               <p v-html="$t('no_multi_ann_labelset_model')" />
             </div>
             <div v-else>
@@ -27,7 +24,7 @@
 
               <div class="label-set-list">
                 <div
-                  v-for="labelSetItem in labelSets"
+                  v-for="labelSetItem in labelSetsFilteredForAnnotationSetCreation"
                   :key="labelSetItem.id"
                   class="label-set-list-row"
                 >
@@ -71,31 +68,19 @@
  * This component shows a modal to choose a label set from the project
  */
 
-import { mapGetters, mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "CreateAnnotationSetModal",
   data() {
     return {
-      labelSets: [],
       show: true,
       labels: [],
-      loading: true,
     };
   },
   computed: {
-    ...mapState("document", ["annotationSets"]),
     ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
     ...mapGetters("document", ["numberOfLabelSetGroup"]),
-  },
-  mounted() {
-    this.$store.dispatch("project/fetchLabelSets").then((data) => {
-      this.labelSets = this.labelSetsFilteredForAnnotationSetCreation(
-        data,
-        this.annotationSets
-      );
-      this.loading = false;
-    });
   },
   methods: {
     submit(labelSet) {

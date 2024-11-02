@@ -24,7 +24,6 @@
           :annotation="annotation"
           :annotation-set="annotationSet"
           :label="label"
-          :from-table="fromTable"
         />
       </div>
 
@@ -137,11 +136,18 @@
             />
           </div>
           <EmptyAnnotation
-            v-else-if="!fromTable"
+            v-else-if="annotationSet"
             :label="label"
             :annotation-set="annotationSet"
             :is-hovered="hoveredAnnotation"
             :is-missing-annotation="annotationIsNotFound(annotationSet, label)"
+            @save-empty-annotation-changes="saveEmptyAnnotationChanges"
+          />
+          <EmptyAnnotation
+            v-else-if="labelSet"
+            :label="label"
+            :label-set="labelSet"
+            :is-hovered="hoveredAnnotation"
             @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
@@ -192,7 +198,11 @@ export default {
   props: {
     annotationSet: {
       type: Object,
-      required: true,
+      default: null,
+    },
+    labelSet: {
+      type: Object,
+      default: null,
     },
     label: {
       type: Object,
@@ -205,10 +215,6 @@ export default {
     showLabel: {
       type: Boolean,
       default: true,
-    },
-    fromTable: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -439,7 +445,7 @@ export default {
       if (span) {
         this.$store.dispatch("document/setDocumentAnnotationSelected", {
           annotation: this.annotation,
-          label: this.fromTable ? null : this.label,
+          label: this.label,
           span,
           scrollTo: false,
         });
@@ -449,9 +455,6 @@ export default {
       this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
     onAnnotationClick() {
-      if (!this.fromTable) {
-        this.$store.dispatch("display/showAnnSetTable", null);
-      }
       this.$store.dispatch("document/scrollToDocumentAnnotationSelected");
     },
     hoveredEmptyLabels() {
