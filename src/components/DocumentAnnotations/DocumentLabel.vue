@@ -29,31 +29,40 @@
           </div>
         </div>
       </div>
-      <div v-if="showAnnotationsGroup" class="label-group-annotation-list">
+      <div
+        v-if="annotationSet && showAnnotationsGroup"
+        class="label-group-annotation-list"
+      >
         <AnnotationRow
           v-for="annotation in label.annotations"
           :key="annotation.id"
           :annotation="annotation"
           :label="label"
           :annotation-set="annotationSet"
+          :label-set="annotationSet.label_set"
         />
       </div>
     </div>
-    <div v-else-if="hasAnnotations">
+    <div v-else-if="annotationSet && hasAnnotations">
       <AnnotationRow
         v-for="annotation in label.annotations"
         :key="annotation.id"
         :annotation="annotation"
         :label="label"
         :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
       />
     </div>
-    <div v-else>
+    <div v-else-if="annotationSet">
       <AnnotationRow
         :annotation="singleAnnotation"
         :label="label"
         :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
       />
+    </div>
+    <div v-else-if="labelSet">
+      <AnnotationRow :label="label" :label-set="labelSet" />
     </div>
   </div>
 </template>
@@ -74,6 +83,10 @@ export default {
     },
     annotationSet: {
       type: Object,
+      default: null,
+    },
+    labelSet: {
+      type: Object,
       required: true,
     },
   },
@@ -93,13 +106,13 @@ export default {
     ]),
     ...mapGetters("document", ["numberOfAcceptedAnnotationsInLabel"]),
     singleAnnotation() {
-      if (this.label.annotations.length > 0) {
+      if (this.label.annotations && this.label.annotations.length > 0) {
         return this.label.annotations[0];
       }
       return null;
     },
     hasAnnotations() {
-      return this.label.annotations.length > 0;
+      return this.label.annotations && this.label.annotations.length > 0;
     },
   },
   watch: {
@@ -159,6 +172,7 @@ export default {
     updateValues() {
       // more than 1 Annotation extracted for a non multiple Label
       this.nonMultipleAnnotationsExtracted =
+        this.label.annotations &&
         this.label.annotations.length > 1 &&
         !this.label.has_multiple_top_candidates;
 

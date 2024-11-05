@@ -627,17 +627,20 @@ const getters = {
   annotationIsNotFound: (state) => (annotationSet, label) => {
     // Check if the combined label and label set have been marked as missing
     // or if the document is in public mode
-    if (state.missingAnnotations.length === 0) {
-      return false;
-    } else {
-      const found = state.missingAnnotations.filter(
-        (el) =>
-          el.label === label.id &&
-          el.annotation_set === annotationSet.id &&
-          el.label_set === annotationSet.label_set.id
-      );
-      return found.length !== 0;
+    if (annotationSet) {
+      if (state.missingAnnotations.length === 0) {
+        return false;
+      } else {
+        const found = state.missingAnnotations.filter(
+          (el) =>
+            el.label === label.id &&
+            el.annotation_set === annotationSet.id &&
+            el.label_set === annotationSet.label_set.id
+        );
+        return found.length !== 0;
+      }
     }
+    return false;
   },
 
   isAnnotationInAnnotationSet: (state) => (annotationSet, annotationId) => {
@@ -1062,6 +1065,10 @@ const actions = {
 
     if (!state.publicView) {
       await dispatch("fetchMissingAnnotations");
+
+      await dispatch("project/fetchLabelSets", null, {
+        root: true,
+      });
 
       await dispatch("project/fetchCurrentUser", null, {
         root: true,

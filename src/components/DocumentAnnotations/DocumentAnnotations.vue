@@ -19,11 +19,43 @@
       </div>
     </div>
 
-    <!-- When there's no annotation sets -->
+    <!-- When there's no annotation sets but show label sets for annotation creation-->
     <div
       v-else-if="
         getAnnotationsFiltered.annotationSets.length === 0 &&
+        labelSets &&
+        labelSets.length > 0 &&
         !isSearchingAnnotationList
+      "
+      class="empty-annotation-sets"
+    >
+      <div class="annotation-set-list">
+        <div
+          v-for="labelSet in labelSets"
+          :key="labelSet.id"
+          class="annotation-set-group"
+        >
+          <div class="label-set-header">
+            <div class="label-set-name">
+              {{ `${labelSet.name}` }}
+            </div>
+          </div>
+
+          <div v-if="labelSet.labels.length > 0">
+            <div v-for="label in labelSet.labels" :key="label.id">
+              <div class="labels">
+                <DocumentLabel :label="label" :label-set="labelSet" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-else-if="
+        getAnnotationsFiltered.annotationSets.length === 0 &&
+        !isSearchingAnnotationList &&
+        (!labelSets || labelSets.length === 0)
       "
       class="empty-annotation-sets"
     >
@@ -119,6 +151,7 @@
                   <DocumentLabel
                     :label="label"
                     :annotation-set="annotationSet"
+                    :label-set="annotationSet.label_set"
                     :index-group="indexGroup"
                     @handle-missing-annotation="markAnnotationsAsMissing"
                   />
@@ -203,6 +236,7 @@ export default {
       "selectedDocument",
       "splittingSuggestions",
     ]),
+    ...mapState("project", ["labelSets"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "getAnnotationsFiltered",
@@ -570,7 +604,11 @@ export default {
             annotation_set: annotationSet,
           },
         ];
-      } else if (this.editAnnotation && this.editAnnotation.id !== null) {
+      } else if (
+        this.editAnnotation &&
+        this.editAnnotation.id !== null &&
+        this.editAnnotation.annotationSet
+      ) {
         // if annotation is marked as missing from "delete" key
 
         missing = [
