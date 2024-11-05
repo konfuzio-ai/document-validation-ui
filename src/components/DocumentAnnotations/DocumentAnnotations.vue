@@ -19,20 +19,21 @@
       </div>
     </div>
 
-    <!-- When there's no annotation sets -->
+    <!-- When there's no annotation sets but show label sets for annotation creation-->
     <div
       v-else-if="
         getAnnotationsFiltered.annotationSets.length === 0 &&
+        labelSets &&
+        labelSets.length > 0 &&
         !isSearchingAnnotationList
       "
       class="empty-annotation-sets"
     >
-      <EmptyState />
       <div class="annotation-set-list">
         <div
           v-for="labelSet in labelSets"
           :key="labelSet.id"
-          :class="['annotation-set-group']"
+          class="annotation-set-group"
         >
           <div class="label-set-header">
             <div class="label-set-name">
@@ -49,6 +50,16 @@
           </div>
         </div>
       </div>
+    </div>
+    <div
+      v-else-if="
+        getAnnotationsFiltered.annotationSets.length === 0 &&
+        !isSearchingAnnotationList &&
+        (!labelSets || labelSets.length === 0)
+      "
+      class="empty-annotation-sets"
+    >
+      <EmptyState />
     </div>
 
     <div v-else ref="annotationList" :class="['annotation-set-list']">
@@ -140,6 +151,7 @@
                   <DocumentLabel
                     :label="label"
                     :annotation-set="annotationSet"
+                    :label-set="annotationSet.label_set"
                     :index-group="indexGroup"
                     @handle-missing-annotation="markAnnotationsAsMissing"
                   />
@@ -592,7 +604,11 @@ export default {
             annotation_set: annotationSet,
           },
         ];
-      } else if (this.editAnnotation && this.editAnnotation.id !== null) {
+      } else if (
+        this.editAnnotation &&
+        this.editAnnotation.id !== null &&
+        this.editAnnotation.annotationSet
+      ) {
         // if annotation is marked as missing from "delete" key
 
         missing = [

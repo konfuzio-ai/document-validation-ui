@@ -128,6 +128,7 @@
               :span-index="index"
               :label="label"
               :annotation-set="annotationSet"
+              :label-set="labelSet"
               :is-hovered="hoveredAnnotation"
               :is-missing-annotation="
                 annotationIsNotFound(annotationSet, label)
@@ -136,18 +137,12 @@
             />
           </div>
           <EmptyAnnotation
-            v-else-if="annotationSet"
+            v-else
             :label="label"
             :annotation-set="annotationSet"
-            :is-hovered="hoveredAnnotation"
-            :is-missing-annotation="annotationIsNotFound(annotationSet, label)"
-            @save-empty-annotation-changes="saveEmptyAnnotationChanges"
-          />
-          <EmptyAnnotation
-            v-else-if="labelSet"
-            :label="label"
             :label-set="labelSet"
             :is-hovered="hoveredAnnotation"
+            :is-missing-annotation="annotationIsNotFound(annotationSet, label)"
             @save-empty-annotation-changes="saveEmptyAnnotationChanges"
           />
         </div>
@@ -290,6 +285,7 @@ export default {
       return (
         this.hoveredAnnotationSet &&
         this.hoveredAnnotationSet.type == "missing" &&
+        this.annotationSet &&
         !this.annotationIsNotFound(this.annotationSet, this.label) &&
         this.annotationSet.id === this.hoveredAnnotationSet.annotationSet.id &&
         this.annotationSet.label_set.id ===
@@ -423,7 +419,7 @@ export default {
       }
     },
     currentAnnotationId() {
-      if (!this.annotationSet || !this.label) return;
+      if ((!this.annotationSet && !this.labelSet) || !this.label) return;
 
       if (
         this.annotation &&
@@ -432,14 +428,11 @@ export default {
       )
         return this.annotation.id;
 
-      let emptyAnnotationId;
+      const setId = this.annotationSet
+        ? this.annotationSet.id
+        : this.labelSet.id;
 
-      if (this.annotationSet.id) {
-        emptyAnnotationId = `${this.annotationSet.id}_${this.label.id}`;
-      } else {
-        emptyAnnotationId = `${this.annotationSet.label_set.id}_${this.label.id}`;
-      }
-      return emptyAnnotationId;
+      return `${setId}_${this.label.id}`;
     },
     onAnnotationHoverEnter(span) {
       if (span) {
@@ -574,7 +567,7 @@ export default {
       this.$parent.$emit(
         "handle-missing-annotation",
         this.label.id,
-        this.annotationSet.label_set.id,
+        this.labelSet.id,
         this.annotationSet.id,
         false
       );
@@ -639,7 +632,7 @@ export default {
         (item) =>
           item.annotation_set === this.annotationSet.id &&
           item.label === this.label.id &&
-          item.label_set === this.annotationSet.label_set.id
+          item.label_set === this.annotationSet.labelSet.id
       );
 
       this.$store
@@ -717,7 +710,7 @@ export default {
           document: this.documentId,
           span: this.spanSelection,
           label: this.label.id,
-          label_set: this.annotationSet.label_set.id,
+          label_set: this.labelSet.id,
           is_correct: true,
           revised: true,
         };
@@ -781,7 +774,7 @@ export default {
         this.annotationsMarkedAsMissing.map((annotation) => {
           // Check if the annotation set and label are marked as missing
           if (
-            annotation.label_set === this.annotationSet.label_set.id &&
+            annotation.label_set === this.labelSet.id &&
             annotation.annotation_set === this.annotationSet.id &&
             annotation.label === this.label.id
           ) {

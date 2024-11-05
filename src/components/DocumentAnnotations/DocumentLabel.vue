@@ -84,7 +84,7 @@ export default {
     },
     labelSet: {
       type: Object,
-      default: null,
+      required: true,
     },
   },
   data() {
@@ -169,6 +169,7 @@ export default {
     updateValues() {
       // more than 1 Annotation extracted for a non multiple Label
       this.nonMultipleAnnotationsExtracted =
+        this.label.annotations &&
         this.label.annotations.length > 1 &&
         !this.label.has_multiple_top_candidates;
 

@@ -56,6 +56,10 @@ export default {
     },
     annotationSet: {
       type: Object,
+      default: null,
+    },
+    labelSet: {
+      type: Object,
       required: true,
     },
     span: {
@@ -118,13 +122,10 @@ export default {
 
   methods: {
     emptyAnnotationId() {
-      if (!this.annotationSet || !this.label) return;
+      if ((!this.annotationSet && !this.labelSet) || !this.label) return;
 
-      if (this.annotationSet.id) {
-        return `${this.annotationSet.id}_${this.label.id}`;
-      } else {
-        return `${this.annotationSet.label_set.id}_${this.label.id}`;
-      }
+      const id = this.annotationSet ? this.annotationSet.id : this.labelSet.id;
+      return `${id}_${this.label.id}`;
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
@@ -148,12 +149,11 @@ export default {
           "selection/selectElement",
           this.emptyAnnotationId()
         );
-
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
           index: this.spanIndex,
           label: this.label,
-          labelSet: this.annotationSet.label_set,
+          labelSet: this.labelSet,
           annotationSet: this.annotationSet,
         });
       }
