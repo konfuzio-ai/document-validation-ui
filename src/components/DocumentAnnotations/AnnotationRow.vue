@@ -197,7 +197,7 @@ export default {
     },
     labelSet: {
       type: Object,
-      default: null,
+      required: true,
     },
     label: {
       type: Object,
@@ -695,7 +695,7 @@ export default {
     saveEmptyAnnotationChanges() {
       let annotationToCreate;
 
-      if (this.annotationSet.id) {
+      if (this.annotationSet && this.annotationSet.id) {
         annotationToCreate = {
           document: this.documentId,
           span: this.spanSelection,

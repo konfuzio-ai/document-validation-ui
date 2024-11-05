@@ -39,6 +39,7 @@
           :annotation="annotation"
           :label="label"
           :annotation-set="annotationSet"
+          :label-set="annotationSet.label_set"
         />
       </div>
     </div>
@@ -49,6 +50,7 @@
         :annotation="annotation"
         :label="label"
         :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
       />
     </div>
     <div v-else-if="annotationSet">
@@ -56,6 +58,7 @@
         :annotation="singleAnnotation"
         :label="label"
         :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
       />
     </div>
     <div v-else-if="labelSet">
