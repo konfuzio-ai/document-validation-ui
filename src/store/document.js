@@ -301,13 +301,15 @@ const getters = {
     let processedAnnotationSets = [];
     let processedLabels = [];
 
+    const isSearching = state.annotationSearch.length > 0;
+
     // search feature
     const addAnnotation = (listToAdd, annotation, force) => {
       if (force) {
         listToAdd.push(annotation);
         return true;
       }
-      if (state.annotationSearch.length > 0) {
+      if (isSearching) {
         if (
           annotation.offset_string &&
           state.annotationSearch.find((search) =>
@@ -333,7 +335,7 @@ const getters = {
     };
 
     const labelHasSearchText = (label) => {
-      if (state.annotationSearch.length > 0) {
+      if (isSearching) {
         if (
           label.name &&
           state.annotationSearch.find((search) =>
@@ -356,7 +358,10 @@ const getters = {
           let addLabel = false;
           const labelHasSearch = labelHasSearchText(label);
           if (!label.annotations || label.annotations.length === 0) {
-            if (state.annotationFilters.showEmpty) {
+            if (
+              state.annotationFilters.showEmpty &&
+              (!isSearching || labelHasSearch)
+            ) {
               addLabel = true;
             }
           } else if (
@@ -1287,9 +1292,7 @@ const actions = {
 
   fetchMissingAnnotations: ({ commit, state, getters }) => {
     return new Promise((resolve, reject) => {
-      return HTTP.get(
-        `/missing-annotations/?document=${state.documentId}`
-      )
+      return HTTP.get(`/missing-annotations/?document=${state.documentId}`)
         .then((response) => {
           commit("SET_MISSING_ANNOTATIONS", response.data.results);
           resolve(true);
