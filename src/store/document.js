@@ -555,7 +555,6 @@ const getters = {
         }
       });
     }
-    console.log("returnLabelSets", returnLabelSets);
     return returnLabelSets;
   },
 
