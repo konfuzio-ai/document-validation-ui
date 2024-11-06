@@ -75,12 +75,13 @@ export default {
   data() {
     return {
       show: true,
-      labels: [],
     };
   },
   computed: {
-    ...mapGetters("project", ["labelSetsFilteredForAnnotationSetCreation"]),
-    ...mapGetters("document", ["numberOfLabelSetGroup"]),
+    ...mapGetters("document", [
+      "numberOfLabelSetGroup",
+      "labelSetsFilteredForAnnotationSetCreation",
+    ]),
   },
   methods: {
     submit(labelSet) {
