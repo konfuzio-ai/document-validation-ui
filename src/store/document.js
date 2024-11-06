@@ -440,19 +440,17 @@ const getters = {
     let processedLabels = [];
 
     annotationSets.forEach((annotationSet) => {
-      if (annotationSet.id) {
-        labels = [];
-        annotationSet.labels.forEach((label) => {
-          const labelAnnotations = [];
+      labels = [];
+      annotationSet.labels.forEach((label) => {
+        const labelAnnotations = [];
 
-          // add annotations to the document array
-          labelAnnotations.push(...label.annotations);
-          labels.push({ ...label, annotations: labelAnnotations });
-          processedLabels.push(label);
-          annotations.push(...labelAnnotations);
-        });
-        processedAnnotationSets.push({ ...annotationSet, labels });
-      }
+        // add annotations to the document array
+        labelAnnotations.push(...label.annotations);
+        labels.push({ ...label, annotations: labelAnnotations });
+        processedLabels.push(label);
+        annotations.push(...labelAnnotations);
+      });
+      processedAnnotationSets.push({ ...annotationSet, labels });
     });
     return {
       annotationSets: processedAnnotationSets,
@@ -535,6 +533,24 @@ const getters = {
       return found ? `${index + 1}` : "";
     }
     return "";
+  },
+
+  /**
+   * Gets label sets for an annotation set creation
+   */
+  labelSetsFilteredForAnnotationSetCreation: (state) => {
+    let returnLabelSets = [];
+    if (state.annotationSets) {
+      state.annotationSets.forEach((annotationSet) => {
+        if (annotationSet.id == null) {
+          returnLabelSets.push(annotationSet.label_set);
+        } else if (annotationSet.label_set.has_multiple_annotation_sets) {
+          // check if label set has multiple
+          returnLabelSets.push(annotationSet.label_set);
+        }
+      });
+    }
+    return returnLabelSets;
   },
 
   /**
@@ -1070,10 +1086,6 @@ const actions = {
 
     if (!state.publicView) {
       await dispatch("fetchMissingAnnotations");
-
-      await dispatch("project/fetchLabelSets", null, {
-        root: true,
-      });
 
       await dispatch("project/fetchCurrentUser", null, {
         root: true,
