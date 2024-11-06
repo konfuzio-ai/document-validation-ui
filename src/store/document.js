@@ -521,16 +521,19 @@ const getters = {
       orderedAnnotationSets.sort((a, b) => {
         return a.id - b.id || a.label_set.name.localeCompare(b.label_set.name);
       });
-      orderedAnnotationSets.map((annotationSetTemp) => {
+      orderedAnnotationSets.forEach((annotationSetTemp) => {
         if (
           annotationSetTemp.label_set.id === labelSet.id &&
           annotationSetTemp.label_set.name === labelSet.name
         ) {
           found = true;
-          index++;
+          // check if annotation set exists, otherwise it will be new
+          if (annotationSetTemp.id) {
+            index++;
+          }
         }
       });
-      return found ? `${index + 1}` : "";
+      return found ? (index === 0 ? "" : `${index + 1}`) : "";
     }
     return "";
   },
@@ -542,14 +545,17 @@ const getters = {
     let returnLabelSets = [];
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
-        if (annotationSet.id == null) {
-          returnLabelSets.push(annotationSet.label_set);
-        } else if (annotationSet.label_set.has_multiple_annotation_sets) {
-          // check if label set has multiple
-          returnLabelSets.push(annotationSet.label_set);
+        if (
+          annotationSet.id == null ||
+          annotationSet.label_set.has_multiple_annotation_sets
+        ) {
+          const labelSet = { ...annotationSet.label_set };
+          labelSet.labels = [...annotationSet.labels];
+          returnLabelSets.push(labelSet);
         }
       });
     }
+    console.log("returnLabelSets", returnLabelSets);
     return returnLabelSets;
   },
 

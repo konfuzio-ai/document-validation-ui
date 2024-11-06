@@ -75,7 +75,6 @@ export default {
   data() {
     return {
       show: true,
-      labels: [],
     };
   },
   computed: {
