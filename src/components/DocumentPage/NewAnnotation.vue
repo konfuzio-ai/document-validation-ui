@@ -329,12 +329,21 @@ export default {
         });
     },
     chooseLabelSet(labelSet) {
+      // check if there's already a new entry for that label set to be created
+      const existsIndex = this.setsList.findIndex((set) => {
+        return set.id === null && set.label_set.id === labelSet.id;
+      });
+
       const newSet = {
         label_set: labelSet,
         labels: labelSet.labels,
         id: null,
       };
-      this.setsList.push(newSet);
+      if (existsIndex >= 0) {
+        this.setsList[existsIndex] = newSet;
+      } else {
+        this.setsList.push(newSet);
+      }
       this.selectedSet = newSet;
     },
     openAnnotationSetCreation() {
