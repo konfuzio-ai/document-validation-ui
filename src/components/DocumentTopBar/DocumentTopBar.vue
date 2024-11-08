@@ -177,14 +177,9 @@ export default {
     navigateToDocument(document) {
       if (!document) return;
 
-      this.$store.dispatch("document/changeCurrentDocument", document.id);
-
-      if (this.editMode) {
-        // Reset edit mode when changing the document,
-        // in case the change was made from the arrows in the Edit Mode
-        // so that the user does not get stuck in this interface
-        this.$store.dispatch("edit/disableEditMode");
-      }
+      this.$store.dispatch("document/changeCurrentDocument", {
+        documentId: document.id,
+      });
     },
   },
 };

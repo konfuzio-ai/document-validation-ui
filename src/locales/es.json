@@ -161,5 +161,6 @@
   "annotation_deleted": "Esta anotación ha sido eliminada.",
   "annotation_link": "Copia el enlace permanente a esta anotación.",
   "copied": "Copiada",
-  "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta."
+  "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta.",
+  "document_section": "Sección del documento"
 }

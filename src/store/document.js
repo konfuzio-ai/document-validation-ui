@@ -512,6 +512,22 @@ const getters = {
   },
 
   /**
+   * Checks the number of current document in the document set
+   */
+  numberOfDocumentInSet: (state) => (documentId) => {
+    let index = -1;
+    if (state.documentSet && state.documentSet.documents) {
+      state.documentSet.documents.forEach((docTemp, indexTemp) => {
+        if (docTemp.id == documentId) {
+          index = indexTemp;
+          return;
+        }
+      });
+    }
+    return index === -1 ? "" : `${index + 1}`;
+  },
+
+  /**
    * Checks if theres a group of annotation sets with this label set
    */
   numberOfLabelSetGroup: (state) => (labelSet) => {
@@ -1027,7 +1043,7 @@ const actions = {
    */
   fetchDocument: async (
     { commit, state, dispatch, rootState, getters },
-    pollDocumentList = false
+    fetchedDocument = null
   ) => {
     let projectId = null;
     let documentSetId = null;
@@ -1040,58 +1056,57 @@ const actions = {
     dispatch("display/updateCurrentPage", initialPage, {
       root: true,
     });
+    try {
+      if (!fetchedDocument) {
+        const response = await HTTP.get(`documents/${state.documentId}/`);
+        fetchedDocument = response.data;
+      }
 
-    await HTTP.get(`documents/${state.documentId}/`)
-      .then(async (response) => {
-        if (response.data) {
-          const { labels, annotations, annotationSets } =
-            getters.processAnnotationSets(response.data.annotation_sets);
+      const { labels, annotations, annotationSets } =
+        getters.processAnnotationSets(fetchedDocument.annotation_sets);
 
-          // load first page
-          if (response.data.pages.length > 0) {
-            dispatch("fetchDocumentPage", initialPage);
-          }
+      // load first page
+      if (fetchedDocument.pages.length > 0) {
+        dispatch("fetchDocumentPage", initialPage);
+      }
 
-          // set information on the store
-          commit("SET_ANNOTATION_SETS", annotationSets);
-          commit("SET_ANNOTATIONS", annotations);
-          commit("SET_LABELS", labels);
-          commit("SET_SELECTED_DOCUMENT", response.data);
-          commit("SET_DOC_SET", response.data.document_set);
+      // set information on the store
+      commit("SET_ANNOTATION_SETS", annotationSets);
+      commit("SET_ANNOTATIONS", annotations);
+      commit("SET_LABELS", labels);
+      commit("SET_SELECTED_DOCUMENT", fetchedDocument);
+      commit("SET_DOC_SET", fetchedDocument.document_set);
 
-          if (response.data.project) {
-            projectId = response.data.project;
+      if (fetchedDocument.project) {
+        projectId = fetchedDocument.project;
 
-            dispatch("project/setProjectId", projectId, {
-              root: true,
-            });
-
-            dispatch(
-              "project/setShowAnnotationTranslations",
-              response.data.enable_translated_strings,
-              {
-                root: true,
-              }
-            );
-          }
-
-          if (getters.documentHasProposedSplit(response.data)) {
-            commit("SET_SPLITTING_SUGGESTIONS", response.data.proposed_split);
-          }
-
-          documentSetId = response.data.document_set;
-          categoryId = response.data.category;
-          // TODO: add this validation to a method
-          isRecalculatingAnnotations = response.data.labeling_available !== 1;
-        }
-      })
-      .catch((error) => {
-        console.log(error, "Could not fetch document details from the backend");
-        dispatch("display/setPageError", error.response.data.detail, {
+        dispatch("project/setProjectId", projectId, {
           root: true,
         });
-        return;
+
+        dispatch(
+          "project/setShowAnnotationTranslations",
+          fetchedDocument.enable_translated_strings,
+          {
+            root: true,
+          }
+        );
+      }
+
+      if (getters.documentHasProposedSplit(fetchedDocument)) {
+        commit("SET_SPLITTING_SUGGESTIONS", fetchedDocument.proposed_split);
+      }
+
+      documentSetId = fetchedDocument.document_set;
+      categoryId = fetchedDocument.category;
+      isRecalculatingAnnotations = fetchedDocument.labeling_available !== 1;
+    } catch (error) {
+      console.log(error, "Could not fetch document details from the backend");
+      dispatch("display/setPageError", error.response.data.detail, {
+        root: true,
       });
+      return;
+    }
 
     if (!state.publicView) {
       await dispatch("fetchMissingAnnotations");
@@ -1133,7 +1148,7 @@ const actions = {
           {
             categoryId,
             user: rootState.project.currentUser.username,
-            poll: pollDocumentList,
+            poll: false,
           },
           {
             root: true,
@@ -1490,17 +1505,33 @@ const actions = {
     window.open(fullUrl, "_blank");
   },
 
-  changeCurrentDocument: ({ commit, state, dispatch }, newDocumentId) => {
+  changeCurrentDocument: (
+    { commit, state, dispatch, rootState },
+    { document, documentId }
+  ) => {
     // reset splitting suggestions
     if (state.splittingSuggestions) {
       commit("SET_SPLITTING_SUGGESTIONS", null);
     }
+
+    if (rootState.edit.editMode) {
+      // Reset edit mode when changing the document,
+      // in case the change was made from the arrows in the Edit Mode
+      // so that the user does not get stuck in this interface
+      dispatch("edit/disableEditMode", null, {
+        root: true,
+      });
+    }
+
     commit("SET_RECALCULATING_ANNOTATIONS", false);
 
     if (getURLQueryParam("document") || getURLPath("d")) {
-      navigateToNewDocumentURL(state.selectedDocument.id, newDocumentId);
+      navigateToNewDocumentURL(state.selectedDocument.id, documentId);
+    } else if (document) {
+      commit("SET_DOC_ID", document.id);
+      dispatch("fetchDocument", document);
     } else {
-      commit("SET_DOC_ID", newDocumentId);
+      commit("SET_DOC_ID", documentId);
       dispatch("fetchDocument");
     }
   },
@@ -1516,7 +1547,18 @@ const mutations = {
     }
   },
   SET_DOC_SET: (state, documentSet) => {
-    state.documentSet = documentSet;
+    // assuming that documents in document set are ordered from new to old
+    let documents = [];
+    if (documentSet && documentSet.documents) {
+      documents = documentSet.documents.slice().reverse();
+    }
+
+    const orderedDocumentSet = {
+      ...documentSet,
+      documents,
+    };
+
+    state.documentSet = orderedDocumentSet;
   },
   SET_ANNOTATION_ID: (state, id) => {
     state.annotationId = id;

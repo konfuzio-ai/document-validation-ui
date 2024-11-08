@@ -1,33 +1,53 @@
 <template>
   <b-dropdown
-    v-if="documentSet && documentSet.length > 0"
-    class="document-set-dropdown"
+    v-if="
+      documentSet && documentSet.documents && documentSet.documents.length > 0
+    "
+    class="document-set-dropdown dropdown-full-width"
     aria-role="list"
     scrollable
   >
     <template #trigger>
-      <div>
-        <div class="icon">
+      <div class="dropdown-doc-set">
+        <div class="dropdown-left">
           <CategoryIcon />
         </div>
-        <div class="text"></div>
+        <div class="dropdown-text">
+          <div class="top-part">
+            {{ $t("document_section") }}
+          </div>
+          <div class="bottom-part">
+            {{
+              `#${numberOfDocumentInSet(selectedDocument.id)} ${categoryName(
+                selectedDocument.category
+              )}`
+            }}
+          </div>
+        </div>
+        <div class="dropdown-right">
+          <b-icon icon="angle-down" size="is-small" class="caret" />
+        </div>
       </div>
     </template>
 
     <b-dropdown-item
-      v-for="doc in documentSet"
+      v-for="doc in documentSet.documents"
       :key="doc.id"
       aria-role="listitem"
       class="list-item"
       @click="handleDocumentClick(doc)"
     >
-      <span>{{ doc.name }}</span>
+      <span>
+        {{
+          `#${numberOfDocumentInSet(doc.id)} ${categoryName(doc.category)}`
+        }}</span
+      >
     </b-dropdown-item>
   </b-dropdown>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import CategoryIcon from "../../assets/images/CategoryIconImg";
 
 export default {
@@ -36,11 +56,16 @@ export default {
     CategoryIcon,
   },
   computed: {
-    ...mapState("document", ["documentSet"]),
+    ...mapGetters("document", ["numberOfDocumentInSet"]),
+    ...mapGetters("category", ["categoryName"]),
+    ...mapState("document", ["documentSet", "selectedDocument"]),
   },
   methods: {
     handleDocumentClick(document) {
-      console.log("doc", document);
+      this.$store.dispatch("document/changeCurrentDocument", {
+        document,
+        documentId: document.id,
+      });
     },
   },
 };
