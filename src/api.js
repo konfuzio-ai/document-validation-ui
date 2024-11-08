@@ -4,8 +4,7 @@ let HTTP, FILE_REQUEST, authToken, appLocale;
 const DEFAULT_URL = "https://app.konfuzio.com";
 const FILE_URL = process.env.VUE_APP_IMAGE_URL;
 
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.withCredentials = true;
 
 HTTP = axios.create({
   baseURL: process.env.VUE_APP_API_URL || `${DEFAULT_URL}/api/v3/`,
@@ -35,8 +34,9 @@ const setLocale = (locale) => {
 const getInterceptorConfig = (config) => {
   if (authToken) {
     config.headers["Authorization"] = `Token ${authToken}`;
-    config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
   }
+  config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
+
   return config;
 };
 
