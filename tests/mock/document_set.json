@@ -1,0 +1,442 @@
+{
+  "id": 13219,
+  "original_file_url": "/doc/show-document-set-original/13219/",
+  "original_number_of_pages": 3,
+  "documents": [
+    {
+      "id": 1369630,
+      "project": 10823,
+      "document_set": 13219,
+      "number_of_pages": 1,
+      "data_file_name": "Document_copy2.pdf",
+      "data_file_producer": null,
+      "file_url": "/doc/show/1376357/",
+      "original_file_url": "/doc/show-original/1376357/",
+      "thumbnail_url": "/page/show-thumbnail/100869/",
+      "ocr_time": 5.805067539215088,
+      "categorization_time": null,
+      "extraction_time": 0.4164612293243408,
+      "processing_time": 8.262498617172241,
+      "extraction_url": "https://testing.konfuzio.com/api/v1/docs/1376357/",
+      "callback_url": null,
+      "callback_status_code": null,
+      "category_confidence": null,
+      "category_is_revised": true,
+      "status_data": 2,
+      "labeling_available": 1,
+      "enable_translated_strings": false,
+      "is_reviewed": false,
+      "text": "\n\n\n\n            Page 3\n\n            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent egestas eu tortor nec\n            finibus. Vivamus sit amet dolor id ipsum rutrum bibendum vel eu ex. Morbi porttitor metus\n            mauris, convallis suscipit orci interdum sit amet. Fusce consectetur volutpat gravida.\n            Integer tellus orci, dignissim nec ultrices in, tempor nec nibh. Donec suscipit ipsum lacus,\n            in pulvinar augue feugiat in. Class aptent taciti sociosqu ad litora torquent per conubia\n            nostra, per inceptos himenaeos. Donec mollis neque risus, sed tincidunt eros malesuada a.\n            Fusce vestibulum nulla eget facilisis cursus. Curabitur massa tellus, auctor vitae suscipit\n            quis, pretium et metus.\n            Integer aliquet varius lorem, vel gravida velit pharetra non. Donec vitae dui feugiat,\n            bibendum lorem eu, aliquam augue. Aenean id commodo diam. Suspendisse ac tortor\n            luctus, fermentum dolor id, suscipit nisi. Etiam accumsan gravida mauris non pulvinar.\n            Fusce sit amet ipsum erat. Quisque cursus justo sem, in rutrum lacus vulputate sit amet.\n            Aliquam imperdiet convallis neque, eu molestie velit facilisis vitae. Nullam ut sem vitae\n            urna tincidunt luctus sed nec nunc. Praesent at tellus dui.\n            Integer commodo ex vitae augue vulputate, a interdum augue lacinia. Nullam laoreet\n            rhoncus urna sit amet placerat. Curabitur ultrices lorem sit amet magna vulputate, sit\n            amet tempus lacus porttitor. Cras ac rhoncus elit. Duis cursus nec turpis in ultricies. Nulla\n            facilisis lectus eros, sit amet ultrices risus hendrerit ut. Nulla facilisi. Ut fringilla cursus\n            lorem quis lacinia. Quisque ac justo facilisis, tristique tortor id, efficitur massa. Praesent\n            rhoncus erat in nibh ornare, eget consequat enim eleifend. Nulla volutpat pellentesque\n            lacus sed egestas. Sed et suscipit felis, ac porta orci. Vestibulum ante ipsum primis in\n            faucibus orci luctus et ultrices posuere cubilia curae;\n            Quisque id malesuada magna. In vulputate egestas arcu, et porttitor elit commodo et. Ut\n            consectetur sagittis massa eget molestie. Donec porttitor tellus a nunc porta, eget\n            maximus neque tristique. Pellentesque tincidunt enim ante, aliquam vehicula erat\n            accumsan id. Donec semper vehicula nunc non molestie. Curabitur tortor libero, finibus eu\n            ullamcorper a, imperdiet sit amet elit.\n            Pellentesque venenatis dolor sed posuere pulvinar. Proin posuere arcu nulla, tincidunt\n            luctus arcu eleifend luctus. Nam porttitor elementum malesuada. Morbi tempor lacus ac\n            libero convallis, eu iaculis arcu gravida. Aliquam consequat non urna suscipit semper.\n            Quisque neque lectus, elementum vitae feugiat a, pharetra eget elit. Quisque a tincidunt\n            sapien. Maecenas rhoncus arcu lacus, ac consectetur lacus ultricies quis. Sed ultrices\n            neque vel magna tincidunt, at hendrerit leo faucibus. Integer venenatis at metus rutrum\n            tincidunt.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "category": 16003,
+      "dataset_status": 0,
+      "pages": [
+        {
+          "id": 100869,
+          "number": 1,
+          "image_url": "/page/show-image/100869/",
+          "thumbnail_url": "/page/show-thumbnail/100869/",
+          "original_size": [595.0, 842.0],
+          "size": [1028, 1456]
+        }
+      ],
+      "annotation_sets": [
+        {
+          "id": 134920,
+          "label_set": {
+            "id": 16003,
+            "name": "Third Page",
+            "api_name": "third-page",
+            "description": "",
+            "has_multiple_annotation_sets": false
+          },
+          "labels": [
+            {
+              "id": 28444,
+              "name": "title",
+              "api_name": "title",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626091,
+                  "document": 1376357,
+                  "offset_string": "Page 3",
+                  "offset_string_original": "Page 3",
+                  "translated_string": null,
+                  "normalized": "Page 3",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 58.1544,
+                      "y0": 764.5968,
+                      "x1": 114.2784,
+                      "y1": 780.9624,
+                      "page_index": 0,
+                      "start_offset": 16,
+                      "end_offset": 22,
+                      "offset_string": "Page 3",
+                      "offset_string_original": "Page 3"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 28.567,
+                    "y0": 760.897,
+                    "x1": 159.215,
+                    "y1": 801.639,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            },
+            {
+              "id": 28447,
+              "name": "third word",
+              "api_name": "third-word",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626092,
+                  "document": 1376357,
+                  "offset_string": "dolor",
+                  "offset_string_original": "dolor",
+                  "translated_string": null,
+                  "normalized": "dolor",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 124.6536,
+                      "y0": 733.4856,
+                      "x1": 149.4216,
+                      "y1": 741.924,
+                      "page_index": 0,
+                      "start_offset": 48,
+                      "end_offset": 53,
+                      "offset_string": "dolor",
+                      "offset_string_original": "dolor"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 124.6536,
+                    "y0": 733.4856,
+                    "x1": 149.4216,
+                    "y1": 741.924,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assignee": "nico.engelmann@konfuzio.com",
+      "created_by": "nico.engelmann@konfuzio.com",
+      "created_at": "2024-10-30T10:38:17.565437+01:00",
+      "updated_at": "2024-10-30T10:41:11.248104+01:00",
+      "proposed_split": null,
+      "split_is_revised": true
+    },
+    {
+      "id": 1369631,
+      "project": 10823,
+      "document_set": 13219,
+      "number_of_pages": 1,
+      "data_file_name": "Document_copy.pdf",
+      "data_file_producer": null,
+      "file_url": "/doc/show/1376356/",
+      "original_file_url": "/doc/show-original/1376356/",
+      "thumbnail_url": "/page/show-thumbnail/100868/",
+      "ocr_time": 5.326858997344971,
+      "categorization_time": null,
+      "extraction_time": 0.3590407371520996,
+      "processing_time": 6.972947120666504,
+      "extraction_url": "https://testing.konfuzio.com/api/v1/docs/1376356/",
+      "callback_url": null,
+      "callback_status_code": null,
+      "category_confidence": null,
+      "category_is_revised": true,
+      "status_data": 2,
+      "labeling_available": 1,
+      "enable_translated_strings": false,
+      "is_reviewed": false,
+      "text": "\n\n\n\n            Page 2\n\n            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent egestas eu tortor nec\n            finibus. Vivamus sit amet dolor id ipsum rutrum bibendum vel eu ex. Morbi porttitor metus\n            mauris, convallis suscipit orci interdum sit amet. Fusce consectetur volutpat gravida.\n            Integer tellus orci, dignissim nec ultrices in, tempor nec nibh. Donec suscipit ipsum lacus,\n            in pulvinar augue feugiat in. Class aptent taciti sociosqu ad litora torquent per conubia\n            nostra, per inceptos himenaeos. Donec mollis neque risus, sed tincidunt eros malesuada a.\n            Fusce vestibulum nulla eget facilisis cursus. Curabitur massa tellus, auctor vitae suscipit\n            quis, pretium et metus.\n            Integer aliquet varius lorem, vel gravida velit pharetra non. Donec vitae dui feugiat,\n            bibendum lorem eu, aliquam augue. Aenean id commodo diam. Suspendisse ac tortor\n            luctus, fermentum dolor id, suscipit nisi. Etiam accumsan gravida mauris non pulvinar.\n            Fusce sit amet ipsum erat. Quisque cursus justo sem, in rutrum lacus vulputate sit amet.\n            Aliquam imperdiet convallis neque, eu molestie velit facilisis vitae. Nullam ut sem vitae\n            urna tincidunt luctus sed nec nunc. Praesent at tellus dui.\n            Integer commodo ex vitae augue vulputate, a interdum augue lacinia. Nullam laoreet\n            rhoncus urna sit amet placerat. Curabitur ultrices lorem sit amet magna vulputate, sit\n            amet tempus lacus porttitor. Cras ac rhoncus elit. Duis cursus nec turpis in ultricies. Nulla\n            facilisis lectus eros, sit amet ultrices risus hendrerit ut. Nulla facilisi. Ut fringilla cursus\n            lorem quis lacinia. Quisque ac justo facilisis, tristique tortor id, efficitur massa. Praesent\n            rhoncus erat in nibh ornare, eget consequat enim eleifend. Nulla volutpat pellentesque\n            lacus sed egestas. Sed et suscipit felis, ac porta orci. Vestibulum ante ipsum primis in\n            faucibus orci luctus et ultrices posuere cubilia curae;\n            Quisque id malesuada magna. In vulputate egestas arcu, et porttitor elit commodo et. Ut\n            consectetur sagittis massa eget molestie. Donec porttitor tellus a nunc porta, eget\n            maximus neque tristique. Pellentesque tincidunt enim ante, aliquam vehicula erat\n            accumsan id. Donec semper vehicula nunc non molestie. Curabitur tortor libero, finibus eu\n            ullamcorper a, imperdiet sit amet elit.\n            Pellentesque venenatis dolor sed posuere pulvinar. Proin posuere arcu nulla, tincidunt\n            luctus arcu eleifend luctus. Nam porttitor elementum malesuada. Morbi tempor lacus ac\n            libero convallis, eu iaculis arcu gravida. Aliquam consequat non urna suscipit semper.\n            Quisque neque lectus, elementum vitae feugiat a, pharetra eget elit. Quisque a tincidunt\n            sapien. Maecenas rhoncus arcu lacus, ac consectetur lacus ultricies quis. Sed ultrices\n            neque vel magna tincidunt, at hendrerit leo faucibus. Integer venenatis at metus rutrum\n            tincidunt.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "category": 16002,
+      "dataset_status": 0,
+      "pages": [
+        {
+          "id": 100868,
+          "number": 1,
+          "image_url": "/page/show-image/100868/",
+          "thumbnail_url": "/page/show-thumbnail/100868/",
+          "original_size": [595.0, 842.0],
+          "size": [1028, 1456]
+        }
+      ],
+      "annotation_sets": [
+        {
+          "id": 134919,
+          "label_set": {
+            "id": 16002,
+            "name": "Second Page",
+            "api_name": "second-page",
+            "description": "",
+            "has_multiple_annotation_sets": false
+          },
+          "labels": [
+            {
+              "id": 28444,
+              "name": "title",
+              "api_name": "title",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626089,
+                  "document": 1376356,
+                  "offset_string": "Page 2",
+                  "offset_string_original": "Page 2",
+                  "translated_string": null,
+                  "normalized": "Page 2",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 58.1544,
+                      "y0": 764.5968,
+                      "x1": 114.2064,
+                      "y1": 780.9624,
+                      "page_index": 0,
+                      "start_offset": 16,
+                      "end_offset": 22,
+                      "offset_string": "Page 2",
+                      "offset_string_original": "Page 2"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 57.514,
+                    "y0": 758.993,
+                    "x1": 127.981,
+                    "y1": 794.404,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            },
+            {
+              "id": 28446,
+              "name": "second word",
+              "api_name": "second-word",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626090,
+                  "document": 1376356,
+                  "offset_string": "ipsum",
+                  "offset_string_original": "ipsum",
+                  "translated_string": null,
+                  "normalized": "ipsum",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 92.16,
+                      "y0": 731.052,
+                      "x1": 121.032,
+                      "y1": 741.5424,
+                      "page_index": 0,
+                      "start_offset": 42,
+                      "end_offset": 47,
+                      "offset_string": "ipsum",
+                      "offset_string_original": "ipsum"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 92.16,
+                    "y0": 731.052,
+                    "x1": 121.032,
+                    "y1": 741.5424,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assignee": "nico.engelmann@konfuzio.com",
+      "created_by": "nico.engelmann@konfuzio.com",
+      "created_at": "2024-10-30T10:38:17.182522+01:00",
+      "updated_at": "2024-10-30T10:40:34.666976+01:00",
+      "proposed_split": null,
+      "split_is_revised": true
+    },
+    {
+      "id": 1369632,
+      "project": 10823,
+      "document_set": 13219,
+      "number_of_pages": 1,
+      "data_file_name": "Document.pdf",
+      "data_file_producer": null,
+      "file_url": "/doc/show/1376355/",
+      "original_file_url": "/doc/show-original/1376355/",
+      "thumbnail_url": "/page/show-thumbnail/100867/",
+      "ocr_time": 2.80910062789917,
+      "categorization_time": null,
+      "extraction_time": 0.3804965019226074,
+      "processing_time": 4.534370422363281,
+      "extraction_url": "https://testing.konfuzio.com/api/v1/docs/1376355/",
+      "callback_url": null,
+      "callback_status_code": null,
+      "category_confidence": null,
+      "category_is_revised": true,
+      "status_data": 2,
+      "labeling_available": 1,
+      "enable_translated_strings": false,
+      "is_reviewed": false,
+      "text": "\n\n\n\n\n            Page 1\n\n            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent egestas eu tortor nec\n            finibus. Vivamus sit amet dolor id ipsum rutrum bibendum vel eu ex. Morbi porttitor metus\n            mauris, convallis suscipit orci interdum sit amet. Fusce consectetur volutpat gravida.\n            Integer tellus orci, dignissim nec ultrices in, tempor nec nibh. Donec suscipit ipsum lacus,\n            in pulvinar augue feugiat in. Class aptent taciti sociosqu ad litora torquent per conubia\n            nostra, per inceptos himenaeos. Donec mollis neque risus, sed tincidunt eros malesuada a.\n            Fusce vestibulum nulla eget facilisis cursus. Curabitur massa tellus, auctor vitae suscipit\n            quis, pretium et metus.\n            Integer aliquet varius lorem, vel gravida velit pharetra non. Donec vitae dui feugiat,\n            bibendum lorem eu, aliquam augue. Aenean id commodo diam. Suspendisse ac tortor\n            luctus, fermentum dolor id, suscipit nisi. Etiam accumsan gravida mauris non pulvinar.\n            Fusce sit amet ipsum erat. Quisque cursus justo sem, in rutrum lacus vulputate sit amet.\n            Aliquam imperdiet convallis neque, eu molestie velit facilisis vitae. Nullam ut sem vitae\n            urna tincidunt luctus sed nec nunc. Praesent at tellus dui.\n            Integer commodo ex vitae augue vulputate, a interdum augue lacinia. Nullam laoreet\n            rhoncus urna sit amet placerat. Curabitur ultrices lorem sit amet magna vulputate, sit\n            amet tempus lacus porttitor. Cras ac rhoncus elit. Duis cursus nec turpis in ultricies. Nulla\n            facilisis lectus eros, sit amet ultrices risus hendrerit ut. Nulla facilisi. Ut fringilla cursus\n            lorem quis lacinia. Quisque ac justo facilisis, tristique tortor id, efficitur massa. Praesent\n            rhoncus erat in nibh ornare, eget consequat enim eleifend. Nulla volutpat pellentesque\n            lacus sed egestas. Sed et suscipit felis, ac porta orci. Vestibulum ante ipsum primis in\n            faucibus orci luctus et ultrices posuere cubilia curae;\n            Quisque id malesuada magna. In vulputate egestas arcu, et porttitor elit commodo et. Ut\n            consectetur sagittis massa eget molestie. Donec porttitor tellus a nunc porta, eget\n            maximus neque tristique. Pellentesque tincidunt enim ante, aliquam vehicula erat\n            accumsan id. Donec semper vehicula nunc non molestie. Curabitur tortor libero, finibus eu\n            ullamcorper a, imperdiet sit amet elit.\n            Pellentesque venenatis dolor sed posuere pulvinar. Proin posuere arcu nulla, tincidunt\n            luctus arcu eleifend luctus. Nam porttitor elementum malesuada. Morbi tempor lacus ac\n            libero convallis, eu iaculis arcu gravida. Aliquam consequat non urna suscipit semper.\n            Quisque neque lectus, elementum vitae feugiat a, pharetra eget elit. Quisque a tincidunt\n            sapien. Maecenas rhoncus arcu lacus, ac consectetur lacus ultricies quis. Sed ultrices\n            neque vel magna tincidunt, at hendrerit leo faucibus. Integer venenatis at metus rutrum\n            tincidunt.\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "category": 16001,
+      "dataset_status": 0,
+      "pages": [
+        {
+          "id": 100867,
+          "number": 1,
+          "image_url": "/page/show-image/100867/",
+          "thumbnail_url": "/page/show-thumbnail/100867/",
+          "original_size": [595.0, 842.0],
+          "size": [1028, 1456]
+        }
+      ],
+      "annotation_sets": [
+        {
+          "id": 134918,
+          "label_set": {
+            "id": 16001,
+            "name": "First Page",
+            "api_name": "first-page",
+            "description": "",
+            "has_multiple_annotation_sets": false
+          },
+          "labels": [
+            {
+              "id": 28444,
+              "name": "title",
+              "api_name": "title",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626087,
+                  "document": 1376355,
+                  "offset_string": "Page 1",
+                  "offset_string_original": "Page 1",
+                  "translated_string": null,
+                  "normalized": "Page 1",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 58.1544,
+                      "y0": 752.6016,
+                      "x1": 114.4224,
+                      "y1": 768.78,
+                      "page_index": 0,
+                      "start_offset": 17,
+                      "end_offset": 23,
+                      "offset_string": "Page 1",
+                      "offset_string_original": "Page 1"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 38.851,
+                    "y0": 749.093,
+                    "x1": 139.789,
+                    "y1": 774.224,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            },
+            {
+              "id": 28445,
+              "name": "first word",
+              "api_name": "first-word",
+              "description": "",
+              "has_multiple_top_candidates": false,
+              "annotations": [
+                {
+                  "id": 626088,
+                  "document": 1376355,
+                  "offset_string": "Lorem",
+                  "offset_string_original": "Lorem",
+                  "translated_string": null,
+                  "normalized": "Lorem",
+                  "confidence": 1.0,
+                  "is_correct": true,
+                  "revised": false,
+                  "origin": "api.v2",
+                  "created_by": "nico.engelmann@konfuzio.com",
+                  "revised_by": null,
+                  "span": [
+                    {
+                      "x0": 57.2976,
+                      "y0": 721.4904,
+                      "x1": 88.7256,
+                      "y1": 729.4536,
+                      "page_index": 0,
+                      "start_offset": 37,
+                      "end_offset": 42,
+                      "offset_string": "Lorem",
+                      "offset_string_original": "Lorem"
+                    }
+                  ],
+                  "selection_bbox": {
+                    "x0": 57.2976,
+                    "y0": 721.4904,
+                    "x1": 88.7256,
+                    "y1": 729.4536,
+                    "page_index": 0
+                  },
+                  "custom_offset_string": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assignee": "nico.engelmann@konfuzio.com",
+      "created_by": "nico.engelmann@konfuzio.com",
+      "created_at": "2024-10-30T10:38:16.723783+01:00",
+      "updated_at": "2024-10-30T10:39:51.349692+01:00",
+      "proposed_split": null,
+      "split_is_revised": true
+    }
+  ]
+}

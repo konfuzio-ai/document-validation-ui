@@ -2,6 +2,7 @@ import store from "../../src/store";
 
 export const init = () => {
   const documentData = require("../mock/document.json");
+  const documentSet = require("../mock/document_set.json");
   const pages = [
     require("../mock/page_1.json"),
     require("../mock/page_2.json"),
@@ -35,6 +36,7 @@ export const init = () => {
     store.dispatch("document/setAnnotationSets", annotationSets),
     store.dispatch("document/setPages", pages),
     store.dispatch("document/setPublicView", false),
+    store.dispatch("document/setDocumentSet", documentSet),
     store.dispatch("document/endRecalculatingAnnotations"),
     store.dispatch("document/endLoading"),
     store.dispatch("display/updateScale", scale)

@@ -4,7 +4,10 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
-      <div v-if="!recalculatingAnnotations" class="left-bar-components">
+      <div
+        v-if="!publicView && !recalculatingAnnotations"
+        class="left-bar-components"
+      >
         <DocumentSetChooser />
       </div>
 

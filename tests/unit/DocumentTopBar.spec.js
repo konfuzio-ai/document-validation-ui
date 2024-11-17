@@ -1,6 +1,5 @@
 import { render } from "../utils/render";
 import { dispatch, getData } from "../utils/store";
-import { DocumentCategory } from "../../src/components";
 import {
   DocumentName,
   DocumentTopBar,
@@ -143,13 +142,13 @@ describe("Document Top Bar", () => {
     ).toBe(false);
   });
 
-  it("Should not show Category dropdown, option to edit file name, keyboard actions information or other buttons", async () => {
+  it("Should not show Dropdown Set Chooser, option to edit file name, keyboard actions information or other buttons", async () => {
     const wrapper = render(DocumentTopBar, false);
 
     dispatch("document/setPublicView", true);
 
-    const categoryDropdown = await wrapper.find(
-      ".left-bar-components .dropdown"
+    const dropdownSetComponent = await wrapper.find(
+      ".left-bar-components .document-set-dropdown"
     );
 
     const fileNameEditButton = await wrapper.find(
@@ -164,47 +163,10 @@ describe("Document Top Bar", () => {
       ".right-bar-components .top-bar-buttons .buttons .finish-review-button-container"
     );
 
-    expect(categoryDropdown.exists()).toBe(false);
+    expect(dropdownSetComponent.exists()).toBe(false);
     expect(fileNameEditButton.exists()).toBe(false);
     expect(keyboardActionInfo.exists()).toBe(false);
     expect(finishReviewButton.exists()).toBe(false);
-  });
-
-  it("Category dropdown is disabled if the Document belongs to a dataset, or if there are Annotations that are correct", async () => {
-    const annotationSet = getData("document").annotationSets[0];
-    const labels = annotationSet.labels;
-    const annotations = labels.flatMap((label) => {
-      return label.annotations;
-    });
-    const correctAnnotations = annotations.filter((ann) => ann.is_correct);
-
-    const wrapper = render(
-      DocumentCategory,
-      false,
-      {},
-      {
-        dropdownIsDisabled: false,
-        tooltipIsShown: false,
-      }
-    );
-
-    if (correctAnnotations.length > 0) {
-      await wrapper.setData({ dropdownIsDisabled: true, tooltipIsShown: true });
-    }
-
-    expect(
-      await wrapper
-        .findComponent(".b-tooltip .tooltip-trigger .dropdown")
-        .classes()
-    ).toContain("is-disabled");
-
-    await wrapper
-      .findComponent(".b-tooltip .tooltip-trigger")
-      .trigger("mouseenter");
-
-    expect(await wrapper.find(".b-tooltip .tooltip-content").isVisible()).toBe(
-      true
-    );
   });
 
   it("Shows arrows to navigate between documents", async () => {
@@ -236,5 +198,32 @@ describe("Document Top Bar", () => {
         .findComponent(".center-bar-components .navigation-arrow")
         .isVisible()
     ).toBe(false);
+  });
+
+  it("Document Set Dropdown to appear when more than one document exists", async () => {
+    dispatch("document/setPublicView", false);
+    const wrapper = render(DocumentTopBar, false);
+
+    const dropdownSetComponent = await wrapper.find(
+      ".left-bar-components .document-set-dropdown"
+    );
+
+    expect(dropdownSetComponent.exists()).toBe(true);
+  });
+
+  it("Document Set Dropdown to not appear when no documents exist in set", async () => {
+    dispatch("document/setPublicView", false);
+
+    const newDocumentSet = getData("document").documentSet;
+    newDocumentSet.documents = [];
+
+    dispatch("document/setDocumentSet", newDocumentSet);
+    const wrapper = render(DocumentTopBar, false);
+
+    const dropdownSetComponent = await wrapper.find(
+      ".left-bar-components .document-set-dropdown"
+    );
+
+    expect(dropdownSetComponent.exists()).toBe(false);
   });
 });

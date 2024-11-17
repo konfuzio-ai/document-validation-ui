@@ -1075,7 +1075,6 @@ const actions = {
       commit("SET_ANNOTATIONS", annotations);
       commit("SET_LABELS", labels);
       commit("SET_SELECTED_DOCUMENT", fetchedDocument);
-      commit("SET_DOC_SET", fetchedDocument.document_set);
 
       if (fetchedDocument.project) {
         projectId = fetchedDocument.project;
@@ -1172,6 +1171,11 @@ const actions = {
       .catch((error) => {
         console.log(error);
       });
+  },
+
+  // Set document set data
+  setDocumentSet: ({ commit }, documentSet) => {
+    commit("SET_DOC_SET", documentSet);
   },
 
   // Get document set data
