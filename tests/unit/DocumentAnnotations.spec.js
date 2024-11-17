@@ -45,6 +45,7 @@ describe("Document Annotations Component", () => {
 
     const wrapper = render(DocumentLabel, false, {
       annotationSet,
+      labelSet: annotationSet.label_set,
       label,
     });
     expect(await wrapper.find(".annotation-row .label-name").text()).toContain(
@@ -78,6 +79,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(EmptyAnnotation, false, {
       label,
       annotationSet,
+      labelSet: annotationSet.label_set,
       isMissingAnnotation,
     });
 
@@ -97,12 +99,14 @@ describe("Document Annotations Component", () => {
       label,
       annotationSet,
       isMissingAnnotation,
+      labelSet: annotationSet.label_set,
     });
 
     const wrapper2 = render(AnnotationRow, false, {
       label,
       annotationSet,
       annotation,
+      labelSet: annotationSet.label_set,
     });
 
     const sampleBbox = {
@@ -162,6 +166,7 @@ describe("Document Annotations Component", () => {
     const wrapper2 = render(AnnotationRow, false, {
       label,
       annotationSet,
+      labelSet: annotationSet.label_set,
       annotation,
     });
 
@@ -177,6 +182,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(AnnotationRow, false, {
       label,
       annotationSet,
+      labelSet: annotationSet.label_set,
       annotation,
     });
 
@@ -207,6 +213,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(AnnotationRow, false, {
       label,
       annotationSet,
+      labelSet: annotationSet.label_set,
       annotation,
     });
 
@@ -450,7 +457,11 @@ describe("Document Annotations Component", () => {
     const wrapper = render(
       DocumentLabel,
       true,
-      { label: label, annotationSet: annotationSet },
+      {
+        label: label,
+        annotationSet: annotationSet,
+        labelSet: annotationSet.label_set,
+      },
       {
         showAnnotationsGroup: false,
         nonMultipleAnnotationsExtracted: true,

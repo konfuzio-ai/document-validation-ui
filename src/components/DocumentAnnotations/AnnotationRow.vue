@@ -632,7 +632,7 @@ export default {
         (item) =>
           item.annotation_set === this.annotationSet.id &&
           item.label === this.label.id &&
-          item.label_set === this.annotationSet.labelSet.id
+          item.label_set === this.labelSet.id
       );
 
       this.$store
