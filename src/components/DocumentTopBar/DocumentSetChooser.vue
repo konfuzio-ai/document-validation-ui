@@ -1,8 +1,9 @@
 <template>
   <b-dropdown
     v-if="
-      documentSet && documentSet.documents && documentSet.documents.length > 0
+      documentSet && documentSet.documents && documentSet.documents.length > 1
     "
+    v-model="selectedDocId"
     class="document-set-dropdown dropdown-full-width"
     aria-role="list"
     scrollable
@@ -35,6 +36,7 @@
       :key="doc.id"
       aria-role="listitem"
       class="list-item"
+      :value="doc.id"
       @click="handleDocumentClick(doc)"
     >
       <span>
@@ -55,10 +57,18 @@ export default {
   components: {
     CategoryIcon,
   },
+  data() {
+    return {
+      selectedDocId: 0,
+    };
+  },
   computed: {
     ...mapGetters("document", ["numberOfDocumentInSet"]),
     ...mapGetters("category", ["categoryName"]),
     ...mapState("document", ["documentSet", "selectedDocument"]),
+  },
+  mounted() {
+    this.selectedDocId = this.selectedDocument.id;
   },
   methods: {
     handleDocumentClick(document) {
