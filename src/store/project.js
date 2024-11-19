@@ -66,12 +66,14 @@ const actions = {
   },
 
   fetchDocumentList: ({ commit, state }, parameters) => {
-    return HTTP.get(
-      `documents/?project=${state.projectId}&limit=100&${parameters}`
-    )
-      .then((response) => {
-        if (response.data.results) {
-          commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
+    return myImports
+      .makeGetPaginatedRequest(
+        `documents/?project=${state.projectId}&${parameters}`,
+        true
+      )
+      .then((results) => {
+        if (results) {
+          commit("SET_DOCUMENTS_IN_PROJECT", results);
         }
       })
       .catch((error) => {
