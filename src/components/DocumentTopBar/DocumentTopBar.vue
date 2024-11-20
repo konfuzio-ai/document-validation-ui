@@ -4,11 +4,15 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
-      <div
-        v-if="!publicView && !recalculatingAnnotations"
-        class="left-bar-components"
-      >
-        <DocumentSetChooser />
+      <div class="left-bar-components">
+        <DocumentSetChooser
+          v-if="
+            !publicView &&
+            !recalculatingAnnotations &&
+            !editMode &&
+            !isDocumentReviewed
+          "
+        />
       </div>
 
       <div

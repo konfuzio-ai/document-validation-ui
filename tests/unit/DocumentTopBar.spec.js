@@ -202,6 +202,7 @@ describe("Document Top Bar", () => {
 
   it("Document Set Dropdown to appear when more than one document exists", async () => {
     dispatch("document/setPublicView", false);
+    dispatch("edit/disableEditMode");
     const wrapper = render(DocumentTopBar, false);
 
     const dropdownSetComponent = await wrapper.find(
@@ -211,8 +212,22 @@ describe("Document Top Bar", () => {
     expect(dropdownSetComponent.exists()).toBe(true);
   });
 
+  it("Document Set Dropdown to not appear when in edit mode", async () => {
+    dispatch("document/setPublicView", false);
+    dispatch("edit/enableEditMode");
+
+    const wrapper = render(DocumentTopBar, false);
+
+    const dropdownSetComponent = await wrapper.find(
+      ".left-bar-components .document-set-dropdown"
+    );
+
+    expect(dropdownSetComponent.exists()).toBe(false);
+  });
+
   it("Document Set Dropdown to not appear when no documents exist in set", async () => {
     dispatch("document/setPublicView", false);
+    dispatch("edit/disableEditMode");
 
     const newDocumentSet = getData("document").documentSet;
     newDocumentSet.documents = [];
