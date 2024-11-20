@@ -6,12 +6,7 @@
     >
       <div class="left-bar-components">
         <DocumentSetChooser
-          v-if="
-            !publicView &&
-            !recalculatingAnnotations &&
-            !editMode &&
-            !isDocumentReviewed
-          "
+          v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
       </div>
 
