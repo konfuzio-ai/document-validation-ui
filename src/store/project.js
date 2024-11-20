@@ -30,9 +30,10 @@ const actions = {
 
   // Get label sets from the project
   fetchLabelSets: ({ commit, state }) => {
-    return HTTP.get(`label-sets/?project=${state.projectId}`)
-      .then((response) => {
-        commit("SET_LABEL_SETS", response.data.results);
+    return myImports
+      .makeGetPaginatedRequest(`label-sets/?project=${state.projectId}`, true)
+      .then((results) => {
+        commit("SET_LABEL_SETS", results);
       })
       .catch((error) => {
         console.log(error);
