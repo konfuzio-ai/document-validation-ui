@@ -6,13 +6,7 @@
       :class="['left-aligned', 'annotation-details']"
     >
       <div :class="['label-icon']">
-        <div
-          v-if="
-            (created(annotation) || edited(annotation)) &&
-            !isNegative(annotation) &&
-            !publicView
-          "
-        >
+        <div v-if="(created(annotation) || edited(annotation)) && !publicView">
           <div
             :class="[
               'annotation-details-icon',
@@ -30,9 +24,7 @@
           <NotFoundIcon />
         </div>
         <div
-          v-else-if="
-            notExtracted(annotation) || (isNegative(annotation) && !publicView)
-          "
+          v-else-if="notExtracted(annotation) && !publicView"
           :class="[
             'annotation-details-icon',
             animate ? 'animated-ripple' : '',
@@ -78,7 +70,7 @@
             <span>{{ description }}</span>
           </div>
           <div
-            v-if="confidence(annotation) && !isNegative(annotation)"
+            v-if="confidence(annotation)"
             :class="['confidence', publicView && 'tooltip-in-public-view']"
           >
             <span>{{ $t("confidence") }}</span
@@ -193,7 +185,6 @@ export default {
       "created",
       "edited",
       "accepted",
-      "isNegative",
       "getUser",
       "annotationIsNotFound",
     ]),
@@ -220,10 +211,7 @@ export default {
   },
   methods: {
     getText() {
-      if (
-        this.notExtracted(this.annotation) ||
-        this.isNegative(this.annotation)
-      ) {
+      if (this.notExtracted(this.annotation)) {
         return this.$t("not_found_in_document");
       } else if (this.created(this.annotation)) {
         return this.getUser(this.annotation)

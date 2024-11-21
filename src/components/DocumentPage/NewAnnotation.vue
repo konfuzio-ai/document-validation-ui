@@ -169,7 +169,6 @@ export default {
       "numberOfAnnotationSetGroup",
       "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
-      "isNegative",
     ]),
     ...mapGetters("display", ["clientToBbox"]),
     ...mapState("selection", ["spanSelection", "selection"]),
@@ -294,27 +293,9 @@ export default {
       } else {
         annotationToCreate.label_set = this.selectedSet.label_set.id;
       }
-
-      // check if the selected label already has a negative annotation
-      let negativeAnnotationId;
-
-      if (
-        this.selectedLabel.annotations &&
-        this.selectedLabel.annotations.length > 0
-      ) {
-        const negativeAnnotation = this.selectedLabel.annotations.find(
-          (annotation) => this.isNegative(annotation)
-        );
-
-        if (negativeAnnotation) {
-          negativeAnnotationId = negativeAnnotation.id;
-        }
-      }
-
       this.$store
         .dispatch("document/createAnnotation", {
           annotation: annotationToCreate,
-          negativeAnnotationId: negativeAnnotationId,
         })
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {
