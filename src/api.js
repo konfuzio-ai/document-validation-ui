@@ -67,11 +67,45 @@ const makeFileRequest = (fileUrl) => {
   });
 };
 
+const makeGetPaginatedRequest = (request, hasParams = false) => {
+  let returnResponse = [];
+  let toFinishLoop = false;
+
+  let separator = hasParams ? "&" : "?";
+  let loopRequest = `${request}${separator}limit=100`;
+
+  return new Promise(async (resolve, reject) => {
+    do {
+      try {
+        let response = await HTTP.get(loopRequest);
+        if (response && response.data) {
+          const data = response.data;
+          if (data.results) {
+            returnResponse = [...returnResponse, ...data.results];
+          }
+          if (data.next) {
+            loopRequest = data.next;
+          } else {
+            toFinishLoop = true;
+          }
+        } else {
+          reject("Error getting paginated results.");
+        }
+      } catch (error) {
+        reject(error);
+        console.log(error);
+      }
+    } while (!toFinishLoop);
+    resolve(returnResponse);
+  });
+};
+
 export default {
   HTTP,
   setApiUrl,
   setFileUrl,
   makeFileRequest,
+  makeGetPaginatedRequest,
   setAuthToken,
   setLocale,
   FILE_REQUEST,

@@ -1309,9 +1309,13 @@ const actions = {
 
   fetchMissingAnnotations: ({ commit, state, getters }) => {
     return new Promise((resolve, reject) => {
-      return HTTP.get(`/missing-annotations/?document=${state.documentId}&limit=1000`)
-        .then((response) => {
-          commit("SET_MISSING_ANNOTATIONS", response.data.results);
+      return myImports
+        .makeGetPaginatedRequest(
+          `/missing-annotations/?document=${state.documentId}`,
+          true
+        )
+        .then((results) => {
+          commit("SET_MISSING_ANNOTATIONS", results);
           resolve(true);
         })
         .catch((error) => {

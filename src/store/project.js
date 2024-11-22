@@ -30,9 +30,10 @@ const actions = {
 
   // Get label sets from the project
   fetchLabelSets: ({ commit, state }) => {
-    return HTTP.get(`label-sets/?project=${state.projectId}`)
-      .then((response) => {
-        commit("SET_LABEL_SETS", response.data.results);
+    return myImports
+      .makeGetPaginatedRequest(`label-sets/?project=${state.projectId}`, true)
+      .then((results) => {
+        commit("SET_LABEL_SETS", results);
       })
       .catch((error) => {
         console.log(error);
@@ -66,12 +67,14 @@ const actions = {
   },
 
   fetchDocumentList: ({ commit, state }, parameters) => {
-    return HTTP.get(
-      `documents/?project=${state.projectId}&limit=100&${parameters}`
-    )
-      .then((response) => {
-        if (response.data.results) {
-          commit("SET_DOCUMENTS_IN_PROJECT", response.data.results);
+    return myImports
+      .makeGetPaginatedRequest(
+        `documents/?project=${state.projectId}&${parameters}`,
+        true
+      )
+      .then((results) => {
+        if (results) {
+          commit("SET_DOCUMENTS_IN_PROJECT", results);
         }
       })
       .catch((error) => {
