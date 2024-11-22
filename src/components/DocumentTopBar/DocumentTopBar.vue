@@ -4,9 +4,9 @@
       v-if="selectedDocument && selectedDocument.pages.length > 0 && !loading"
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
-      <div v-if="!recalculatingAnnotations" class="left-bar-components">
-        <DocumentCategory
-          v-if="categories && !editMode && !publicView && !isDocumentReviewed"
+      <div class="left-bar-components">
+        <DocumentSetChooser
+          v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
       </div>
 
@@ -91,7 +91,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import DocumentCategory from "../../components/DocumentCategory";
+import DocumentSetChooser from "./DocumentSetChooser";
 import DocumentName from "./DocumentName";
 import DocumentTopBarButtons from "./DocumentTopBarButtons";
 import KeyboardActionsDescription from "./KeyboardActionsDescription";
@@ -104,14 +104,13 @@ import KeyboardActionsDescription from "./KeyboardActionsDescription";
 export default {
   name: "DocumentTopBar",
   components: {
-    DocumentCategory,
+    DocumentSetChooser,
     DocumentName,
     DocumentTopBarButtons,
     KeyboardActionsDescription,
   },
   data() {
     return {
-      categoryError: false,
       previousDocument: null,
       nextDocument: null,
     };
@@ -123,7 +122,6 @@ export default {
       "loading",
       "recalculatingAnnotations",
     ]),
-    ...mapState("category", ["categories"]),
     ...mapState("edit", ["editMode"]),
     ...mapState("project", ["documentsInProject"]),
     ...mapGetters("document", [
@@ -181,14 +179,9 @@ export default {
     navigateToDocument(document) {
       if (!document) return;
 
-      this.$store.dispatch("document/changeCurrentDocument", document.id);
-
-      if (this.editMode) {
-        // Reset edit mode when changing the document,
-        // in case the change was made from the arrows in the Edit Mode
-        // so that the user does not get stuck in this interface
-        this.$store.dispatch("edit/disableEditMode");
-      }
+      this.$store.dispatch("document/changeCurrentDocument", {
+        documentId: document.id,
+      });
     },
   },
 };

@@ -162,5 +162,6 @@
   "annotation_deleted": "This annotation has been deleted.",
   "annotation_link": "Copy the permanent link to this annotation",
   "copied": "Copied",
-  "checkbox_ann_details": "A checkbox will be extracted for this label."
+  "checkbox_ann_details": "A checkbox will be extracted for this label.",
+  "document_section": "Document Section"
 }

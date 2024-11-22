@@ -262,6 +262,12 @@
       margin-left: 0;
     }
 
+    &.dropdown-full-width {
+      .dropdown-menu {
+        width: 100%;
+      }
+    }
+
     .dropdown-trigger {
       justify-content: space-between;
       width: 100%;

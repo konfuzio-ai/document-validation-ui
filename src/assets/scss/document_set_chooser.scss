@@ -1,0 +1,19 @@
+@import "./imports.scss";
+.document-set-dropdown {
+  border-right: $component-border;
+
+  .dropdown-doc-set {
+    display: flex;
+    margin: 0 16px;
+    gap: 8px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+
+    .dropdown-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+}
