@@ -84,10 +84,7 @@
     </div>
     <div class="annotation-row-right">
       <div class="annotation-content">
-        <div
-          v-if="annotation && !isNegative(annotation)"
-          class="annotation-items"
-        >
+        <div v-if="annotation" class="annotation-items">
           <b-checkbox
             v-if="annotation.metadata && annotation.metadata.checkbox"
             v-model="isChecked"
@@ -251,12 +248,10 @@ export default {
       "isAnnotationInEditMode",
       "annotationIsNotFound",
       "isDocumentReviewed",
-      "isNegative",
     ]),
     defaultSpan() {
       if (
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         this.annotation.span &&
         this.annotation.span.length > 0
       ) {
@@ -274,7 +269,6 @@ export default {
     isAnnotation() {
       return (
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         this.isAnnotationInEditMode(
           this.currentAnnotationId(),
           this.editAnnotation.index
@@ -298,7 +292,6 @@ export default {
         this.hoveredAnnotationSet &&
         this.hoveredAnnotationSet.type == "accept" &&
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         this.hoveredNotCorrectAnnotations() === this.annotation.id
       );
     },
@@ -395,7 +388,6 @@ export default {
       if (
         newAnnotationId &&
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         this.annotation.id == newAnnotationId
       ) {
         this.isSelected = true;
@@ -421,12 +413,7 @@ export default {
     currentAnnotationId() {
       if ((!this.annotationSet && !this.labelSet) || !this.label) return;
 
-      if (
-        this.annotation &&
-        this.annotation.id &&
-        !this.isNegative(this.annotation)
-      )
-        return this.annotation.id;
+      if (this.annotation && this.annotation.id) return this.annotation.id;
 
       const setId = this.annotationSet
         ? this.annotationSet.id
@@ -461,12 +448,8 @@ export default {
         }
       );
       const found = labels.find((l) => l.id === this.label.id);
-      const negativeAnnotations = found.annotations.find((annotation) =>
-        this.isNegative(annotation)
-      );
 
-      if ((found && found.annotations.length === 0) || negativeAnnotations)
-        return found.id;
+      if (found && found.annotations.length === 0) return found.id;
       return null;
     },
     hoveredNotCorrectAnnotations() {
@@ -504,7 +487,6 @@ export default {
         !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         !this.annotation.is_correct &&
         this.hoveredAnnotation === this.annotation.id
       );
@@ -514,7 +496,6 @@ export default {
         !this.editAnnotation &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         this.hoveredAnnotation === this.annotation.id
       );
     },
@@ -523,7 +504,7 @@ export default {
         !this.editAnnotation &&
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
-        (!this.annotation || this.isNegative(this.annotation)) &&
+        !this.annotation &&
         !this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
@@ -578,7 +559,6 @@ export default {
       // Verify if we are editing a filled or empty annotation
       if (
         this.annotation &&
-        !this.isNegative(this.annotation) &&
         (this.showAcceptButton() ||
           this.showDeclineButton() ||
           this.isAnnotationInEditMode(
@@ -619,7 +599,7 @@ export default {
           this.saveAnnotationChanges(spans, decline);
         }
       } else if (
-        (!this.annotation || this.isNegative(this.annotation)) &&
+        !this.annotation &&
         this.isAnnotationInEditMode(this.currentAnnotationId())
       ) {
         this.saveEmptyAnnotationChanges();
@@ -716,18 +696,10 @@ export default {
         };
       }
       this.isLoading = true;
-      let negativeAnnotationId;
-
-      // check if the annotation to create comes from a negative annotation
-      // so we can create the new one and remove the negative one from the annotations array
-      if (this.isNegative(this.annotation)) {
-        negativeAnnotationId = this.annotation.id;
-      }
 
       this.$store
         .dispatch("document/createAnnotation", {
           annotation: annotationToCreate,
-          negativeAnnotationId: negativeAnnotationId,
         })
         .catch((error) => {
           this.$store.dispatch("document/createErrorMessage", {

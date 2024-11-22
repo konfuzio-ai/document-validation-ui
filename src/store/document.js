@@ -128,7 +128,7 @@ const getters = {
   labelsFilteredForAnnotationCreation: (_, getters) => (set) => {
     let availableLabels = [];
     if (set.id && set.labels) {
-      // check if label can be multiple, if there's already an annotation created & if it's a negative annotation
+      // check if label can be multiple, if there's already an annotation created
       set.labels.map((label) => {
         // check if we already added the same label to the array
         const found = availableLabels.find((l) => l.id === label.id);
@@ -137,17 +137,8 @@ const getters = {
 
         if (label.annotations.length === 0) {
           availableLabels.push(label);
-        } else {
-          if (label.has_multiple_top_candidates) {
-            availableLabels.push(label);
-          } else {
-            // if the label has negative annotations, we show the label
-            label.annotations.map((annotation) => {
-              if (getters.isNegative(annotation)) {
-                availableLabels.push(label);
-              }
-            });
-          }
+        } else if (label.has_multiple_top_candidates) {
+          availableLabels.push(label);
         }
       });
     } else if (set.labels) {
@@ -433,7 +424,7 @@ const getters = {
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: () => (annotationSets) => {
+  processAnnotationSets: (_, getters) => (annotationSets) => {
     // group annotations for sidebar
     let annotations = [];
     let labels = [];
@@ -446,7 +437,12 @@ const getters = {
         const labelAnnotations = [];
 
         // add annotations to the document array
-        labelAnnotations.push(...label.annotations);
+        // remove negative annotations
+        label.annotations.forEach((ann) => {
+          if (!getters.isNegative(ann)) {
+            labelAnnotations.push(ann);
+          }
+        });
         labels.push({ ...label, annotations: labelAnnotations });
         processedLabels.push(label);
         annotations.push(...labelAnnotations);
@@ -655,11 +651,7 @@ const getters = {
           annotationSet.label_set.id === l.label_set
       );
 
-      const foundNegative = label.annotations.find((annotation) =>
-        getters.isNegative(annotation)
-      );
-
-      if (!foundMissing && (label.annotations.length === 0 || foundNegative)) {
+      if (!foundMissing && label.annotations.length === 0) {
         pendingEmpty.push(label);
       }
     });
@@ -743,7 +735,7 @@ const getters = {
 
     // if all annotations are correct
     // and if there are no empty annotations or
-    // all empty annotations or negative annotations were marked as missing,
+    // all empty annotations were marked as missing,
     // we can finish the review
     if (
       !emptyAnnotations ||
@@ -1211,10 +1203,7 @@ const actions = {
     commit("SET_DOCUMENT_ANNOTATION_SELECTED", null);
   },
 
-  createAnnotation: (
-    { commit, getters, dispatch },
-    { annotation, negativeAnnotationId }
-  ) => {
+  createAnnotation: ({ commit, getters, dispatch }, { annotation }) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`/annotations/`, annotation)
         .then(async (response) => {
@@ -1234,9 +1223,6 @@ const actions = {
               commit("ADD_ANNOTATION", response.data);
               if (response.data && response.data.id) {
                 dispatch("setAnnotationId", response.data.id);
-              }
-              if (negativeAnnotationId) {
-                commit("DELETE_ANNOTATION", negativeAnnotationId);
               }
             }
 

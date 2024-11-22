@@ -255,7 +255,6 @@ export default {
       "isDocumentReadyToBeReviewed",
       "isDocumentReviewed",
       "labelOfAnnotation",
-      "isNegative",
     ]),
     selectionPage() {
       return this.selection && this.selection.pageNumber;
@@ -305,8 +304,7 @@ export default {
           if (
             annotation.span.find(
               (span) => span.page_index + 1 === this.page.number
-            ) &&
-            !this.isNegative(annotation)
+            )
           ) {
             annotations.push(annotation);
           }
