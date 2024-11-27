@@ -155,9 +155,9 @@ const actions = {
   fetchCategories: ({ commit }, projectId) => {
     return myImports
       .makeGetPaginatedRequest(`categories/?project=${projectId}`, true)
-      .then(async (response) => {
-        if (response.data && response.data.results) {
-          commit("SET_CATEGORIES", response.data.results);
+      .then(async (results) => {
+        if (results) {
+          commit("SET_CATEGORIES", results);
         }
       })
       .catch((error) => {
