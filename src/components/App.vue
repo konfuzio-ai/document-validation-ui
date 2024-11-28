@@ -19,6 +19,7 @@ import {
 } from "../utils/utils";
 import { Integrations } from "@sentry/tracing";
 import API from "../api";
+import { initKeycloak } from "../utils/keycloak";
 
 export default {
   name: "App",
@@ -211,7 +212,7 @@ export default {
     }
 
     // api config
-    API.setAuthToken(this.userToken);
+    // API.setAuthToken(this.userToken);
     API.setLocale(this.$i18n.locale);
 
     if (this.api_url !== "") {
@@ -223,6 +224,7 @@ export default {
 
     // document and project config
     Promise.all([
+      initKeycloak(),
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
