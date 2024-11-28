@@ -32,6 +32,7 @@
     "axios": "^1.7.4",
     "bignumber.js": "^9.1.0",
     "buefy": "^0.9.22",
+    "keycloak-js": "^26.0.6",
     "konva": "^8.3.13",
     "sass": "^1.56.0",
     "sass-loader": "^13.1.0",
