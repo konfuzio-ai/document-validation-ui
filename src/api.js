@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let HTTP, FILE_REQUEST, authToken, appLocale;
+let HTTP, FILE_REQUEST, authToken, appLocale, isKeycloakAuth;
 const DEFAULT_URL = "https://app.konfuzio.com";
 const FILE_URL = process.env.VUE_APP_IMAGE_URL;
 
@@ -17,6 +17,10 @@ const setAuthToken = (token) => {
   authToken = token;
 };
 
+const setIsKeycloakAuth = (result) => {
+  isKeycloakAuth = result;
+};
+
 const setApiUrl = (url) => {
   HTTP.defaults.baseURL = url;
 };
@@ -31,7 +35,9 @@ const setLocale = (locale) => {
 
 const getInterceptorConfig = (config) => {
   if (authToken) {
-    config.headers["Authorization"] = `Bearer ${authToken}`;
+    config.headers["Authorization"] = `${
+      isKeycloakAuth ? "Bearer" : "Token"
+    } ${authToken}`;
   }
   config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
 
@@ -105,6 +111,7 @@ export default {
   makeFileRequest,
   makeGetPaginatedRequest,
   setAuthToken,
+  setIsKeycloakAuth,
   setLocale,
   FILE_REQUEST,
   DEFAULT_URL,

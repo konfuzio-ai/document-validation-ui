@@ -99,6 +99,24 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    sso_url: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    sso_realm: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    sso_client_id: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   computed: {
     ...mapState("display", ["pageError"]),
@@ -134,7 +152,11 @@ export default {
       }
     },
     isPublicView() {
-      if (this.userToken || this.fullMode) {
+      if (
+        this.userToken ||
+        this.fullMode ||
+        (this.ssoUrl && this.ssoRealm && this.ssoClientId)
+      ) {
         return false;
       } else {
         return true;
@@ -157,6 +179,33 @@ export default {
         return process.env.VUE_APP_DETAILS_URL;
       } else if (this.details_url) {
         return this.details_url;
+      } else {
+        return null;
+      }
+    },
+    ssoUrl() {
+      if (process.env.VUE_APP_SSO_URL) {
+        return process.env.VUE_APP_SSO_URL;
+      } else if (this.sso_url) {
+        return this.sso_url;
+      } else {
+        return null;
+      }
+    },
+    ssoRealm() {
+      if (process.env.VUE_APP_SSO_REALM) {
+        return process.env.VUE_APP_SSO_REALM;
+      } else if (this.sso_realm) {
+        return this.sso_realm;
+      } else {
+        return null;
+      }
+    },
+    ssoClientId() {
+      if (process.env.VUE_APP_SSO_CLIENT_ID) {
+        return process.env.VUE_APP_SSO_CLIENT_ID;
+      } else if (this.sso_client_id) {
+        return this.sso_client_id;
       } else {
         return null;
       }
@@ -184,7 +233,7 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
     // Sentry config
     if (process.env.NODE_ENV != "development") {
       Sentry.init({
@@ -212,7 +261,12 @@ export default {
     }
 
     // api config
-    // API.setAuthToken(this.userToken);
+    if (this.userToken) {
+      API.setAuthToken(this.userToken);
+    } else if (this.ssoUrl && this.ssoRealm && this.ssoClientId) {
+      await initKeycloak(this.ssoUrl, this.ssoRealm, this.ssoClientId);
+    }
+
     API.setLocale(this.$i18n.locale);
 
     if (this.api_url !== "") {
@@ -224,7 +278,6 @@ export default {
 
     // document and project config
     Promise.all([
-      initKeycloak(),
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
