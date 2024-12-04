@@ -1172,7 +1172,9 @@ const actions = {
 
   // Get document set data
   fetchDocumentSet: ({ commit, state }, documentSetId) => {
-    return HTTP.get(`document-sets/${documentSetId}/`)
+    return HTTP.get(
+      `document-sets/${documentSetId}/?expand=documents&fields=documents.id,documents.data_file_name,documents.category`
+    )
       .then((response) => {
         commit("SET_DOC_SET", response.data);
       })
