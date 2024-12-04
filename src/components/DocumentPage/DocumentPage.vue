@@ -83,7 +83,10 @@
                   :key="`label${annotation.id}`"
                   :config="{
                     listening: false,
-                    ...annotationLabelRect(bbox),
+                    ...annotationLabelRect(
+                      bbox,
+                      labelOfAnnotation(annotation).name
+                    ),
                   }"
                 >
                   <v-tag
@@ -150,7 +153,10 @@
           :key="`label${documentAnnotationSelected.id}`"
           :config="{
             listening: false,
-            ...annotationLabelRect(documentAnnotationSelected.span),
+            ...annotationLabelRect(
+              documentAnnotationSelected.span,
+              documentAnnotationSelected.labelName
+            ),
           }"
         >
           <v-tag
@@ -683,10 +689,17 @@ export default {
     /**
      * Builds the konva config object for the annotation label.
      */
-    annotationLabelRect(bbox) {
+    annotationLabelRect(bbox, labelName) {
       const rect = this.bboxToRect(this.page, bbox, true);
+
+      // calculations to check if label name will go off document
+      const calculatedX =
+        rect.x + labelName.length * 5.4 < this.scaledViewport.width
+          ? rect.x
+          : this.scaledViewport.width - labelName.length * 5.4;
+
       return {
-        x: rect.x,
+        x: calculatedX,
         y: rect.y,
       };
     },
