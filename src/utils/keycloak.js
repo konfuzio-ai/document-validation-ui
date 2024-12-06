@@ -1,8 +1,10 @@
 import Keycloak from "keycloak-js";
 import API from "../api";
 
+let keycloak;
+
 export const initKeycloak = async (url, realm, clientId) => {
-  const keycloak = new Keycloak({
+  keycloak = new Keycloak({
     url,
     realm,
     clientId,
@@ -22,4 +24,15 @@ export const initKeycloak = async (url, realm, clientId) => {
   } catch (error) {
     console.error("Failed to initialize adapter:", error);
   }
+};
+
+export const updateKeycloakToken = () => {
+  return new Promise(async (resolve, reject) => {
+    if (keycloak) {
+      const update = await keycloak.updateToken(30);
+      resolve();
+    } else {
+      reject();
+    }
+  });
 };

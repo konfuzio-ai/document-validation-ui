@@ -1,4 +1,5 @@
 import axios from "axios";
+import { updateKeycloakToken } from "./utils/keycloak";
 
 let HTTP, FILE_REQUEST, authToken, appLocale, isKeycloakAuth;
 const DEFAULT_URL = "https://app.konfuzio.com";
@@ -33,7 +34,7 @@ const setLocale = (locale) => {
   appLocale = locale;
 };
 
-const getInterceptorConfig = (config) => {
+const getInterceptorConfig = async (config) => {
   if (authToken) {
     config.headers["Authorization"] = `${
       isKeycloakAuth ? "Bearer" : "Token"
@@ -41,10 +42,14 @@ const getInterceptorConfig = (config) => {
   }
   config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
 
+  if (isKeycloakAuth) {
+    await updateKeycloakToken();
+  }
+
   return config;
 };
 
-HTTP.interceptors.request.use(getInterceptorConfig, (error) => {
+HTTP.interceptors.request.use(getInterceptorConfig, async (error) => {
   return Promise.reject(error);
 });
 
