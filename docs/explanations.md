@@ -66,6 +66,22 @@ Defining in the `HTML` file:
   </div>
 ```
 
+#### Keycloak SSO Integration
+
+If you want to use Single Sign On in the Document Validation UI you should configure your server console as following:
+
+- Client with "Client authentication" set to "off" in "Capability config" page
+- "Valid Redirect URIs" and "Web Origins" should include the full domain(s)/URLs that the application will be served from (i.e. https://mydomain.com/dvui)
+- In "OpenID connect compatibility modes", "Use refresh tokens" should be enabled
+
+Then in the `.env` mentioned in the previous section, the following parameters or tag parameters should be set:
+
+- app_sso_url: example: https://sso.konfuzio.com
+- app_sso_realm: example: testing
+- app_sso_client_id: example: testing-client, should match the client that has "client authentication" set to "off"
+
+When setting this parameters, user_token should not be set, as it would have priority over the SSO authentication.
+
 ## Multilingual User Interface
 
 The Document Validation UI can currently be used in three languages: German (de), English (en), and Spanish (es). As mentioned in the previous section, you can specify what the default language of the application will be.
