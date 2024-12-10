@@ -193,11 +193,11 @@ export default {
     handleDownloadFile(fileType) {
       let fileUrl;
       // get the file name without the extension
-      let fileName = this.getFileName(this.selectedDocument.data_file_name);
+      let fileName = this.selectedDocument.data_file_name;
 
       if (fileType === "ocr") {
         fileUrl = this.selectedDocument.file_url;
-        fileName = `${fileName}_${fileType}`;
+        fileName = `${fileType}_${fileName}`;
       } else {
         fileUrl = `/doc/show-original/${this.selectedDocument.id}/`;
       }
@@ -221,9 +221,6 @@ export default {
           });
           console.log(error);
         });
-    },
-    getFileName(fileName) {
-      return fileName.split(".").slice(0, -1).join(".");
     },
     cancelAnnotationEditMode() {
       this.$store.dispatch("document/resetEditAnnotation");
