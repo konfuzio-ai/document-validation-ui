@@ -323,7 +323,7 @@ export default {
       if (existsIndex >= 0) {
         this.setsList[existsIndex] = newSet;
       } else {
-        this.setsList.push(newSet);
+        this.setsList.unshift(newSet);
       }
       this.selectedSet = newSet;
     },
