@@ -6,7 +6,7 @@ import {
   AnnotationRow,
 } from "../../src/components/DocumentAnnotations";
 import { render } from "../utils/render";
-import { dispatch, getData } from "../utils/store";
+import { dispatch, getData, getGetter } from "../utils/store";
 
 describe("Document Annotations Component", () => {
   beforeEach(async () => {
@@ -24,7 +24,8 @@ describe("Document Annotations Component", () => {
   it("label set name appears", async () => {
     const wrapper = render(DocumentAnnotations, false);
     expect(await wrapper.findAll(".label-set-name").at(2).text()).toContain(
-      getData("document").annotationSets[2].label_set.name
+      getGetter("document/getAnnotationsFiltered").annotationSets[2].label_set
+        .name
     );
   });
 
@@ -237,7 +238,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Marking as missing should change the style of the Annotation row", async () => {
-    const annotationSet = getData("document").annotationSets[0];
+    const annotationSet = getGetter("document/getAnnotationsFiltered")
+      .annotationSets[0];
 
     const wrapper = render(DocumentAnnotations, false);
 
@@ -258,7 +260,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Clicking the restore button should remove the specific class from the Annotation row", async () => {
-    const annotationSet = getData("document").annotationSets[0];
+    const annotationSet = getGetter("document/getAnnotationsFiltered")
+      .annotationSets[0];
 
     const wrapper = render(DocumentAnnotations, false);
 
@@ -305,7 +308,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Mark all empty as missing button should show how many empty labels are in the annotation set", async () => {
-    const annotationSet = getData("document").annotationSets[0];
+    const annotationSet = getGetter("document/getAnnotationsFiltered")
+      .annotationSets[0];
 
     const wrapper = render(DocumentAnnotations, false);
 
@@ -360,7 +364,8 @@ describe("Document Annotations Component", () => {
   });
 
   it("Accept all button should show how many unrevised/unaccepted annotations are in the annotation set", async () => {
-    const annotationSet = getData("document").annotationSets[0];
+    const annotationSet = getGetter("document/getAnnotationsFiltered")
+      .annotationSets[0];
     const labels = annotationSet.labels;
     const annotations = labels.flatMap((label) => {
       return label.annotations;
