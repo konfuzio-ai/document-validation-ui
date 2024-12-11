@@ -416,6 +416,11 @@ const getters = {
       });
     }
 
+    // sort ann sets by name
+    processedAnnotationSets.sort((a, b) =>
+      a.label_set.name.localeCompare(b.label_set.name)
+    );
+
     return {
       annotationSets: processedAnnotationSets,
       labels: processedLabels,
