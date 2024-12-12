@@ -563,9 +563,13 @@ const getters = {
     let returnLabelSets = [];
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
+        // last validation checks if the label set is already present in list
         if (
-          annotationSet.id == null ||
-          annotationSet.label_set.has_multiple_annotation_sets
+          (annotationSet.id == null ||
+            annotationSet.label_set.has_multiple_annotation_sets) &&
+          !returnLabelSets.find(
+            (set) => set.id !== null && set.id === annotationSet.label_set.id
+          )
         ) {
           const labelSet = { ...annotationSet.label_set };
           labelSet.labels = [...annotationSet.labels];

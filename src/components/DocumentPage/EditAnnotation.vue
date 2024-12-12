@@ -24,7 +24,9 @@
               ? `${selectedSet.label_set.name} ${
                   selectedSet.id
                     ? numberOfAnnotationSetGroup(selectedSet)
-                    : `(${$t("new")})`
+                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                        "new"
+                      )})`
                 }`
               : $t("select_annotation_set")
           }}
@@ -33,6 +35,14 @@
           </span>
         </b-button>
       </template>
+      <b-button
+        type="is-ghost"
+        :class="['add-ann-set', 'dropdown-item', 'no-icon-margin']"
+        icon-left="plus"
+        @click="openAnnotationSetCreation"
+      >
+        {{ $t("new_ann_set_title") }}
+      </b-button>
       <b-dropdown-item
         v-for="(set, index) in setsList"
         :key="`${set.label_set.id}_${index}`"
@@ -41,23 +51,12 @@
       >
         <span>{{
           `${set.label_set.name} ${
-            set.id ? numberOfAnnotationSetGroup(set) : `(${$t("new")})`
+            set.id
+              ? numberOfAnnotationSetGroup(set)
+              : `${numberOfLabelSetGroup(set.label_set)} (${$t("new")})`
           }`
         }}</span>
       </b-dropdown-item>
-      <b-button
-        type="is-ghost"
-        :class="[
-          'add-ann-set',
-          'dropdown-item',
-          'no-icon-margin',
-          setsList.length > 0 ? 'has-border' : '',
-        ]"
-        icon-left="plus"
-        @click="openAnnotationSetCreation"
-      >
-        {{ $t("new_ann_set_title") }}
-      </b-button>
     </b-dropdown>
     <b-tooltip
       multilined
@@ -166,6 +165,7 @@ export default {
     ]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
+      "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
     ]),
     ...mapGetters("display", ["bboxToRect"]),
@@ -304,12 +304,21 @@ export default {
       }
     },
     chooseLabelSet(labelSet) {
+      // check if there's already a new entry for that label set to be created
+      const existsIndex = this.setsList.findIndex((set) => {
+        return set.id === null && set.label_set.id === labelSet.id;
+      });
+
       const newSet = {
         label_set: labelSet,
         labels: labelSet.labels,
         id: null,
       };
-      this.setsList.push(newSet);
+      if (existsIndex >= 0) {
+        this.setsList[existsIndex] = newSet;
+      } else {
+        this.setsList.unshift(newSet);
+      }
       this.selectedSet = newSet;
     },
     openAnnotationSetCreation() {
