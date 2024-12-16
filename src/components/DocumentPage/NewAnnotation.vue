@@ -12,13 +12,18 @@
         'annotation-dropdown',
         'no-padding-bottom',
         'no-padding-top',
+        'dropdown-full-width',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
       scrollable
     >
       <template #trigger>
         <b-button
-          :class="['popup-input', selectedSet ? '' : 'not-selected']"
+          :class="[
+            'popup-input',
+            selectedSet ? '' : 'not-selected',
+            'has-right-icon',
+          ]"
           type="is-text"
         >
           {{
@@ -76,11 +81,15 @@
         aria-role="list"
         :disabled="!textFromEntities || !labels || labels.length === 0"
         scrollable
-        class="label-dropdown annotation-dropdown"
+        class="label-dropdown annotation-dropdown dropdown-full-width"
       >
         <template #trigger>
           <b-button
-            :class="['popup-input', selectedLabel ? '' : 'not-selected']"
+            :class="[
+              'popup-input',
+              selectedLabel ? '' : 'not-selected',
+              'has-right-icon',
+            ]"
             type="is-text"
           >
             {{
