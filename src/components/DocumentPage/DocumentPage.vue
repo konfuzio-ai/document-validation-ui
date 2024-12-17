@@ -31,6 +31,14 @@
       :container-height="scaledViewport.height"
     />
 
+    <div
+      v-if="showAnnotationLabel"
+      class="annotation-label"
+      :style="getAnnotationLabelPosition(showAnnotationLabel)"
+    >
+      {{ showAnnotationLabel.labelName }}
+    </div>
+
     <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
 
     <v-stage
@@ -78,35 +86,6 @@
               )"
             >
               <v-group :key="'ann' + annotation.id + '-' + index">
-                <v-label
-                  v-if="annotation.id == annotationId && !searchEnabled"
-                  :key="`label${annotation.id}`"
-                  :config="{
-                    listening: false,
-                    ...annotationLabelRect(
-                      bbox,
-                      labelOfAnnotation(annotation).name
-                    ),
-                  }"
-                >
-                  <v-tag
-                    :config="{
-                      fill: '#1A1A1A',
-                      lineJoin: 'round',
-                      hitStrokeWidth: 0,
-                      listening: false,
-                    }"
-                  />
-                  <v-text
-                    :config="{
-                      padding: 4,
-                      text: labelOfAnnotation(annotation).name,
-                      fill: 'white',
-                      fontSize: 12,
-                      listening: false,
-                    }"
-                  />
-                </v-label>
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="annotationRect(bbox, annotation.id)"
@@ -141,42 +120,6 @@
             </template>
           </template>
         </template>
-      </v-layer>
-      <v-layer
-        v-if="
-          showFocusedAnnotation &&
-          !isSelecting &&
-          documentAnnotationSelected.labelName !== ''
-        "
-      >
-        <v-label
-          :key="`label${documentAnnotationSelected.id}`"
-          :config="{
-            listening: false,
-            ...annotationLabelRect(
-              documentAnnotationSelected.span,
-              documentAnnotationSelected.labelName
-            ),
-          }"
-        >
-          <v-tag
-            :config="{
-              fill: '#1A1A1A',
-              lineJoin: 'round',
-              hitStrokeWidth: 0,
-              listening: false,
-            }"
-          />
-          <v-text
-            :config="{
-              padding: 4,
-              text: documentAnnotationSelected.labelName,
-              fill: 'white',
-              fontSize: 12,
-              listening: false,
-            }"
-          />
-        </v-label>
       </v-layer>
       <v-layer v-if="page.number === selectionPage">
         <box-selection
@@ -336,6 +279,18 @@ export default {
       return this.$store.getters["display/currentSearchResultForPage"](
         this.page.number
       );
+    },
+    showAnnotationLabel() {
+      if (
+        this.showFocusedAnnotation &&
+        !this.isSelecting &&
+        this.documentAnnotationSelected &&
+        this.documentAnnotationSelected.labelName !== ""
+      ) {
+        return this.documentAnnotationSelected;
+      } else {
+        return null;
+      }
     },
   },
   watch: {
@@ -686,22 +641,28 @@ export default {
         ...this.bboxToRect(this.page, bbox),
       };
     },
-    /**
-     * Builds the konva config object for the annotation label.
-     */
-    annotationLabelRect(bbox, labelName) {
-      const rect = this.bboxToRect(this.page, bbox, true);
+    getAnnotationLabelPosition(annotation) {
+      if (annotation && this.$refs.stage) {
+        const padding = 8;
+        const maxCharacters = 10;
+        const minimumSpaceTopY = 50;
+        const rect = this.bboxToRect(this.page, annotation.span, true);
 
-      // calculations to check if label name will go off document
-      const calculatedX =
-        rect.x + labelName.length * 5.4 < this.scaledViewport.width
-          ? rect.x
-          : this.scaledViewport.width - labelName.length * 5.4;
-
-      return {
-        x: calculatedX,
-        y: rect.y,
-      };
+        if (
+          annotation.labelName.length > maxCharacters &&
+          rect.y < minimumSpaceTopY
+        ) {
+          return `left: ${rect.x}px; top: ${
+            rect.y + rect.height * 3 + padding
+          }px`;
+        } else {
+          return `left: ${rect.x}px; bottom: ${
+            this.$refs.stage.$el.clientHeight - rect.y - rect.height - padding
+          }px`;
+        }
+      } else {
+        return "";
+      }
     },
     closePopups() {
       this.newAnnotation = [];

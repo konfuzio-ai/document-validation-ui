@@ -706,7 +706,10 @@ const getters = {
   },
 
   annotationById: (state) => (annotationId) => {
-    return state.annotations.find((ann) => ann.id == annotationId);
+    if (state.annotations) {
+      return state.annotations.find((ann) => ann.id == annotationId);
+    }
+    return null;
   },
 
   // Check if document is ready to be finished
@@ -954,7 +957,7 @@ const actions = {
     commit("SET_PAGES", []);
     commit("SET_DOC_ID", id);
   },
-  setAnnotationId: ({ commit }, id) => {
+  setAnnotationId: ({ commit, dispatch, getters }, id) => {
     commit("SET_ANNOTATION_ID", id);
     setURLAnnotationHash(id);
   },

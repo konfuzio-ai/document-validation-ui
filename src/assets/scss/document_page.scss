@@ -9,4 +9,14 @@
   &.default-cursor {
     cursor: default;
   }
+
+  .annotation-label {
+    position: absolute;
+    z-index: 999;
+    background-color: $text-color;
+    color: $white;
+    font-size: 12px;
+    padding: 4px;
+    word-break: break-all;
+  }
 }
