@@ -123,7 +123,7 @@ export default {
       "recalculatingAnnotations",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapState("project", ["documentsInProject"]),
+    ...mapState("display", ["showDocumentsNavigation"]),
     ...mapGetters("document", [
       "isDocumentReviewed",
       "isDocumentReadyToBeReviewed",
@@ -131,9 +131,13 @@ export default {
     ]),
   },
   watch: {
-    documentsInProject(newValue) {
-      if (newValue && this.selectedDocument) {
-        this.getPreviousAndNextDocuments();
+    loading(newValue) {
+      if (!newValue && this.showDocumentsNavigation) {
+        this.$store
+          .dispatch("project/fetchDocumentListForNavigation")
+          .then((results) => {
+            this.getPreviousAndNextDocuments(results);
+          });
       }
     },
   },
@@ -157,9 +161,7 @@ export default {
     handleResize() {
       this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
     },
-    getPreviousAndNextDocuments() {
-      const filteredDocuments = this.documentsInProject;
-
+    getPreviousAndNextDocuments(filteredDocuments) {
       if (!filteredDocuments) return;
 
       const found = filteredDocuments.find(
