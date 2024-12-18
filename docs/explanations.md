@@ -42,6 +42,7 @@ Optional variables:
 - image_url: The files URL, will be `https://app.konfuzio.com` if left empty.
 - locale: The language of the application, the default will be `en` if left empty.
 - full_mode: If no User token is set, you can force full mode by setting this variable to true.
+- show_documents_navigation: If you want to disable the navigation arrows to go to the next or previous document, you can set this as false. Default will be true.
 - sentry_dsn: Sentry [DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/?original_referrer=https%3A%2F%2Fwww.google.com%2F)
 - sentry_environment: Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/?original_referrer=https%3A%2F%2Fwww.google.com%2F)
 - documents_list_path: The path to a list of Documents in the application. This variable will be used to redirect the user to the specified list of Documents in the application so that they can continue with the review process of other Documents after certain changes like [splitting](https://help.konfuzio.com/document-validation-ui/review-documents/split/index.html), rotating or sorting. A `/` character should be added both at the start and end of the pathname.
