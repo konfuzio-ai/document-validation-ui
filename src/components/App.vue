@@ -47,6 +47,12 @@ export default {
       default: "false",
     },
     // eslint-disable-next-line vue/prop-name-casing
+    show_documents_navigation: {
+      type: String,
+      required: false,
+      default: "true",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
     sentry_dsn: {
       type: String,
       required: false,
@@ -149,6 +155,14 @@ export default {
         return this.full_mode;
       } else {
         return null;
+      }
+    },
+    showDocumentsNavigation() {
+      if (process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION) {
+        return process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION === "true";
+      } else {
+        console.log(this.show_documents_navigation);
+        return this.show_documents_navigation === "true";
       }
     },
     isPublicView() {
@@ -279,6 +293,10 @@ export default {
     // document and project config
     Promise.all([
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
+      this.$store.dispatch(
+        "display/showDocumentsNavigation",
+        this.showDocumentsNavigation
+      ),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),
