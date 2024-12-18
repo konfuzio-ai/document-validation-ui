@@ -6,7 +6,6 @@ const state = {
   labelSets: null,
   currentUser: null,
   documentsListPath: null,
-  documentsInProject: null,
   showAnnotationTranslations: false,
 };
 
@@ -58,28 +57,41 @@ const actions = {
     commit("SET_DOCUMENTS_LIST_PATH", path);
   },
 
-  setDocumentsInProject: ({ commit }, documents) => {
-    commit("SET_DOCUMENTS_IN_PROJECT", documents);
-  },
-
   setShowAnnotationTranslations: ({ commit }, show) => {
     commit("SET_SHOW_ANNOTATION_TRANSLATIONS", show);
   },
 
-  fetchDocumentList: ({ commit, state }, parameters) => {
-    return myImports
-      .makeGetPaginatedRequest(
-        `documents/?project=${state.projectId}&${parameters}`,
-        true
-      )
-      .then((results) => {
-        if (results) {
-          commit("SET_DOCUMENTS_IN_PROJECT", results);
-        }
-      })
-      .catch((error) => {
-        console.log(error, "Could not fetch document list from the backend");
-      });
+  fetchDocumentListWithParameters: ({ commit, state }, parameters) => {
+    return new Promise((resolve, reject) => {
+      myImports
+        .makeGetPaginatedRequest(
+          `documents/?project=${state.projectId}&${parameters}`,
+          true
+        )
+        .then((results) => {
+          resolve(results);
+        })
+        .catch((error) => {
+          reject();
+          console.log(error, "Could not fetch document list from the backend");
+        });
+    });
+  },
+  fetchDocumentListForNavigation: ({ commit, state }) => {
+    return new Promise((resolve, reject) => {
+      myImports
+        .makeGetPaginatedRequest(
+          `documents/?project=${state.projectId}&is_reviewed=false&fields=id`,
+          true
+        )
+        .then((results) => {
+          resolve(results);
+        })
+        .catch((error) => {
+          reject();
+          console.log(error, "Could not fetch document list from the backend");
+        });
+    });
   },
 };
 
@@ -95,9 +107,6 @@ const mutations = {
   },
   SET_DOCUMENTS_LIST_PATH: (state, path) => {
     state.documentsListPath = path;
-  },
-  SET_DOCUMENTS_IN_PROJECT: (state, documents) => {
-    state.documentsInProject = documents;
   },
   SET_SHOW_ANNOTATION_TRANSLATIONS: (state, show) => {
     state.showAnnotationTranslations = show;

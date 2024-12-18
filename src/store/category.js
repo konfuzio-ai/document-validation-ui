@@ -3,7 +3,6 @@ import myImports from "../api";
 const HTTP = myImports.HTTP;
 
 const state = {
-  createAvailableListOfDocuments: false,
   documentsAvailableToReview: [], // filtered by user
   categories: null,
 };
@@ -74,10 +73,13 @@ const actions = {
       let errors = 0;
       count += 1;
 
-      return dispatch("project/fetchDocumentList", parameters).then(() => {
-        for (let i = 0; i < rootState.project.documentsInProject.length; i++) {
+      return dispatch(
+        "project/fetchDocumentListWithParameters",
+        parameters
+      ).then((documents) => {
+        for (let i = 0; i < documents.length; i++) {
           const found = state.documentsAvailableToReview.find(
-            (doc) => doc.id === rootState.project.documentsInProject[i].id
+            (doc) => doc.id === documents[i].id
           );
 
           if (found) {
@@ -85,19 +87,12 @@ const actions = {
             // we go to the next item
             continue;
           } else if (
-            rootGetters["document/isDocumentReadyToBeReviewed"](
-              rootState.project.documentsInProject[i]
-            )
+            rootGetters["document/isDocumentReadyToBeReviewed"](documents)
           ) {
             // add available doc to the end of the array
-            commit(
-              "ADD_AVAILABLE_DOCUMENT",
-              rootState.project.documentsInProject[i]
-            );
+            commit("ADD_AVAILABLE_DOCUMENT", documents);
           } else if (
-            rootGetters["document/documentHadErrorDuringExtraction"](
-              rootState.project.documentsInProject[i]
-            )
+            rootGetters["document/documentHadErrorDuringExtraction"](documents)
           ) {
             dispatch("document/setDocumentError", null, { root: true });
             // If error, add 1
@@ -115,10 +110,8 @@ const actions = {
         // And if the difference is due to errors or to docs not ready
         if (
           poll &&
-          rootState.project.documentsInProject.length !==
-            state.documentsAvailableToReview.length &&
-          state.documentsAvailableToReview.length + errors !==
-            rootState.project.documentsInProject.length
+          documents.length !== state.documentsAvailableToReview.length &&
+          state.documentsAvailableToReview.length + errors !== documents.length
         ) {
           if (count >= 10) return true;
 
@@ -134,9 +127,8 @@ const actions = {
 
     // Poll as long as the lengths are different
     if (
-      rootState.project.documentsInProject.length === 0 ||
-      rootState.project.documentsInProject.length !==
-        state.documentsAvailableToReview.length
+      documents.length === 0 ||
+      documents.length !== state.documentsAvailableToReview.length
     ) {
       let duration;
       if (count <= 5) {

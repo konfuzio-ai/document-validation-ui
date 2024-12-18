@@ -1147,24 +1147,6 @@ const actions = {
         await dispatch("category/fetchCategories", projectId, {
           root: true,
         });
-
-        // get list of documents not reviewed
-        await dispatch("project/fetchDocumentList", "is_reviewed=false", {
-          root: true,
-        });
-      }
-      if (categoryId && rootState.category.createAvailableListOfDocuments) {
-        await dispatch(
-          "category/createAvailableDocumentsList",
-          {
-            categoryId,
-            user: rootState.project.currentUser.username,
-            poll: false,
-          },
-          {
-            root: true,
-          }
-        );
       }
     }
     if (isRecalculatingAnnotations) {
