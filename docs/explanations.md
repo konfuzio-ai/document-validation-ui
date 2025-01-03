@@ -48,6 +48,7 @@ Optional variables:
 - details_url: The path to the document details page where you can change other options not available on the app (for example, permissions) or see logs related to the document. If not set, the button will not appear.
 - annotation: Annotation ID of the desired annotation that should be selected on the list.
 - annotation_set: Annotation Set ID of the desired annotation set that should be selected on the list.
+- hide_empty_label_sets: Hide label sets that have no Labels assigned (id=null)
 
 To define this variables in the `.env`, they should be in uppercase and with the prefix `VUE_APP_`.
 Examples:
