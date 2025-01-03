@@ -429,7 +429,7 @@ const getters = {
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: (_, getters, rootState) => (annotationSets) => {
+  processAnnotationSets: (state, getters, rootState) => (annotationSets) => {
     // group annotations for sidebar
     let annotations = [];
     let labels = [];
@@ -439,7 +439,10 @@ const getters = {
     annotationSets.forEach((annotationSet) => {
       // check if empty label sets and env variable set as true
       if (
-        !(rootState.display.hideEmptyLabelSets && annotationSet.id === null)
+        !(
+          (rootState.display.hideEmptyLabelSets || state.publicView) &&
+          annotationSet.id === null
+        )
       ) {
         labels = [];
         annotationSet.labels.forEach((label) => {
