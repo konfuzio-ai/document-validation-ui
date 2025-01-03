@@ -429,7 +429,7 @@ const getters = {
   },
 
   /* Process annotations and extract labels and sets */
-  processAnnotationSets: (_, getters) => (annotationSets) => {
+  processAnnotationSets: (_, getters, rootState) => (annotationSets) => {
     // group annotations for sidebar
     let annotations = [];
     let labels = [];
@@ -437,22 +437,27 @@ const getters = {
     let processedLabels = [];
 
     annotationSets.forEach((annotationSet) => {
-      labels = [];
-      annotationSet.labels.forEach((label) => {
-        const labelAnnotations = [];
+      // check if empty label sets and env variable set as true
+      if (
+        !(rootState.display.hideEmptyLabelSets && annotationSet.id === null)
+      ) {
+        labels = [];
+        annotationSet.labels.forEach((label) => {
+          const labelAnnotations = [];
 
-        // add annotations to the document array
-        // remove negative annotations
-        label.annotations.forEach((ann) => {
-          if (!getters.isNegative(ann)) {
-            labelAnnotations.push(ann);
-          }
+          // add annotations to the document array
+          // remove negative annotations
+          label.annotations.forEach((ann) => {
+            if (!getters.isNegative(ann)) {
+              labelAnnotations.push(ann);
+            }
+          });
+          labels.push({ ...label, annotations: labelAnnotations });
+          processedLabels.push(label);
+          annotations.push(...labelAnnotations);
         });
-        labels.push({ ...label, annotations: labelAnnotations });
-        processedLabels.push(label);
-        annotations.push(...labelAnnotations);
-      });
-      processedAnnotationSets.push({ ...annotationSet, labels });
+        processedAnnotationSets.push({ ...annotationSet, labels });
+      }
     });
     return {
       annotationSets: processedAnnotationSets,
