@@ -33,6 +33,7 @@
 
     <div
       v-if="!editMode && !isDocumentReviewed && !publicView"
+      id="review-btn"
       class="finish-review-button-container"
     >
       <b-tooltip
