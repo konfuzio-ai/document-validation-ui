@@ -11,6 +11,7 @@
       </div>
 
       <div
+        id="document-info"
         :class="[
           'center-bar-components',
           recalculatingAnnotations && 'single-component',
