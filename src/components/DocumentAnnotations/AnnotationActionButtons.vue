@@ -3,6 +3,7 @@
     <!-- loading -->
     <b-button
       v-if="linkBtn"
+      id="annotation-link-btn"
       type="is-ghost"
       class="link-button"
       @click="copyAnnotationLink"
