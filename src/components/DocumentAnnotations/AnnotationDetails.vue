@@ -71,6 +71,7 @@
           </div>
           <div
             v-if="confidence(annotation)"
+            id="annotation-details-confidence"
             :class="['confidence', publicView && 'tooltip-in-public-view']"
           >
             <span>{{ $t("confidence") }}</span
