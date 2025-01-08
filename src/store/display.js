@@ -27,6 +27,7 @@ const state = {
   pageChangedFromThumbnail: false,
   showAnnSetTable: null,
   showChooseLabelSetModal: null,
+  hideEmptyLabelSets: false,
   currentSearch: "",
   searchEnabled: false,
   searchResults: [],
@@ -322,6 +323,10 @@ const actions = {
     commit("SET_SEARCH_LOADING", true);
   },
 
+  hideEmptyLabelSets({ commit }, value) {
+    commit("HIDE_EMPTY_LABEL_SETS", value);
+  },
+
   search({ commit, rootState }, query) {
     // only allow queries that are at least 3 characters long
     if (query.length >= 3) {
@@ -398,6 +403,9 @@ const mutations = {
 
   SET_ANN_SET_TABLE: (state, tableSet) => {
     state.showAnnSetTable = tableSet;
+  },
+  HIDE_EMPTY_LABEL_SETS: (state, hide) => {
+    state.hideEmptyLabelSets = hide;
   },
 
   TOGGLE_ANN_SET_TABLE: (state, tableSet) => {

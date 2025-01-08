@@ -117,6 +117,12 @@ export default {
       required: false,
       default: "",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    hide_empty_label_sets: {
+      type: String,
+      required: false,
+      default: "false",
+    },
   },
   computed: {
     ...mapState("display", ["pageError"]),
@@ -232,6 +238,13 @@ export default {
         return null;
       }
     },
+    hideEmptyLabelSets() {
+      if (process.env.VUE_APP_HIDE_EMPTY_LABEL_SETS) {
+        return process.env.VUE_APP_HIDE_EMPTY_LABEL_SETS === "true";
+      } else {
+        return this.hide_empty_label_sets === "true";
+      }
+    },
   },
   async created() {
     // Sentry config
@@ -279,6 +292,10 @@ export default {
     // document and project config
     Promise.all([
       this.$store.dispatch("display/setDetailsUrl", this.detailsUrl),
+      this.$store.dispatch(
+        "display/hideEmptyLabelSets",
+        this.hideEmptyLabelSets
+      ),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),
