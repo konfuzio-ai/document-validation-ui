@@ -167,7 +167,6 @@ export default {
       if (process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION) {
         return process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION === "true";
       } else {
-        console.log(this.show_documents_navigation);
         return this.show_documents_navigation === "true";
       }
     },
