@@ -28,6 +28,7 @@ const state = {
   showAnnSetTable: null,
   showChooseLabelSetModal: null,
   hideEmptyLabelSets: false,
+  showDocumentsNavigation: true,
   currentSearch: "",
   searchEnabled: false,
   searchResults: [],
@@ -298,6 +299,9 @@ const actions = {
   showAnnSetTable({ commit }, tableSet) {
     commit("SET_ANN_SET_TABLE", tableSet);
   },
+  showDocumentsNavigation({ commit }, show) {
+    commit("SET_SHOW_DOCUMENTS_NAVIGATION", show);
+  },
   showChooseLabelSetModal({ commit }, options) {
     commit("SET_SHOW_CHOOSE_LABEL_SET_MODAL", options);
   },
@@ -399,6 +403,10 @@ const mutations = {
 
   SET_DOCUMENT_ACTION_BAR: (state, actionBar) => {
     state.documentActionBar = actionBar;
+  },
+
+  SET_SHOW_DOCUMENTS_NAVIGATION: (state, show) => {
+    state.showDocumentsNavigation = show;
   },
 
   SET_ANN_SET_TABLE: (state, tableSet) => {
