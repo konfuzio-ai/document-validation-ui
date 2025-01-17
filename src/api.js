@@ -5,6 +5,9 @@ let HTTP, FILE_REQUEST, authToken, appLocale, isKeycloakAuth;
 const DEFAULT_URL = "https://app.konfuzio.com";
 const FILE_URL = process.env.VUE_APP_IMAGE_URL;
 
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+
 HTTP = axios.create({
   baseURL: process.env.VUE_APP_API_URL || `${DEFAULT_URL}/api/v3/`,
 });
