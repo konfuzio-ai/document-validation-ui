@@ -19,7 +19,7 @@
           </div>
           <div class="bottom-part">
             {{
-              `#${numberOfDocumentInSet(selectedDocument.id)} ${categoryName(
+              `${numberOfDocumentInSet(selectedDocument.id)} ${categoryName(
                 selectedDocument.category
               )}`
             }}
@@ -41,7 +41,7 @@
     >
       <span>
         {{
-          `#${numberOfDocumentInSet(doc.id)} ${categoryName(doc.category)}`
+          `${numberOfDocumentInSet(doc.id)} ${categoryName(doc.category)}`
         }}</span
       >
     </b-dropdown-item>
