@@ -682,7 +682,7 @@ export default {
           label: this.label.id,
           annotation_set: this.annotationSet.id,
           is_correct: true,
-          revised: true,
+          revised: false,
         };
       } else {
         // if annotation set id is null
@@ -692,7 +692,7 @@ export default {
           label: this.label.id,
           label_set: this.labelSet.id,
           is_correct: true,
-          revised: true,
+          revised: false,
         };
       }
       this.isLoading = true;

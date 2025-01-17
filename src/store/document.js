@@ -484,7 +484,7 @@ const getters = {
   /* Returns the number of accepted annotations in a label */
   numberOfAcceptedAnnotationsInLabel: (_) => (label) => {
     const annotations = label.annotations.filter((annotation) => {
-      return annotation.revised && annotation.is_correct;
+      return annotation.is_correct;
     });
     return annotations.length;
   },
@@ -524,6 +524,7 @@ const getters = {
    * Checks the number of current document in the document set
    */
   numberOfDocumentInSet: (state) => (documentId) => {
+    return "";
     let index = -1;
     if (state.documentSet && state.documentSet.documents) {
       state.documentSet.documents.forEach((docTemp, indexTemp) => {
