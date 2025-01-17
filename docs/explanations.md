@@ -139,6 +139,7 @@ _Please note that the default values from the examples below are based on Konfuz
   :root {
     --primary-color: #41AF85;
     --primary-button: 4px;
+    --font-family: "Arial";
   }
 </style>
 ```
@@ -151,6 +152,7 @@ _Please note that the default values from the examples below are based on Konfuz
 :root {
     --primary-color: #41AF85 !important;
     --primary-button: 4px !important;
+    -font-family: "Arial" !important;
   }
 ```
 

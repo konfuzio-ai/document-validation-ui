@@ -44,7 +44,7 @@ $text-color: #1a1a1a;
 
 $primary: var(--primary-color);
 $hover-style: brightness(0.8) contrast(160%) grayscale(0.4);
-$font-family: "Inter", sans-serif;
+$font-family: var(--font-family);
 $background: $white;
 $top-bar-background: var(--top-bar-background);
 $toolbar: $text-color;
