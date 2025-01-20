@@ -523,18 +523,35 @@ const getters = {
   /**
    * Checks the number of current document in the document set
    */
-  numberOfDocumentInSet: (state) => (documentId) => {
-    return "";
-    let index = -1;
+  numberOfDocumentInSet: (state) => (document) => {
+    let found = false;
+    let value = 0;
+    let index = 0;
     if (state.documentSet && state.documentSet.documents) {
-      state.documentSet.documents.forEach((docTemp, indexTemp) => {
-        if (docTemp.id == documentId) {
-          index = indexTemp;
-          return;
+      state.documentSet.documents.map((documentSetTemp) => {
+        if (
+          documentSetTemp.id !== document.id &&
+          documentSetTemp.category === document.category
+        ) {
+          found = true;
+          index++;
+        } else if (documentSetTemp.id === document.id) {
+          value = index;
         }
       });
+      return found ? `${value + 1}` : "";
     }
-    return index === -1 ? "" : `${index + 1}`;
+    return "";
+    // let index = -1;
+    // if (state.documentSet && state.documentSet.documents) {
+    //   state.documentSet.documents.forEach((docTemp, indexTemp) => {
+    //     if (docTemp.id == documentId) {
+    //       index = indexTemp;
+    //       return;
+    //     }
+    //   });
+    // }
+    // return index === -1 ? "" : `${index + 1}`;
   },
 
   /**
