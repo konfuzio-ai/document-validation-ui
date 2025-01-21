@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     changeDocument(documentId) {
-      this.$store.dispatch("document/changeCurrentDocument", { documentId });
+      this.$store.dispatch("document/changeCurrentDocument", documentId);
     },
     requestTrialAccess() {
       window.open("https://konfuzio.com", "_blank");

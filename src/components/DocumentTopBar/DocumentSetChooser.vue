@@ -1,7 +1,10 @@
 <template>
   <b-dropdown
     v-if="
-      documentSet && documentSet.documents && documentSet.documents.length > 1
+      documentSet &&
+      documentSet.documents &&
+      documentSet.documents.length > 1 &&
+      categories
     "
     v-model="selectedDocId"
     class="document-set-dropdown dropdown-full-width"
@@ -46,6 +49,12 @@
       >
     </b-dropdown-item>
   </b-dropdown>
+  <div
+    v-else-if="selectedDocument.documentSet !== null && documentSet === null"
+    class="loading-bar"
+  >
+    <b-skeleton width="100px" height="60%" />
+  </div>
 </template>
 
 <script>
@@ -66,16 +75,14 @@ export default {
     ...mapGetters("document", ["numberOfDocumentInSet"]),
     ...mapGetters("category", ["categoryName"]),
     ...mapState("document", ["documentSet", "selectedDocument"]),
+    ...mapState("category", ["categories"]),
   },
   mounted() {
     this.selectedDocId = this.selectedDocument.id;
   },
   methods: {
     handleDocumentClick(document) {
-      this.$store.dispatch("document/changeCurrentDocument", {
-        document,
-        documentId: document.id,
-      });
+      this.$store.dispatch("document/changeCurrentDocument", document.id);
     },
   },
 };

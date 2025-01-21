@@ -181,10 +181,7 @@ export default {
     },
     navigateToDocument(document) {
       if (!document) return;
-
-      this.$store.dispatch("document/changeCurrentDocument", {
-        documentId: document.id,
-      });
+      this.$store.dispatch("document/changeCurrentDocument", document.id);
     },
   },
 };

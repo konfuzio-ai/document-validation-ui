@@ -38,7 +38,9 @@
                   }"
                   :image-url="getImageUrl(page)"
                   class="page-thumbnail"
-                />
+                >
+                  <b-skeleton width="60px" height="60px" />
+                </ServerImage>
                 <div class="icon-container">
                   <div class="action-icon">
                     <EyeIcon />
