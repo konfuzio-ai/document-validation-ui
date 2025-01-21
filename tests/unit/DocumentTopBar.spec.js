@@ -203,6 +203,8 @@ describe("Document Top Bar", () => {
   it("Document Set Dropdown to appear when more than one document exists", async () => {
     dispatch("document/setPublicView", false);
     dispatch("edit/disableEditMode");
+    const category = require("../mock/category.json");
+    dispatch("category/setCategories", [category]);
     const wrapper = render(DocumentTopBar, false);
 
     const dropdownSetComponent = await wrapper.find(
