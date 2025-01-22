@@ -1243,11 +1243,11 @@ const actions = {
               }
             } else {
               commit("ADD_ANNOTATION", response.data);
-              if (response.data && response.data.id) {
-                dispatch("setAnnotationId", response.data.id);
-              }
             }
 
+            if (response.data && response.data.id) {
+              dispatch("setAnnotationId", response.data.id);
+            }
             resolve(response);
           }
         })
