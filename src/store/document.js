@@ -441,7 +441,7 @@ const getters = {
       if (
         !(
           (rootState.display.hideEmptyLabelSets || state.publicView) &&
-          annotationSet.id === null
+          annotationSet.labels.length === 0
         )
       ) {
         labels = [];
