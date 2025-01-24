@@ -1,5 +1,6 @@
 <template>
   <b-tooltip
+    v-if="categories"
     multilined
     :active="tooltipIsShown || dropdownIsDisabled"
     size="is-large"
@@ -67,6 +68,9 @@
       </b-dropdown-item>
     </b-dropdown>
   </b-tooltip>
+  <div v-else class="loading-bar">
+    <b-skeleton width="auto" height="100%" />
+  </div>
 </template>
 
 <script>
@@ -258,21 +262,23 @@ export default {
       this.$emit("category-change", this.page, category.id);
     },
     setTooltipText() {
-      // Text set from innerHTML vs 'label' due to html tag in locales file string
-      let tooltipText;
-      let tooltipDelay = 0;
+      if (this.categories) {
+        // Text set from innerHTML vs 'label' due to html tag in locales file string
+        let tooltipText;
+        let tooltipDelay = 0;
 
-      if (this.documentCannotBeEdited(this.selectedDocument)) {
-        tooltipText = this.$t("edit_not_available");
-      } else if (this.documentHasCorrectAnnotations) {
-        tooltipText = this.$t("approved_annotations");
-      } else if (this.projectHasSingleCategory) {
-        tooltipText = this.$t("single_category_in_project");
-        tooltipDelay = 5000;
+        if (this.documentCannotBeEdited(this.selectedDocument)) {
+          tooltipText = this.$t("edit_not_available");
+        } else if (this.documentHasCorrectAnnotations) {
+          tooltipText = this.$t("approved_annotations");
+        } else if (this.projectHasSingleCategory) {
+          tooltipText = this.$t("single_category_in_project");
+          tooltipDelay = 5000;
+        }
+
+        this.tooltipCloseDelay = tooltipDelay;
+        this.$refs.tooltipContent.innerHTML = tooltipText;
       }
-
-      this.tooltipCloseDelay = tooltipDelay;
-      this.$refs.tooltipContent.innerHTML = tooltipText;
     },
   },
 };

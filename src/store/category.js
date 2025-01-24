@@ -13,9 +13,12 @@ const getters = {
    */
   categoryName: (state) => (categoryId) => {
     if (categoryId && state.categories) {
-      return state.categories.find(
+      const category = state.categories.find(
         (tempCategory) => tempCategory.id == categoryId
-      ).name;
+      );
+      if (category) {
+        return category.name;
+      }
     }
     return "";
   },
@@ -35,9 +38,12 @@ const getters = {
    */
   category: (state) => (categoryId) => {
     if (categoryId && state.categories) {
-      return state.categories.find(
+      const category = state.categories.find(
         (tempCategory) => tempCategory.id == categoryId
       );
+      if (category) {
+        return category;
+      }
     }
     return null;
   },

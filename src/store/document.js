@@ -542,16 +542,6 @@ const getters = {
       return found ? `${value + 1}` : "";
     }
     return "";
-    // let index = -1;
-    // if (state.documentSet && state.documentSet.documents) {
-    //   state.documentSet.documents.forEach((docTemp, indexTemp) => {
-    //     if (docTemp.id == documentId) {
-    //       index = indexTemp;
-    //       return;
-    //     }
-    //   });
-    // }
-    // return index === -1 ? "" : `${index + 1}`;
   },
 
   /**
@@ -1071,105 +1061,96 @@ const actions = {
    * Actions that use HTTP requests always return the axios promise,
    * so they can be `await`ed (useful to set the `loading` status).
    */
-  fetchDocument: async (
-    { commit, state, dispatch, rootState, getters },
-    fetchedDocument = null
-  ) => {
-    let projectId = null;
-    let documentSetId = null;
-    let categoryId = null;
+  fetchDocument: async ({ commit, state, dispatch, rootState, getters }) => {
     let isRecalculatingAnnotations = false;
-
     const initialPage = 1;
 
     dispatch("startLoading");
     dispatch("display/updateCurrentPage", initialPage, {
       root: true,
     });
-    try {
-      if (!fetchedDocument) {
-        const response = await HTTP.get(`documents/${state.documentId}/`);
-        fetchedDocument = response.data;
-      }
 
-      const { labels, annotations, annotationSets } =
-        getters.processAnnotationSets(fetchedDocument.annotation_sets);
+    await HTTP.get(`documents/${state.documentId}/`)
+      .then((response) => {
+        if (response.data) {
+          const fetchedDocument = response.data;
 
-      // load first page
-      if (fetchedDocument.pages.length > 0) {
-        dispatch("fetchDocumentPage", initialPage);
-      }
+          const { labels, annotations, annotationSets } =
+            getters.processAnnotationSets(fetchedDocument.annotation_sets);
 
-      // set information on the store
-      commit("SET_ANNOTATION_SETS", annotationSets);
-      commit("SET_ANNOTATIONS", annotations);
-      commit("SET_LABELS", labels);
-      commit("SET_SELECTED_DOCUMENT", fetchedDocument);
+          // load first page
+          // if (fetchedDocument.pages.length > 0) {
+          //   dispatch("fetchDocumentPage", initialPage);
+          // }
 
-      if (fetchedDocument.project) {
-        projectId = fetchedDocument.project;
+          // set information on the store
+          commit("SET_ANNOTATION_SETS", annotationSets);
+          commit("SET_ANNOTATIONS", annotations);
+          commit("SET_LABELS", labels);
+          commit("SET_SELECTED_DOCUMENT", fetchedDocument);
 
-        dispatch("project/setProjectId", projectId, {
+          // project
+          if (fetchedDocument.project) {
+            dispatch("project/setProjectId", fetchedDocument.project, {
+              root: true,
+            });
+
+            dispatch(
+              "project/setShowAnnotationTranslations",
+              fetchedDocument.enable_translated_strings,
+              {
+                root: true,
+              }
+            );
+          }
+
+          if (!state.publicView) {
+            dispatch("fetchMissingAnnotations");
+
+            dispatch("project/fetchCurrentUser", null, {
+              root: true,
+            });
+
+            if (fetchedDocument.project) {
+              dispatch("category/fetchCategories", fetchedDocument.project, {
+                root: true,
+              });
+            }
+            if (fetchedDocument.document_set) {
+              dispatch("fetchDocumentSet", fetchedDocument.document_set);
+            }
+          }
+
+          if (getters.documentHasProposedSplit(fetchedDocument)) {
+            dispatch("setSplittingSuggestions", fetchedDocument.proposed_split);
+          }
+
+          if (fetchedDocument.labeling_available !== 1) {
+            commit("SET_RECALCULATING_ANNOTATIONS", true);
+            dispatch("pollDocumentEndpoint");
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error, "Could not fetch document details from the backend");
+        dispatch("display/setPageError", error.response.data.detail, {
           root: true,
         });
-
-        dispatch(
-          "project/setShowAnnotationTranslations",
-          fetchedDocument.enable_translated_strings,
-          {
-            root: true,
-          }
-        );
-      }
-
-      if (getters.documentHasProposedSplit(fetchedDocument)) {
-        commit("SET_SPLITTING_SUGGESTIONS", fetchedDocument.proposed_split);
-      }
-
-      documentSetId = fetchedDocument.document_set;
-      categoryId = fetchedDocument.category;
-      isRecalculatingAnnotations = fetchedDocument.labeling_available !== 1;
-    } catch (error) {
-      console.log(error, "Could not fetch document details from the backend");
-      dispatch("display/setPageError", error.response.data.detail, {
-        root: true,
-      });
-      return;
-    }
-
-    if (!state.publicView) {
-      await dispatch("fetchMissingAnnotations");
-
-      await dispatch("project/fetchCurrentUser", null, {
-        root: true,
+        return;
       });
 
-      // Check if we first open the document dashboard or the edit mode
-      if (
-        !state.selectedDocument.category ||
+    // Check if we first open the document dashboard or the edit mode
+    if (
+      !state.publicView &&
+      (!state.selectedDocument.category ||
         (!state.selectedDocument.category_is_revised &&
           !getters.documentHasCorrectAnnotations &&
-          state.missingAnnotations.length === 0)
-      ) {
-        dispatch("edit/enableEditMode", null, {
-          root: true,
-        });
-        dispatch("edit/setRenameAndCategorize", true, { root: true });
-      }
-
-      if (documentSetId) {
-        await dispatch("fetchDocumentSet", documentSetId);
-      }
-
-      if (projectId) {
-        await dispatch("category/fetchCategories", projectId, {
-          root: true,
-        });
-      }
-    }
-    if (isRecalculatingAnnotations) {
-      commit("SET_RECALCULATING_ANNOTATIONS", true);
-      dispatch("pollDocumentEndpoint");
+          state.missingAnnotations.length === 0))
+    ) {
+      dispatch("edit/enableEditMode", null, {
+        root: true,
+      });
+      dispatch("edit/setRenameAndCategorize", true, { root: true });
     }
     dispatch("endLoading");
   },
@@ -1523,7 +1504,7 @@ const actions = {
 
   changeCurrentDocument: (
     { commit, state, dispatch, rootState },
-    { document, documentId }
+    documentId
   ) => {
     // reset splitting suggestions
     if (state.splittingSuggestions) {
@@ -1543,9 +1524,6 @@ const actions = {
 
     if (getURLQueryParam("document") || getURLPath("d")) {
       navigateToNewDocumentURL(state.selectedDocument.id, documentId);
-    } else if (document) {
-      commit("SET_DOC_ID", document.id);
-      dispatch("fetchDocument", document);
     } else {
       commit("SET_DOC_ID", documentId);
       dispatch("fetchDocument");
