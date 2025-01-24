@@ -51,17 +51,14 @@
           :key="indexGroup"
           :class="[
             'annotation-set-group',
-            !annotationSetsAccordion[indexGroup] === true &&
-              'annotation-set-collapsed',
+            !isAccordionOpen(annotationSet) && 'annotation-set-collapsed',
           ]"
         >
-          <div class="label-set-header" @click="toggleAccordion(indexGroup)">
+          <div class="label-set-header" @click="toggleAccordion(annotationSet)">
             <div class="label-set-name">
               <b-icon
                 :icon="
-                  annotationSetsAccordion[indexGroup]
-                    ? 'angle-up'
-                    : 'angle-down'
+                  isAccordionOpen(annotationSet) ? 'angle-up' : 'angle-down'
                 "
                 size="is-12"
               />
@@ -80,7 +77,7 @@
               class="labelset-action-buttons"
             >
               <AnnotationSetActionButtons
-                :is-placeholder="annotationSetsAccordion[indexGroup] === false"
+                :is-placeholder="!isAccordionOpen(annotationSet)"
                 :number-of-empty-labels-in-annotation-set="
                   emptyLabels(annotationSet).length
                 "
@@ -107,7 +104,7 @@
             </div>
           </div>
 
-          <b-collapse :open="annotationSetsAccordion[indexGroup] === true">
+          <b-collapse :open="isAccordionOpen(annotationSet)">
             <div v-if="annotationSet.labels.length > 0">
               <div v-for="label in annotationSet.labels" :key="label.id">
                 <div
@@ -242,11 +239,12 @@ export default {
       if (newAnnotationId) {
         const annotationSet = this.annotationSetOfAnnotation(newAnnotationId);
         if (annotationSet) {
-          const index = this.annotationSets.findIndex(
-            (annotationSetToFind) => annotationSetToFind.id === annotationSet.id
-          );
-          const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-          newAnnotationSetsAccordion[index] = true;
+          const newAnnotationSetsAccordion = {
+            ...this.annotationSetsAccordion,
+          };
+          newAnnotationSetsAccordion[
+            annotationSet.id || annotationSet.label_set.id
+          ] = true;
           this.annotationSetsAccordion = newAnnotationSetsAccordion;
         }
       }
@@ -272,50 +270,37 @@ export default {
         annotationSet.labels.length === 0 && this.isSearchingAnnotationList
       );
     },
-
-    toggleAccordion(index) {
-      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-      newAnnotationSetsAccordion[index] = !newAnnotationSetsAccordion[index];
+    isAccordionOpen(annotationSet) {
+      return (
+        this.isSearchingAnnotationList ||
+        this.annotationSetsAccordion[
+          annotationSet.id || annotationSet.label_set.id
+        ] === true
+      );
+    },
+    toggleAccordion(annotationSet) {
+      const newAnnotationSetsAccordion = { ...this.annotationSetsAccordion };
+      newAnnotationSetsAccordion[
+        annotationSet.id || annotationSet.label_set.id
+      ] =
+        !newAnnotationSetsAccordion[
+          annotationSet.id || annotationSet.label_set.id
+        ];
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
     },
     openAllAccordions() {
-      const newAnnotationSetsAccordion = [...this.annotationSetsAccordion];
-      newAnnotationSetsAccordion.forEach((_, index) => {
-        newAnnotationSetsAccordion[index] = true;
-      });
+      const newAnnotationSetsAccordion = { ...this.annotationSetsAccordion };
+      for (var key in newAnnotationSetsAccordion) {
+        newAnnotationSetsAccordion[key] = true;
+      }
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
     },
     loadAccordions(newAnnotationSets, oldAnnotationSets = null) {
       if (newAnnotationSets) {
         const isFirstTime = this.annotationSetsAccordion === null;
-        const newAnnotationSetsAccordion = [];
+        const newAnnotationSetsAccordion = {};
         const annotationSetsOpened = [];
         const annotationSetsCreated = [];
-
-        if (!isFirstTime) {
-          // when annotation sets changed, restore old state
-          // and check if new ones were created to be open by default
-
-          this.annotationSetsAccordion.forEach((isOpen, index) => {
-            if (isOpen) {
-              annotationSetsOpened.push(oldAnnotationSets[index]);
-            }
-          });
-
-          newAnnotationSets.forEach((newAnnotationSet) => {
-            const existed = oldAnnotationSets.find(
-              (oldAnnotationSet) =>
-                oldAnnotationSet &&
-                newAnnotationSet &&
-                oldAnnotationSet.id &&
-                newAnnotationSet.id &&
-                oldAnnotationSet.id === newAnnotationSet.id
-            );
-            if (!existed && newAnnotationSet && newAnnotationSet.id !== null) {
-              annotationSetsCreated.push(newAnnotationSet);
-            }
-          });
-        }
 
         newAnnotationSets.forEach((newAnnotationSet, index) => {
           const wasOpen = annotationSetsOpened.find(
@@ -326,19 +311,25 @@ export default {
               newAnnotationSet.id === annotationSetOpened.id
           );
           if (isFirstTime && this.annotationSetId) {
-            newAnnotationSetsAccordion[index] =
-              newAnnotationSet.id == this.annotationSetId;
+            newAnnotationSetsAccordion[
+              newAnnotationSet.id || newAnnotationSet.label_set.id
+            ] = newAnnotationSet.id == this.annotationSetId;
           } else if (isFirstTime && this.annotationId) {
-            newAnnotationSetsAccordion[index] =
-              this.isAnnotationInAnnotationSet(
-                newAnnotationSet,
-                this.annotationId
-              );
+            newAnnotationSetsAccordion[
+              newAnnotationSet.id || newAnnotationSet.label_set.id
+            ] = this.isAnnotationInAnnotationSet(
+              newAnnotationSet,
+              this.annotationId
+            );
           } else if (isFirstTime && index === 0) {
             // open first one by default
-            newAnnotationSetsAccordion[index] = true;
+            newAnnotationSetsAccordion[
+              newAnnotationSet.id || newAnnotationSet.label_set.id
+            ] = true;
           } else if (wasOpen) {
-            newAnnotationSetsAccordion[index] = wasOpen !== undefined;
+            newAnnotationSetsAccordion[
+              newAnnotationSet.id || newAnnotationSet.label_set.id
+            ] = wasOpen !== undefined;
           } else {
             const wasCreated = annotationSetsCreated.find(
               (annotationSetCreated) =>
@@ -346,7 +337,9 @@ export default {
                 newAnnotationSet.id &&
                 newAnnotationSet.id === annotationSetCreated.id
             );
-            newAnnotationSetsAccordion[index] = wasCreated !== undefined;
+            newAnnotationSetsAccordion[
+              newAnnotationSet.id || newAnnotationSet.label_set.id
+            ] = wasCreated !== undefined;
           }
         });
         this.annotationSetsAccordion = newAnnotationSetsAccordion;
