@@ -68,68 +68,6 @@
       }
     }
 
-    // TODO: custom classes should have the styles under the component file
-    &.missing-decline-btn {
-      font-size: 14px;
-      color: $grey-blue !important;
-      font-weight: 500;
-      background-color: transparent;
-      width: auto;
-
-      &:not([disabled]) {
-        &:hover {
-          text-decoration: none;
-          color: $text-color !important;
-        }
-      }
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-
-    &.is-text {
-      text-decoration: none;
-
-      &.has-right-icon {
-        > span {
-          padding-right: 16px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      &:hover {
-        background-color: transparent;
-      }
-    }
-
-    &.annotation-cancel-btn {
-      .icon {
-        svg {
-          width: 15px !important;
-          height: 15px !important;
-        }
-      }
-    }
-
-    &.accept-all-btn {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-    &.all-missing-btn {
-      padding-right: 4px;
-    }
-
-    &.action-bar-save-btn {
-      height: 32px;
-      padding: 6px 12px 6px 12px !important;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
     &.finish-review-btn {
       margin-right: 2px;
 
@@ -675,6 +613,10 @@
 
   .no-icon-margin .icon {
     margin: 0 !important;
+  }
+
+  .center-icon {
+    vertical-align: middle;
   }
 
   .icon.is-48 {

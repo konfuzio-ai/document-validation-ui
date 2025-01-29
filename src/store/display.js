@@ -22,7 +22,6 @@ const state = {
   currentPage: 1,
   optimalResolution: true,
   interactionBlocked: false,
-  documentActionBar: null, // document action bar properties
   categorizeModalIsActive: false,
   pageChangedFromThumbnail: false,
   showAnnSetTable: null,
@@ -36,6 +35,8 @@ const state = {
   currentSearchResult: null,
   detailsUrl: null,
   pageError: null,
+  labelWidth: 40,
+  annotationWidth: 60,
 };
 
 const getters = {
@@ -290,12 +291,6 @@ const actions = {
   updateOptimalResolution({ commit }, width) {
     commit("SET_OPTIMAL_RESOLUTION", width >= MINIMUM_OPTIMIZED_APP_WIDTH);
   },
-  showDocumentActionBar({ commit }, { icon, text, action, show, loading }) {
-    commit(
-      "SET_DOCUMENT_ACTION_BAR",
-      show ? { icon, text, action, loading } : null
-    );
-  },
   showAnnSetTable({ commit }, tableSet) {
     commit("SET_ANN_SET_TABLE", tableSet);
   },
@@ -399,10 +394,6 @@ const mutations = {
 
   SET_CURRENT_PAGE: (state, currentPage) => {
     state.currentPage = currentPage;
-  },
-
-  SET_DOCUMENT_ACTION_BAR: (state, actionBar) => {
-    state.documentActionBar = actionBar;
   },
 
   SET_SHOW_DOCUMENTS_NAVIGATION: (state, show) => {

@@ -73,7 +73,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 32px;
         margin: 24px 16px 8px 16px;
 
         &:hover {
@@ -196,28 +195,26 @@
             width: 100%;
             border-bottom: 1px solid $grey-lightest;
             transition: background-color 0.2s ease-out;
-            display: flex;
             align-items: center;
-            padding-right: 5px;
+            height: 100%;
+            padding: 0 16px;
 
             &.clickable-cursor {
               cursor: pointer;
             }
 
             .annotation-row-left {
-              flex: 1;
-              padding-left: 8px;
               display: flex;
               align-items: center;
 
               .annotation-icon {
                 height: 40px;
-                padding: 0 15px;
+                padding-right: 16px;
               }
 
               .label-name {
                 padding: 10px 0;
-                padding-right: 4px;
+                padding-right: 6px;
               }
 
               .annotation-translation {
@@ -273,10 +270,11 @@
             }
 
             .annotation-row-right {
-              width: 60%;
               display: flex;
               align-items: center;
-              padding-right: 12px;
+              justify-content: center;
+              height: 100%;
+              position: relative;
 
               .notification {
                 background-color: transparent;
@@ -284,10 +282,11 @@
 
               .annotation-content {
                 width: 100%;
+                height: 100%;
                 font-size: 14px;
                 line-height: 20px;
                 font-weight: 400;
-                padding: 0 8px;
+                padding: 6px 0 6px 0;
 
                 .annotation,
                 .empty-annotation {
@@ -323,7 +322,21 @@
 
               .buttons-container {
                 display: flex;
+                height: 100%;
                 gap: 8px;
+                position: absolute;
+                right: -16px;
+                padding: 0 16px;
+                background-image: linear-gradient(
+                  to right,
+                  transparent,
+                  $grey-hover 20%
+                );
+
+                &.is-ann-editing {
+                  position: relative;
+                  background-image: none;
+                }
               }
 
               .annotation-value {
@@ -447,134 +460,6 @@
           color: $white;
           text-decoration: underline;
           font-weight: 500;
-        }
-      }
-    }
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 6px;
-    button {
-      height: 32px;
-
-      &.link-button {
-        color: $grey-blue;
-        padding: 8px;
-        .icon {
-          vertical-align: middle;
-        }
-      }
-
-      &.annotation-save-btn {
-        cursor: pointer;
-        padding: 6px 14px 6px 14px;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        width: auto;
-      }
-
-      &.annotation-cancel-btn {
-        padding-top: 8px !important;
-        border: none !important;
-        background-color: transparent !important;
-        width: 32px;
-      }
-
-      &.accept-all-btn,
-      &.restore-btn {
-        color: $primary !important;
-        font-size: 14px !important;
-        font-weight: 500;
-        background-color: transparent !important;
-        width: auto;
-
-        &:hover {
-          text-decoration: none !important;
-          color: $primary !important;
-          filter: $hover-style;
-        }
-
-        &:focus {
-          box-shadow: none !important;
-        }
-      }
-
-      &.finish-review-btn {
-        height: 40px;
-
-        .icon:last-child:not(:first-child) {
-          margin: 0;
-        }
-      }
-
-      &.text-btn {
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-      }
-
-      &.annotation-save-btn {
-        padding: 6px 14px 6px 14px;
-      }
-
-      &.annotation-cancel-btn {
-        border: none !important;
-        background-color: transparent !important;
-        width: 32px;
-      }
-    }
-
-    .button-icon {
-      height: 24px;
-      width: 24px;
-      padding: 6px;
-    }
-
-    .accept-decline-container {
-      display: flex;
-      flex-direction: row;
-      gap: 6px;
-      justify-content: center;
-      button {
-        padding: 0px;
-
-        .decline-icon {
-          color: $red;
-          vertical-align: middle;
-        }
-
-        svg {
-          vertical-align: middle;
-          height: 24px;
-        }
-      }
-    }
-
-    .missing-button-container {
-      background-color: transparent;
-      display: flex;
-      flex-direction: row;
-
-      .missing-btn,
-      .search-btn {
-        padding: 6px;
-        color: $grey-blue !important;
-        font-size: 14px !important;
-        font-weight: 500;
-        background-color: transparent !important;
-        width: auto;
-
-        &:hover {
-          text-decoration: none !important;
-          color: $text-color !important;
-        }
-
-        &:focus {
-          box-shadow: none !important;
         }
       }
     }

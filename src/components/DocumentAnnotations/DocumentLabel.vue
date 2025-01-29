@@ -30,24 +30,22 @@
       </div>
     </div>
     <div
-      v-if="showAnnotationsGroup"
+      v-if="showAnnotationsGroup && annotationSet"
       :class="isGroup && 'label-group-annotation-list'"
     >
-      <div v-if="annotationSet">
-        <AnnotationRow
-          v-for="(annotation, index) in hasAnnotations
-            ? label.annotations
-            : [singleAnnotation]"
-          :key="index"
-          :annotation="annotation"
-          :label="label"
-          :annotation-set="annotationSet"
-          :label-set="annotationSet.label_set"
-        />
-      </div>
-      <div v-else-if="labelSet">
-        <AnnotationRow :label="label" :label-set="labelSet" />
-      </div>
+      <AnnotationRow
+        v-for="(annotation, index) in hasAnnotations
+          ? label.annotations
+          : [singleAnnotation]"
+        :key="index"
+        :annotation="annotation"
+        :label="label"
+        :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
+      />
+    </div>
+    <div v-else-if="showAnnotationsGroup && labelSet">
+      <AnnotationRow :label="label" :label-set="labelSet" />
     </div>
   </div>
 </template>

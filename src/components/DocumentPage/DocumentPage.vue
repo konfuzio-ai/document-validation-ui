@@ -23,7 +23,8 @@
       v-if="
         editAnnotation &&
         editAnnotation.pageNumber &&
-        editAnnotation.pageNumber === currentPage
+        editAnnotation.pageNumber === currentPage &&
+        selection
       "
       :edit-annotation="editAnnotation"
       :page="page"
