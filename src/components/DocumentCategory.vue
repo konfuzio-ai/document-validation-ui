@@ -10,7 +10,6 @@
         ? 'right-aligned full-height-tooltip'
         : 'left-aligned full-height-tooltip',
     ]"
-    :close-delay="tooltipCloseDelay"
   >
     <template #content>
       <div ref="tooltipContent"></div>
@@ -99,7 +98,6 @@ export default {
     return {
       categoryError: false,
       tooltipIsShown: false,
-      tooltipCloseDelay: 0,
       dropdownIsDisabled: false,
     };
   },
@@ -265,7 +263,6 @@ export default {
       if (this.categories) {
         // Text set from innerHTML vs 'label' due to html tag in locales file string
         let tooltipText;
-        let tooltipDelay = 0;
 
         if (this.documentCannotBeEdited(this.selectedDocument)) {
           tooltipText = this.$t("edit_not_available");
@@ -273,10 +270,8 @@ export default {
           tooltipText = this.$t("approved_annotations");
         } else if (this.projectHasSingleCategory) {
           tooltipText = this.$t("single_category_in_project");
-          tooltipDelay = 5000;
         }
 
-        this.tooltipCloseDelay = tooltipDelay;
         this.$refs.tooltipContent.innerHTML = tooltipText;
       }
     },

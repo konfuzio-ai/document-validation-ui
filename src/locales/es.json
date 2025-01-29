@@ -113,7 +113,7 @@
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
   "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o marcadas como faltantes.",
   "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haga clic en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>este enlace</a>.",
-  "single_category_in_project": "Este proyecto solo tiene una categoría. Para poder modificarla, es necesario agregar esta nueva categoría al proyecto. Para más información, visita <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>este enlace</a>.",
+  "single_category_in_project": "Este proyecto solo tiene una categoría. Para poder modificarla, es necesario agregar esta nueva categoría al proyecto.",
   "approved_annotations": "No es posible cambiar la categoría ya que existen anotaciones aceptadas o creadas manualmente en este documento.",
   "restore": "Restaurar",
   "split_modal_title": "Dividir el documento",
