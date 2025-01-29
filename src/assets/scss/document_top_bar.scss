@@ -50,95 +50,99 @@
     }
 
     .right-bar-components {
-      align-items: center;
-      justify-content: flex-end;
-      display: flex;
       flex: 1;
 
-      .read-only-info {
-        display: flex;
+      .right-components {
+        height: 100%;
         align-items: center;
         justify-content: flex-end;
-        padding-right: 24px;
-        color: $text-lighter;
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 400;
-        height: 100%;
+        display: flex;
 
-        .info-icon {
-          margin-left: 14px;
-          vertical-align: text-top;
-
-          &.info-reviewed {
-            color: $primary;
-          }
-        }
-
-        .doc-reviewed {
-          color: $primary;
-        }
-
-        .read-only-details {
-          white-space: normal;
-          font-size: 12px;
-        }
-      }
-
-      .keyboard-actions-info {
-        margin-right: 16px;
-
-        .tooltip-title {
-          font-weight: 600;
-          padding-bottom: 10px;
-        }
-
-        .tooltip-description {
-          display: flex;
-          flex-direction: column;
-          row-gap: 8px;
-
-          .content-line,
-          .action-item {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            gap: 6px;
-
-            .tooltip-divider {
-              width: 1px;
-              background-color: $grey-detail;
-              height: 15px;
-              margin-top: 3px;
-              opacity: 30%;
-            }
-
-            .key {
-              font-size: 12px;
-              font-weight: 500;
-              display: flex;
-              align-items: center;
-              background-color: $low-opacity-white;
-              border-radius: 4px;
-              padding: 0 5px 0 5px;
-            }
-
-            .keyboard-action-text {
-              font-weight: 400;
-              line-height: 20px;
-            }
-          }
-        }
-      }
-
-      .top-bar-buttons {
-        .buttons {
+        .read-only-info {
           display: flex;
           align-items: center;
+          justify-content: flex-end;
+          padding-right: 24px;
+          color: $text-lighter;
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          height: 100%;
+
+          .info-icon {
+            margin-left: 14px;
+            vertical-align: text-top;
+
+            &.info-reviewed {
+              color: $primary;
+            }
+          }
+
+          .doc-reviewed {
+            color: $primary;
+          }
+
+          .read-only-details {
+            white-space: normal;
+            font-size: 12px;
+          }
+        }
+
+        .keyboard-actions-info {
           margin-right: 16px;
 
-          .edit-mode-btn {
-            font-size: 14px;
+          .tooltip-title {
+            font-weight: 600;
+            padding-bottom: 10px;
+          }
+
+          .tooltip-description {
+            display: flex;
+            flex-direction: column;
+            row-gap: 8px;
+
+            .content-line,
+            .action-item {
+              display: flex;
+              flex-wrap: nowrap;
+              justify-content: flex-start;
+              gap: 6px;
+
+              .tooltip-divider {
+                width: 1px;
+                background-color: $grey-detail;
+                height: 15px;
+                margin-top: 3px;
+                opacity: 30%;
+              }
+
+              .key {
+                font-size: 12px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                background-color: $low-opacity-white;
+                border-radius: 4px;
+                padding: 0 5px 0 5px;
+              }
+
+              .keyboard-action-text {
+                font-weight: 400;
+                line-height: 20px;
+              }
+            }
+          }
+        }
+
+        .top-bar-buttons {
+          .buttons {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+
+            .edit-mode-btn {
+              font-size: 14px;
+            }
           }
         }
       }
