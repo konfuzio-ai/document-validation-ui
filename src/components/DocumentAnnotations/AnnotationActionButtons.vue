@@ -35,12 +35,18 @@
 
     <!-- accept button -->
     <b-button
-      v-if="showAccept"
-      class="button-action is-button-icon"
-      type="is-ghost"
+      v-if="true"
+      :class="`button-action ${showText ? 'is-button-text' : 'is-button-icon'}`"
+      :type="showText ? 'is-primary' : 'is-ghost'"
       @click.stop="accept"
     >
-      <b-tooltip :delay="tooltipDelay" position="is-left" :label="$t('accept')">
+      <span v-if="showText" class="button-text">{{ $t("accept") }}</span>
+      <b-tooltip
+        v-else
+        :delay="tooltipDelay"
+        position="is-left"
+        :label="$t('accept')"
+      >
         <b-icon
           icon="circle-check"
           class="accept-icon center-icon button-icon"
