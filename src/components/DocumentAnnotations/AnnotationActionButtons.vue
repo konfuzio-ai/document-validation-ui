@@ -35,7 +35,7 @@
 
     <!-- accept button -->
     <b-button
-      v-if="true"
+      v-if="showAccept"
       :class="`button-action accept-btn ${
         showText ? 'is-button-text' : 'is-button-icon'
       }`"

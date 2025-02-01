@@ -309,9 +309,12 @@ const actions = {
   setPageChangedFromThumbnail: ({ commit }, value) => {
     commit("SET_PAGE_CHANGED_FROM_THUMBNAIL", value);
   },
-
   setDetailsUrl: ({ commit }, value) => {
     commit("SET_DETAILS_URL", value);
+  },
+  setLabelWidth: ({ commit }, value) => {
+    commit("SET_LABEL_WIDTH", value);
+    commit("SET_ANNOTATION_WIDTH", 100 - value);
   },
 
   debounceSearch: debounce(({ commit, dispatch }, query) => {
@@ -394,6 +397,14 @@ const mutations = {
 
   SET_CURRENT_PAGE: (state, currentPage) => {
     state.currentPage = currentPage;
+  },
+
+  SET_LABEL_WIDTH: (state, labelWidth) => {
+    state.labelWidth = labelWidth;
+  },
+
+  SET_ANNOTATION_WIDTH: (state, annotationWidth) => {
+    state.annotationWidth = annotationWidth;
   },
 
   SET_SHOW_DOCUMENTS_NAVIGATION: (state, show) => {

@@ -162,5 +162,6 @@
   "annotation_link": "Copia el enlace permanente a esta anotación.",
   "copied": "Copiada",
   "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta.",
-  "document_section": "Sección del documento"
+  "document_section": "Sección del documento",
+  "label_size": "Tamaño de columna:"
 }

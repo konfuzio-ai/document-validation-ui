@@ -104,6 +104,30 @@
     }
   }
 
+  .b-slider {
+    &.is-move {
+      margin: 0px;
+      .b-slider-track {
+        cursor: col-resize;
+        color: $white;
+        background: transparent !important;
+      }
+      .b-slider-fill {
+        background: transparent !important;
+      }
+      .b-slider-thumb-wrapper {
+        cursor: col-resize;
+        .b-slider-thumb {
+          background: none;
+          background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+
+          width: 5px;
+          border: none;
+        }
+      }
+    }
+  }
+
   .carousel-list {
     &.has-shadow {
       box-shadow: none !important;
@@ -475,14 +499,6 @@
         display: flex;
         font-size: 14px;
       }
-    }
-  }
-
-  .label-action-btn {
-    .dropdown-trigger {
-      width: 100%;
-      display: flex;
-      justify-content: center;
     }
   }
 

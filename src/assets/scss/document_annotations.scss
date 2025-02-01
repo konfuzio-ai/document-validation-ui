@@ -67,399 +67,413 @@
       }
     }
 
-    .annotation-set-group {
-      .label-set-header {
-        cursor: pointer;
+    .annotation-sets-accordions {
+      .annotations-width-slider {
+        background-color: $grey-lightest;
+        margin: 16px;
+        height: 24px;
+        padding: 0 20%;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin: 24px 16px 8px 16px;
-
-        &:hover {
-          background-color: $background;
-        }
-
-        .label-set-name {
-          font-weight: 600;
-          font-size: 14px;
-          line-height: 20px;
-          color: $text;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          .icon {
-            width: 12px;
-            height: 12px;
-          }
-        }
+        border-radius: 8px;
       }
-
-      .ann-set-table {
-        display: flex;
-        align-items: center;
-        width: fit-content;
-        cursor: pointer;
-        &:not(:last-child) {
-          padding-bottom: 12px;
+      .annotation-set-group {
+        &.no-top-margin {
+          margin-top: 0px;
         }
-
-        .ann-set-table-icon {
-          padding: 4px 8px;
-          border-radius: 32px;
-          margin-left: 14px;
-          background: $purple-low-opacity;
+        margin: 24px 16px 8px 16px;
+        .label-set-header {
+          cursor: pointer;
           display: flex;
-          width: fit-content;
           align-items: center;
-          .ann-set-number {
-            font-weight: 400;
+          justify-content: space-between;
+
+          &:hover {
+            background-color: $background;
+          }
+
+          .label-set-name {
+            font-weight: 600;
             font-size: 14px;
             line-height: 20px;
-            margin-left: 4px;
+            color: $text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .icon {
+              width: 12px;
+              height: 12px;
+            }
           }
         }
-        .ann-set-table-label-set-name {
-          margin-left: 8px;
-          font-size: 14px;
-          line-height: 20px;
-        }
-      }
 
-      .labels {
-        .label {
-          .label-group {
+        .ann-set-table {
+          display: flex;
+          align-items: center;
+          width: fit-content;
+          cursor: pointer;
+          &:not(:last-child) {
+            padding-bottom: 12px;
+          }
+
+          .ann-set-table-icon {
+            padding: 4px 8px;
+            border-radius: 32px;
+            margin-left: 14px;
+            background: $purple-low-opacity;
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
+            width: fit-content;
             align-items: center;
-            border-bottom: 1px solid $grey-lightest;
-            min-height: 44px;
-            cursor: pointer;
-
-            .label-group-left {
-              display: flex;
-              flex-direction: row;
-              padding-left: 28px;
-              color: $text-lighter;
-              align-items: center;
-
-              .label-name {
-                padding-left: 20px;
-              }
-            }
-
-            .label-group-right {
-              display: flex;
-              flex-direction: row;
+            .ann-set-number {
               font-weight: 400;
               font-size: 14px;
               line-height: 20px;
-              padding-right: 16px;
-              cursor: default;
-
-              .label-annotations-pending {
-                padding: 0px 8px;
-                border-radius: 20px;
-                background: $grey-lighter-low-opacity;
-                color: $text-lighter;
-                margin-right: 4px;
-              }
-
-              .label-annotations-accepted {
-                padding: 0px 8px;
-                border-radius: 20px;
-                background: $green-low-opacity;
-                color: $green;
-              }
+              margin-left: 4px;
             }
           }
-
-          .label-group-annotation-list {
-            background-color: $grey-hover;
-
-            .annotation-row {
-              padding-left: 16px;
-            }
-          }
-
-          .label-name {
-            color: $text-lighter;
-            word-break: break-word;
+          .ann-set-table-label-set-name {
+            margin-left: 8px;
             font-size: 14px;
             line-height: 20px;
-            font-weight: 400;
           }
+        }
 
-          .annotation-row {
-            width: 100%;
-            border-bottom: 1px solid $grey-lightest;
-            transition: background-color 0.2s ease-out;
-            align-items: center;
-            height: 100%;
-            padding: 0 16px;
-
-            &.clickable-cursor {
+        .labels {
+          .label {
+            .label-group {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 1px solid $grey-lightest;
+              min-height: 44px;
               cursor: pointer;
+
+              .label-group-left {
+                display: flex;
+                flex-direction: row;
+                padding-left: 28px;
+                color: $text-lighter;
+                align-items: center;
+
+                .label-name {
+                  padding-left: 20px;
+                }
+              }
+
+              .label-group-right {
+                display: flex;
+                flex-direction: row;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                padding-right: 16px;
+                cursor: default;
+
+                .label-annotations-pending {
+                  padding: 0px 8px;
+                  border-radius: 20px;
+                  background: $grey-lighter-low-opacity;
+                  color: $text-lighter;
+                  margin-right: 4px;
+                }
+
+                .label-annotations-accepted {
+                  padding: 0px 8px;
+                  border-radius: 20px;
+                  background: $green-low-opacity;
+                  color: $green;
+                }
+              }
             }
 
-            .annotation-row-left {
-              display: flex;
+            .label-group-annotation-list {
+              background-color: $grey-hover;
+
+              .annotation-row {
+                padding-left: 16px;
+              }
+            }
+
+            .label-name {
+              color: $text-lighter;
+              word-break: break-word;
+              font-size: 14px;
+              line-height: 20px;
+              font-weight: 400;
+            }
+
+            .annotation-row {
+              width: 100%;
+              border-bottom: 1px solid $grey-lightest;
+              transition: background-color 0.2s ease-out;
               align-items: center;
+              height: 100%;
+              padding: 0 16px;
 
-              .annotation-icon {
-                height: 40px;
-                padding-right: 16px;
+              &.clickable-cursor {
+                cursor: pointer;
               }
 
-              .label-name {
-                padding: 10px 0;
-                padding-right: 6px;
-              }
-
-              .annotation-translation {
+              .annotation-row-left {
                 display: flex;
-                padding-left: 20px;
+                align-items: center;
 
-                &.pointer {
-                  cursor: pointer;
+                .annotation-icon {
+                  height: 40px;
+                  padding-right: 16px;
                 }
 
-                .icon {
-                  display: flex;
+                .label-name {
+                  padding: 10px 0;
+                  padding-right: 6px;
                 }
 
-                .translation-details {
+                .annotation-translation {
                   display: flex;
-                  flex-direction: column;
-                  gap: 8px;
-                  min-width: 216px;
-                  text-align: left;
-                  border-bottom: 1px solid $low-opacity-white;
-                  padding-bottom: 8px;
-                  word-wrap: break-all;
-                  white-space: normal;
+                  padding-left: 20px;
 
-                  .translation-title {
-                    color: $white;
-                    font-weight: 400;
-                    font-size: 12px;
-                    line-height: 18px;
+                  &.pointer {
+                    cursor: pointer;
+                  }
+
+                  .icon {
                     display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                    .translated-string {
-                      font-weight: 500;
-                      text-align: right;
-                      &.no-translation {
-                        color: $red;
-                        font-weight: 400;
+                  }
+
+                  .translation-details {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    min-width: 216px;
+                    text-align: left;
+                    border-bottom: 1px solid $low-opacity-white;
+                    padding-bottom: 8px;
+                    word-wrap: break-all;
+                    white-space: normal;
+
+                    .translation-title {
+                      color: $white;
+                      font-weight: 400;
+                      font-size: 12px;
+                      line-height: 18px;
+                      display: flex;
+                      flex-direction: row;
+                      justify-content: space-between;
+                      .translated-string {
+                        font-weight: 500;
+                        text-align: right;
+                        &.no-translation {
+                          color: $red;
+                          font-weight: 400;
+                        }
                       }
                     }
                   }
-                }
-                .translation-info {
-                  padding-top: 8px;
-                  line-height: 18px;
-                  font-size: 12px;
-                  opacity: 0.7;
-                  color: $white;
-                  font-weight: 400;
-                }
-              }
-            }
-
-            .annotation-row-right {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              height: 100%;
-              position: relative;
-
-              .notification {
-                background-color: transparent;
-              }
-
-              .annotation-content {
-                width: 100%;
-                height: 100%;
-                font-size: 14px;
-                line-height: 20px;
-                font-weight: 400;
-                padding: 6px 0 6px 0;
-
-                .annotation,
-                .empty-annotation {
-                  min-height: 36px;
-                  display: flex;
-                  align-items: center;
-
-                  .annotation-checkbox {
-                    margin-right: 0px;
-                  }
-                }
-
-                .loading-container {
-                  height: 20px;
-                  display: flex;
-                  align-items: center;
-
-                  .loading-icon-size {
-                    width: 13px;
-                    height: 13px;
-                  }
-                }
-
-                .spinner {
-                  color: $grey;
-                }
-
-                .annotation-items {
-                  display: flex;
-                  flex-direction: row;
-                }
-              }
-
-              .buttons-container {
-                display: flex;
-                height: 100%;
-                gap: 8px;
-                position: absolute;
-                right: -16px;
-                padding: 0 16px;
-                background-image: linear-gradient(
-                  to right,
-                  transparent,
-                  $grey-hover 20%
-                );
-
-                &.is-ann-editing {
-                  position: relative;
-                  background-image: none;
-                }
-              }
-
-              .annotation-value {
-                display: inline-block;
-                color: $text;
-                padding: 0;
-                border: none;
-                background-color: transparent;
-                inline-size: 100%;
-                overflow-wrap: break-word;
-                word-break: break-all;
-
-                &:focus {
-                  outline: none;
-                }
-
-                &.label-empty {
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: $primary;
-
-                  &.clicked-ann {
+                  .translation-info {
+                    padding-top: 8px;
+                    line-height: 18px;
+                    font-size: 12px;
+                    opacity: 0.7;
+                    color: $white;
                     font-weight: 400;
-                    color: $text-lighter;
                   }
                 }
               }
-            }
 
-            .empty-annotation {
-              display: flex;
-              width: 100%;
-              justify-content: space-between;
-            }
-
-            &:hover {
-              background-color: $grey-hover !important;
-            }
-            &.selected {
-              background-color: $grey-lightest;
-            }
-
-            &.hovered-empty-labels {
-              background-color: $grey-lightest;
-              border-bottom-color: $grey-detail;
-            }
-
-            &.hovered-pending-annotations {
-              position: relative;
-              border-bottom-color: $primary;
-
-              &:before {
-                display: block;
-                content: "";
-                width: 100%;
+              .annotation-row-right {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 height: 100%;
-                background: $primary;
-                opacity: 0.1;
-                position: absolute;
-                top: 0;
-                left: 0;
+                position: relative;
+
+                .notification {
+                  background-color: transparent;
+                }
+
+                .annotation-content {
+                  width: 100%;
+                  height: 100%;
+                  font-size: 14px;
+                  line-height: 20px;
+                  font-weight: 400;
+                  padding: 6px 0 6px 0;
+
+                  .annotation,
+                  .empty-annotation {
+                    min-height: 36px;
+                    display: flex;
+                    align-items: center;
+
+                    .annotation-checkbox {
+                      margin-right: 0px;
+                    }
+                  }
+
+                  .loading-container {
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+
+                    .loading-icon-size {
+                      width: 13px;
+                      height: 13px;
+                    }
+                  }
+
+                  .spinner {
+                    color: $grey;
+                  }
+
+                  .annotation-items {
+                    display: flex;
+                    flex-direction: row;
+                  }
+                }
+
+                .buttons-container {
+                  display: flex;
+                  height: 100%;
+                  gap: 8px;
+                  position: absolute;
+                  right: -16px;
+                  padding: 0 16px;
+                  background-image: linear-gradient(
+                    to right,
+                    transparent,
+                    $grey-hover 20%
+                  );
+
+                  &.is-ann-editing {
+                    position: relative;
+                    background-image: none;
+                  }
+                }
+
+                .annotation-value {
+                  display: inline-block;
+                  color: $text;
+                  padding: 0;
+                  border: none;
+                  background-color: transparent;
+                  inline-size: 100%;
+                  overflow-wrap: break-word;
+                  word-break: break-all;
+
+                  &:focus {
+                    outline: none;
+                  }
+
+                  &.label-empty {
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: $primary;
+
+                    &.clicked-ann {
+                      font-weight: 400;
+                      color: $text-lighter;
+                    }
+                  }
+                }
               }
-            }
 
-            &.editing {
-              background-color: $background;
-              border-bottom: 1px solid $primary;
-            }
-
-            .not-found-text {
-              color: $grey;
-              opacity: 0.3;
-            }
-
-            .saving-changes {
-              color: $grey;
-            }
-
-            .error-editing {
-              color: $red;
-              animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-              transform: translate3d(0, 0, 0);
-            }
-
-            @keyframes shake {
-              10%,
-              90% {
-                transform: translate3d(-1px, 0, 0);
+              .empty-annotation {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
               }
 
-              20%,
-              80% {
-                transform: translate3d(2px, 0, 0);
+              &:hover {
+                background-color: $grey-hover !important;
+              }
+              &.selected {
+                background-color: $grey-lightest;
               }
 
-              30%,
-              50%,
-              70% {
-                transform: translate3d(-4px, 0, 0);
+              &.hovered-empty-labels {
+                background-color: $grey-lightest;
+                border-bottom-color: $grey-detail;
               }
 
-              40%,
-              60% {
-                transform: translate3d(4px, 0, 0);
+              &.hovered-pending-annotations {
+                position: relative;
+                border-bottom-color: $primary;
+
+                &:before {
+                  display: block;
+                  content: "";
+                  width: 100%;
+                  height: 100%;
+                  background: $primary;
+                  opacity: 0.1;
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                }
+              }
+
+              &.editing {
+                background-color: $background;
+                border-bottom: 1px solid $primary;
+              }
+
+              .not-found-text {
+                color: $grey;
+                opacity: 0.3;
+              }
+
+              .saving-changes {
+                color: $grey;
+              }
+
+              .error-editing {
+                color: $red;
+                animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+                transform: translate3d(0, 0, 0);
+              }
+
+              @keyframes shake {
+                10%,
+                90% {
+                  transform: translate3d(-1px, 0, 0);
+                }
+
+                20%,
+                80% {
+                  transform: translate3d(2px, 0, 0);
+                }
+
+                30%,
+                50%,
+                70% {
+                  transform: translate3d(-4px, 0, 0);
+                }
+
+                40%,
+                60% {
+                  transform: translate3d(4px, 0, 0);
+                }
               }
             }
           }
         }
-      }
 
-      .no-labels {
-        display: flex;
-        gap: 5px;
-        padding-left: 28px;
-        color: $text-lighter;
-        font-size: 14px;
-        line-height: 20px;
-        min-height: 44px;
+        .no-labels {
+          display: flex;
+          gap: 5px;
+          padding-left: 28px;
+          color: $text-lighter;
+          font-size: 14px;
+          line-height: 20px;
+          min-height: 44px;
 
-        a {
-          color: $white;
-          text-decoration: underline;
-          font-weight: 500;
+          a {
+            color: $white;
+            text-decoration: underline;
+            font-weight: 500;
+          }
         }
       }
     }

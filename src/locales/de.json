@@ -162,5 +162,6 @@
   "annotation_link": "Kopieren Sie den permanenten Link zu dieser Annotationen",
   "copied": "Kopiert",
   "checkbox_ann_details": "Für dieses Label wird ein Kästchen extrahiert.",
-  "document_section": "Dokumentabschnitt"
+  "document_section": "Dokumentabschnitt",
+  "label_size": "Spaltengröße:"
 }
