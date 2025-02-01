@@ -1,0 +1,82 @@
+@import "./imports.scss";
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .button-action {
+    padding: 0px;
+    vertical-align: middle;
+
+    &.is-button-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    &.is-button-text {
+      height: 26px;
+      padding: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    &.is-button-text-ghost {
+      height: 26px;
+      color: $grey-blue;
+      font-size: 14px;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: none;
+        color: $text-color;
+      }
+
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+
+    .button-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      &.cancel-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .button-text {
+      display: block;
+    }
+  }
+
+  .accept-icon,
+  .restore-icon,
+  .accept-all-icon {
+    color: $green !important;
+  }
+  .save-icon {
+    color: $primary;
+  }
+  .decline-icon {
+    color: $red;
+  }
+  .cancel-icon,
+  .search-icon,
+  .missing-icon,
+  .link-icon,
+  .spinner-icon {
+    color: $grey-blue;
+  }
+
+  .spinner-icon {
+    width: 16px;
+  }
+
+  .missing-button-container {
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+  }
+}

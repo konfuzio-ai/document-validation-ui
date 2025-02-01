@@ -1,11 +1,7 @@
 <template>
   <div class="data-extraction-container">
     <div class="loading-container">
-      <AnnotationActionButtons
-        :is-loading="true"
-        :save-btn="false"
-        :cancel-btn="false"
-      />
+      <b-icon icon="spinner" class="fa-spin spinner-icon" />
     </div>
     <div class="data-extraction-text">
       <p class="title">
@@ -28,11 +24,9 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import AnnotationActionButtons from "./AnnotationActionButtons";
 
 export default {
   name: "ExtractingData",
-  components: { AnnotationActionButtons },
   computed: {
     ...mapState("edit", ["redirectingUser"]),
   },

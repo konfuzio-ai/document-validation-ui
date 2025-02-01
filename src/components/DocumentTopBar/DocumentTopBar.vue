@@ -38,49 +38,51 @@
         </div>
       </div>
 
-      <div v-if="!recalculatingAnnotations" class="right-bar-components">
-        <div
-          v-if="!editMode && (!publicView || !isDocumentReviewed)"
-          class="keyboard-actions-info"
-        >
-          <KeyboardActionsDescription />
-        </div>
-
-        <div
-          v-if="!editMode && (publicView || isDocumentReviewed)"
-          class="read-only-info"
-        >
-          <b-tooltip
-            :animated="false"
-            position="is-bottom"
-            class="right-aligned width-184"
+      <div class="right-bar-components">
+        <div v-if="!recalculatingAnnotations" class="right-components">
+          <div
+            v-if="!editMode && (!publicView || !isDocumentReviewed)"
+            class="keyboard-actions-info"
           >
-            <span v-if="publicView">
-              {{ $t("lite_mode") }}
-            </span>
-            <span v-else class="doc-reviewed">
-              {{ $t("reviewed_mode") }}
-            </span>
-            <b-icon
-              :class="[
-                'info-icon is-small',
-                !publicView && isDocumentReviewed && 'info-reviewed',
-              ]"
-              icon="circle-info"
-            />
-            <template #content>
-              <div v-if="publicView" class="read-only-details">
-                {{ $t("limited_functionalities") }}
-              </div>
-              <div v-else class="read-only-details">
-                {{ $t("document_reviewed") }}
-              </div>
-            </template>
-          </b-tooltip>
-        </div>
+            <KeyboardActionsDescription />
+          </div>
 
-        <div class="top-bar-buttons">
-          <DocumentTopBarButtons />
+          <div
+            v-if="!editMode && (publicView || isDocumentReviewed)"
+            class="read-only-info"
+          >
+            <b-tooltip
+              :animated="false"
+              position="is-bottom"
+              class="right-aligned width-184"
+            >
+              <span v-if="publicView">
+                {{ $t("lite_mode") }}
+              </span>
+              <span v-else class="doc-reviewed">
+                {{ $t("reviewed_mode") }}
+              </span>
+              <b-icon
+                :class="[
+                  'info-icon is-small',
+                  !publicView && isDocumentReviewed && 'info-reviewed',
+                ]"
+                icon="circle-info"
+              />
+              <template #content>
+                <div v-if="publicView" class="read-only-details">
+                  {{ $t("limited_functionalities") }}
+                </div>
+                <div v-else class="read-only-details">
+                  {{ $t("document_reviewed") }}
+                </div>
+              </template>
+            </b-tooltip>
+          </div>
+
+          <div class="top-bar-buttons">
+            <DocumentTopBarButtons />
+          </div>
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@
       <EmptyState />
     </div>
 
-    <div v-else ref="annotationList" :class="['annotation-set-list']">
+    <div v-else ref="annotationList" class="annotation-set-list">
       <AnnotationFilters
         v-if="isDocumentEditable"
         @openAll="openAllAccordions"
@@ -43,7 +43,17 @@
       >
         <EmptyState :is-search="true" />
       </div>
-      <div v-if="annotationSetsAccordion">
+      <div v-if="annotationSetsAccordion" class="annotation-sets-accordions">
+        <div class="annotations-width-slider">
+          <b-slider
+            :value="labelWidth"
+            type="is-move"
+            :min="20"
+            :max="80"
+            :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
+            @input="setLabelWidth"
+          />
+        </div>
         <div
           v-for="(
             annotationSet, indexGroup
@@ -51,6 +61,7 @@
           :key="indexGroup"
           :class="[
             'annotation-set-group',
+            indexGroup === 0 && 'no-top-margin',
             !isAccordionOpen(annotationSet) && 'annotation-set-collapsed',
           ]"
         >
@@ -155,7 +166,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
@@ -185,7 +196,7 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["showAnnSetTable"]),
+    ...mapState("display", ["showAnnSetTable", "labelWidth"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -265,6 +276,7 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
+    ...mapActions("display", ["setLabelWidth"]),
     annotationSetShouldAppear(annotationSet) {
       return !(
         annotationSet.labels.length === 0 && this.isSearchingAnnotationList

@@ -8,7 +8,7 @@
     >
       <b-button
         type="is-ghost"
-        class="missing-btn all-missing-btn"
+        class="button-action is-button-text-ghost"
         :disabled="numberOfEmptyLabelsInAnnotationSet === 0"
         @click="markAllAsMissing"
       >
@@ -25,8 +25,8 @@
       @mouseleave="mouseleaveAnnotationSet"
     >
       <b-button
-        type="is-primary"
-        class="accept-all-btn"
+        type="is-ghost"
+        class="button-action is-button-text-ghost accept-all-icon"
         :disabled="numberOfNotCorrectAnnotationsInAnnotationSet === 0"
         @click="acceptAllPending"
       >
@@ -95,5 +95,5 @@ export default {
 <style
   scoped
   lang="scss"
-  src="../../assets/scss/document_annotations.scss"
+  src="../../assets/scss/annotation_action_buttons.scss"
 ></style>

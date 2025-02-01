@@ -44,11 +44,18 @@ describe("Document Annotations Component", () => {
     const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
 
-    const wrapper = render(DocumentLabel, false, {
-      annotationSet,
-      labelSet: annotationSet.label_set,
-      label,
-    });
+    const wrapper = render(
+      DocumentLabel,
+      false,
+      {
+        annotationSet,
+        labelSet: annotationSet.label_set,
+        label,
+      },
+      {
+        showAnnotationsGroup: true,
+      }
+    );
     expect(await wrapper.find(".annotation-row .label-name").text()).toContain(
       label.name
     );
@@ -56,6 +63,10 @@ describe("Document Annotations Component", () => {
 
   it("check if annotation info appears when hovering", async () => {
     const wrapper = render(DocumentAnnotations, false);
+    await wrapper
+      .findAll(".annotation-set-group .label-set-header")
+      .at(0)
+      .trigger("click");
     const element = await wrapper
       .findAll(".annotation-row .annotation-details")
       .at(0);
@@ -94,16 +105,8 @@ describe("Document Annotations Component", () => {
     const annotationSet = getData("document").annotationSets[0];
     const label = annotationSet.labels[0];
     const annotation = annotationSet.labels[0].annotations[0];
-    const isMissingAnnotation = false;
 
-    const wrapper = render(EmptyAnnotation, false, {
-      label,
-      annotationSet,
-      isMissingAnnotation,
-      labelSet: annotationSet.label_set,
-    });
-
-    const wrapper2 = render(AnnotationRow, false, {
+    const wrapper = render(AnnotationRow, false, {
       label,
       annotationSet,
       annotation,
@@ -127,7 +130,7 @@ describe("Document Annotations Component", () => {
 
     await wrapper.findComponent(".annotation-value").trigger("click");
     await dispatch("selection/setSpanSelection", sampleBbox);
-    expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
+    expect(await wrapper.findAll(".action-buttons").length).toEqual(1);
   });
 
   it("Click should trigger edit mode in annotation", async () => {
@@ -199,9 +202,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .findComponent(
-          ".buttons-container .action-buttons .accept-decline-container .accept-btn"
-        )
+        .findComponent(".buttons-container .action-buttons .accept-btn")
         .exists()
     ).toBe(true);
   });
@@ -220,9 +221,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(
-          ".buttons-container .action-buttons .accept-decline-container .decline-btn"
-        )
+        .find(".buttons-container .action-buttons .decline-btn")
         .exists()
     ).toBe(false);
 
@@ -230,9 +229,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(
-          ".buttons-container .action-buttons .accept-decline-container .decline-btn"
-        )
+        .find(".buttons-container .action-buttons .decline-btn")
         .isVisible()
     ).toBe(true);
   });
@@ -302,7 +299,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .all-missing .missing-btn")
+        .find(".action-buttons .all-missing .button-action")
         .isVisible()
     ).toBe(true);
   });
@@ -323,7 +320,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .all-missing .missing-btn")
+        .find(".action-buttons .all-missing .button-action")
         .text()
         .includes(emptyLabels.length)
     ).toBe(true);
@@ -341,7 +338,7 @@ describe("Document Annotations Component", () => {
       .trigger("click");
 
     await wrapper
-      .find(".action-buttons .all-missing .missing-btn")
+      .find(".action-buttons .all-missing .button-action")
       .trigger("click");
 
     await markAnnotationsAsMissing();
@@ -358,7 +355,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .accept-all .accept-all-btn")
+        .find(".action-buttons .accept-all .button-action")
         .isVisible()
     ).toBe(true);
   });
@@ -381,7 +378,7 @@ describe("Document Annotations Component", () => {
 
     expect(
       await wrapper
-        .find(".action-buttons .accept-all .accept-all-btn")
+        .find(".action-buttons .accept-all .button-action")
         .text()
         .includes(pendingAnnotations.length)
     ).toBe(true);
@@ -397,7 +394,7 @@ describe("Document Annotations Component", () => {
       .trigger("click");
 
     await wrapper
-      .find(".action-buttons .accept-all .accept-all-btn")
+      .find(".action-buttons .accept-all .button-action")
       .trigger("click");
 
     await updateAnnotations();

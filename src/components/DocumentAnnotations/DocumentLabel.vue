@@ -1,67 +1,51 @@
 <template>
   <div class="label">
-    <div v-if="enableGroupingFeature && nonMultipleAnnotationsExtracted">
-      <div
-        :class="['label-group', !showAnnotationsGroup && 'keyboard-nav']"
-        @click.stop="toggleGroup"
-      >
-        <div class="label-group-left">
-          <b-icon
-            :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
-            class="is-small caret"
-          />
-          <div class="label-name">
-            <span>{{ `${label.name} (${label.annotations.length})` }}</span>
-          </div>
-        </div>
-        <div class="label-group-right">
-          <div v-if="!publicView" class="label-annotations-pending">
-            {{
-              `${
-                label.annotations.length - acceptedAnnotationsGroupCounter
-              } ${$t("annotations_pending")}`
-            }}
-          </div>
-          <div v-if="!publicView" class="label-annotations-accepted">
-            {{
-              `${acceptedAnnotationsGroupCounter} ${$t("annotations_accepted")}`
-            }}
-          </div>
+    <div
+      v-if="isGroup"
+      :class="['label-group', !showAnnotationsGroup && 'keyboard-nav']"
+      @click.stop="toggleGroup"
+    >
+      <div class="label-group-left">
+        <b-icon
+          :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
+          size="is-16"
+          class="caret"
+        />
+        <div class="label-name">
+          <span>{{ `${label.name} (${label.annotations.length})` }}</span>
         </div>
       </div>
-      <div
-        v-if="annotationSet && showAnnotationsGroup"
-        class="label-group-annotation-list"
-      >
-        <AnnotationRow
-          v-for="annotation in label.annotations"
-          :key="annotation.id"
-          :annotation="annotation"
-          :label="label"
-          :annotation-set="annotationSet"
-          :label-set="annotationSet.label_set"
-        />
+      <div class="label-group-right">
+        <div v-if="!publicView" class="label-annotations-pending">
+          {{
+            `${label.annotations.length - acceptedAnnotationsGroupCounter} ${$t(
+              "annotations_pending"
+            )}`
+          }}
+        </div>
+        <div v-if="!publicView" class="label-annotations-accepted">
+          {{
+            `${acceptedAnnotationsGroupCounter} ${$t("annotations_accepted")}`
+          }}
+        </div>
       </div>
     </div>
-    <div v-else-if="annotationSet && hasAnnotations">
+    <div
+      v-if="showAnnotationsGroup && annotationSet"
+      :class="isGroup && 'label-group-annotation-list'"
+    >
       <AnnotationRow
-        v-for="annotation in label.annotations"
-        :key="annotation.id"
+        v-for="(annotation, index) in hasAnnotations
+          ? label.annotations
+          : [singleAnnotation]"
+        :key="index"
         :annotation="annotation"
         :label="label"
         :annotation-set="annotationSet"
         :label-set="annotationSet.label_set"
       />
     </div>
-    <div v-else-if="annotationSet">
-      <AnnotationRow
-        :annotation="singleAnnotation"
-        :label="label"
-        :annotation-set="annotationSet"
-        :label-set="annotationSet.label_set"
-      />
-    </div>
-    <div v-else-if="labelSet">
+    <div v-else-if="showAnnotationsGroup && labelSet">
       <AnnotationRow :label="label" :label-set="labelSet" />
     </div>
   </div>
@@ -114,6 +98,9 @@ export default {
     hasAnnotations() {
       return this.label.annotations && this.label.annotations.length > 0;
     },
+    isGroup() {
+      return this.enableGroupingFeature && this.nonMultipleAnnotationsExtracted;
+    },
   },
   watch: {
     annotationId(newAnnotationId) {
@@ -155,14 +142,6 @@ export default {
 
         if (annotation) {
           this.showAnnotationsGroup = true;
-          // this.$store.dispatch("document/setSidebarAnnotationSelected", null);
-          // // run in next render because we need to open the group first
-          // this.$nextTick(() => {
-          //   this.$store.dispatch(
-          //     "document/setSidebarAnnotationSelected",
-          //     annotation
-          //   );
-          // });
         }
       }
     },
@@ -179,6 +158,10 @@ export default {
       if (this.nonMultipleAnnotationsExtracted) {
         this.acceptedAnnotationsGroupCounter =
           this.numberOfAcceptedAnnotationsInLabel(this.label);
+      }
+      if (!this.isGroup) {
+        // if not a group then show by default
+        this.showAnnotationsGroup = true;
       }
     },
     labelHasPendingAnnotations(hoveredSet) {
