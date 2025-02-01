@@ -8,7 +8,8 @@
       <div class="label-group-left">
         <b-icon
           :icon="showAnnotationsGroup ? 'angle-up' : 'angle-down'"
-          class="is-small caret"
+          size="is-16"
+          class="caret"
         />
         <div class="label-name">
           <span>{{ `${label.name} (${label.annotations.length})` }}</span>

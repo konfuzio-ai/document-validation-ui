@@ -661,6 +661,12 @@
       width: 12px;
     }
   }
+  .icon.is-16 {
+    svg {
+      height: 16px;
+      width: 16px;
+    }
+  }
 
   .icon.is-small,
   .button .icon.is-small {

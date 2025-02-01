@@ -153,9 +153,13 @@
               .label-group-left {
                 display: flex;
                 flex-direction: row;
-                padding-left: 28px;
+                padding-left: 16px;
                 color: $text-lighter;
                 align-items: center;
+
+                icon {
+                  width: 26px;
+                }
 
                 .label-name {
                   padding-left: 20px;
