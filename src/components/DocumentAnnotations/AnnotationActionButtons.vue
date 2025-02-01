@@ -20,7 +20,7 @@
     <!-- decline button -->
     <b-button
       v-if="showDecline"
-      class="button-action is-button-icon"
+      class="button-action is-button-icon decline-btn"
       type="is-ghost"
       @click.stop="decline"
     >
@@ -36,7 +36,9 @@
     <!-- accept button -->
     <b-button
       v-if="true"
-      :class="`button-action ${showText ? 'is-button-text' : 'is-button-icon'}`"
+      :class="`button-action accept-btn ${
+        showText ? 'is-button-text' : 'is-button-icon'
+      }`"
       :type="showText ? 'is-primary' : 'is-ghost'"
       @click.stop="accept"
     >
@@ -122,7 +124,9 @@
     <!-- Restore not found annotations -->
     <b-button
       v-if="showRestore"
-      :class="`button-action ${showText ? 'is-button-text' : 'is-button-icon'}`"
+      :class="`button-action restore-btn ${
+        showText ? 'is-button-text' : 'is-button-icon'
+      }`"
       :type="showText ? 'is-primary' : 'is-ghost'"
       @click.stop="restore"
     >
