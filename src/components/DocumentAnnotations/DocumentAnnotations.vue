@@ -44,16 +44,6 @@
         <EmptyState :is-search="true" />
       </div>
       <div v-if="annotationSetsAccordion" class="annotation-sets-accordions">
-        <div class="annotations-width-slider">
-          <b-slider
-            :value="labelWidth"
-            type="is-move"
-            :min="20"
-            :max="80"
-            :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
-            @input="setLabelWidth"
-          />
-        </div>
         <div
           v-for="(
             annotationSet, indexGroup
@@ -116,7 +106,22 @@
           </div>
 
           <b-collapse :open="isAccordionOpen(annotationSet)">
-            <div v-if="annotationSet.labels.length > 0">
+            <div
+              v-if="annotationSet.labels.length > 0"
+              class="annotation-sets-list"
+            >
+              <div class="annotations-width-slider">
+                <b-slider
+                  :value="labelWidth"
+                  type="is-move"
+                  :min="20"
+                  :max="80"
+                  :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
+                  class="is-full-height"
+                  :disabled="isAnnotationBeingEdited"
+                  @input="setLabelWidth"
+                />
+              </div>
               <div v-for="label in annotationSet.labels" :key="label.id">
                 <div
                   v-if="!(label.annotations.length === 0 && publicView)"

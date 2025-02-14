@@ -68,16 +68,23 @@
     }
 
     .annotation-sets-accordions {
-      .annotations-width-slider {
-        background-color: $grey-lightest;
-        margin: 16px;
-        height: 24px;
-        padding: 0 20%;
-        display: flex;
-        align-items: center;
-        border-radius: 8px;
-      }
+      margin-top: 16px;
       .annotation-set-group {
+        .annotation-sets-list {
+          position: relative;
+        }
+        .annotations-width-slider {
+          background-color: transparent;
+          top: 10px;
+          bottom: 0px;
+          left: 4px;
+          right: 16px;
+          padding: 0 20%;
+          display: flex;
+          align-items: center;
+          border-radius: 8px;
+          position: absolute;
+        }
         &.no-top-margin {
           margin-top: 0px;
         }
@@ -172,7 +179,6 @@
                 font-weight: 400;
                 font-size: 14px;
                 line-height: 20px;
-                padding-right: 16px;
                 cursor: default;
 
                 .label-annotations-pending {
@@ -206,6 +212,7 @@
               font-size: 14px;
               line-height: 20px;
               font-weight: 400;
+              user-select: none;
             }
 
             .annotation-row {
@@ -365,6 +372,7 @@
                   inline-size: 100%;
                   overflow-wrap: break-word;
                   word-break: break-all;
+                  user-select: none;
 
                   &:focus {
                     outline: none;
@@ -376,6 +384,7 @@
                     color: $primary;
 
                     &.clicked-ann {
+                      user-select: auto;
                       font-weight: 400;
                       color: $text-lighter;
                     }
