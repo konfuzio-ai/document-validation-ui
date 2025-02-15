@@ -110,18 +110,6 @@
               v-if="annotationSet.labels.length > 0"
               class="annotation-sets-list"
             >
-              <div class="annotations-width-slider">
-                <b-slider
-                  :value="labelWidth"
-                  type="is-move"
-                  :min="20"
-                  :max="80"
-                  :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
-                  class="is-full-height"
-                  :disabled="isAnnotationBeingEdited"
-                  @input="setLabelWidth"
-                />
-              </div>
               <div v-for="label in annotationSet.labels" :key="label.id">
                 <div
                   v-if="!(label.annotations.length === 0 && publicView)"
@@ -171,7 +159,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import EmptyState from "./EmptyState";
 import ExtractingData from "./ExtractingData";
 import AnnotationSetActionButtons from "./AnnotationSetActionButtons";
@@ -201,7 +189,7 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["showAnnSetTable", "labelWidth"]),
+    ...mapState("display", ["showAnnSetTable"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -281,7 +269,6 @@ export default {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
-    ...mapActions("display", ["setLabelWidth"]),
     annotationSetShouldAppear(annotationSet) {
       return !(
         annotationSet.labels.length === 0 && this.isSearchingAnnotationList

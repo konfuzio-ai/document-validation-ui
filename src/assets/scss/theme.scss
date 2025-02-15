@@ -118,6 +118,30 @@
             .b-slider-thumb {
               height: 100%;
               width: 1px;
+            }
+          }
+        }
+      }
+    }
+    &.show-hover {
+      .b-slider-track:hover {
+        .b-slider-thumb-wrapper {
+          .tooltip-trigger {
+            .b-slider-thumb {
+              width: 4px;
+              transform: none;
+              background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+    &.show-line {
+      .b-slider-track {
+        .b-slider-thumb-wrapper {
+          .tooltip-trigger {
+            .b-slider-thumb {
               background-color: $grey-lightest;
               background-image: none;
             }

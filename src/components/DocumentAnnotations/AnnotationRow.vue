@@ -13,6 +13,18 @@
     @mouseover="hoveredAnnotation = currentAnnotationId()"
     @mouseleave="hoveredAnnotation = null"
   >
+    <div class="annotations-width-slider">
+      <b-slider
+        :value="labelWidth"
+        type="is-move"
+        :min="20"
+        :max="80"
+        :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
+        class="is-full-height show-hover show-line"
+        :disabled="isAnnotationInEditMode()"
+        @input="setLabelWidth"
+      />
+    </div>
     <div
       class="annotation-row-left"
       :style="`width:${labelWidth}%`"
@@ -177,7 +189,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
@@ -373,6 +385,7 @@ export default {
     this.checkAnnotationSelection(this.annotationId);
   },
   methods: {
+    ...mapActions("display", ["setLabelWidth"]),
     handleCheckboxChanged(value) {
       this.$store
         .dispatch("document/updateAnnotation", {
