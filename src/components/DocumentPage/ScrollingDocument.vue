@@ -30,7 +30,6 @@
       </div>
     </div>
     <Toolbar v-if="showToolbar" />
-    <ActionBar v-if="showActionBar" />
   </div>
 </template>
 <script>
@@ -38,14 +37,12 @@ import { mapState, mapGetters } from "vuex";
 import scroll from "../../directives/scroll";
 import ScrollingPage from "./ScrollingPage";
 import Toolbar from "./DocumentToolbar";
-import ActionBar from "./ActionBar";
 import SearchBar from "./SearchBar";
 
 export default {
   components: {
     ScrollingPage,
     Toolbar,
-    ActionBar,
     SearchBar,
   },
   directives: {
@@ -74,7 +71,6 @@ export default {
     ]),
     ...mapState("display", [
       "scale",
-      "documentActionBar",
       "pageChangedFromThumbnail",
       "currentPage",
       "searchEnabled",
@@ -89,15 +85,7 @@ export default {
       }
     },
     showToolbar() {
-      return (
-        !this.loading &&
-        this.pages.length > 0 &&
-        this.scale &&
-        !this.documentActionBar
-      );
-    },
-    showActionBar() {
-      return this.documentActionBar !== null;
+      return !this.loading && this.pages.length > 0 && this.scale;
     },
   },
   watch: {

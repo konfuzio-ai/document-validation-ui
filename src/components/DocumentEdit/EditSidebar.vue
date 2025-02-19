@@ -41,7 +41,7 @@
         />
       </div>
     </div>
-    <div class="split smart-split">
+    <div class="smart-split">
       <b-tooltip
         multilined
         :active="!documentHasProposedSplit(selectedDocument)"

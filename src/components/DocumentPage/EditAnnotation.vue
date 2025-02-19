@@ -176,28 +176,34 @@ export default {
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["selection", "spanSelection"]),
     top() {
-      const top = this.selection.start.y - heightOfPopup; // subtract the height of the popup plus some margin
+      if (this.selection && this.selection.start && this.selection.end) {
+        const top = this.selection.start.y - heightOfPopup; // subtract the height of the popup plus some margin
 
-      const height = this.selection.end.y - this.selection.start.y;
+        const height = this.selection.end.y - this.selection.start.y;
 
-      //check if the popup will not go off the container on the top
-      return this.selection.start.y > heightOfPopup
-        ? top - margin
-        : this.selection.start.y + height + margin;
+        //check if the popup will not go off the container on the top
+        return this.selection.start.y > heightOfPopup
+          ? top - margin
+          : this.selection.start.y + height + margin;
+      }
+      return 0;
     },
     left() {
-      const width = this.selection.end.x - this.selection.start.x;
+      if (this.selection && this.selection.start && this.selection.end) {
+        const width = this.selection.end.x - this.selection.start.x;
 
-      const left = this.selection.start.x + width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+        const left = this.selection.start.x + width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
-      //check if the popup will not go off the container
-      if (left + widthOfPopup > this.containerWidth) {
-        // on the right side
-        return this.containerWidth - widthOfPopup;
-      } else {
-        // on the left side
-        return left > 0 ? left : 0;
+        //check if the popup will not go off the container
+        if (left + widthOfPopup > this.containerWidth) {
+          // on the right side
+          return this.containerWidth - widthOfPopup;
+        } else {
+          // on the left side
+          return left > 0 ? left : 0;
+        }
       }
+      return 0;
     },
     wasChanged() {
       return (

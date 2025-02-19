@@ -2,8 +2,10 @@
 
 #document-edit {
   display: flex;
-  flex: 1;
   background-color: $light-grey-background;
+  position: relative;
+  display: flex;
+  height: 100%;
 
   .pages-section {
     width: 100%;

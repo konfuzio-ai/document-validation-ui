@@ -114,7 +114,7 @@
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
   "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>.",
-  "single_category_in_project": "Das aktuelle Projekt hat nur eine Kategorie. Um sie ändern zu können, sollte die neue zuerst dem Projekt hinzugefügt werden. Einzelheiten dazu finden Sie unter <a href='https://help.konfuzio.com/modules/categories/index.html#add-a-category' target='_blank'>diesem Link</a>.",
+  "single_category_in_project": "Das aktuelle Projekt hat nur eine Kategorie. Um sie ändern zu können, sollte die neue zuerst dem Projekt hinzugefügt werden.",
   "approved_annotations": "Die Kategorie kann nicht geändert werden, da bereits akzeptierte Annotationen oder manuell erstellte Annotationen zu diesem Dokument vorhanden sind.",
   "restore": "Wiederherstellen",
   "disabled_finish_review": "Das Beenden der Dokumentenprüfung ist erst möglich, nachdem alle Annotationen überarbeitet wurden, unabhängig davon, ob sie akzeptiert oder als fehlend markiert wurden.",
@@ -162,5 +162,6 @@
   "annotation_link": "Kopieren Sie den permanenten Link zu dieser Annotationen",
   "copied": "Kopiert",
   "checkbox_ann_details": "Für dieses Label wird ein Kästchen extrahiert.",
-  "document_section": "Dokumentabschnitt"
+  "document_section": "Dokumentabschnitt",
+  "label_size": "Spaltengröße:"
 }

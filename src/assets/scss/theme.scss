@@ -68,68 +68,6 @@
       }
     }
 
-    // TODO: custom classes should have the styles under the component file
-    &.missing-decline-btn {
-      font-size: 14px;
-      color: $grey-blue !important;
-      font-weight: 500;
-      background-color: transparent;
-      width: auto;
-
-      &:not([disabled]) {
-        &:hover {
-          text-decoration: none;
-          color: $text-color !important;
-        }
-      }
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-
-    &.is-text {
-      text-decoration: none;
-
-      &.has-right-icon {
-        > span {
-          padding-right: 16px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      &:hover {
-        background-color: transparent;
-      }
-    }
-
-    &.annotation-cancel-btn {
-      .icon {
-        svg {
-          width: 15px !important;
-          height: 15px !important;
-        }
-      }
-    }
-
-    &.accept-all-btn {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-    &.all-missing-btn {
-      padding-right: 4px;
-    }
-
-    &.action-bar-save-btn {
-      height: 32px;
-      padding: 6px 12px 6px 12px !important;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
     &.finish-review-btn {
       margin-right: 2px;
 
@@ -163,6 +101,85 @@
 
     &.tertiary-button {
       border-radius: 20px !important;
+    }
+  }
+
+  .b-slider {
+    &.is-full-height {
+      height: 100%;
+
+      .b-slider-track {
+        height: 100%;
+
+        .b-slider-thumb-wrapper {
+          height: 100%;
+          .tooltip-trigger {
+            height: 100%;
+            .b-slider-thumb {
+              height: 100%;
+              width: 1px;
+            }
+          }
+        }
+      }
+    }
+    &.show-hover {
+      .b-slider-track:hover {
+        .b-slider-thumb-wrapper {
+          .tooltip-trigger {
+            .b-slider-thumb {
+              width: 4px;
+              transform: none;
+              background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+    &.show-line {
+      .b-slider-track {
+        .b-slider-thumb-wrapper {
+          .tooltip-trigger {
+            .b-slider-thumb {
+              background-color: $grey-lightest;
+              background-image: none;
+            }
+          }
+        }
+      }
+    }
+    &.is-move {
+      margin: 0px;
+      &.is-disabled {
+        .b-slider-track {
+          cursor: not-allowed !important;
+        }
+        .b-slider-thumb-wrapper {
+          cursor: not-allowed !important;
+        }
+      }
+      .b-slider-track {
+        cursor: col-resize;
+        color: $white;
+        background: transparent !important;
+      }
+      .b-slider-fill {
+        background: transparent !important;
+      }
+      .b-slider-thumb-wrapper {
+        cursor: col-resize;
+        .b-slider-thumb {
+          background: none;
+          background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+
+          width: 5px;
+          border: none;
+        }
+        .tooltip-content {
+          user-select: none;
+        }
+      }
     }
   }
 
@@ -540,14 +557,6 @@
     }
   }
 
-  .label-action-btn {
-    .dropdown-trigger {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-  }
-
   .slide-fade-enter-active {
     transition: all 0.3s ease;
   }
@@ -677,6 +686,10 @@
     margin: 0 !important;
   }
 
+  .center-icon {
+    vertical-align: middle;
+  }
+
   .icon.is-48 {
     svg {
       height: 48px;
@@ -701,6 +714,12 @@
     svg {
       height: 12px;
       width: 12px;
+    }
+  }
+  .icon.is-16 {
+    svg {
+      height: 16px;
+      width: 16px;
     }
   }
 

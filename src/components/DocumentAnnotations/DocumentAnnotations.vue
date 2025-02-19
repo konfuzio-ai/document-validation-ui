@@ -28,7 +28,7 @@
       <EmptyState />
     </div>
 
-    <div v-else ref="annotationList" :class="['annotation-set-list']">
+    <div v-else ref="annotationList" class="annotation-set-list">
       <AnnotationFilters
         v-if="isDocumentEditable"
         @openAll="openAllAccordions"
@@ -43,7 +43,7 @@
       >
         <EmptyState :is-search="true" />
       </div>
-      <div v-if="annotationSetsAccordion">
+      <div v-if="annotationSetsAccordion" class="annotation-sets-accordions">
         <div
           v-for="(
             annotationSet, indexGroup
@@ -51,6 +51,7 @@
           :key="indexGroup"
           :class="[
             'annotation-set-group',
+            indexGroup === 0 && 'no-top-margin',
             !isAccordionOpen(annotationSet) && 'annotation-set-collapsed',
           ]"
         >
@@ -105,7 +106,10 @@
           </div>
 
           <b-collapse :open="isAccordionOpen(annotationSet)">
-            <div v-if="annotationSet.labels.length > 0">
+            <div
+              v-if="annotationSet.labels.length > 0"
+              class="annotation-sets-list"
+            >
               <div v-for="label in annotationSet.labels" :key="label.id">
                 <div
                   v-if="!(label.annotations.length === 0 && publicView)"

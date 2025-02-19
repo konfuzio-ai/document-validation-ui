@@ -13,8 +13,21 @@
     @mouseover="hoveredAnnotation = currentAnnotationId()"
     @mouseleave="hoveredAnnotation = null"
   >
+    <div class="annotations-width-slider">
+      <b-slider
+        :value="labelWidth"
+        type="is-move"
+        :min="20"
+        :max="80"
+        :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
+        class="is-full-height show-hover show-line"
+        :disabled="isAnnotationInEditMode()"
+        @input="setLabelWidth"
+      />
+    </div>
     <div
       class="annotation-row-left"
+      :style="`width:${labelWidth}%`"
       @mouseenter="onAnnotationHoverEnter(defaultSpan)"
       @mouseleave="onAnnotationHoverLeave"
     >
@@ -82,7 +95,8 @@
         </b-tooltip>
       </div>
     </div>
-    <div class="annotation-row-right">
+
+    <div class="annotation-row-right" :style="`width:${annotationWidth}%`">
       <div class="annotation-content">
         <div v-if="annotation" class="annotation-items">
           <b-checkbox
@@ -144,16 +158,22 @@
           />
         </div>
       </div>
-      <div class="buttons-container">
+      <div
+        v-if="showAnnotationActions()"
+        :class="`buttons-container ${
+          isAnnotationInEditMode(currentAnnotationId()) ? 'is-ann-editing' : ''
+        }`"
+      >
         <AnnotationActionButtons
           :annotation="annotation"
-          :cancel-btn="showCancelButton()"
-          :accept-btn="showAcceptButton()"
-          :decline-btn="showDeclineButton()"
-          :show-missing-btn="showMissingButton()"
-          :save-btn="showSaveButton()"
-          :restore-btn="showRestoreButton()"
-          :link-btn="showLinkButton()"
+          :show-cancel="showCancelButton()"
+          :show-accept="showAcceptButton()"
+          :show-decline="showDeclineButton()"
+          :show-missing="showMissingButton()"
+          :show-search="showMissingButton()"
+          :show-save="showSaveButton()"
+          :show-restore="showRestoreButton()"
+          :show-link="showLinkButton()"
           :is-loading="isLoading"
           @mark-as-missing="handleMissingAnnotation"
           @save="handleSaveChanges"
@@ -161,14 +181,15 @@
           @decline="handleSaveChanges(true)"
           @cancel="handleCancelButton"
           @restore="handleRestore"
-          @search-label-in-document="searchLabelInDocument"
+          @search="searchLabelInDocument"
+          @link="copyAnnotationLink"
         />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import AnnotationDetails from "./AnnotationDetails";
 import AnnotationContent from "./AnnotationContent";
 import EmptyAnnotation from "./EmptyAnnotation";
@@ -243,6 +264,7 @@ export default {
       "elementSelected",
       "selectedEntities",
     ]),
+    ...mapState("display", ["labelWidth", "annotationWidth"]),
     ...mapState("project", ["showAnnotationTranslations"]),
     ...mapGetters("document", [
       "isAnnotationInEditMode",
@@ -363,6 +385,7 @@ export default {
     this.checkAnnotationSelection(this.annotationId);
   },
   methods: {
+    ...mapActions("display", ["setLabelWidth"]),
     handleCheckboxChanged(value) {
       this.$store
         .dispatch("document/updateAnnotation", {
@@ -475,6 +498,20 @@ export default {
         return null;
       }
     },
+    showAnnotationActions() {
+      return (
+        !this.publicView &&
+        !this.isDocumentReviewed &&
+        (this.isLoading ||
+          this.showLinkButton() ||
+          this.showAcceptButton() ||
+          this.showDeclineButton() ||
+          this.showMissingButton() ||
+          this.showCancelButton() ||
+          this.showSaveButton() ||
+          this.showRestoreButton())
+      );
+    },
     showLinkButton() {
       return (
         !this.editAnnotation &&
@@ -512,18 +549,19 @@ export default {
       return (
         !this.editAnnotation &&
         this.hoveredAnnotation &&
+        !this.isLoading &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotationIsNotFound(this.annotationSet, this.label)
       );
     },
     showCancelButton() {
-      if (!this.editAnnotation || this.isLoading) return;
-      if (this.isAnnotationInEditMode(this.currentAnnotationId())) {
-        return true;
+      if (!this.editAnnotation || this.isLoading) {
+        return false;
       }
+      return this.isAnnotationInEditMode(this.currentAnnotationId());
     },
     showSaveButton() {
-      if (!this.editAnnotation || this.isLoading) return;
+      if (!this.editAnnotation || this.isLoading) return false;
 
       // Check if it's an Annotation or Empty Annotation
       if (this.isAnnotation) {
@@ -590,7 +628,7 @@ export default {
         if (showAiWarning) {
           this.$buefy.dialog.confirm({
             container: "#app .dv-ui-app-container",
-            canCancel: "button",
+            canCancel: ["button"],
             message: this.$t("edit_ann_content_warning"),
             onConfirm: () => this.saveAnnotationChanges(spans, decline),
             onCancel: () => this.handleCancelButton(),
@@ -632,7 +670,9 @@ export default {
     saveAnnotationChanges(spans, isToDecline) {
       // This function deals with declining Annotations
       // or editing an Annotation or a part of it (if multi line)
-      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = true;
+      }, 100);
 
       let updatedString; // what will be sent to the API
       let storeAction; // if it will be 'delete' or 'patch'
@@ -719,6 +759,7 @@ export default {
         this.$store.dispatch("selection/disableSelection");
         this.$store.dispatch("selection/setSelectedEntities", null);
       }
+      this.isLoading = false;
     },
     enableLoading(annotations) {
       if (annotations && this.annotation && !this.annotation.is_correct) {
@@ -778,8 +819,20 @@ export default {
       window.open(annotationDetailsUrl, "_blank");
     },
     searchLabelInDocument() {
-      this.$store.dispatch("display/enableSearch", true);
-      this.$store.dispatch("display/setCurrentSearch", this.label.name);
+      if (this.label) {
+        this.$store.dispatch("display/enableSearch", true);
+        this.$store.dispatch("display/setCurrentSearch", this.label.name);
+      }
+    },
+    copyAnnotationLink() {
+      if (this.annotation) {
+        this.$store.dispatch("document/setAnnotationId", this.annotation.id);
+        navigator.clipboard.writeText(window.location.href);
+        this.$buefy.toast.open({
+          container: "#app .dv-ui-app-container",
+          message: this.$t("copied"),
+        });
+      }
     },
     selectAnnotation(event) {
       event.stopPropagation();

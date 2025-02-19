@@ -3,9 +3,18 @@
     <DocumentTopBar />
     <div :class="['dashboard-viewer', renameAndCategorize ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
-      <ScrollingDocument ref="scrollingDocument" class="dashboard-document" />
-      <DocumentAnnotations v-if="!editMode" ref="annotations" />
-      <DocumentEdit v-if="editMode" ref="editView" />
+      <Split>
+        <SplitArea :size="50" :min-size="350">
+          <ScrollingDocument
+            ref="scrollingDocument"
+            class="dashboard-document"
+          />
+        </SplitArea>
+        <SplitArea :size="50" style="overflow-y: hidden">
+          <DocumentAnnotations v-if="!editMode" ref="annotations" />
+          <DocumentEdit v-else ref="editView" />
+        </SplitArea>
+      </Split>
 
       <MultiAnnotationTableOverlay
         v-if="showAnnSetTable"

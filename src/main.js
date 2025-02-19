@@ -6,6 +6,7 @@ import i18n from "./i18n";
 import store from "./store";
 import VueObserveVisibility from "vue-observe-visibility";
 import Icons from "./icons";
+import VueSplit from "vue-split-panel";
 
 Vue.component("VueFontawesome", Icons);
 Vue.component("App", App);
@@ -15,6 +16,7 @@ Vue.use(Buefy, {
   defaultIconComponent: "vue-fontawesome",
 });
 Vue.use(VueObserveVisibility);
+Vue.use(VueSplit);
 
 /**
  * Main entrypoint for the App

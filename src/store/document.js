@@ -1251,6 +1251,9 @@ const actions = {
           if (response.status === 200) {
             commit("UPDATE_ANNOTATION", response.data);
             commit("SET_NEW_ACCEPTED_ANNOTATIONS", null);
+            if (response.data && response.data.id) {
+              dispatch("setAnnotationId", response.data.id);
+            }
 
             resolve(true);
           }
