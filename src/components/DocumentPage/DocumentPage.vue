@@ -79,7 +79,7 @@
                 (bbox) => bbox.page_index + 1 == page.number
               )"
             >
-              <v-group :key="'ann' + annotation.id + '-' + index">
+              <v-group>
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="annotationRect(bbox, annotation.id)"
@@ -92,7 +92,7 @@
             <template
               v-if="annotation.metadata && annotation.metadata.checkbox"
             >
-              <v-group :key="'ann' + annotation.id + '-checkbox'">
+              <v-group>
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="
