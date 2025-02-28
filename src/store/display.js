@@ -316,6 +316,16 @@ const actions = {
     commit("SET_LABEL_WIDTH", value);
     commit("SET_ANNOTATION_WIDTH", 100 - value);
   },
+  setAnnotationWidth: ({ commit }, value) => {
+    const width = Number(value);
+    if (width && width >= 20) {
+      commit("SET_ANNOTATION_WIDTH", width);
+      commit("SET_LABEL_WIDTH", 100 - width);
+    } else {
+      commit("SET_ANNOTATION_WIDTH", 60);
+      commit("SET_LABEL_WIDTH", 40);
+    }
+  },
 
   debounceSearch: debounce(({ commit, dispatch }, query) => {
     dispatch("search", query);

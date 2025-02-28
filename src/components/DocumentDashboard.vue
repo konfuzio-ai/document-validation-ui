@@ -156,26 +156,28 @@ export default {
       return elementsWidth;
     },
     onDocumentResize() {
-      this.documentContainerLeftPadding =
-        this.$refs.scrollingDocument.$el.getBoundingClientRect().left;
-      this.documentContainerWidth =
-        this.$refs.scrollingDocument.$el.offsetWidth;
-      this.$store.dispatch(
-        "display/updateOptimalResolution",
-        this.$el.offsetWidth
-      );
-      if (this.selectedDocument.pages[0]) {
-        this.$store.dispatch("display/updateScale", {
-          elementsWidth: this.elementsWidth(),
-          client: {
-            width: this.$el.clientWidth,
-            height: this.$el.clientHeight,
-          },
-          viewport: {
-            width: this.selectedDocument.pages[0].size[0],
-            height: this.selectedDocument.pages[0].size[1],
-          },
-        });
+      if (this.$refs.scrollingDocument) {
+        this.documentContainerLeftPadding =
+          this.$refs.scrollingDocument.$el.getBoundingClientRect().left;
+        this.documentContainerWidth =
+          this.$refs.scrollingDocument.$el.offsetWidth;
+        this.$store.dispatch(
+          "display/updateOptimalResolution",
+          this.$el.offsetWidth
+        );
+        if (this.selectedDocument.pages[0]) {
+          this.$store.dispatch("display/updateScale", {
+            elementsWidth: this.elementsWidth(),
+            client: {
+              width: this.$el.clientWidth,
+              height: this.$el.clientHeight,
+            },
+            viewport: {
+              width: this.selectedDocument.pages[0].size[0],
+              height: this.selectedDocument.pages[0].size[1],
+            },
+          });
+        }
       }
     },
   },

@@ -50,6 +50,7 @@ Optional variables:
 - annotation: Annotation ID of the desired annotation that should be selected on the list.
 - annotation_set: Annotation Set ID of the desired annotation set that should be selected on the list.
 - hide_empty_label_sets: Hide label sets that have no Labels assigned (id=null)
+- annotation_content_width: Width of the annotation content in the annotation list in percentage. Default is 60, minimum value is 20.
 
 To define this variables in the `.env`, they should be in uppercase and with the prefix `VUE_APP_`.
 Examples:
