@@ -901,4 +901,11 @@
       }
     }
   }
+  .splitpanes--vertical > .splitpanes__splitter {
+    background: $grey-lighter-low-opacity;
+  }
+
+  .splitpanes--horizontal > .splitpanes__splitter {
+    background: $grey-lighter-low-opacity;
+  }
 }

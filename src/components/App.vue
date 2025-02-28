@@ -377,7 +377,7 @@ export default {
     if (this.userToken) {
       API.setAuthToken(this.userToken);
     } else if (this.ssoUrl && this.ssoRealm && this.ssoClientId) {
-      await initKeycloak(this.ssoUrl, this.ssoRealm, this.ssoClientId);
+      //await initKeycloak(this.ssoUrl, this.ssoRealm, this.ssoClientId);
     }
 
     API.setLocale(this.$i18n.locale);
