@@ -7,60 +7,64 @@
       v-model="editPages"
       class="document-grid"
       easing="cubic-bezier(0.37, 0, 0.63, 1)"
+      item-key="id"
       @start="dragging = true"
       @end="handleDragEnd"
       @move="checkMove"
     >
-      <div
-        v-for="(page, index) in editPages"
-        :key="page.id"
-        class="image-section"
-        tabindex="0"
-      >
-        <div class="top-section">
-          <EditPageThumbnail
-            :page="page"
-            :index="index"
-            :rotation="getRotation(page.id)"
-          />
-          <div
-            :class="[
-              'splitting-lines',
-              splittingLines &&
-                splittingLines[index].page === page.number &&
-                'active-split',
-            ]"
-            @click="handleSplittingLines(page.number, 'manual')"
-          >
-            <div class="scissors-icon">
-              <b-icon icon="scissors" class="is-small" />
-            </div>
+      <template #item="{ element, index }">
+        <div
+          :id="element.id"
+          :key="element.id"
+          class="image-section"
+          tabindex="0"
+        >
+          <div class="top-section">
+            <EditPageThumbnail
+              :page="element"
+              :index="index"
+              :rotation="getRotation(element.id)"
+            />
             <div
-              v-if="
-                splittingLines && splittingLines[index].page === page.number
-              "
-              class="lines active-split"
+              :class="[
+                'splitting-lines',
+                splittingLines &&
+                  splittingLines[index].page === element.number &&
+                  'active-split',
+              ]"
+              @click="handleSplittingLines(element.number, 'manual')"
             >
-              <SplitZigZag
-                :color="
+              <div class="scissors-icon">
+                <b-icon icon="scissors" class="is-small" />
+              </div>
+              <div
+                v-if="
                   splittingLines &&
-                  splittingLines[index].origin &&
-                  splittingLines[index].origin === 'AI' &&
-                  splitSuggestionsEnabled
-                    ? 'green'
-                    : 'dark'
+                  splittingLines[index].page === element.number
                 "
-              />
-            </div>
-            <div v-else class="lines not-active-split">
-              <SplitLines />
+                class="lines active-split"
+              >
+                <SplitZigZag
+                  :color="
+                    splittingLines &&
+                    splittingLines[index].origin &&
+                    splittingLines[index].origin === 'AI' &&
+                    splitSuggestionsEnabled
+                      ? 'green'
+                      : 'dark'
+                  "
+                />
+              </div>
+              <div v-else class="lines not-active-split">
+                <SplitLines />
+              </div>
             </div>
           </div>
+          <div class="bottom-section">
+            <span class="page-number">{{ element.number }}</span>
+          </div>
         </div>
-        <div class="bottom-section">
-          <span class="page-number">{{ page.number }}</span>
-        </div>
-      </div>
+      </template>
     </draggable>
   </div>
 </template>

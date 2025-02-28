@@ -25,17 +25,19 @@
           ]"
           type="is-text"
         >
-          {{
-            selectedSet
-              ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
-                        "new"
-                      )})`
-                }`
-              : $t("select_annotation_set")
-          }}
+          <span class="input-text">
+            {{
+              selectedSet
+                ? `${selectedSet.label_set.name} ${
+                    selectedSet.id
+                      ? numberOfAnnotationSetGroup(selectedSet)
+                      : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                          "new"
+                        )})`
+                  }`
+                : $t("select_annotation_set")
+            }}</span
+          >
           <span class="caret-icon">
             <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
@@ -95,7 +97,7 @@
             :disabled="!labelsFiltered"
             type="is-text"
           >
-            {{ selectedLabel.name }}
+            <span class="input-text"> {{ selectedLabel.name }}</span>
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>

@@ -1,10 +1,12 @@
-import Vue from "vue";
+import App from "../src/components/App";
+import { createApp } from "vue";
 import Buefy from "buefy";
-import VueObserveVisibility from "vue-observe-visibility";
+import VueObserveVisibility from "vue3-observe-visibility";
 import { init as initStore } from "./utils/store";
 
-Vue.use(VueObserveVisibility);
-Vue.use(Buefy);
+const app = createApp(App);
+app.use(VueObserveVisibility);
+app.use(Buefy);
 
 initStore();
 
