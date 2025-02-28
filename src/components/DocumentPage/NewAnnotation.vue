@@ -27,17 +27,19 @@
           ]"
           type="is-text"
         >
-          {{
-            selectedSet
-              ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
-                        "new"
-                      )})`
-                }`
-              : $t("select_annotation_set")
-          }}
+          <span class="input-text">
+            {{
+              selectedSet
+                ? `${selectedSet.label_set.name} ${
+                    selectedSet.id
+                      ? numberOfAnnotationSetGroup(selectedSet)
+                      : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                          "new"
+                        )})`
+                  }`
+                : $t("select_annotation_set")
+            }}</span
+          >
           <span class="caret-icon">
             <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
@@ -72,7 +74,6 @@
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
-      :close-delay="5000"
     >
       <template #content>
         <div
@@ -99,13 +100,13 @@
             ]"
             type="is-text"
           >
-            {{
+            <span class="input-text">{{
               selectedLabel
                 ? selectedLabel.name
                 : labels && labels.length === 0
                 ? $t("no_labels_to_choose")
                 : $t("select_label")
-            }}
+            }}</span>
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>
