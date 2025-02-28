@@ -26,8 +26,7 @@ The Document Validation UI is a powerful JavaScript-based document library that'
 
 ## License
 
-Konfuzio Document Validation UI is dual licensed under GNU AGPL v3 and commercial license.
+Konfuzio Document Validation UI is available under a commercial license.
+For usage, distribution, or modification, a valid license is required.
+For licensing inquiries, please [contact our team](https://konfuzio.com/kontakt/). 
 
-The GNU AGPL v3 is designed for developers who are building open source applications in compliance with the GNU AGPL v3 license and are able to support themselves. It is fully featured. If you distribute, host or create derivative works of the Konfuzio Document Validation UI software over the network, the GNU AGPL v3 license requires that you also distribute the complete, corresponding source code of the combined work under the same GNU AGPL v3 license. This requirement applies whether or not you modified Konfuzio Document Validation UI. 
-
-A commercial license is available. Please [contact our team](https://konfuzio.com/kontakt/). 
