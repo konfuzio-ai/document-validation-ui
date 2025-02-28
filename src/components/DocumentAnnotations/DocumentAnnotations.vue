@@ -105,7 +105,10 @@
             </div>
           </div>
 
-          <b-collapse :open="isAccordionOpen(annotationSet)">
+          <b-collapse
+            :model-value="isAccordionOpen(annotationSet)"
+            animation="slide"
+          >
             <div
               v-if="annotationSet.labels.length > 0"
               class="annotation-sets-list"
