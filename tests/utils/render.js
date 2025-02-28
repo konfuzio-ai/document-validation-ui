@@ -2,10 +2,10 @@ import { mount, shallowMount } from "@vue/test-utils";
 import { $t } from "./i18n";
 import store from "../../src/store";
 
-export const render = (component, shallow, propsData = {}, data = {}) => {
+export const render = (component, shallow, props = {}, data = {}) => {
   const values = {
     store,
-    propsData,
+    props,
     mocks: {
       $t,
     },

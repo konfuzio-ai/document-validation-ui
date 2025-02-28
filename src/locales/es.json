@@ -102,7 +102,7 @@
   "decline": "Declinar",
   "server_error": "Estamos experimentando problemas con el servidor. Por favor, repita la operación o ",
   "get_support": "Contacte al Soporte",
-  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado. Para más información, haz clic en <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>este enlace</a>.",
+  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
   "new_ann_set_title": "Crear anotaciones múltiples",
   "new_ann_set_description": "Seleccione un modelo de datos de las opciones disponibles, y luego deseleccione las etiquetas que no existen en este documento.",
   "select_label_set": "Seleccione un modelo de grupo de etiquetas",

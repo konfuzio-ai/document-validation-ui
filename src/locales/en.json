@@ -109,7 +109,7 @@
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
   "get_support": "Get Support",
-  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set. For more details, you can visit <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>this link</a>.",
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set.",
   "new_multi_ann_title": "Create multiple annotations",
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
