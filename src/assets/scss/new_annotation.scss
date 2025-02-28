@@ -30,6 +30,13 @@
     text-wrap: wrap;
     text-align: left;
 
+    > span {
+      white-space: nowrap;
+      width: 100%;
+      overflow: hidden;
+      margin-right: 24px;
+    }
+
     .caret-icon {
       position: absolute;
       right: 18px;

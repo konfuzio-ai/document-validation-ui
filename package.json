@@ -7,6 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --name DocumentValidationUi ./src/main.js",
     "test:unit": "vue-cli-service test:unit",
+    "test": "jest",
     "cypress:open": "cypress open",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "lint": "vue-cli-service lint",
@@ -38,24 +39,24 @@
     "vue-i18n": "^10.0.5",
     "vue-konva": "^3.2.0",
     "vue3-observe-visibility": "^1.0.3",
-    "vue3-split-panel": "^0.2.0",
     "vuedraggable": "^4.1.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.3.0",
-    "@intlify/vue-i18n-loader": "^1.x",
-    "@vue/cli-plugin-unit-jest": "^5.0.8",
+    "@babel/preset-env": "^7.26.9",
     "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.1.0",
     "@vue/test-utils": "^2.4.6",
-    "@vue/vue3-jest": "^27.0.0",
+    "@vue/vue3-jest": "^29.2.6",
+    "babel-jest": "^29.7.0",
     "cypress": "^13.2.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-vue": "^9.32.0",
-    "jest": "^29.7.0",
+    "jest": "^29.2.6",
+    "jest-environment-jsdom": "^29.7.0",
     "prettier": "2.8.1"
   }
 }
