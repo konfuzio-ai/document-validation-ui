@@ -411,9 +411,11 @@ export default {
     },
 
     createArray(className) {
-      return Array.from(
-        this.$refs.annotationList.getElementsByClassName(className)
-      );
+      if (this.$refs.annotationList) {
+        return Array.from(
+          this.$refs.annotationList.getElementsByClassName(className)
+        );
+      }
     },
 
     keyDownHandler(event) {
