@@ -15,14 +15,13 @@
   >
     <div class="annotations-width-slider">
       <b-slider
-        :value="labelWidth"
+        v-model="labelContainerWidth"
         type="is-move"
         :min="20"
         :max="80"
         :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
         class="is-full-height show-hover show-line"
         :disabled="isAnnotationInEditMode()"
-        @input="setLabelWidth"
       />
     </div>
     <div
@@ -250,6 +249,7 @@ export default {
       checkboxDefaultValue: checkboxValue,
       isCheckboxAvailable: false,
       isChecked: checkboxValue,
+      labelContainerWidth: 0,
     };
   },
   computed: {
@@ -325,6 +325,12 @@ export default {
     },
   },
   watch: {
+    labelWidth(width) {
+      this.labelContainerWidth = width;
+    },
+    labelContainerWidth(width) {
+      this.setLabelWidth(width);
+    },
     annotationId(newAnnotationId) {
       this.checkAnnotationSelection(newAnnotationId);
     },
@@ -389,6 +395,7 @@ export default {
   },
   mounted() {
     this.checkAnnotationSelection(this.annotationId);
+    this.labelContainerWidth = this.labelWidth;
   },
   methods: {
     ...mapActions("display", ["setLabelWidth"]),
