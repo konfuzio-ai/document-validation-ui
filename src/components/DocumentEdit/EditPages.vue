@@ -8,9 +8,9 @@
       class="document-grid"
       easing="cubic-bezier(0.37, 0, 0.63, 1)"
       item-key="id"
+      :move="checkMove"
       @start="dragging = true"
       @end="handleDragEnd"
-      @move="checkMove"
     >
       <template #item="{ element, index }">
         <div
@@ -79,7 +79,6 @@ import { mapState } from "vuex";
 import SplitLines from "../../assets/images/SplitLines";
 import SplitZigZag from "../../assets/images/SplitZigZag";
 import EditPageThumbnail from "./EditPageThumbnail";
-
 import draggable from "vuedraggable";
 
 export default {
@@ -135,9 +134,6 @@ export default {
         this.editPages = this.pagesForPostprocess;
       }
     },
-  },
-  mounted() {
-    this.editPages = this.pagesForPostprocess;
   },
   methods: {
     deselect() {
