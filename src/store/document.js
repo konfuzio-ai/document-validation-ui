@@ -1088,6 +1088,7 @@ const actions = {
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", fetchedDocument);
+          commit("SET_PAGES", fetchedDocument.pages);
 
           // project
           if (fetchedDocument.project) {
