@@ -1078,17 +1078,19 @@ const actions = {
           const { labels, annotations, annotationSets } =
             getters.processAnnotationSets(fetchedDocument.annotation_sets);
 
+          // reset pages to avoid displaying old pages while new ones are loading
+          commit("SET_PAGES", []);
+
           // load first page
-          // if (fetchedDocument.pages.length > 0) {
-          //   dispatch("fetchDocumentPage", initialPage);
-          // }
+          if (fetchedDocument.pages.length > 0) {
+            dispatch("fetchDocumentPage", initialPage);
+          }
 
           // set information on the store
           commit("SET_ANNOTATION_SETS", annotationSets);
           commit("SET_ANNOTATIONS", annotations);
           commit("SET_LABELS", labels);
           commit("SET_SELECTED_DOCUMENT", fetchedDocument);
-          commit("SET_PAGES", fetchedDocument.pages);
 
           // project
           if (fetchedDocument.project) {
