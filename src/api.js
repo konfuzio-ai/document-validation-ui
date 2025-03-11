@@ -18,7 +18,9 @@ FILE_REQUEST = axios.create({
 });
 
 const setAuthToken = (token) => {
-  authToken = token;
+  if (token !== authToken) {
+    authToken = token;
+  }
 };
 
 const setIsKeycloakAuth = (result) => {
@@ -38,16 +40,15 @@ const setLocale = (locale) => {
 };
 
 const getInterceptorConfig = async (config) => {
-  if (authToken) {
-    config.headers["Authorization"] = `${
-      isKeycloakAuth ? "Bearer" : "Token"
-    } ${authToken}`;
-  }
-  config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
-
   if (isKeycloakAuth) {
     await updateKeycloakToken();
   }
+
+  if (authToken) {
+    config.headers["Authorization"] = `${isKeycloakAuth ? "Bearer" : "Token"
+      } ${authToken}`;
+  }
+  config.headers["Accept-Language"] = `${appLocale}-${appLocale}`;
 
   return config;
 };

@@ -29,7 +29,8 @@ export const initKeycloak = async (url, realm, clientId) => {
 export const updateKeycloakToken = () => {
   return new Promise(async (resolve, reject) => {
     if (keycloak) {
-      const update = await keycloak.updateToken(30);
+      await keycloak.updateToken(30);
+      API.setAuthToken(keycloak.token);
       resolve();
     } else {
       reject();
