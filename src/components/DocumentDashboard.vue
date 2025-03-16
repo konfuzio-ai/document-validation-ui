@@ -10,7 +10,7 @@
             class="dashboard-document"
           />
         </SplitArea>
-        <SplitArea :size="50" style="overflow-y: hidden">
+        <SplitArea :size="50" style="overflow-y: auto">
           <DocumentAnnotations v-if="!editMode" ref="annotations" />
           <DocumentEdit v-else ref="editView" />
         </SplitArea>
