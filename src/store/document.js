@@ -1268,11 +1268,19 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters }, { annotationId, annotationSet }) => {
+  deleteAnnotation: (
+    { commit, getters, state },
+    { annotationId, annotationSet }
+  ) => {
     return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(async (response) => {
           if (response.status === 204) {
+            if (state.annotationId === annotationId) {
+              commit("SET_ANNOTATION_ID", null);
+              setURLAnnotationHash(null);
+            }
+
             commit("DELETE_ANNOTATION", annotationId);
 
             // Check if the deleted annotation was the last one in a multiple annotation set

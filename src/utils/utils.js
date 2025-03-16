@@ -51,6 +51,12 @@ export function setURLQueryParam(query, value, deleteParam = "") {
 export function setURLAnnotationHash(annotationId) {
   if (annotationId) {
     window.location.hash = `ann${annotationId}`;
+  } else {
+    history.pushState(
+      "",
+      document.title,
+      window.location.pathname + window.location.search
+    );
   }
 }
 

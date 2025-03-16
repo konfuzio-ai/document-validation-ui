@@ -710,6 +710,7 @@ export default {
           this.$store.dispatch("document/resetEditAnnotation");
           this.$store.dispatch("selection/disableSelection");
           this.$store.dispatch("selection/setSelectedEntities", null);
+          this.isLoading = false;
         });
     },
     saveEmptyAnnotationChanges() {
