@@ -516,12 +516,14 @@ export default {
       return (
         !this.editAnnotation &&
         this.annotation &&
+        !this.isLoading &&
         this.hoveredAnnotation === this.annotation.id
       );
     },
     showAcceptButton() {
       return (
         !this.editAnnotation &&
+        !this.isLoading &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
         !this.annotation.is_correct &&
@@ -531,6 +533,7 @@ export default {
     showDeclineButton() {
       return (
         !this.editAnnotation &&
+        !this.isLoading &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         this.annotation &&
         this.hoveredAnnotation === this.annotation.id
@@ -539,6 +542,7 @@ export default {
     showMissingButton() {
       return (
         !this.editAnnotation &&
+        !this.isLoading &&
         this.hoveredAnnotation &&
         !this.isAnnotationInEditMode(this.currentAnnotationId()) &&
         !this.annotation &&
