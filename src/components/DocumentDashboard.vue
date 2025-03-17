@@ -16,11 +16,6 @@
         </pane>
       </splitpanes>
 
-      <MultiAnnotationTableOverlay
-        v-if="showAnnSetTable"
-        :left="documentContainerLeftPadding"
-        :width="documentContainerWidth"
-      />
       <ChooseLabelSetModal
         v-if="showChooseLabelSetModal && showChooseLabelSetModal.show"
         :is-multiple-annotations="showChooseLabelSetModal.isMultipleAnnotations"
@@ -59,10 +54,7 @@ import { mapGetters, mapState } from "vuex";
 import { DocumentTopBar } from "./DocumentTopBar";
 import { ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
-import {
-  DocumentAnnotations,
-  MultiAnnotationTableOverlay,
-} from "./DocumentAnnotations";
+import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
@@ -89,7 +81,6 @@ export default {
     ErrorMessage,
     NotOptimizedViewportModal,
     DocumentErrorModal,
-    MultiAnnotationTableOverlay,
     ChooseLabelSetModal,
     AnnotationDeletedModal,
   },
