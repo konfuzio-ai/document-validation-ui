@@ -6,7 +6,6 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --name DocumentValidationUi ./src/main.js",
-    "test:unit": "vue-cli-service test:unit",
     "test": "jest",
     "cypress:open": "cypress open",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
@@ -30,7 +29,7 @@
     "axios": "^1.7.9",
     "bignumber.js": "^9.1.2",
     "buefy": "npm:@ntohq/buefy-next@^0.2.0",
-    "keycloak-js": "^26.0.6",
+    "keycloak-js": "^25.0.6",
     "konva": "^9.3.18",
     "sass": "^1.85.0",
     "sass-loader": "^16.0.5",
