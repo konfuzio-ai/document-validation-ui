@@ -30,6 +30,13 @@
       flex-direction: row;
       display: flex;
       flex: 1;
+
+      #brand {
+        img {
+          height: 100%;
+          padding: 12px 16px;
+        }
+      }
     }
 
     .center-bar-components {

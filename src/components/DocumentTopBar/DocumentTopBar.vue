@@ -5,6 +5,9 @@
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
       <div class="left-bar-components">
+        <div id="brand">
+          <img src="../../assets/images/KonfuzioLogo.svg" alt="Konfuzio" />
+        </div>
         <DocumentSetChooser
           v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
