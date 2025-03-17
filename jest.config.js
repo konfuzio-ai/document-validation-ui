@@ -1,5 +1,4 @@
 module.exports = {
-  setupFiles: ["./tests/setup.js"],
   moduleFileExtensions: [
     "vue",
     "js",
@@ -11,7 +10,13 @@ module.exports = {
     "json",
     "node",
   ],
+  moduleNameMapper: {
+    "\\.(css|less)$": "<rootDir>/tests/mock/styleMock.js",
+  },
   testEnvironment: "jsdom",
+  testEnvironmentOptions: {
+    customExportConditions: ["node", "node-addons"],
+  },
   transformIgnorePatterns: ["node_modules/(?!axios|keycloak-js)"],
   transform: {
     "^.+\\.[t|j]sx?$": "babel-jest",
