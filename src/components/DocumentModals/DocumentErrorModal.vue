@@ -17,15 +17,6 @@
           <p>{{ $t("document_error_info") }}</p>
         </div>
       </section>
-      <footer class="modal-card-foot">
-        <b-button
-          type="is-primary"
-          class="primary-button"
-          @click="handleContactSupport"
-        >
-          {{ $t("contact_support") }}
-        </b-button>
-      </footer>
     </b-modal>
   </section>
 </template>
@@ -44,10 +35,6 @@ export default {
     };
   },
   methods: {
-    handleContactSupport() {
-      const documentError = "Document error";
-      this.$store.dispatch("document/contactSupport", documentError);
-    },
     closeModal() {
       this.$store.dispatch("document/setDocumentError", false);
     },

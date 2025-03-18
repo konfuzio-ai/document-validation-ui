@@ -1497,14 +1497,6 @@ const actions = {
     }, 5000);
   },
 
-  contactSupport: ({ rootState }, error) => {
-    const url = "https://konfuzio.com/support/";
-    const params = `project=${rootState.project.projectId}&email=${rootState.project.currentUser.username}&issue=${error}`;
-    const fullUrl = `${url}?${params}`;
-
-    window.open(fullUrl, "_blank");
-  },
-
   changeCurrentDocument: (
     { commit, state, dispatch, rootState },
     documentId

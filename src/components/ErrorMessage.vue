@@ -3,9 +3,6 @@
     <div v-if="serverError" class="message-container">
       <span class="server-error">
         {{ errorMessage }}
-        <span class="contact-support" @click="handleGetSupport">
-          {{ $t("get_support") }} <b-icon icon="arrow-right" size="is-small"
-        /></span>
       </span>
     </div>
     <div v-else class="message-container">
@@ -26,10 +23,6 @@ export default {
     ...mapState("document", ["errorMessage", "serverError"]),
   },
   methods: {
-    handleGetSupport() {
-      const error = "Server error";
-      this.$store.dispatch("document/contactSupport", error);
-    },
     handleErrorClose() {
       this.$store.dispatch("document/setErrorMessage", null);
     },

@@ -13,13 +13,6 @@
       <div class="documents-list-top-right">
         <div class="action-box">
           <span>{{ $t("upload_documents") }}</span>
-          <b-button
-            class="action-button primary-button"
-            type="is-primary"
-            @click="requestTrialAccess"
-          >
-            {{ $t("request_trial") }}
-          </b-button>
         </div>
       </div>
     </div>
@@ -111,9 +104,6 @@ export default {
   methods: {
     changeDocument(documentId) {
       this.$store.dispatch("document/changeCurrentDocument", documentId);
-    },
-    requestTrialAccess() {
-      window.open("https://konfuzio.com", "_blank");
     },
   },
 };
