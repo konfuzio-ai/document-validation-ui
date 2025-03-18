@@ -1,9 +1,8 @@
-@import "./imports.scss";
-$documents-list-height: 52px;
+@use "variables.scss";
 
 .documents-list {
-  background-color: $background;
-  font-family: $font-family;
+  background-color: variables.$background;
+  font-family: variables.$font-family;
 
   .documents-list-top {
     display: flex;
@@ -16,7 +15,7 @@ $documents-list-height: 52px;
 
       h2 {
         font-size: 26px;
-        color: $text;
+        color: variables.$text;
         font-weight: 600;
         line-height: 33px;
         margin: 0;
@@ -24,7 +23,7 @@ $documents-list-height: 52px;
 
       p {
         font-size: 14px;
-        color: $text-lighter;
+        color: variables.$text-lighter;
         font-weight: 400;
         line-height: 20px;
         margin: 16px 0 0 0;
@@ -53,7 +52,7 @@ $documents-list-height: 52px;
           content: "";
           width: 100%;
           height: 100%;
-          background: $primary;
+          background: variables.$primary;
           opacity: 0.1;
           position: absolute;
           top: 0;
@@ -65,7 +64,7 @@ $documents-list-height: 52px;
           font-weight: 600;
           font-size: 16px;
           line-height: 24px;
-          color: $text;
+          color: variables.$text;
         }
 
         .action-button {
@@ -84,7 +83,7 @@ $documents-list-height: 52px;
   .documents-list-bottom {
     display: flex;
     flex-direction: row;
-    border-bottom: $component-border;
+    border-bottom: variables.$component-border;
 
     .documents-list-thumbnail {
       cursor: pointer;
@@ -93,7 +92,7 @@ $documents-list-height: 52px;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      height: $documents-list-height;
+      height: variables.$documents-list-height;
       padding: 8px;
 
       &.selected {
@@ -101,7 +100,7 @@ $documents-list-height: 52px;
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
-        border-bottom: 3px solid $primary;
+        border-bottom: 3px solid variables.$primary;
       }
 
       .img-thumbnail {
@@ -112,7 +111,7 @@ $documents-list-height: 52px;
         }
 
         &.selected {
-          outline: 1px solid $dark;
+          outline: 1px solid variables.$dark;
         }
       }
 

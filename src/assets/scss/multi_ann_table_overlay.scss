@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .multi-ann-table-overlay {
   position: absolute;
@@ -6,7 +6,7 @@
   height: fit-content;
   z-index: 40;
   width: 100%;
-  background-color: $background;
+  background-color: variables.$background;
 
   .multi-ann-set-table {
     padding-bottom: 6px;
@@ -25,7 +25,7 @@
         }
 
         .delete-action {
-          color: $red;
+          color: variables.$red;
         }
       }
 

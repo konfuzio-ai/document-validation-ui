@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .error-page {
   width: 100vw;
@@ -9,6 +9,6 @@
   flex-direction: column;
   gap: 16px;
   .error-icon {
-    color: $red;
+    color: variables.$red;
   }
 }
