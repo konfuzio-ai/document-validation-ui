@@ -109,8 +109,7 @@
 
         &:last-child {
           .splitting-lines {
-            visibility: hidden;
-            pointer-events: none;
+            display: none;
           }
           .page-number {
             padding-right: 0px;

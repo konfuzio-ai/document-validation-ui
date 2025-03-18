@@ -242,7 +242,7 @@ export default {
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
