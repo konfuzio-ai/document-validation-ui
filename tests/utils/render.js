@@ -25,6 +25,8 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 };
 
+const store = initStore();
+
 export const render = (component, shallow, props = {}, data = {}) => {
   const values = {
     props,
@@ -35,7 +37,7 @@ export const render = (component, shallow, props = {}, data = {}) => {
       mocks: {
         $t,
       },
-      plugins: [initStore(), Buefy, VueObserveVisibility],
+      plugins: [store, Buefy, VueObserveVisibility],
     },
   };
 
