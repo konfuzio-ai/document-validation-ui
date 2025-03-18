@@ -12,8 +12,9 @@ console.log(
   `${require("../package.json").name} ${require("../package.json").version}`
 );
 
-const app = createApp(App);
+const app = createApp();
 
+app.component("App", App);
 app.component("VueFontawesome", Icons);
 app.use(VueKonva);
 app.use(Buefy, {
