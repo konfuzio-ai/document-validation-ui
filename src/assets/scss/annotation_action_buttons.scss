@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 .action-buttons {
   display: flex;
   align-items: center;
@@ -22,13 +22,13 @@
 
     &.is-button-text-ghost {
       height: 26px;
-      color: $grey-blue;
+      color: variables.$grey-blue;
       font-size: 14px;
       font-weight: 500;
 
       &:hover {
         text-decoration: none;
-        color: $text-color;
+        color: variables.$text-color;
       }
 
       &:focus {
@@ -54,20 +54,20 @@
   .accept-icon,
   .restore-icon,
   .accept-all-icon {
-    color: $green !important;
+    color: variables.$green !important;
   }
   .save-icon {
-    color: $primary;
+    color: variables.$primary;
   }
   .decline-icon {
-    color: $red;
+    color: variables.$red;
   }
   .cancel-icon,
   .search-icon,
   .missing-icon,
   .link-icon,
   .spinner-icon {
-    color: $grey-blue;
+    color: variables.$grey-blue;
   }
 
   .spinner-icon {

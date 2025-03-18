@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .document-error-modal {
   text-align: left;
@@ -14,7 +14,7 @@
         }
 
         .modal-card-body {
-          background: $white;
+          background: variables.$white;
           border-radius: 12px 12px 0 0 !important;
 
           .header {
@@ -25,14 +25,14 @@
               width: 48px;
               height: 48px;
               border-radius: 50%;
-              background: $low-opacity-red;
+              background: variables.$low-opacity-red;
               display: flex;
               align-items: center;
               justify-content: center;
             }
 
             .close-btn {
-              color: $grey;
+              color: variables.$grey;
 
               &:hover {
                 cursor: pointer;
@@ -42,7 +42,7 @@
 
           .content {
             padding-top: 15px;
-            color: $text-color !important;
+            color: variables.$text-color !important;
 
             h3 {
               font-weight: 500 !important;
@@ -63,7 +63,7 @@
           display: flex;
           justify-content: center;
           border: none;
-          background: $white;
+          background: variables.$white;
           border-radius: 0 0 12px 12px;
           padding-top: 0 !important;
 
