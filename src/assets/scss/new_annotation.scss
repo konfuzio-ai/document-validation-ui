@@ -1,8 +1,8 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .annotation-popup {
   border-radius: 12px;
-  background-color: $text-color;
+  background-color: variables.$text-color;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -10,7 +10,7 @@
   width: 205px;
   height: 192px;
   z-index: 40;
-  color: $white;
+  color: variables.$white;
   padding: 8px;
   cursor: default;
 
@@ -19,8 +19,8 @@
   }
 
   .popup-input {
-    background-color: $text-color;
-    color: $white;
+    background-color: variables.$text-color;
+    color: variables.$white;
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
@@ -28,7 +28,7 @@
     box-shadow: none;
     padding: 8px;
     border-radius: 12px;
-    border: 1px solid $grey-low-opacity;
+    border: 1px solid variables.$grey-low-opacity;
     width: 100%;
     justify-content: space-between;
     position: relative;
@@ -50,16 +50,16 @@
   }
 
   .not-selected {
-    color: $grey-detail;
+    color: variables.$grey-detail;
   }
 
   .add-ann-set {
     &.has-border {
-      border-top: 1px solid $grey-detail;
+      border-top: 1px solid variables.$grey-detail;
     }
 
     width: 100%;
-    color: $primary !important;
+    color: variables.$primary !important;
     font-size: 14px;
     line-height: 24px;
     font-weight: 500;
@@ -75,11 +75,11 @@
 
   .annotation-dropdown {
     border-radius: 12px;
-    border: 1px solid $grey-low-opacity !important;
+    border: 1px solid variables.$grey-low-opacity !important;
 
     .button.is-text {
       box-shadow: none !important;
-      color: $white !important;
+      color: variables.$white !important;
       background-color: transparent !important;
       text-decoration: none;
     }
@@ -92,15 +92,15 @@
     gap: 2px;
 
     .button.is-text {
-      color: $white !important;
+      color: variables.$white !important;
       text-decoration: none;
     }
 
     .cancel-button {
-      color: $white;
+      color: variables.$white;
 
       &:hover {
-        border: 1px solid $grey-low-opacity;
+        border: 1px solid variables.$grey-low-opacity;
         background: transparent;
       }
     }

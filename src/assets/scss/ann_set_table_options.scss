@@ -1,9 +1,9 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .ann-set-table-header {
   position: absolute;
-  background-color: $purple;
-  color: $white;
+  background-color: variables.$purple;
+  color: variables.$white;
   font-size: 14px;
   padding: 4px;
   z-index: 9;
@@ -20,7 +20,7 @@
     }
 
     .delete-action {
-      color: $red;
+      color: variables.$red;
     }
   }
 }
