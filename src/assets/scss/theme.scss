@@ -42,6 +42,10 @@
   text-size-adjust: 100%;
   box-sizing: border-box;
 
+  & {
+    @include meta.load-css("../../../node_modules/buefy/dist/buefy.css");
+  }
+
   h1 {
     font-size: 48px;
     color: variables.$text-color;
@@ -908,8 +912,5 @@
 
   .splitpanes--horizontal > .splitpanes__splitter {
     background: variables.$grey-lighter-low-opacity;
-  }
-  & {
-    @include meta.load-css("../../../node_modules/buefy/dist/buefy.css");
   }
 }
