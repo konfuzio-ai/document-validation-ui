@@ -40,20 +40,9 @@ const state = {
   splittingSuggestions: null,
   enableGroupingFeature: true,
   annotationFilters: {
-    showFeedbackNeeded:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect" ||
-      true,
-    showEmpty:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect"
-        ? false
-        : true,
-    showAccepted:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect"
-        ? false
-        : true,
+    showFeedbackNeeded: true,
+    showEmpty: true,
+    showAccepted: true,
   },
   annotationSearch:
     (getURLQueryParam("search") && getURLQueryParam("search").split(",")) || [],
@@ -1543,6 +1532,15 @@ const actions = {
       dispatch("fetchDocument");
     }
   },
+  showMissingAnnotations({ commit }, show) {
+    commit("SET_SHOW_MISSING_ANNOTATIONS", show);
+  },
+  showFeedbackNeededAnnotations({ commit }, show) {
+    commit("SET_SHOW_FEEDBACK_NEEDED_ANNOTATIONS", show);
+  },
+  showAcceptedAnnotations({ commit }, show) {
+    commit("SET_SHOW_ACCEPTED_ANNOTATIONS", show);
+  },
 };
 
 const mutations = {
@@ -1806,6 +1804,15 @@ const mutations = {
   SET_ANNOTATION_SEARCH: (state, search) => {
     state.annotationSearch = search;
     setURLQueryParam("search", search);
+  },
+  SET_SHOW_MISSING_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showEmpty = show;
+  },
+  SET_SHOW_ACCEPTED_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showAccepted = show;
+  },
+  SET_SHOW_FEEDBACK_NEEDED_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showFeedbackNeeded = show;
   },
 };
 
