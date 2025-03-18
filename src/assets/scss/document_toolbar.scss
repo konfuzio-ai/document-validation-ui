@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 #toolbar-container {
   position: absolute;
@@ -9,7 +9,7 @@
   margin: 0 auto;
 
   .toolbar {
-    background-color: $toolbar;
+    background-color: variables.$toolbar;
     height: 40px;
     width: fit-content;
     border-radius: 8px;
@@ -36,7 +36,7 @@
 
     .toolbar-divider {
       width: 1px;
-      background-color: $grey-detail;
+      background-color: variables.$grey-detail;
       height: 20px;
       margin-left: 10px;
       margin-right: 10px;
@@ -49,7 +49,7 @@
 
       .icon {
         svg {
-          fill: $toolbar-elements;
+          fill: variables.$toolbar-elements;
         }
       }
 
@@ -58,7 +58,7 @@
 
         &:hover {
           cursor: pointer;
-          background: $low-opacity-white;
+          background: variables.$low-opacity-white;
           border-radius: 4px;
         }
 
@@ -72,12 +72,12 @@
         }
 
         .edit-text {
-          color: $toolbar-elements;
+          color: variables.$toolbar-elements;
         }
       }
 
       .percentage {
-        color: $toolbar-elements;
+        color: variables.$toolbar-elements;
         width: 32px;
         padding: 7px;
         margin-right: 20px;
@@ -89,7 +89,7 @@
 
         &:hover:not(.edit-icon) {
           cursor: pointer;
-          background: $low-opacity-white;
+          background: variables.$low-opacity-white;
           border-radius: 4px;
         }
       }
@@ -97,10 +97,10 @@
 
     .download-file,
     .search-icon {
-      color: $toolbar-elements;
+      color: variables.$toolbar-elements;
 
       .is-active {
-        background: $low-opacity-white;
+        background: variables.$low-opacity-white;
         border-radius: 4px;
 
         .icon:hover {

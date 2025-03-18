@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 .action-bar {
   position: absolute;
   width: fit-content;
@@ -9,7 +9,7 @@
   z-index: 100;
 
   .action-bar-elements {
-    background-color: $text-color;
+    background-color: variables.$text-color;
     height: 40px;
     width: fit-content;
     padding: 4px 4px 4px 12px;
@@ -28,7 +28,7 @@
     }
 
     .action-text {
-      color: $white;
+      color: variables.$white;
       font-size: 14px;
       font-weight: 400;
       line-height: 20px;
