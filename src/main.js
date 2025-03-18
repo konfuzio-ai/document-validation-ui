@@ -7,8 +7,9 @@ import { store } from "./store";
 import VueObserveVisibility from "vue3-observe-visibility";
 import Icons from "./icons";
 
-const app = createApp(App);
+const app = createApp();
 
+app.component("App", App);
 app.component("VueFontawesome", Icons);
 app.use(VueKonva);
 app.use(Buefy, {

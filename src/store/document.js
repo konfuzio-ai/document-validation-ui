@@ -1134,6 +1134,7 @@ const actions = {
     // Check if we first open the document dashboard or the edit mode
     if (
       !state.publicView &&
+      state.selectedDocument &&
       (!state.selectedDocument.category ||
         (!state.selectedDocument.category_is_revised &&
           !getters.documentHasCorrectAnnotations &&
