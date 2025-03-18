@@ -131,7 +131,7 @@ export default {
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
   },
-  destroyed() {
+  unmounted() {
     if (this.$refs.scrollingDocument) {
       this.resizeObserver.unobserve(this.$refs.scrollingDocument.$el);
     }

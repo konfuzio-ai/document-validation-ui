@@ -135,6 +135,11 @@ export default {
       }
     },
   },
+  mounted() {
+    if (this.pagesForPostprocess.length > 0) {
+      this.editPages = this.pagesForPostprocess;
+    }
+  },
   methods: {
     deselect() {
       this.$store.dispatch("edit/setSelectedPages");
