@@ -197,6 +197,7 @@ export default {
 
   computed: {
     ...mapState("display", ["showAnnSetTable", "showBranding"]),
+    ...mapState("edit", ["editMode"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -224,7 +225,7 @@ export default {
       return this.editAnnotation && this.editAnnotation.id;
     },
     isDocumentEditable() {
-      return !this.publicView && !this.isDocumentReviewed;
+      return !this.publicView && !this.isDocumentReviewed && !this.editMode;
     },
   },
   watch: {
@@ -276,7 +277,7 @@ export default {
       this.loadAccordions(this.getAnnotationsFiltered.annotationSets);
     }
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
