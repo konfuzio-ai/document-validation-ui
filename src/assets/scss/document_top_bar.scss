@@ -1,9 +1,9 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 #document-top-bar-component {
   width: 100%;
-  height: $top-bar-height;
-  border-bottom: $component-border;
+  height: variables.$top-bar-height;
+  border-bottom: variables.$component-border;
 
   .loading-top-bar {
     height: 100%;
@@ -14,7 +14,7 @@
   .document-top-bar {
     width: 100%;
     height: 100%;
-    background-color: $top-bar-background;
+    background-color: variables.$top-bar-background;
     position: sticky;
     z-index: 39;
     display: flex;
@@ -23,7 +23,7 @@
     flex: 1;
     top: 0;
     font-size: 14px;
-    color: $text-color;
+    color: variables.$text-color;
     font-weight: 400px;
 
     .left-bar-components {
@@ -74,7 +74,7 @@
           align-items: center;
           justify-content: flex-end;
           padding-right: 24px;
-          color: $text-lighter;
+          color: variables.$text-lighter;
           font-size: 14px;
           line-height: 20px;
           font-weight: 400;
@@ -85,12 +85,12 @@
             vertical-align: text-top;
 
             &.info-reviewed {
-              color: $primary;
+              color: variables.$primary;
             }
           }
 
           .doc-reviewed {
-            color: $primary;
+            color: variables.$primary;
           }
 
           .read-only-details {
@@ -121,7 +121,7 @@
 
               .tooltip-divider {
                 width: 1px;
-                background-color: $grey-detail;
+                background-color: variables.$grey-detail;
                 height: 15px;
                 margin-top: 3px;
                 opacity: 30%;
@@ -132,7 +132,7 @@
                 font-weight: 500;
                 display: flex;
                 align-items: center;
-                background-color: $low-opacity-white;
+                background-color: variables.$low-opacity-white;
                 border-radius: 4px;
                 padding: 0 5px 0 5px;
               }

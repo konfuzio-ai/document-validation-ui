@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 #document-search {
   position: absolute;
   right: 8px;
@@ -7,8 +7,8 @@
   z-index: 95;
 
   .search-container {
-    background-color: $searchbar;
-    color: $white;
+    background-color: variables.$searchbar;
+    color: variables.$white;
     height: 40px;
     padding: 8px 4px;
     border-radius: 8px;
@@ -26,7 +26,7 @@
       }
 
       &:hover {
-        background: $low-opacity-white;
+        background: variables.$low-opacity-white;
         border-radius: 4px;
         color: inherit;
       }
@@ -46,7 +46,7 @@
     }
 
     .search-no-results {
-      color: $text-lighter;
+      color: variables.$text-lighter;
       font-size: 12px;
     }
 
@@ -58,14 +58,14 @@
       .search-counters {
         font-size: 12px;
         margin-right: 6px;
-        color: $text-lighter;
+        color: variables.$text-lighter;
       }
     }
 
     .search-loading {
       display: flex;
       font-size: 12px;
-      color: $text-lighter;
+      color: variables.$text-lighter;
     }
   }
 }

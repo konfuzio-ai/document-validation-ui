@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .scrolling-document {
   overflow: auto;
