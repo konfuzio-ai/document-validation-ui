@@ -32,9 +32,7 @@ describe("Document Edit Component", () => {
   it("the sidebar should be visible", async () => {
     const wrapper = render(DocumentEdit, false);
 
-    expect(
-      await wrapper.findAllComponents(".sidebar .edit-sidebar").isVisible()
-    ).toBe(true);
+    expect(await wrapper.find(".sidebar .edit-sidebar").isVisible()).toBe(true);
   });
 
   it("The sidebar has 4 buttons", async () => {
@@ -66,8 +64,7 @@ describe("Document Edit Component", () => {
     await wrapper
       .findAll(
         ".document-grid .image-section .edit-page-thumbnail .page-thumbnail"
-      )
-      .at(0)
+      )[0]
       .trigger("click");
 
     expect(
@@ -99,8 +96,7 @@ describe("Document Edit Component", () => {
     );
 
     await wrapper
-      .findAll(".image-section .edit-page-thumbnail .page-thumbnail")
-      .at(0)
+      .findAll(".image-section .edit-page-thumbnail .page-thumbnail")[0]
       .trigger("click");
 
     await wrapper2.setData({
@@ -110,8 +106,7 @@ describe("Document Edit Component", () => {
     expect(await wrapper2.vm.buttonDisabled).toBe(false);
     expect(
       await wrapper2
-        .findAll(".buttons-container .rotate-selected .rotate-button")
-        .at(0)
+        .findAll(".buttons-container .rotate-selected .rotate-button")[0]
         .attributes("disabled")
     ).toBeUndefined;
   });
@@ -247,9 +242,9 @@ describe("Document Edit Component", () => {
     await mockFn(subDocumentMock[1].name);
 
     expect(
-      await wrapper
-        .findAll(".document-details .doc-info .file-name-section .name-input")
-        .at(0).element.value
+      await wrapper.findAll(
+        ".document-details .doc-info .file-name-section .name-input"
+      )[0].element.value
     ).toBe("3AVAWS");
   });
 
@@ -278,7 +273,7 @@ describe("Document Edit Component", () => {
       await wrapper
         .find(".smart-split .b-tooltip .tooltip-trigger .switch")
         .attributes("disabled")
-    ).toBe("disabled");
+    ).toBe("true");
   });
 
   it("Smart Split is enabled if splitting suggestions & info bar appears", async () => {
