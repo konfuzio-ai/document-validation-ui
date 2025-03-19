@@ -53,6 +53,24 @@ export default {
       default: "true",
     },
     // eslint-disable-next-line vue/prop-name-casing
+    show_missing_annotations: {
+      type: String,
+      required: false,
+      default: "true",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    show_feedback_needed_annotations: {
+      type: String,
+      required: false,
+      default: "true",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    show_accepted_annotations: {
+      type: String,
+      required: false,
+      default: "true",
+    },
+    // eslint-disable-next-line vue/prop-name-casing
     sentry_dsn: {
       type: String,
       required: false,
@@ -187,6 +205,41 @@ export default {
         return process.env.VUE_APP_REMOVE_BRANDING === "true";
       } else {
         return this.remove_branding === "true";
+    },
+    showMissingAnnotations() {
+      if (
+        window.location.hash === "#unrevised" ||
+        window.location.hash === "#possiblyIncorrect"
+      ) {
+        return false;
+      } else if (process.env.VUE_APP_SHOW_MISSING_ANNOTATIONS) {
+        return process.env.VUE_APP_SHOW_MISSING_ANNOTATIONS === "true";
+      } else {
+        return this.show_missing_annotations === "true";
+      }
+    },
+    showAcceptedAnnotations() {
+      if (
+        window.location.hash === "#unrevised" ||
+        window.location.hash === "#possiblyIncorrect"
+      ) {
+        return false;
+      } else if (process.env.VUE_APP_SHOW_ACCEPTED_ANNOTATIONS) {
+        return process.env.VUE_APP_SHOW_ACCEPTED_ANNOTATIONS === "true";
+      } else {
+        return this.show_accepted_annotations === "true";
+      }
+    },
+    showFeedbackNeededAnnotations() {
+      if (
+        window.location.hash === "#unrevised" ||
+        window.location.hash === "#possiblyIncorrect"
+      ) {
+        return true;
+      } else if (process.env.VUE_APP_SHOW_FEEDBACK_NEEDED_ANNOTATIONS) {
+        return process.env.VUE_APP_SHOW_FEEDBACK_NEEDED_ANNOTATIONS === "true";
+      } else {
+        return this.show_feedback_needed_annotations === "true";
       }
     },
     isPublicView() {
@@ -344,6 +397,18 @@ export default {
         this.showDocumentsNavigation
       ),
       this.$store.dispatch("display/showBranding", !this.removeBranding),
+      this.$store.dispatch(
+        "document/showMissingAnnotations",
+        this.showMissingAnnotations
+      ),
+      this.$store.dispatch(
+        "document/showFeedbackNeededAnnotations",
+        this.showFeedbackNeededAnnotations
+      ),
+      this.$store.dispatch(
+        "document/showAcceptedAnnotations",
+        this.showAcceptedAnnotations
+      ),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),

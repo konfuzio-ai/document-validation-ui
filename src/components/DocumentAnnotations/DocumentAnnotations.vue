@@ -236,12 +236,16 @@ export default {
         this.jumpToNextAnnotation = false;
       }
     },
-
     getAnnotationsFiltered(newFiltered, oldFiltered) {
-      this.loadAccordions(
-        newFiltered.annotationSets,
-        oldFiltered.annotationSets
-      );
+      // just load accordions again if the length was changed
+      if (
+        newFiltered.annotationSets.length !== oldFiltered.annotationSets.length
+      ) {
+        this.loadAccordions(
+          newFiltered.annotationSets,
+          oldFiltered.annotationSets
+        );
+      }
     },
     annotationId(newAnnotationId) {
       if (newAnnotationId) {
@@ -303,21 +307,13 @@ export default {
       }
       this.annotationSetsAccordion = newAnnotationSetsAccordion;
     },
-    loadAccordions(newAnnotationSets, oldAnnotationSets = null) {
+    loadAccordions(newAnnotationSets) {
       if (newAnnotationSets) {
         const isFirstTime = this.annotationSetsAccordion === null;
         const newAnnotationSetsAccordion = {};
-        const annotationSetsOpened = [];
         const annotationSetsCreated = [];
 
         newAnnotationSets.forEach((newAnnotationSet, index) => {
-          const wasOpen = annotationSetsOpened.find(
-            (annotationSetOpened) =>
-              annotationSetOpened &&
-              annotationSetOpened.id &&
-              newAnnotationSet.id &&
-              newAnnotationSet.id === annotationSetOpened.id
-          );
           if (isFirstTime && this.annotationSetId) {
             newAnnotationSetsAccordion[
               newAnnotationSet.id || newAnnotationSet.label_set.id
@@ -334,10 +330,6 @@ export default {
             newAnnotationSetsAccordion[
               newAnnotationSet.id || newAnnotationSet.label_set.id
             ] = true;
-          } else if (wasOpen) {
-            newAnnotationSetsAccordion[
-              newAnnotationSet.id || newAnnotationSet.label_set.id
-            ] = wasOpen !== undefined;
           } else {
             const wasCreated = annotationSetsCreated.find(
               (annotationSetCreated) =>

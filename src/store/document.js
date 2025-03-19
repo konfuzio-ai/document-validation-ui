@@ -40,20 +40,9 @@ const state = {
   splittingSuggestions: null,
   enableGroupingFeature: true,
   annotationFilters: {
-    showFeedbackNeeded:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect" ||
-      true,
-    showEmpty:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect"
-        ? false
-        : true,
-    showAccepted:
-      window.location.hash === "#unrevised" ||
-      window.location.hash === "#possiblyIncorrect"
-        ? false
-        : true,
+    showFeedbackNeeded: true,
+    showEmpty: true,
+    showAccepted: true,
   },
   annotationSearch:
     (getURLQueryParam("search") && getURLQueryParam("search").split(",")) || [],
@@ -1268,11 +1257,19 @@ const actions = {
     });
   },
 
-  deleteAnnotation: ({ commit, getters }, { annotationId, annotationSet }) => {
+  deleteAnnotation: (
+    { commit, getters, state },
+    { annotationId, annotationSet }
+  ) => {
     return new Promise((resolve, reject) => {
       HTTP.delete(`/annotations/${annotationId}/`)
         .then(async (response) => {
           if (response.status === 204) {
+            if (state.annotationId === annotationId) {
+              commit("SET_ANNOTATION_ID", null);
+              setURLAnnotationHash(null);
+            }
+
             commit("DELETE_ANNOTATION", annotationId);
 
             // Check if the deleted annotation was the last one in a multiple annotation set
@@ -1534,6 +1531,15 @@ const actions = {
       commit("SET_DOC_ID", documentId);
       dispatch("fetchDocument");
     }
+  },
+  showMissingAnnotations({ commit }, show) {
+    commit("SET_SHOW_MISSING_ANNOTATIONS", show);
+  },
+  showFeedbackNeededAnnotations({ commit }, show) {
+    commit("SET_SHOW_FEEDBACK_NEEDED_ANNOTATIONS", show);
+  },
+  showAcceptedAnnotations({ commit }, show) {
+    commit("SET_SHOW_ACCEPTED_ANNOTATIONS", show);
   },
 };
 
@@ -1798,6 +1804,15 @@ const mutations = {
   SET_ANNOTATION_SEARCH: (state, search) => {
     state.annotationSearch = search;
     setURLQueryParam("search", search);
+  },
+  SET_SHOW_MISSING_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showEmpty = show;
+  },
+  SET_SHOW_ACCEPTED_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showAccepted = show;
+  },
+  SET_SHOW_FEEDBACK_NEEDED_ANNOTATIONS: (state, show) => {
+    state.annotationFilters.showFeedbackNeeded = show;
   },
 };
 
