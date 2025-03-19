@@ -164,5 +164,6 @@
   "copied": "Copied",
   "checkbox_ann_details": "A checkbox will be extracted for this label.",
   "document_section": "Document Section",
-  "label_size": "Column size:"
+  "label_size": "Column size:",
+  "powered_by": "powered by"
 }

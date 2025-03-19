@@ -5,12 +5,20 @@
       :class="['document-top-bar', editMode && 'edit-mode-top-bar']"
     >
       <div class="left-bar-components">
-        <div id="brand">
-          <img src="../../assets/images/KonfuzioLogo.svg" alt="Konfuzio" />
-        </div>
         <DocumentSetChooser
           v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
+        <a
+          v-show="
+            !(selectedDocument.documentSet !== null && documentSet === null)
+          "
+          class="app-info"
+          target="_blank"
+          href="https://konfuzio.com"
+        >
+          <span>{{ $t("powered_by") }}</span>
+          <img src="../../assets/images/KonfuzioLogo.svg" alt="Konfuzio" />
+        </a>
       </div>
 
       <div
@@ -124,6 +132,7 @@ export default {
   computed: {
     ...mapState("document", [
       "selectedDocument",
+      "documentSet",
       "publicView",
       "loading",
       "recalculatingAnnotations",

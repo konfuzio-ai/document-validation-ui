@@ -163,5 +163,6 @@
   "copied": "Copiada",
   "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta.",
   "document_section": "Sección del documento",
-  "label_size": "Tamaño de columna:"
+  "label_size": "Tamaño de columna:",
+  "powered_by": "impulsado por"
 }
