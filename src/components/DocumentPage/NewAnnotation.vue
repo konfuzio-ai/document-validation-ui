@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
     <div v-if="!textFromEntities" class="popup-input">
@@ -74,7 +75,13 @@
       :close-delay="5000"
     >
       <template #content>
-        <div ref="tooltipContent"></div>
+        <div
+          v-html="
+            `${$t('no_labels_available')} ${
+              showBranding ? $t('no_labels_available_link') : ''
+            }`
+          "
+        ></div>
       </template>
       <b-dropdown
         v-model="selectedLabel"
@@ -255,8 +262,6 @@ export default {
       // prevent click propagation when opening the popup
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
-
-    this.setTooltipText();
   },
   destroyed() {
     document.body.removeEventListener("click", this.clickOutside);
@@ -342,12 +347,6 @@ export default {
         show: true,
         finish: this.chooseLabelSet,
       });
-    },
-    setTooltipText() {
-      // Text set from innerHTML vs 'label' due to html tag in locales file string
-      this.$refs.tooltipContent.innerHTML = `${this.$t(
-        "no_labels_available"
-      )} ${this.showBranding ? this.$t("no_labels_available_link") : ""}`;
     },
   },
 };

@@ -135,6 +135,12 @@ export default {
       required: false,
       default: "60",
     },
+    // eslint-disable-next-line vue/prop-name-casing
+    remove_branding: {
+      type: String,
+      required: false,
+      default: "false",
+    },
   },
   computed: {
     ...mapState("display", ["pageError"]),
@@ -174,6 +180,13 @@ export default {
         return process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION === "true";
       } else {
         return this.show_documents_navigation === "true";
+      }
+    },
+    removeBranding() {
+      if (process.env.VUE_APP_REMOVE_BRANDING) {
+        return process.env.VUE_APP_REMOVE_BRANDING === "true";
+      } else {
+        return this.remove_branding === "true";
       }
     },
     isPublicView() {
@@ -330,6 +343,7 @@ export default {
         "display/showDocumentsNavigation",
         this.showDocumentsNavigation
       ),
+      this.$store.dispatch("display/showBranding", !this.removeBranding),
       this.$store.dispatch("document/setDocId", this.documentId),
       this.$store.dispatch("document/setPublicView", this.isPublicView),
       this.$store.dispatch("document/setAnnotationId", this.annotationId),
