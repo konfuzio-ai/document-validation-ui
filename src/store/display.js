@@ -37,6 +37,7 @@ const state = {
   pageError: null,
   labelWidth: 40,
   annotationWidth: 60,
+  showBranding: true,
 };
 
 const getters = {

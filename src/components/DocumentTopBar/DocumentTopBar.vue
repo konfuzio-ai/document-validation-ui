@@ -9,7 +9,8 @@
           v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
         <a
-          v-show="
+          v-if="
+            showBranding &&
             !(selectedDocument.documentSet !== null && documentSet === null)
           "
           class="app-info"
@@ -138,7 +139,7 @@ export default {
       "recalculatingAnnotations",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapState("display", ["showDocumentsNavigation"]),
+    ...mapState("display", ["showDocumentsNavigation", "showBranding"]),
     ...mapGetters("document", [
       "isDocumentReviewed",
       "isDocumentReadyToBeReviewed",

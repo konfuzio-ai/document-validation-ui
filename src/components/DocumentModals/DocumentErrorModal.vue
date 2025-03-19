@@ -19,6 +19,7 @@
       </section>
       <footer class="modal-card-foot">
         <b-button
+          v-if="showBranding"
           type="is-primary"
           class="primary-button"
           @click="handleContactSupport"
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ErrorIcon from "../../assets/images/ErrorIcon";
 
 export default {
@@ -42,6 +44,9 @@ export default {
     return {
       isModalActive: true,
     };
+  },
+  computed: {
+    ...mapState("display", ["showBranding"]),
   },
   methods: {
     handleContactSupport() {

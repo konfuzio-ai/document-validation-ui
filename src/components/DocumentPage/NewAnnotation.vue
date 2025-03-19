@@ -179,6 +179,7 @@ export default {
       "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
     ]),
+    ...mapState("display", ["showBranding"]),
     ...mapGetters("display", ["clientToBbox"]),
     ...mapState("selection", ["spanSelection", "selection"]),
     top() {
@@ -344,7 +345,9 @@ export default {
     },
     setTooltipText() {
       // Text set from innerHTML vs 'label' due to html tag in locales file string
-      this.$refs.tooltipContent.innerHTML = this.$t("no_labels_available");
+      this.$refs.tooltipContent.innerHTML = `${this.$t(
+        "no_labels_available"
+      )} ${this.showBranding ? this.$t("no_labels_available_link") : ""}`;
     },
   },
 };
