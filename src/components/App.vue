@@ -205,6 +205,7 @@ export default {
         return process.env.VUE_APP_REMOVE_BRANDING === "true";
       } else {
         return this.remove_branding === "true";
+      }
     },
     showMissingAnnotations() {
       if (
