@@ -18,7 +18,6 @@
           href="https://konfuzio.com"
         >
           <span>{{ $t("powered_by") }}</span>
-          <img src="../../assets/images/KonfuzioLogo.svg" alt="Konfuzio" />
         </a>
       </div>
 
