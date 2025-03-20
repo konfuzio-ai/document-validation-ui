@@ -303,13 +303,11 @@ export default {
     scale() {
       this.closePopups();
     },
-    async selectedEntities(newValue) {
+    selectedEntities(newValue) {
       if (!newValue) {
         this.$store.dispatch("selection/setSpanSelection", null);
         this.closePopups();
       }
-
-      await this.$store.dispatch("selection/getTextFromEntities", newValue);
     },
     page(newValue, oldValue) {
       if (newValue.image_url !== oldValue.image_url) {
@@ -439,6 +437,10 @@ export default {
           "selection/setSelectedEntities",
           this.newAnnotation
         );
+        this.$store.dispatch(
+          "selection/getTextFromEntities",
+          this.newAnnotation
+        );
       } else {
         this.$store.dispatch("selection/setSelectedEntities", null);
       }
@@ -456,6 +458,10 @@ export default {
       if (normalizedEntities.length > 0) {
         this.$store.dispatch(
           "selection/setSelectedEntities",
+          normalizedEntities
+        );
+        this.$store.dispatch(
+          "selection/getTextFromEntities",
           normalizedEntities
         );
       } else {
@@ -501,6 +507,10 @@ export default {
       if (this.newAnnotation.length > 0) {
         this.$store.dispatch(
           "selection/setSelectedEntities",
+          this.newAnnotation
+        );
+        this.$store.dispatch(
+          "selection/getTextFromEntities",
           this.newAnnotation
         );
       } else {
