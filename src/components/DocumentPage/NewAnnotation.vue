@@ -226,13 +226,12 @@ export default {
     textFromEntities() {
       if (!this.spanSelection) return;
 
-      // get array of all offset strings
-      let text = this.spanSelection.map((span) => {
-        return span.offset_string;
+      let text = "";
+      this.spanSelection.forEach((span) => {
+        text = `${text} ${span.offset_string}`;
       });
 
-      // join all the strings to become a single string of text
-      return text.join().split(",").join(" ");
+      return text.trim();
     },
   },
   watch: {
