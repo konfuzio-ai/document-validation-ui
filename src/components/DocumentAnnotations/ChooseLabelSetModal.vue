@@ -15,7 +15,12 @@
           </h3>
           <div>
             <div v-if="labelSetsFilteredForAnnotationSetCreation.length === 0">
-              <p v-html="$t('no_multi_ann_labelset_model')" />
+              <p
+                v-html="
+                  `${$t('no_multi_ann_labelset_model')}
+              ${showBranding ? $t('no_multi_ann_labelset_model_link') : ''}`
+                "
+              />
             </div>
             <div v-else>
               <p>
@@ -68,7 +73,7 @@
  * This component shows a modal to choose a label set from the project
  */
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "CreateAnnotationSetModal",
@@ -78,6 +83,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("display", ["showBranding"]),
     ...mapGetters("document", [
       "numberOfLabelSetGroup",
       "labelSetsFilteredForAnnotationSetCreation",

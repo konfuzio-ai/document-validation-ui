@@ -3,7 +3,11 @@
     <div v-if="serverError" class="message-container">
       <span class="server-error">
         {{ errorMessage }}
-        <span class="contact-support" @click="handleGetSupport">
+        <span
+          v-if="showBranding"
+          class="contact-support"
+          @click="handleGetSupport"
+        >
           {{ $t("get_support") }} <b-icon icon="arrow-right" size="is-small"
         /></span>
       </span>
@@ -24,6 +28,7 @@ export default {
   name: "ErrorMessage",
   computed: {
     ...mapState("document", ["errorMessage", "serverError"]),
+    ...mapState("display", ["showBranding"]),
   },
   methods: {
     handleGetSupport() {

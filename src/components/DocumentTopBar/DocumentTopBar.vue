@@ -8,6 +8,17 @@
         <DocumentSetChooser
           v-if="!publicView && !recalculatingAnnotations && !editMode"
         />
+        <a
+          v-if="
+            showBranding &&
+            !(selectedDocument.documentSet !== null && documentSet === null)
+          "
+          class="app-info"
+          target="_blank"
+          href="https://konfuzio.com"
+        >
+          <span>{{ $t("powered_by") }}</span>
+        </a>
       </div>
 
       <div
@@ -121,12 +132,13 @@ export default {
   computed: {
     ...mapState("document", [
       "selectedDocument",
+      "documentSet",
       "publicView",
       "loading",
       "recalculatingAnnotations",
     ]),
     ...mapState("edit", ["editMode"]),
-    ...mapState("display", ["showDocumentsNavigation"]),
+    ...mapState("display", ["showDocumentsNavigation", "showBranding"]),
     ...mapGetters("document", [
       "isDocumentReviewed",
       "isDocumentReadyToBeReviewed",

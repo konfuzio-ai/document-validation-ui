@@ -139,7 +139,11 @@
               >
               <!-- eslint-disable vue/no-v-html -->
               <span
-                v-if="isDocumentEditable && !isSearchingAnnotationList"
+                v-if="
+                  showBranding &&
+                  isDocumentEditable &&
+                  !isSearchingAnnotationList
+                "
                 v-html="$t('link_to_add_labels')"
               />
             </div>
@@ -189,7 +193,7 @@ export default {
   },
 
   computed: {
-    ...mapState("display", ["showAnnSetTable"]),
+    ...mapState("display", ["showAnnSetTable", "showBranding"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",

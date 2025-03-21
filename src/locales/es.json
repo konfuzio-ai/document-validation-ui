@@ -102,7 +102,8 @@
   "decline": "Declinar",
   "server_error": "Estamos experimentando problemas con el servidor. Por favor, repita la operación o ",
   "get_support": "Contacte al Soporte",
-  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado. Para más información, haz clic en <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>este enlace</a>.",
+  "no_labels_available": "No hay etiquetas vacías o múltiples en el grupo de anotaciones seleccionado.",
+  "no_labels_available_link": "Para más información, haz clic en <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>este enlace</a>.",
   "new_ann_set_title": "Crear anotaciones múltiples",
   "new_ann_set_description": "Seleccione un modelo de datos de las opciones disponibles, y luego deseleccione las etiquetas que no existen en este documento.",
   "select_label_set": "Seleccione un modelo de grupo de etiquetas",
@@ -112,7 +113,8 @@
   "drag_drop_columns_multi_ann": "Arrastre y suelte las columnas para ordenar las etiquetas",
   "error_creating_multi_ann": "No todos los grupos de anotaciones fueron creados de manera exitosa.",
   "disabled_finish_review": "Solo es posible finalizar la revisión del documento si todas las anotaciones han sido revisadas, ya sea aceptadas o marcadas como faltantes.",
-  "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles. Para más información, haga clic en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>este enlace</a>.",
+  "no_multi_ann_labelset_model": "En este documento no hay grupos de etiquetas múltiples disponibles.",
+  "no_multi_ann_labelset_model_link": "Para más información, haga clic en <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>este enlace</a>.",
   "single_category_in_project": "Este proyecto solo tiene una categoría. Para poder modificarla, es necesario agregar esta nueva categoría al proyecto.",
   "approved_annotations": "No es posible cambiar la categoría ya que existen anotaciones aceptadas o creadas manualmente en este documento.",
   "restore": "Restaurar",
@@ -163,5 +165,6 @@
   "copied": "Copiada",
   "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta.",
   "document_section": "Sección del documento",
-  "label_size": "Tamaño de columna:"
+  "label_size": "Tamaño de columna:",
+  "powered_by": "impulsado por Konfuzio"
 }

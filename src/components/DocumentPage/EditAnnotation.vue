@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div
     v-if="annotation && !hide"
@@ -71,6 +72,15 @@
       class="bottom-aligned"
       :close-delay="5000"
     >
+      <template #content>
+        <div
+          v-html="
+            `${$t('no_labels_available')} ${
+              showBranding ? $t('no_labels_available_link') : ''
+            }`
+          "
+        ></div>
+      </template>
       <b-dropdown
         v-if="selectedLabel"
         v-model="selectedLabel"
@@ -173,6 +183,7 @@ export default {
       "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
     ]),
+    ...mapState("display", ["showBranding"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("selection", ["selection", "spanSelection"]),
     top() {

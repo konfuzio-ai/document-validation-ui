@@ -109,13 +109,15 @@
   "decline": "Decline",
   "server_error": "We are currently experiencing a server issue. Please try again later or",
   "get_support": "Get Support",
-  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set. For more details, you can visit <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>this link</a>.",
+  "no_labels_available": "There are no unfilled or multiple labels in the selected annotation set.",
+  "no_labels_available_link": "For more details, you can visit <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>this link</a>.",
   "new_multi_ann_title": "Create multiple annotations",
   "new_multi_ann_description": "Select a data model from the existing ones, then deselect the labels that don't exist in this document.",
   "drag_drop_columns_multi_ann": "Drag and drop to change the order of the labels",
   "error_creating_multi_ann": "Not all annotation sets were created successfully.",
   "disabled_finish_review": "Finishing the document review is only possible after all annotations have been revised, whether they are accepted or marked as missing.",
-  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document. For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>.",
+  "no_multi_ann_labelset_model": "There are no available label sets that can be found multiple times in this document.",
+  "no_multi_ann_labelset_model_link": "For more details, you can visit <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>this link</a>.",
   "single_category_in_project": "The current project has only one category. To be able to change it, the new one should be first added to the project.",
   "approved_annotations": "It is not possible to change the current category since the document has approved or manually created annotations.",
   "restore": "Restore",
@@ -164,5 +166,6 @@
   "copied": "Copied",
   "checkbox_ann_details": "A checkbox will be extracted for this label.",
   "document_section": "Document Section",
-  "label_size": "Column size:"
+  "label_size": "Column size:",
+  "powered_by": "powered by Konfuzio"
 }

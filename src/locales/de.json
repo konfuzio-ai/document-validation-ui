@@ -102,7 +102,8 @@
   "decline": "Ablehnen",
   "server_error": "Wir haben derzeit ein Serverproblem. Bitte versuchen Sie es später noch einmal oder",
   "get_support": "Hole dir Unterstützung",
-  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>diesem Link</a>.",
+  "no_labels_available": "Das ausgewählte Annotations-Set enthält keine nicht ausgefüllten oder multiplen Labels.",
+  "no_labels_available_link": "Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/modules/labels/index.html#multiple' target='_blank'>diesem Link</a>.",
   "new_ann_set_title": "Neues Annotations-Set",
   "new_ann_set_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus. Das neue Annotations-Set enthält dieselben Beschriftungen.",
   "select_label_set": "Wählen Sie das Label-Set-Modell aus",
@@ -113,7 +114,8 @@
   "new_multi_ann_description": "Wählen Sie ein Datenmodell aus den vorhandenen aus und deaktivieren Sie dann die Labels, die in diesem Dokument nicht vorhanden sind.",
   "drag_drop_columns_multi_ann": "Drag and Drop, um die Reihenfolge der Labels zu ändern",
   "error_creating_multi_ann": "Nicht alle Annotationen wurden erfolgreich erstellt.",
-  "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind. Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>.",
+  "no_multi_ann_labelset_model": "Es gibt keine verfügbaren Label Sets, die mehrfach in diesem Dokument zu finden sind.",
+  "no_multi_ann_labelset_model_link": "Weitere Informationen finden Sie unter <a href='https://help.konfuzio.com/tutorials/advanced-document-extraction/index.html#multiple-annotation-sets' target='_blank'>diesem Link</a>.",
   "single_category_in_project": "Das aktuelle Projekt hat nur eine Kategorie. Um sie ändern zu können, sollte die neue zuerst dem Projekt hinzugefügt werden.",
   "approved_annotations": "Die Kategorie kann nicht geändert werden, da bereits akzeptierte Annotationen oder manuell erstellte Annotationen zu diesem Dokument vorhanden sind.",
   "restore": "Wiederherstellen",
@@ -163,5 +165,6 @@
   "copied": "Kopiert",
   "checkbox_ann_details": "Für dieses Label wird ein Kästchen extrahiert.",
   "document_section": "Dokumentabschnitt",
-  "label_size": "Spaltengröße:"
+  "label_size": "Spaltengröße:",
+  "powered_by": "betrieben von Konfuzio"
 }

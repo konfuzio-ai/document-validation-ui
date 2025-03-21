@@ -37,6 +37,7 @@ const state = {
   pageError: null,
   labelWidth: 40,
   annotationWidth: 60,
+  showBranding: true,
 };
 
 const getters = {
@@ -297,6 +298,9 @@ const actions = {
   showDocumentsNavigation({ commit }, show) {
     commit("SET_SHOW_DOCUMENTS_NAVIGATION", show);
   },
+  showBranding({ commit }, show) {
+    commit("SET_SHOW_BRANDING", show);
+  },
   showChooseLabelSetModal({ commit }, options) {
     commit("SET_SHOW_CHOOSE_LABEL_SET_MODAL", options);
   },
@@ -419,6 +423,10 @@ const mutations = {
 
   SET_SHOW_DOCUMENTS_NAVIGATION: (state, show) => {
     state.showDocumentsNavigation = show;
+  },
+
+  SET_SHOW_BRANDING: (state, show) => {
+    state.showBranding = show;
   },
 
   SET_ANN_SET_TABLE: (state, tableSet) => {

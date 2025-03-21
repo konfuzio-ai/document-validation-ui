@@ -11,7 +11,7 @@
         </p>
       </div>
       <div class="documents-list-top-right">
-        <div class="action-box">
+        <div v-if="showBranding" class="action-box">
           <span>{{ $t("upload_documents") }}</span>
           <b-button
             class="action-button primary-button"
@@ -98,6 +98,7 @@ export default {
   computed: {
     ...mapState("document", ["selectedDocument"]),
     ...mapState("category", ["documentsAvailableToReview"]),
+    ...mapState("display", ["showBranding"]),
     ...mapGetters("category", ["category"]),
     ...mapGetters("document", ["documentHadErrorDuringExtraction"]),
   },

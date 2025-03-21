@@ -1,6 +1,7 @@
 @import "./imports.scss";
 .document-set-dropdown {
   border-right: $component-border;
+  border-left: $component-border;
 
   .dropdown-doc-set {
     display: flex;
