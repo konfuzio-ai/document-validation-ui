@@ -80,7 +80,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "isDocumentReviewed"]),
-    ...mapState("selection", ["spanSelection", "elementSelected"]),
+    ...mapState("selection", ["spanSelection"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
@@ -97,23 +97,24 @@ export default {
 
   watch: {
     span(newValue) {
-      if (this.elementSelected === this.emptyAnnotationId() && newValue) {
-        if (isElementArray(newValue))
-          newValue.map((span) => {
-            if (span.offset_string) {
-              span.offset_string =
-                this.$refs.emptyAnnotation.textContent.trim();
-              span.offset_string_original =
-                this.$refs.emptyAnnotation.textContent.trim();
-            }
-          });
-      }
+      // if (newValue) {
+      //   if (isElementArray(newValue))
+      //     newValue.map((span) => {
+      //       if (span.offset_string) {
+      //         span.offset_string =
+      //           this.$refs.emptyAnnotation.textContent.trim();
+      //         span.offset_string_original =
+      //           this.$refs.emptyAnnotation.textContent.trim();
+      //       }
+      //     });
+      // }
     },
     spanSelection(newValue) {
       if (!newValue) return;
 
       // Check if the bbox has no string
       if (newValue[0] && !newValue[0].offset_string) {
+        console.log(newValue);
         this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
       }
@@ -138,17 +139,8 @@ export default {
       )
         return;
 
-      if (
-        !this.publicView &&
-        !this.isDocumentReviewed &&
-        this.elementSelected !== this.emptyAnnotationId()
-      ) {
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("selection/setSelectedEntities", null);
-        this.$store.dispatch(
-          "selection/selectElement",
-          this.emptyAnnotationId()
-        );
+      if (!this.publicView && !this.isDocumentReviewed) {
+        this.$store.dispatch("selection/setSpanSelection", null);
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.emptyAnnotationId(),
           index: this.spanIndex,
@@ -166,7 +158,6 @@ export default {
         return false;
       } else {
         return (
-          this.elementSelected === this.emptyAnnotationId() &&
           this.spanSelection &&
           this.spanSelection[this.spanIndex] &&
           this.spanSelection[this.spanIndex].offset_string != null
