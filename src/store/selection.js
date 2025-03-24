@@ -15,7 +15,7 @@ const state = {
   isSelecting: false,
   spanSelection: null,
   elementSelected: null, // selected element id
-  selectedEntities: null,
+  selectedEntities: [],
 };
 
 const getters = {
@@ -169,6 +169,61 @@ const actions = {
     });
   },
 
+  entitySelection: ({ commit, dispatch, state }, entities) => {
+    if (entities.length === 0) {
+      commit("SET_SELECTED_ENTITIES", []);
+    } else {
+      commit("SET_SELECTED_ENTITIES", entities);
+
+      dispatch("document/setAnnotationId", null, {
+        root: true,
+      });
+      dispatch("getTextFromBboxes", {
+        box: entities,
+        entities: true,
+      });
+    }
+  },
+
+  entityClick: ({ commit, dispatch, state }, entity) => {
+    // Check if we are creating a new Annotation
+    // or if we are removing a previously selected entity
+    // or editing empty one
+    const found = state.selectedEntities.find(
+      (entityToFind) =>
+        entity.scaled.width === entityToFind.scaled.width &&
+        entity.original.offset_string === entityToFind.original.offset_string
+    );
+
+    let entities = [];
+    if (found) {
+      entities = [
+        ...state.selectedEntities.filter(
+          (entityToFilter) =>
+            entityToFilter.scaled.width !== entity.scaled.width &&
+            entityToFilter.original.offset_string !==
+              entity.original.offset_string
+        ),
+      ];
+    } else {
+      entities.push(entity);
+    }
+
+    if (entities.length === 0) {
+      commit("SET_SELECTED_ENTITIES", []);
+    } else {
+      commit("SET_SELECTED_ENTITIES", entities);
+
+      dispatch("document/setAnnotationId", null, {
+        root: true,
+      });
+      dispatch("getTextFromBboxes", {
+        box: entities,
+        entities: true,
+      });
+    }
+  },
+
   setSpanSelection: ({ commit }, span) => {
     commit("SET_SPAN_SELECTION", span);
   },
@@ -207,6 +262,7 @@ const mutations = {
     state.selection.placeholderBox = null;
   },
   SET_SPAN_SELECTION: (state, span) => {
+    console.log("span", span);
     state.spanSelection = span;
   },
   SET_SELECTION: (state, selection) => {

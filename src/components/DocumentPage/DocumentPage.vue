@@ -12,8 +12,8 @@
     ]"
   >
     <NewAnnotation
-      v-if="newAnnotation && newAnnotation.length && !editAnnotation"
-      :new-annotation="newAnnotation"
+      v-if="selectedEntities && selectedEntities.length && !editAnnotation"
+      :new-annotation="selectedEntities"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       :page="page"
@@ -70,7 +70,12 @@
               }"
             ></v-rect>
           </template>
-          <v-group v-if="!publicView || !isDocumentReviewed" ref="entities">
+          <v-group
+            v-if="
+              !categorizeModalIsActive || !publicView || !isDocumentReviewed
+            "
+            ref="entities"
+          >
             <v-rect
               v-for="(entity, index) in scaledEntities(page.entities, page)"
               :key="index"
@@ -122,10 +127,17 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="page.number === selectionPage">
+      <v-layer
+        v-if="
+          page.number === selectionPage &&
+          !categorizeModalIsActive &&
+          !publicView &&
+          !isDocumentReviewed
+        "
+      >
         <box-selection
           :page="page"
-          @createAnnotations="handleCreateAnnotationsFromSelection"
+          @createAnnotations="handleSelectionEntities"
           @selectEntities="handleEntitiesFromSelection"
         />
       </v-layer>
@@ -171,7 +183,6 @@ export default {
   data() {
     return {
       image: null,
-      newAnnotation: [],
     };
   },
 
@@ -303,12 +314,7 @@ export default {
     scale() {
       this.closePopups();
     },
-    selectedEntities(newValue) {
-      if (!newValue) {
-        this.$store.dispatch("selection/setSpanSelection", null);
-        this.closePopups();
-      }
-    },
+
     page(newValue, oldValue) {
       if (newValue.image_url !== oldValue.image_url) {
         this.drawPage(true);
@@ -418,35 +424,8 @@ export default {
       this.closePopups();
     },
 
-    handleCreateAnnotationsFromSelection(entities) {
-      if (
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
-      this.newAnnotation = [];
-
-      const normalizedEntities = this.scaledEntities(entities, this.page);
-      if (normalizedEntities) {
-        this.newAnnotation.push(...normalizedEntities);
-      }
-
-      if (this.newAnnotation.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          this.newAnnotation
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          this.newAnnotation
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
-    },
-
     handleEntitiesFromSelection(entities) {
+      console.log("handleEntitiesFromSelection", entities);
       if (
         this.categorizeModalIsActive ||
         this.publicView ||
@@ -469,53 +448,15 @@ export default {
       }
     },
 
-    handleClickedEntity(entity) {
-      if (
-        !entity ||
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
-
-      // Check if we are creating a new Annotation
-      // or if we are removing a previously selected entity
-      // or editing empty one
-      const entityToAdd = entity;
-
-      const found = this.newAnnotation.find(
-        (ann) =>
-          ann.scaled.width === entityToAdd.scaled.width &&
-          ann.original.offset_string === entityToAdd.original.offset_string
+    handleSelectionEntities(entities) {
+      this.$store.dispatch(
+        "selection/entitySelection",
+        this.scaledEntities(entities, this.page)
       );
+    },
 
-      // reset the selection so that we don't have a drawn rectangle when editing based on entities
-      this.endSelection();
-
-      if (found) {
-        this.newAnnotation = [
-          ...this.newAnnotation.filter(
-            (ann) =>
-              ann.scaled.width !== entityToAdd.scaled.width &&
-              ann.original.offset_string !== entityToAdd.original.offset_string
-          ),
-        ];
-      } else {
-        this.newAnnotation.push(entityToAdd);
-      }
-
-      if (this.newAnnotation.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          this.newAnnotation
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          this.newAnnotation
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
+    handleClickedEntity(entity) {
+      this.$store.dispatch("selection/entityClick", entity);
     },
 
     onElementEnter(annotation = null, span = null) {
@@ -676,7 +617,7 @@ export default {
       }
     },
     closePopups() {
-      this.newAnnotation = [];
+      this.$store.dispatch("selection/entitySelection", []);
     },
   },
 };
