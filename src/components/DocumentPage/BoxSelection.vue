@@ -1,7 +1,6 @@
 <template>
   <v-group>
     <v-rect
-      v-if="isSelectionValid"
       ref="boxSelection"
       :config="config"
       :stroke-scale-enabled="false"
@@ -13,16 +12,16 @@
       ref="boxTransformer"
       :config="transformerConfig"
     />
-    <v-rect
+    <!-- <v-rect
       v-if="selection.placeholderBox"
       ref="placeholderSelection"
       :config="placeholderConfig"
-    />
+    /> -->
   </v-group>
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
@@ -35,6 +34,18 @@ export default {
       type: Boolean,
       default: true,
     },
+    span: {
+      required: true,
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      selection: {
+        start: null,
+        end: null,
+      },
+    };
   },
   computed: {
     /**
@@ -43,12 +54,12 @@ export default {
      */
     config() {
       return {
-        x: this.selection.start.x,
-        y: this.selection.start.y,
-        width: this.selection.end.x - this.selection.start.x,
-        height: this.selection.end.y - this.selection.start.y,
-        fill: this.isSelecting ? "#7B61FFB3" : "transparent",
-        stroke: this.isSelecting ? "transparent" : "#7B61FFB3",
+        x: this.span.x,
+        y: this.span.y,
+        width: this.span.width,
+        height: this.span.height,
+        stroke: "#7B61FFB3",
+        fill: "transparent",
         strokeWidth: 1,
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
@@ -81,30 +92,65 @@ export default {
         anchorSize: 6,
       };
     },
-    ...mapState("selection", [
-      "selection",
-      "isSelecting",
-      "elementSelected",
-      "spanSelection",
-    ]),
-    ...mapGetters("display", ["clientToBbox"]),
-    ...mapGetters("selection", ["isSelectionValid", "entitiesOnSelection"]),
-  },
-  watch: {
-    isSelecting(isSelecting) {
-      if (!isSelecting) {
-        this.updateTransformer();
-        this.handleSelection();
-      }
-    },
+    ...mapState("selection", ["spanSelection"]),
+    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
+    ...mapGetters("selection", ["entitiesOnSelection"]),
   },
   mounted() {
-    if (!this.selection.custom) {
-      // if annotation was selected, then add transformer
-      this.updateTransformer();
-    }
+    this.updateTransformer();
+    this.startSelection({
+      x: this.span.x,
+      y: this.span.y,
+    });
   },
   methods: {
+    startSelection(start) {
+      this.selection.start = start;
+    },
+
+    moveSelection(points) {
+      // only apply when we have a large enough selection, otherwise we risk counting misclicks
+      const xDiff = Math.abs(this.selection.start.x - points.end.x);
+      const yDiff = Math.abs(this.selection.start.y - points.end.y);
+      if (xDiff > 5 && yDiff > 5) {
+        const { start, end } = points;
+        if (start) {
+          this.selection.start = start;
+        }
+        if (end) {
+          this.selection.end = end;
+        }
+      }
+    },
+
+    endSelection(end) {
+      let xDiff;
+      let yDiff;
+
+      if (end) {
+        xDiff = Math.abs(this.selection.start.x - end.x);
+        yDiff = Math.abs(this.selection.start.y - end.y);
+      }
+
+      // if "end" is not provided, start and end points are the same, or if we have a selection smaller than 5x5,
+      // just reset
+      if (
+        !end ||
+        (yDiff <= 5 && xDiff <= 5) ||
+        (this.selection.start.x === end.x && this.selection.start.y == end.y)
+      ) {
+        this.selection.start = null;
+        this.selection.end = null;
+      } else {
+        this.selection.start.x = this.selection.start.x - selectionPadding;
+        this.selection.start.y = this.selection.start.y - selectionPadding;
+
+        end.x = end.x + selectionPadding;
+        end.y = end.y + selectionPadding;
+
+        this.selection.end = end;
+      }
+    },
     handleSelection() {
       if (!this.elementSelected) {
         const box = this.clientToBbox(
@@ -153,18 +199,12 @@ export default {
     },
 
     getBoxSelectionContent() {
-      if (!this.isSelecting) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-        this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
-        this.$store.dispatch("selection/getTextFromBboxes", {
-          box,
-          entities: false,
-        });
-      }
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
+      this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
     },
 
     /**
@@ -205,7 +245,6 @@ export default {
 
       this.handleSelection();
     },
-    ...mapActions("selection", ["moveSelection"]),
   },
 };
 </script>

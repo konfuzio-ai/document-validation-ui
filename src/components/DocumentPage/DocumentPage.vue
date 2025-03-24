@@ -11,15 +11,18 @@
       page.number === currentPage && 'current-page',
     ]"
   >
-    <NewAnnotation
-      v-if="selectedEntities && selectedEntities.length && !editAnnotation"
-      :new-annotation="selectedEntities"
+    <AnnotationPopup
+      v-if="
+        spanSelection.length > 0 &&
+        spanSelection[0].page_index + 1 == page.number
+      "
+      :spans="spanSelection"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       :page="page"
       @close="closePopups"
     />
-    <EditAnnotation
+    <!-- <EditAnnotation
       v-if="
         editAnnotation &&
         editAnnotation.pageNumber &&
@@ -30,7 +33,7 @@
       :page="page"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
-    />
+    /> -->
 
     <div
       v-if="showAnnotationLabel"
@@ -127,15 +130,11 @@
           </template>
         </template>
       </v-layer>
-      <v-layer
-        v-if="
-          page.number === selectionPage &&
-          !categorizeModalIsActive &&
-          !publicView &&
-          !isDocumentReviewed
-        "
-      >
+      <v-layer>
         <box-selection
+          v-for="(span, index) in spanSelectionsForPage(page)"
+          :key="index"
+          :span="bboxToRect(page, span)"
           :page="page"
           @createAnnotations="handleSelectionEntities"
           @selectEntities="handleEntitiesFromSelection"
@@ -155,16 +154,14 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
-import NewAnnotation from "./NewAnnotation";
-import EditAnnotation from "./EditAnnotation";
+import AnnotationPopup from "./AnnotationPopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    NewAnnotation,
-    EditAnnotation,
+    AnnotationPopup,
     AnnSetTableOptions,
   },
 
@@ -187,7 +184,7 @@ export default {
   },
 
   computed: {
-    ...mapState("selection", ["isSelecting", "selectedEntities"]),
+    ...mapState("selection", ["selectedEntities", "spanSelection"]),
     ...mapState("display", [
       "scale",
       "categorizeModalIsActive",
@@ -198,7 +195,6 @@ export default {
     ...mapState("document", [
       "documentAnnotationSelected",
       "recalculatingAnnotations",
-      "editAnnotation",
       "selectedDocument",
       "publicView",
       "annotationId",
@@ -209,7 +205,11 @@ export default {
       "bboxToRect",
       "scaledEntities",
     ]),
-    ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
+    ...mapGetters("selection", [
+      "isSelectionValid",
+      "isSelecting",
+      "spanSelectionsForPage",
+    ]),
     ...mapGetters("document", [
       "getAnnotationsFiltered",
       "isAnnotationInEditMode",
@@ -343,7 +343,6 @@ export default {
     isAnnotationFocused(annotationId) {
       return (
         this.documentAnnotationSelected &&
-        !this.isElementSelected &&
         annotationId === this.documentAnnotationSelected.id
       );
     },
@@ -426,26 +425,26 @@ export default {
 
     handleEntitiesFromSelection(entities) {
       console.log("handleEntitiesFromSelection", entities);
-      if (
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
+      // if (
+      //   this.categorizeModalIsActive ||
+      //   this.publicView ||
+      //   this.isDocumentReviewed
+      // )
+      //   return;
 
-      const normalizedEntities = this.scaledEntities(entities, this.page);
-      if (normalizedEntities.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          normalizedEntities
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          normalizedEntities
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
+      // const normalizedEntities = this.scaledEntities(entities, this.page);
+      // if (normalizedEntities.length > 0) {
+      //   this.$store.dispatch(
+      //     "selection/setSelectedEntities",
+      //     normalizedEntities
+      //   );
+      //   this.$store.dispatch(
+      //     "selection/getTextFromEntities",
+      //     normalizedEntities
+      //   );
+      // } else {
+      //   this.$store.dispatch("selection/setSelectedEntities", null);
+      // }
     },
 
     handleSelectionEntities(entities) {

@@ -259,11 +259,7 @@ export default {
       "showActionError",
       "missingAnnotations",
     ]),
-    ...mapState("selection", [
-      "spanSelection",
-      "elementSelected",
-      "selectedEntities",
-    ]),
+    ...mapState("selection", ["spanSelection", "selectedEntities"]),
     ...mapState("display", ["labelWidth", "annotationWidth"]),
     ...mapState("project", ["showAnnotationTranslations"]),
     ...mapGetters("document", [
@@ -573,11 +569,8 @@ export default {
       } else {
         if (!this.isAnnotationInEditMode(this.currentAnnotationId())) return;
 
-        return (
-          this.elementSelected === this.currentAnnotationId() &&
-          this.spanSelection &&
-          Array.isArray(this.spanSelection)
-        );
+        // check if spans are selected
+        return this.spanSelection && this.spanSelection.length > 0;
       }
     },
     handleMissingAnnotation() {
@@ -712,8 +705,7 @@ export default {
         })
         .finally(() => {
           this.$store.dispatch("document/resetEditAnnotation");
-          this.$store.dispatch("selection/disableSelection");
-          this.$store.dispatch("selection/setSelectedEntities", null);
+          this.$store.dispatch("selection/setSpanSelection", null);
           this.isLoading = false;
         });
     },
@@ -760,10 +752,7 @@ export default {
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
-      if (this.elementSelected) {
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
+      this.$store.dispatch("selection/disableSelection");
       this.isLoading = false;
     },
     enableLoading(annotations) {

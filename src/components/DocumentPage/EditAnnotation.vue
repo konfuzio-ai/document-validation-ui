@@ -285,7 +285,6 @@ export default {
     close() {
       this.$store.dispatch("document/resetEditAnnotation");
       this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("selection/setSelectedEntities", null);
       this.$emit("close");
     },
     async save() {
