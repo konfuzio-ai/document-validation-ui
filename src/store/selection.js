@@ -9,21 +9,15 @@ const state = {
     pageNumber: null,
     start: null,
     end: null,
-    custom: false, // if the box was created by user in document or it comes from an annotation
-    placeholderBox: null, // show a not editable placeholder box
   },
-  isSelecting: false,
-  spanSelection: null,
-  elementSelected: null, // selected element id
+  spanSelection: [],
+  placeholderSelection: [],
   selectedEntities: [],
 };
 
 const getters = {
-  isElementSelected: (state) => {
-    return state.elementSelected;
-  },
   isSelecting: (state) => {
-    return state.isSelecting;
+    return state.selection.start;
   },
   isSelectionValid: (state) => {
     /**
@@ -52,19 +46,20 @@ const getters = {
         box.y1 >= entity.y1
     );
   },
+  spanSelectionsForPage: (state) => (page) => {
+    console.log(state.spanSelection);
+    return state.spanSelection.filter(
+      (span) => page.number === span.page_index + 1
+    );
+  },
 };
 
 const actions = {
-  selectElement: ({ commit }, value) => {
-    commit("RESET_SELECTION");
-    commit("SET_SPAN_SELECTION", null);
-    commit("ELEMENT_SELECTED", value);
-  },
-
   disableSelection: ({ commit }) => {
-    commit("ELEMENT_SELECTED", null);
     commit("RESET_SELECTION");
-    commit("SET_SPAN_SELECTION", null);
+    commit("SET_SELECTED_ENTITIES", []);
+    commit("SET_SPAN_SELECTION", []);
+    commit("SET_PLACEHOLDER_SELECTION", []);
   },
 
   startSelection: ({ commit }, { pageNumber, start }) => {
@@ -113,11 +108,6 @@ const actions = {
     }
   },
 
-  setSelection: ({ commit }, { span, selection }) => {
-    commit("SET_SELECTION", selection);
-    commit("SET_SPAN_SELECTION", span);
-  },
-
   setSelectedEntities: ({ commit }, entities) => {
     commit("SET_SELECTED_ENTITIES", entities);
   },
@@ -133,39 +123,33 @@ const actions = {
       span = [box];
     }
 
-    return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-      span,
-    })
-      .then((response) => {
-        if (response.data.span.length && response.data.span.length > 0) {
-          /**
-           * If we have a non-empty bboxes list, we assume there
-           * is text here on the backend, so we just set
-           * spanSelection to the response.
-           */
-          commit("SET_SPAN_SELECTION", response.data.span);
-        } else {
-          /**
-           * Otherwise, we assume the backend can't identify text
-           * on this area, so we set our bbox into spanSelection
-           * ready to be passed back to the backend when creating
-           * an annotation on this empty area, adding the offset_string
-           * attribute, ready to be filled.
-           */
-          commit("SET_SPAN_SELECTION", span);
-        }
+    return new Promise((resolve, reject) => {
+      HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
+        span,
       })
-      .catch((error) => {
-        alert("Could not fetch the selected text from the backend");
-      });
-  },
-
-  getTextFromEntities: ({ commit, dispatch }, selectedEntities) => {
-    if (!selectedEntities) return;
-
-    return dispatch("getTextFromBboxes", {
-      box: selectedEntities,
-      entities: true,
+        .then((response) => {
+          if (response.data.span.length && response.data.span.length > 0) {
+            /**
+             * If we have a non-empty bboxes list, we assume there
+             * is text here on the backend, so we just set
+             * spanSelection to the response.
+             */
+            resolve(response.data.span);
+          } else {
+            /**
+             * Otherwise, we assume the backend can't identify text
+             * on this area, so we set our bbox into spanSelection
+             * ready to be passed back to the backend when creating
+             * an annotation on this empty area, adding the offset_string
+             * attribute, ready to be filled.
+             */
+            resolve(span);
+          }
+        })
+        .catch((error) => {
+          alert("Could not fetch the selected text from the backend");
+          reject(error);
+        });
     });
   },
 
@@ -181,6 +165,11 @@ const actions = {
       dispatch("getTextFromBboxes", {
         box: entities,
         entities: true,
+      }).then((spans) => {
+        spans.forEach((span) => {
+          console.log("ADD_SPAN_SELECTION", span);
+          commit("ADD_SPAN_SELECTION", span);
+        });
       });
     }
   },
@@ -220,22 +209,27 @@ const actions = {
       dispatch("getTextFromBboxes", {
         box: entities,
         entities: true,
+      }).then((spans) => {
+        spans.forEach((span) => {
+          console.log("ADD_SPAN_SELECTION", span);
+          commit("ADD_SPAN_SELECTION", span);
+        });
       });
     }
   },
 
   setSpanSelection: ({ commit }, span) => {
+    console.log("setSpanSelection", span);
     commit("SET_SPAN_SELECTION", span);
+  },
+  setPlaceholderSelection: ({ commit }, span) => {
+    commit("SET_PLACEHOLDER_SELECTION", span);
   },
 };
 
 const mutations = {
-  ELEMENT_SELECTED: (state, value) => {
-    state.elementSelected = value;
-  },
   START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
-    state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
     state.selection.custom = true;
     state.selection.start = start;
@@ -252,24 +246,40 @@ const mutations = {
   },
   END_SELECTION: (state, end) => {
     state.selection.end = end;
-    state.isSelecting = false;
   },
   RESET_SELECTION: (state) => {
-    state.isSelecting = false;
     state.selection.pageNumber = null;
     state.selection.start = null;
     state.selection.end = null;
     state.selection.placeholderBox = null;
   },
   SET_SPAN_SELECTION: (state, span) => {
-    console.log("span", span);
-    state.spanSelection = span;
+    if (!span) {
+      state.spanSelection = [];
+    } else {
+      state.spanSelection = span;
+    }
   },
-  SET_SELECTION: (state, selection) => {
-    state.selection = selection;
+  ADD_SPAN_SELECTION: (state, span) => {
+    state.spanSelection.push(span);
+  },
+  SET_PLACEHOLDER_SELECTION: (state, span) => {
+    if (!span) {
+      state.placeholderSelection = [];
+    } else {
+      state.placeholderSelection = span;
+    }
+  },
+  ADD_PLACEHOLDER_SELECTION: (state, span) => {
+    state.placeholderSelection.push(span);
   },
   SET_SELECTED_ENTITIES: (state, entities) => {
-    state.selectedEntities = entities;
+    console.log("SET_SELECTED_ENTITIES", entities);
+    if (!entities) {
+      state.selectedEntities = [];
+    } else {
+      state.selectedEntities = entities;
+    }
   },
 };
 

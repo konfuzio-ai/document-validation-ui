@@ -113,8 +113,6 @@ export default {
         !this.isAnnotationBeingEdited &&
         !this.isLoading
       ) {
-        this.$store.dispatch("selection/selectElement", this.annotation.id);
-
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
@@ -131,39 +129,15 @@ export default {
             console.log(error);
           });
 
-        const page = this.pageAtIndex(this.span.page_index);
-        if (page) {
-          const { x, y, width, height } = this.bboxToRect(page, this.span);
-
-          const selection = {
-            start: {
-              x,
-              y,
-            },
-            end: {
-              x: x + width,
-              y: y + height,
-            },
-            pageNumber: page.number,
-            custom: false,
-          };
-
-          // check if this is part of a group of spans to show the whole bounding box as a placeholder
-          if (
-            this.annotation.selection_bbox &&
-            this.annotation.span.length > 1
-          ) {
-            selection.placeholderBox = this.bboxToRect(
-              page,
-              this.annotation.selection_bbox
-            );
-          }
-
-          this.$store.dispatch("selection/setSelection", {
-            selection,
-            span: this.span,
-          });
+        // check if this is part of a group of spans to show the whole bounding box as a placeholder
+        if (this.annotation.selection_bbox && this.annotation.span.length > 1) {
+          this.$store.dispatch(
+            "selection/setPlaceholderSelection",
+            this.annotation.selection_bbox
+          );
         }
+
+        this.$store.dispatch("selection/setSpanSelection", [this.span]);
       }
     },
     handleCancel() {
@@ -173,7 +147,7 @@ export default {
         this.$refs.contentEditable.blur();
       }
 
-      this.$store.dispatch("selection/setSelectedEntities", null);
+      this.$store.dispatch("selection/setSpanSelection", null);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text
