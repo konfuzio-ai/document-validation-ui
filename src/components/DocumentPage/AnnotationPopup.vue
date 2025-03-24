@@ -152,7 +152,7 @@ import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
-    newAnnotation: {
+    spans: {
       required: true,
       type: Array,
     },
@@ -187,7 +187,7 @@ export default {
       "labelsFilteredForAnnotationCreation",
     ]),
     ...mapState("display", ["showBranding"]),
-    ...mapGetters("display", ["clientToBbox"]),
+    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
     ...mapState("selection", ["spanSelection", "selection"]),
     top() {
       if (this.selection && this.selection.end) {
@@ -197,14 +197,13 @@ export default {
           ? top
           : this.selection.end.y - heightOfPopup;
       } else {
-        const top = this.newAnnotation[0].scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
+        const top = normalizedSpan.y - heightOfPopup; // subtract the height of the popup plus some margin
 
         //check if the popup will not go off the container on the top
-        return this.newAnnotation[0].scaled.y > heightOfPopup
+        return normalizedSpan.y > heightOfPopup
           ? top
-          : this.newAnnotation[0].scaled.y +
-              this.newAnnotation[0].scaled.height +
-              margin;
+          : normalizedSpan.y + normalizedSpan.height + margin;
       }
     },
     left() {
@@ -214,12 +213,10 @@ export default {
         return left + widthOfPopup < this.containerWidth
           ? left
           : this.containerWidth - widthOfPopup;
-        return this.selection.start.x;
       } else {
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
         const left =
-          this.newAnnotation[0].scaled.x +
-          this.newAnnotation[0].scaled.width / 2 -
-          widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+          normalizedSpan.x + normalizedSpan.width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
         //check if the popup will not go off the container
         if (left + widthOfPopup > this.containerWidth) {
@@ -283,13 +280,12 @@ export default {
       return setsList;
     },
     close() {
-      this.$store.dispatch("selection/setSelectedEntities", null);
-      this.$store.dispatch("selection/endSelection");
+      this.$store.dispatch("selection/disableSelection");
       this.$emit("close");
     },
     save() {
       this.loading = true;
-      const span = this.newAnnotation.flatMap((ann) => {
+      const span = this.spans.flatMap((ann) => {
         return {
           ...ann.original,
           offset_string: ann.original.offset_string,
