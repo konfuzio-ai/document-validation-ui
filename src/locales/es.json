@@ -31,7 +31,7 @@
   "document_successfully_handed": "Documento asignado correctamente a",
   "handover_not_possible": "La asignación no fue posible.  Por favor, inténtelo de nuevo más tarde.",
   "small_viewport_title": "Tamaño de ventana demasiado pequeño",
-  "small_viewport_info": "Lo sentimos, pero Konfuzio no está optimizado para este tamaño de ventana. Para una mejor experiencia, por favor ábralo en una ventana más grande.",
+  "small_viewport_info": "Lo sentimos, pero aplicación no está optimizado para este tamaño de ventana. Para una mejor experiencia, por favor ábralo en una ventana más grande.",
   "ok": "Ok, entendido",
   "no_data_found": "Click para editar...",
   "draw_box_document": "Encuentra <i>{label_name}</i> en el documento",
