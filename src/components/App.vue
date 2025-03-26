@@ -361,6 +361,13 @@ export default {
       });
     }
 
+    // Log app version
+    console.log(
+      `${this.removeBranding ? "" : require("../../package.json").name} ${
+        require("../../package.json").version
+      }`
+    );
+
     // locale config
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;

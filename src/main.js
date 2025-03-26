@@ -8,11 +8,6 @@ import VueObserveVisibility from "vue-observe-visibility";
 import Icons from "./icons";
 import VueSplit from "vue-split-panel";
 
-// Log app version
-console.log(
-  `${require("../package.json").name} ${require("../package.json").version}`
-);
-
 Vue.component("VueFontawesome", Icons);
 Vue.component("App", App);
 Vue.use(VueKonva);
