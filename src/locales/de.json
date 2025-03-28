@@ -31,7 +31,7 @@
   "document_successfully_handed": "Dokument erfolgreich zugewiesen an",
   "handover_not_possible": "Eine Zuweisung war nicht möglich. Bitte versuchen Sie es später erneut.",
   "small_viewport_title": "Kleine Fenstergröße",
-  "small_viewport_info": "Es tut uns leid, aber anwendung ist nicht für diese Fenstergröße optimiert. Für eine bessere Bedienbarkeit öffnen Sie es bitte in einem größeren Ansichtsfenster.",
+  "small_viewport_info": "Es tut uns leid, aber Anwendung ist nicht für diese Fenstergröße optimiert. Für eine bessere Bedienbarkeit öffnen Sie es bitte in einem größeren Ansichtsfenster.",
   "ok": "Ok",
   "no_data_found": "Zum Bearbeiten anklicken...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",
