@@ -244,8 +244,24 @@ export default {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
+    orderedSetList(setsList) {
+      setsList.sort((a, b) => {
+        const nameA = a.label_set.name;
+        const nameB = b.label_set.name;
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        // names must be equal
+        return 0;
+      });
+      return setsList;
+    },
     loadInfo() {
-      this.setsList = [...this.annotationSets];
+      this.setsList = this.orderedSetList([...this.annotationSets]);
 
       this.selectedSet = this.annotationSets.find(
         (annSet) => annSet.id === this.editAnnotation.annotationSet.id
