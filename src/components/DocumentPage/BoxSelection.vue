@@ -7,34 +7,24 @@
       @dragend="onChange"
       @transformend="onChange"
     />
-    <v-transformer
-      v-if="editable"
-      ref="boxTransformer"
-      :config="transformerConfig"
-    />
-    <!-- <v-rect
-      v-if="selection.placeholderBox"
-      ref="placeholderSelection"
-      :config="placeholderConfig"
-    /> -->
+    <v-transformer ref="boxTransformer" :config="transformerConfig" />
   </v-group>
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
+    id: {
+      required: true,
+      type: Number,
+    },
     page: {
       required: true,
       type: Object,
     },
-    editable: {
-      required: false,
-      type: Boolean,
-      default: true,
-    },
-    span: {
+    entity: {
       required: true,
       type: Object,
     },
@@ -53,33 +43,22 @@ export default {
      * `selection` object.
      */
     config() {
+      const primaryColor = window
+        .getComputedStyle(document.body)
+        .getPropertyValue("--primary-color");
       return {
-        x: this.span.x,
-        y: this.span.y,
-        width: this.span.width,
-        height: this.span.height,
+        x: this.entity.x,
+        y: this.entity.y,
+        width: this.entity.width,
+        height: this.entity.height,
         stroke: "#7B61FFB3",
-        fill: "transparent",
+        fill: `${primaryColor}77`,
         strokeWidth: 1,
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
-        name: "boxSelection",
+        perfectDrawEnabled: false,
+        name: `boxSelection_${this.id}`,
         draggable: true,
-      };
-    },
-    placeholderConfig() {
-      return {
-        x: this.selection.placeholderBox.x,
-        y: this.selection.placeholderBox.y,
-        width: this.selection.placeholderBox.width,
-        height: this.selection.placeholderBox.height,
-        fill: "transparent",
-        stroke: "#41af85",
-        strokeWidth: 3,
-        globalCompositeOperation: "multiply",
-        shadowForStrokeEnabled: false,
-        name: "placeholderSelection",
-        draggable: false,
       };
     },
     transformerConfig() {
@@ -92,18 +71,29 @@ export default {
         anchorSize: 6,
       };
     },
-    ...mapState("selection", ["spanSelection"]),
     ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
     ...mapGetters("selection", ["entitiesOnSelection"]),
   },
   mounted() {
-    this.updateTransformer();
-    this.startSelection({
-      x: this.span.x,
-      y: this.span.y,
+    this.setSelection();
+    this.$nextTick(() => {
+      this.updateTransformer();
     });
+    console.log("box selections", this.selection);
   },
   methods: {
+    setSelection() {
+      this.selection = {
+        start: {
+          x: this.entity.x,
+          y: this.entity.y,
+        },
+        end: {
+          x: this.entity.x + this.entity.width,
+          y: this.entity.y + this.entity.height,
+        },
+      };
+    },
     startSelection(start) {
       this.selection.start = start;
     },
@@ -179,7 +169,8 @@ export default {
       const stage = transformerNode.getStage();
       let selectedNode;
       if (stage) {
-        selectedNode = stage.findOne(".boxSelection");
+        console.log("stage", stage);
+        selectedNode = stage.findOne(`.boxSelection_${this.id}`);
       }
 
       // do nothing if selected node is already attached
