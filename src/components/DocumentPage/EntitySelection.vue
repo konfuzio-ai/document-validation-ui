@@ -69,6 +69,7 @@ export default {
         keepRatio: false,
         anchorStroke: "#7B61FF",
         anchorSize: 6,
+        name: `entityTransformer_${this.id}`,
       };
     },
     ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
@@ -142,6 +143,7 @@ export default {
       }
     },
     handleSelection() {
+      console.log("handleSelection");
       if (!this.elementSelected) {
         const box = this.clientToBbox(
           this.page,
