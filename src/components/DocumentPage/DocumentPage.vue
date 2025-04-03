@@ -131,7 +131,7 @@
         </template>
       </v-layer>
       <v-layer v-for="(entity, index) in selectedEntities" :key="index">
-        <box-selection
+        <entity-selection
           v-if="entity.original.page_index + 1 === page.number"
           :id="index"
           :entity="entity.scaled"
@@ -140,13 +140,13 @@
           @selectEntities="handleEntitiesFromSelection"
         />
       </v-layer>
-      <!-- <v-layer v-if="page.number === selectionPage">
+      <v-layer v-if="page.number === selectionPage">
         <box-selection
           :page="page"
           @createAnnotations="handleSelectionEntities"
           @selectEntities="handleEntitiesFromSelection"
         />
-      </v-layer> -->
+      </v-layer>
     </v-stage>
     <b-skeleton
       v-else
@@ -161,6 +161,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
+import EntitySelection from "./EntitySelection";
 import AnnotationPopup from "./AnnotationPopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
@@ -168,6 +169,7 @@ export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
+    EntitySelection,
     AnnotationPopup,
     AnnSetTableOptions,
   },
@@ -380,8 +382,10 @@ export default {
         event.target.name() === "multiAnnBoxSelection" ||
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
-        event.target.name().includes("boxSelection") ||
-        event.target.name().includes("boxTransformer")
+        event.target.name() === "boxSelection" ||
+        event.target.name() === "boxTransformer" ||
+        event.target.name().includes("entitySelection") ||
+        event.target.name().includes("entityTransformer")
       ) {
         return;
       }

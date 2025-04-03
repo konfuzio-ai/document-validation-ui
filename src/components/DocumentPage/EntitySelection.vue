@@ -1,40 +1,41 @@
 <template>
   <v-group>
     <v-rect
-      v-if="isSelectionValid"
-      ref="boxSelection"
+      ref="entitySelection"
       :config="config"
       :stroke-scale-enabled="false"
       @dragend="onChange"
       @transformend="onChange"
     />
-    <v-transformer
-      v-if="editable"
-      ref="boxTransformer"
-      :config="transformerConfig"
-    />
-    <v-rect
-      v-if="selection.placeholderBox"
-      ref="placeholderSelection"
-      :config="placeholderConfig"
-    />
+    <v-transformer ref="entityTransformer" :config="transformerConfig" />
   </v-group>
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
+    id: {
+      required: true,
+      type: Number,
+    },
     page: {
       required: true,
       type: Object,
     },
-    editable: {
-      required: false,
-      type: Boolean,
-      default: true,
+    entity: {
+      required: true,
+      type: Object,
     },
+  },
+  data() {
+    return {
+      selection: {
+        start: null,
+        end: null,
+      },
+    };
   },
   computed: {
     /**
@@ -42,33 +43,22 @@ export default {
      * `selection` object.
      */
     config() {
+      const primaryColor = window
+        .getComputedStyle(document.body)
+        .getPropertyValue("--primary-color");
       return {
-        x: this.selection.start.x,
-        y: this.selection.start.y,
-        width: this.selection.end.x - this.selection.start.x,
-        height: this.selection.end.y - this.selection.start.y,
-        fill: this.isSelecting ? "#7B61FFB3" : "transparent",
-        stroke: this.isSelecting ? "transparent" : "#7B61FFB3",
+        x: this.entity.x,
+        y: this.entity.y,
+        width: this.entity.width,
+        height: this.entity.height,
+        stroke: "#7B61FFB3",
+        fill: `${primaryColor}77`,
         strokeWidth: 1,
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
-        name: "boxSelection",
+        perfectDrawEnabled: false,
+        name: `entitySelection_${this.id}`,
         draggable: true,
-      };
-    },
-    placeholderConfig() {
-      return {
-        x: this.selection.placeholderBox.x,
-        y: this.selection.placeholderBox.y,
-        width: this.selection.placeholderBox.width,
-        height: this.selection.placeholderBox.height,
-        fill: "transparent",
-        stroke: "#41af85",
-        strokeWidth: 3,
-        globalCompositeOperation: "multiply",
-        shadowForStrokeEnabled: false,
-        name: "placeholderSelection",
-        draggable: false,
       };
     },
     transformerConfig() {
@@ -81,30 +71,76 @@ export default {
         anchorSize: 6,
       };
     },
-    ...mapState("selection", [
-      "selection",
-      "isSelecting",
-      "elementSelected",
-      "spanSelection",
-    ]),
-    ...mapGetters("display", ["clientToBbox"]),
-    ...mapGetters("selection", ["isSelectionValid", "entitiesOnSelection"]),
-  },
-  watch: {
-    isSelecting(isSelecting) {
-      if (!isSelecting) {
-        this.updateTransformer();
-        this.handleSelection();
-      }
-    },
+    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
+    ...mapGetters("selection", ["entitiesOnSelection"]),
   },
   mounted() {
-    if (!this.selection.custom) {
-      // if annotation was selected, then add transformer
+    this.setSelection();
+    this.$nextTick(() => {
       this.updateTransformer();
-    }
+    });
+    console.log("box selections", this.selection);
   },
   methods: {
+    setSelection() {
+      this.selection = {
+        start: {
+          x: this.entity.x,
+          y: this.entity.y,
+        },
+        end: {
+          x: this.entity.x + this.entity.width,
+          y: this.entity.y + this.entity.height,
+        },
+      };
+    },
+    startSelection(start) {
+      this.selection.start = start;
+    },
+
+    moveSelection(points) {
+      // only apply when we have a large enough selection, otherwise we risk counting misclicks
+      const xDiff = Math.abs(this.selection.start.x - points.end.x);
+      const yDiff = Math.abs(this.selection.start.y - points.end.y);
+      if (xDiff > 5 && yDiff > 5) {
+        const { start, end } = points;
+        if (start) {
+          this.selection.start = start;
+        }
+        if (end) {
+          this.selection.end = end;
+        }
+      }
+    },
+
+    endSelection(end) {
+      let xDiff;
+      let yDiff;
+
+      if (end) {
+        xDiff = Math.abs(this.selection.start.x - end.x);
+        yDiff = Math.abs(this.selection.start.y - end.y);
+      }
+
+      // if "end" is not provided, start and end points are the same, or if we have a selection smaller than 5x5,
+      // just reset
+      if (
+        !end ||
+        (yDiff <= 5 && xDiff <= 5) ||
+        (this.selection.start.x === end.x && this.selection.start.y == end.y)
+      ) {
+        this.selection.start = null;
+        this.selection.end = null;
+      } else {
+        this.selection.start.x = this.selection.start.x - selectionPadding;
+        this.selection.start.y = this.selection.start.y - selectionPadding;
+
+        end.x = end.x + selectionPadding;
+        end.y = end.y + selectionPadding;
+
+        this.selection.end = end;
+      }
+    },
     handleSelection() {
       if (!this.elementSelected) {
         const box = this.clientToBbox(
@@ -122,7 +158,7 @@ export default {
     },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node
-      const transformer = this.$refs.boxTransformer;
+      const transformer = this.$refs.entityTransformer;
 
       // maybe we're out of sync and the transformer is not available, just return
       if (!transformer) {
@@ -133,7 +169,7 @@ export default {
       const stage = transformerNode.getStage();
       let selectedNode;
       if (stage) {
-        selectedNode = stage.findOne(".boxSelection");
+        selectedNode = stage.findOne(`.entitySelection_${this.id}`);
       }
 
       // do nothing if selected node is already attached
@@ -153,18 +189,12 @@ export default {
     },
 
     getBoxSelectionContent() {
-      if (!this.isSelecting) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-        this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
-        this.$store.dispatch("selection/getTextFromBboxes", {
-          box,
-          entities: false,
-        });
-      }
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
+      this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
     },
 
     /**
@@ -196,7 +226,7 @@ export default {
 
       // reset node's everything after transform (we don't want to deal with that,
       // just with regular x/y/width/height)
-      const node = this.$refs.boxSelection.getNode();
+      const node = this.$refs.entitySelection.getNode();
       node.skewX(0);
       node.skewY(0);
       node.rotation(0);
@@ -205,7 +235,6 @@ export default {
 
       this.handleSelection();
     },
-    ...mapActions("selection", ["moveSelection"]),
   },
 };
 </script>
