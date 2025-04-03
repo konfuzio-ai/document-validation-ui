@@ -112,17 +112,7 @@ const actions = {
     commit("SET_SELECTED_ENTITIES", entities);
   },
 
-  getTextFromBboxes: ({ commit, rootState }, { box, entities }) => {
-    let span;
-
-    if (entities) {
-      span = box.flatMap((s) => {
-        return s.original;
-      });
-    } else {
-      span = [box];
-    }
-
+  getTextFromBboxes: ({ commit, rootState }, span) => {
     return new Promise((resolve, reject) => {
       HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
         span,
@@ -156,20 +146,23 @@ const actions = {
   entitySelection: ({ commit, dispatch, state }, entities) => {
     if (entities.length === 0) {
       commit("SET_SELECTED_ENTITIES", []);
+      commit("SET_SPAN_SELECTION", []);
     } else {
       commit("SET_SELECTED_ENTITIES", entities);
 
       dispatch("document/setAnnotationId", null, {
         root: true,
       });
-      dispatch("getTextFromBboxes", {
-        box: entities,
-        entities: true,
-      }).then((spans) => {
-        spans.forEach((span) => {
-          console.log("ADD_SPAN_SELECTION", span);
-          commit("ADD_SPAN_SELECTION", span);
+      let span;
+      if (entities) {
+        span = entities.flatMap((s) => {
+          return s.original;
         });
+      } else {
+        span = [entities];
+      }
+      dispatch("getTextFromBboxes", span).then((spans) => {
+        commit("SET_SPAN_SELECTION", spans);
       });
     }
   },
@@ -184,7 +177,7 @@ const actions = {
         entity.original.offset_string === entityToFind.original.offset_string
     );
 
-    let entities = [];
+    let entities = state.selectedEntities;
     if (found) {
       entities = [
         ...state.selectedEntities.filter(
@@ -200,20 +193,26 @@ const actions = {
 
     if (entities.length === 0) {
       commit("SET_SELECTED_ENTITIES", []);
+      commit("SET_SPAN_SELECTION", []);
     } else {
       commit("SET_SELECTED_ENTITIES", entities);
 
       dispatch("document/setAnnotationId", null, {
         root: true,
       });
-      dispatch("getTextFromBboxes", {
-        box: entities,
-        entities: true,
-      }).then((spans) => {
-        spans.forEach((span) => {
-          console.log("ADD_SPAN_SELECTION", span);
-          commit("ADD_SPAN_SELECTION", span);
+
+      let span;
+
+      if (entities) {
+        span = entities.flatMap((s) => {
+          return s.original;
         });
+      } else {
+        span = [entities];
+      }
+
+      dispatch("getTextFromBboxes", span).then((spans) => {
+        commit("SET_SPAN_SELECTION", spans);
       });
     }
   },
