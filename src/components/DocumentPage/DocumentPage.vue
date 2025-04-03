@@ -130,13 +130,23 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="page.number === selectionPage">
+      <v-layer v-for="(entity, index) in selectedEntities" :key="index">
         <box-selection
+          v-if="entity.original.page_index + 1 === page.number"
+          :id="index"
+          :entity="entity.scaled"
           :page="page"
           @createAnnotations="handleSelectionEntities"
           @selectEntities="handleEntitiesFromSelection"
         />
       </v-layer>
+      <!-- <v-layer v-if="page.number === selectionPage">
+        <box-selection
+          :page="page"
+          @createAnnotations="handleSelectionEntities"
+          @selectEntities="handleEntitiesFromSelection"
+        />
+      </v-layer> -->
     </v-stage>
     <b-skeleton
       v-else
@@ -370,8 +380,8 @@ export default {
         event.target.name() === "multiAnnBoxSelection" ||
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
-        event.target.name() === "boxSelection" ||
-        event.target.name() === "boxTransformer"
+        event.target.name().includes("boxSelection") ||
+        event.target.name().includes("boxTransformer")
       ) {
         return;
       }
@@ -530,24 +540,11 @@ export default {
      * Builds the konva config object for the entity.
      */
     entityRect(entity) {
-      let entityIsSelected = false;
-      if (this.selectedEntities && this.selectedEntities.length > 0) {
-        entityIsSelected = this.selectedEntities.find((selectedEntity) => {
-          return (
-            selectedEntity.original &&
-            selectedEntity.original.offset_string ===
-              entity.original.offset_string &&
-            selectedEntity.original.x0 === entity.original.x0 &&
-            selectedEntity.original.y0 === entity.original.y0
-          );
-        });
-      }
-
       return {
         stroke: "#ccc",
         strokeWidth: 1,
         dash: [5, 2],
-        fill: entityIsSelected ? "#67E9B7" : "transparent",
+        fill: "transparent",
         globalCompositeOperation: "multiply",
         transformsEnabled: "position",
         hitStrokeWidth: 0,
