@@ -56,6 +56,7 @@ const getters = {
 
 const actions = {
   disableSelection: ({ commit }) => {
+    console.log("disableSelection");
     commit("RESET_SELECTION");
     commit("SET_SELECTED_ENTITIES", []);
     commit("SET_SPAN_SELECTION", []);
@@ -145,6 +146,7 @@ const actions = {
 
   entitySelection: ({ commit, dispatch, state }, entities) => {
     if (entities.length === 0) {
+      console.log("entitySelection null");
       commit("SET_SELECTED_ENTITIES", []);
       commit("SET_SPAN_SELECTION", []);
     } else {
@@ -192,6 +194,7 @@ const actions = {
     }
 
     if (entities.length === 0) {
+      console.log("entitySelection null");
       commit("SET_SELECTED_ENTITIES", []);
       commit("SET_SPAN_SELECTION", []);
     } else {

@@ -367,7 +367,8 @@ export default {
 
       if (
         event.target.getParent() &&
-        event.target.getParent().className === "Transformer"
+        event.target.getParent().className === "Transformer" &&
+        !event.target.name().includes("anchor")
       ) {
         // if we are editing a box then close popups
         this.closePopups();
@@ -385,7 +386,8 @@ export default {
         event.target.name() === "boxSelection" ||
         event.target.name() === "boxTransformer" ||
         event.target.name().includes("entitySelection") ||
-        event.target.name().includes("entityTransformer")
+        event.target.name().includes("entityTransformer") ||
+        event.target.name().includes("anchor")
       ) {
         return;
       }
@@ -459,6 +461,7 @@ export default {
     },
 
     handleSelectionEntities(entities) {
+      console.log("handleSelectionEntities");
       this.$store.dispatch(
         "selection/entitySelection",
         this.scaledEntities(entities, this.page)
@@ -614,6 +617,7 @@ export default {
       }
     },
     closePopups() {
+      console.log("close upopu");
       this.$store.dispatch("selection/entitySelection", []);
     },
   },
