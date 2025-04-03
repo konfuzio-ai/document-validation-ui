@@ -10,22 +10,20 @@ const state = {
     start: null,
     end: null,
   },
+  isSelecting: false,
   spanSelection: [],
   placeholderSelection: [],
   selectedEntities: [],
 };
 
 const getters = {
-  isSelecting: (state) => {
-    return state.selection.start;
-  },
   isSelectionValid: (state) => {
     /**
      * `endSelection` will reset everything in case of invalid selection.
      * Check the existence of `selection.end` before requesting the
      * content from the backend.
      * */
-    return state.selection && state.selection.end;
+    return state.selection && state.selection.end != null;
   },
   getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
@@ -77,8 +75,6 @@ const actions = {
     if (xDiff > 5 && yDiff > 5) {
       commit("MOVE_SELECTION", points);
     }
-
-    commit("SET_SELECTED_ENTITIES", null);
   },
 
   endSelection: ({ commit, state }, end) => {
@@ -233,9 +229,9 @@ const mutations = {
   START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
     state.selection.pageNumber = pageNumber;
-    state.selection.custom = true;
     state.selection.start = start;
     state.selection.placeholderBox = null;
+    state.isSelecting = true;
   },
   MOVE_SELECTION: (state, points) => {
     const { start, end } = points;
@@ -248,6 +244,7 @@ const mutations = {
   },
   END_SELECTION: (state, end) => {
     state.selection.end = end;
+    state.isSelecting = false;
   },
   RESET_SELECTION: (state) => {
     state.selection.pageNumber = null;
