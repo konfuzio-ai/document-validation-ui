@@ -130,11 +130,8 @@
           </template>
         </template>
       </v-layer>
-      <v-layer>
+      <v-layer v-if="page.number === selectionPage">
         <box-selection
-          v-for="(span, index) in spanSelectionsForPage(page)"
-          :key="index"
-          :span="bboxToRect(page, span)"
           :page="page"
           @createAnnotations="handleSelectionEntities"
           @selectEntities="handleEntitiesFromSelection"
