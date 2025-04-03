@@ -193,7 +193,11 @@ export default {
   },
 
   computed: {
-    ...mapState("selection", ["selectedEntities", "spanSelection"]),
+    ...mapState("selection", [
+      "selectedEntities",
+      "spanSelection",
+      "isSelecting",
+    ]),
     ...mapState("display", [
       "scale",
       "categorizeModalIsActive",
@@ -214,11 +218,7 @@ export default {
       "bboxToRect",
       "scaledEntities",
     ]),
-    ...mapGetters("selection", [
-      "isSelectionValid",
-      "isSelecting",
-      "spanSelectionsForPage",
-    ]),
+    ...mapGetters("selection", ["isSelectionValid", "spanSelectionsForPage"]),
     ...mapGetters("document", [
       "getAnnotationsFiltered",
       "isAnnotationInEditMode",
@@ -371,6 +371,7 @@ export default {
         !event.target.name().includes("anchor")
       ) {
         // if we are editing a box then close popups
+        console.log("close popup");
         this.closePopups();
 
         return;
@@ -423,6 +424,8 @@ export default {
       if (!this.isSelecting) {
         return;
       }
+
+      console.log("onMouseUp");
 
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.endSelection({

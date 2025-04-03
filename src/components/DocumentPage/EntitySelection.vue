@@ -7,12 +7,16 @@
       @dragend="onChange"
       @transformend="onChange"
     />
-    <v-transformer ref="entityTransformer" :config="transformerConfig" />
+    <v-transformer
+      v-if="!isSelectionValid"
+      ref="entityTransformer"
+      :config="transformerConfig"
+    />
   </v-group>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
@@ -73,7 +77,7 @@ export default {
       };
     },
     ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
-    ...mapGetters("selection", ["entitiesOnSelection"]),
+    ...mapGetters("selection", ["entitiesOnSelection", "isSelectionValid"]),
   },
   mounted() {
     this.setSelection();
