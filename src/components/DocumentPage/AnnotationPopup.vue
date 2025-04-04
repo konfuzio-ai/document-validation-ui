@@ -9,7 +9,7 @@
     }"
   >
     <div v-if="!editAnnotation">
-      <div v-if="!textFromEntities" class="popup-input">
+      <div v-if="spanLoading" class="popup-input">
         <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
       </div>
       <input
@@ -189,6 +189,7 @@ export default {
       selectedSet: null,
       labels: null,
       loading: false,
+      spanLoading: true,
       isAnnSetModalShowing: false,
       setsList: [],
     };
@@ -243,10 +244,8 @@ export default {
       }
     },
     textFromEntities() {
-      if (!this.spanSelection) return;
-
       let text = "";
-      this.spanSelection.forEach((span) => {
+      this.spans.forEach((span) => {
         text = `${text} ${span.offset_string}`;
       });
 
@@ -262,6 +261,17 @@ export default {
       } else if (this.labels.length === 1) {
         this.selectedLabel = this.labels[0];
       }
+    },
+    spans() {
+      // check if info was loaded
+      let loading = false;
+      this.spans.forEach((span) => {
+        if (!span.offset_string_original) {
+          loading = true;
+          return;
+        }
+      });
+      this.spanLoading = loading;
     },
   },
   mounted() {

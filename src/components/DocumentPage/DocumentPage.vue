@@ -121,6 +121,12 @@
       >
         <span-selection :id="index" :span="span" :page="page" />
       </v-layer>
+      <v-layer
+        v-for="(span, index) in placeholderSelectionForPage(page)"
+        :key="index"
+      >
+        <placeholder-selection :span="span" />
+      </v-layer>
       <v-layer v-if="page.number === selectionPage">
         <box-selection :page="page" />
       </v-layer>
@@ -139,6 +145,7 @@ import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
 import SpanSelection from "./SpanSelection";
+import PlaceholderSelection from "./PlaceholderSelection";
 import AnnotationPopup from "./AnnotationPopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
@@ -147,6 +154,7 @@ export default {
   components: {
     BoxSelection,
     SpanSelection,
+    PlaceholderSelection,
     AnnotationPopup,
     AnnSetTableOptions,
   },
@@ -195,7 +203,11 @@ export default {
       "bboxToRect",
       "scaledEntities",
     ]),
-    ...mapGetters("selection", ["isSelectionValid", "spanSelectionsForPage"]),
+    ...mapGetters("selection", [
+      "isSelectionValid",
+      "spanSelectionsForPage",
+      "placeholderSelectionForPage",
+    ]),
     ...mapGetters("document", [
       "getAnnotationsFiltered",
       "isAnnotationInEditMode",
