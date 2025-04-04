@@ -5,9 +5,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   props: {
     span: {
+      required: true,
+      type: Object,
+    },
+    page: {
       required: true,
       type: Object,
     },
@@ -22,13 +27,17 @@ export default {
   },
   computed: {
     placeholderConfig() {
+      const box = this.bboxToRect(this.page, this.span);
+      const primaryColor = window
+        .getComputedStyle(document.body)
+        .getPropertyValue("--primary-color");
       return {
-        x: this.span.x0,
-        y: this.span.y0,
-        width: this.span.x1 - this.span.x0,
-        height: this.span.y1 - this.span.y0,
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height,
         fill: "transparent",
-        stroke: "#41af85",
+        stroke: primaryColor,
         strokeWidth: 3,
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
@@ -36,6 +45,7 @@ export default {
         draggable: false,
       };
     },
+    ...mapGetters("display", ["bboxToRect"]),
   },
 };
 </script>

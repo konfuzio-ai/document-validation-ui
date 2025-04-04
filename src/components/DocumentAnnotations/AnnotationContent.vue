@@ -133,10 +133,9 @@ export default {
             "setPlaceholderSelection",
             this.annotation.selection_bbox
           );
-          this.$store.dispatch(
-            "selection/setPlaceholderSelection",
-            this.annotation.selection_bbox
-          );
+          this.$store.dispatch("selection/setPlaceholderSelection", [
+            this.annotation.selection_bbox,
+          ]);
         }
 
         this.$store.dispatch("selection/setSpanSelection", [this.span]);
