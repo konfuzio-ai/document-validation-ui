@@ -12,28 +12,13 @@
     ]"
   >
     <AnnotationPopup
-      v-if="
-        spanSelection.length > 0 &&
-        spanSelection[0].page_index + 1 == page.number
-      "
-      :spans="spanSelection"
+      v-if="spanSelectionsForPage(page).length > 0"
+      :spans="spanSelectionsForPage(page)"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       :page="page"
       @close="closePopups"
     />
-    <!-- <EditAnnotation
-      v-if="
-        editAnnotation &&
-        editAnnotation.pageNumber &&
-        editAnnotation.pageNumber === currentPage &&
-        selection
-      "
-      :edit-annotation="editAnnotation"
-      :page="page"
-      :container-width="scaledViewport.width"
-      :container-height="scaledViewport.height"
-    /> -->
 
     <div
       v-if="showAnnotationLabel"
@@ -130,22 +115,14 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-for="(entity, index) in selectedEntities" :key="index">
-        <entity-selection
-          v-if="entity.original.page_index + 1 === page.number"
-          :id="index"
-          :entity="entity.scaled"
-          :page="page"
-          @createAnnotations="handleSelectionEntities"
-          @selectEntities="handleEntitiesFromSelection"
-        />
+      <v-layer
+        v-for="(span, index) in spanSelectionsForPage(page)"
+        :key="index"
+      >
+        <span-selection :id="index" :span="span" :page="page" />
       </v-layer>
       <v-layer v-if="page.number === selectionPage">
-        <box-selection
-          :page="page"
-          @createAnnotations="handleSelectionEntities"
-          @selectEntities="handleEntitiesFromSelection"
-        />
+        <box-selection :page="page" />
       </v-layer>
     </v-stage>
     <b-skeleton
@@ -161,7 +138,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
-import EntitySelection from "./EntitySelection";
+import SpanSelection from "./SpanSelection";
 import AnnotationPopup from "./AnnotationPopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
@@ -169,7 +146,7 @@ export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    EntitySelection,
+    SpanSelection,
     AnnotationPopup,
     AnnSetTableOptions,
   },
@@ -386,8 +363,8 @@ export default {
         event.target.name() === "multiAnnButton" ||
         event.target.name() === "boxSelection" ||
         event.target.name() === "boxTransformer" ||
-        event.target.name().includes("entitySelection") ||
-        event.target.name().includes("entityTransformer") ||
+        event.target.name().includes("spanSelection") ||
+        event.target.name().includes("spanTransformer") ||
         event.target.name().includes("anchor")
       ) {
         return;
@@ -437,38 +414,6 @@ export default {
     handleFocusedAnnotation(annotation) {
       this.$store.dispatch("document/setAnnotationId", annotation.id);
       this.closePopups();
-    },
-
-    handleEntitiesFromSelection(entities) {
-      console.log("handleEntitiesFromSelection", entities);
-      // if (
-      //   this.categorizeModalIsActive ||
-      //   this.publicView ||
-      //   this.isDocumentReviewed
-      // )
-      //   return;
-
-      // const normalizedEntities = this.scaledEntities(entities, this.page);
-      // if (normalizedEntities.length > 0) {
-      //   this.$store.dispatch(
-      //     "selection/setSelectedEntities",
-      //     normalizedEntities
-      //   );
-      //   this.$store.dispatch(
-      //     "selection/getTextFromEntities",
-      //     normalizedEntities
-      //   );
-      // } else {
-      //   this.$store.dispatch("selection/setSelectedEntities", null);
-      // }
-    },
-
-    handleSelectionEntities(entities) {
-      console.log("handleSelectionEntities");
-      this.$store.dispatch(
-        "selection/entitySelection",
-        this.scaledEntities(entities, this.page)
-      );
     },
 
     handleClickedEntity(entity) {
