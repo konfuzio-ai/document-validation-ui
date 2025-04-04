@@ -46,7 +46,6 @@ const getters = {
     );
   },
   spanSelectionsForPage: (state) => (page) => {
-    console.log(state.spanSelection);
     return state.spanSelection.filter(
       (span) => page.number === span.page_index + 1
     );

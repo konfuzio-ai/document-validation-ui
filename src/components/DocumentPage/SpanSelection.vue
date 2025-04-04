@@ -1,7 +1,7 @@
 <template>
   <v-group>
     <v-rect
-      ref="entitySelection"
+      ref="spanSelection"
       :config="config"
       :stroke-scale-enabled="false"
       @dragend="onChange"
@@ -9,7 +9,7 @@
     />
     <v-transformer
       v-if="!isSelectionValid"
-      ref="entityTransformer"
+      ref="spanTransformer"
       :config="transformerConfig"
     />
   </v-group>
@@ -28,7 +28,7 @@ export default {
       required: true,
       type: Object,
     },
-    entity: {
+    span: {
       required: true,
       type: Object,
     },
@@ -51,17 +51,17 @@ export default {
         .getComputedStyle(document.body)
         .getPropertyValue("--primary-color");
       return {
-        x: this.entity.x,
-        y: this.entity.y,
-        width: this.entity.width,
-        height: this.entity.height,
+        x: this.span.x0,
+        y: this.span.y0,
+        width: this.span.x1 - this.span.x0,
+        height: this.span.y1 - this.span.y0,
         stroke: "#7B61FFB3",
         fill: `${primaryColor}77`,
         strokeWidth: 1,
         globalCompositeOperation: "multiply",
         shadowForStrokeEnabled: false,
         perfectDrawEnabled: false,
-        name: `entitySelection_${this.id}`,
+        name: `spanSelection_${this.id}`,
         draggable: true,
       };
     },
@@ -73,10 +73,11 @@ export default {
         keepRatio: false,
         anchorStroke: "#7B61FF",
         anchorSize: 6,
-        name: `entityTransformer_${this.id}`,
+        name: `spanTransformer_${this.id}`,
       };
     },
-    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
+    ...mapState("document", ["editAnnotation"]),
+    ...mapGetters("display", ["clientToBbox", "bboxToRect", "scaledEntities"]),
     ...mapGetters("selection", ["entitiesOnSelection", "isSelectionValid"]),
   },
   mounted() {
@@ -90,12 +91,12 @@ export default {
     setSelection() {
       this.selection = {
         start: {
-          x: this.entity.x,
-          y: this.entity.y,
+          x: this.span.x0,
+          y: this.span.y0,
         },
         end: {
-          x: this.entity.x + this.entity.width,
-          y: this.entity.y + this.entity.height,
+          x: this.span.x1,
+          y: this.span.y1,
         },
       };
     },
@@ -148,23 +149,41 @@ export default {
     },
     handleSelection() {
       console.log("handleSelection");
-      if (!this.elementSelected) {
+      if (!this.editAnnotation) {
         const box = this.clientToBbox(
           this.page,
           this.selection.start,
           this.selection.end
         );
-        this.$emit(
-          "createAnnotations",
-          this.entitiesOnSelection(box, this.page)
+
+        this.$store.dispatch(
+          "selection/entitySelection",
+          this.scaledEntities(
+            this.entitiesOnSelection(box, this.page),
+            this.page
+          )
         );
       } else {
-        this.getBoxSelectionContent();
+        const box = this.clientToBbox(
+          this.page,
+          this.selection.start,
+          this.selection.end
+        );
+
+        const entities = this.entitiesOnSelection(box, this.page);
+        if (entities.length > 0) {
+          this.$store.dispatch(
+            "selection/entitySelection",
+            this.scaledEntities(entities, this.page)
+          );
+        } else {
+          this.$store.dispatch("selection/setSelectedEntities", null);
+        }
       }
     },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node
-      const transformer = this.$refs.entityTransformer;
+      const transformer = this.$refs.spanTransformer;
 
       // maybe we're out of sync and the transformer is not available, just return
       if (!transformer) {
@@ -175,7 +194,7 @@ export default {
       const stage = transformerNode.getStage();
       let selectedNode;
       if (stage) {
-        selectedNode = stage.findOne(`.entitySelection_${this.id}`);
+        selectedNode = stage.findOne(`.spanSelection_${this.id}`);
       }
 
       // do nothing if selected node is already attached
@@ -192,15 +211,6 @@ export default {
       }
 
       transformerNode.getLayer().batchDraw();
-    },
-
-    getBoxSelectionContent() {
-      const box = this.clientToBbox(
-        this.page,
-        this.selection.start,
-        this.selection.end
-      );
-      this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
     },
 
     /**
@@ -232,7 +242,7 @@ export default {
 
       // reset node's everything after transform (we don't want to deal with that,
       // just with regular x/y/width/height)
-      const node = this.$refs.entitySelection.getNode();
+      const node = this.$refs.spanSelection.getNode();
       node.skewX(0);
       node.skewY(0);
       node.rotation(0);
