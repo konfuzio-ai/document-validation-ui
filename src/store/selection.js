@@ -165,9 +165,9 @@ const actions = {
         span = [entities];
       }
       commit("SET_SPAN_SELECTION", span);
-      dispatch("getTextFromBboxes", span).then((spans) => {
-        commit("SET_SPAN_SELECTION", spans);
-      });
+      // dispatch("getTextFromBboxes", span).then((spans) => {
+      //   commit("SET_SPAN_SELECTION", spans);
+      // });
     }
   },
 
@@ -217,10 +217,10 @@ const actions = {
       }
       console.log("span before", span);
       commit("SET_SPAN_SELECTION", span);
-      dispatch("getTextFromBboxes", span).then((spans) => {
-        console.log("span after", spans);
-        commit("SET_SPAN_SELECTION", spans);
-      });
+      // dispatch("getTextFromBboxes", span).then((spans) => {
+      //   console.log("span after", spans);
+      //   commit("SET_SPAN_SELECTION", spans);
+      // });
     }
   },
 
