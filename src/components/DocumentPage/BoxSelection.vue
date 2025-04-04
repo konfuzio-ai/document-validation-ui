@@ -13,11 +13,6 @@
       ref="boxTransformer"
       :config="transformerConfig"
     />
-    <v-rect
-      v-if="selection.placeholderBox"
-      ref="placeholderSelection"
-      :config="placeholderConfig"
-    />
   </v-group>
 </template>
 
@@ -56,21 +51,7 @@ export default {
         draggable: true,
       };
     },
-    placeholderConfig() {
-      return {
-        x: this.selection.placeholderBox.x,
-        y: this.selection.placeholderBox.y,
-        width: this.selection.placeholderBox.width,
-        height: this.selection.placeholderBox.height,
-        fill: "transparent",
-        stroke: "#41af85",
-        strokeWidth: 3,
-        globalCompositeOperation: "multiply",
-        shadowForStrokeEnabled: false,
-        name: "placeholderSelection",
-        draggable: false,
-      };
-    },
+
     transformerConfig() {
       return {
         borderEnabled: false,
