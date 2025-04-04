@@ -106,6 +106,7 @@
     <!-- save button -->
     <b-button
       v-if="showSave"
+      id="save-ann"
       :class="`button-action ${showText ? 'is-button-text' : 'is-button-icon'}`"
       :type="showText ? 'is-primary' : 'is-ghost'"
       @click.stop="save"

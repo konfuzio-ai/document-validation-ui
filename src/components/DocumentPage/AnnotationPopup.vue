@@ -1,10 +1,24 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <div v-if="!textFromEntities" class="popup-input">
-      <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+  <div
+    class="annotation-popup"
+    :style="{
+      left: `${left}px`,
+      top: `${top}px`,
+      height: `${heightOfPopup}px`,
+    }"
+  >
+    <div v-if="!editAnnotation">
+      <div v-if="!textFromEntities" class="popup-input">
+        <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+      </div>
+      <input
+        v-else
+        v-model="textFromEntities"
+        class="popup-input"
+        type="text"
+      />
     </div>
-    <input v-else v-model="textFromEntities" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
       :disabled="!textFromEntities"
@@ -144,9 +158,6 @@
  * This component is used to show a popup
  * for creating a new annotation.
  */
-const heightOfPopup = 192;
-const margin = 12;
-const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
 
@@ -171,6 +182,9 @@ export default {
   },
   data() {
     return {
+      heightOfPopup: 192,
+      margin: 12,
+      widthOfPopup: 205,
       selectedLabel: null,
       selectedSet: null,
       labels: null,
@@ -180,7 +194,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["annotationSets", "documentId"]),
+    ...mapState("document", ["annotationSets", "documentId", "editAnnotation"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "numberOfLabelSetGroup",
@@ -191,37 +205,37 @@ export default {
     ...mapState("selection", ["spanSelection", "selection"]),
     top() {
       if (this.selection && this.selection.end) {
-        const top = this.selection.end.y + margin;
+        const top = this.selection.end.y + this.margin;
         //check if the popup will not go off the container on the top
-        return top + heightOfPopup < this.containerHeight
+        return top + this.heightOfPopup < this.containerHeight
           ? top
-          : this.selection.end.y - heightOfPopup;
+          : this.selection.end.y - this.heightOfPopup;
       } else {
         const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
-        const top = normalizedSpan.y - heightOfPopup; // subtract the height of the popup plus some margin
+        const top = normalizedSpan.y - this.heightOfPopup; // subtract the height of the popup plus some margin
 
         //check if the popup will not go off the container on the top
-        return normalizedSpan.y > heightOfPopup
+        return normalizedSpan.y > this.heightOfPopup
           ? top
-          : normalizedSpan.y + normalizedSpan.height + margin;
+          : normalizedSpan.y + normalizedSpan.height + this.margin;
       }
     },
     left() {
       if (this.selection && this.selection.start && this.selection.end) {
         const left = this.selection.start.x;
         //check if the popup will not go off the container on the right
-        return left + widthOfPopup < this.containerWidth
+        return left + this.widthOfPopup < this.containerWidth
           ? left
-          : this.containerWidth - widthOfPopup;
+          : this.containerWidth - this.widthOfPopup;
       } else {
         const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
         const left =
-          normalizedSpan.x + normalizedSpan.width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+          normalizedSpan.x + normalizedSpan.width / 2 - this.widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
         //check if the popup will not go off the container
-        if (left + widthOfPopup > this.containerWidth) {
+        if (left + this.widthOfPopup > this.containerWidth) {
           // on the right side
-          return this.containerWidth - widthOfPopup;
+          return this.containerWidth - this.widthOfPopup;
         } else {
           // on the left side
           return left > 0 ? left : 0;
@@ -240,17 +254,23 @@ export default {
     },
   },
   watch: {
-    selectedSet(newValue) {
+    selectedSet(newValue, oldValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
-      if (this.labels.length === 1) {
+      if (oldValue === null && this.editAnnotation) {
+        this.selectedLabel = this.editAnnotation.label;
+      } else if (this.labels.length === 1) {
         this.selectedLabel = this.labels[0];
       }
     },
   },
   mounted() {
     this.setsList = this.orderedSetList([...this.annotationSets]);
-    if (this.setsList.length === 1) {
+
+    if (this.editAnnotation) {
+      this.heightOfPopup = 142;
+      this.selectedSet = this.editAnnotation.annotationSet;
+    } else if (this.setsList.length === 1) {
       this.selectedSet = this.setsList[0];
     }
 
@@ -280,10 +300,28 @@ export default {
       return setsList;
     },
     close() {
+      if (this.editAnnotation) {
+        this.$store.dispatch("document/resetEditAnnotation");
+      }
       this.$store.dispatch("selection/disableSelection");
       this.$emit("close");
     },
     save() {
+      if (this.editAnnotation) {
+        this.$store.dispatch("document/setEditAnnotation", {
+          id: this.editAnnotation.id,
+          index: this.editAnnotation.spanIndex,
+          label: this.selectedLabel,
+          labelSet: this.selectedSet.label_set,
+          annotationSet: this.selectedSet,
+          pageNumber: this.editAnnotation.pageNumber,
+        });
+
+        document.getElementById("save-ann").click();
+        this.$emit("close");
+        return;
+      }
+
       this.loading = true;
       const span = this.spans.flatMap((ann) => {
         return {
