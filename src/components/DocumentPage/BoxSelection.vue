@@ -87,7 +87,8 @@ export default {
       "elementSelected",
       "spanSelection",
     ]),
-    ...mapGetters("display", ["clientToBbox"]),
+    ...mapState("document", ["editAnnotation"]),
+    ...mapGetters("display", ["clientToBbox", "scaledEntities"]),
     ...mapGetters("selection", ["isSelectionValid", "entitiesOnSelection"]),
   },
   watch: {
@@ -106,18 +107,36 @@ export default {
   },
   methods: {
     handleSelection() {
-      if (!this.elementSelected) {
+      if (!this.editAnnotation) {
         const box = this.clientToBbox(
           this.page,
           this.selection.start,
           this.selection.end
         );
-        this.$emit(
-          "createAnnotations",
-          this.entitiesOnSelection(box, this.page)
+
+        this.$store.dispatch(
+          "selection/entitySelection",
+          this.scaledEntities(
+            this.entitiesOnSelection(box, this.page),
+            this.page
+          )
         );
       } else {
-        this.getBoxSelectionContent();
+        const box = this.clientToBbox(
+          this.page,
+          this.selection.start,
+          this.selection.end
+        );
+
+        const entities = this.entitiesOnSelection(box, this.page);
+        if (entities.length > 0) {
+          this.$store.dispatch(
+            "selection/entitySelection",
+            this.scaledEntities(entities, this.page)
+          );
+        } else {
+          this.$store.dispatch("selection/setSelectedEntities", null);
+        }
       }
     },
     updateTransformer() {
@@ -150,21 +169,6 @@ export default {
       }
 
       transformerNode.getLayer().batchDraw();
-    },
-
-    getBoxSelectionContent() {
-      if (!this.isSelecting) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-        this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
-        this.$store.dispatch("selection/getTextFromBboxes", {
-          box,
-          entities: false,
-        });
-      }
     },
 
     /**
