@@ -39,6 +39,12 @@ export default {
         start: null,
         end: null,
       },
+      box: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      },
     };
   },
   computed: {
@@ -51,10 +57,10 @@ export default {
         .getComputedStyle(document.body)
         .getPropertyValue("--primary-color");
       return {
-        x: this.span.x0,
-        y: this.span.y0,
-        width: this.span.x1 - this.span.x0,
-        height: this.span.y1 - this.span.y0,
+        x: this.box.x,
+        y: this.box.y,
+        width: this.box.width,
+        height: this.box.height,
         stroke: "#7B61FFB3",
         fill: `${primaryColor}77`,
         strokeWidth: 1,
@@ -81,6 +87,7 @@ export default {
     ...mapGetters("selection", ["entitiesOnSelection", "isSelectionValid"]),
   },
   mounted() {
+    this.box = this.bboxToRect(this.page, this.span);
     this.setSelection();
     this.$nextTick(() => {
       this.updateTransformer();
@@ -91,12 +98,12 @@ export default {
     setSelection() {
       this.selection = {
         start: {
-          x: this.span.x0,
-          y: this.span.y0,
+          x: this.box.x,
+          y: this.box.y,
         },
         end: {
-          x: this.span.x1,
-          y: this.span.y1,
+          x: this.box.x + this.box.width,
+          y: this.box.y + this.box.height,
         },
       };
     },
