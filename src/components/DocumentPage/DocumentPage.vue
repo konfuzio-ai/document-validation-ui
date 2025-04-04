@@ -123,9 +123,9 @@
       </v-layer>
       <v-layer
         v-for="(span, index) in placeholderSelectionForPage(page)"
-        :key="index"
+        :key="`${index}_placeholder`"
       >
-        <placeholder-selection :span="span" />
+        <placeholder-selection :span="span" :page="page" />
       </v-layer>
       <v-layer v-if="page.number === selectionPage">
         <box-selection :page="page" />
