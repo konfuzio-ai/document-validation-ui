@@ -308,9 +308,10 @@ export default {
     },
     save() {
       if (this.editAnnotation) {
+        this.loading = true;
         this.$store.dispatch("document/setEditAnnotation", {
           id: this.editAnnotation.id,
-          index: this.editAnnotation.spanIndex,
+          index: this.editAnnotation.index,
           label: this.selectedLabel,
           labelSet: this.selectedSet.label_set,
           annotationSet: this.selectedSet,
@@ -318,60 +319,60 @@ export default {
         });
 
         document.getElementById("save-ann").click();
-        this.$emit("close");
+
         return;
-      }
-
-      this.loading = true;
-      const span = this.spans.flatMap((ann) => {
-        return {
-          ...ann.original,
-          offset_string: ann.original.offset_string,
-        };
-      });
-
-      let selection_bbox = null;
-
-      if (this.selection && this.selection.start && this.selection.end) {
-        selection_bbox = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-      }
-
-      const annotationToCreate = {
-        document: this.documentId,
-        span: span,
-        label: this.selectedLabel.id,
-        is_correct: true,
-        revised: false,
-      };
-
-      if (selection_bbox) {
-        annotationToCreate.selection_bbox = selection_bbox;
-      }
-
-      if (this.selectedSet.id) {
-        annotationToCreate.annotation_set = this.selectedSet.id;
       } else {
-        annotationToCreate.label_set = this.selectedSet.label_set.id;
-      }
-      this.$store
-        .dispatch("document/createAnnotation", {
-          annotation: annotationToCreate,
-        })
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("error_creating_annotation"),
-          });
-        })
-        .finally(() => {
-          this.close();
-          this.loading = false;
+        this.loading = true;
+        const span = this.spans.flatMap((ann) => {
+          return {
+            ...ann.original,
+            offset_string: ann.original.offset_string,
+          };
         });
+
+        let selection_bbox = null;
+
+        if (this.selection && this.selection.start && this.selection.end) {
+          selection_bbox = this.clientToBbox(
+            this.page,
+            this.selection.start,
+            this.selection.end
+          );
+        }
+
+        const annotationToCreate = {
+          document: this.documentId,
+          span: span,
+          label: this.selectedLabel.id,
+          is_correct: true,
+          revised: false,
+        };
+
+        if (selection_bbox) {
+          annotationToCreate.selection_bbox = selection_bbox;
+        }
+
+        if (this.selectedSet.id) {
+          annotationToCreate.annotation_set = this.selectedSet.id;
+        } else {
+          annotationToCreate.label_set = this.selectedSet.label_set.id;
+        }
+        this.$store
+          .dispatch("document/createAnnotation", {
+            annotation: annotationToCreate,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("error_creating_annotation"),
+            });
+          })
+          .finally(() => {
+            this.close();
+            this.loading = false;
+          });
+      }
     },
     chooseLabelSet(labelSet) {
       // check if there's already a new entry for that label set to be created
