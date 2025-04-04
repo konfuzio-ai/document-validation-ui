@@ -671,43 +671,92 @@ export default {
         this.isLoading = true;
       }, 100);
 
-      let updatedString; // what will be sent to the API
-      let storeAction; // if it will be 'delete' or 'patch'
+      // check if annotation set was changed
+      if (
+        (this.editAnnotation.annotationSet &&
+          (this.editAnnotation.annotationSet.id !== this.annotationSet.id ||
+            (this.editAnnotation.annotationSet.id == null &&
+              this.labelSet.id !== this.editAnnotation.labelSet.id))) ||
+        (this.editAnnotation.label &&
+          this.editAnnotation.label.id !== this.label.id)
+      ) {
+        // first delete annotation, then create new one
+        this.$store
+          .dispatch("document/deleteAnnotation", {
+            annotationId: this.annotation.id,
+          })
+          .then(() => {
+            const annotationToCreate = {
+              document: this.documentId,
+              span: spans,
+              label: this.editAnnotation.label.id,
+              is_correct: true,
+              revised: false,
+            };
 
-      // Verify if we delete the entire Annotation or a part of the text
-      if (isToDecline || spans.length === 0) {
-        storeAction = "document/deleteAnnotation";
-      } else {
-        // Editing the Annotation
-        // Deleting part of multi-line Annotation
-        storeAction = "document/updateAnnotation";
+            if (this.editAnnotation.annotationSet.id) {
+              annotationToCreate.annotation_set =
+                this.editAnnotation.annotationSet.id;
+            } else {
+              annotationToCreate.label_set = this.editAnnotation.labelSet.id;
+            }
 
-        updatedString = {
-          is_correct: true,
-          revised: true,
-          span: spans,
-        };
-      }
-
-      // Send to the store for the http patch/delete request
-      this.$store
-        .dispatch(storeAction, {
-          updatedValues: updatedString,
-          annotationId: this.annotation.id,
-          annotationSet: this.annotationSet,
-        })
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("edit_error"),
+            this.$store
+              .dispatch("document/createAnnotation", {
+                annotation: annotationToCreate,
+              })
+              .catch((error) => {
+                this.$store.dispatch("document/createErrorMessage", {
+                  error,
+                  serverErrorMessage: this.$t("server_error"),
+                  defaultErrorMessage: this.$t("error_creating_annotation"),
+                });
+              })
+              .finally(() => {
+                this.$store.dispatch("document/resetEditAnnotation");
+                this.$store.dispatch("selection/disableSelection");
+                this.loading = false;
+              });
           });
-        })
-        .finally(() => {
-          this.$store.dispatch("document/resetEditAnnotation");
-          this.$store.dispatch("selection/setSpanSelection", null);
-          this.isLoading = false;
-        });
+      } else {
+        let updatedString; // what will be sent to the API
+        let storeAction; // if it will be 'delete' or 'patch'
+
+        // Verify if we delete the entire Annotation or a part of the text
+        if (isToDecline || spans.length === 0) {
+          storeAction = "document/deleteAnnotation";
+        } else {
+          // Editing the Annotation
+          // Deleting part of multi-line Annotation
+          storeAction = "document/updateAnnotation";
+
+          updatedString = {
+            is_correct: true,
+            revised: true,
+            span: spans,
+          };
+        }
+
+        // Send to the store for the http patch/delete request
+        this.$store
+          .dispatch(storeAction, {
+            updatedValues: updatedString,
+            annotationId: this.annotation.id,
+            annotationSet: this.annotationSet,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          })
+          .finally(() => {
+            this.$store.dispatch("document/resetEditAnnotation");
+            this.$store.dispatch("selection/disableSelection");
+            this.isLoading = false;
+          });
+      }
     },
     saveEmptyAnnotationChanges() {
       let annotationToCreate;
