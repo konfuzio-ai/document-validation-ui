@@ -8,15 +8,10 @@
   gap: 8px;
   position: absolute;
   width: 205px;
-  height: 192px;
   z-index: 40;
   color: $white;
   padding: 8px;
   cursor: default;
-
-  &.small {
-    height: 142px;
-  }
 
   .popup-input {
     background-color: $text-color;
