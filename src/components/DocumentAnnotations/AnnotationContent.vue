@@ -119,14 +119,20 @@ export default {
             pageNumber: this.span.page_index + 1,
           })
           .then(() => {
-            this.$refs.contentEditable.focus();
+            if (this.$refs.contentEditable) {
+              this.$refs.contentEditable.focus();
+            }
           })
           .catch((error) => {
             console.log(error);
           });
-
+        console.log("setPlaceholderSelection", this.annotation);
         // check if this is part of a group of spans to show the whole bounding box as a placeholder
         if (this.annotation.selection_bbox && this.annotation.span.length > 1) {
+          console.log(
+            "setPlaceholderSelection",
+            this.annotation.selection_bbox
+          );
           this.$store.dispatch(
             "selection/setPlaceholderSelection",
             this.annotation.selection_bbox

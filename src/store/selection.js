@@ -50,6 +50,11 @@ const getters = {
       (span) => page.number === span.page_index + 1
     );
   },
+  placeholderSelectionForPage: (state) => (page) => {
+    return state.placeholderSelection.filter(
+      (span) => page.number === span.page_index + 1
+    );
+  },
 };
 
 const actions = {
@@ -159,6 +164,7 @@ const actions = {
       } else {
         span = [entities];
       }
+      commit("SET_SPAN_SELECTION", span);
       dispatch("getTextFromBboxes", span).then((spans) => {
         commit("SET_SPAN_SELECTION", spans);
       });
@@ -209,8 +215,10 @@ const actions = {
       } else {
         span = [entities];
       }
-
+      console.log("span before", span);
+      commit("SET_SPAN_SELECTION", span);
       dispatch("getTextFromBboxes", span).then((spans) => {
+        console.log("span after", spans);
         commit("SET_SPAN_SELECTION", spans);
       });
     }
@@ -230,7 +238,6 @@ const mutations = {
     state.selection.end = null;
     state.selection.pageNumber = pageNumber;
     state.selection.start = start;
-    state.selection.placeholderBox = null;
     state.isSelecting = true;
   },
   MOVE_SELECTION: (state, points) => {
@@ -250,7 +257,6 @@ const mutations = {
     state.selection.pageNumber = null;
     state.selection.start = null;
     state.selection.end = null;
-    state.selection.placeholderBox = null;
   },
   SET_SPAN_SELECTION: (state, span) => {
     if (!span) {
