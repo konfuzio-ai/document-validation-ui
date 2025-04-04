@@ -25,6 +25,7 @@ const getters = {
      * */
     return state.selection && state.selection.end != null;
   },
+
   getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
