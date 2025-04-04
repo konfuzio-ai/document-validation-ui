@@ -333,12 +333,6 @@ export default {
         return;
       } else {
         this.loading = true;
-        const span = this.spans.flatMap((ann) => {
-          return {
-            ...ann.original,
-            offset_string: ann.original.offset_string,
-          };
-        });
 
         let selection_bbox = null;
 
@@ -352,11 +346,13 @@ export default {
 
         const annotationToCreate = {
           document: this.documentId,
-          span: span,
+          span: this.spans,
           label: this.selectedLabel.id,
           is_correct: true,
           revised: false,
         };
+
+        console.log("annotationToCreate", annotationToCreate);
 
         if (selection_bbox) {
           annotationToCreate.selection_bbox = selection_bbox;
