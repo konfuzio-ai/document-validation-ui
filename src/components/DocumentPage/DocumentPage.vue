@@ -578,7 +578,10 @@ export default {
     },
     closePopups() {
       console.log("close upopu");
-      this.$store.dispatch("selection/entitySelection", []);
+      this.$store.dispatch("selection/entitySelection", {
+        entities: [],
+        selection: null,
+      });
     },
   },
 };

@@ -189,7 +189,6 @@ export default {
       selectedSet: null,
       labels: null,
       loading: false,
-      spanLoading: false,
       isAnnSetModalShowing: false,
       setsList: [],
     };
@@ -203,7 +202,7 @@ export default {
     ]),
     ...mapState("display", ["showBranding"]),
     ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
-    ...mapState("selection", ["spanSelection", "selection"]),
+    ...mapState("selection", ["spanSelection", "selection", "spanLoading"]),
     top() {
       if (this.selection && this.selection.end) {
         const top = this.selection.end.y + this.margin;
@@ -262,17 +261,6 @@ export default {
         this.selectedLabel = this.labels[0];
       }
     },
-    // spans() {
-    //   // check if info was loaded
-    //   let loading = false;
-    //   this.spans.forEach((span) => {
-    //     if (!span.offset_string_original) {
-    //       loading = true;
-    //       return;
-    //     }
-    //   });
-    //   this.spanLoading = loading;
-    // },
   },
   mounted() {
     this.setsList = [...this.annotationSets];
