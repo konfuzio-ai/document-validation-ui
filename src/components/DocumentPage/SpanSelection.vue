@@ -86,6 +86,13 @@ export default {
     ...mapGetters("display", ["clientToBbox", "bboxToRect", "scaledEntities"]),
     ...mapGetters("selection", ["entitiesOnSelection", "isSelectionValid"]),
   },
+  watch: {
+    box() {
+      console.log("box watch");
+      this.updateTransformer();
+      this.setSelection();
+    },
+  },
   mounted() {
     this.box = this.bboxToRect(this.page, this.span);
     this.setSelection();
@@ -155,38 +162,26 @@ export default {
       }
     },
     handleSelection() {
-      console.log("handleSelection");
-      if (!this.editAnnotation) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
+      this.box = {
+        x: this.selection.start.x,
+        y: this.selection.start.y,
+        width: this.selection.end.x - this.selection.start.x,
+        height: this.selection.end.y - this.selection.start.y,
+      };
 
-        this.$store.dispatch(
-          "selection/entitySelection",
-          this.scaledEntities(
-            this.entitiesOnSelection(box, this.page),
-            this.page
-          )
-        );
-      } else {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
 
-        const entities = this.entitiesOnSelection(box, this.page);
-        if (entities.length > 0) {
-          this.$store.dispatch(
-            "selection/entitySelection",
-            this.scaledEntities(entities, this.page)
-          );
-        } else {
-          this.$store.dispatch("selection/setSelectedEntities", null);
-        }
-      }
+      this.$store.dispatch("selection/entitySelection", {
+        entities: this.scaledEntities(
+          this.entitiesOnSelection(box, this.page),
+          this.page
+        ),
+        selection: box,
+      });
     },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node

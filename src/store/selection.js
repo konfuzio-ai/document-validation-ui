@@ -14,6 +14,7 @@ const state = {
   spanSelection: [],
   placeholderSelection: [],
   selectedEntities: [],
+  spanLoading: false,
 };
 
 const getters = {
@@ -115,6 +116,7 @@ const actions = {
   },
 
   getTextFromBboxes: ({ commit, rootState }, span) => {
+    commit("SET_SPAN_LOADING", true);
     return new Promise((resolve, reject) => {
       HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
         span,
@@ -141,15 +143,24 @@ const actions = {
         .catch((error) => {
           alert("Could not fetch the selected text from the backend");
           reject(error);
+        })
+        .finally(() => {
+          commit("SET_SPAN_LOADING", false);
         });
     });
   },
 
-  entitySelection: ({ commit, dispatch, state }, entities) => {
+  entitySelection: ({ commit, dispatch, state }, { entities, selection }) => {
     if (entities.length === 0) {
-      console.log("entitySelection null");
+      if (selection) {
+        dispatch("getTextFromBboxes", [selection]).then((spans) => {
+          commit("SET_SPAN_SELECTION", spans);
+        });
+      } else {
+        commit("RESET_SELECTION");
+        commit("SET_SPAN_SELECTION", []);
+      }
       commit("SET_SELECTED_ENTITIES", []);
-      commit("SET_SPAN_SELECTION", []);
     } else {
       commit("SET_SELECTED_ENTITIES", entities);
 
@@ -165,9 +176,9 @@ const actions = {
         span = [entities];
       }
       commit("SET_SPAN_SELECTION", span);
-      // dispatch("getTextFromBboxes", span).then((spans) => {
-      //   commit("SET_SPAN_SELECTION", spans);
-      // });
+      dispatch("getTextFromBboxes", span).then((spans) => {
+        commit("SET_SPAN_SELECTION", spans);
+      });
     }
   },
 
@@ -285,6 +296,9 @@ const mutations = {
     } else {
       state.selectedEntities = entities;
     }
+  },
+  SET_SPAN_LOADING: (state, loading) => {
+    state.spanLoading = loading;
   },
 };
 
