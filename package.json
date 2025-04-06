@@ -30,7 +30,7 @@
     "bignumber.js": "^9.1.2",
     "buefy": "npm:@ntohq/buefy-next@^0.2.0",
     "keycloak-js": "^25.0.6",
-    "konva": "^9.3.18",
+    "konva": "^9.3.20",
     "sass": "^1.85.0",
     "sass-loader": "^16.0.5",
     "splitpanes": "^3.1.8",
