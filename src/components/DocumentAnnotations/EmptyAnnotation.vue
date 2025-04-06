@@ -6,7 +6,6 @@
       :class="[
         'annotation-value',
         showActionError && isAnnotationBeingEdited() && 'error-editing',
-        !isMissingAnnotation && 'label-empty',
         isAnnotationBeingEdited() && 'clicked-ann',
         isMissingAnnotation && 'missing-annotation',
         !isMissingAnnotation && 'keyboard-nav',
@@ -18,6 +17,7 @@
       ><!-- eslint-disable vue/no-v-html -->
       <span
         v-if="isFindingAnnotation"
+        class="label-empty-clicked"
         v-html="$t('draw_box_document', { label_name: label.name })"
       >
       </span>
@@ -27,7 +27,7 @@
       <span v-else-if="span && span.offset_string">
         {{ span.offset_string }}
       </span>
-      <span v-else>
+      <span v-else class="label-empty">
         {{ $t("no_data_found") }}
       </span>
       <!--eslint-enable-->
@@ -127,28 +127,17 @@ export default {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
-      if (
-        this.publicView ||
-        this.isDocumentReviewed ||
-        this.isMissingAnnotation
-      )
-        return;
-
-      if (!this.publicView && !this.isDocumentReviewed) {
-        console.log("clicked ", this.emptyAnnotationId());
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("document/setEditAnnotation", {
-          id: this.emptyAnnotationId(),
-          index: this.spanIndex,
-          label: this.label,
-          labelSet: this.labelSet,
-          annotationSet: this.annotationSet,
-        });
-      }
+      if (this.isMissingAnnotation) return;
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/setEditAnnotation", {
+        id: this.emptyAnnotationId(),
+        index: this.spanIndex,
+        label: this.label,
+        labelSet: this.labelSet,
+        annotationSet: this.annotationSet,
+      });
     },
     saveEmptyAnnotationChanges(event) {
-      if (this.publicView || this.isDocumentReviewed) return;
-
       if (event) {
         event.preventDefault();
       }
