@@ -101,7 +101,6 @@ export default {
     this.$nextTick(() => {
       this.updateTransformer();
     });
-    console.log("box selections", this.selection);
   },
   methods: {
     setSelection() {
