@@ -324,8 +324,6 @@ export default {
           revised: false,
         };
 
-        console.log("annotationToCreate", annotationToCreate);
-
         if (selection_bbox) {
           annotationToCreate.selection_bbox = selection_bbox;
         }
