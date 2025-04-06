@@ -1,16 +1,32 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div
-    v-if="annotation && !hide"
-    class="annotation-popup small"
-    :style="{ left: `${left}px`, top: `${top}px` }"
+    class="annotation-popup"
+    :style="{
+      left: `${left}px`,
+      top: `${top}px`,
+      height: `${heightOfPopup}px`,
+    }"
   >
+    <div v-if="!editAnnotation">
+      <div v-if="spanLoading" class="popup-input">
+        <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+      </div>
+      <input
+        v-else
+        v-model="textFromEntities"
+        class="popup-input"
+        type="text"
+      />
+    </div>
     <b-dropdown
       v-model="selectedSet"
+      :disabled="!textFromEntities"
       aria-role="list"
       :class="[
         'annotation-dropdown',
         'no-padding-bottom',
+        'no-padding-top',
         'dropdown-full-width',
         setsList.length === 0 ? 'no-padding-top' : '',
       ]"
@@ -68,11 +84,10 @@
     </b-dropdown>
     <b-tooltip
       multilined
-      :active="selectedSet && (!labelsFiltered || labelsFiltered.length === 0)"
+      :active="selectedSet && (!labels || labels.length === 0)"
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
-      :close-delay="5000"
     >
       <template #content>
         <div
@@ -84,27 +99,35 @@
         ></div>
       </template>
       <b-dropdown
-        v-if="selectedLabel"
         v-model="selectedLabel"
         aria-role="list"
-        :disabled="!labelsFiltered || labelsFiltered.length === 0"
+        :disabled="!textFromEntities || !labels || labels.length === 0"
         scrollable
         class="label-dropdown annotation-dropdown dropdown-full-width"
       >
         <template #trigger>
           <b-button
-            class="popup-input has-right-icon"
-            :disabled="!labelsFiltered"
+            :class="[
+              'popup-input',
+              selectedLabel ? '' : 'not-selected',
+              'has-right-icon',
+            ]"
             type="is-text"
           >
-            <span class="input-text"> {{ selectedLabel.name }}</span>
+            <span class="input-text">{{
+              selectedLabel
+                ? selectedLabel.name
+                : labels && labels.length === 0
+                ? $t("no_labels_to_choose")
+                : $t("select_label")
+            }}</span>
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>
           </b-button>
         </template>
         <b-dropdown-item
-          v-for="label in labelsFiltered"
+          v-for="label in labels"
           :key="label.id"
           aria-role="listitem"
           :value="label"
@@ -117,15 +140,15 @@
       <b-button
         type="is-text"
         class="cancel-button popup-button primary-button"
-        :label="$t('hide')"
+        :label="$t('cancel')"
         :disabled="loading"
-        @click.prevent="hide = true"
+        @click.prevent="close"
       />
       <b-button
         type="is-primary"
         class="popup-button primary-button"
         :label="$t('save')"
-        :disabled="loading || !spanSelection || !selectedLabel || !wasChanged"
+        :disabled="loading || !spanSelection || !selectedLabel"
         @click.prevent="save"
       />
     </div>
@@ -134,23 +157,16 @@
 <script>
 /**
  * This component is used to show a popup
- * for editing an annotation.
+ * for creating a new annotation.
  */
-const heightOfPopup = 142;
-const margin = 12;
-const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
-    editAnnotation: {
+    spans: {
       required: true,
-      type: Object,
-    },
-    page: {
-      required: true,
-      type: Object,
+      type: Array,
     },
     containerWidth: {
       type: Number,
@@ -160,82 +176,102 @@ export default {
       type: Number,
       required: true,
     },
+    page: {
+      required: true,
+      type: Object,
+    },
   },
   data() {
     return {
-      annotation: null,
+      heightOfPopup: 192,
+      margin: 12,
+      widthOfPopup: 205,
       selectedLabel: null,
       selectedSet: null,
-      labelsFiltered: null,
+      labels: null,
       loading: false,
       isAnnSetModalShowing: false,
       setsList: [],
-      hide: false,
     };
   },
   computed: {
-    ...mapState("document", [
-      "annotationSets",
-      "annotations",
-      "labels",
-      "documentId",
-    ]),
+    ...mapState("document", ["annotationSets", "documentId", "editAnnotation"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
     ]),
     ...mapState("display", ["showBranding"]),
-    ...mapGetters("display", ["bboxToRect"]),
-    ...mapState("selection", ["selection", "spanSelection"]),
+    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
+    ...mapState("selection", ["spanSelection", "selection", "spanLoading"]),
     top() {
-      if (this.selection && this.selection.start && this.selection.end) {
-        const top = this.selection.start.y - heightOfPopup; // subtract the height of the popup plus some margin
-
-        const height = this.selection.end.y - this.selection.start.y;
+      if (this.selection && this.selection.end) {
+        const top = this.selection.end.y + this.margin;
+        //check if the popup will not go off the container on the top
+        return top + this.heightOfPopup < this.containerHeight
+          ? top
+          : this.selection.end.y - this.heightOfPopup;
+      } else {
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
+        const top = normalizedSpan.y - this.heightOfPopup; // subtract the height of the popup plus some margin
 
         //check if the popup will not go off the container on the top
-        return this.selection.start.y > heightOfPopup
-          ? top - margin
-          : this.selection.start.y + height + margin;
+        return normalizedSpan.y > this.heightOfPopup
+          ? top
+          : normalizedSpan.y + normalizedSpan.height + this.margin;
       }
-      return 0;
     },
     left() {
       if (this.selection && this.selection.start && this.selection.end) {
-        const width = this.selection.end.x - this.selection.start.x;
-
-        const left = this.selection.start.x + width / 2 - widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+        const left = this.selection.start.x;
+        //check if the popup will not go off the container on the right
+        return left + this.widthOfPopup < this.containerWidth
+          ? left
+          : this.containerWidth - this.widthOfPopup;
+      } else {
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
+        const left =
+          normalizedSpan.x + normalizedSpan.width / 2 - this.widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
         //check if the popup will not go off the container
-        if (left + widthOfPopup > this.containerWidth) {
+        if (left + this.widthOfPopup > this.containerWidth) {
           // on the right side
-          return this.containerWidth - widthOfPopup;
+          return this.containerWidth - this.widthOfPopup;
         } else {
           // on the left side
           return left > 0 ? left : 0;
         }
       }
-      return 0;
     },
-    wasChanged() {
-      return (
-        this.editAnnotation.annotationSet.id !== this.selectedSet.id ||
-        this.editAnnotation.label.id !== this.selectedLabel.id
-      );
+    textFromEntities() {
+      let text = "";
+      this.spans.forEach((span) => {
+        text = `${text} ${span.offset_string}`;
+      });
+
+      return text.trim();
     },
   },
   watch: {
-    selectedSet(newValue) {
-      this.labelsFiltered = this.labelsFilteredForAnnotationCreation(newValue);
-    },
-    editAnnotation() {
-      this.hide = false;
-      this.loadInfo();
+    selectedSet(newValue, oldValue) {
+      this.selectedLabel = null;
+      this.labels = this.labelsFilteredForAnnotationCreation(newValue);
+      if (oldValue === null && this.editAnnotation) {
+        this.selectedLabel = this.editAnnotation.label;
+      } else if (this.labels.length === 1) {
+        this.selectedLabel = this.labels[0];
+      }
     },
   },
   mounted() {
-    this.loadInfo();
+    this.setsList = this.orderedSetList([...this.annotationSets]);
+
+    if (this.editAnnotation) {
+      this.heightOfPopup = 142;
+      this.selectedSet = this.editAnnotation.annotationSet;
+    } else if (this.setsList.length === 1) {
+      this.selectedSet = this.setsList[0];
+    }
 
     setTimeout(() => {
       // prevent click propagation when opening the popup
@@ -262,68 +298,58 @@ export default {
       });
       return setsList;
     },
-    loadInfo() {
-      this.setsList = this.orderedSetList([...this.annotationSets]);
-
-      this.selectedSet = this.annotationSets.find(
-        (annSet) => annSet.id === this.editAnnotation.annotationSet.id
-      );
-
-      this.labelsFiltered = this.labelsFilteredForAnnotationCreation(
-        this.selectedSet
-      );
-
-      // if existing label is not able to be chosen we add it manually
-      if (!this.labelsFiltered.includes(this.editAnnotation.label)) {
-        this.labelsFiltered.push(this.editAnnotation.label);
-      }
-
-      this.selectedLabel = this.editAnnotation.label;
-
-      this.annotation = this.annotations.find(
-        (ann) => ann.id === this.editAnnotation.id
-      );
-    },
     close() {
-      this.$store.dispatch("document/resetEditAnnotation");
+      if (this.editAnnotation) {
+        this.$store.dispatch("document/resetEditAnnotation");
+      }
       this.$store.dispatch("selection/disableSelection");
-      this.$store.dispatch("selection/setSelectedEntities", null);
       this.$emit("close");
     },
-    async save() {
-      this.loading = true;
+    save() {
+      if (this.editAnnotation) {
+        this.loading = true;
+        this.$store.dispatch("document/setEditAnnotation", {
+          id: this.editAnnotation.id,
+          index: this.editAnnotation.index,
+          label: this.selectedLabel,
+          labelSet: this.selectedSet.label_set,
+          annotationSet: this.selectedSet,
+          pageNumber: this.editAnnotation.pageNumber,
+        });
 
-      if (this.wasChanged) {
-        // first delete annotation, then create new one
-        await this.$store
-          .dispatch("document/deleteAnnotation", {
-            annotationId: this.annotation.id,
-          })
-          .catch((error) => {
-            this.$store.dispatch("document/createErrorMessage", {
-              error,
-              serverErrorMessage: this.$t("server_error"),
-              defaultErrorMessage: this.$t("edit_error"),
-            });
-          });
+        document.getElementById("save-ann").click();
 
-        const spans = this.annotation.span;
-        spans[this.editAnnotation.index] = this.spanSelection;
+        return;
+      } else {
+        this.loading = true;
+
+        let selection_bbox = null;
+
+        if (this.selection && this.selection.start && this.selection.end) {
+          selection_bbox = this.clientToBbox(
+            this.page,
+            this.selection.start,
+            this.selection.end
+          );
+        }
 
         const annotationToCreate = {
           document: this.documentId,
-          span: spans,
+          span: this.spans,
           label: this.selectedLabel.id,
           is_correct: true,
           revised: false,
         };
+
+        if (selection_bbox) {
+          annotationToCreate.selection_bbox = selection_bbox;
+        }
 
         if (this.selectedSet.id) {
           annotationToCreate.annotation_set = this.selectedSet.id;
         } else {
           annotationToCreate.label_set = this.selectedSet.label_set.id;
         }
-
         this.$store
           .dispatch("document/createAnnotation", {
             annotation: annotationToCreate,
@@ -339,8 +365,6 @@ export default {
             this.close();
             this.loading = false;
           });
-      } else {
-        this.close();
       }
     },
     chooseLabelSet(labelSet) {
