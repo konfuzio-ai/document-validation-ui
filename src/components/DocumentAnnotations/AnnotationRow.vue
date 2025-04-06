@@ -129,7 +129,8 @@
         <div v-else>
           <div
             v-if="
-              spanSelection && isAnnotationInEditMode(currentAnnotationId())
+              spanSelection.length > 0 &&
+              isAnnotationInEditMode(currentAnnotationId())
             "
           >
             <EmptyAnnotation
@@ -434,9 +435,10 @@ export default {
 
       if (this.annotation && this.annotation.id) return this.annotation.id;
 
-      const setId = this.annotationSet
-        ? this.annotationSet.id
-        : this.labelSet.id;
+      const setId =
+        this.annotationSet && this.annotationSet.id
+          ? this.annotationSet.id
+          : this.labelSet.id;
 
       return `${setId}_${this.label.id}`;
     },
