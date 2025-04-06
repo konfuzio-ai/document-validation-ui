@@ -115,20 +115,22 @@
           </template>
         </template>
       </v-layer>
-      <v-layer
-        v-for="(span, index) in spanSelectionsForPage(page)"
-        :key="index"
-      >
-        <span-selection :id="index" :span="span" :page="page" />
-      </v-layer>
-      <v-layer
-        v-for="(span, index) in placeholderSelectionForPage(page)"
-        :key="`${index}_placeholder`"
-      >
-        <placeholder-selection :span="span" :page="page" />
-      </v-layer>
-      <v-layer v-if="page.number === selectionPage">
-        <box-selection :page="page" />
+      <v-layer>
+        <template
+          v-for="(span, index) in spanSelectionsForPage(page)"
+          :key="index"
+        >
+          <span-selection :id="index" :span="span" :page="page" />
+        </template>
+        <template
+          v-for="(span, index) in placeholderSelectionForPage(page)"
+          :key="`${index}_placeholder`"
+        >
+          <placeholder-selection :span="span" :page="page" />
+        </template>
+        <template v-if="page.number === selectionPage">
+          <box-selection :page="page" />
+        </template>
       </v-layer>
     </v-stage>
     <b-skeleton
