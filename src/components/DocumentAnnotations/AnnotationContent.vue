@@ -11,10 +11,10 @@
           editAnnotation &&
           editAnnotation.id === annotation.id &&
           'error-editing',
-        isAnnotationBeingEdited && 'clicked-ann',
+        isSpanBeingEdited && 'clicked-ann',
       ]"
       role="textbox"
-      :contenteditable="isAnnotationBeingEdited"
+      :contenteditable="isSpanBeingEdited"
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
@@ -70,19 +70,17 @@ export default {
       "newAcceptedAnnotations",
       "showActionError",
     ]),
-    isAnnotationBeingEdited() {
+    isSpanBeingEdited() {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
+    },
+    isAnnotationBeingEdited() {
+      return (
+        this.editAnnotation && this.annotation.id === this.editAnnotation.id
+      );
     },
   },
 
   watch: {
-    isAnnotationBeingEdited(newState, oldState) {
-      // verify if new annotation in edit mode is not this one and if this
-      // one was selected before so we set the state to the previous one (like a cancel)
-      if (!newState && oldState) {
-        this.handleCancel();
-      }
-    },
     span() {
       // span content changed, ex. from click on entity
       this.setText(this.span.offset_string);
@@ -106,9 +104,16 @@ export default {
       if (
         !this.publicView &&
         !this.isDocumentReviewed &&
-        !this.isAnnotationBeingEdited &&
+        !this.isSpanBeingEdited &&
         !this.isLoading
       ) {
+        if (!this.isAnnotationBeingEdited) {
+          this.$store.dispatch(
+            "selection/setSpanSelection",
+            this.annotation.span
+          );
+        }
+
         this.$store
           .dispatch("document/setEditAnnotation", {
             id: this.annotation.id,
@@ -126,19 +131,12 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-        console.log("setPlaceholderSelection", this.annotation);
         // check if this is part of a group of spans to show the whole bounding box as a placeholder
         if (this.annotation.selection_bbox && this.annotation.span.length > 1) {
-          console.log(
-            "setPlaceholderSelection",
-            this.annotation.selection_bbox
-          );
           this.$store.dispatch("selection/setPlaceholderSelection", [
             this.annotation.selection_bbox,
           ]);
         }
-
-        this.$store.dispatch("selection/setSpanSelection", [this.span]);
       }
     },
     handleCancel() {

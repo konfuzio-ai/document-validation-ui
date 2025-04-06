@@ -88,9 +88,11 @@ export default {
   },
   watch: {
     box() {
-      console.log("box watch");
       this.updateTransformer();
       this.setSelection();
+    },
+    span() {
+      this.box = this.bboxToRect(this.page, this.span);
     },
   },
   mounted() {
