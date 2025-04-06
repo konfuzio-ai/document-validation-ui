@@ -88,37 +88,19 @@ export default {
   },
   methods: {
     handleSelection() {
-      if (!this.editAnnotation) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
 
-        this.$store.dispatch(
-          "selection/entitySelection",
-          this.scaledEntities(
-            this.entitiesOnSelection(box, this.page),
-            this.page
-          )
-        );
-      } else {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-
-        const entities = this.entitiesOnSelection(box, this.page);
-        if (entities.length > 0) {
-          this.$store.dispatch(
-            "selection/entitySelection",
-            this.scaledEntities(entities, this.page)
-          );
-        } else {
-          this.$store.dispatch("selection/setSelectedEntities", null);
-        }
-      }
+      this.$store.dispatch("selection/entitySelection", {
+        entities: this.scaledEntities(
+          this.entitiesOnSelection(box, this.page),
+          this.page
+        ),
+        selection: box,
+      });
     },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node
