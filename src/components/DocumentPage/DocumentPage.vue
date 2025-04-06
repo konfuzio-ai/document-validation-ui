@@ -12,7 +12,7 @@
     ]"
   >
     <AnnotationPopup
-      v-if="spanSelectionsForPage(page).length > 0"
+      v-if="!isSelecting && spanSelectionsForPage(page).length > 0"
       :spans="spanSelectionsForPage(page)"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
