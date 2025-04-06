@@ -60,7 +60,6 @@ const getters = {
 
 const actions = {
   disableSelection: ({ commit }) => {
-    console.log("disableSelection");
     commit("RESET_SELECTION");
     commit("SET_SELECTED_ENTITIES", []);
     commit("SET_SPAN_SELECTION", []);
@@ -207,7 +206,6 @@ const actions = {
     }
 
     if (entities.length === 0) {
-      console.log("entitySelection null");
       commit("SET_SELECTED_ENTITIES", []);
       commit("SET_SPAN_SELECTION", []);
     } else {
@@ -226,17 +224,11 @@ const actions = {
       } else {
         span = [entities];
       }
-      console.log("span before", span);
       commit("SET_SPAN_SELECTION", span);
-      // dispatch("getTextFromBboxes", span).then((spans) => {
-      //   console.log("span after", spans);
-      //   commit("SET_SPAN_SELECTION", spans);
-      // });
     }
   },
 
   setSpanSelection: ({ commit }, span) => {
-    console.log("setSpanSelection", span);
     commit("SET_SPAN_SELECTION", span);
   },
   setPlaceholderSelection: ({ commit }, span) => {
@@ -290,7 +282,6 @@ const mutations = {
     state.placeholderSelection.push(span);
   },
   SET_SELECTED_ENTITIES: (state, entities) => {
-    console.log("SET_SELECTED_ENTITIES", entities);
     if (!entities) {
       state.selectedEntities = [];
     } else {
