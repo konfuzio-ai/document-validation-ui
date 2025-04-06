@@ -360,7 +360,6 @@ export default {
         !event.target.name().includes("anchor")
       ) {
         // if we are editing a box then close popups
-        console.log("close popup");
         this.closePopups();
 
         return;
@@ -413,8 +412,6 @@ export default {
       if (!this.isSelecting) {
         return;
       }
-
-      console.log("onMouseUp");
 
       const position = this.$refs.stage.getStage().getPointerPosition();
       this.endSelection({
@@ -577,7 +574,6 @@ export default {
       }
     },
     closePopups() {
-      console.log("close upopu");
       this.$store.dispatch("selection/entitySelection", {
         entities: [],
         selection: null,

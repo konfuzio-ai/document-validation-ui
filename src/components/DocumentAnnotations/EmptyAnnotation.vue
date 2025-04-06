@@ -107,7 +107,6 @@ export default {
 
       // Check if the bbox has no string
       if (newValue[0] && !newValue[0].offset_string) {
-        console.log(newValue);
         this.$store.dispatch("document/resetEditAnnotation");
         this.$store.dispatch("selection/disableSelection");
       }
