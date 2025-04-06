@@ -98,7 +98,12 @@
 
     <div class="annotation-row-right" :style="`width:${annotationWidth}%`">
       <div class="annotation-content">
-        <div v-if="annotation" class="annotation-items">
+        <div
+          v-if="isAnnotationInEditMode(currentAnnotationId()) && spanLoading"
+        >
+          <b-icon style="width: 16px" icon="spinner" class="fa-spin" />
+        </div>
+        <div v-else-if="annotation" class="annotation-items">
           <b-checkbox
             v-if="annotation.metadata && annotation.metadata.checkbox"
             v-model="isChecked"
@@ -260,7 +265,11 @@ export default {
       "showActionError",
       "missingAnnotations",
     ]),
-    ...mapState("selection", ["spanSelection", "selectedEntities"]),
+    ...mapState("selection", [
+      "spanSelection",
+      "selectedEntities",
+      "spanLoading",
+    ]),
     ...mapState("display", ["labelWidth", "annotationWidth"]),
     ...mapState("project", ["showAnnotationTranslations"]),
     ...mapGetters("document", [
