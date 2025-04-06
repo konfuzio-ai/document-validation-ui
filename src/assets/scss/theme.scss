@@ -1,6 +1,8 @@
+@use "variables";
+
 @use "sass:meta";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
-@import "./imports.scss";
+@include meta.load-css("variables.scss");
 
 :root {
   --konfuzio-green: #41af85;
@@ -30,8 +32,7 @@
 }
 
 .dv-ui-theme {
-  @include meta.load-css("../../../node_modules/buefy/dist/buefy.css");
-  font-family: $font-family;
+  font-family: variables.$font-family;
 
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -41,30 +42,34 @@
   text-size-adjust: 100%;
   box-sizing: border-box;
 
+  & {
+    @include meta.load-css("../../../node_modules/buefy/dist/buefy.css");
+  }
+
   h1 {
     font-size: 48px;
-    color: $text-color;
+    color: variables.$text-color;
   }
   h2 {
     font-size: 24px;
-    color: $text-color;
+    color: variables.$text-color;
   }
 
   a {
-    color: $primary;
+    color: variables.$primary;
   }
 
   button {
     &.is-primary {
-      background-color: $primary !important;
-      color: $white !important;
+      background-color: variables.$primary !important;
+      color: variables.$white !important;
 
       &:hover:enabled {
-        filter: $hover-style;
+        filter: variables.$hover-style;
       }
 
       &:disabled {
-        background-color: $grey;
+        background-color: variables.$grey;
       }
     }
 
@@ -73,7 +78,7 @@
 
       &:focus {
         box-shadow: none;
-        outline: 3px solid $grey-dark;
+        outline: 3px solid variables.$grey-dark;
         border: 2px solid;
         margin-right: 1px;
       }
@@ -84,7 +89,7 @@
     }
 
     &.edit-mode-btn[disabled] {
-      border: 1px solid $detail;
+      border: 1px solid variables.$detail;
     }
 
     &[disabled] {
@@ -142,7 +147,7 @@
         .b-slider-thumb-wrapper {
           .tooltip-trigger {
             .b-slider-thumb {
-              background-color: $grey-lightest;
+              background-color: variables.$grey-lightest;
               background-image: none;
             }
           }
@@ -161,7 +166,7 @@
       }
       .b-slider-track {
         cursor: col-resize;
-        color: $white;
+        color: variables.$white;
         background: transparent !important;
       }
       .b-slider-fill {
@@ -194,10 +199,10 @@
 
     .carousel-arrow {
       .icon {
-        color: $primary;
+        color: variables.$primary;
 
         &:hover {
-          border: 1px solid $primary;
+          border: 1px solid variables.$primary;
         }
 
         svg {
@@ -216,8 +221,8 @@
     }
 
     .message-body {
-      background-color: $error-background;
-      color: $white;
+      background-color: variables.$error-background;
+      color: variables.$white;
       font-size: 14px;
       border: 0;
       border-radius: 0%;
@@ -320,22 +325,22 @@
       padding-right: 16px;
 
       &.is-active {
-        background-color: $primary;
+        background-color: variables.$primary;
       }
 
       &.is-disabled {
-        color: $grey-blue !important;
+        color: variables.$grey-blue !important;
       }
     }
 
     &.dropdown-menu-animation {
       a.navbar-item {
-        color: $text-color;
+        color: variables.$text-color;
         font-size: 16px;
         line-height: 24px;
 
         &:hover {
-          color: $primary;
+          color: variables.$primary;
           background: none;
           border: none;
         }
@@ -349,7 +354,7 @@
   .taginput-container {
     &.is-focused {
       box-shadow: none !important;
-      border-color: $primary !important;
+      border-color: variables.$primary !important;
     }
 
     .tag {
@@ -360,7 +365,7 @@
     input {
       box-shadow: none !important;
       &:focus {
-        border-color: $primary;
+        border-color: variables.$primary;
       }
     }
     .control.has-icons-left {
@@ -375,15 +380,15 @@
 
   .b-checkbox.checkbox {
     input[type="checkbox"] + .check {
-      background-color: $white;
+      background-color: variables.$white;
     }
     &:hover input[type="checkbox"]:not(:disabled) + .check {
-      border-color: $primary !important;
+      border-color: variables.$primary !important;
     }
 
     input[type="checkbox"]:checked + .check {
-      border-color: $primary !important;
-      background-color: $primary;
+      border-color: variables.$primary !important;
+      background-color: variables.$primary;
     }
   }
 
@@ -446,16 +451,16 @@
 
           &::before,
           &::after {
-            background-color: $grey;
+            background-color: variables.$grey;
           }
 
           &:hover {
-            background-color: $white;
+            background-color: variables.$white;
           }
         }
 
         .modal-card-body {
-          background: $white;
+          background: variables.$white;
           border-radius: 16px 16px 0 0 !important;
         }
 
@@ -463,7 +468,7 @@
           display: flex;
           justify-content: center;
           border: none;
-          background: $white;
+          background: variables.$white;
           border-radius: 0 0 16px 16px;
         }
       }
@@ -474,7 +479,7 @@
     }
 
     .modal-background {
-      background-color: $full-black;
+      background-color: variables.$full-black;
       opacity: 0.5;
     }
 
@@ -496,7 +501,7 @@
           text-align: left;
           font-weight: 400;
           font-size: 14px;
-          color: $grey-blue;
+          color: variables.$grey-blue;
         }
 
         .modal-card-foot {
@@ -547,7 +552,7 @@
 
   .notices {
     .snackbar {
-      background-color: $text-color;
+      background-color: variables.$text-color;
       min-height: 40px;
 
       .text {
@@ -576,15 +581,15 @@
     align-items: center;
 
     .tooltip-content {
-      background-color: $text-color !important;
+      background-color: variables.$text-color !important;
 
       a {
-        color: $white;
+        color: variables.$white;
         text-decoration: underline;
         font-weight: 500;
       }
       &:before {
-        border-bottom-color: $text-color !important;
+        border-bottom-color: variables.$text-color !important;
       }
     }
 
@@ -597,8 +602,8 @@
         &::before {
           left: 16px !important;
           right: auto !important;
-          border-top-color: $text-color !important;
-          border-bottom-color: $text-color !important;
+          border-top-color: variables.$text-color !important;
+          border-bottom-color: variables.$text-color !important;
         }
       }
     }
@@ -613,7 +618,7 @@
         &::before {
           right: 16px !important;
           left: auto !important;
-          border-bottom-color: $text-color !important;
+          border-bottom-color: variables.$text-color !important;
         }
       }
 
@@ -649,12 +654,12 @@
         font-size: 14px;
         padding: 12px 12px;
         top: 45px;
-        background-color: $text-color;
+        background-color: variables.$text-color;
         border-radius: 4px !important;
 
         &::before {
           top: 17px;
-          border-left-color: $text-color !important;
+          border-left-color: variables.$text-color !important;
         }
       }
     }
@@ -664,7 +669,7 @@
 
       .tooltip-content {
         &::before {
-          border-bottom-color: $text-color !important;
+          border-bottom-color: variables.$text-color !important;
         }
       }
     }
@@ -672,7 +677,7 @@
     &.top-aligned {
       .tooltip-content {
         &::before {
-          border-top-color: $text-color !important;
+          border-top-color: variables.$text-color !important;
         }
       }
     }
@@ -740,7 +745,7 @@
 
       &.split-mode-caret {
         svg {
-          color: $grey;
+          color: variables.$grey;
         }
       }
     }
@@ -750,7 +755,7 @@
       height: 10px;
 
       &.error-icon {
-        color: $white;
+        color: variables.$white;
         padding-right: 20px;
         padding-left: 20px;
 
@@ -804,10 +809,10 @@
     &.dark-header {
       .table {
         thead {
-          background-color: $black !important;
+          background-color: variables.$black !important;
           th {
             font-weight: 400;
-            background-color: $black !important;
+            background-color: variables.$black !important;
           }
         }
       }
@@ -827,7 +832,7 @@
       }
       cursor: text;
       thead {
-        background-color: $purple !important;
+        background-color: variables.$purple !important;
         th {
           font-weight: 500;
           font-size: 10px;
@@ -838,7 +843,7 @@
               margin: 0;
             }
           }
-          background-color: $purple !important;
+          background-color: variables.$purple !important;
           color: white !important;
           vertical-align: middle;
           &[draggable="true"] {
@@ -880,7 +885,7 @@
   .switch {
     input[type="checkbox"] {
       &:checked + .check {
-        background: $primary !important;
+        background: variables.$primary !important;
         box-shadow: none !important;
       }
 
@@ -900,5 +905,12 @@
         filter: brightness(0.8) contrast(160%) grayscale(0.4);
       }
     }
+  }
+  .splitpanes--vertical > .splitpanes__splitter {
+    background: variables.$grey-lighter-low-opacity;
+  }
+
+  .splitpanes--horizontal > .splitpanes__splitter {
+    background: variables.$grey-lighter-low-opacity;
   }
 }

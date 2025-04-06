@@ -206,9 +206,7 @@ export default {
   data() {
     return {
       tooltipDelay: 700,
-      showText:
-        window.innerWidth >
-        TEXT_BREAKPOINT_WIDTH(this.$i18n ? this.$i18n.locale : "en"),
+      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH,
     };
   },
   computed: {
@@ -228,13 +226,12 @@ export default {
     window.addEventListener("resize", this.resize);
   },
 
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.resize);
   },
   methods: {
     resize() {
-      this.showText =
-        window.innerWidth > TEXT_BREAKPOINT_WIDTH(this.$i18n.locale);
+      this.showText = window.innerWidth > TEXT_BREAKPOINT_WIDTH;
     },
     search() {
       this.$emit("search");

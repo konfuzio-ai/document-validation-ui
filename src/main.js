@@ -1,33 +1,26 @@
 import App from "./components/App";
-import Vue from "vue";
+import { createApp } from "vue";
 import Buefy from "buefy";
 import VueKonva from "vue-konva";
-import i18n from "./i18n";
-import store from "./store";
-import VueObserveVisibility from "vue-observe-visibility";
+import { i18n } from "./i18n";
+import { store } from "./store";
+import VueObserveVisibility from "vue3-observe-visibility";
 import Icons from "./icons";
-import VueSplit from "vue-split-panel";
 
-// Log app version
-console.log(
-  `${require("../package.json").name} ${require("../package.json").version}`
-);
+const app = createApp();
 
-Vue.component("VueFontawesome", Icons);
-Vue.component("App", App);
-Vue.use(VueKonva);
-Vue.use(Buefy, {
+app.component("App", App);
+app.component("VueFontawesome", Icons);
+app.use(VueKonva);
+app.use(Buefy, {
   defaultIconPack: "fas",
   defaultIconComponent: "vue-fontawesome",
 });
-Vue.use(VueObserveVisibility);
-Vue.use(VueSplit);
+app.use(VueObserveVisibility);
+app.use(store);
+app.use(i18n);
 
 /**
  * Main entrypoint for the App
  */
-new Vue({
-  i18n,
-  store,
-  el: "#app",
-});
+app.mount("#app");

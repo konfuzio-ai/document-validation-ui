@@ -20,6 +20,7 @@ import {
 import { Integrations } from "@sentry/tracing";
 import API from "../api";
 import { initKeycloak } from "../utils/keycloak";
+import { debounce } from "../utils/utils";
 
 export default {
   name: "App",
@@ -361,6 +362,13 @@ export default {
       });
     }
 
+    // Log app version
+    console.log(
+      `${this.removeBranding ? "" : require("../../package.json").name} ${
+        require("../../package.json").version
+      }`
+    );
+
     // locale config
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
@@ -422,20 +430,14 @@ export default {
       this.$store.dispatch("document/fetchDocument");
     });
 
-    // Add observer for class added to HTML tag when Buefy modals are mounted
-    // TODO: check defaultModalScroll property in Buefy constructor https://buefy.org/documentation/constructor-options
-    const htmlTag = document.documentElement;
-    const observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        if (mutation.attributeName === "class") {
-          const classToRemove = "is-clipped";
-          if (mutation.target.classList.contains(classToRemove)) {
-            htmlTag.classList.remove(classToRemove);
-          }
-        }
-      });
-    });
-    observer.observe(htmlTag, { attributes: true });
+    // Stop error resizeObserver
+    const _ = window.ResizeObserver;
+    window.ResizeObserver = class ResizeObserver extends _ {
+      constructor(callback) {
+        callback = debounce(callback, 20);
+        super(callback);
+      }
+    };
   },
 };
 </script>

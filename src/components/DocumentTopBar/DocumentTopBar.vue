@@ -159,7 +159,7 @@ export default {
   created() {
     window.addEventListener("resize", this.handleResize);
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.handleResize);
   },
   mounted() {
@@ -174,7 +174,9 @@ export default {
       this.$store.dispatch("document/setErrorMessageWidth", width);
     },
     handleResize() {
-      this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
+      if (this.$refs.documentTopBar) {
+        this.setComponentWidth(this.$refs.documentTopBar.offsetWidth);
+      }
     },
     getPreviousAndNextDocuments(filteredDocuments) {
       if (!filteredDocuments) return;

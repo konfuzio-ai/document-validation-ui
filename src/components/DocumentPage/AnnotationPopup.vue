@@ -41,17 +41,19 @@
           ]"
           type="is-text"
         >
-          {{
-            selectedSet
-              ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
-                        "new"
-                      )})`
-                }`
-              : $t("select_annotation_set")
-          }}
+          <span class="input-text">
+            {{
+              selectedSet
+                ? `${selectedSet.label_set.name} ${
+                    selectedSet.id
+                      ? numberOfAnnotationSetGroup(selectedSet)
+                      : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                          "new"
+                        )})`
+                  }`
+                : $t("select_annotation_set")
+            }}</span
+          >
           <span class="caret-icon">
             <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
@@ -86,7 +88,6 @@
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
-      :close-delay="5000"
     >
       <template #content>
         <div
@@ -113,13 +114,13 @@
             ]"
             type="is-text"
           >
-            {{
+            <span class="input-text">{{
               selectedLabel
                 ? selectedLabel.name
                 : labels && labels.length === 0
                 ? $t("no_labels_to_choose")
                 : $t("select_label")
-            }}
+            }}</span>
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>
@@ -263,7 +264,7 @@ export default {
     },
   },
   mounted() {
-    this.setsList = [...this.annotationSets];
+    this.setsList = this.orderedSetList([...this.annotationSets]);
 
     if (this.editAnnotation) {
       this.heightOfPopup = 142;
@@ -277,10 +278,26 @@ export default {
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
+    orderedSetList(setsList) {
+      setsList.sort((a, b) => {
+        const nameA = a.label_set.name;
+        const nameB = b.label_set.name;
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        // names must be equal
+        return 0;
+      });
+      return setsList;
+    },
     close() {
       if (this.editAnnotation) {
         this.$store.dispatch("document/resetEditAnnotation");

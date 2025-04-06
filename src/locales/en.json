@@ -32,7 +32,7 @@
   "document_successfully_handed": "Document successfully handed over to",
   "handover_not_possible": "Handover was not possible. Please try again later.",
   "small_viewport_title": "Small viewport size",
-  "small_viewport_info": "We’re sorry, but Konfuzio is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
+  "small_viewport_info": "We’re sorry, but the app is not optimized to this viewport size. For a better experience, please open it on a bigger viewport.",
   "ok": "Ok, got it",
   "no_data_found": "Click to edit...",
   "draw_box_document": "Find <i>{label_name}</i> in the document",

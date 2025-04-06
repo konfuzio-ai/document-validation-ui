@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .viewport-modal {
   text-align: center;
@@ -8,12 +8,12 @@
       font-weight: 600 !important;
       font-size: 20px !important;
       line-height: 26px !important;
-      color: $text-color !important;
+      color: variables.$text-color !important;
       padding-bottom: 5px;
     }
 
     p {
-      color: $grey;
+      color: variables.$grey;
     }
 
     p,

@@ -1,4 +1,4 @@
-import store from "../../src/store";
+import { store } from "../../src/store";
 
 export const init = () => {
   const documentData = require("../mock/document.json");
@@ -41,6 +41,8 @@ export const init = () => {
     store.dispatch("document/endLoading"),
     store.dispatch("display/updateScale", scale)
   );
+
+  return store;
 };
 
 // returns promise

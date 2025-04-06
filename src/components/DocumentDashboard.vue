@@ -3,24 +3,19 @@
     <DocumentTopBar />
     <div :class="['dashboard-viewer', renameAndCategorize ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
-      <Split>
-        <SplitArea :size="50" :min-size="350">
+      <splitpanes class="default-theme">
+        <pane :size="50" :min-size="10">
           <ScrollingDocument
             ref="scrollingDocument"
             class="dashboard-document"
           />
-        </SplitArea>
-        <SplitArea :size="50" style="overflow-y: auto">
+        </pane>
+        <pane :size="50">
           <DocumentAnnotations v-if="!editMode" ref="annotations" />
           <DocumentEdit v-else ref="editView" />
-        </SplitArea>
-      </Split>
+        </pane>
+      </splitpanes>
 
-      <MultiAnnotationTableOverlay
-        v-if="showAnnSetTable"
-        :left="documentContainerLeftPadding"
-        :width="documentContainerWidth"
-      />
       <ChooseLabelSetModal
         v-if="showChooseLabelSetModal && showChooseLabelSetModal.show"
         :is-multiple-annotations="showChooseLabelSetModal.isMultipleAnnotations"
@@ -59,16 +54,15 @@ import { mapGetters, mapState } from "vuex";
 import { DocumentTopBar } from "./DocumentTopBar";
 import { ScrollingDocument } from "./DocumentPage";
 import { DocumentThumbnails } from "./DocumentThumbnails";
-import {
-  DocumentAnnotations,
-  MultiAnnotationTableOverlay,
-} from "./DocumentAnnotations";
+import { DocumentAnnotations } from "./DocumentAnnotations";
 import { DocumentEdit } from "./DocumentEdit";
 import ErrorMessage from "./ErrorMessage";
 import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimizedViewportModal";
 import AnnotationDeletedModal from "../components/DocumentModals/AnnotationDeletedModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
 import ChooseLabelSetModal from "../components/DocumentAnnotations/ChooseLabelSetModal";
+import { Splitpanes, Pane } from "splitpanes";
+import "splitpanes/dist/splitpanes.css";
 
 /**
  * This component shows the PDF pages in a scrolling component and
@@ -77,6 +71,8 @@ import ChooseLabelSetModal from "../components/DocumentAnnotations/ChooseLabelSe
 export default {
   name: "DocumentDashboard",
   components: {
+    Splitpanes,
+    Pane,
     DocumentTopBar,
     ScrollingDocument,
     DocumentThumbnails,
@@ -85,7 +81,6 @@ export default {
     ErrorMessage,
     NotOptimizedViewportModal,
     DocumentErrorModal,
-    MultiAnnotationTableOverlay,
     ChooseLabelSetModal,
     AnnotationDeletedModal,
   },
@@ -136,7 +131,7 @@ export default {
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onDocumentResize);
   },
-  destroyed() {
+  unmounted() {
     if (this.$refs.scrollingDocument) {
       this.resizeObserver.unobserve(this.$refs.scrollingDocument.$el);
     }
