@@ -95,7 +95,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.find(".annotation-value").trigger("click");
-    expect(await getData("selection").elementSelected).toEqual(
+    expect(await getData("document").editAnnotation.id).toEqual(
       emptyAnnotationId
     );
   });
@@ -148,7 +148,7 @@ describe("Document Annotations Component", () => {
     });
 
     await wrapper.find(".annotation-value").trigger("click");
-    expect(await getData("selection").elementSelected).toEqual(annotation.id);
+    expect(await getData("document").editAnnotation.id).toEqual(annotation.id);
   });
 
   it("Action buttons should appear when annotation is in edit mode", async () => {
