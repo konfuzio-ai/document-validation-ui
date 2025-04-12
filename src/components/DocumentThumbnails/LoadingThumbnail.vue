@@ -1,9 +1,6 @@
 <template>
-  <div>
-    <b-skeleton
-      width="40px"
-      height="57px"
-    />
+  <div class="loading-thumbnail">
+    <b-skeleton width="40px" height="57px" />
   </div>
 </template>
 
@@ -14,7 +11,7 @@
  */
 
 export default {
-  name: "LoadingThumbnail"
+  name: "LoadingThumbnail",
 };
 </script>
 

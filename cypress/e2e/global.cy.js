@@ -36,4 +36,16 @@ describe("DVUI test script", () => {
     cy.wait("@renameDoc").its("response.statusCode").should("eq", 200);
     cy.get("#document-info .document-name").contains(docName);
   });
+
+  it("Thumbnail selection", () => {
+    cy.get(".loading-thumbnail").should("not.exist");
+
+    cy.get("#document-pages .document-thumbnail").each(($element, index) => {
+      console.log("element", $element);
+      cy.wrap($element).click();
+      cy.get("#scrolling-document .scrolling-page")
+        .eq(index)
+        .should("be.visible");
+    });
+  });
 });
