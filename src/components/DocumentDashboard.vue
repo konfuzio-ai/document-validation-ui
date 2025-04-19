@@ -10,7 +10,7 @@
             class="dashboard-document"
           />
         </pane>
-        <pane :size="50">
+        <pane :size="50" class="document-sidebar">
           <DocumentAnnotations v-if="!editMode" ref="annotations" />
           <DocumentEdit v-else ref="editView" />
         </pane>
