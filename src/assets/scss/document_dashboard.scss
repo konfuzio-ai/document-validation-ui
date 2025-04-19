@@ -25,6 +25,7 @@
 
     .document-sidebar {
       overflow-y: auto;
+      background-color: variables.$background;
     }
 
     @media print {
