@@ -23,6 +23,10 @@
       background-size: 9px 9px;
     }
 
+    .document-sidebar {
+      overflow-y: auto;
+    }
+
     @media print {
       .dashboard-document {
         position: static;
