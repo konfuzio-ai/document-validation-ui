@@ -113,32 +113,43 @@ const getters = {
    * image rendering.
    */
   imageScale: (state) => (page) => {
-    return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
+    if (
+      page.size &&
+      page.size.length > 0 &&
+      page.original_size &&
+      page.original_size.length > 0
+    ) {
+      return new BigNumber(page.size[0]).div(page.original_size[0]).toNumber();
+    }
+    return 0;
   },
   bboxToPoint:
     (state, getters) =>
     (page, point, hasOffset = false) => {
-      const imageScale = getters.imageScale(page);
-      const { x, y } = point;
-      const pageHeight = new BigNumber(page.original_size[1]);
-      const newPoint = {
-        // left
-        x: new BigNumber(x)
-          .minus(hasOffset ? 1 : 0)
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-        // top
-        y: pageHeight
-          .minus(new BigNumber(y))
-          .minus(hasOffset ? 17.1 : 0)
-          .times(state.scale)
-          .times(imageScale)
-          .div(PIXEL_RATIO)
-          .toNumber(),
-      };
-      return newPoint;
+      if (page && page.original_size && page.original_size.length > 1) {
+        const imageScale = getters.imageScale(page);
+        const { x, y } = point;
+        const pageHeight = new BigNumber(page.original_size[1]);
+        const newPoint = {
+          // left
+          x: new BigNumber(x)
+            .minus(hasOffset ? 1 : 0)
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+          // top
+          y: pageHeight
+            .minus(new BigNumber(y))
+            .minus(hasOffset ? 17.1 : 0)
+            .times(state.scale)
+            .times(imageScale)
+            .div(PIXEL_RATIO)
+            .toNumber(),
+        };
+        return newPoint;
+      }
+      return { x: 0, y: 0 };
     },
   bboxToRect:
     (state, getters) =>

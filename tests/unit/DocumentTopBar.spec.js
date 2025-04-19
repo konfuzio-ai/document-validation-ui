@@ -12,66 +12,64 @@ describe("Document Top Bar", () => {
     expect(await wrapper.getComponent("#document-top-bar-component"));
   });
 
-  it("File name should be visible", () => {
+  it("File name should be visible", async () => {
     const fileName = getData("document").selectedDocument.data_file_name;
-    const wrapper = render(DocumentName, true, {
+    const wrapper = render(DocumentName, false, {
       dataFileName: fileName,
     });
 
-    expect(wrapper.getComponent(".document-name").text()).toBe(fileName);
+    expect(await wrapper.find(".document-name").text()).toBe(fileName);
   });
 
   it("Edit button should be visible when rendering the component", async () => {
     const wrapper = render(DocumentName, true);
 
-    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(true);
+    expect(await wrapper.find(".edit-btn").exists()).toBe(true);
   });
 
   it("Clicking on the edit button should make it not visible and make the save one visible", async () => {
     const wrapper = render(DocumentTopBar, false);
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(false);
-    expect(await wrapper.findComponent(".save-btn").exists()).toBe(true);
+    await wrapper.find(".edit-btn").trigger("click");
+    expect(await wrapper.find(".edit-btn").exists()).toBe(false);
+    expect(await wrapper.find(".save-btn").exists()).toBe(true);
   });
 
   it("No buttons should be visible while saving", async () => {
     const wrapper = render(DocumentTopBar, false);
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    expect(await wrapper.findComponent(".edit-btn").exists()).toBe(false);
+    const editBtn = await wrapper.find(".edit-btn");
+    await editBtn.trigger("click");
+    expect(await wrapper.find(".edit-btn").exists()).toBe(false);
 
-    await wrapper.getComponent(".save-btn").trigger("click");
-    expect(await wrapper.findComponent(".save-btn").exists()).toBe(false);
+    const saveBtn = await wrapper.find(".save-btn");
+    await saveBtn.trigger("click");
+    expect(await wrapper.find(".save-btn").exists()).toBe(false);
   });
 
   it("The file name should become a content editable when clicking on the Edit button", async () => {
     const wrapper = render(DocumentTopBar, false);
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    expect(wrapper.getComponent(".document-name").classes()).toContain(
-      "is-editable"
-    );
+    await wrapper.find(".edit-btn").trigger("click");
+    expect(wrapper.find(".document-name").classes()).toContain("is-editable");
   });
 
   it("The file name should not be content editable after clicking the Save button", async () => {
     const wrapper = render(DocumentTopBar, false);
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    await wrapper.getComponent(".save-btn").trigger("click");
-    expect(
-      await wrapper.findComponent(".document-name").classes()
-    ).not.toContain("is-editable");
+    await wrapper.find(".edit-btn").trigger("click");
+    await wrapper.find(".save-btn").trigger("click");
+    expect(await wrapper.find(".document-name").classes()).not.toContain(
+      "is-editable"
+    );
   });
 
   it("Clicking the save button should show the autosaving message to the user", async () => {
     const wrapper = render(DocumentTopBar, false);
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    await wrapper.getComponent(".save-btn").trigger("click");
-    expect(await wrapper.findComponent(".loading-container").exists()).toBe(
-      true
-    );
+    await wrapper.find(".edit-btn").trigger("click");
+    await wrapper.find(".save-btn").trigger("click");
+    expect(await wrapper.find(".loading-container").exists()).toBe(true);
   });
 
   it("Check if save function is called after clicking save button", async () => {
@@ -79,8 +77,8 @@ describe("Document Top Bar", () => {
 
     const mockFn = jest.fn().mockName("saveFunction");
 
-    await wrapper.getComponent(".edit-btn").trigger("click");
-    await wrapper.getComponent(".save-btn").trigger("click");
+    await wrapper.find(".edit-btn").trigger("click");
+    await wrapper.find(".save-btn").trigger("click");
     await mockFn();
 
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -96,7 +94,7 @@ describe("Document Top Bar", () => {
     const wrapper = render(DocumentTopBar, false);
 
     await wrapper
-      .findComponent(".keyboard-actions-info .tooltip-trigger")
+      .find(".keyboard-actions-info .tooltip-trigger")
       .trigger("mouseenter");
 
     expect(
@@ -111,7 +109,7 @@ describe("Document Top Bar", () => {
 
     expect(
       await wrapper
-        .findComponent(".top-bar-buttons .finish-review-button-container")
+        .find(".top-bar-buttons .finish-review-button-container")
         .isVisible()
     ).toBe(true);
   });
@@ -121,11 +119,11 @@ describe("Document Top Bar", () => {
 
     expect(
       await wrapper
-        .findComponent(
+        .find(
           ".top-bar-buttons .finish-review-button-container .finish-review-btn"
         )
-        .attributes("disabled")
-    ).toBe("disabled");
+        .isDisabled()
+    ).toBe(true);
   });
 
   it("If document is in edit mode, button should not be visible", async () => {
@@ -135,7 +133,7 @@ describe("Document Top Bar", () => {
 
     expect(
       await wrapper
-        .findComponent(
+        .find(
           ".top-bar-buttons .buttons .finish-review-button-container .action-buttons .finish-review-btn"
         )
         .exists()
@@ -176,9 +174,7 @@ describe("Document Top Bar", () => {
     });
 
     expect(
-      await wrapper
-        .findComponent(".center-bar-components .navigation-arrow")
-        .exists()
+      await wrapper.find(".center-bar-components .navigation-arrow").exists()
     ).toBe(true);
   });
 
@@ -194,9 +190,7 @@ describe("Document Top Bar", () => {
     );
 
     expect(
-      await wrapper
-        .findComponent(".center-bar-components .navigation-arrow")
-        .isVisible()
+      await wrapper.find(".center-bar-components .navigation-arrow").isVisible()
     ).toBe(false);
   });
 
