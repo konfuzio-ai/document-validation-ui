@@ -378,16 +378,16 @@
                     outline: none;
                   }
 
+                  .label-empty-clicked {
+                    user-select: auto;
+                    font-weight: 400;
+                    color: variables.$text-lighter;
+                  }
+
                   .label-empty {
                     font-weight: 500;
                     font-size: 14px;
                     color: variables.$primary;
-
-                    &.clicked-ann {
-                      user-select: auto;
-                      font-weight: 400;
-                      color: variables.$text-lighter;
-                    }
                   }
                 }
               }
