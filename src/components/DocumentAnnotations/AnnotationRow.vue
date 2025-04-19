@@ -257,7 +257,6 @@ export default {
       "editAnnotation",
       "annotationId",
       "hoveredAnnotationSet",
-      "enableGroupingFeature",
       "publicView",
       "newAcceptedAnnotations",
       "annotationsMarkedAsMissing",
