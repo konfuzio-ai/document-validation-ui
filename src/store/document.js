@@ -153,6 +153,43 @@ const getters = {
     return annotations.length > 0;
   },
 
+  /* Checks if the label has annotations to show */
+  isLabelMultiFalseAndGroupOfAnns: (state) => (label) => {
+    return (
+      label.annotations &&
+      label.annotations.length > 1 &&
+      !label.has_multiple_top_candidates &&
+      state.enableGroupingFeature
+    );
+  },
+
+  /* Returns the annotation selected for label multi false */
+  annotationSelectedForLabelMultiFalse: (state) => (label) => {
+    // TODO: implement this
+    return label.annotations.sort((a, b) => {
+      if (a.confidence < b.confidence) {
+        return -1;
+      } else if (a.confidence > b.confidence) {
+        return 1;
+      }
+      return 0;
+    })[0];
+  },
+
+  /* Returns the annotations ordered by highest confidence */
+  annotationsByConfidence: (state) => (annotations) => {
+    annotations.sort((a, b) => {
+      if (a.confidence < b.confidence) {
+        return -1;
+      } else if (a.confidence > b.confidence) {
+        return 1;
+      }
+      return 0;
+    });
+
+    return annotations;
+  },
+
   /* Checks if the document has an annotation set */
   annotationSetExists: (state) => (annotationSetId) => {
     return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
