@@ -73,14 +73,12 @@ const actions = {
     });
   },
 
-  moveSelection: ({ commit, state }, points) => {
+  moveSelection: ({ commit, state, dispatch }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
-    if (points.end && state.selection.start) {
-      const xDiff = Math.abs(state.selection.start.x - points.end.x);
-      const yDiff = Math.abs(state.selection.start.y - points.end.y);
-      if (xDiff > 5 && yDiff > 5) {
-        commit("MOVE_SELECTION", points);
-      }
+    const xDiff = Math.abs(state.selection.start.x - points.end.x);
+    const yDiff = Math.abs(state.selection.start.y - points.end.y);
+    if (xDiff > 5 && yDiff > 5) {
+      commit("MOVE_SELECTION", points);
     }
   },
 
