@@ -1,5 +1,27 @@
 <template>
   <div class="action-buttons">
+    <!-- label multi false nav buttons -->
+    <b-tooltip
+      v-if="isLabelMultiFalseAndGroupOfAnns(label)"
+      :delay="tooltipDelay"
+      position="is-left"
+      :label="$t('nav_label_anns')"
+    >
+      <div class="ann-nav-btns">
+        <b-icon
+          icon="angle-up"
+          class="angle-icon center-icon button-icon is-link"
+          @click.stop="nextAnn"
+        />
+        <span>{{ label.annotations.length }}</span>
+        <b-icon
+          icon="angle-down"
+          class="angle-icon center-icon button-icon is-link"
+          @click.stop="prevAnn"
+        />
+      </div>
+    </b-tooltip>
+
     <!-- link button -->
     <b-button
       v-if="showLink"
@@ -211,7 +233,10 @@ export default {
   },
   computed: {
     ...mapState("document", ["publicView"]),
-    ...mapGetters("document", ["isDocumentReviewed"]),
+    ...mapGetters("document", [
+      "isDocumentReviewed",
+      "isLabelMultiFalseAndGroupOfAnns",
+    ]),
     showHoverButton() {
       return (
         !this.isLoading &&
@@ -257,6 +282,8 @@ export default {
     link() {
       this.$emit("link");
     },
+    nextAnn() {},
+    prevAnn() {},
   },
 };
 </script>

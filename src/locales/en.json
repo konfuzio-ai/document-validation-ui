@@ -167,5 +167,6 @@
   "checkbox_ann_details": "A checkbox will be extracted for this label.",
   "document_section": "Document Section",
   "label_size": "Column size:",
-  "powered_by": "powered by Konfuzio"
+  "powered_by": "powered by Konfuzio",
+  "nav_label_anns": "Navigate through annotations"
 }
