@@ -1580,6 +1580,9 @@ const actions = {
   showAcceptedAnnotations({ commit }, show) {
     commit("SET_SHOW_ACCEPTED_ANNOTATIONS", show);
   },
+  putNextAnnotationInLabelFirst({ commit }, label) {
+    commit("PUT_NEXT_ANN_IN_LABEL_FIRST", label);
+  },
 };
 
 const mutations = {
@@ -1668,6 +1671,18 @@ const mutations = {
           }
           updatedAnnotation = true;
           return;
+        }
+      });
+    });
+  },
+  PUT_NEXT_ANN_IN_LABEL_FIRST: (state, label) => {
+    state.annotationSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((labelToFind) => {
+        if (labelToFind.id === label.id) {
+          if (labelToFind.annotations && labelToFind.annotations.length > 1) {
+            const firstElement = labelToFind.annotations.shift();
+            labelToFind.annotations.push(firstElement);
+          }
         }
       });
     });
