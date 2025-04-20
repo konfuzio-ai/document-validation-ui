@@ -73,7 +73,7 @@ const actions = {
     });
   },
 
-  moveSelection: ({ commit, state, dispatch }, points) => {
+  moveSelection: ({ commit, state }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
     if (points.end && state.selection.start) {
       const xDiff = Math.abs(state.selection.start.x - points.end.x);
