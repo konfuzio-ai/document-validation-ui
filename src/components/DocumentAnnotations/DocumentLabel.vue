@@ -53,8 +53,6 @@ export default {
       } else {
         return this.label.annotations;
       }
-
-      return [];
     },
     labelHasPendingAnnotations(hoveredSet) {
       if (!hoveredSet) return;
