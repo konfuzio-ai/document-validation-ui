@@ -8,16 +8,11 @@
       :label="$t('nav_label_anns')"
     >
       <div class="ann-nav-btns">
-        <b-icon
-          icon="angle-up"
-          class="angle-icon center-icon button-icon is-link"
-          @click.stop="nextAnn"
-        />
         <span>{{ label.annotations.length }}</span>
         <b-icon
           icon="angle-down"
           class="angle-icon center-icon button-icon is-link"
-          @click.stop="prevAnn"
+          @click.stop="nextAnn"
         />
       </div>
     </b-tooltip>
@@ -282,8 +277,12 @@ export default {
     link() {
       this.$emit("link");
     },
-    nextAnn() {},
-    prevAnn() {},
+    nextAnn() {
+      this.$store.dispatch(
+        "document/putNextAnnotationInLabelFirst",
+        this.label
+      );
+    },
   },
 };
 </script>
