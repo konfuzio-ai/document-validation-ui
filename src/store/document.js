@@ -164,12 +164,6 @@ const getters = {
     );
   },
 
-  /* Returns the annotation selected for label multi false */
-  annotationSelectedForLabelMultiFalse: (state) => (label) => {
-    // TODO: implement this
-    return label.annotations.find((a) => a);
-  },
-
   /* Returns the annotations ordered by highest confidence */
   annotationsByConfidence: (state) => (annotations) => {
     annotations.sort((a, b) => {
@@ -306,7 +300,7 @@ const getters = {
     return foundLabel;
   },
 
-  getAnnotationsFiltered: (state) => {
+  getAnnotationsFiltered: (state, getters) => {
     // group annotations for sidebar
     let annotations = [];
     let labels = [];
@@ -381,6 +375,13 @@ const getters = {
             !state.annotationFilters.showFeedbackNeeded ||
             !state.annotationFilters.showAccepted
           ) {
+            if (!label.has_multiple_top_candidates) {
+              // if multi label = false, sort by confidence
+              label.annotations = getters.annotationsByConfidence(
+                label.annotations
+              );
+            }
+
             label.annotations.forEach((annotation) => {
               if (
                 state.annotationFilters.showFeedbackNeeded &&
@@ -410,6 +411,12 @@ const getters = {
               }
             });
           } else {
+            if (!label.has_multiple_top_candidates) {
+              // if multi label = false, sort by confidence
+              label.annotations = getters.annotationsByConfidence(
+                label.annotations
+              );
+            }
             // add annotations to the document array
             label.annotations.forEach((annotation) => {
               const added = addAnnotation(

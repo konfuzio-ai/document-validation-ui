@@ -2,7 +2,7 @@
   <div class="action-buttons">
     <!-- label multi false nav buttons -->
     <b-tooltip
-      v-if="isLabelMultiFalseAndGroupOfAnns(label)"
+      v-if="isLabelMultiFalseAndGroupOfAnns(label) && !showSave"
       :delay="tooltipDelay"
       position="is-left"
       :label="$t('nav_label_anns')"

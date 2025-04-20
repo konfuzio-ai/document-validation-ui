@@ -44,21 +44,16 @@ export default {
     ...mapGetters("document", [
       "numberOfAcceptedAnnotationsInLabel",
       "isLabelMultiFalseAndGroupOfAnns",
-      "annotationSelectedForLabelMultiFalse",
     ]),
   },
   methods: {
     annotationsToShow() {
-      if (this.label.annotations && this.label.annotations.length > 0) {
-        if (this.isLabelMultiFalseAndGroupOfAnns(this.label)) {
-          const ann = this.annotationSelectedForLabelMultiFalse(this.label);
-          if (ann) {
-            return [ann];
-          }
-        } else {
-          return this.label.annotations;
-        }
+      if (this.isLabelMultiFalseAndGroupOfAnns(this.label)) {
+        return [this.label.annotations[0]];
+      } else {
+        return this.label.annotations;
       }
+
       return [];
     },
     labelHasPendingAnnotations(hoveredSet) {
