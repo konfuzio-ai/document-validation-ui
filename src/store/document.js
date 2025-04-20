@@ -156,6 +156,7 @@ const getters = {
   /* Checks if the label has annotations to show */
   isLabelMultiFalseAndGroupOfAnns: (state) => (label) => {
     return (
+      label &&
       label.annotations &&
       label.annotations.length > 1 &&
       !label.has_multiple_top_candidates &&
@@ -166,14 +167,7 @@ const getters = {
   /* Returns the annotation selected for label multi false */
   annotationSelectedForLabelMultiFalse: (state) => (label) => {
     // TODO: implement this
-    return label.annotations.sort((a, b) => {
-      if (a.confidence < b.confidence) {
-        return -1;
-      } else if (a.confidence > b.confidence) {
-        return 1;
-      }
-      return 0;
-    })[0];
+    return label.annotations.find((a) => a);
   },
 
   /* Returns the annotations ordered by highest confidence */

@@ -171,6 +171,7 @@
       >
         <AnnotationActionButtons
           :annotation="annotation"
+          :label="label"
           :show-cancel="showCancelButton()"
           :show-accept="showAcceptButton()"
           :show-decline="showDeclineButton()"
