@@ -60,8 +60,8 @@
               </th>
               <template v-if="selectedProject && labelSets.length > 0">
                 <th v-for="(category, categoryIndex) in labelSets" 
-                    :key="category.id"
-                    :colspan="getCategoryLabelCount(category)"
+                    :key="`category-${category.id}`"
+                    :colspan="getCategoryColspan(category)"
                     :style="{ 
                       backgroundColor: getLabelSetBackground(category.id, 0),
                       borderBottom: '1px solid #dee2e6'
@@ -75,13 +75,23 @@
               <template v-if="selectedProject && labelSets.length > 0">
                 <template v-for="(category, categoryIndex) in labelSets">
                   <th v-for="(labelSet, labelSetIndex) in category.labels" 
-                      :key="`${category.id}-${labelSet.id}`"
-                      :colspan="labelSet.labels.length"
+                      :key="`header-${category.id}-${labelSet.id}`"
+                      :colspan="isLabelSetCollapsed(category.id, labelSetIndex) ? 1 : labelSet.labels.length"
                       :style="{ 
                         backgroundColor: getLabelSetBackground(category.id, labelSetIndex),
                         borderBottom: '1px solid #dee2e6'
-                      }">
-                    {{ labelSet.name }}
+                      }"
+                      class="label-set-header">
+                    <div class="label-set-title">
+                      <span>{{ labelSet.name }}</span>
+                      <button 
+                        class="collapse-btn"
+                        @click.stop="toggleLabelSet(category.id, labelSetIndex)"
+                        :title="isLabelSetCollapsed(category.id, labelSetIndex) ? 'Expand' : 'Collapse'"
+                      >
+                        {{ isLabelSetCollapsed(category.id, labelSetIndex) ? '►' : '▼' }}
+                      </button>
+                    </div>
                   </th>
                 </template>
               </template>
@@ -90,13 +100,23 @@
               <template v-if="selectedProject && labelSets.length > 0">
                 <template v-for="(category, categoryIndex) in labelSets">
                   <template v-for="(labelSet, labelSetIndex) in category.labels">
-                    <th v-for="label in labelSet.labels" 
-                        :key="`${category.id}-${labelSet.id}-${label.id}`"
+                    <template v-if="!isLabelSetCollapsed(category.id, labelSetIndex)">
+                      <th v-for="label in labelSet.labels" 
+                          :key="`label-${category.id}-${labelSet.id}-${label.id}`"
+                          :style="{ 
+                            backgroundColor: getLabelSetBackground(category.id, labelSetIndex),
+                            borderBottom: 'none'
+                          }">
+                        {{ label.name }}
+                      </th>
+                    </template>
+                    <th v-else
+                        :key="`collapsed-${category.id}-${labelSet.id}`"
                         :style="{ 
                           backgroundColor: getLabelSetBackground(category.id, labelSetIndex),
                           borderBottom: 'none'
                         }">
-                      {{ label.name }}
+                      {{ labelSet.labels.length }} labels
                     </th>
                   </template>
                 </template>
@@ -129,47 +149,57 @@
               <template v-if="selectedProject && labelSets.length > 0">
                 <template v-for="(category, categoryIndex) in labelSets">
                   <template v-for="(labelSet, labelSetIndex) in category.labels">
-                    <td v-for="label in labelSet.labels" 
-                        :key="`${doc.id}-${label.id}`"
-                        class="annotation-cell"
-                        :style="{ backgroundColor: getLabelSetBackground(category.id, labelSetIndex) }">
-                      <div class="annotation-container">
-                        <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
-                          <div class="spinner"></div>
+                    <template v-if="!isLabelSetCollapsed(category.id, labelSetIndex)">
+                      <td v-for="label in labelSet.labels" 
+                          :key="`annotation-${doc.id}-${category.id}-${labelSet.id}-${label.id}`"
+                          class="annotation-cell"
+                          :style="{ backgroundColor: getLabelSetBackground(category.id, labelSetIndex) }">
+                        <div class="annotation-container">
+                          <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
+                            <div class="spinner"></div>
+                          </div>
+                          <template v-else-if="!isLoadingAll && !loadingAnnotations[doc.id]">
+                            <div v-if="getAnnotationForLabel(doc, label)" class="annotation">
+                              <span class="annotation-text" :title="getAnnotationForLabel(doc, label).span[0].offset_string">
+                                {{ getAnnotationForLabel(doc, label).span[0].offset_string }}
+                              </span>
+                              <button 
+                                class="delete-btn"
+                                @click="deleteAnnotation(doc.id, getAnnotationForLabel(doc, label).id)"
+                                @mouseenter="showTooltip($event, 'Delete')"
+                                @mouseleave="hideTooltip"
+                              >×</button>
+                            </div>
+                            <div v-else class="empty-annotation" @click="startEditing(doc.id, label.id)">
+                              <template v-if="isEditing(`${doc.id}-${label.id}`)">
+                                <div class="annotation-input">
+                                  <input 
+                                    type="text" 
+                                    v-model="newAnnotations[`${doc.id}-${label.id}`]"
+                                    placeholder="Type + Enter"
+                                    @keyup.enter="saveNewAnnotation(doc.id, label.id)"
+                                    @keyup.esc="cancelEditing(doc.id, label.id)"
+                                    @blur="cancelEditing(doc.id, label.id)"
+                                    v-focus
+                                  />
+                                </div>
+                              </template>
+                              <template v-else>
+                                <button class="add-btn" @mouseenter="showTooltip($event, 'Add annotation')" @mouseleave="hideTooltip">
+                                  <span class="plus-icon">+</span>
+                                </button>
+                              </template>
+                            </div>
+                          </template>
                         </div>
-                        <template v-else-if="!isLoadingAll && !loadingAnnotations[doc.id]">
-                          <div v-if="getAnnotationForLabel(doc, label)" class="annotation">
-                            <span class="annotation-text" :title="getAnnotationForLabel(doc, label).span[0].offset_string">
-                              {{ getAnnotationForLabel(doc, label).span[0].offset_string }}
-                            </span>
-                            <button 
-                              class="delete-btn"
-                              @click="deleteAnnotation(doc.id, getAnnotationForLabel(doc, label).id)"
-                              @mouseenter="showTooltip($event, 'Delete')"
-                              @mouseleave="hideTooltip"
-                            >×</button>
-                          </div>
-                          <div v-else class="empty-annotation" @click="startEditing(doc.id, label.id)">
-                            <template v-if="isEditing(`${doc.id}-${label.id}`)">
-                              <div class="annotation-input">
-                                <input 
-                                  type="text" 
-                                  v-model="newAnnotations[`${doc.id}-${label.id}`]"
-                                  placeholder="Type + Enter"
-                                  @keyup.enter="saveNewAnnotation(doc.id, label.id)"
-                                  @keyup.esc="cancelEditing(doc.id, label.id)"
-                                  @blur="cancelEditing(doc.id, label.id)"
-                                  v-focus
-                                />
-                              </div>
-                            </template>
-                            <template v-else>
-                              <button class="add-btn" @mouseenter="showTooltip($event, 'Add annotation')" @mouseleave="hideTooltip">
-                                <span class="plus-icon">+</span>
-                              </button>
-                            </template>
-                          </div>
-                        </template>
+                      </td>
+                    </template>
+                    <td v-else
+                        :key="`collapsed-annotation-${doc.id}-${category.id}-${labelSet.id}`"
+                        class="annotation-cell collapsed"
+                        :style="{ backgroundColor: getLabelSetBackground(category.id, labelSetIndex) }">
+                      <div class="collapsed-summary">
+                        {{ getCollapsedLabelSetSummary(doc, labelSet) }}
                       </div>
                     </td>
                   </template>
@@ -235,7 +265,8 @@ export default {
         left: '0px'
       },
       editingCells: new Set(),
-      categoryColors: {}, // Store category base colors
+      categoryColors: {},
+      collapsedLabelSets: new Set(),
     }
   },
   computed: {
@@ -547,9 +578,10 @@ export default {
       console.error('Error uploading document:', error)
       // You might want to show an error message to the user here
     },
-    getCategoryLabelCount(category) {
-      // Each category in the label set has its own labels array
-      return category.labels.reduce((count, labelSet) => count + labelSet.labels.length, 0);
+    getCategoryColspan(category) {
+      return category.labels.reduce((total, labelSet, labelSetIndex) => {
+        return total + (this.isLabelSetCollapsed(category.id, labelSetIndex) ? 1 : labelSet.labels.length);
+      }, 0);
     },
     showTooltip(event, text) {
       this.tooltipText = text;
@@ -614,6 +646,27 @@ export default {
       const color = `hsl(${baseColor.h}, ${saturation}%, ${lightness}%)`;
       console.log('Generated color for category', categoryId, 'labelSet', labelSetIndex, ':', color);
       return color;
+    },
+    isLabelSetCollapsed(categoryId, labelSetIndex) {
+      return this.collapsedLabelSets.has(`${categoryId}-${labelSetIndex}`);
+    },
+    toggleLabelSet(categoryId, labelSetIndex) {
+      const key = `${categoryId}-${labelSetIndex}`;
+      if (this.collapsedLabelSets.has(key)) {
+        this.collapsedLabelSets.delete(key);
+      } else {
+        this.collapsedLabelSets.add(key);
+      }
+      // Force a re-render of the table
+      this.$nextTick(() => {
+        this.$forceUpdate();
+      });
+    },
+    getCollapsedLabelSetSummary(doc, labelSet) {
+      const annotations = labelSet.labels
+        .map(label => this.getAnnotationForLabel(doc, label))
+        .filter(Boolean);
+      return annotations.length ? `${annotations.length} annotations` : '-';
     },
   },
   watch: {
@@ -1226,5 +1279,47 @@ export default {
 /* Add subtle border between categories */
 .documents-table th[colspan] {
   border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.label-set-header {
+  position: relative;
+  padding-right: 30px !important;
+}
+
+.label-set-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  transition: all 0.2s ease;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.collapse-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.annotation-cell.collapsed {
+  text-align: center;
+}
+
+.collapsed-summary {
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 4px;
 }
 </style> 
