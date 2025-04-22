@@ -1,0 +1,17 @@
+image: node:16
+
+pages:
+  stage: deploy
+  cache:
+    paths:
+      - node_modules/
+  script:
+    - npm install
+    - npm run build
+    - mkdir -p public/inspector-view
+    - cp -r dist/* public/inspector-view/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main 

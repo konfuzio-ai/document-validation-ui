@@ -171,8 +171,8 @@ export default {
       selectedProject: '',
       documentAnnotations: {},
       newAnnotations: {},
-      loadingAnnotations: {},  // Track loading state per document
-      isLoadingAll: false     // Track global loading state for initial load
+      loadingAnnotations: {},
+      isLoadingAll: false
     }
   },
   computed: {
@@ -461,8 +461,8 @@ export default {
     }
   },
   created() {
-    this.fetchProjects()
-    this.fetchDocuments()
+    this.fetchProjects();
+    this.fetchDocuments();
   }
 }
 </script>

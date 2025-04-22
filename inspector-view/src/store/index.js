@@ -10,7 +10,7 @@ export default new Vuex.Store({
     currentDocument: null,
     loading: false,
     error: null,
-    userToken: process.env.VUE_APP_USER_TOKEN || '',
+    userToken: localStorage.getItem('VUE_APP_USER_TOKEN') || '',
     apiUrl: process.env.VUE_APP_API_URL || 'https://testing.konfuzio.com/api/v3/',
     imageUrl: process.env.VUE_APP_IMAGE_URL || 'https://testing.konfuzio.com',
     projects: [],
@@ -57,7 +57,13 @@ export default new Vuex.Store({
     },
     SET_USER_TOKEN(state, token) {
       state.userToken = token
-      api.setAuthToken(token)
+      if (token) {
+        localStorage.setItem('VUE_APP_USER_TOKEN', token)
+        api.setAuthToken(token)
+      } else {
+        localStorage.removeItem('VUE_APP_USER_TOKEN')
+        api.setAuthToken(null)
+      }
     },
     SET_API_URL(state, url) {
       state.apiUrl = url
@@ -83,6 +89,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    initializeAuth({ commit }) {
+      const token = localStorage.getItem('VUE_APP_USER_TOKEN')
+      if (token) {
+        commit('SET_USER_TOKEN', token)
+      }
+    },
     async fetchProjects({ commit }) {
       try {
         const response = await api.getProjects()
