@@ -140,6 +140,14 @@ const makeFileRequest = (fileUrl) => {
   return FILE_REQUEST.get(fileUrl)
 }
 
+const uploadDocument = (formData) => {
+  return HTTP.post('documents/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
 export default {
   HTTP,
   FILE_REQUEST,
@@ -162,5 +170,6 @@ export default {
   getAnnotationById,
   createAnnotation,
   deleteAnnotation,
-  makeFileRequest
+  makeFileRequest,
+  uploadDocument
 } 

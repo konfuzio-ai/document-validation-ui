@@ -1,5 +1,9 @@
 <template>
   <div class="buttons">
+    <div v-if="!editMode && !isDocumentReviewed && !publicView" class="upload-button-container">
+      <DocumentUpload />
+    </div>
+
     <div v-if="editMode" class="edit-mode-buttons">
       <b-button
         :label="$t('back_to_annotations')"
@@ -72,9 +76,13 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
+import DocumentUpload from "../DocumentUpload";
 
 export default {
   name: "DocumentTopBarButtons",
+  components: {
+    DocumentUpload,
+  },
   data() {
     return {
       emptyLabels: null,

@@ -5,6 +5,7 @@
   "no_labels_description": "No existen etiquetas en este grupo.",
   "resolution_not_supported": "Aplicación no compatible con la resolución de pantalla actual",
   "upload_documents": "Suba sus propios documentos",
+  "upload_document": "Subir Documento",
   "request_trial": "Solicite acceso a la versión de prueba",
   "warning_message": "La IA no puede ser entrenada si se cambia el texto manualmente.",
   "category": "Categoría",

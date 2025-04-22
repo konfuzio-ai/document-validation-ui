@@ -6,6 +6,11 @@
     <div v-else>
       <div class="table-controls">
         <div class="filters">
+          <DocumentUpload 
+            :selected-project="selectedProject"
+            @document-uploaded="handleDocumentUploaded" 
+            @upload-error="handleUploadError" 
+          />
           <div class="project-filter">
             <label for="project-select">Project:</label>
             <select 
@@ -14,7 +19,6 @@
               @change="handleProjectChange"
               class="project-select"
             >
-              <option value="">All Projects</option>
               <option 
                 v-for="project in projects" 
                 :key="project.id" 
@@ -155,16 +159,18 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import AuthImage from '../components/AuthImage.vue'
+import DocumentUpload from '../components/DocumentUpload.vue'
 import api from '../api'
 
 export default {
   name: 'Documents',
   components: {
-    AuthImage
+    AuthImage,
+    DocumentUpload
   },
   data() {
     return {
-      sortKey: 'created',
+      sortKey: 'id',
       sortOrder: 'desc',
       pageSizeOptions: [10, 25, 50, 100],
       activePreview: null,
@@ -199,6 +205,11 @@ export default {
           bVal = new Date(bVal)
         }
         
+        // For ID sorting, always use descending order
+        if (this.sortKey === 'id') {
+          return bVal - aVal
+        }
+        
         if (this.sortOrder === 'asc') {
           return aVal > bVal ? 1 : -1
         }
@@ -226,6 +237,10 @@ export default {
     },
     sortBy(key) {
       if (this.sortKey === key) {
+        // For ID column, always keep descending order
+        if (key === 'id') {
+          return;
+        }
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
       } else {
         this.sortKey = key
@@ -257,9 +272,10 @@ export default {
       if (this.selectedProject && this.documents.length > 0) {
         this.isLoadingAll = true;  // Set global loading state
         try {
-          for (const doc of this.documents) {
-            await this.fetchDocumentAnnotations(doc.id);
-          }
+          // Create an array of promises for parallel execution
+          const annotationPromises = this.documents.map(doc => this.fetchDocumentAnnotations(doc.id));
+          // Wait for all promises to resolve
+          await Promise.all(annotationPromises);
         } finally {
           this.isLoadingAll = false;  // Clear global loading state
         }
@@ -316,11 +332,11 @@ export default {
         
         // Fetch project labels if a project is selected
         if (this.selectedProject) {
-          await this.fetchProjectLabels(this.selectedProject);
-          // Fetch annotations for each document
-          for (const doc of this.documents) {
-            await this.fetchDocumentAnnotations(doc.id);
-          }
+          // Run these operations in parallel
+          await Promise.all([
+            this.fetchProjectLabels(this.selectedProject),
+            this.fetchAnnotationsForCurrentDocuments()
+          ]);
         } else {
           this.$store.commit('SET_PROJECT_LABELS', []);
         }
@@ -460,11 +476,23 @@ export default {
         console.error('Error deleting annotation:', error);
         this.$store.commit('SET_ERROR', 'Failed to delete annotation');
       }
+    },
+    handleDocumentUploaded(document) {
+      // Document was successfully uploaded, the list will be refreshed automatically
+      console.log('Document uploaded successfully:', document)
+    },
+    handleUploadError(error) {
+      console.error('Error uploading document:', error)
+      // You might want to show an error message to the user here
     }
   },
   created() {
-    this.fetchProjects();
-    this.fetchDocuments();
+    this.fetchProjects().then(() => {
+      if (this.projects.length > 0) {
+        this.selectedProject = this.projects[0].id;
+        this.handleProjectChange();
+      }
+    });
   }
 }
 </script>

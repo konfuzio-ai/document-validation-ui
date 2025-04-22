@@ -46,6 +46,9 @@
         {{ $t("resolution_not_supported") }}
       </div>
     </div>
+    <div>
+      <DocumentUpload />
+    </div>
   </div>
 </template>
 
@@ -61,6 +64,7 @@ import NotOptimizedViewportModal from "../components/DocumentModals/NotOptimized
 import AnnotationDeletedModal from "../components/DocumentModals/AnnotationDeletedModal";
 import DocumentErrorModal from "../components/DocumentModals/DocumentErrorModal";
 import ChooseLabelSetModal from "../components/DocumentAnnotations/ChooseLabelSetModal";
+import DocumentUpload from "./DocumentUpload";
 import { Splitpanes, Pane } from "splitpanes";
 import "splitpanes/dist/splitpanes.css";
 
@@ -83,6 +87,7 @@ export default {
     DocumentErrorModal,
     ChooseLabelSetModal,
     AnnotationDeletedModal,
+    DocumentUpload,
   },
   data() {
     return {
