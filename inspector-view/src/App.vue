@@ -40,22 +40,17 @@ export default {
     ...mapActions(['initializeAuth']),
     ...mapMutations(['SET_USER_TOKEN']),
     handleTokenSaved(token) {
-      // Directly set the token without reloading
-      this.SET_USER_TOKEN(token);
+      this.SET_USER_TOKEN(token)
     }
   },
   created() {
-    this.initializeAuth();
+    this.initializeAuth()
   }
 }
 </script>
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -65,41 +60,37 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #41af85;
-  color: white;
-  
-  .navbar-brand {
-    h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.navbar-brand {
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
   }
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.navbar-item {
+  text-decoration: none;
+  color: #495057;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
   
-  .navbar-menu {
-    display: flex;
-    gap: 1rem;
-    
-    .navbar-item {
-      color: white;
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-      
-      &.router-link-active {
-        background-color: rgba(255, 255, 255, 0.2);
-      }
-    }
+  &:hover {
+    background-color: #e9ecef;
   }
 }
 
 .main-content {
   flex: 1;
-  padding: 2rem;
-  overflow: auto;
+  padding: 1rem;
+  overflow-y: auto;
 }
 </style> 
