@@ -89,10 +89,10 @@
                 :key="label.id">
               <div class="annotation-cell">
                 <div class="annotation-container">
-                  <div v-if="isLoadingAnnotations" class="loading-spinner">
+                  <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
                     <div class="spinner"></div>
                   </div>
-                  <template v-else-if="!isLoadingAnnotations">
+                  <template v-else-if="!isLoadingAll && !loadingAnnotations[doc.id]">
                     <div v-if="getAnnotationForLabelSet(doc, label)" class="annotation">
                       {{ getAnnotationForLabelSet(doc, label).span[0].offset_string }}
                       <span v-if="getAnnotationForLabelSet(doc, label).is_correct" class="status-icon correct">✓</span>
@@ -116,8 +116,9 @@
                         class="save-btn"
                         @click="saveNewAnnotation(doc.id, label.id)"
                         :disabled="!newAnnotations[`${doc.id}-${label.id}`]"
+                        title="Save annotation"
                       >
-                        Save
+                        ✓
                       </button>
                     </div>
                   </template>
@@ -170,7 +171,8 @@ export default {
       selectedProject: '',
       documentAnnotations: {},
       newAnnotations: {},
-      isLoadingAnnotations: false
+      loadingAnnotations: {},  // Track loading state per document
+      isLoadingAll: false     // Track global loading state for initial load
     }
   },
   computed: {
@@ -237,7 +239,7 @@ export default {
     },
     async fetchDocumentAnnotations(docId) {
       try {
-        this.isLoadingAnnotations = true;
+        this.$set(this.loadingAnnotations, docId, true);
         const response = await api.getDocumentAnnotations(docId);
         console.log('Annotations for document', docId, ':', response.data);
         // The v3 endpoint returns a paginated response with results array
@@ -246,13 +248,18 @@ export default {
         console.error(`Error fetching annotations for document ${docId}:`, error);
         this.$set(this.documentAnnotations, docId, []);
       } finally {
-        this.isLoadingAnnotations = false;
+        this.$set(this.loadingAnnotations, docId, false);
       }
     },
     async fetchAnnotationsForCurrentDocuments() {
       if (this.selectedProject && this.documents.length > 0) {
-        for (const doc of this.documents) {
-          await this.fetchDocumentAnnotations(doc.id);
+        this.isLoadingAll = true;  // Set global loading state
+        try {
+          for (const doc of this.documents) {
+            await this.fetchDocumentAnnotations(doc.id);
+          }
+        } finally {
+          this.isLoadingAll = false;  // Clear global loading state
         }
       }
     },
@@ -285,7 +292,8 @@ export default {
         this.$store.commit('SET_LOADING', true);
         this.$store.commit('SET_ERROR', null);
         this.documentAnnotations = {};
-        this.isLoadingAnnotations = true;  // Set loading state for annotations
+        this.loadingAnnotations = {};  // Reset loading states
+        this.isLoadingAll = true;      // Set global loading state
         
         // Reset pagination state
         this.$store.commit('SET_CURRENT_PAGE', 1);
@@ -319,7 +327,7 @@ export default {
         console.error('Error in handleProjectChange:', error);
       } finally {
         this.$store.commit('SET_LOADING', false);
-        this.isLoadingAnnotations = false;  // Clear loading state for annotations
+        this.isLoadingAll = false;  // Clear global loading state
       }
     },
     getAnnotationForLabelSet(doc, label) {
@@ -824,22 +832,29 @@ export default {
 }
 
 .save-btn {
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   background-color: #28a745;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9em;
-  white-space: nowrap;
+  font-size: 1em;
+  padding: 0;
+  transition: all 0.2s;
 }
 
 .save-btn:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .save-btn:not(:disabled):hover {
   background-color: #218838;
+  transform: scale(1.1);
 }
 </style> 
