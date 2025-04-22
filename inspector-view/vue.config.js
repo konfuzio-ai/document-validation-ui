@@ -1,6 +1,6 @@
 module.exports = {
   lintOnSave: false,
-  publicPath: process.env.NODE_ENV === 'production' ? '/inspector-view/' : '/',
+  publicPath: '/',
   devServer: {
     port: 8081,
     proxy: {
