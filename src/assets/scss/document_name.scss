@@ -7,6 +7,7 @@
   gap: 12px;
   line-height: 20px;
   width: 400px;
+  min-width: 200px;
 
   .document-icon {
     display: flex;
@@ -21,6 +22,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 100px;
 
     &.is-editable {
       display: inline-block;
