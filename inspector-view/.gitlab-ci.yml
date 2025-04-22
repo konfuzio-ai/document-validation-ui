@@ -1,0 +1,33 @@
+image: node:16
+
+stages:
+  - build
+  - deploy
+
+cache:
+  paths:
+    - inspector-view/node_modules/
+
+build:
+  stage: build
+  script:
+    - cd inspector-view
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - inspector-view/dist
+    expire_in: 1 week
+
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r inspector-view/dist/* .public/
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - table-view 
