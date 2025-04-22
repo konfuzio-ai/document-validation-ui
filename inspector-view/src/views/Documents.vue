@@ -820,6 +820,8 @@ export default {
   display: flex;
   gap: 4px;
   width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
 }
 
 .annotation-input input {
@@ -829,6 +831,7 @@ export default {
   border-radius: 4px;
   font-size: 0.9em;
   min-width: 0;
+  width: 100%;
 }
 
 .save-btn {
