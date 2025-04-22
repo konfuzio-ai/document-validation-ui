@@ -4,7 +4,7 @@ pages:
   stage: deploy
   cache:
     paths:
-      - node_modules/
+      - inspector-view/node_modules/
   variables:
     VUE_APP_API_URL: "https://testing.konfuzio.com/api/v3"
     VUE_APP_IMAGE_URL: "https://testing.konfuzio.com"
@@ -17,13 +17,15 @@ pages:
     VUE_APP_SSO_REALM: "testing"
     VUE_APP_SSO_CLIENT_ID: "testing-client"
   script:
+    - cd inspector-view
     - npm install
     - cp .env.production .env
     - npm run build
+    - cd ..
     - mkdir -p public/inspector-view
-    - cp -r dist/* public/inspector-view/
+    - cp -r inspector-view/dist/* public/inspector-view/
   artifacts:
     paths:
       - public
   only:
-    - main 
+    - table-view 
