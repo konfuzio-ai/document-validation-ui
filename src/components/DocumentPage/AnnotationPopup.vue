@@ -17,6 +17,7 @@
         v-model="textFromEntities"
         class="popup-input"
         type="text"
+        :disabled="true"
       />
     </div>
     <b-dropdown
