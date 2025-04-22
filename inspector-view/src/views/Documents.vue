@@ -545,16 +545,26 @@ export default {
         console.log('Creating annotation with:', annotationToCreate);
         
         // Create the annotation
-        await api.createAnnotation(annotationToCreate);
+        const response = await api.createAnnotation(annotationToCreate);
+        console.log('Annotation created:', response.data);
 
         // Clear the input
         this.$set(this.newAnnotations, key, '');
         
-        // Only reload annotations for this specific document
-        await this.fetchDocumentAnnotations(docId);
-
-        // After successful save, exit editing mode
+        // Immediately update the local annotations data structure
+        if (!this.documentAnnotations[docId]) {
+          this.$set(this.documentAnnotations, docId, []);
+        }
+        this.documentAnnotations[docId].push(response.data);
+        
+        // Exit editing mode
         this.editingCells.delete(key);
+
+        // Force a re-render of the table
+        this.$nextTick(() => {
+          this.$forceUpdate();
+        });
+
       } catch (error) {
         console.error('Error creating annotation:', error);
         this.$store.commit('SET_ERROR', 'Failed to create annotation');
