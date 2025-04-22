@@ -1,15 +1,25 @@
 <template>
-  <img
-    :src="imageData"
-    :alt="alt"
-    :class="imageClass"
-    @error="handleError"
-    v-bind="$attrs"
-  />
+  <div class="auth-image-container">
+    <img
+      v-if="imageData && !error"
+      :src="imageData"
+      :alt="alt"
+      :class="imageClass"
+      @error="handleError"
+      v-bind="$attrs"
+    />
+    <div v-else-if="loading" class="loading-placeholder">
+      <b-skeleton width="100%" height="100%" />
+    </div>
+    <div v-else-if="error" class="error-placeholder">
+      <b-icon icon="image" />
+      <span>{{ error.message || 'Failed to load image' }}</span>
+    </div>
+  </div>
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   name: 'AuthImage',
@@ -36,16 +46,24 @@ export default {
   },
   methods: {
     async loadImage() {
+      if (!this.src) {
+        this.error = new Error('No image source provided')
+        this.loading = false
+        return
+      }
+
       try {
-        const baseUrl = process.env.VUE_APP_IMAGE_URL || 'https://testing.konfuzio.com'
-        const token = process.env.VUE_APP_USER_TOKEN
-        const response = await axios.get(`${baseUrl}${this.src}`, {
-          responseType: 'blob',
-          headers: {
-            'Authorization': `Token ${token}`
-          }
-        })
-        this.imageData = URL.createObjectURL(response.data)
+        this.loading = true
+        this.error = null
+        const response = await api.makeFileRequest(this.src)
+        
+        // Handle axios response which contains the blob in response.data
+        const blob = response.data
+        if (blob instanceof Blob) {
+          this.imageData = URL.createObjectURL(blob)
+        } else {
+          throw new Error('Invalid image response format')
+        }
       } catch (err) {
         console.error('Error loading image:', err)
         this.error = err
@@ -54,15 +72,21 @@ export default {
         this.loading = false
       }
     },
-    handleError() {
+    handleError(event) {
+      console.error('Image load error:', event)
       this.imageData = '' // Clear the image on load error
-      console.error('Error loading image:', this.src)
+      let errorMessage = 'Failed to load image'
+      if (event && event.target && event.target.error && event.target.error.message) {
+        errorMessage = event.target.error.message
+      }
+      this.error = new Error(errorMessage)
     }
   },
   watch: {
     src: {
       immediate: true,
-      handler() {
+      handler(newSrc) {
+        console.log('Source changed to:', newSrc)
         this.loadImage()
       }
     }
@@ -74,4 +98,37 @@ export default {
     }
   }
 }
-</script> 
+</script>
+
+<style scoped>
+.auth-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+}
+
+.loading-placeholder,
+.error-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.error-placeholder {
+  color: #666;
+  gap: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.error-placeholder .b-icon {
+  font-size: 24px;
+}
+</style> 

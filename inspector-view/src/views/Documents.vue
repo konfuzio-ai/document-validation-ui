@@ -233,8 +233,10 @@ export default {
       }
     },
     viewDocument(id) {
-      const baseUrl = process.env.VUE_APP_IMAGE_URL || 'https://testing.konfuzio.com';
-      const url = `${baseUrl}/d/${id}`;
+      const baseUrl = process.env.VUE_APP_API_URL || 'https://testing.konfuzio.com/api/v3';
+      // Remove /api/v3 from the end if present
+      const hostUrl = baseUrl.replace(/\/api\/v3\/?$/, '');
+      const url = `${hostUrl}/d/${id}`;
       window.open(url, '_blank');
     },
     async fetchDocumentAnnotations(docId) {

@@ -64,26 +64,26 @@ export default {
   background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
 }
-
-.navbar-brand {
-  h1 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-}
-
-.navbar-menu {
-  display: flex;
-  gap: 1rem;
-}
-
-.navbar-item {
-  text-decoration: none;
-  color: #495057;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
   
-  &:hover {
+  .navbar-brand {
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  }
+  
+  .navbar-menu {
+    display: flex;
+    gap: 1rem;
+}
+    
+    .navbar-item {
+      text-decoration: none;
+  color: #495057;
+      padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+      
+      &:hover {
     background-color: #e9ecef;
   }
 }
