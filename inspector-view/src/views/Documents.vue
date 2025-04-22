@@ -55,8 +55,8 @@
             </td>
             <td>{{ formatDate(doc.created_at || doc.created) }}</td>
             <td>
-              <span :class="['status-badge', doc.status ? doc.status.toLowerCase() : '']">
-                {{ doc.status || 'Unknown' }}
+              <span :class="['status-badge', getStatusClass(doc.status_data)]">
+                {{ getStatusText(doc.status_data) }}
               </span>
             </td>
             <td>
@@ -179,6 +179,38 @@ export default {
     },
     closePreview() {
       this.activePreview = null
+    },
+    getStatusText(statusData) {
+      const statusMap = {
+        0: 'Queuing for OCR',
+        10: 'OCR in progress',
+        1: 'Queuing for extraction',
+        20: 'Extraction in progress',
+        3: 'Queuing for categorization',
+        30: 'Categorization in progress',
+        4: 'Queuing for splitting',
+        40: 'Splitting in progress',
+        41: 'Waiting for splitting confirmation',
+        2: 'Done',
+        111: 'Processing failed'
+      };
+      return statusMap[statusData] || 'Unknown';
+    },
+    getStatusClass(statusData) {
+      const classMap = {
+        0: 'queuing',
+        10: 'processing',
+        1: 'queuing',
+        20: 'processing',
+        3: 'queuing',
+        30: 'processing',
+        4: 'queuing',
+        40: 'processing',
+        41: 'waiting',
+        2: 'completed',
+        111: 'error'
+      };
+      return classMap[statusData] || '';
     }
   },
   created() {
@@ -292,7 +324,7 @@ export default {
   font-weight: 500;
 }
 
-.status-badge.new {
+.status-badge.queuing {
   background-color: #e3f2fd;
   color: #1976d2;
 }
@@ -300,6 +332,11 @@ export default {
 .status-badge.processing {
   background-color: #fff3e0;
   color: #f57c00;
+}
+
+.status-badge.waiting {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
 }
 
 .status-badge.completed {
