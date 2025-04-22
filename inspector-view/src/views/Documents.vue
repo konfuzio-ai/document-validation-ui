@@ -59,9 +59,13 @@
                 <span v-if="sortKey === 'status'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
               </th>
               <template v-if="selectedProject && labelSets.length > 0">
-                <th v-for="category in labelSets" 
+                <th v-for="(category, categoryIndex) in labelSets" 
                     :key="category.id"
-                    :colspan="getCategoryLabelCount(category)">
+                    :colspan="getCategoryLabelCount(category)"
+                    :style="{ 
+                      backgroundColor: getLabelSetBackground(category.id, 0),
+                      borderBottom: '1px solid #dee2e6'
+                    }">
                   {{ category.name }}
                 </th>
               </template>
@@ -69,10 +73,14 @@
             </tr>
             <tr>
               <template v-if="selectedProject && labelSets.length > 0">
-                <template v-for="category in labelSets">
-                  <th v-for="labelSet in category.labels" 
-                      :key="labelSet.id"
-                      :colspan="labelSet.labels.length">
+                <template v-for="(category, categoryIndex) in labelSets">
+                  <th v-for="(labelSet, labelSetIndex) in category.labels" 
+                      :key="`${category.id}-${labelSet.id}`"
+                      :colspan="labelSet.labels.length"
+                      :style="{ 
+                        backgroundColor: getLabelSetBackground(category.id, labelSetIndex),
+                        borderBottom: '1px solid #dee2e6'
+                      }">
                     {{ labelSet.name }}
                   </th>
                 </template>
@@ -80,10 +88,14 @@
             </tr>
             <tr>
               <template v-if="selectedProject && labelSets.length > 0">
-                <template v-for="category in labelSets">
-                  <template v-for="labelSet in category.labels">
+                <template v-for="(category, categoryIndex) in labelSets">
+                  <template v-for="(labelSet, labelSetIndex) in category.labels">
                     <th v-for="label in labelSet.labels" 
-                        :key="label.id">
+                        :key="`${category.id}-${labelSet.id}-${label.id}`"
+                        :style="{ 
+                          backgroundColor: getLabelSetBackground(category.id, labelSetIndex),
+                          borderBottom: 'none'
+                        }">
                       {{ label.name }}
                     </th>
                   </template>
@@ -115,11 +127,12 @@
                 </span>
               </td>
               <template v-if="selectedProject && labelSets.length > 0">
-                <template v-for="category in labelSets">
-                  <template v-for="labelSet in category.labels">
+                <template v-for="(category, categoryIndex) in labelSets">
+                  <template v-for="(labelSet, labelSetIndex) in category.labels">
                     <td v-for="label in labelSet.labels" 
                         :key="`${doc.id}-${label.id}`"
-                        class="annotation-cell">
+                        class="annotation-cell"
+                        :style="{ backgroundColor: getLabelSetBackground(category.id, labelSetIndex) }">
                       <div class="annotation-container">
                         <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
                           <div class="spinner"></div>
@@ -222,6 +235,7 @@ export default {
         left: '0px'
       },
       editingCells: new Set(),
+      categoryColors: {}, // Store category base colors
     }
   },
   computed: {
@@ -565,6 +579,52 @@ export default {
     isEditing(key) {
       return this.editingCells.has(key);
     },
+    generateCategoryColors() {
+      const baseColors = [
+        { h: 200, s: 45 }, // Light blue
+        { h: 150, s: 45 }, // Light green
+        { h: 25, s: 45 },  // Light orange
+        { h: 280, s: 35 }, // Light purple
+        { h: 340, s: 35 }, // Light pink
+        { h: 45, s: 45 },  // Light yellow
+        { h: 170, s: 40 }, // Light teal
+        { h: 0, s: 40 }    // Light red
+      ];
+
+      this.labelSets.forEach((category, index) => {
+        const baseColor = baseColors[index % baseColors.length];
+        this.categoryColors[category.id] = baseColor;
+      });
+
+      console.log('Generated category colors:', this.categoryColors);
+    },
+    getLabelSetBackground(categoryId, labelSetIndex) {
+      const baseColor = this.categoryColors[categoryId];
+      if (!baseColor) {
+        console.log('No color found for category:', categoryId);
+        return '#f8f9fa';
+      }
+
+      const baseLightness = 92; // Slightly darker base
+      const lightnessStep = 4;  // Bigger step for more contrast
+      const saturationBoost = labelSetIndex * 5; // Increase saturation for each label set
+      const lightness = baseLightness - (labelSetIndex * lightnessStep);
+      const saturation = Math.min(baseColor.s + saturationBoost, 60); // Cap saturation at 60%
+
+      const color = `hsl(${baseColor.h}, ${saturation}%, ${lightness}%)`;
+      console.log('Generated color for category', categoryId, 'labelSet', labelSetIndex, ':', color);
+      return color;
+    },
+  },
+  watch: {
+    labelSets: {
+      handler(newSets) {
+        if (newSets && newSets.length > 0) {
+          this.generateCategoryColors();
+        }
+      },
+      immediate: true
+    }
   },
   created() {
     this.fetchProjects().then(() => {
@@ -658,6 +718,7 @@ export default {
   padding: 4px 8px;
   vertical-align: top;
   box-sizing: border-box;
+  transition: background-color 0.2s ease;
 }
 
 .annotation-container {
@@ -674,9 +735,10 @@ export default {
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  background-color: #f8f9fa;
+  background-color: white;
   border-radius: 4px;
   font-size: 0.9em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .annotation-text {
@@ -720,23 +782,24 @@ export default {
   width: 80px;
   min-width: 0;
   padding: 2px 4px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   font-size: 0.9em;
+  background-color: white;
 }
 
 .annotation-input input:focus {
   outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
 .add-btn {
   width: 20px;
   height: 20px;
-  border: 1px dashed #ccc;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  background: none;
+  background: white;
   color: #666;
   cursor: pointer;
   display: flex;
@@ -749,9 +812,9 @@ export default {
 
 .add-btn:hover {
   opacity: 1;
-  border-color: #999;
+  border-color: rgba(0, 0, 0, 0.3);
   color: #333;
-  background-color: #f8f9fa;
+  background-color: white;
 }
 
 .empty-annotation {
@@ -762,15 +825,83 @@ export default {
   cursor: pointer;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.add-btn {
+  width: 20px;
+  height: 20px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: white;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.add-btn:hover {
+  opacity: 1;
+  border-color: rgba(0, 0, 0, 0.3);
+  color: #333;
+  background-color: white;
+}
+
+.annotation-input {
+  width: 100%;
+  max-width: 120px;
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+
+.annotation-input input {
+  width: 80px;
+  min-width: 0;
+  padding: 2px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.9em;
+  background-color: white;
+}
+
+.annotation-input input:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.delete-btn {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: #dc3545;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Add borders to cells */
+.annotation-cell {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effect for cells */
+.annotation-cell:hover {
+  filter: brightness(0.98);
 }
 
 .table-controls {
@@ -1057,5 +1188,43 @@ export default {
 .status-indicator.declined {
   background-color: rgba(220, 53, 69, 0.1);
   color: #dc3545;
+}
+
+.documents-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 500;
+  border-bottom: 1px solid #dee2e6;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.documents-table th[rowspan="3"] {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  vertical-align: middle;
+  border-right: 1px solid #dee2e6;
+}
+
+.documents-table thead tr:first-child th {
+  font-weight: 600;
+}
+
+.documents-table thead tr:nth-child(2) th {
+  font-weight: 500;
+}
+
+.documents-table thead tr:last-child th {
+  font-weight: 400;
+}
+
+/* Add subtle text shadow for better readability on colored backgrounds */
+.documents-table th {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Add subtle border between categories */
+.documents-table th[colspan] {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 </style> 
