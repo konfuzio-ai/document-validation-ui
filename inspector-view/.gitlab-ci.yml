@@ -18,6 +18,7 @@ pages:
     VUE_APP_SSO_CLIENT_ID: "testing-client"
   script:
     - npm install
+    - cp .env.production .env
     - npm run build
     - mkdir -p public/inspector-view
     - cp -r dist/* public/inspector-view/
