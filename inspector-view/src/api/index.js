@@ -97,7 +97,15 @@ const getDocumentAnnotations = (id) => {
 }
 
 const getDocumentAnnotationSets = (id) => {
-  return HTTP.get(`documents/${id}/annotation_sets/`)
+  return HTTP.get(`documents/${id}/`)
+    .then(response => {
+      // Return the annotation_sets from the document response
+      return {
+        data: {
+          results: response.data.annotation_sets || []
+        }
+      };
+    });
 }
 
 const getAnnotationSets = () => {
@@ -108,12 +116,20 @@ const getAnnotationSetById = (id) => {
   return HTTP.get(`annotation_sets/${id}/`)
 }
 
+const createAnnotationSet = (annotationSet) => {
+  return HTTP.post('annotation_sets/', annotationSet)
+}
+
 const getAnnotations = () => {
   return HTTP.get('annotations/')
 }
 
 const getAnnotationById = (id) => {
   return HTTP.get(`annotations/${id}/`)
+}
+
+const createAnnotation = (annotation) => {
+  return HTTP.post('annotations/', annotation)
 }
 
 const makeFileRequest = (fileUrl) => {
@@ -137,7 +153,9 @@ export default {
   getDocumentAnnotationSets,
   getAnnotationSets,
   getAnnotationSetById,
+  createAnnotationSet,
   getAnnotations,
   getAnnotationById,
+  createAnnotation,
   makeFileRequest
 } 

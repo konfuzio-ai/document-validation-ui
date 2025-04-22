@@ -99,6 +99,21 @@
                     </div>
                   </template>
                   <span v-else class="no-annotation">-</span>
+                  <div v-if="!documentAnnotations[doc.id] || getAnnotationsForLabel(doc.id, label.id).length === 0" class="new-annotation-input">
+                    <input 
+                      type="text" 
+                      v-model="newAnnotations[`${doc.id}-${label.id}`]"
+                      placeholder="Add new annotation..."
+                      @keyup.enter="saveNewAnnotation(doc.id, label.id)"
+                    />
+                    <button 
+                      class="save-icon"
+                      @click="saveNewAnnotation(doc.id, label.id)"
+                      :disabled="!newAnnotations[`${doc.id}-${label.id}`]"
+                    >
+                      <i class="fas fa-save"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </td>
@@ -146,7 +161,8 @@ export default {
       pageSizeOptions: [10, 25, 50, 100],
       activePreview: null,
       selectedProject: '',
-      documentAnnotations: {}
+      documentAnnotations: {},
+      newAnnotations: {}
     }
   },
   computed: {
@@ -352,6 +368,73 @@ export default {
         111: 'error'
       };
       return classMap[statusData] || '';
+    },
+    async saveNewAnnotation(docId, labelId) {
+      const annotationText = this.newAnnotations[`${docId}-${labelId}`];
+      if (!annotationText) return;
+
+      try {
+        // Create a span object for the annotation
+        const span = {
+          offset_string: annotationText,
+          page_index: 0,  // Default to first page
+          x0: 0,
+          x1: 0,
+          y0: 0,
+          y1: 0,
+          start_offset: 0,
+          end_offset: annotationText.length,
+          is_custom: true
+        };
+
+        // Get the document to access its annotation sets
+        const docResponse = await api.getDocumentById(docId);
+        const document = docResponse.data;
+        
+        // Find the appropriate annotation set for this label
+        let annotationSet = null;
+        if (document.annotation_sets && document.annotation_sets.length > 0) {
+          annotationSet = document.annotation_sets.find(set => 
+            set.labels && set.labels.some(label => label.id === labelId)
+          );
+          
+          // If no matching annotation set found, use the first one
+          if (!annotationSet && document.annotation_sets[0]) {
+            annotationSet = document.annotation_sets[0];
+          }
+        }
+
+        const annotationToCreate = {
+          document: docId,
+          span: [span],  // API expects an array of spans
+          label: labelId,
+          is_correct: true,
+          revised: false
+        };
+
+        // Only set one of annotation_set or label_set, never both
+        if (annotationSet && annotationSet.id) {
+          annotationToCreate.annotation_set = annotationSet.id;
+        } else if (annotationSet && annotationSet.label_set) {
+          annotationToCreate.label_set = annotationSet.label_set.id;
+        } else {
+          throw new Error('No valid annotation set or label set found for document');
+        }
+
+        console.log('Creating annotation with:', annotationToCreate);
+        
+        // Create the annotation
+        await api.createAnnotation(annotationToCreate);
+
+        // Clear the input
+        this.$set(this.newAnnotations, `${docId}-${labelId}`, '');
+        
+        // Refresh annotations for this document
+        await this.fetchDocumentAnnotations(docId);
+      } catch (error) {
+        console.error('Error creating annotation:', error);
+        this.$store.commit('SET_ERROR', 'Failed to create annotation');
+      }
     }
   },
   created() {
@@ -703,6 +786,52 @@ export default {
   font-weight: 500;
   color: #666;
   margin-bottom: 4px;
+  font-size: 0.875rem;
+}
+
+.new-annotation-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.new-annotation-input input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  height: 28px;
+}
+
+.save-icon {
+  background: none;
+  border: none;
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.save-icon:hover:not(:disabled) {
+  color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.save-icon:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  background: none;
+}
+
+.save-icon i {
   font-size: 0.875rem;
 }
 </style> 
