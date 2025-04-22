@@ -89,31 +89,38 @@
                 :key="label.id">
               <div class="annotation-cell">
                 <div class="annotation-container">
-                  <template v-if="documentAnnotations[doc.id]">
-                    <div v-for="annotation in getAnnotationsForLabel(doc.id, label.id)" 
-                         :key="annotation.id"
-                         :class="['annotation', { 'is-correct': annotation.is_correct, 'revised': annotation.revised }]">
-                      <span class="annotation-text">{{ annotation.value || '-' }}</span>
-                      <span v-if="annotation.revised" class="annotation-status">✓</span>
-                      <span v-if="annotation.is_correct" class="annotation-status correct">✓</span>
+                  <div v-if="isLoadingAnnotations" class="loading-spinner">
+                    <div class="spinner"></div>
+                  </div>
+                  <template v-else-if="!isLoadingAnnotations">
+                    <div v-if="getAnnotationForLabelSet(doc, label)" class="annotation">
+                      {{ getAnnotationForLabelSet(doc, label).span[0].offset_string }}
+                      <span v-if="getAnnotationForLabelSet(doc, label).is_correct" class="status-icon correct">✓</span>
+                      <span v-if="getAnnotationForLabelSet(doc, label).revised" class="status-icon revised">↺</span>
+                      <button 
+                        class="delete-btn"
+                        @click="deleteAnnotation(doc.id, getAnnotationForLabelSet(doc, label).id)"
+                        title="Delete annotation"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div v-else class="annotation-input">
+                      <input 
+                        type="text" 
+                        v-model="newAnnotations[`${doc.id}-${label.id}`]"
+                        placeholder="Add annotation..."
+                        @keyup.enter="saveNewAnnotation(doc.id, label.id)"
+                      />
+                      <button 
+                        class="save-btn"
+                        @click="saveNewAnnotation(doc.id, label.id)"
+                        :disabled="!newAnnotations[`${doc.id}-${label.id}`]"
+                      >
+                        Save
+                      </button>
                     </div>
                   </template>
-                  <span v-else class="no-annotation">-</span>
-                  <div v-if="!documentAnnotations[doc.id] || getAnnotationsForLabel(doc.id, label.id).length === 0" class="new-annotation-input">
-                    <input 
-                      type="text" 
-                      v-model="newAnnotations[`${doc.id}-${label.id}`]"
-                      placeholder="Add new annotation..."
-                      @keyup.enter="saveNewAnnotation(doc.id, label.id)"
-                    />
-                    <button 
-                      class="save-icon"
-                      @click="saveNewAnnotation(doc.id, label.id)"
-                      :disabled="!newAnnotations[`${doc.id}-${label.id}`]"
-                    >
-                      <i class="fas fa-save"></i>
-                    </button>
-                  </div>
                 </div>
               </div>
             </td>
@@ -162,7 +169,8 @@ export default {
       activePreview: null,
       selectedProject: '',
       documentAnnotations: {},
-      newAnnotations: {}
+      newAnnotations: {},
+      isLoadingAnnotations: false
     }
   },
   computed: {
@@ -229,6 +237,7 @@ export default {
     },
     async fetchDocumentAnnotations(docId) {
       try {
+        this.isLoadingAnnotations = true;
         const response = await api.getDocumentAnnotations(docId);
         console.log('Annotations for document', docId, ':', response.data);
         // The v3 endpoint returns a paginated response with results array
@@ -236,6 +245,8 @@ export default {
       } catch (error) {
         console.error(`Error fetching annotations for document ${docId}:`, error);
         this.$set(this.documentAnnotations, docId, []);
+      } finally {
+        this.isLoadingAnnotations = false;
       }
     },
     async fetchAnnotationsForCurrentDocuments() {
@@ -274,6 +285,7 @@ export default {
         this.$store.commit('SET_LOADING', true);
         this.$store.commit('SET_ERROR', null);
         this.documentAnnotations = {};
+        this.isLoadingAnnotations = true;  // Set loading state for annotations
         
         // Reset pagination state
         this.$store.commit('SET_CURRENT_PAGE', 1);
@@ -297,13 +309,7 @@ export default {
           await this.fetchProjectLabels(this.selectedProject);
           // Fetch annotations for each document
           for (const doc of this.documents) {
-            try {
-              const response = await api.getDocumentAnnotations(doc.id);
-              console.log('Annotations for document', doc.id, ':', response.data);
-              this.$set(this.documentAnnotations, doc.id, response.data.results || []);
-            } catch (error) {
-              console.error(`Error fetching annotations for document ${doc.id}:`, error);
-            }
+            await this.fetchDocumentAnnotations(doc.id);
           }
         } else {
           this.$store.commit('SET_PROJECT_LABELS', []);
@@ -313,20 +319,19 @@ export default {
         console.error('Error in handleProjectChange:', error);
       } finally {
         this.$store.commit('SET_LOADING', false);
+        this.isLoadingAnnotations = false;  // Clear loading state for annotations
       }
     },
-    getAnnotationsForLabel(docId, labelId) {
-      const docAnnotations = this.documentAnnotations[docId] || [];
-      console.log('Getting annotations for doc', docId, 'label', labelId, ':', docAnnotations);
+    getAnnotationForLabelSet(doc, label) {
+      const docAnnotations = this.documentAnnotations[doc.id] || [];
+      console.log('Getting annotations for doc', doc.id, 'label', label.id, ':', docAnnotations);
       // Filter annotations by label ID from the nested label object
-      return docAnnotations.filter(annotation => {
-        return annotation.label && annotation.label.id === labelId;
-      }).map(annotation => ({
-        ...annotation,
-        value: annotation.offset_string || annotation.normalized || '-',
-        is_correct: annotation.is_correct || false,
-        revised: annotation.revised || false
-      }));
+      const annotation = docAnnotations.find(annotation => {
+        console.log('Checking annotation:', annotation);
+        return annotation.label && annotation.label.id === label.id;
+      });
+      console.log('Found annotation:', annotation);
+      return annotation;
     },
     getFullImageUrl(doc) {
       return doc.thumbnail_url.replace('show-thumbnail', 'show-image');
@@ -429,11 +434,21 @@ export default {
         // Clear the input
         this.$set(this.newAnnotations, `${docId}-${labelId}`, '');
         
-        // Refresh annotations for this document
+        // Only reload annotations for this specific document
         await this.fetchDocumentAnnotations(docId);
       } catch (error) {
         console.error('Error creating annotation:', error);
         this.$store.commit('SET_ERROR', 'Failed to create annotation');
+      }
+    },
+    async deleteAnnotation(docId, annotationId) {
+      try {
+        await api.deleteAnnotation(annotationId);
+        // Only reload annotations for this specific document
+        await this.fetchDocumentAnnotations(docId);
+      } catch (error) {
+        console.error('Error deleting annotation:', error);
+        this.$store.commit('SET_ERROR', 'Failed to delete annotation');
       }
     }
   },
@@ -705,133 +720,126 @@ export default {
 }
 
 .annotation-container {
+  position: relative;
+  min-height: 24px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .annotation {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
-  margin: 0;
-  background-color: #f5f5f5;
+  gap: 4px;
+  padding: 2px 6px;
+  background-color: #f8f9fa;
   border-radius: 4px;
-  font-size: 0.875rem;
-  line-height: 1.2;
-  white-space: nowrap;
+  font-size: 0.9em;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  white-space: nowrap;
 }
 
-.annotation-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 0;
+  margin-left: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 .no-annotation {
-  color: #999;
+  color: #6c757d;
   font-style: italic;
-  line-height: 32px;
 }
 
-.annotation.is-correct {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.annotation.revised {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.annotation-status {
-  margin-left: 4px;
-  font-size: 0.75rem;
-  color: #666;
-  flex-shrink: 0;
-}
-
-.annotation-status.correct {
-  color: #388e3c;
-}
-
-.annotation-set {
-  margin-bottom: 8px;
-}
-
-.label-annotations {
-  margin-bottom: 4px;
-}
-
-.label-set-info {
-  font-size: 0.75rem;
-  color: #666;
-  margin-top: 2px;
-}
-
-.multiple-sections {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-}
-
-.label-name {
-  font-weight: 500;
-  color: #666;
-  margin-bottom: 4px;
-  font-size: 0.875rem;
-}
-
-.new-annotation-input {
-  display: flex;
+.status-icon {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 4px;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 0.8em;
 }
 
-.new-annotation-input input {
+.status-icon.correct {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-icon.revised {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.annotation-input {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.annotation-input input {
   flex: 1;
   padding: 4px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 0.875rem;
-  height: 28px;
+  font-size: 0.9em;
+  min-width: 0;
 }
 
-.save-icon {
-  background: none;
+.save-btn {
+  padding: 4px 8px;
+  background-color: #28a745;
+  color: white;
   border: none;
-  color: #2c3e50;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-  width: 24px;
-  height: 24px;
   border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  white-space: nowrap;
 }
 
-.save-icon:hover:not(:disabled) {
-  color: #1976d2;
-  background-color: rgba(25, 118, 210, 0.1);
-}
-
-.save-icon:disabled {
-  color: #ccc;
+.save-btn:disabled {
+  background-color: #6c757d;
   cursor: not-allowed;
-  background: none;
 }
 
-.save-icon i {
-  font-size: 0.875rem;
+.save-btn:not(:disabled):hover {
+  background-color: #218838;
 }
 </style> 

@@ -151,6 +151,19 @@ export default new Vuex.Store({
       commit('SET_PAGE_SIZE', size)
       commit('SET_CURRENT_PAGE', 1) // Reset to first page
       dispatch('fetchDocuments')
+    },
+    async deleteAnnotation({ commit, dispatch }, annotationId) {
+      try {
+        await api.deleteAnnotation(annotationId)
+        // Refresh the current document's annotations after deletion
+        if (state.currentDocument) {
+          dispatch('fetchDocument', state.currentDocument.id)
+        }
+      } catch (error) {
+        commit('SET_ERROR', error.message)
+        console.error('Error deleting annotation:', error)
+        throw error
+      }
     }
   }
 }) 

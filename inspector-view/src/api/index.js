@@ -132,6 +132,10 @@ const createAnnotation = (annotation) => {
   return HTTP.post('annotations/', annotation)
 }
 
+const deleteAnnotation = (id) => {
+  return HTTP.delete(`annotations/${id}/`)
+}
+
 const makeFileRequest = (fileUrl) => {
   return FILE_REQUEST.get(fileUrl)
 }
@@ -157,5 +161,6 @@ export default {
   getAnnotations,
   getAnnotationById,
   createAnnotation,
+  deleteAnnotation,
   makeFileRequest
 } 
