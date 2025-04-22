@@ -53,11 +53,10 @@
               Status
               <span v-if="sortKey === 'status'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
             </th>
-            <th v-for="labelSet in labelSets" :key="labelSet.id">
-              {{ labelSet.name }}
-              <div class="label-set-info">
-                <span v-if="labelSet.has_multiple_sections" class="multiple-sections">Multiple</span>
-              </div>
+            <th v-if="selectedProject && projectLabels.length > 0" 
+                v-for="label in projectLabels" 
+                :key="label.id">
+              {{ label.name }}
             </th>
             <th>Actions</th>
           </tr>
@@ -85,26 +84,22 @@
                 {{ getStatusText(doc.status_data) }}
               </span>
             </td>
-            <td v-for="labelSet in labelSets" :key="labelSet.id">
+            <td v-if="selectedProject && projectLabels.length > 0" 
+                v-for="label in projectLabels" 
+                :key="label.id">
               <div class="annotation-cell">
-                <template v-if="doc.annotation_sets">
-                  <div v-for="annotationSet in doc.annotation_sets.filter(set => set.label_set.id === labelSet.id)" 
-                       :key="annotationSet.id"
-                       class="annotation-set">
-                    <div v-for="label in annotationSet.labels" 
-                         :key="label.id"
-                         class="label-annotations">
-                      <div class="label-name">{{ label.name }}</div>
-                      <div v-for="annotation in label.annotations" 
-                           :key="annotation.id"
-                           :class="['annotation', { 'is-correct': annotation.is_correct, 'revised': annotation.revised }]">
-                        {{ annotation.value || '-' }}
-                        <span v-if="annotation.revised" class="annotation-status">✓</span>
-                      </div>
+                <div class="annotation-container">
+                  <template v-if="documentAnnotations[doc.id]">
+                    <div v-for="annotation in getAnnotationsForLabel(doc.id, label.id)" 
+                         :key="annotation.id"
+                         :class="['annotation', { 'is-correct': annotation.is_correct, 'revised': annotation.revised }]">
+                      <span class="annotation-text">{{ annotation.value || '-' }}</span>
+                      <span v-if="annotation.revised" class="annotation-status">✓</span>
+                      <span v-if="annotation.is_correct" class="annotation-status correct">✓</span>
                     </div>
-                  </div>
-                </template>
-                <span v-else>-</span>
+                  </template>
+                  <span v-else class="no-annotation">-</span>
+                </div>
               </div>
             </td>
             <td>
@@ -137,6 +132,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import AuthImage from '../components/AuthImage.vue'
+import api from '../api'
 
 export default {
   name: 'Documents',
@@ -149,12 +145,12 @@ export default {
       sortOrder: 'desc',
       pageSizeOptions: [10, 25, 50, 100],
       activePreview: null,
-      labelSets: [],
-      selectedProject: ''
+      selectedProject: '',
+      documentAnnotations: {}
     }
   },
   computed: {
-    ...mapState(['documents', 'loading', 'error', 'pagination', 'imageUrl', 'projects']),
+    ...mapState(['documents', 'loading', 'error', 'pagination', 'imageUrl', 'projects', 'labelSets', 'projectLabels']),
     pageSize: {
       get() {
         return this.pagination.pageSize
@@ -185,7 +181,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects', 'fetchProjectLabelSets']),
+    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects', 'fetchProjectLabels']),
     formatDate(date) {
       if (!date) return '-';
       try {
@@ -215,28 +211,106 @@ export default {
       const url = `${baseUrl}/d/${id}`;
       window.open(url, '_blank');
     },
-    changePage(page) {
-      // Update the current page in the Vuex store
-      this.$store.commit('SET_CURRENT_PAGE', page)
+    async fetchDocumentAnnotations(docId) {
+      try {
+        const response = await api.getDocumentAnnotations(docId);
+        console.log('Annotations for document', docId, ':', response.data);
+        // The v3 endpoint returns a paginated response with results array
+        this.$set(this.documentAnnotations, docId, response.data.results || []);
+      } catch (error) {
+        console.error(`Error fetching annotations for document ${docId}:`, error);
+        this.$set(this.documentAnnotations, docId, []);
+      }
+    },
+    async fetchAnnotationsForCurrentDocuments() {
+      if (this.selectedProject && this.documents.length > 0) {
+        for (const doc of this.documents) {
+          await this.fetchDocumentAnnotations(doc.id);
+        }
+      }
+    },
+    async changePage(page) {
+      this.$store.commit('SET_CURRENT_PAGE', page);
       
       const params = {
         offset: (page - 1) * this.pagination.pageSize,
         limit: this.pagination.pageSize
       }
       if (this.selectedProject) {
-        params.project = this.selectedProject
+        params.project = this.selectedProject;
       }
-      this.fetchDocuments(params)
+      await this.fetchDocuments(params);
+      await this.fetchAnnotationsForCurrentDocuments();
     },
-    handlePageSizeChange() {
+    async handlePageSizeChange() {
       const params = {
         offset: 0,
         limit: this.pageSize
       }
       if (this.selectedProject) {
-        params.project = this.selectedProject
+        params.project = this.selectedProject;
       }
-      this.$store.dispatch('fetchDocuments', params)
+      await this.fetchDocuments(params);
+      await this.fetchAnnotationsForCurrentDocuments();
+    },
+    async handleProjectChange() {
+      try {
+        this.$store.commit('SET_LOADING', true);
+        this.$store.commit('SET_ERROR', null);
+        this.documentAnnotations = {};
+        
+        // Reset pagination state
+        this.$store.commit('SET_CURRENT_PAGE', 1);
+        this.$store.commit('SET_PAGINATION', {
+          count: 0,
+          next: null,
+          previous: null,
+          pageSize: this.pageSize
+        });
+        
+        // Fetch documents for the selected project
+        const params = {
+          project: this.selectedProject,
+          offset: 0,
+          limit: this.pageSize
+        };
+        await this.fetchDocuments(params);
+        
+        // Fetch project labels if a project is selected
+        if (this.selectedProject) {
+          await this.fetchProjectLabels(this.selectedProject);
+          // Fetch annotations for each document
+          for (const doc of this.documents) {
+            try {
+              const response = await api.getDocumentAnnotations(doc.id);
+              console.log('Annotations for document', doc.id, ':', response.data);
+              this.$set(this.documentAnnotations, doc.id, response.data.results || []);
+            } catch (error) {
+              console.error(`Error fetching annotations for document ${doc.id}:`, error);
+            }
+          }
+        } else {
+          this.$store.commit('SET_PROJECT_LABELS', []);
+        }
+      } catch (error) {
+        this.$store.commit('SET_ERROR', error.message || 'Error loading documents');
+        console.error('Error in handleProjectChange:', error);
+      } finally {
+        this.$store.commit('SET_LOADING', false);
+      }
+    },
+    getAnnotationsForLabel(docId, labelId) {
+      const docAnnotations = this.documentAnnotations[docId] || [];
+      console.log('Getting annotations for doc', docId, 'label', labelId, ':', docAnnotations);
+      // Filter annotations by label ID from the nested label object
+      return docAnnotations.filter(annotation => {
+        return annotation.label && annotation.label.id === labelId;
+      }).map(annotation => ({
+        ...annotation,
+        value: annotation.offset_string || annotation.normalized || '-',
+        is_correct: annotation.is_correct || false,
+        revised: annotation.revised || false
+      }));
     },
     getFullImageUrl(doc) {
       return doc.thumbnail_url.replace('show-thumbnail', 'show-image');
@@ -278,28 +352,6 @@ export default {
         111: 'error'
       };
       return classMap[statusData] || '';
-    },
-    async handleProjectChange() {
-      try {
-        this.loading = true
-        this.error = null
-        
-        // Fetch documents for the selected project
-        await this.fetchDocuments({
-          project: this.selectedProject,
-          page: 1
-        })
-        
-        // Fetch label sets if a project is selected
-        if (this.selectedProject) {
-          await this.fetchProjectLabelSets(this.selectedProject)
-        }
-      } catch (error) {
-        this.error = error.message || 'Error loading documents'
-        console.error('Error in handleProjectChange:', error)
-      } finally {
-        this.loading = false
-      }
     }
   },
   created() {
@@ -564,8 +616,65 @@ export default {
 }
 
 .annotation-cell {
-  max-width: 200px;
+  min-height: 40px;
+  padding: 4px;
+  vertical-align: top;
+}
+
+.annotation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 32px;
+}
+
+.annotation {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  margin: 0;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.annotation-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.no-annotation {
+  color: #999;
+  font-style: italic;
+  line-height: 32px;
+}
+
+.annotation.is-correct {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.annotation.revised {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.annotation-status {
+  margin-left: 4px;
+  font-size: 0.75rem;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.annotation-status.correct {
+  color: #388e3c;
 }
 
 .annotation-set {
@@ -595,31 +704,5 @@ export default {
   color: #666;
   margin-bottom: 4px;
   font-size: 0.875rem;
-}
-
-.annotation {
-  display: inline-block;
-  padding: 2px 6px;
-  margin: 2px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  color: #333;
-  position: relative;
-}
-
-.annotation.is-correct {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.annotation.revised {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.annotation-status {
-  margin-left: 4px;
-  font-size: 0.75rem;
 }
 </style> 

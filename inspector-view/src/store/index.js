@@ -16,6 +16,7 @@ export default new Vuex.Store({
     projects: [],
     selectedProject: null,
     labelSets: [],
+    projectLabels: [],
     pagination: {
       count: 0,
       next: null,
@@ -38,6 +39,9 @@ export default new Vuex.Store({
     },
     SET_LABEL_SETS(state, labelSets) {
       state.labelSets = labelSets
+    },
+    SET_PROJECT_LABELS(state, labels) {
+      state.projectLabels = labels
     },
     SET_SELECTED_PROJECT(state, projectId) {
       state.selectedProject = projectId
@@ -88,15 +92,22 @@ export default new Vuex.Store({
         console.error('Error fetching projects:', error)
       }
     },
-    async fetchProjectLabelSets({ commit }, projectId) {
+    async fetchProjectLabels({ commit }, projectId) {
       try {
-        const response = await api.getProjectLabelSets(projectId)
-        commit('SET_LABEL_SETS', response.data || [])
-        return response
+        console.log('Fetching labels for project:', projectId);
+        const response = await api.getProjectLabels(projectId);
+        console.log('Labels response:', response.data);
+        
+        // Check if the response has a results property
+        const labels = response.data.results || response.data || [];
+        console.log('Processed labels:', labels);
+        
+        commit('SET_PROJECT_LABELS', labels);
+        return response;
       } catch (error) {
-        console.error('Error fetching project label sets:', error)
-        commit('SET_LABEL_SETS', [])
-        throw error
+        console.error('Error fetching project labels:', error);
+        commit('SET_PROJECT_LABELS', []);
+        throw error;
       }
     },
     async fetchDocuments({ commit, state }, params) {

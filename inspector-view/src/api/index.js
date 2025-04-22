@@ -64,7 +64,15 @@ const getProjects = () => {
 }
 
 const getProjectLabels = (projectId) => {
-  return HTTP.get(`projects/${projectId}/labels/`)
+  return HTTP.get(`labels/?project=${projectId}`)
+    .then(response => {
+      console.log('Project labels response:', response.data);
+      return response;
+    })
+    .catch(error => {
+      console.error('Error fetching project labels:', error);
+      throw error;
+    });
 }
 
 const getProjectLabelSets = (projectId) => {
@@ -85,7 +93,7 @@ const getDocumentPages = (id) => {
 }
 
 const getDocumentAnnotations = (id) => {
-  return HTTP.get(`documents/${id}/annotations/`)
+  return HTTP.get(`annotations/?document=${id}`);
 }
 
 const getDocumentAnnotationSets = (id) => {
