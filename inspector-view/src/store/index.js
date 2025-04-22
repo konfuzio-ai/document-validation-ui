@@ -122,6 +122,32 @@ export default new Vuex.Store({
         throw error;
       }
     },
+    async fetchLabelSets({ commit }, projectId) {
+      try {
+        console.log('Fetching categories for project:', projectId);
+        const response = await api.HTTP.get(`categories/?project=${projectId}`);
+        console.log('Categories response:', response.data);
+        
+        // Extract label sets from categories
+        const labelSets = response.data.results.map(category => ({
+          id: category.id,
+          name: category.name,
+          labels: category.schema.map(labelSet => ({
+            id: labelSet.id,
+            name: labelSet.name,
+            labels: labelSet.labels
+          }))
+        }));
+        
+        console.log('Processed label sets:', labelSets);
+        commit('SET_LABEL_SETS', labelSets);
+        return labelSets;
+      } catch (error) {
+        console.error('Error fetching project label sets:', error);
+        commit('SET_LABEL_SETS', []);
+        throw error;
+      }
+    },
     async fetchDocuments({ commit, state }, params) {
       commit('SET_LOADING', true)
       try {

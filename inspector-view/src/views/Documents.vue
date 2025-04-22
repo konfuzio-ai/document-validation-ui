@@ -38,103 +38,137 @@
           </div>
         </div>
       </div>
-      <table class="documents-table">
-        <thead>
-          <tr>
-            <th @click="sortBy('id')">
-              ID
-              <span v-if="sortKey === 'id'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
-            </th>
-            <th @click="sortBy('name')">
-              Name
-              <span v-if="sortKey === 'name'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
-            </th>
-            <th @click="sortBy('created')">
-              Created
-              <span v-if="sortKey === 'created'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
-            </th>
-            <th @click="sortBy('status')">
-              Status
-              <span v-if="sortKey === 'status'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
-            </th>
-            <th v-if="selectedProject && projectLabels.length > 0" 
-                v-for="label in projectLabels" 
-                :key="label.id">
-              {{ label.name }}
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="doc in sortedDocuments" :key="doc.id">
-            <td>{{ doc.id }}</td>
-            <td>
-              <div class="name-cell">
-                <span class="document-name" @click="showPreview(doc)">{{ doc.data_file_name || '-' }}</span>
-                <div v-if="doc.thumbnail_url" class="preview-tooltip">
-                  <div class="preview-content">
-                    <AuthImage
-                      :src="getFullImageUrl(doc)"
-                      alt="Document preview"
-                      class="preview-image"
-                    />
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td>{{ formatDate(doc.created_at || doc.created) }}</td>
-            <td>
-              <span :class="['status-badge', getStatusClass(doc.status_data)]">
-                {{ getStatusText(doc.status_data) }}
-              </span>
-            </td>
-            <td v-if="selectedProject && projectLabels.length > 0" 
-                v-for="label in projectLabels" 
-                :key="label.id">
-              <div class="annotation-cell">
-                <div class="annotation-container">
-                  <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
-                    <div class="spinner"></div>
-                  </div>
-                  <template v-else-if="!isLoadingAll && !loadingAnnotations[doc.id]">
-                    <div v-if="getAnnotationForLabelSet(doc, label)" class="annotation">
-                      {{ getAnnotationForLabelSet(doc, label).span[0].offset_string }}
-                      <span v-if="getAnnotationForLabelSet(doc, label).is_correct" class="status-icon correct">✓</span>
-                      <span v-if="getAnnotationForLabelSet(doc, label).revised" class="status-icon revised">↺</span>
-                      <button 
-                        class="delete-btn"
-                        @click="deleteAnnotation(doc.id, getAnnotationForLabelSet(doc, label).id)"
-                        title="Delete annotation"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <div v-else class="annotation-input">
-                      <input 
-                        type="text" 
-                        v-model="newAnnotations[`${doc.id}-${label.id}`]"
-                        placeholder="Add annotation..."
-                        @keyup.enter="saveNewAnnotation(doc.id, label.id)"
-                      />
-                      <button 
-                        class="save-btn"
-                        @click="saveNewAnnotation(doc.id, label.id)"
-                        :disabled="!newAnnotations[`${doc.id}-${label.id}`]"
-                        title="Save annotation"
-                      >
-                        ✓
-                      </button>
-                    </div>
+      <div class="documents-wrapper">
+        <table class="documents-table">
+          <thead>
+            <tr>
+              <th rowspan="3" @click="sortBy('id')">
+                ID
+                <span v-if="sortKey === 'id'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
+              </th>
+              <th rowspan="3" @click="sortBy('name')">
+                Name
+                <span v-if="sortKey === 'name'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
+              </th>
+              <th rowspan="3" @click="sortBy('created')">
+                Created
+                <span v-if="sortKey === 'created'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
+              </th>
+              <th rowspan="3" @click="sortBy('status')">
+                Status
+                <span v-if="sortKey === 'status'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
+              </th>
+              <template v-if="selectedProject && labelSets.length > 0">
+                <th v-for="category in labelSets" 
+                    :key="category.id"
+                    :colspan="getCategoryLabelCount(category)">
+                  {{ category.name }}
+                </th>
+              </template>
+              <th rowspan="3">Actions</th>
+            </tr>
+            <tr>
+              <template v-if="selectedProject && labelSets.length > 0">
+                <template v-for="category in labelSets">
+                  <th v-for="labelSet in category.labels" 
+                      :key="labelSet.id"
+                      :colspan="labelSet.labels.length">
+                    {{ labelSet.name }}
+                  </th>
+                </template>
+              </template>
+            </tr>
+            <tr>
+              <template v-if="selectedProject && labelSets.length > 0">
+                <template v-for="category in labelSets">
+                  <template v-for="labelSet in category.labels">
+                    <th v-for="label in labelSet.labels" 
+                        :key="label.id">
+                      {{ label.name }}
+                    </th>
                   </template>
+                </template>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="doc in sortedDocuments" :key="doc.id">
+              <td>{{ doc.id }}</td>
+              <td>
+                <div class="name-cell">
+                  <span class="document-name" @click="showPreview(doc)">{{ doc.data_file_name || '-' }}</span>
+                  <div v-if="doc.thumbnail_url" class="preview-tooltip">
+                    <div class="preview-content">
+                      <AuthImage
+                        :src="getFullImageUrl(doc)"
+                        alt="Document preview"
+                        class="preview-image"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td>
-              <button @click="viewDocument(doc.id)" class="view-btn">View</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td>{{ formatDate(doc.created_at || doc.created) }}</td>
+              <td>
+                <span :class="['status-badge', getStatusClass(doc.status_data)]">
+                  {{ getStatusText(doc.status_data) }}
+                </span>
+              </td>
+              <template v-if="selectedProject && labelSets.length > 0">
+                <template v-for="category in labelSets">
+                  <template v-for="labelSet in category.labels">
+                    <td v-for="label in labelSet.labels" 
+                        :key="`${doc.id}-${label.id}`"
+                        class="annotation-cell">
+                      <div class="annotation-container">
+                        <div v-if="isLoadingAll || loadingAnnotations[doc.id]" class="loading-spinner">
+                          <div class="spinner"></div>
+                        </div>
+                        <template v-else-if="!isLoadingAll && !loadingAnnotations[doc.id]">
+                          <div v-if="getAnnotationForLabel(doc, label)" class="annotation">
+                            <span class="annotation-text" :title="getAnnotationForLabel(doc, label).span[0].offset_string">
+                              {{ getAnnotationForLabel(doc, label).span[0].offset_string }}
+                            </span>
+                            <button 
+                              class="delete-btn"
+                              @click="deleteAnnotation(doc.id, getAnnotationForLabel(doc, label).id)"
+                              @mouseenter="showTooltip($event, 'Delete')"
+                              @mouseleave="hideTooltip"
+                            >×</button>
+                          </div>
+                          <div v-else class="empty-annotation" @click="startEditing(doc.id, label.id)">
+                            <template v-if="isEditing(`${doc.id}-${label.id}`)">
+                              <div class="annotation-input">
+                                <input 
+                                  type="text" 
+                                  v-model="newAnnotations[`${doc.id}-${label.id}`]"
+                                  placeholder="Type + Enter"
+                                  @keyup.enter="saveNewAnnotation(doc.id, label.id)"
+                                  @keyup.esc="cancelEditing(doc.id, label.id)"
+                                  @blur="cancelEditing(doc.id, label.id)"
+                                  v-focus
+                                />
+                              </div>
+                            </template>
+                            <template v-else>
+                              <button class="add-btn" @mouseenter="showTooltip($event, 'Add annotation')" @mouseleave="hideTooltip">
+                                <span class="plus-icon">+</span>
+                              </button>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </td>
+                  </template>
+                </template>
+              </template>
+              <td>
+                <button @click="viewDocument(doc.id)" class="view-btn">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="pagination">
         <button 
           :disabled="!pagination.previous" 
@@ -152,6 +186,9 @@
           Next
         </button>
       </div>
+    </div>
+    <div v-if="tooltipText" class="tooltip-container" :style="tooltipStyle">
+      {{ tooltipText }}
     </div>
   </div>
 </template>
@@ -178,7 +215,13 @@ export default {
       documentAnnotations: {},
       newAnnotations: {},
       loadingAnnotations: {},
-      isLoadingAll: false
+      isLoadingAll: false,
+      tooltipText: '',
+      tooltipStyle: {
+        top: '0px',
+        left: '0px'
+      },
+      editingCells: new Set(),
     }
   },
   computed: {
@@ -218,7 +261,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects', 'fetchProjectLabels']),
+    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects', 'fetchProjectLabels', 'fetchLabelSets']),
     formatDate(date) {
       if (!date) return '-';
       try {
@@ -330,15 +373,17 @@ export default {
         };
         await this.fetchDocuments(params);
         
-        // Fetch project labels if a project is selected
+        // Fetch project labels and label sets if a project is selected
         if (this.selectedProject) {
           // Run these operations in parallel
           await Promise.all([
             this.fetchProjectLabels(this.selectedProject),
+            this.fetchLabelSets(this.selectedProject),
             this.fetchAnnotationsForCurrentDocuments()
           ]);
         } else {
           this.$store.commit('SET_PROJECT_LABELS', []);
+          this.$store.commit('SET_LABEL_SETS', []);
         }
       } catch (error) {
         this.$store.commit('SET_ERROR', error.message || 'Error loading documents');
@@ -348,10 +393,10 @@ export default {
         this.isLoadingAll = false;  // Clear global loading state
       }
     },
-    getAnnotationForLabelSet(doc, label) {
+    getAnnotationForLabel(doc, label) {
       const docAnnotations = this.documentAnnotations[doc.id] || [];
       console.log('Getting annotations for doc', doc.id, 'label', label.id, ':', docAnnotations);
-      // Filter annotations by label ID from the nested label object
+      // Filter annotations by label ID
       const annotation = docAnnotations.find(annotation => {
         console.log('Checking annotation:', annotation);
         return annotation.label && annotation.label.id === label.id;
@@ -401,20 +446,20 @@ export default {
       return classMap[statusData] || '';
     },
     async saveNewAnnotation(docId, labelId) {
-      const annotationText = this.newAnnotations[`${docId}-${labelId}`];
-      if (!annotationText) return;
+      const key = `${docId}-${labelId}`;
+      if (!this.newAnnotations[key]) return;
 
       try {
         // Create a span object for the annotation
         const span = {
-          offset_string: annotationText,
+          offset_string: this.newAnnotations[key],
           page_index: 0,  // Default to first page
           x0: 0,
           x1: 0,
           y0: 0,
           y1: 0,
           start_offset: 0,
-          end_offset: annotationText.length,
+          end_offset: this.newAnnotations[key].length,
           is_custom: true
         };
 
@@ -458,10 +503,13 @@ export default {
         await api.createAnnotation(annotationToCreate);
 
         // Clear the input
-        this.$set(this.newAnnotations, `${docId}-${labelId}`, '');
+        this.$set(this.newAnnotations, key, '');
         
         // Only reload annotations for this specific document
         await this.fetchDocumentAnnotations(docId);
+
+        // After successful save, exit editing mode
+        this.editingCells.delete(key);
       } catch (error) {
         console.error('Error creating annotation:', error);
         this.$store.commit('SET_ERROR', 'Failed to create annotation');
@@ -484,7 +532,39 @@ export default {
     handleUploadError(error) {
       console.error('Error uploading document:', error)
       // You might want to show an error message to the user here
-    }
+    },
+    getCategoryLabelCount(category) {
+      // Each category in the label set has its own labels array
+      return category.labels.reduce((count, labelSet) => count + labelSet.labels.length, 0);
+    },
+    showTooltip(event, text) {
+      this.tooltipText = text;
+      const rect = event.target.getBoundingClientRect();
+      this.tooltipStyle = {
+        top: `${rect.top - 30}px`,
+        left: `${rect.left + (rect.width / 2)}px`,
+        transform: 'translateX(-50%)'
+      };
+    },
+    hideTooltip() {
+      this.tooltipText = '';
+    },
+    startEditing(docId, labelId) {
+      const key = `${docId}-${labelId}`;
+      this.editingCells.add(key);
+      this.$nextTick(() => {
+        // Clear any existing value
+        this.newAnnotations[key] = '';
+      });
+    },
+    cancelEditing(docId, labelId) {
+      const key = `${docId}-${labelId}`;
+      this.editingCells.delete(key);
+      this.newAnnotations[key] = '';
+    },
+    isEditing(key) {
+      return this.editingCells.has(key);
+    },
   },
   created() {
     this.fetchProjects().then(() => {
@@ -493,6 +573,13 @@ export default {
         this.handleProjectChange();
       }
     });
+  },
+  directives: {
+    focus: {
+      mounted(el) {
+        el.focus()
+      }
+    }
   }
 }
 </script>
@@ -500,6 +587,13 @@ export default {
 <style scoped>
 .documents {
   padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.documents-wrapper {
+  min-width: 150%;  /* Make table wider than screen */
+  padding-bottom: 20px;  /* Add space for scrollbar */
 }
 
 .loading, .error {
@@ -512,38 +606,171 @@ export default {
 }
 
 .documents-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
+  font-size: 0.85em;
 }
 
 .documents-table th,
 .documents-table td {
-  padding: 12px;
+  padding: 6px 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  border-right: 1px solid #eee;  /* Add vertical borders */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.documents-table th {
-  background-color: #f5f5f5;
+/* Fixed widths for the first columns */
+.documents-table th:nth-child(1),
+.documents-table td:nth-child(1) {
+  width: 80px;  /* Increased from 60px */
+}
+
+.documents-table th:nth-child(2),
+.documents-table td:nth-child(2) {
+  width: 200px;  /* Increased from 140px */
+}
+
+.documents-table th:nth-child(3),
+.documents-table td:nth-child(3) {
+  width: 160px;  /* Increased from 120px */
+}
+
+.documents-table th:nth-child(4),
+.documents-table td:nth-child(4) {
+  width: 140px;  /* Increased from 100px */
+}
+
+.documents-table th:last-child,
+.documents-table td:last-child {
+  width: 100px;  /* Increased from 80px */
+}
+
+/* Ensure annotation cells have consistent width */
+.annotation-cell {
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  padding: 4px 8px;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+.annotation-container {
+  width: 100%;
+  position: relative;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.annotation {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.annotation-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delete-btn {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: #dc3545;
   cursor: pointer;
-  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: all 0.2s ease;
 }
 
-.documents-table th:hover {
-  background-color: #e5e5e5;
+.delete-btn:hover {
+  opacity: 1;
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
-.documents-table tr:hover {
-  background-color: #f9f9f9;
+.annotation-input {
+  width: 100%;
+  max-width: 120px;
+  display: flex;
+  animation: fadeIn 0.2s ease;
 }
 
-.asc, .desc {
-  margin-left: 5px;
+.annotation-input input {
+  width: 80px;
+  min-width: 0;
+  padding: 2px 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9em;
 }
 
-.asc {
-  transform: rotate(180deg);
+.annotation-input input:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+
+.add-btn {
+  width: 20px;
+  height: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background: none;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.add-btn:hover {
+  opacity: 1;
+  border-color: #999;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+.empty-annotation {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .table-controls {
@@ -751,25 +978,11 @@ export default {
   color: #1976d2;
 }
 
-.annotation-cell {
-  min-height: 40px;
-  padding: 4px;
-  vertical-align: top;
-}
-
-.annotation-container {
-  position: relative;
-  min-height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .loading-spinner {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 24px;
+  min-height: 32px;
 }
 
 .spinner {
@@ -784,46 +997,6 @@ export default {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-.annotation {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  font-size: 0.9em;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.delete-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border: none;
-  background: none;
-  color: #dc3545;
-  cursor: pointer;
-  font-size: 1.2em;
-  padding: 0;
-  margin-left: 4px;
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-
-.delete-btn:hover {
-  background-color: rgba(220, 53, 69, 0.1);
-}
-
-.no-annotation {
-  color: #6c757d;
-  font-style: italic;
 }
 
 .status-icon {
@@ -846,48 +1019,43 @@ export default {
   color: #212529;
 }
 
-.annotation-input {
-  display: flex;
-  gap: 4px;
-  width: 100%;
-  max-width: 200px;
-  margin: 0 auto;
+/* Add horizontal scrollbar styles */
+.documents::-webkit-scrollbar {
+  height: 12px;
 }
 
-.annotation-input input {
-  flex: 1;
-  padding: 4px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9em;
-  min-width: 0;
-  width: 100%;
+.documents::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
 }
 
-.save-btn {
+.documents::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.documents::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Status indicators for accepted/declined state */
+.status-indicator {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background-color: #28a745;
-  color: white;
-  border: none;
+  gap: 4px;
+  padding: 2px 6px;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 0;
-  transition: all 0.2s;
+  font-size: 0.85em;
+  font-weight: 500;
 }
 
-.save-btn:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.5;
+.status-indicator.accepted {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
 }
 
-.save-btn:not(:disabled):hover {
-  background-color: #218838;
-  transform: scale(1.1);
+.status-indicator.declined {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
 }
 </style> 
