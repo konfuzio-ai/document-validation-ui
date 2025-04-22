@@ -15,6 +15,7 @@ export default new Vuex.Store({
     imageUrl: process.env.VUE_APP_IMAGE_URL || 'https://testing.konfuzio.com',
     projects: [],
     selectedProject: null,
+    labelSets: [],
     pagination: {
       count: 0,
       next: null,
@@ -34,6 +35,9 @@ export default new Vuex.Store({
     },
     SET_PROJECTS(state, projects) {
       state.projects = projects
+    },
+    SET_LABEL_SETS(state, labelSets) {
+      state.labelSets = labelSets
     },
     SET_SELECTED_PROJECT(state, projectId) {
       state.selectedProject = projectId
@@ -84,9 +88,24 @@ export default new Vuex.Store({
         console.error('Error fetching projects:', error)
       }
     },
+    async fetchProjectLabelSets({ commit }, projectId) {
+      try {
+        const response = await api.getProjectLabelSets(projectId)
+        commit('SET_LABEL_SETS', response.data || [])
+        return response
+      } catch (error) {
+        console.error('Error fetching project label sets:', error)
+        commit('SET_LABEL_SETS', [])
+        throw error
+      }
+    },
     async fetchDocuments({ commit, state }, params) {
       commit('SET_LOADING', true)
       try {
+        if (params && params.page) {
+          commit('SET_CURRENT_PAGE', params.page)
+        }
+        
         const response = await api.getDocuments(params)
         commit('SET_DOCUMENTS', response.data.results)
         commit('SET_PAGINATION', {

@@ -53,6 +53,12 @@
               Status
               <span v-if="sortKey === 'status'" :class="sortOrder === 'asc' ? 'asc' : 'desc'">▼</span>
             </th>
+            <th v-for="labelSet in labelSets" :key="labelSet.id">
+              {{ labelSet.name }}
+              <div class="label-set-info">
+                <span v-if="labelSet.has_multiple_sections" class="multiple-sections">Multiple</span>
+              </div>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -78,6 +84,28 @@
               <span :class="['status-badge', getStatusClass(doc.status_data)]">
                 {{ getStatusText(doc.status_data) }}
               </span>
+            </td>
+            <td v-for="labelSet in labelSets" :key="labelSet.id">
+              <div class="annotation-cell">
+                <template v-if="doc.annotation_sets">
+                  <div v-for="annotationSet in doc.annotation_sets.filter(set => set.label_set.id === labelSet.id)" 
+                       :key="annotationSet.id"
+                       class="annotation-set">
+                    <div v-for="label in annotationSet.labels" 
+                         :key="label.id"
+                         class="label-annotations">
+                      <div class="label-name">{{ label.name }}</div>
+                      <div v-for="annotation in label.annotations" 
+                           :key="annotation.id"
+                           :class="['annotation', { 'is-correct': annotation.is_correct, 'revised': annotation.revised }]">
+                        {{ annotation.value || '-' }}
+                        <span v-if="annotation.revised" class="annotation-status">✓</span>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <span v-else>-</span>
+              </div>
             </td>
             <td>
               <button @click="viewDocument(doc.id)" class="view-btn">View</button>
@@ -120,19 +148,13 @@ export default {
       sortKey: 'created',
       sortOrder: 'desc',
       pageSizeOptions: [10, 25, 50, 100],
-      activePreview: null
+      activePreview: null,
+      labelSets: [],
+      selectedProject: ''
     }
   },
   computed: {
     ...mapState(['documents', 'loading', 'error', 'pagination', 'imageUrl', 'projects']),
-    selectedProject: {
-      get() {
-        return this.$store.state.selectedProject
-      },
-      set(value) {
-        this.$store.commit('SET_SELECTED_PROJECT', value)
-      }
-    },
     pageSize: {
       get() {
         return this.pagination.pageSize
@@ -163,7 +185,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects']),
+    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects', 'fetchProjectLabelSets']),
     formatDate(date) {
       if (!date) return '-';
       try {
@@ -194,6 +216,9 @@ export default {
       window.open(url, '_blank');
     },
     changePage(page) {
+      // Update the current page in the Vuex store
+      this.$store.commit('SET_CURRENT_PAGE', page)
+      
       const params = {
         offset: (page - 1) * this.pagination.pageSize,
         limit: this.pagination.pageSize
@@ -201,7 +226,7 @@ export default {
       if (this.selectedProject) {
         params.project = this.selectedProject
       }
-      this.$store.dispatch('fetchDocuments', params)
+      this.fetchDocuments(params)
     },
     handlePageSizeChange() {
       const params = {
@@ -254,15 +279,27 @@ export default {
       };
       return classMap[statusData] || '';
     },
-    handleProjectChange() {
-      const params = {
-        offset: (this.pagination.currentPage - 1) * this.pagination.pageSize,
-        limit: this.pagination.pageSize
+    async handleProjectChange() {
+      try {
+        this.loading = true
+        this.error = null
+        
+        // Fetch documents for the selected project
+        await this.fetchDocuments({
+          project: this.selectedProject,
+          page: 1
+        })
+        
+        // Fetch label sets if a project is selected
+        if (this.selectedProject) {
+          await this.fetchProjectLabelSets(this.selectedProject)
+        }
+      } catch (error) {
+        this.error = error.message || 'Error loading documents'
+        console.error('Error in handleProjectChange:', error)
+      } finally {
+        this.loading = false
       }
-      if (this.selectedProject) {
-        params.project = this.selectedProject
-      }
-      this.$store.dispatch('fetchDocuments', params)
     }
   },
   created() {
@@ -524,5 +561,65 @@ export default {
 
 .document-name:hover {
   color: #1976d2;
+}
+
+.annotation-cell {
+  max-width: 200px;
+  overflow: hidden;
+}
+
+.annotation-set {
+  margin-bottom: 8px;
+}
+
+.label-annotations {
+  margin-bottom: 4px;
+}
+
+.label-set-info {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.multiple-sections {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.label-name {
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+}
+
+.annotation {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #333;
+  position: relative;
+}
+
+.annotation.is-correct {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.annotation.revised {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.annotation-status {
+  margin-left: 4px;
+  font-size: 0.75rem;
 }
 </style> 

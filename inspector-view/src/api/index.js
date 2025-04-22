@@ -63,6 +63,19 @@ const getProjects = () => {
   return HTTP.get('projects/')
 }
 
+const getProjectLabels = (projectId) => {
+  return HTTP.get(`projects/${projectId}/labels/`)
+}
+
+const getProjectLabelSets = (projectId) => {
+  return HTTP.get(`label-sets/?project=${projectId}`)
+    .then(response => response.data)
+    .catch(error => {
+      console.error('Error fetching project label sets:', error);
+      throw error;
+    });
+}
+
 const getDocumentById = (id) => {
   return HTTP.get(`documents/${id}/`)
 }
@@ -108,6 +121,8 @@ export default {
   setLocale,
   getDocuments,
   getProjects,
+  getProjectLabels,
+  getProjectLabelSets,
   getDocumentById,
   getDocumentPages,
   getDocumentAnnotations,
