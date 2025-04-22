@@ -5,17 +5,6 @@ pages:
   cache:
     paths:
       - inspector-view/node_modules/
-  variables:
-    VUE_APP_API_URL: "https://testing.konfuzio.com/api/v3"
-    VUE_APP_IMAGE_URL: "https://testing.konfuzio.com"
-    VUE_APP_DOCUMENT: "1376639"
-    VUE_APP_DOCUMENT_DETAILS_URL: "https://testing.konfuzio.com/admin/server/document/1371462/change"
-    VUE_APP_LOCALE: "en"
-    VUE_APP_HIDE_EMPTY_LABEL_SETS: "true"
-    VUE_APP_SHOW_DOCUMENTS_NAVIGATION: "false"
-    VUE_APP_SSO_URL: "https://sso.konfuzio.com"
-    VUE_APP_SSO_REALM: "testing"
-    VUE_APP_SSO_CLIENT_ID: "testing-client"
   script:
     - cd inspector-view
     - npm install
