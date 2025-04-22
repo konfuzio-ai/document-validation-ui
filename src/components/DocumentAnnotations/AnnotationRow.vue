@@ -691,12 +691,13 @@ export default {
 
       // check if annotation set was changed
       if (
-        (this.editAnnotation.annotationSet &&
+        !isToDecline &&
+        ((this.editAnnotation.annotationSet &&
           (this.editAnnotation.annotationSet.id !== this.annotationSet.id ||
             (this.editAnnotation.annotationSet.id == null &&
               this.labelSet.id !== this.editAnnotation.labelSet.id))) ||
-        (this.editAnnotation.label &&
-          this.editAnnotation.label.id !== this.label.id)
+          (this.editAnnotation.label &&
+            this.editAnnotation.label.id !== this.label.id))
       ) {
         // first delete annotation, then create new one
         this.$store
