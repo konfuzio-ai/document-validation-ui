@@ -13,6 +13,8 @@ export default new Vuex.Store({
     userToken: process.env.VUE_APP_USER_TOKEN || '',
     apiUrl: process.env.VUE_APP_API_URL || 'https://testing.konfuzio.com/api/v3/',
     imageUrl: process.env.VUE_APP_IMAGE_URL || 'https://testing.konfuzio.com',
+    projects: [],
+    selectedProject: null,
     pagination: {
       count: 0,
       next: null,
@@ -29,6 +31,12 @@ export default new Vuex.Store({
   mutations: {
     SET_DOCUMENTS(state, documents) {
       state.documents = documents
+    },
+    SET_PROJECTS(state, projects) {
+      state.projects = projects
+    },
+    SET_SELECTED_PROJECT(state, projectId) {
+      state.selectedProject = projectId
     },
     SET_CURRENT_DOCUMENT(state, document) {
       state.currentDocument = document
@@ -67,12 +75,19 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async fetchDocuments({ commit, state }) {
+    async fetchProjects({ commit }) {
+      try {
+        const response = await api.getProjects()
+        commit('SET_PROJECTS', response.data.results)
+      } catch (error) {
+        commit('SET_ERROR', error.message)
+        console.error('Error fetching projects:', error)
+      }
+    },
+    async fetchDocuments({ commit, state }, params) {
       commit('SET_LOADING', true)
       try {
-        const { currentPage, pageSize } = state.pagination
-        const offset = (currentPage - 1) * pageSize
-        const response = await api.getDocuments(offset, pageSize)
+        const response = await api.getDocuments(params)
         commit('SET_DOCUMENTS', response.data.results)
         commit('SET_PAGINATION', {
           count: response.data.count,

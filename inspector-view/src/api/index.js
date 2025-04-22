@@ -55,13 +55,12 @@ HTTP.interceptors.request.use(async (config) => {
 })
 
 // API methods
-const getDocuments = (offset = 0, limit = 10) => {
-  return HTTP.get('documents/', {
-    params: {
-      offset,
-      limit
-    }
-  })
+const getDocuments = (params) => {
+  return HTTP.get('documents/', { params })
+}
+
+const getProjects = () => {
+  return HTTP.get('projects/')
 }
 
 const getDocumentById = (id) => {
@@ -108,6 +107,7 @@ export default {
   setFileUrl,
   setLocale,
   getDocuments,
+  getProjects,
   getDocumentById,
   getDocumentPages,
   getDocumentAnnotations,

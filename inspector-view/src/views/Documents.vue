@@ -5,13 +5,33 @@
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="table-controls">
-        <div class="page-size">
-          <label for="page-size">Items per page:</label>
-          <select id="page-size" v-model="pageSize" @change="handlePageSizeChange">
-            <option v-for="size in pageSizeOptions" :key="size" :value="size">
-              {{ size }}
-            </option>
-          </select>
+        <div class="filters">
+          <div class="project-filter">
+            <label for="project-select">Project:</label>
+            <select 
+              id="project-select" 
+              v-model="selectedProject" 
+              @change="handleProjectChange"
+              class="project-select"
+            >
+              <option value="">All Projects</option>
+              <option 
+                v-for="project in projects" 
+                :key="project.id" 
+                :value="project.id"
+              >
+                {{ project.name }}
+              </option>
+            </select>
+          </div>
+          <div class="page-size">
+            <label for="page-size">Items per page:</label>
+            <select id="page-size" v-model="pageSize" @change="handlePageSizeChange">
+              <option v-for="size in pageSizeOptions" :key="size" :value="size">
+                {{ size }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
       <table class="documents-table">
@@ -104,7 +124,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(['documents', 'loading', 'error', 'pagination', 'imageUrl']),
+    ...mapState(['documents', 'loading', 'error', 'pagination', 'imageUrl', 'projects']),
+    selectedProject: {
+      get() {
+        return this.$store.state.selectedProject
+      },
+      set(value) {
+        this.$store.commit('SET_SELECTED_PROJECT', value)
+      }
+    },
     pageSize: {
       get() {
         return this.pagination.pageSize
@@ -135,7 +163,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDocuments', 'fetchDocument']),
+    ...mapActions(['fetchDocuments', 'fetchDocument', 'fetchProjects']),
     formatDate(date) {
       if (!date) return '-';
       try {
@@ -166,10 +194,24 @@ export default {
       window.open(url, '_blank');
     },
     changePage(page) {
-      this.$store.dispatch('changePage', page)
+      const params = {
+        offset: (page - 1) * this.pagination.pageSize,
+        limit: this.pagination.pageSize
+      }
+      if (this.selectedProject) {
+        params.project = this.selectedProject
+      }
+      this.$store.dispatch('fetchDocuments', params)
     },
     handlePageSizeChange() {
-      this.$store.dispatch('changePageSize', this.pageSize)
+      const params = {
+        offset: 0,
+        limit: this.pageSize
+      }
+      if (this.selectedProject) {
+        params.project = this.selectedProject
+      }
+      this.$store.dispatch('fetchDocuments', params)
     },
     getFullImageUrl(doc) {
       return doc.thumbnail_url.replace('show-thumbnail', 'show-image');
@@ -211,9 +253,20 @@ export default {
         111: 'error'
       };
       return classMap[statusData] || '';
+    },
+    handleProjectChange() {
+      const params = {
+        offset: (this.pagination.currentPage - 1) * this.pagination.pageSize,
+        limit: this.pagination.pageSize
+      }
+      if (this.selectedProject) {
+        params.project = this.selectedProject
+      }
+      this.$store.dispatch('fetchDocuments', params)
     }
   },
   created() {
+    this.fetchProjects()
     this.fetchDocuments()
   }
 }
@@ -272,6 +325,24 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.project-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
 }
 
 .page-size {
