@@ -60,7 +60,7 @@ const getDocuments = (params) => {
 }
 
 const getProjects = () => {
-  return HTTP.get('projects/')
+  return HTTP.get('projects/', { params: { limit: 1000 } })
 }
 
 const getProjectLabels = (projectId) => {
