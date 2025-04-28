@@ -59,11 +59,6 @@
           />
           <div class="switch-info">
             <span class="switch-text">{{ $t("smart_split") }}</span>
-            <span
-              v-if="documentHasProposedSplit(selectedDocument)"
-              class="new-badge"
-              >{{ newText }}</span
-            >
           </div>
         </b-field>
       </b-tooltip>
@@ -93,7 +88,6 @@ export default {
     return {
       buttonDisabled: true,
       tooltipInfo: null,
-      newText: this.$t("new"),
       switchStatus: true,
     };
   },
@@ -129,9 +123,6 @@ export default {
     this.$nextTick(() => {
       this.switchStatus = this.splitSuggestionsEnabled;
       this.tooltipInfo = this.$t("no_splitting_suggestions");
-      if (this.newText) {
-        this.newText = this.$t("new").toUpperCase();
-      }
     });
   },
   methods: {
