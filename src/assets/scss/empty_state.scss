@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .empty-container {
   width: 100%;
@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  font-family: $font-family;
+  font-family: variables.$font-family;
 
   svg {
     align-self: center;
@@ -17,7 +17,7 @@
 
     .title {
       font-size: 16px;
-      color: $text;
+      color: variables.$text;
       font-weight: 500;
       text-align: center;
       margin: 0;
@@ -26,7 +26,7 @@
     .description {
       font-size: 14px;
       line-height: 20px;
-      color: $text-lighter;
+      color: variables.$text-lighter;
       font-weight: 400;
       text-align: center;
     }
