@@ -75,6 +75,18 @@ const makeFileRequest = (fileUrl) => {
         resolve(myBlob);
       })
       .catch((error) => {
+        if (error.response.status === 428) {
+          // retry request after 2 seconds
+          setTimeout(() => {
+            makeFileRequest(fileUrl)
+              .then((response) => {
+                resolve(response);
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          }, 2000);
+        }
         reject(error);
       });
   });
