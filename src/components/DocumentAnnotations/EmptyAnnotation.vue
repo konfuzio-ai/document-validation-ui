@@ -1,39 +1,33 @@
 <template>
-  <div class="empty-annotation">
+  <div v-if="!publicView && !isDocumentReviewed" class="empty-annotation">
     <span
-      v-if="!publicView && !isDocumentReviewed"
       :id="emptyAnnotationId()"
       ref="emptyAnnotation"
       :class="[
         'annotation-value',
-        showActionError &&
-          editAnnotation &&
-          editAnnotation.id === emptyAnnotationId() &&
-          'error-editing',
-        !isEmptyAnnotationEditable() && !isMissingAnnotation && 'label-empty',
+        showActionError && isAnnotationBeingEdited() && 'error-editing',
         isAnnotationBeingEdited() && 'clicked-ann',
         isMissingAnnotation && 'missing-annotation',
         !isMissingAnnotation && 'keyboard-nav',
       ]"
-      :contenteditable="isEmptyAnnotationEditable()"
+      :contenteditable="isAnnotationBeingEdited()"
       @keypress.enter="saveEmptyAnnotationChanges"
       @click="handleEditEmptyAnnotation"
       @focus="handleEditEmptyAnnotation"
       ><!-- eslint-disable vue/no-v-html -->
       <span
         v-if="isFindingAnnotation"
+        class="label-empty-clicked"
         v-html="$t('draw_box_document', { label_name: label.name })"
       >
       </span>
       <span v-else-if="isMissingAnnotation" class="not-found-text">
         {{ $t("missing_from_document") }}
       </span>
-      <span
-        v-else-if="span && span.offset_string && isEmptyAnnotationEditable()"
-      >
+      <span v-else-if="span && span.offset_string">
         {{ span.offset_string }}
       </span>
-      <span v-else>
+      <span v-else class="label-empty">
         {{ $t("no_data_found") }}
       </span>
       <!--eslint-enable-->
@@ -42,7 +36,6 @@
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import { isElementArray } from "../../utils/utils";
 
 /**
  * This component is responsible for managing empty annotations (labels with no annotations).
@@ -80,7 +73,7 @@ export default {
   },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "isDocumentReviewed"]),
-    ...mapState("selection", ["spanSelection", "elementSelected"]),
+    ...mapState("selection", ["spanSelection"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
@@ -97,17 +90,17 @@ export default {
 
   watch: {
     span(newValue) {
-      if (this.elementSelected === this.emptyAnnotationId() && newValue) {
-        if (isElementArray(newValue))
-          newValue.map((span) => {
-            if (span.offset_string) {
-              span.offset_string =
-                this.$refs.emptyAnnotation.textContent.trim();
-              span.offset_string_original =
-                this.$refs.emptyAnnotation.textContent.trim();
-            }
-          });
-      }
+      // if (newValue) {
+      //   if (isElementArray(newValue))
+      //     newValue.map((span) => {
+      //       if (span.offset_string) {
+      //         span.offset_string =
+      //           this.$refs.emptyAnnotation.textContent.trim();
+      //         span.offset_string_original =
+      //           this.$refs.emptyAnnotation.textContent.trim();
+      //       }
+      //     });
+      // }
     },
     spanSelection(newValue) {
       if (!newValue) return;
@@ -123,59 +116,27 @@ export default {
   methods: {
     emptyAnnotationId() {
       if ((!this.annotationSet && !this.labelSet) || !this.label) return;
-
-      const id = this.annotationSet ? this.annotationSet.id : this.labelSet.id;
+      const id =
+        this.annotationSet && this.annotationSet.id != null
+          ? this.annotationSet.id
+          : this.labelSet.id;
       return `${id}_${this.label.id}`;
     },
     isAnnotationBeingEdited() {
       return this.isAnnotationInEditMode(this.emptyAnnotationId());
     },
     handleEditEmptyAnnotation() {
-      if (
-        this.publicView ||
-        this.isDocumentReviewed ||
-        this.isMissingAnnotation
-      )
-        return;
-
-      if (
-        !this.publicView &&
-        !this.isDocumentReviewed &&
-        this.elementSelected !== this.emptyAnnotationId()
-      ) {
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("selection/setSelectedEntities", null);
-        this.$store.dispatch(
-          "selection/selectElement",
-          this.emptyAnnotationId()
-        );
-        this.$store.dispatch("document/setEditAnnotation", {
-          id: this.emptyAnnotationId(),
-          index: this.spanIndex,
-          label: this.label,
-          labelSet: this.labelSet,
-          annotationSet: this.annotationSet,
-        });
-      }
-    },
-    isEmptyAnnotationEditable() {
-      if (
-        (this.spanSelection && this.spanSelection[this.spanIndex] === 0) ||
-        this.isMissingAnnotation
-      ) {
-        return false;
-      } else {
-        return (
-          this.elementSelected === this.emptyAnnotationId() &&
-          this.spanSelection &&
-          this.spanSelection[this.spanIndex] &&
-          this.spanSelection[this.spanIndex].offset_string != null
-        );
-      }
+      if (this.isMissingAnnotation) return;
+      this.$store.dispatch("selection/disableSelection");
+      this.$store.dispatch("document/setEditAnnotation", {
+        id: this.emptyAnnotationId(),
+        index: this.spanIndex,
+        label: this.label,
+        labelSet: this.labelSet,
+        annotationSet: this.annotationSet,
+      });
     },
     saveEmptyAnnotationChanges(event) {
-      if (this.publicView || this.isDocumentReviewed) return;
-
       if (event) {
         event.preventDefault();
       }

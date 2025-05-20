@@ -15,14 +15,13 @@
   >
     <div class="annotations-width-slider">
       <b-slider
-        :value="labelWidth"
+        v-model="labelContainerWidth"
         type="is-move"
         :min="20"
         :max="80"
         :custom-formatter="(val) => `${$t('label_size')} ${val}%`"
         class="is-full-height show-hover show-line"
         :disabled="isAnnotationInEditMode()"
-        @input="setLabelWidth"
       />
     </div>
     <div
@@ -98,7 +97,12 @@
 
     <div class="annotation-row-right" :style="`width:${annotationWidth}%`">
       <div class="annotation-content">
-        <div v-if="annotation" class="annotation-items">
+        <div
+          v-if="isAnnotationInEditMode(currentAnnotationId()) && spanLoading"
+        >
+          <b-icon style="width: 16px" icon="spinner" class="fa-spin" />
+        </div>
+        <div v-else-if="annotation" class="annotation-items">
           <b-checkbox
             v-if="annotation.metadata && annotation.metadata.checkbox"
             v-model="isChecked"
@@ -129,7 +133,8 @@
         <div v-else>
           <div
             v-if="
-              spanSelection && isAnnotationInEditMode(currentAnnotationId())
+              spanSelection.length > 0 &&
+              isAnnotationInEditMode(currentAnnotationId())
             "
           >
             <EmptyAnnotation
@@ -166,6 +171,7 @@
       >
         <AnnotationActionButtons
           :annotation="annotation"
+          :label="label"
           :show-cancel="showCancelButton()"
           :show-accept="showAcceptButton()"
           :show-decline="showDeclineButton()"
@@ -244,6 +250,7 @@ export default {
       checkboxDefaultValue: checkboxValue,
       isCheckboxAvailable: false,
       isChecked: checkboxValue,
+      labelContainerWidth: 0,
     };
   },
   computed: {
@@ -251,7 +258,6 @@ export default {
       "editAnnotation",
       "annotationId",
       "hoveredAnnotationSet",
-      "enableGroupingFeature",
       "publicView",
       "newAcceptedAnnotations",
       "annotationsMarkedAsMissing",
@@ -261,8 +267,8 @@ export default {
     ]),
     ...mapState("selection", [
       "spanSelection",
-      "elementSelected",
       "selectedEntities",
+      "spanLoading",
     ]),
     ...mapState("display", ["labelWidth", "annotationWidth"]),
     ...mapState("project", ["showAnnotationTranslations"]),
@@ -319,6 +325,12 @@ export default {
     },
   },
   watch: {
+    labelWidth(width) {
+      this.labelContainerWidth = width;
+    },
+    labelContainerWidth(width) {
+      this.setLabelWidth(width);
+    },
     annotationId(newAnnotationId) {
       this.checkAnnotationSelection(newAnnotationId);
     },
@@ -383,6 +395,7 @@ export default {
   },
   mounted() {
     this.checkAnnotationSelection(this.annotationId);
+    this.labelContainerWidth = this.labelWidth;
   },
   methods: {
     ...mapActions("display", ["setLabelWidth"]),
@@ -438,9 +451,10 @@ export default {
 
       if (this.annotation && this.annotation.id) return this.annotation.id;
 
-      const setId = this.annotationSet
-        ? this.annotationSet.id
-        : this.labelSet.id;
+      const setId =
+        this.annotationSet && this.annotationSet.id
+          ? this.annotationSet.id
+          : this.labelSet.id;
 
       return `${setId}_${this.label.id}`;
     },
@@ -573,11 +587,8 @@ export default {
       } else {
         if (!this.isAnnotationInEditMode(this.currentAnnotationId())) return;
 
-        return (
-          this.elementSelected === this.currentAnnotationId() &&
-          this.spanSelection &&
-          Array.isArray(this.spanSelection)
-        );
+        // check if spans are selected
+        return this.spanSelection && this.spanSelection.length > 0;
       }
     },
     handleMissingAnnotation() {
@@ -678,44 +689,93 @@ export default {
         this.isLoading = true;
       }, 100);
 
-      let updatedString; // what will be sent to the API
-      let storeAction; // if it will be 'delete' or 'patch'
+      // check if annotation set was changed
+      if (
+        !isToDecline &&
+        ((this.editAnnotation.annotationSet &&
+          (this.editAnnotation.annotationSet.id !== this.annotationSet.id ||
+            (this.editAnnotation.annotationSet.id == null &&
+              this.labelSet.id !== this.editAnnotation.labelSet.id))) ||
+          (this.editAnnotation.label &&
+            this.editAnnotation.label.id !== this.label.id))
+      ) {
+        // first delete annotation, then create new one
+        this.$store
+          .dispatch("document/deleteAnnotation", {
+            annotationId: this.annotation.id,
+          })
+          .then(() => {
+            const annotationToCreate = {
+              document: this.documentId,
+              span: spans,
+              label: this.editAnnotation.label.id,
+              is_correct: true,
+              revised: false,
+            };
 
-      // Verify if we delete the entire Annotation or a part of the text
-      if (isToDecline || spans.length === 0) {
-        storeAction = "document/deleteAnnotation";
-      } else {
-        // Editing the Annotation
-        // Deleting part of multi-line Annotation
-        storeAction = "document/updateAnnotation";
+            if (this.editAnnotation.annotationSet.id) {
+              annotationToCreate.annotation_set =
+                this.editAnnotation.annotationSet.id;
+            } else {
+              annotationToCreate.label_set = this.editAnnotation.labelSet.id;
+            }
 
-        updatedString = {
-          is_correct: true,
-          revised: true,
-          span: spans,
-        };
-      }
-
-      // Send to the store for the http patch/delete request
-      this.$store
-        .dispatch(storeAction, {
-          updatedValues: updatedString,
-          annotationId: this.annotation.id,
-          annotationSet: this.annotationSet,
-        })
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("edit_error"),
+            this.$store
+              .dispatch("document/createAnnotation", {
+                annotation: annotationToCreate,
+              })
+              .catch((error) => {
+                this.$store.dispatch("document/createErrorMessage", {
+                  error,
+                  serverErrorMessage: this.$t("server_error"),
+                  defaultErrorMessage: this.$t("error_creating_annotation"),
+                });
+              })
+              .finally(() => {
+                this.$store.dispatch("document/resetEditAnnotation");
+                this.$store.dispatch("selection/disableSelection");
+                this.loading = false;
+              });
           });
-        })
-        .finally(() => {
-          this.$store.dispatch("document/resetEditAnnotation");
-          this.$store.dispatch("selection/disableSelection");
-          this.$store.dispatch("selection/setSelectedEntities", null);
-          this.isLoading = false;
-        });
+      } else {
+        let updatedString; // what will be sent to the API
+        let storeAction; // if it will be 'delete' or 'patch'
+
+        // Verify if we delete the entire Annotation or a part of the text
+        if (isToDecline || spans.length === 0) {
+          storeAction = "document/deleteAnnotation";
+        } else {
+          // Editing the Annotation
+          // Deleting part of multi-line Annotation
+          storeAction = "document/updateAnnotation";
+
+          updatedString = {
+            is_correct: true,
+            revised: true,
+            span: spans,
+          };
+        }
+
+        // Send to the store for the http patch/delete request
+        this.$store
+          .dispatch(storeAction, {
+            updatedValues: updatedString,
+            annotationId: this.annotation.id,
+            annotationSet: this.annotationSet,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("edit_error"),
+            });
+          })
+          .finally(() => {
+            this.$store.dispatch("document/resetEditAnnotation");
+            this.$store.dispatch("selection/disableSelection");
+            this.isLoading = false;
+          });
+      }
     },
     saveEmptyAnnotationChanges() {
       let annotationToCreate;
@@ -760,10 +820,7 @@ export default {
     },
     handleCancelButton() {
       this.$store.dispatch("document/resetEditAnnotation");
-      if (this.elementSelected) {
-        this.$store.dispatch("selection/disableSelection");
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
+      this.$store.dispatch("selection/disableSelection");
       this.isLoading = false;
     },
     enableLoading(annotations) {

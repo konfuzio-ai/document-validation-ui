@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .pdf-page-container {
   position: relative;
@@ -13,8 +13,8 @@
   .annotation-label {
     position: absolute;
     z-index: 999;
-    background-color: $text-color;
-    color: $white;
+    background-color: variables.$text-color;
+    color: variables.$white;
     font-size: 12px;
     padding: 4px;
     word-break: break-all;

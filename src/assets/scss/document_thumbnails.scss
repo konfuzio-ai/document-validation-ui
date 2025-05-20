@@ -1,12 +1,12 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 #document-pages {
-  background: $background;
+  background: variables.$background;
   min-width: 80px;
   overflow-y: auto;
-  font-family: $font-family;
+  font-family: variables.$font-family;
   height: 100%;
-  border-right: $component-border;
+  border-right: variables.$component-border;
 
   .document-thumbnail {
     text-align: center;
@@ -19,11 +19,11 @@
       justify-content: center;
 
       .img-thumbnail {
-        border: 1px solid $grey-detail;
+        border: 1px solid variables.$grey-detail;
         border-radius: 4px;
 
         &.selected {
-          border: 2px solid $primary;
+          border: 2px solid variables.$primary;
         }
 
         img {
@@ -33,7 +33,7 @@
     }
 
     .number-thumbnail {
-      color: $text-lighter;
+      color: variables.$text-lighter;
       font-size: 12px;
       margin-top: 4px;
     }

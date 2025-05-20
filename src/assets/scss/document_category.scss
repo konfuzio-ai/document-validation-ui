@@ -1,16 +1,16 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .category-chooser {
   cursor: pointer;
   height: 100%;
 
   &.split-mode {
-    border: 1px solid $grey-outline;
+    border: 1px solid variables.$grey-outline;
     border-radius: 4px;
-    background-color: $white;
+    background-color: variables.$white;
 
     &:hover {
-      border-color: $grey-outline-dark;
+      border-color: variables.$grey-outline-dark;
       background-color: transparent;
     }
   }
@@ -21,7 +21,7 @@
 
   &:not(.split-mode) {
     .category-drop-down {
-      border-right: $component-border;
+      border-right: variables.$component-border;
     }
   }
   .category-drop-down {
@@ -53,7 +53,7 @@
 
       .category-title {
         font-size: 12px;
-        color: $grey;
+        color: variables.$grey;
       }
 
       .category-name {
@@ -71,12 +71,12 @@
         display: flex;
         align-items: center;
         justify-content: space-evenly;
-        border-right: $component-border;
+        border-right: variables.$component-border;
 
         .category-info {
           p {
             font-size: 12px;
-            color: $grey;
+            color: variables.$grey;
           }
         }
       }

@@ -105,7 +105,10 @@
             </div>
           </div>
 
-          <b-collapse :open="isAccordionOpen(annotationSet)">
+          <b-collapse
+            :model-value="isAccordionOpen(annotationSet)"
+            animation="slide"
+          >
             <div
               v-if="annotationSet.labels.length > 0"
               class="annotation-sets-list"
@@ -194,6 +197,7 @@ export default {
 
   computed: {
     ...mapState("display", ["showAnnSetTable", "showBranding"]),
+    ...mapState("edit", ["editMode"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -221,7 +225,7 @@ export default {
       return this.editAnnotation && this.editAnnotation.id;
     },
     isDocumentEditable() {
-      return !this.publicView && !this.isDocumentReviewed;
+      return !this.publicView && !this.isDocumentReviewed && !this.editMode;
     },
   },
   watch: {
@@ -273,7 +277,7 @@ export default {
       this.loadAccordions(this.getAnnotationsFiltered.annotationSets);
     }
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("keydown", this.keyDownHandler);
   },
   methods: {
@@ -404,9 +408,11 @@ export default {
     },
 
     createArray(className) {
-      return Array.from(
-        this.$refs.annotationList.getElementsByClassName(className)
-      );
+      if (this.$refs.annotationList) {
+        return Array.from(
+          this.$refs.annotationList.getElementsByClassName(className)
+        );
+      }
     },
 
     keyDownHandler(event) {
