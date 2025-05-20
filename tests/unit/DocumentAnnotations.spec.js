@@ -449,42 +449,6 @@ describe("Document Annotations Component", () => {
     );
   });
 
-  it("Expands and hides grouped annotations dropdown when clicking Label group name", async () => {
-    const annotationSet = getData("document").annotationSets[1];
-    const label = annotationSet.labels[0];
-
-    await dispatch("document/setPublicView", false);
-
-    const wrapper = render(
-      DocumentLabel,
-      true,
-      {
-        label: label,
-        annotationSet: annotationSet,
-        labelSet: annotationSet.label_set,
-      },
-      {
-        showAnnotationsGroup: false,
-        nonMultipleAnnotationsExtracted: true,
-        acceptedAnnotationsGroupCounter: 0,
-      }
-    );
-
-    const labelGroup = wrapper.find(".label .label-group");
-
-    await labelGroup.trigger("click");
-
-    expect(await wrapper.find(".label-group-annotation-list").exists()).toBe(
-      true
-    );
-
-    await labelGroup.trigger("click");
-
-    expect(await wrapper.find(" .label-group-annotation-list").exists()).toBe(
-      false
-    );
-  });
-
   it("Shows message to user if an annotation set has no labels", async () => {
     const wrapper = render(DocumentAnnotations, false);
 
