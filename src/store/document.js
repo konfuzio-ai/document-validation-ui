@@ -1541,6 +1541,9 @@ const actions = {
   showAcceptedAnnotations({ commit }, show) {
     commit("SET_SHOW_ACCEPTED_ANNOTATIONS", show);
   },
+  unloadDocumentPage: ({ commit }, pageNumber) => {
+    commit("REMOVE_PAGE", pageNumber);
+  },
 };
 
 const mutations = {
@@ -1813,6 +1816,9 @@ const mutations = {
   },
   SET_SHOW_FEEDBACK_NEEDED_ANNOTATIONS: (state, show) => {
     state.annotationFilters.showFeedbackNeeded = show;
+  },
+  REMOVE_PAGE: (state, pageNumber) => {
+    state.pages = state.pages.filter((p) => p.number !== pageNumber);
   },
 };
 

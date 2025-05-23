@@ -260,11 +260,6 @@ const actions = {
         break;
       case "all": {
         const widthScale = getters.pageWidthScale(elementsWidth, client.width, viewport.width);
-        console.log('Fit to width debug:');
-        console.log('elementsWidth:', elementsWidth);
-        console.log('client.width:', client.width);
-        console.log('viewport.width:', viewport.width);
-        console.log('Calculated widthScale:', widthScale);
         commit("SET_SCALE", widthScale);
         break;
       }
