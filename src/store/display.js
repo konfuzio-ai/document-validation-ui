@@ -259,11 +259,8 @@ const actions = {
         commit("SET_SCALE", autoScale);
         break;
       case "all": {
-        commit(
-          "SET_SCALE",
-          getters.pageWidthScale(elementsWidth, client.width, viewport.width) -
-            0.5
-        );
+        const widthScale = getters.pageWidthScale(elementsWidth, client.width, viewport.width);
+        commit("SET_SCALE", widthScale);
         break;
       }
       case "custom": {
