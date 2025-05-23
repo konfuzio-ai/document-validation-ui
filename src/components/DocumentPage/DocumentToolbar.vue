@@ -105,6 +105,7 @@ export default {
   data() {
     return {
       currentPercentage: 100,
+      fitWidthScale: 1, // baseline for 100%
       maxPercentage: 500,
       defaultPercentage: 0.25,
       fitPercentage: 0.5,
@@ -134,6 +135,13 @@ export default {
     selectedDocument(newValue) {
       if (this.documentCannotBeEdited(newValue)) {
         this.editModeDisabled = true;
+      }
+    },
+    scale(newScale) {
+      if (this.fitWidthScale > 0) {
+        this.currentPercentage = Math.round((newScale / this.fitWidthScale) * 100);
+      } else {
+        this.currentPercentage = Math.round(newScale * 100);
       }
     },
   },
@@ -178,12 +186,13 @@ export default {
       this.updateScale(this.scale - this.defaultPercentage);
     },
     fitAuto() {
-      // exit edit mode of Annotation if changing zoom during editing
       this.cancelAnnotationEditMode();
-
-      // Always set to 50%
-      this.currentPercentage = 50;
-      this.$store.dispatch("display/updateFit", "all");
+      this.$store.dispatch("display/updateFit", "all").then(() => {
+        this.$nextTick(() => {
+          this.fitWidthScale = this.scale;
+          this.currentPercentage = 100;
+        });
+      });
     },
     updateScale(scale) {
       this.$store.dispatch("display/updateFit", "custom").then(() => {
