@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div v-observe-visibility="visibilityChanged">
     <DummyPage
-      v-if="!loadedPage || !pageInVisibleRange(page)"
+      v-if="!loadedPage"
       :width="page.size[0]"
       :height="page.size[1]"
     />
@@ -178,6 +178,14 @@ export default {
         .then(() => {
           this.pageBeingLoaded = false;
         });
+    },
+    visibilityChanged(isVisible) {
+      if (isVisible && !this.loadedPage && !this.pageBeingLoaded) {
+        this.loadPage();
+      }
+      if (!isVisible && this.loadedPage) {
+        this.$store.dispatch("document/unloadDocumentPage", this.page.number);
+      }
     },
     pageInVisibleRange(page) {
       return (
