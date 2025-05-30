@@ -1,4 +1,4 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 .document-name-component {
   display: flex;
@@ -11,7 +11,7 @@
   .document-icon {
     display: flex;
     align-items: center;
-    border: 1px solid $grey-detail;
+    border: 1px solid variables.$grey-detail;
     border-radius: 1px;
   }
 
@@ -28,12 +28,12 @@
       white-space: nowrap;
       border-radius: 8px;
       padding: 6px 14px 6px 14px;
-      outline: 1px solid $grey-outline;
+      outline: 1px solid variables.$grey-outline;
     }
   }
 
   .btn {
-    color: $primary;
+    color: variables.$primary;
     font-weight: 500;
   }
 
@@ -45,7 +45,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: $grey;
+    color: variables.$grey;
 
     .notification {
       background-color: transparent;
@@ -53,7 +53,7 @@
     }
 
     .spinner {
-      color: $grey;
+      color: variables.$grey;
     }
 
     .cloud-icon {

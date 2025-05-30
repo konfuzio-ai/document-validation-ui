@@ -166,5 +166,6 @@
   "checkbox_ann_details": "Se extraerá una casilla de verificación para esta etiqueta.",
   "document_section": "Sección del documento",
   "label_size": "Tamaño de columna:",
-  "powered_by": "impulsado por Konfuzio"
+  "powered_by": "impulsado por Konfuzio",
+  "nav_label_anns": "Navegar por las anotaciones"
 }

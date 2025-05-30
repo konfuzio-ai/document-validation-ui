@@ -9,30 +9,24 @@ const state = {
     pageNumber: null,
     start: null,
     end: null,
-    custom: false, // if the box was created by user in document or it comes from an annotation
-    placeholderBox: null, // show a not editable placeholder box
   },
   isSelecting: false,
-  spanSelection: null,
-  elementSelected: null, // selected element id
-  selectedEntities: null,
+  spanSelection: [],
+  placeholderSelection: [],
+  selectedEntities: [],
+  spanLoading: false,
 };
 
 const getters = {
-  isElementSelected: (state) => {
-    return state.elementSelected;
-  },
-  isSelecting: (state) => {
-    return state.isSelecting;
-  },
   isSelectionValid: (state) => {
     /**
      * `endSelection` will reset everything in case of invalid selection.
      * Check the existence of `selection.end` before requesting the
      * content from the backend.
      * */
-    return state.selection && state.selection.end;
+    return state.selection && state.selection.end != null;
   },
+
   getSelectionForPage: (state) => (pageNumber) => {
     if (state.selection.pageNumber === pageNumber) {
       return state.selection;
@@ -52,19 +46,24 @@ const getters = {
         box.y1 >= entity.y1
     );
   },
+  spanSelectionsForPage: (state) => (page) => {
+    return state.spanSelection.filter(
+      (span) => page.number === span.page_index + 1
+    );
+  },
+  placeholderSelectionForPage: (state) => (page) => {
+    return state.placeholderSelection.filter(
+      (span) => page.number === span.page_index + 1
+    );
+  },
 };
 
 const actions = {
-  selectElement: ({ commit }, value) => {
-    commit("RESET_SELECTION");
-    commit("SET_SPAN_SELECTION", null);
-    commit("ELEMENT_SELECTED", value);
-  },
-
   disableSelection: ({ commit }) => {
-    commit("ELEMENT_SELECTED", null);
     commit("RESET_SELECTION");
-    commit("SET_SPAN_SELECTION", null);
+    commit("SET_SELECTED_ENTITIES", []);
+    commit("SET_SPAN_SELECTION", []);
+    commit("SET_PLACEHOLDER_SELECTION", []);
   },
 
   startSelection: ({ commit }, { pageNumber, start }) => {
@@ -81,8 +80,6 @@ const actions = {
     if (xDiff > 5 && yDiff > 5) {
       commit("MOVE_SELECTION", points);
     }
-
-    commit("SET_SELECTED_ENTITIES", null);
   },
 
   endSelection: ({ commit, state }, end) => {
@@ -113,78 +110,138 @@ const actions = {
     }
   },
 
-  setSelection: ({ commit }, { span, selection }) => {
-    commit("SET_SELECTION", selection);
-    commit("SET_SPAN_SELECTION", span);
-  },
-
   setSelectedEntities: ({ commit }, entities) => {
     commit("SET_SELECTED_ENTITIES", entities);
   },
 
-  getTextFromBboxes: ({ commit, rootState }, { box, entities }) => {
-    let span;
-
-    if (entities) {
-      span = box.flatMap((s) => {
-        return s.original;
-      });
-    } else {
-      span = [box];
-    }
-
-    return HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
-      span,
-    })
-      .then((response) => {
-        if (response.data.span.length && response.data.span.length > 0) {
-          /**
-           * If we have a non-empty bboxes list, we assume there
-           * is text here on the backend, so we just set
-           * spanSelection to the response.
-           */
-          commit("SET_SPAN_SELECTION", response.data.span);
-        } else {
-          /**
-           * Otherwise, we assume the backend can't identify text
-           * on this area, so we set our bbox into spanSelection
-           * ready to be passed back to the backend when creating
-           * an annotation on this empty area, adding the offset_string
-           * attribute, ready to be filled.
-           */
-          commit("SET_SPAN_SELECTION", span);
-        }
+  getTextFromBboxes: ({ commit, rootState }, span) => {
+    commit("SET_SPAN_LOADING", true);
+    return new Promise((resolve, reject) => {
+      HTTP.post(`documents/${rootState.document.documentId}/bbox/`, {
+        span,
       })
-      .catch((error) => {
-        alert("Could not fetch the selected text from the backend");
-      });
+        .then((response) => {
+          if (response.data.span.length && response.data.span.length > 0) {
+            /**
+             * If we have a non-empty bboxes list, we assume there
+             * is text here on the backend, so we just set
+             * spanSelection to the response.
+             */
+            resolve(response.data.span);
+          } else {
+            /**
+             * Otherwise, we assume the backend can't identify text
+             * on this area, so we set our bbox into spanSelection
+             * ready to be passed back to the backend when creating
+             * an annotation on this empty area, adding the offset_string
+             * attribute, ready to be filled.
+             */
+            resolve(span);
+          }
+        })
+        .catch((error) => {
+          alert("Could not fetch the selected text from the backend");
+          reject(error);
+        })
+        .finally(() => {
+          commit("SET_SPAN_LOADING", false);
+        });
+    });
   },
 
-  getTextFromEntities: ({ commit, dispatch }, selectedEntities) => {
-    if (!selectedEntities) return;
+  entitySelection: ({ commit, dispatch, state }, { entities, selection }) => {
+    if (entities.length === 0) {
+      if (selection) {
+        dispatch("getTextFromBboxes", [selection]).then((spans) => {
+          commit("SET_SPAN_SELECTION", spans);
+        });
+      } else {
+        commit("RESET_SELECTION");
+        commit("SET_SPAN_SELECTION", []);
+      }
+      commit("SET_SELECTED_ENTITIES", []);
+    } else {
+      commit("SET_SELECTED_ENTITIES", entities);
 
-    return dispatch("getTextFromBboxes", {
-      box: selectedEntities,
-      entities: true,
-    });
+      dispatch("document/setAnnotationId", null, {
+        root: true,
+      });
+      let span;
+      if (entities) {
+        span = entities.flatMap((s) => {
+          return s.original;
+        });
+      } else {
+        span = [entities];
+      }
+      commit("SET_SPAN_SELECTION", span);
+      dispatch("getTextFromBboxes", span).then((spans) => {
+        commit("SET_SPAN_SELECTION", spans);
+      });
+    }
+  },
+
+  entityClick: ({ commit, dispatch, state }, entity) => {
+    // Check if we are creating a new Annotation
+    // or if we are removing a previously selected entity
+    // or editing empty one
+    const found = state.selectedEntities.find(
+      (entityToFind) =>
+        entity.scaled.width === entityToFind.scaled.width &&
+        entity.original.offset_string === entityToFind.original.offset_string
+    );
+
+    let entities = state.selectedEntities;
+    if (found) {
+      entities = [
+        ...state.selectedEntities.filter(
+          (entityToFilter) =>
+            entityToFilter.scaled.width !== entity.scaled.width &&
+            entityToFilter.original.offset_string !==
+              entity.original.offset_string
+        ),
+      ];
+    } else {
+      entities.push(entity);
+    }
+
+    if (entities.length === 0) {
+      commit("SET_SELECTED_ENTITIES", []);
+      commit("SET_SPAN_SELECTION", []);
+    } else {
+      commit("SET_SELECTED_ENTITIES", entities);
+
+      dispatch("document/setAnnotationId", null, {
+        root: true,
+      });
+
+      let span;
+
+      if (entities) {
+        span = entities.flatMap((s) => {
+          return s.original;
+        });
+      } else {
+        span = [entities];
+      }
+      commit("SET_SPAN_SELECTION", span);
+    }
   },
 
   setSpanSelection: ({ commit }, span) => {
     commit("SET_SPAN_SELECTION", span);
   },
+  setPlaceholderSelection: ({ commit }, span) => {
+    commit("SET_PLACEHOLDER_SELECTION", span);
+  },
 };
 
 const mutations = {
-  ELEMENT_SELECTED: (state, value) => {
-    state.elementSelected = value;
-  },
   START_SELECTION: (state, { pageNumber, start }) => {
     state.selection.end = null;
-    state.isSelecting = true;
     state.selection.pageNumber = pageNumber;
-    state.selection.custom = true;
     state.selection.start = start;
-    state.selection.placeholderBox = null;
+    state.isSelecting = true;
   },
   MOVE_SELECTION: (state, points) => {
     const { start, end } = points;
@@ -200,20 +257,39 @@ const mutations = {
     state.isSelecting = false;
   },
   RESET_SELECTION: (state) => {
-    state.isSelecting = false;
     state.selection.pageNumber = null;
     state.selection.start = null;
     state.selection.end = null;
-    state.selection.placeholderBox = null;
   },
   SET_SPAN_SELECTION: (state, span) => {
-    state.spanSelection = span;
+    if (!span) {
+      state.spanSelection = [];
+    } else {
+      state.spanSelection = span;
+    }
   },
-  SET_SELECTION: (state, selection) => {
-    state.selection = selection;
+  ADD_SPAN_SELECTION: (state, span) => {
+    state.spanSelection.push(span);
+  },
+  SET_PLACEHOLDER_SELECTION: (state, span) => {
+    if (!span) {
+      state.placeholderSelection = [];
+    } else {
+      state.placeholderSelection = span;
+    }
+  },
+  ADD_PLACEHOLDER_SELECTION: (state, span) => {
+    state.placeholderSelection.push(span);
   },
   SET_SELECTED_ENTITIES: (state, entities) => {
-    state.selectedEntities = entities;
+    if (!entities) {
+      state.selectedEntities = [];
+    } else {
+      state.selectedEntities = entities;
+    }
+  },
+  SET_SPAN_LOADING: (state, loading) => {
+    state.spanLoading = loading;
   },
 };
 

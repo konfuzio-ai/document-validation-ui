@@ -1,5 +1,22 @@
 <template>
   <div class="action-buttons">
+    <!-- label multi false nav buttons -->
+    <b-tooltip
+      v-if="isLabelMultiFalseAndGroupOfAnns(label) && !showSave"
+      :delay="tooltipDelay"
+      position="is-left"
+      :label="$t('nav_label_anns')"
+    >
+      <div class="ann-nav-btns">
+        <span>{{ label.annotations.length }}</span>
+        <b-icon
+          icon="angle-down"
+          class="angle-icon center-icon button-icon is-link"
+          @click.stop="nextAnn"
+        />
+      </div>
+    </b-tooltip>
+
     <!-- link button -->
     <b-button
       v-if="showLink"
@@ -106,6 +123,7 @@
     <!-- save button -->
     <b-button
       v-if="showSave"
+      id="save-ann"
       :class="`button-action ${showText ? 'is-button-text' : 'is-button-icon'}`"
       :type="showText ? 'is-primary' : 'is-ghost'"
       @click.stop="save"
@@ -205,14 +223,15 @@ export default {
   data() {
     return {
       tooltipDelay: 700,
-      showText:
-        window.innerWidth >
-        TEXT_BREAKPOINT_WIDTH(this.$i18n ? this.$i18n.locale : "en"),
+      showText: window.innerWidth > TEXT_BREAKPOINT_WIDTH,
     };
   },
   computed: {
     ...mapState("document", ["publicView"]),
-    ...mapGetters("document", ["isDocumentReviewed"]),
+    ...mapGetters("document", [
+      "isDocumentReviewed",
+      "isLabelMultiFalseAndGroupOfAnns",
+    ]),
     showHoverButton() {
       return (
         !this.isLoading &&
@@ -227,13 +246,12 @@ export default {
     window.addEventListener("resize", this.resize);
   },
 
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.resize);
   },
   methods: {
     resize() {
-      this.showText =
-        window.innerWidth > TEXT_BREAKPOINT_WIDTH(this.$i18n.locale);
+      this.showText = window.innerWidth > TEXT_BREAKPOINT_WIDTH;
     },
     search() {
       this.$emit("search");
@@ -258,6 +276,12 @@ export default {
     },
     link() {
       this.$emit("link");
+    },
+    nextAnn() {
+      this.$store.dispatch(
+        "document/putNextAnnotationInLabelFirst",
+        this.label
+      );
     },
   },
 };

@@ -11,25 +11,13 @@
       page.number === currentPage && 'current-page',
     ]"
   >
-    <NewAnnotation
-      v-if="newAnnotation && newAnnotation.length && !editAnnotation"
-      :new-annotation="newAnnotation"
+    <AnnotationPopup
+      v-if="!isSelecting && spanSelectionsForPage(page).length > 0"
+      :spans="spanSelectionsForPage(page)"
       :container-width="scaledViewport.width"
       :container-height="scaledViewport.height"
       :page="page"
       @close="closePopups"
-    />
-    <EditAnnotation
-      v-if="
-        editAnnotation &&
-        editAnnotation.pageNumber &&
-        editAnnotation.pageNumber === currentPage &&
-        selection
-      "
-      :edit-annotation="editAnnotation"
-      :page="page"
-      :container-width="scaledViewport.width"
-      :container-height="scaledViewport.height"
     />
 
     <div
@@ -70,7 +58,12 @@
               }"
             ></v-rect>
           </template>
-          <v-group v-if="!publicView || !isDocumentReviewed" ref="entities">
+          <v-group
+            v-if="
+              !categorizeModalIsActive || !publicView || !isDocumentReviewed
+            "
+            ref="entities"
+          >
             <v-rect
               v-for="(entity, index) in scaledEntities(page.entities, page)"
               :key="index"
@@ -86,7 +79,7 @@
                 (bbox) => bbox.page_index + 1 == page.number
               )"
             >
-              <v-group :key="'ann' + annotation.id + '-' + index">
+              <v-group>
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="annotationRect(bbox, annotation.id)"
@@ -99,7 +92,7 @@
             <template
               v-if="annotation.metadata && annotation.metadata.checkbox"
             >
-              <v-group :key="'ann' + annotation.id + '-checkbox'">
+              <v-group>
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="
@@ -122,12 +115,22 @@
           </template>
         </template>
       </v-layer>
-      <v-layer v-if="page.number === selectionPage">
-        <box-selection
-          :page="page"
-          @createAnnotations="handleCreateAnnotationsFromSelection"
-          @selectEntities="handleEntitiesFromSelection"
-        />
+      <v-layer>
+        <template
+          v-for="(span, index) in spanSelectionsForPage(page)"
+          :key="index"
+        >
+          <span-selection :id="index" :span="span" :page="page" />
+        </template>
+        <template
+          v-for="(span, index) in placeholderSelectionForPage(page)"
+          :key="`${index}_placeholder`"
+        >
+          <placeholder-selection :span="span" :page="page" />
+        </template>
+        <template v-if="page.number === selectionPage">
+          <box-selection :page="page" />
+        </template>
       </v-layer>
     </v-stage>
     <b-skeleton
@@ -143,16 +146,18 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { PIXEL_RATIO } from "../../constants";
 import api from "../../api";
 import BoxSelection from "./BoxSelection";
-import NewAnnotation from "./NewAnnotation";
-import EditAnnotation from "./EditAnnotation";
+import SpanSelection from "./SpanSelection";
+import PlaceholderSelection from "./PlaceholderSelection";
+import AnnotationPopup from "./AnnotationPopup";
 import AnnSetTableOptions from "./AnnSetTableOptions";
 
 export default {
   name: "DocumentPage",
   components: {
     BoxSelection,
-    NewAnnotation,
-    EditAnnotation,
+    SpanSelection,
+    PlaceholderSelection,
+    AnnotationPopup,
     AnnSetTableOptions,
   },
 
@@ -171,12 +176,15 @@ export default {
   data() {
     return {
       image: null,
-      newAnnotation: [],
     };
   },
 
   computed: {
-    ...mapState("selection", ["isSelecting", "selectedEntities"]),
+    ...mapState("selection", [
+      "selectedEntities",
+      "spanSelection",
+      "isSelecting",
+    ]),
     ...mapState("display", [
       "scale",
       "categorizeModalIsActive",
@@ -187,7 +195,6 @@ export default {
     ...mapState("document", [
       "documentAnnotationSelected",
       "recalculatingAnnotations",
-      "editAnnotation",
       "selectedDocument",
       "publicView",
       "annotationId",
@@ -198,7 +205,11 @@ export default {
       "bboxToRect",
       "scaledEntities",
     ]),
-    ...mapGetters("selection", ["isSelectionValid", "isElementSelected"]),
+    ...mapGetters("selection", [
+      "isSelectionValid",
+      "spanSelectionsForPage",
+      "placeholderSelectionForPage",
+    ]),
     ...mapGetters("document", [
       "getAnnotationsFiltered",
       "isAnnotationInEditMode",
@@ -303,12 +314,7 @@ export default {
     scale() {
       this.closePopups();
     },
-    selectedEntities(newValue) {
-      if (!newValue) {
-        this.$store.dispatch("selection/setSpanSelection", null);
-        this.closePopups();
-      }
-    },
+
     page(newValue, oldValue) {
       if (newValue.image_url !== oldValue.image_url) {
         this.drawPage(true);
@@ -337,7 +343,6 @@ export default {
     isAnnotationFocused(annotationId) {
       return (
         this.documentAnnotationSelected &&
-        !this.isElementSelected &&
         annotationId === this.documentAnnotationSelected.id
       );
     },
@@ -353,7 +358,8 @@ export default {
 
       if (
         event.target.getParent() &&
-        event.target.getParent().className === "Transformer"
+        event.target.getParent().className === "Transformer" &&
+        !event.target.name().includes("anchor")
       ) {
         // if we are editing a box then close popups
         this.closePopups();
@@ -369,7 +375,10 @@ export default {
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
         event.target.name() === "boxSelection" ||
-        event.target.name() === "boxTransformer"
+        event.target.name() === "boxTransformer" ||
+        event.target.name().includes("spanSelection") ||
+        event.target.name().includes("spanTransformer") ||
+        event.target.name().includes("anchor")
       ) {
         return;
       }
@@ -418,104 +427,8 @@ export default {
       this.closePopups();
     },
 
-    handleCreateAnnotationsFromSelection(entities) {
-      if (
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
-      this.newAnnotation = [];
-
-      const normalizedEntities = this.scaledEntities(entities, this.page);
-      if (normalizedEntities) {
-        this.newAnnotation.push(...normalizedEntities);
-      }
-
-      if (this.newAnnotation.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          this.newAnnotation
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          this.newAnnotation
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
-    },
-
-    handleEntitiesFromSelection(entities) {
-      if (
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
-
-      const normalizedEntities = this.scaledEntities(entities, this.page);
-      if (normalizedEntities.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          normalizedEntities
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          normalizedEntities
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
-    },
-
     handleClickedEntity(entity) {
-      if (
-        !entity ||
-        this.categorizeModalIsActive ||
-        this.publicView ||
-        this.isDocumentReviewed
-      )
-        return;
-
-      // Check if we are creating a new Annotation
-      // or if we are removing a previously selected entity
-      // or editing empty one
-      const entityToAdd = entity;
-
-      const found = this.newAnnotation.find(
-        (ann) =>
-          ann.scaled.width === entityToAdd.scaled.width &&
-          ann.original.offset_string === entityToAdd.original.offset_string
-      );
-
-      // reset the selection so that we don't have a drawn rectangle when editing based on entities
-      this.endSelection();
-
-      if (found) {
-        this.newAnnotation = [
-          ...this.newAnnotation.filter(
-            (ann) =>
-              ann.scaled.width !== entityToAdd.scaled.width &&
-              ann.original.offset_string !== entityToAdd.original.offset_string
-          ),
-        ];
-      } else {
-        this.newAnnotation.push(entityToAdd);
-      }
-
-      if (this.newAnnotation.length > 0) {
-        this.$store.dispatch(
-          "selection/setSelectedEntities",
-          this.newAnnotation
-        );
-        this.$store.dispatch(
-          "selection/getTextFromEntities",
-          this.newAnnotation
-        );
-      } else {
-        this.$store.dispatch("selection/setSelectedEntities", null);
-      }
+      this.$store.dispatch("selection/entityClick", entity);
     },
 
     onElementEnter(annotation = null, span = null) {
@@ -593,24 +506,11 @@ export default {
      * Builds the konva config object for the entity.
      */
     entityRect(entity) {
-      let entityIsSelected = false;
-      if (this.selectedEntities && this.selectedEntities.length > 0) {
-        entityIsSelected = this.selectedEntities.find((selectedEntity) => {
-          return (
-            selectedEntity.original &&
-            selectedEntity.original.offset_string ===
-              entity.original.offset_string &&
-            selectedEntity.original.x0 === entity.original.x0 &&
-            selectedEntity.original.y0 === entity.original.y0
-          );
-        });
-      }
-
       return {
         stroke: "#ccc",
         strokeWidth: 1,
         dash: [5, 2],
-        fill: entityIsSelected ? "#67E9B7" : "transparent",
+        fill: "transparent",
         globalCompositeOperation: "multiply",
         transformsEnabled: "position",
         hitStrokeWidth: 0,
@@ -676,7 +576,10 @@ export default {
       }
     },
     closePopups() {
-      this.newAnnotation = [];
+      this.$store.dispatch("selection/entitySelection", {
+        entities: [],
+        selection: null,
+      });
     },
   },
 };

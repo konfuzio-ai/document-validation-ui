@@ -13,11 +13,6 @@
       ref="boxTransformer"
       :config="transformerConfig"
     />
-    <v-rect
-      v-if="selection.placeholderBox"
-      ref="placeholderSelection"
-      :config="placeholderConfig"
-    />
   </v-group>
 </template>
 
@@ -56,21 +51,7 @@ export default {
         draggable: true,
       };
     },
-    placeholderConfig() {
-      return {
-        x: this.selection.placeholderBox.x,
-        y: this.selection.placeholderBox.y,
-        width: this.selection.placeholderBox.width,
-        height: this.selection.placeholderBox.height,
-        fill: "transparent",
-        stroke: "#41af85",
-        strokeWidth: 3,
-        globalCompositeOperation: "multiply",
-        shadowForStrokeEnabled: false,
-        name: "placeholderSelection",
-        draggable: false,
-      };
-    },
+
     transformerConfig() {
       return {
         borderEnabled: false,
@@ -87,7 +68,8 @@ export default {
       "elementSelected",
       "spanSelection",
     ]),
-    ...mapGetters("display", ["clientToBbox"]),
+    ...mapState("document", ["editAnnotation"]),
+    ...mapGetters("display", ["clientToBbox", "scaledEntities"]),
     ...mapGetters("selection", ["isSelectionValid", "entitiesOnSelection"]),
   },
   watch: {
@@ -106,19 +88,19 @@ export default {
   },
   methods: {
     handleSelection() {
-      if (!this.elementSelected) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-        this.$emit(
-          "createAnnotations",
-          this.entitiesOnSelection(box, this.page)
-        );
-      } else {
-        this.getBoxSelectionContent();
-      }
+      const box = this.clientToBbox(
+        this.page,
+        this.selection.start,
+        this.selection.end
+      );
+
+      this.$store.dispatch("selection/entitySelection", {
+        entities: this.scaledEntities(
+          this.entitiesOnSelection(box, this.page),
+          this.page
+        ),
+        selection: box,
+      });
     },
     updateTransformer() {
       // here we need to manually attach or detach Transformer node
@@ -150,21 +132,6 @@ export default {
       }
 
       transformerNode.getLayer().batchDraw();
-    },
-
-    getBoxSelectionContent() {
-      if (!this.isSelecting) {
-        const box = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-        this.$emit("selectEntities", this.entitiesOnSelection(box, this.page));
-        this.$store.dispatch("selection/getTextFromBboxes", {
-          box,
-          entities: false,
-        });
-      }
     },
 
     /**

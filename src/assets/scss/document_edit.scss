@@ -1,8 +1,8 @@
-@import "./imports.scss";
+@use "variables.scss";
 
 #document-edit {
   display: flex;
-  background-color: $light-grey-background;
+  background-color: variables.$light-grey-background;
   position: relative;
   display: flex;
   height: 100%;
@@ -10,21 +10,21 @@
   .pages-section {
     width: 100%;
     overflow-y: scroll;
-    border-right: $component-border;
-    border-left: $component-border;
+    border-right: variables.$component-border;
+    border-left: variables.$component-border;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
     .grid-header {
       height: 60px;
-      background-color: $background;
-      border-bottom: $component-border;
+      background-color: variables.$background;
+      border-bottom: variables.$component-border;
       display: flex;
       align-items: center;
 
       .header-title {
-        color: $text-color;
+        color: variables.$text-color;
         font-weight: 600;
         font-size: 18px;
         line-height: 18px;
@@ -57,7 +57,7 @@
 
         .page-number {
           margin-top: 8px;
-          color: $text-lighter;
+          color: variables.$text-lighter;
           font-size: 12px;
           line-height: 12px;
           font-weight: 400;
@@ -109,8 +109,7 @@
 
         &:last-child {
           .splitting-lines {
-            visibility: hidden;
-            pointer-events: none;
+            display: none;
           }
           .page-number {
             padding-right: 0px;
@@ -138,8 +137,8 @@
         align-items: center;
         justify-content: center;
         gap: 3px;
-        background-color: $text-color;
-        color: $white;
+        background-color: variables.$text-color;
+        color: variables.$white;
         font-weight: 400;
         font-size: 14px;
         border-radius: 52px;
@@ -152,7 +151,7 @@
     width: 45%;
     max-width: 300px;
     min-width: 270px;
-    background-color: $background;
+    background-color: variables.$background;
 
     .edit-sidebar {
       display: flex;
@@ -166,7 +165,7 @@
         width: 85%;
         display: flex;
         flex-direction: column;
-        color: $grey-dark;
+        color: variables.$grey-dark;
 
         .pages-selected {
           font-weight: 400;
@@ -174,7 +173,7 @@
           margin-bottom: 15px;
 
           &.disabled {
-            color: $grey;
+            color: variables.$grey;
           }
         }
 
@@ -182,7 +181,7 @@
           display: flex;
           flex-direction: column;
           gap: 8px;
-          border-bottom: 1px solid $grey-detail;
+          border-bottom: 1px solid variables.$grey-detail;
 
           .sidebar-buttons {
             .edit-mode-btn {
@@ -231,7 +230,7 @@
             .switch-text {
               font-size: 14px;
               padding-right: 10px;
-              color: $grey-dark;
+              color: variables.$grey-dark;
               font-weight: 500;
             }
           }
@@ -242,7 +241,7 @@
             font-weight: 700;
             font-size: 11px;
             padding: 5px;
-            color: $text-color;
+            color: variables.$text-color;
           }
         }
       }
@@ -262,7 +261,7 @@
   }
 
   &.rename-and-categorize-component {
-    background-color: $background;
+    background-color: variables.$background;
     min-width: 600px;
 
     .rename-and-categorize-section {
@@ -292,7 +291,7 @@
         }
 
         .back-text {
-          color: $grey;
+          color: variables.$grey;
           font-weight: 400;
           font-size: 14px;
           line-height: 20px;
@@ -300,7 +299,7 @@
       }
 
       .rename-and-categorize-title {
-        color: $text-color;
+        color: variables.$text-color;
         font-size: 16px;
         font-weight: 600;
       }
@@ -333,14 +332,15 @@
                   justify-content: center;
 
                   .page-thumbnail {
-                    border: $component-border;
+                    border: variables.$component-border;
                     border-radius: 2px;
                   }
 
                   &.page-stack {
                     .page-thumbnail {
-                      box-shadow: 2px 2px $white, 3px 3px $detail,
-                        5px 5px $white, 6px 6px $detail;
+                      box-shadow: 2px 2px variables.$white,
+                        3px 3px variables.$detail, 5px 5px variables.$white,
+                        6px 6px variables.$detail;
                     }
                   }
 
@@ -370,7 +370,7 @@
                   border-right: 0;
 
                   &:hover {
-                    border-color: $grey-outline;
+                    border-color: variables.$grey-outline;
                   }
                 }
               }
@@ -383,9 +383,9 @@
                 max-width: 100%;
                 padding: 12px;
                 border-radius: 4px 0 0 4px;
-                border: 1px solid $grey-outline;
+                border: 1px solid variables.$grey-outline;
                 border-right: 0;
-                background-color: $white;
+                background-color: variables.$white;
                 cursor: text;
               }
 
@@ -395,9 +395,9 @@
                 padding: 13px;
                 height: 40px;
                 border-radius: 0 4px 4px 0;
-                border: 1px solid $grey-outline;
-                background-color: $white;
-                color: $grey-blue;
+                border: 1px solid variables.$grey-outline;
+                background-color: variables.$white;
+                color: variables.$grey-blue;
               }
             }
 

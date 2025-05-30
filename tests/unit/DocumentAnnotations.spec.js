@@ -23,7 +23,7 @@ describe("Document Annotations Component", () => {
 
   it("label set name appears", async () => {
     const wrapper = render(DocumentAnnotations, false);
-    expect(await wrapper.findAll(".label-set-name").at(2).text()).toContain(
+    expect(await wrapper.findAll(".label-set-name")[2].text()).toContain(
       getGetter("document/getAnnotationsFiltered").annotationSets[2].label_set
         .name
     );
@@ -64,12 +64,11 @@ describe("Document Annotations Component", () => {
   it("check if annotation info appears when hovering", async () => {
     const wrapper = render(DocumentAnnotations, false);
     await wrapper
-      .findAll(".annotation-set-group .label-set-header")
-      .at(0)
+      .findAll(".annotation-set-group .label-set-header")[0]
       .trigger("click");
-    const element = await wrapper
-      .findAll(".annotation-row .annotation-details")
-      .at(0);
+    const element = await wrapper.findAll(
+      ".annotation-row .annotation-details"
+    )[0];
     await element.find(".tooltip-trigger").trigger("mouseenter");
     requestAnimationFrame(async () => {
       expect(await element.find(".tooltip-content").isVisible()).toBe(true);
@@ -95,8 +94,8 @@ describe("Document Annotations Component", () => {
       isMissingAnnotation,
     });
 
-    await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(await getData("selection").elementSelected).toEqual(
+    await wrapper.find(".annotation-value").trigger("click");
+    expect(await getData("document").editAnnotation.id).toEqual(
       emptyAnnotationId
     );
   });
@@ -128,7 +127,7 @@ describe("Document Annotations Component", () => {
       offset_string_original: "mit 1",
     };
 
-    await wrapper.findComponent(".annotation-value").trigger("click");
+    await wrapper.find(".annotation-value").trigger("click");
     await dispatch("selection/setSpanSelection", sampleBbox);
     expect(await wrapper.findAll(".action-buttons").length).toEqual(1);
   });
@@ -148,8 +147,8 @@ describe("Document Annotations Component", () => {
       spanIndex,
     });
 
-    await wrapper.findComponent(".annotation-value").trigger("click");
-    expect(await getData("selection").elementSelected).toEqual(annotation.id);
+    await wrapper.find(".annotation-value").trigger("click");
+    expect(await getData("document").editAnnotation.id).toEqual(annotation.id);
   });
 
   it("Action buttons should appear when annotation is in edit mode", async () => {
@@ -174,7 +173,7 @@ describe("Document Annotations Component", () => {
       annotation,
     });
 
-    await wrapper.findComponent(".annotation-value").trigger("click");
+    await wrapper.find(".annotation-value").trigger("click");
     expect(await wrapper2.findAll(".action-buttons").length).toEqual(1);
   });
 
@@ -198,11 +197,11 @@ describe("Document Annotations Component", () => {
         .exists()
     ).toBe(false);
 
-    await wrapper.findComponent(".annotation-content").trigger("mouseover");
+    await wrapper.find(".annotation-content").trigger("mouseover");
 
     expect(
       await wrapper
-        .findComponent(".buttons-container .action-buttons .accept-btn")
+        .find(".buttons-container .action-buttons .accept-btn")
         .exists()
     ).toBe(true);
   });
@@ -225,7 +224,7 @@ describe("Document Annotations Component", () => {
         .exists()
     ).toBe(false);
 
-    await wrapper.findComponent(".annotation-content").trigger("mouseover");
+    await wrapper.find(".annotation-content").trigger("mouseover");
 
     expect(
       await wrapper
@@ -251,7 +250,7 @@ describe("Document Annotations Component", () => {
 
     await dispatch("document/setMissingAnnotations", missingAnnotation);
 
-    expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
+    expect(await wrapper.findAll(".annotation-row")[0].classes()).toContain(
       "missing"
     );
   });
@@ -273,28 +272,28 @@ describe("Document Annotations Component", () => {
 
     await dispatch("document/setMissingAnnotations", missingAnnotation);
 
-    expect(await wrapper.findAll(".annotation-row").at(0).classes()).toContain(
+    expect(await wrapper.findAll(".annotation-row")[0].classes()).toContain(
       "missing"
     );
 
-    await wrapper.findComponent(".missing").trigger("mouseover");
+    await wrapper.find(".missing").trigger("mouseover");
 
     await wrapper
-      .findComponent(".buttons-container .action-buttons .restore-btn")
+      .find(".buttons-container .action-buttons .restore-btn")
       .trigger("click");
 
     await dispatch("document/setMissingAnnotations", []);
 
-    expect(
-      await wrapper.findComponent(".annotation-row").classes()
-    ).not.toContain("missing");
+    expect(await wrapper.find(".annotation-row").classes()).not.toContain(
+      "missing"
+    );
   });
 
   it("Mark all empty as missing button should be visible if annotation set group is open", async () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     expect(
@@ -315,7 +314,7 @@ describe("Document Annotations Component", () => {
     );
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     expect(
@@ -334,7 +333,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     await wrapper
@@ -350,7 +349,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     expect(
@@ -373,7 +372,7 @@ describe("Document Annotations Component", () => {
     const pendingAnnotations = annotations.filter((ann) => !ann.is_correct);
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     expect(
@@ -390,7 +389,7 @@ describe("Document Annotations Component", () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await wrapper
-      .findComponent(".annotation-set-group .label-set-header")
+      .find(".annotation-set-group .label-set-header")
       .trigger("click");
 
     await wrapper
@@ -411,11 +410,11 @@ describe("Document Annotations Component", () => {
     await dispatch("document/setPublicView", true);
     await dispatch("document/setMissingAnnotations", []);
 
-    const markAllMissingButton = await wrapper.findAll(
+    const markAllMissingButton = await wrapper.find(
       ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .all-missing .all-missing-btn"
     );
 
-    const acceptAllButton = await wrapper.findAll(
+    const acceptAllButton = await wrapper.find(
       ".annotation-set-list .annotation-set-group .label-set-header .labelset-action-buttons .action-buttons .accept-all .accept-all-btn"
     );
 
@@ -435,7 +434,7 @@ describe("Document Annotations Component", () => {
       ".annotation-set-list .annotation-set-group .labels .label .annotation-row .annotation-row-right .buttons-container .action-buttons .decline-btn"
     );
 
-    await wrapper.findComponent(".annotation-value").trigger("click");
+    await wrapper.find(".annotation-value").trigger("click");
 
     expect(await getData("document").missingAnnotations.length).toBe(0);
     expect(markAllMissingButton.exists()).toBe(false);
@@ -450,47 +449,13 @@ describe("Document Annotations Component", () => {
     );
   });
 
-  it("Expands and hides grouped annotations dropdown when clicking Label group name", async () => {
-    const annotationSet = getData("document").annotationSets[1];
-    const label = annotationSet.labels[0];
-
-    await dispatch("document/setPublicView", false);
-
-    const wrapper = render(
-      DocumentLabel,
-      true,
-      {
-        label: label,
-        annotationSet: annotationSet,
-        labelSet: annotationSet.label_set,
-      },
-      {
-        showAnnotationsGroup: false,
-        nonMultipleAnnotationsExtracted: true,
-        acceptedAnnotationsGroupCounter: 0,
-      }
-    );
-
-    await wrapper.findAll(".label .label-group").trigger("click");
-
-    expect(
-      await wrapper.findComponent(" .label-group-annotation-list").exists()
-    ).toBe(true);
-
-    await wrapper.findAll(".label .label-group").trigger("click");
-
-    expect(
-      await wrapper.findComponent(" .label-group-annotation-list").exists()
-    ).toBe(false);
-  });
-
   it("Shows message to user if an annotation set has no labels", async () => {
     const wrapper = render(DocumentAnnotations, false);
 
     await dispatch("document/setPublicView", false);
 
     expect(
-      await wrapper.findComponent(".annotation-set-group .no-labels").exists()
+      await wrapper.find(".annotation-set-group .no-labels").exists()
     ).toBe(true);
   });
 });

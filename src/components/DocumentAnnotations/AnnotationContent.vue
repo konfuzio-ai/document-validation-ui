@@ -11,10 +11,10 @@
           editAnnotation &&
           editAnnotation.id === annotation.id &&
           'error-editing',
-        isAnnotationBeingEdited && 'clicked-ann',
+        isSpanBeingEdited && 'clicked-ann',
       ]"
       role="textbox"
-      :contenteditable="isAnnotationBeingEdited"
+      :contenteditable="isSpanBeingEdited"
       @click="handleEditAnnotation"
       @paste="handlePaste"
       @keypress.enter="saveAnnotationChanges"
@@ -61,11 +61,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("document", [
-      "isAnnotationInEditMode",
-      "pageAtIndex",
-      "isDocumentReviewed",
-    ]),
+    ...mapGetters("document", ["isAnnotationInEditMode", "isDocumentReviewed"]),
     ...mapGetters("display", ["bboxToRect"]),
     ...mapState("document", [
       "editAnnotation",
@@ -74,19 +70,17 @@ export default {
       "newAcceptedAnnotations",
       "showActionError",
     ]),
-    isAnnotationBeingEdited() {
+    isSpanBeingEdited() {
       return this.isAnnotationInEditMode(this.annotation.id, this.spanIndex);
+    },
+    isAnnotationBeingEdited() {
+      return (
+        this.editAnnotation && this.annotation.id === this.editAnnotation.id
+      );
     },
   },
 
   watch: {
-    isAnnotationBeingEdited(newState, oldState) {
-      // verify if new annotation in edit mode is not this one and if this
-      // one was selected before so we set the state to the previous one (like a cancel)
-      if (!newState && oldState) {
-        this.handleCancel();
-      }
-    },
     span() {
       // span content changed, ex. from click on entity
       this.setText(this.span.offset_string);
@@ -110,10 +104,15 @@ export default {
       if (
         !this.publicView &&
         !this.isDocumentReviewed &&
-        !this.isAnnotationBeingEdited &&
+        !this.isSpanBeingEdited &&
         !this.isLoading
       ) {
-        this.$store.dispatch("selection/selectElement", this.annotation.id);
+        if (!this.isAnnotationBeingEdited) {
+          this.$store.dispatch(
+            "selection/setSpanSelection",
+            this.annotation.span
+          );
+        }
 
         this.$store
           .dispatch("document/setEditAnnotation", {
@@ -125,44 +124,18 @@ export default {
             pageNumber: this.span.page_index + 1,
           })
           .then(() => {
-            this.$refs.contentEditable.focus();
+            if (this.$refs.contentEditable) {
+              this.$refs.contentEditable.focus();
+            }
           })
           .catch((error) => {
             console.log(error);
           });
-
-        const page = this.pageAtIndex(this.span.page_index);
-        if (page) {
-          const { x, y, width, height } = this.bboxToRect(page, this.span);
-
-          const selection = {
-            start: {
-              x,
-              y,
-            },
-            end: {
-              x: x + width,
-              y: y + height,
-            },
-            pageNumber: page.number,
-            custom: false,
-          };
-
-          // check if this is part of a group of spans to show the whole bounding box as a placeholder
-          if (
-            this.annotation.selection_bbox &&
-            this.annotation.span.length > 1
-          ) {
-            selection.placeholderBox = this.bboxToRect(
-              page,
-              this.annotation.selection_bbox
-            );
-          }
-
-          this.$store.dispatch("selection/setSelection", {
-            selection,
-            span: this.span,
-          });
+        // check if this is part of a group of spans to show the whole bounding box as a placeholder
+        if (this.annotation.selection_bbox && this.annotation.span.length > 1) {
+          this.$store.dispatch("selection/setPlaceholderSelection", [
+            this.annotation.selection_bbox,
+          ]);
         }
       }
     },
@@ -173,7 +146,7 @@ export default {
         this.$refs.contentEditable.blur();
       }
 
-      this.$store.dispatch("selection/setSelectedEntities", null);
+      this.$store.dispatch("selection/setSpanSelection", null);
     },
     handlePaste(event) {
       // TODO: modify to only paste plain text

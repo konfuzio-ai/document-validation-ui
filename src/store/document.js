@@ -153,6 +153,31 @@ const getters = {
     return annotations.length > 0;
   },
 
+  /* Checks if the label has annotations to show */
+  isLabelMultiFalseAndGroupOfAnns: (state) => (label) => {
+    return (
+      label &&
+      label.annotations &&
+      label.annotations.length > 1 &&
+      !label.has_multiple_top_candidates &&
+      state.enableGroupingFeature
+    );
+  },
+
+  /* Returns the annotations ordered by highest confidence */
+  annotationsByConfidence: (state) => (annotations) => {
+    annotations.sort((a, b) => {
+      if (a.confidence < b.confidence) {
+        return -1;
+      } else if (a.confidence > b.confidence) {
+        return 1;
+      }
+      return 0;
+    });
+
+    return annotations;
+  },
+
   /* Checks if the document has an annotation set */
   annotationSetExists: (state) => (annotationSetId) => {
     return state.annotationSets.find((annSet) => annSet.id === annotationSetId);
@@ -256,11 +281,16 @@ const getters = {
   /* Get label for a given annotation */
   labelOfAnnotation: (state) => (annotationToFind) => {
     let foundLabel = null;
-    state.annotationSets.forEach((annotationSet) => {
-      annotationSet.labels.forEach((label) => {
-        label.annotations.forEach((annotation) => {
-          if (annotation.id === annotationToFind.id) {
-            foundLabel = label;
+    if (state.annotationSets) {
+      state.annotationSets.forEach((annotationSet) => {
+        annotationSet.labels.forEach((label) => {
+          label.annotations.forEach((annotation) => {
+            if (annotation.id === annotationToFind.id) {
+              foundLabel = label;
+              return;
+            }
+          });
+          if (foundLabel) {
             return;
           }
         });
@@ -268,14 +298,12 @@ const getters = {
           return;
         }
       });
-      if (foundLabel) {
-        return;
-      }
-    });
+    }
+
     return foundLabel;
   },
 
-  getAnnotationsFiltered: (state) => {
+  getAnnotationsFiltered: (state, getters) => {
     // group annotations for sidebar
     let annotations = [];
     let labels = [];
@@ -331,6 +359,18 @@ const getters = {
       return false;
     };
 
+    const sortByConfidenceOrByAnnotationSelected = (annotations) => {
+      annotations = getters.annotationsByConfidence(annotations);
+      if (state.annotationId) {
+        for (let i = 0; i < annotations.length; i++) {
+          if (state.annotationId == annotations[i].id) {
+            annotations.unshift(annotations.splice(i, 1)[0]);
+          }
+        }
+      }
+      return annotations;
+    };
+
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
         labels = [];
@@ -350,6 +390,13 @@ const getters = {
             !state.annotationFilters.showFeedbackNeeded ||
             !state.annotationFilters.showAccepted
           ) {
+            if (!label.has_multiple_top_candidates) {
+              // if multi label = false, sort by confidence
+              label.annotations = sortByConfidenceOrByAnnotationSelected(
+                label.annotations
+              );
+            }
+
             label.annotations.forEach((annotation) => {
               if (
                 state.annotationFilters.showFeedbackNeeded &&
@@ -379,6 +426,12 @@ const getters = {
               }
             });
           } else {
+            if (!label.has_multiple_top_candidates) {
+              // if multi label = false, sort by confidence
+              label.annotations = sortByConfidenceOrByAnnotationSelected(
+                label.annotations
+              );
+            }
             // add annotations to the document array
             label.annotations.forEach((annotation) => {
               const added = addAnnotation(
@@ -963,6 +1016,15 @@ const actions = {
     commit("SET_DOC_ID", id);
   },
   setAnnotationId: ({ commit, dispatch, getters }, id) => {
+    if (id) {
+      // check if part of label with multi ann as false
+      const annotation = getters.annotationById(id);
+      const label = getters.labelOfAnnotation(annotation);
+      if (getters.isLabelMultiFalseAndGroupOfAnns(label)) {
+        dispatch("setAnnotationAsFirstInLabel", { label, annotation });
+      }
+    }
+
     commit("SET_ANNOTATION_ID", id);
     setURLAnnotationHash(id);
   },
@@ -1134,6 +1196,7 @@ const actions = {
     // Check if we first open the document dashboard or the edit mode
     if (
       !state.publicView &&
+      state.selectedDocument &&
       (!state.selectedDocument.category ||
         (!state.selectedDocument.category_is_revised &&
           !getters.documentHasCorrectAnnotations &&
@@ -1544,6 +1607,60 @@ const actions = {
   unloadDocumentPage: ({ commit }, pageNumber) => {
     commit("REMOVE_PAGE", pageNumber);
   },
+  putNextAnnotationInLabelFirst({ commit }, label) {
+    commit("PUT_NEXT_ANN_IN_LABEL_FIRST", label);
+  },
+  setAnnotationAsFirstInLabel({ commit, state }, { label, annotation }) {
+    state.annotationSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((labelToFind) => {
+        if (labelToFind.id === label.id) {
+          if (labelToFind.annotations && labelToFind.annotations.length > 1) {
+            for (let i = 0; i < labelToFind.annotations.length; i++) {
+              if (labelToFind.annotations[i].id === annotation.id) {
+                labelToFind.annotations.unshift(
+                  labelToFind.annotations.splice(i, 1)[0]
+                );
+                commit("SET_ANNOTATIONS_IN_LABEL", {
+                  label: labelToFind,
+                  annotations: labelToFind.annotations,
+                });
+              }
+            }
+          }
+        }
+      });
+    });
+  },
+  putNextAnnotationInLabelFirst({ commit, state, dispatch }, label) {
+    dispatch("setAnnotationId", null);
+    let newFirstAnn = null;
+    state.annotationSets.forEach((annotationSet) => {
+      annotationSet.labels.forEach((labelToFind) => {
+        if (labelToFind.id === label.id) {
+          if (labelToFind.annotations && labelToFind.annotations.length > 1) {
+            const firstElement = labelToFind.annotations.shift();
+            labelToFind.annotations.push(firstElement);
+            commit("SET_ANNOTATIONS_IN_LABEL", {
+              label: labelToFind,
+              annotations: labelToFind.annotations,
+            });
+            newFirstAnn = labelToFind.annotations[0];
+          }
+        }
+      });
+    });
+
+    if (newFirstAnn) {
+      dispatch("setDocumentAnnotationSelected", {
+        annotation: newFirstAnn,
+        label: label,
+        span: newFirstAnn.span[0],
+        scrollTo: true,
+      });
+
+      dispatch("scrollToDocumentAnnotationSelected");
+    }
+  },
 };
 
 const mutations = {
@@ -1688,6 +1805,13 @@ const mutations = {
   },
   SET_LABELS: (state, labels) => {
     state.labels = labels;
+  },
+  SET_ANNOTATIONS_IN_LABEL: (state, { label, annotations }) => {
+    state.labels.forEach((labelToFind) => {
+      if (labelToFind.id === label.id) {
+        labelToFind.annotations = annotations;
+      }
+    });
   },
   SET_EDIT_ANNOTATION: (state, editAnnotation) => {
     state.editAnnotation = editAnnotation;

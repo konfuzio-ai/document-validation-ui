@@ -1,10 +1,25 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div class="annotation-popup" :style="{ left: `${left}px`, top: `${top}px` }">
-    <div v-if="!textFromEntities" class="popup-input">
-      <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+  <div
+    class="annotation-popup"
+    :style="{
+      left: `${left}px`,
+      top: `${top}px`,
+      height: `${heightOfPopup}px`,
+    }"
+  >
+    <div v-if="!editAnnotation">
+      <div v-if="spanLoading" class="popup-input">
+        <b-icon icon="spinner" class="fa-spin loading-icon-size spinner" />
+      </div>
+      <input
+        v-else
+        v-model="textFromEntities"
+        class="popup-input"
+        type="text"
+        :disabled="true"
+      />
     </div>
-    <input v-else v-model="textFromEntities" class="popup-input" type="text" />
     <b-dropdown
       v-model="selectedSet"
       :disabled="!textFromEntities"
@@ -27,17 +42,19 @@
           ]"
           type="is-text"
         >
-          {{
-            selectedSet
-              ? `${selectedSet.label_set.name} ${
-                  selectedSet.id
-                    ? numberOfAnnotationSetGroup(selectedSet)
-                    : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
-                        "new"
-                      )})`
-                }`
-              : $t("select_annotation_set")
-          }}
+          <span class="input-text">
+            {{
+              selectedSet
+                ? `${selectedSet.label_set.name} ${
+                    selectedSet.id
+                      ? numberOfAnnotationSetGroup(selectedSet)
+                      : `${numberOfLabelSetGroup(selectedSet.label_set)} (${$t(
+                          "new"
+                        )})`
+                  }`
+                : $t("select_annotation_set")
+            }}</span
+          >
           <span class="caret-icon">
             <b-icon icon="angle-down" size="is-small" class="caret" />
           </span>
@@ -72,7 +89,6 @@
       size="is-large"
       position="is-bottom"
       class="bottom-aligned"
-      :close-delay="5000"
     >
       <template #content>
         <div
@@ -99,13 +115,13 @@
             ]"
             type="is-text"
           >
-            {{
+            <span class="input-text">{{
               selectedLabel
                 ? selectedLabel.name
                 : labels && labels.length === 0
                 ? $t("no_labels_to_choose")
                 : $t("select_label")
-            }}
+            }}</span>
             <span class="caret-icon">
               <b-icon icon="angle-down" size="is-small" class="caret" />
             </span>
@@ -144,15 +160,12 @@
  * This component is used to show a popup
  * for creating a new annotation.
  */
-const heightOfPopup = 192;
-const margin = 12;
-const widthOfPopup = 205;
 
 import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
-    newAnnotation: {
+    spans: {
       required: true,
       type: Array,
     },
@@ -171,6 +184,9 @@ export default {
   },
   data() {
     return {
+      heightOfPopup: 192,
+      margin: 12,
+      widthOfPopup: 205,
       selectedLabel: null,
       selectedSet: null,
       labels: null,
@@ -180,51 +196,48 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["annotationSets", "documentId"]),
+    ...mapState("document", ["annotationSets", "documentId", "editAnnotation"]),
     ...mapGetters("document", [
       "numberOfAnnotationSetGroup",
       "numberOfLabelSetGroup",
       "labelsFilteredForAnnotationCreation",
     ]),
     ...mapState("display", ["showBranding"]),
-    ...mapGetters("display", ["clientToBbox"]),
-    ...mapState("selection", ["spanSelection", "selection"]),
+    ...mapGetters("display", ["clientToBbox", "bboxToRect"]),
+    ...mapState("selection", ["spanSelection", "selection", "spanLoading"]),
     top() {
       if (this.selection && this.selection.end) {
-        const top = this.selection.end.y + margin;
+        const top = this.selection.end.y + this.margin;
         //check if the popup will not go off the container on the top
-        return top + heightOfPopup < this.containerHeight
+        return top + this.heightOfPopup < this.containerHeight
           ? top
-          : this.selection.end.y - heightOfPopup;
+          : this.selection.end.y - this.heightOfPopup;
       } else {
-        const top = this.newAnnotation[0].scaled.y - heightOfPopup; // subtract the height of the popup plus some margin
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
+        const top = normalizedSpan.y - this.heightOfPopup; // subtract the height of the popup plus some margin
 
         //check if the popup will not go off the container on the top
-        return this.newAnnotation[0].scaled.y > heightOfPopup
+        return normalizedSpan.y > this.heightOfPopup
           ? top
-          : this.newAnnotation[0].scaled.y +
-              this.newAnnotation[0].scaled.height +
-              margin;
+          : normalizedSpan.y + normalizedSpan.height + this.margin;
       }
     },
     left() {
       if (this.selection && this.selection.start && this.selection.end) {
         const left = this.selection.start.x;
         //check if the popup will not go off the container on the right
-        return left + widthOfPopup < this.containerWidth
+        return left + this.widthOfPopup < this.containerWidth
           ? left
-          : this.containerWidth - widthOfPopup;
-        return this.selection.start.x;
+          : this.containerWidth - this.widthOfPopup;
       } else {
+        const normalizedSpan = this.bboxToRect(this.page, this.spans[0]);
         const left =
-          this.newAnnotation[0].scaled.x +
-          this.newAnnotation[0].scaled.width / 2 -
-          widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
+          normalizedSpan.x + normalizedSpan.width / 2 - this.widthOfPopup / 2; // add the entity half width to be centered and then subtract half the width of the popup
 
         //check if the popup will not go off the container
-        if (left + widthOfPopup > this.containerWidth) {
+        if (left + this.widthOfPopup > this.containerWidth) {
           // on the right side
-          return this.containerWidth - widthOfPopup;
+          return this.containerWidth - this.widthOfPopup;
         } else {
           // on the left side
           return left > 0 ? left : 0;
@@ -232,10 +245,8 @@ export default {
       }
     },
     textFromEntities() {
-      if (!this.spanSelection) return;
-
       let text = "";
-      this.spanSelection.forEach((span) => {
+      this.spans.forEach((span) => {
         text = `${text} ${span.offset_string}`;
       });
 
@@ -243,17 +254,23 @@ export default {
     },
   },
   watch: {
-    selectedSet(newValue) {
+    selectedSet(newValue, oldValue) {
       this.selectedLabel = null;
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
-      if (this.labels.length === 1) {
+      if (oldValue === null && this.editAnnotation) {
+        this.selectedLabel = this.editAnnotation.label;
+      } else if (this.labels.length === 1) {
         this.selectedLabel = this.labels[0];
       }
     },
   },
   mounted() {
     this.setsList = this.orderedSetList([...this.annotationSets]);
-    if (this.setsList.length === 1) {
+
+    if (this.editAnnotation) {
+      this.heightOfPopup = 142;
+      this.selectedSet = this.editAnnotation.annotationSet;
+    } else if (this.setsList.length === 1) {
       this.selectedSet = this.setsList[0];
     }
 
@@ -262,7 +279,7 @@ export default {
       document.body.addEventListener("click", this.clickOutside);
     }, 200);
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener("click", this.clickOutside);
   },
   methods: {
@@ -283,61 +300,73 @@ export default {
       return setsList;
     },
     close() {
-      this.$store.dispatch("selection/setSelectedEntities", null);
-      this.$store.dispatch("selection/endSelection");
+      if (this.editAnnotation) {
+        this.$store.dispatch("document/resetEditAnnotation");
+      }
+      this.$store.dispatch("selection/disableSelection");
       this.$emit("close");
     },
     save() {
-      this.loading = true;
-      const span = this.newAnnotation.flatMap((ann) => {
-        return {
-          ...ann.original,
-          offset_string: ann.original.offset_string,
-        };
-      });
-
-      let selection_bbox = null;
-
-      if (this.selection && this.selection.start && this.selection.end) {
-        selection_bbox = this.clientToBbox(
-          this.page,
-          this.selection.start,
-          this.selection.end
-        );
-      }
-
-      const annotationToCreate = {
-        document: this.documentId,
-        span: span,
-        label: this.selectedLabel.id,
-        is_correct: true,
-        revised: false,
-      };
-
-      if (selection_bbox) {
-        annotationToCreate.selection_bbox = selection_bbox;
-      }
-
-      if (this.selectedSet.id) {
-        annotationToCreate.annotation_set = this.selectedSet.id;
-      } else {
-        annotationToCreate.label_set = this.selectedSet.label_set.id;
-      }
-      this.$store
-        .dispatch("document/createAnnotation", {
-          annotation: annotationToCreate,
-        })
-        .catch((error) => {
-          this.$store.dispatch("document/createErrorMessage", {
-            error,
-            serverErrorMessage: this.$t("server_error"),
-            defaultErrorMessage: this.$t("error_creating_annotation"),
-          });
-        })
-        .finally(() => {
-          this.close();
-          this.loading = false;
+      if (this.editAnnotation) {
+        this.loading = true;
+        this.$store.dispatch("document/setEditAnnotation", {
+          id: this.editAnnotation.id,
+          index: this.editAnnotation.index,
+          label: this.selectedLabel,
+          labelSet: this.selectedSet.label_set,
+          annotationSet: this.selectedSet,
+          pageNumber: this.editAnnotation.pageNumber,
         });
+
+        document.getElementById("save-ann").click();
+
+        return;
+      } else {
+        this.loading = true;
+
+        let selection_bbox = null;
+
+        if (this.selection && this.selection.start && this.selection.end) {
+          selection_bbox = this.clientToBbox(
+            this.page,
+            this.selection.start,
+            this.selection.end
+          );
+        }
+
+        const annotationToCreate = {
+          document: this.documentId,
+          span: this.spans,
+          label: this.selectedLabel.id,
+          is_correct: true,
+          revised: false,
+        };
+
+        if (selection_bbox) {
+          annotationToCreate.selection_bbox = selection_bbox;
+        }
+
+        if (this.selectedSet.id) {
+          annotationToCreate.annotation_set = this.selectedSet.id;
+        } else {
+          annotationToCreate.label_set = this.selectedSet.label_set.id;
+        }
+        this.$store
+          .dispatch("document/createAnnotation", {
+            annotation: annotationToCreate,
+          })
+          .catch((error) => {
+            this.$store.dispatch("document/createErrorMessage", {
+              error,
+              serverErrorMessage: this.$t("server_error"),
+              defaultErrorMessage: this.$t("error_creating_annotation"),
+            });
+          })
+          .finally(() => {
+            this.close();
+            this.loading = false;
+          });
+      }
     },
     chooseLabelSet(labelSet) {
       // check if there's already a new entry for that label set to be created
