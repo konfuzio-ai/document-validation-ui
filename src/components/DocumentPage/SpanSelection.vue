@@ -121,15 +121,17 @@ export default {
 
     moveSelection(points) {
       // only apply when we have a large enough selection, otherwise we risk counting misclicks
-      const xDiff = Math.abs(this.selection.start.x - points.end.x);
-      const yDiff = Math.abs(this.selection.start.y - points.end.y);
-      if (xDiff > 5 && yDiff > 5) {
-        const { start, end } = points;
-        if (start) {
-          this.selection.start = start;
-        }
-        if (end) {
-          this.selection.end = end;
+      if (this.selection) {
+        const xDiff = Math.abs(this.selection.start.x - points.end.x);
+        const yDiff = Math.abs(this.selection.start.y - points.end.y);
+        if (xDiff > 5 && yDiff > 5) {
+          const { start, end } = points;
+          if (start) {
+            this.selection.start = start;
+          }
+          if (end) {
+            this.selection.end = end;
+          }
         }
       }
     },

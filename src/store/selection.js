@@ -75,10 +75,12 @@ const actions = {
 
   moveSelection: ({ commit, state, dispatch }, points) => {
     // only apply when we have a large enough selection, otherwise we risk counting misclicks
-    const xDiff = Math.abs(state.selection.start.x - points.end.x);
-    const yDiff = Math.abs(state.selection.start.y - points.end.y);
-    if (xDiff > 5 && yDiff > 5) {
-      commit("MOVE_SELECTION", points);
+    if (state.selection && state.selection.start) {
+      const xDiff = Math.abs(state.selection.start.x - points.end.x);
+      const yDiff = Math.abs(state.selection.start.y - points.end.y);
+      if (xDiff > 5 && yDiff > 5) {
+        commit("MOVE_SELECTION", points);
+      }
     }
   },
 
