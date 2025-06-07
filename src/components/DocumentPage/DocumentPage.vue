@@ -554,21 +554,18 @@ export default {
     },
     getAnnotationLabelPosition(annotation) {
       if (annotation && this.$refs.stage) {
-        const padding = 8;
         const maxCharacters = 10;
         const minimumSpaceTopY = 50;
-        const rect = this.bboxToRect(this.page, annotation.span, true);
+        const rect = this.bboxToRect(this.page, annotation.span);
 
         if (
           annotation.labelName.length > maxCharacters &&
           rect.y < minimumSpaceTopY
         ) {
-          return `left: ${rect.x}px; top: ${
-            rect.y + rect.height * 3 + padding
-          }px`;
+          return `left: ${rect.x}px; top: ${rect.y + rect.height}px`;
         } else {
           return `left: ${rect.x}px; bottom: ${
-            this.$refs.stage.$el.clientHeight - rect.y - rect.height - padding
+            this.$refs.stage.$el.clientHeight - rect.y
           }px`;
         }
       } else {

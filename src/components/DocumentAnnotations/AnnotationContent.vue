@@ -62,7 +62,6 @@ export default {
   },
   computed: {
     ...mapGetters("document", ["isAnnotationInEditMode", "isDocumentReviewed"]),
-    ...mapGetters("display", ["bboxToRect"]),
     ...mapState("document", [
       "editAnnotation",
       "publicView",
