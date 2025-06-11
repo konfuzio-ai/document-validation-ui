@@ -1,10 +1,6 @@
 <template>
   <div id="scrolling-document">
-    <div
-      ref="scrollingDocument"
-      v-scroll.immediate="updateScrollBounds"
-      class="scrolling-document"
-    >
+    <div ref="scrollingDocument" class="scrolling-document">
       <transition :name="searchEnabled ? 'slide-down' : 'slide-up'">
         <SearchBar v-if="searchEnabled" />
       </transition>
@@ -114,6 +110,7 @@ export default {
       this.$refs.scrollingDocument.scroll(scrollX, scrollY);
     },
     handleScroll() {
+      this.updateScrollBounds();
       if (this.pages.length === 1) return;
 
       this.isScrolling = true;
