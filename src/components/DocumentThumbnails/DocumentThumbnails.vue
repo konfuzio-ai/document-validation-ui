@@ -1,9 +1,8 @@
 <template>
   <div id="document-pages" ref="documentThumbnails">
-    <div v-if="selectedDocument">
+    <div v-if="selectedDocument" ref="docPage">
       <div
         v-for="page in selectedDocument.pages"
-        ref="docPage"
         :key="page.id"
         :class="[
           'document-thumbnail',
@@ -76,20 +75,11 @@ export default {
   },
   watch: {
     currentPage(newPage) {
-      if (!newPage) return;
+      if (!newPage || newPage == this.thumbnailClicked) return;
 
       // handle thumbnail selection when scrolling the document
       this.scrollToThumbnail(newPage);
     },
-  },
-  mounted() {
-    const scrollingPage = document.querySelector(".scrolling-document");
-
-    if (scrollingPage) {
-      scrollingPage.addEventListener("scroll", () => {
-        this.scrollToThumbnail();
-      });
-    }
   },
 
   methods: {
@@ -109,17 +99,10 @@ export default {
 
     scrollToThumbnail(page) {
       // select only the active thumbnail
-      const selectedPage = this.$refs.docPage.filter((image) =>
-        image.className.includes("selected")
-      );
-
-      if (page == this.thumbnailClicked) {
-        this.thumbnailClicked = null;
-      }
-
-      if (!this.thumbnailClicked && selectedPage && selectedPage[0]) {
-        selectedPage[0].scrollIntoView();
-      }
+      this.thumbnailClicked = null;
+      this.$refs.docPage.children[page - 1].scrollIntoView({
+        behavior: "smooth",
+      });
     },
   },
 };

@@ -270,7 +270,11 @@ const actions = {
         commit("SET_SCALE", autoScale);
         break;
       case "all": {
-        const widthScale = getters.pageWidthScale(elementsWidth, client.width, viewport.width);
+        const widthScale = getters.pageWidthScale(
+          elementsWidth,
+          client.width,
+          viewport.width
+        );
         commit("SET_SCALE", widthScale);
         break;
       }
