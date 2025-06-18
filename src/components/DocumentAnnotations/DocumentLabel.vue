@@ -1,10 +1,17 @@
 <template>
   <div class="label">
-    <div v-if="annotationSet">
+    <div v-if="annotationSet && annotationsToShow().length > 0">
       <AnnotationRow
         v-for="(annotation, index) in annotationsToShow()"
         :key="index"
         :annotation="annotation"
+        :label="label"
+        :annotation-set="annotationSet"
+        :label-set="annotationSet.label_set"
+      />
+    </div>
+    <div v-else-if="annotationSet">
+      <AnnotationRow
         :label="label"
         :annotation-set="annotationSet"
         :label-set="annotationSet.label_set"
