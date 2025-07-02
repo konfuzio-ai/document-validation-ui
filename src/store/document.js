@@ -167,14 +167,14 @@ const getters = {
   /* Returns the annotations ordered by highest confidence */
   annotationsByConfidence: (state) => (annotations) => {
     annotations.sort((a, b) => {
-      if (a.confidence < b.confidence) {
+      // in reverse, comparison was not working correctly in the correct way
+      if (a.confidence > b.confidence) {
         return -1;
-      } else if (a.confidence > b.confidence) {
+      } else if (a.confidence < b.confidence) {
         return 1;
       }
       return 0;
     });
-
     return annotations;
   },
 
@@ -359,18 +359,6 @@ const getters = {
       return false;
     };
 
-    const sortByConfidenceOrByAnnotationSelected = (annotations) => {
-      annotations = getters.annotationsByConfidence(annotations);
-      if (state.annotationId) {
-        for (let i = 0; i < annotations.length; i++) {
-          if (state.annotationId == annotations[i].id) {
-            annotations.unshift(annotations.splice(i, 1)[0]);
-          }
-        }
-      }
-      return annotations;
-    };
-
     if (state.annotationSets) {
       state.annotationSets.forEach((annotationSet) => {
         labels = [];
@@ -390,13 +378,6 @@ const getters = {
             !state.annotationFilters.showFeedbackNeeded ||
             !state.annotationFilters.showAccepted
           ) {
-            if (!label.has_multiple_top_candidates) {
-              // if multi label = false, sort by confidence
-              label.annotations = sortByConfidenceOrByAnnotationSelected(
-                label.annotations
-              );
-            }
-
             label.annotations.forEach((annotation) => {
               if (
                 state.annotationFilters.showFeedbackNeeded &&
@@ -426,12 +407,6 @@ const getters = {
               }
             });
           } else {
-            if (!label.has_multiple_top_candidates) {
-              // if multi label = false, sort by confidence
-              label.annotations = sortByConfidenceOrByAnnotationSelected(
-                label.annotations
-              );
-            }
             // add annotations to the document array
             label.annotations.forEach((annotation) => {
               const added = addAnnotation(
@@ -478,6 +453,18 @@ const getters = {
     let processedAnnotationSets = [];
     let processedLabels = [];
 
+    const sortByConfidenceOrByAnnotationSelected = (annotations) => {
+      annotations = getters.annotationsByConfidence(annotations);
+      if (state.annotationId) {
+        for (let i = 0; i < annotations.length; i++) {
+          if (state.annotationId == annotations[i].id) {
+            annotations.unshift(annotations.splice(i, 1)[0]);
+          }
+        }
+      }
+      return annotations;
+    };
+
     annotationSets.forEach((annotationSet) => {
       // check if empty label sets and env variable set as true
       if (
@@ -488,7 +475,7 @@ const getters = {
       ) {
         labels = [];
         annotationSet.labels.forEach((label) => {
-          const labelAnnotations = [];
+          let labelAnnotations = [];
 
           // add annotations to the document array
           // remove negative annotations
@@ -497,6 +484,13 @@ const getters = {
               labelAnnotations.push(ann);
             }
           });
+
+          if (!label.has_multiple_top_candidates) {
+            // if multi label = false, sort by confidence
+            labelAnnotations =
+              sortByConfidenceOrByAnnotationSelected(labelAnnotations);
+          }
+
           labels.push({ ...label, annotations: labelAnnotations });
           processedLabels.push(label);
           annotations.push(...labelAnnotations);
@@ -1621,6 +1615,7 @@ const actions = {
                   labelToFind.annotations.splice(i, 1)[0]
                 );
                 commit("SET_ANNOTATIONS_IN_LABEL", {
+                  annotationSet,
                   label: labelToFind,
                   annotations: labelToFind.annotations,
                 });
@@ -1638,16 +1633,22 @@ const actions = {
       annotationSet.labels.forEach((labelToFind) => {
         if (labelToFind.id === label.id) {
           if (labelToFind.annotations && labelToFind.annotations.length > 1) {
-            const firstElement = labelToFind.annotations.shift();
-            labelToFind.annotations.push(firstElement);
+            const cloneAnnotations = [...labelToFind.annotations];
+            const firstElement = cloneAnnotations.shift();
+            cloneAnnotations.push(firstElement);
             commit("SET_ANNOTATIONS_IN_LABEL", {
+              annotationSet,
               label: labelToFind,
-              annotations: labelToFind.annotations,
+              annotations: cloneAnnotations,
             });
-            newFirstAnn = labelToFind.annotations[0];
+            newFirstAnn = cloneAnnotations[0];
+            return;
           }
         }
       });
+      if (newFirstAnn) {
+        return;
+      }
     });
 
     if (newFirstAnn) {
@@ -1806,10 +1807,12 @@ const mutations = {
   SET_LABELS: (state, labels) => {
     state.labels = labels;
   },
-  SET_ANNOTATIONS_IN_LABEL: (state, { label, annotations }) => {
-    state.labels.forEach((labelToFind) => {
+  SET_ANNOTATIONS_IN_LABEL: (state, { label, annotations, annotationSet }) => {
+    annotationSet.labels.forEach((labelToFind) => {
       if (labelToFind.id === label.id) {
+        delete labelToFind.annotations;
         labelToFind.annotations = annotations;
+        return;
       }
     });
   },
