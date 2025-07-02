@@ -369,6 +369,8 @@ export default {
       }`
     );
 
+    console.log("-------");
+
     // locale config
     if (this.locale && this.locale !== "") {
       this.$i18n.locale = this.locale;
