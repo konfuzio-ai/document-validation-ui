@@ -259,7 +259,7 @@ export default {
       this.labels = this.labelsFilteredForAnnotationCreation(newValue);
       if (oldValue === null && this.editAnnotation) {
         this.selectedLabel = this.editAnnotation.label;
-      } else if (this.labels.length === 1) {
+      } else if (this.labels.length > 0) {
         this.selectedLabel = this.labels[0];
       }
     },
