@@ -195,7 +195,9 @@ export default {
       }
     },
     showDocumentsNavigation() {
-      if (process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION) {
+      if (this.isPublicView) {
+        return false;
+      } else if (process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION) {
         return process.env.VUE_APP_SHOW_DOCUMENTS_NAVIGATION === "true";
       } else {
         return this.show_documents_navigation === "true";
