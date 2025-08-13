@@ -88,27 +88,29 @@ const actions = {
     let xDiff;
     let yDiff;
 
-    if (end) {
-      xDiff = Math.abs(state.selection.start.x - end.x);
-      yDiff = Math.abs(state.selection.start.y - end.y);
-    }
+    if (state.selection && state.selection.start) {
+      if (end) {
+        xDiff = Math.abs(state.selection.start.x - end.x);
+        yDiff = Math.abs(state.selection.start.y - end.y);
+      }
 
-    // if "end" is not provided, start and end points are the same, or if we have a selection smaller than 5x5,
-    // just reset
-    if (
-      !end ||
-      (yDiff <= 5 && xDiff <= 5) ||
-      (state.selection.start.x === end.x && state.selection.start.y == end.y)
-    ) {
-      commit("RESET_SELECTION");
-    } else {
-      state.selection.start.x = state.selection.start.x - selectionPadding;
-      state.selection.start.y = state.selection.start.y - selectionPadding;
+      // if "end" is not provided, start and end points are the same, or if we have a selection smaller than 5x5,
+      // just reset
+      if (
+        !end ||
+        (yDiff <= 5 && xDiff <= 5) ||
+        (state.selection.start.x === end.x && state.selection.start.y == end.y)
+      ) {
+        commit("RESET_SELECTION");
+      } else {
+        state.selection.start.x = state.selection.start.x - selectionPadding;
+        state.selection.start.y = state.selection.start.y - selectionPadding;
 
-      end.x = end.x + selectionPadding;
-      end.y = end.y + selectionPadding;
+        end.x = end.x + selectionPadding;
+        end.y = end.y + selectionPadding;
 
-      commit("END_SELECTION", end);
+        commit("END_SELECTION", end);
+      }
     }
   },
 
