@@ -528,7 +528,7 @@ export default {
     annotationRect(bbox, annotationId, draggable) {
       const selected = this.annotationId == annotationId && !this.searchEnabled;
       const focused = this.isAnnotationFocused(annotationId);
-      let fillColor = "yellow";
+      let fillColor = "#c6ff91";
       let strokeWidth = 0;
       let strokeColor = "";
 
@@ -551,7 +551,7 @@ export default {
         name: "annotation",
         draggable,
         cornerRadius: 2,
-        ...this.bboxToRect(this.page, bbox),
+        ...this.bboxToRect(this.page, bbox, focused),
       };
     },
     getAnnotationLabelPosition(annotation) {
