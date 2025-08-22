@@ -3,7 +3,7 @@
     <DocumentTopBar />
     <div :class="['dashboard-viewer', renameAndCategorize ? 'edit-mode' : '']">
       <DocumentThumbnails v-if="!editMode" ref="documentPages" />
-      <splitpanes class="default-theme">
+      <splitpanes class="default-theme" style="overflow:hidden;">
         <pane :size="50" :min-size="10">
           <ScrollingDocument
             ref="scrollingDocument"
