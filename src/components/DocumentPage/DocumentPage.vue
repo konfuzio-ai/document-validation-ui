@@ -20,14 +20,15 @@
       @close="closePopups"
     />
 
-    <div
-      v-if="showAnnotationLabel"
-      class="annotation-label"
-      :style="getAnnotationLabelPosition(showAnnotationLabel)"
-    >
-      {{ showAnnotationLabel.labelName }}
-    </div>
-
+    <Transition>
+      <div
+        v-if="showAnnotationLabel"
+        class="annotation-label"
+        :style="getAnnotationLabelPosition(showAnnotationLabel)"
+      >
+        {{ showAnnotationLabel && showAnnotationLabel.labelName }}
+      </div>
+    </Transition>
     <AnnSetTableOptions v-if="showAnnSetTable" :page="page" />
 
     <v-stage
@@ -527,9 +528,9 @@ export default {
     annotationRect(bbox, annotationId, draggable) {
       const selected = this.annotationId == annotationId && !this.searchEnabled;
       const focused = this.isAnnotationFocused(annotationId);
-      let fillColor = "yellow";
-      let strokeWidth = 0;
-      let strokeColor = "";
+      let fillColor = "#c6ff91";
+      let strokeWidth = 0.4;
+      let strokeColor = "black";
 
       // if annotation is selected
       if (selected) {
@@ -539,7 +540,7 @@ export default {
       } // if hovered
       else if (focused) {
         fillColor = "#67E9B7";
-        strokeWidth = 1;
+        strokeWidth = 0.6;
         strokeColor = "black";
       }
       return {
@@ -549,7 +550,8 @@ export default {
         stroke: strokeColor,
         name: "annotation",
         draggable,
-        ...this.bboxToRect(this.page, bbox),
+        cornerRadius: 2,
+        ...this.bboxToRect(this.page, bbox, focused),
       };
     },
     getAnnotationLabelPosition(annotation) {

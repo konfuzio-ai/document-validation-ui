@@ -153,7 +153,7 @@ const getters = {
     },
   bboxToRect:
     (state, getters) =>
-    (page, bbox, hasOffset = false) => {
+    (page, bbox, hasPadding = false) => {
       const imageScale = getters.imageScale(page);
       if (bbox.x0 && bbox.y0) {
         const { x0, x1, y0, y1 } = bbox;
@@ -161,7 +161,7 @@ const getters = {
         const rect = {
           // left
           x: new BigNumber(x0)
-            .minus(hasOffset ? 1 : 0)
+            .minus(hasPadding ? 1 : 0)
             .times(state.scale)
             .times(imageScale)
             .div(PIXEL_RATIO)
@@ -169,13 +169,14 @@ const getters = {
           // top
           y: pageHeight
             .minus(new BigNumber(y1))
-            .minus(hasOffset ? 17.1 : 0)
+            .minus(hasPadding ? 1 : 0)
             .times(state.scale)
             .times(imageScale)
             .div(PIXEL_RATIO)
             .toNumber(),
           width: new BigNumber(x1)
             .minus(x0)
+            .plus(hasPadding ? 2 : 0)
             .abs()
             .times(state.scale)
             .times(imageScale)
@@ -183,6 +184,7 @@ const getters = {
             .toNumber(),
           height: new BigNumber(y1)
             .minus(y0)
+            .plus(hasPadding ? 2 : 0)
             .times(state.scale)
             .times(imageScale)
             .div(PIXEL_RATIO)
