@@ -529,8 +529,8 @@ export default {
       const selected = this.annotationId == annotationId && !this.searchEnabled;
       const focused = this.isAnnotationFocused(annotationId);
       let fillColor = "#c6ff91";
-      let strokeWidth = 0;
-      let strokeColor = "";
+      let strokeWidth = 0.4;
+      let strokeColor = "black";
 
       // if annotation is selected
       if (selected) {
