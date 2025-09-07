@@ -74,6 +74,11 @@
               @mouseleave="onElementLeave"
             />
           </v-group>
+          <template v-for="annotationSet in pageAnnotationSets">
+            <v-group>
+              <v-rect :config="groupAnnotationRect(annotationSet)" />
+            </v-group>
+          </template>
           <template v-for="annotation in pageAnnotations">
             <template
               v-for="(bbox, index) in annotation.span.filter(
@@ -217,6 +222,7 @@ export default {
       "isDocumentReadyToBeReviewed",
       "isDocumentReviewed",
       "labelOfAnnotation",
+      "annotationSetBoxForPageNumber",
     ]),
     selectionPage() {
       return this.selection && this.selection.pageNumber;
@@ -273,6 +279,31 @@ export default {
         });
       }
       return annotations;
+    },
+
+    pageAnnotationSets() {
+      const annotationSets = [];
+
+      if (this.getAnnotationsFiltered.annotationSets) {
+        this.getAnnotationsFiltered.annotationSets.forEach((annotationSet) => {
+          let samePage = false;
+          annotationSet.labels.forEach((label) => {
+            label.annotations.forEach((annotation) => {
+              if (
+                annotation.span.find(
+                  (span) => span.page_index + 1 === this.page.number
+                )
+              ) {
+                samePage = true;
+              }
+            });
+          });
+          if (samePage) {
+            annotationSets.push(annotationSet);
+          }
+        });
+      }
+      return annotationSets;
     },
 
     selection() {
@@ -552,6 +583,24 @@ export default {
         draggable,
         cornerRadius: 2,
         ...this.bboxToRect(this.page, bbox, focused),
+      };
+    },
+    groupAnnotationRect(annotationSet) {
+      let fillColor = "red";
+      let strokeWidth = 0.4;
+      let strokeColor = "black";
+
+      return {
+        fill: fillColor,
+        globalCompositeOperation: "multiply",
+        strokeWidth: strokeWidth,
+        stroke: strokeColor,
+        name: "annotationSet",
+        cornerRadius: 2,
+        ...this.bboxToRect(
+          this.page,
+          this.annotationSetBoxForPageNumber(annotationSet)
+        ),
       };
     },
     getAnnotationLabelPosition(annotation) {
