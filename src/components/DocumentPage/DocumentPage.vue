@@ -582,25 +582,20 @@ export default {
         name: "annotation",
         draggable,
         cornerRadius: 2,
-        ...this.bboxToRect(this.page, bbox, focused),
+        ...this.bboxToRect(this.page, bbox, focused ? 2 : 0),
       };
     },
     groupAnnotationRect(annotationSet) {
-      let fillColor = "red";
-      let strokeWidth = 0.4;
-      let strokeColor = "black";
-
+      const box = this.annotationSetBoxForPageNumber(annotationSet);
       return {
-        fill: fillColor,
+        fill: "#2f80ed",
         globalCompositeOperation: "multiply",
-        strokeWidth: strokeWidth,
-        stroke: strokeColor,
+        strokeWidth: 0.2,
+        stroke: "black",
         name: "annotationSet",
-        cornerRadius: 2,
-        ...this.bboxToRect(
-          this.page,
-          this.annotationSetBoxForPageNumber(annotationSet)
-        ),
+        cornerRadius: 4,
+        opacity: 0.3,
+        ...this.bboxToRect(this.page, box, 4),
       };
     },
     getAnnotationLabelPosition(annotation) {

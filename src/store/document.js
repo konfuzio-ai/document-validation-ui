@@ -277,33 +277,63 @@ const getters = {
     });
     return foundAnnotationSet;
   },
-  
+
   /* Get annotation set box to cover all annotations */
   annotationSetBoxForPageNumber: (state) => (annotationSet) => {
     let box = {
       x0: null,
-      x1: null,
       y0: null,
+      x1: null,
       y1: null,
-    }
+    };
+    const annotationIdsOfAnnSet = [];
     annotationSet.labels.forEach((label) => {
       label.annotations.forEach((annotation) => {
+        annotationIdsOfAnnSet.push(annotation.id);
         annotation.span.forEach((span) => {
           if (!box.x0 || box.x0 > span.x0) {
             box.x0 = span.x0;
-          }          
+          }
           if (!box.x1 || box.x1 < span.x1) {
             box.x1 = span.x1;
-          }          
+          }
           if (!box.y0 || box.y0 > span.y0) {
             box.y0 = span.y0;
-          }          
+          }
           if (!box.y1 || box.y1 < span.y1) {
             box.y1 = span.y1;
           }
-        })
+        });
       });
     });
+
+    // check if doesn't cover any other annotation
+    if (box.x0) {
+      state.annotations.forEach((annotation) => {
+        // don't check for annotations of the intended annotation set
+        if (!annotationIdsOfAnnSet.includes(annotation.id)) {
+          annotation.span.forEach((span) => {
+            if (
+              span.x0 >= box.x0 &&
+              span.x1 <= box.x1 &&
+              span.y0 >= box.y0 &&
+              span.y1 <= box.y1
+            ) {
+              box = {
+                x0: null,
+                y0: null,
+                x1: null,
+                y1: null,
+              };
+              return;
+            }
+          });
+        }
+        if (!box.x0) {
+          return;
+        }
+      });
+    }
     return box;
   },
 
