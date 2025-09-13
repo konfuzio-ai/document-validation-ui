@@ -26,7 +26,7 @@
     "@sentry/tracing": "^6.19.4",
     "@sentry/vue": "^6.2.0",
     "@vue/compat": "^3.5.13",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "bignumber.js": "^9.1.2",
     "buefy": "npm:@ntohq/buefy-next@^0.2.0",
     "keycloak-js": "^25.0.6",
