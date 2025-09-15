@@ -600,6 +600,7 @@
       }
       &:before {
         border-bottom-color: variables.$text-color !important;
+        border-top-color: variables.$text-color !important;
       }
     }
 

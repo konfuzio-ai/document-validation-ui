@@ -168,5 +168,7 @@
   "document_section": "Document Section",
   "label_size": "Column size:",
   "powered_by": "powered by Konfuzio",
-  "nav_label_anns": "Navigate through annotations"
+  "nav_label_anns": "Navigate through annotations",
+  "document_faq_title": "Document FAQ",
+  "document_faq_content": "Annotation Sets grouping only appear when there's no overlap between annotations."
 }
