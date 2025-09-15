@@ -590,12 +590,12 @@ export default {
       return {
         fill: "#2f80ed",
         globalCompositeOperation: "multiply",
-        strokeWidth: 0.2,
+        strokeWidth: 1,
         stroke: "black",
         name: "annotationSet",
         cornerRadius: 4,
         opacity: 0.3,
-        ...this.bboxToRect(this.page, box, 4),
+        ...this.bboxToRect(this.page, box, 1),
       };
     },
     getAnnotationLabelPosition(annotation) {
