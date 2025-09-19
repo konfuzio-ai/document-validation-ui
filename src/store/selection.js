@@ -15,6 +15,7 @@ const state = {
   placeholderSelection: [],
   selectedEntities: [],
   spanLoading: false,
+  annotationSetSelection: null,
 };
 
 const getters = {
@@ -238,6 +239,9 @@ const actions = {
   setPlaceholderSelection: ({ commit }, span) => {
     commit("SET_PLACEHOLDER_SELECTION", span);
   },
+  setAnnotationSetSelection: ({ commit }, annotationSet) => {
+    commit("SET_ANNOTATION_SET_SELECTED", annotationSet);
+  },
 };
 
 const mutations = {
@@ -294,6 +298,9 @@ const mutations = {
   },
   SET_SPAN_LOADING: (state, loading) => {
     state.spanLoading = loading;
+  },
+  SET_ANNOTATION_SET_SELECTED: (state, annotationSet) => {
+    state.annotationSetSelection = annotationSet;
   },
 };
 

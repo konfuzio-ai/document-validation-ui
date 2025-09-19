@@ -27,6 +27,7 @@ import {
   faCircleExclamation,
   faLink,
   faSquareCheck,
+  faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon as Icons } from "@fortawesome/vue-fontawesome";
 
@@ -57,7 +58,8 @@ library.add(
   faFloppyDisk,
   faCircleExclamation,
   faLink,
-  faSquareCheck
+  faSquareCheck,
+  faQuestion
 );
 
 export default Icons;

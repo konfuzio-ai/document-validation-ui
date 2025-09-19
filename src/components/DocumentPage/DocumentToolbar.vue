@@ -82,7 +82,36 @@
           {{ `${currentPercentage}%` }}
         </div>
       </div>
+      <div v-if="!publicView" class="toolbar-divider" />
+      <div v-if="!publicView && !editMode">
+        <b-tooltip
+          class="doc-faq"
+          position="is-top"
+          :label="$t('document_faq_title')"
+        >
+          <b-icon
+            size="is-small"
+            icon="question"
+            @click="isFaqModalActive = true"
+          />
+        </b-tooltip>
+      </div>
     </div>
+    <section class="faq-modal">
+      <b-modal v-model="isFaqModalActive" :width="500">
+        <section class="modal-card-body">
+          <div class="content">
+            <h3>{{ $t("document_faq_title") }}</h3>
+            <ul>
+              <li>
+                <p>{{ $t("document_faq_content") }}</p>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <footer class="modal-card-foot"></footer>
+      </b-modal>
+    </section>
   </div>
 </template>
 
@@ -112,6 +141,7 @@ export default {
       toolbarModalOpen: true,
       editModeDisabled: false,
       tooltipInfo: null,
+      isFaqModalActive: false,
     };
   },
   computed: {
@@ -139,7 +169,9 @@ export default {
     },
     scale(newScale) {
       if (this.fitWidthScale > 0) {
-        this.currentPercentage = Math.round((newScale / this.fitWidthScale) * 100);
+        this.currentPercentage = Math.round(
+          (newScale / this.fitWidthScale) * 100
+        );
       } else {
         this.currentPercentage = Math.round(newScale * 100);
       }
