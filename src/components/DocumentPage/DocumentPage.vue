@@ -76,7 +76,12 @@
           </v-group>
           <template v-for="annotationSet in pageAnnotationSets">
             <v-group>
-              <v-rect :config="groupAnnotationRect(annotationSet)" />
+              <v-rect
+                :config="groupAnnotationRect(annotationSet)"
+                @click="handleClickedAnnotationSet(annotationSet)"
+                @mouseenter="onElementEnter(null, null)"
+                @mouseleave="onElementLeave"
+              />
             </v-group>
           </template>
           <template v-for="annotation in pageAnnotations">
@@ -403,6 +408,7 @@ export default {
       if (
         event.target.name() === "entity" ||
         event.target.name() === "annotation" ||
+        event.target.name() === "annotationSet" ||
         event.target.name() === "multiAnnBoxSelection" ||
         event.target.name() === "multiAnnBoxTransformer" ||
         event.target.name() === "multiAnnButton" ||
@@ -461,6 +467,13 @@ export default {
 
     handleClickedEntity(entity) {
       this.$store.dispatch("selection/entityClick", entity);
+    },
+
+    handleClickedAnnotationSet(annotationSet) {
+      this.$store.dispatch(
+        "selection/setAnnotationSetSelection",
+        annotationSet
+      );
     },
 
     onElementEnter(annotation = null, span = null) {
@@ -594,7 +607,7 @@ export default {
         stroke: "black",
         name: "annotationSet",
         cornerRadius: 4,
-        opacity: 0.3,
+        opacity: 0.1,
         ...this.bboxToRect(this.page, box, 1),
       };
     },
