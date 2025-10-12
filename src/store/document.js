@@ -279,7 +279,7 @@ const getters = {
   },
 
   /* Get annotation set box to cover all annotations */
-  annotationSetBoxForPageNumber: (state) => (annotationSet) => {
+  annotationSetBoxForPageNumber: (state, getters) => (annotationSet) => {
     let box = {
       x0: null,
       y0: null,
@@ -288,23 +288,47 @@ const getters = {
     };
     const annotationIdsOfAnnSet = [];
     annotationSet.labels.forEach((label) => {
-      label.annotations.forEach((annotation) => {
-        annotationIdsOfAnnSet.push(annotation.id);
-        annotation.span.forEach((span) => {
-          if (!box.x0 || box.x0 > span.x0) {
-            box.x0 = span.x0;
-          }
-          if (!box.x1 || box.x1 < span.x1) {
-            box.x1 = span.x1;
-          }
-          if (!box.y0 || box.y0 > span.y0) {
-            box.y0 = span.y0;
-          }
-          if (!box.y1 || box.y1 < span.y1) {
-            box.y1 = span.y1;
-          }
+      if (getters.isLabelMultiFalseAndGroupOfAnns(label)) {
+        if (label.annotations && label.annotations[0]) {
+          const annotation = label.annotations[0];
+          annotation.span.forEach((span) => {
+            if (!box.x0 || box.x0 > span.x0) {
+              box.x0 = span.x0;
+            }
+            if (!box.x1 || box.x1 < span.x1) {
+              box.x1 = span.x1;
+            }
+            if (!box.y0 || box.y0 > span.y0) {
+              box.y0 = span.y0;
+            }
+            if (!box.y1 || box.y1 < span.y1) {
+              box.y1 = span.y1;
+            }
+          });
+        }
+        // add all annotations to not be checked
+        label.annotations.forEach((annotation) => {
+          annotationIdsOfAnnSet.push(annotation.id);
         });
-      });
+      } else {
+        label.annotations.forEach((annotation) => {
+          annotationIdsOfAnnSet.push(annotation.id);
+          annotation.span.forEach((span) => {
+            if (!box.x0 || box.x0 > span.x0) {
+              box.x0 = span.x0;
+            }
+            if (!box.x1 || box.x1 < span.x1) {
+              box.x1 = span.x1;
+            }
+            if (!box.y0 || box.y0 > span.y0) {
+              box.y0 = span.y0;
+            }
+            if (!box.y1 || box.y1 < span.y1) {
+              box.y1 = span.y1;
+            }
+          });
+        });
+      }
     });
 
     // check if doesn't cover any other annotation

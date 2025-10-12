@@ -96,7 +96,8 @@
     }
 
     .download-file,
-    .search-icon {
+    .search-icon,
+    .doc-faq {
       color: variables.$toolbar-elements;
 
       .is-active {
@@ -107,6 +108,9 @@
           background: none;
         }
       }
+    }
+    .doc-faq {
+      cursor: pointer;
     }
   }
 }

@@ -48,6 +48,7 @@
           v-for="(
             annotationSet, indexGroup
           ) in getAnnotationsFiltered.annotationSets"
+          :id="`annset_${annotationSet.id}`"
           :key="indexGroup"
           :class="[
             'annotation-set-group',
@@ -198,6 +199,7 @@ export default {
   computed: {
     ...mapState("display", ["showAnnSetTable", "showBranding"]),
     ...mapState("edit", ["editMode"]),
+    ...mapState("selection", ["annotationSetSelection"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -263,6 +265,27 @@ export default {
           ] = true;
           this.annotationSetsAccordion = newAnnotationSetsAccordion;
         }
+      }
+    },
+    annotationSetSelection(newAnnotationSet) {
+      if (newAnnotationSet) {
+        const newAnnotationSetsAccordion = {
+          ...this.annotationSetsAccordion,
+        };
+        newAnnotationSetsAccordion[
+          newAnnotationSet.id || newAnnotationSet.label_set.id
+        ] = true;
+        this.annotationSetsAccordion = newAnnotationSetsAccordion;
+
+        // scroll to element
+        const annotationSetElement = document.getElementById(
+          `annset_${newAnnotationSet.id}`
+        );
+        if (annotationSetElement) {
+          annotationSetElement.scrollIntoView({ behavior: "smooth" });
+        }
+
+        this.$store.dispatch("selection/setAnnotationSetSelection", null);
       }
     },
   },
