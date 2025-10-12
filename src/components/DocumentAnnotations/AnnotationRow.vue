@@ -441,7 +441,9 @@ export default {
             inline: "nearest",
           });
         };
-        runAnimation();
+        setTimeout(() => {
+          runAnimation();
+        }, 300);
       } else {
         this.isSelected = false;
       }
