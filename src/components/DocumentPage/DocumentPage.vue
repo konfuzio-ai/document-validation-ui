@@ -620,7 +620,7 @@ export default {
     groupAnnotationRect(annotationSet, index) {
       const box = this.annotationSetBoxForPageNumber(annotationSet);
       return {
-        fill: index % 2 !== 0 ? "#ffe79b" : "#a7e7ff",
+        fill: index % 2 !== 0 ? "#0377fc" : "#a7e7ff",
         globalCompositeOperation: "multiply",
         strokeWidth: 1,
         stroke: "black",
