@@ -75,6 +75,9 @@
           margin-top: 0px;
         }
         margin: 24px 16px 8px 16px;
+        &.hover-effect {
+          background-color: variables.$grey-lightest;
+        }
         .label-set-header {
           cursor: pointer;
           display: flex;

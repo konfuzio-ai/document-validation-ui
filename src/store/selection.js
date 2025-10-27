@@ -16,6 +16,7 @@ const state = {
   selectedEntities: [],
   spanLoading: false,
   annotationSetSelection: null,
+  annotationSetHover: null,
 };
 
 const getters = {
@@ -242,6 +243,9 @@ const actions = {
   setAnnotationSetSelection: ({ commit }, annotationSet) => {
     commit("SET_ANNOTATION_SET_SELECTED", annotationSet);
   },
+  setAnnotationSetHover: ({ commit }, annotationSet) => {
+    commit("SET_ANNOTATION_SET_HOVER", annotationSet);
+  },
 };
 
 const mutations = {
@@ -301,6 +305,9 @@ const mutations = {
   },
   SET_ANNOTATION_SET_SELECTED: (state, annotationSet) => {
     state.annotationSetSelection = annotationSet;
+  },
+  SET_ANNOTATION_SET_HOVER: (state, annotationSet) => {
+    state.annotationSetHover = annotationSet;
   },
 };
 
