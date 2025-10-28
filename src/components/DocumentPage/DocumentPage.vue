@@ -74,13 +74,13 @@
               @mouseleave="onElementLeave"
             />
           </v-group>
-          <template v-for="annotationSet in pageAnnotationSets">
+          <template v-for="(annotationSet, index) in pageAnnotationSets">
             <v-group>
               <v-rect
-                :config="groupAnnotationRect(annotationSet)"
+                :config="groupAnnotationRect(annotationSet, index)"
                 @click="handleClickedAnnotationSet(annotationSet)"
-                @mouseenter="onElementEnter(null, null)"
-                @mouseleave="onElementLeave"
+                @mouseenter="onAnnotationSetEnter(annotationSet)"
+                @mouseleave="onAnnotationSetLeave"
               />
             </v-group>
           </template>
@@ -195,6 +195,7 @@ export default {
       "selectedEntities",
       "spanSelection",
       "isSelecting",
+      "annotationSetSelection",
     ]),
     ...mapState("display", [
       "scale",
@@ -504,6 +505,24 @@ export default {
       this.$store.dispatch("document/disableDocumentAnnotationSelected");
     },
 
+    onAnnotationSetEnter(annotationSet) {
+      if (
+        !this.categorizeModalIsActive &&
+        !this.publicView &&
+        !this.editMode &&
+        !this.isDocumentReviewed
+      ) {
+        this.$refs.stage.$el.style.cursor = "pointer";
+      }
+
+      this.$store.dispatch("selection/setAnnotationSetHover", annotationSet);
+    },
+
+    onAnnotationSetLeave() {
+      this.$refs.stage.$el.style.cursor = "inherit";
+      this.$store.dispatch("selection/setAnnotationSetHover", null);
+    },
+
     /**
      * Konva draws pages like this.
      */
@@ -598,16 +617,16 @@ export default {
         ...this.bboxToRect(this.page, bbox, focused ? 2 : 0),
       };
     },
-    groupAnnotationRect(annotationSet) {
+    groupAnnotationRect(annotationSet, index) {
       const box = this.annotationSetBoxForPageNumber(annotationSet);
       return {
-        fill: "#2f80ed",
+        fill: index % 2 !== 0 ? "#0377fc" : "#a7e7ff",
         globalCompositeOperation: "multiply",
         strokeWidth: 1,
         stroke: "black",
         name: "annotationSet",
         cornerRadius: 4,
-        opacity: 0.1,
+        opacity: 0.3,
         ...this.bboxToRect(this.page, box, 1),
       };
     },

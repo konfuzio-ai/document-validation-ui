@@ -53,6 +53,7 @@
           :class="[
             'annotation-set-group',
             indexGroup === 0 && 'no-top-margin',
+            annotationSetHover && annotationSetHover.id === annotationSet.id && 'hover-effect',
             !isAccordionOpen(annotationSet) && 'annotation-set-collapsed',
           ]"
         >
@@ -199,7 +200,7 @@ export default {
   computed: {
     ...mapState("display", ["showAnnSetTable", "showBranding"]),
     ...mapState("edit", ["editMode"]),
-    ...mapState("selection", ["annotationSetSelection"]),
+    ...mapState("selection", ["annotationSetSelection", "annotationSetHover"]),
     ...mapState("document", [
       "annotationSets",
       "documentId",
@@ -272,9 +273,12 @@ export default {
         const newAnnotationSetsAccordion = {
           ...this.annotationSetsAccordion,
         };
-        newAnnotationSetsAccordion[
+        const isOpen = (newAnnotationSetsAccordion[
           newAnnotationSet.id || newAnnotationSet.label_set.id
-        ] = true;
+        ] =
+          !newAnnotationSetsAccordion[
+            newAnnotationSet.id || newAnnotationSet.label_set.id
+          ]);
         this.annotationSetsAccordion = newAnnotationSetsAccordion;
 
         // scroll to element
