@@ -81,7 +81,6 @@
               v-if="
                 !categorizeModalIsActive || !publicView || !isDocumentReviewed
               "
-              ref="entities"
             >
               <v-rect
                 v-for="(entity, index) in scaledEntities(page.entities, page)"
@@ -94,7 +93,7 @@
             </template>
 
             <!-- Annotations -->
-            <template v-for="annotation in pageAnnotations">
+            <template v-for="(annotation, annIndex) in pageAnnotations">
               <template v-if="!isAnnotationInEditMode(annotation.id)">
                 <v-rect
                   v-for="(bbox, index) in annotation.span.filter(
@@ -117,6 +116,7 @@
                 "
               >
                 <v-rect
+                  :key="annIndex"
                   :config="
                     annotationRect(
                       annotation.metadata.checkbox.bbox,
