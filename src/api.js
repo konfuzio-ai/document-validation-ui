@@ -119,7 +119,6 @@ const makeGetPaginatedRequest = (request, hasParams = false) => {
       } catch (error) {
         reject(error);
         toFinishLoop = true;
-        console.log(error);
       }
     } while (!toFinishLoop);
     resolve(returnResponse);

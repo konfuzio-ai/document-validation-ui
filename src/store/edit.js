@@ -260,7 +260,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },

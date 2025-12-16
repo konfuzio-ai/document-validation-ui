@@ -1263,7 +1263,6 @@ const actions = {
         }
       })
       .catch((error) => {
-        console.log(error, "Could not fetch document details from the backend");
         dispatch("display/setPageError", error.response.data.detail, {
           root: true,
         });
@@ -1293,8 +1292,8 @@ const actions = {
       .then((response) => {
         commit("ADD_PAGE", response.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        // Error is silently ignored
       });
   },
 
@@ -1311,8 +1310,8 @@ const actions = {
       .then((response) => {
         commit("SET_DOC_SET", response.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        // Error is silently ignored
       });
   },
 
@@ -1366,7 +1365,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1392,7 +1390,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1432,7 +1429,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1490,7 +1486,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1508,7 +1503,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1524,7 +1518,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },
@@ -1575,7 +1568,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error.response);
-          console.log(error);
         });
     });
   },

@@ -158,8 +158,8 @@ const actions = {
           commit("SET_CATEGORIES", results);
         }
       })
-      .catch((error) => {
-        console.log(error, "Could not fetch categories from the backend");
+      .catch(() => {
+        // Error is silently ignored
       });
   },
 };

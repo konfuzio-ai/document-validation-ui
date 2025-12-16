@@ -74,36 +74,36 @@
               @mouseleave="onElementLeave"
             />
           </v-group>
-          <template v-for="(annotationSet, index) in pageAnnotationSets">
-            <v-group>
-              <v-rect
-                :config="groupAnnotationRect(annotationSet, index)"
-                @click="handleClickedAnnotationSet(annotationSet)"
-                @mouseenter="onAnnotationSetEnter(annotationSet)"
-                @mouseleave="onAnnotationSetLeave"
-              />
-            </v-group>
-          </template>
+          <v-group
+            v-for="(annotationSet, index) in pageAnnotationSets"
+            :key="`annotation-set-${annotationSet.id || index}`"
+          >
+            <v-rect
+              :config="groupAnnotationRect(annotationSet, index)"
+              @click="handleClickedAnnotationSet(annotationSet)"
+              @mouseenter="onAnnotationSetEnter(annotationSet)"
+              @mouseleave="onAnnotationSetLeave"
+            />
+          </v-group>
           <template v-for="annotation in pageAnnotations">
-            <template
-              v-for="(bbox, index) in annotation.span.filter(
+            <v-group
+              v-for="bbox in annotation.span.filter(
                 (bbox) => bbox.page_index + 1 == page.number
               )"
+              :key="`annotation-${annotation.id}-bbox-${bbox.x0}-${bbox.y0}`"
             >
-              <v-group>
-                <v-rect
-                  v-if="!isAnnotationInEditMode(annotation.id)"
-                  :config="annotationRect(bbox, annotation.id)"
-                  @click="handleFocusedAnnotation(annotation)"
-                  @mouseenter="onElementEnter(annotation, bbox)"
-                  @mouseleave="onElementLeave"
-                />
-              </v-group>
-            </template>
+              <v-rect
+                v-if="!isAnnotationInEditMode(annotation.id)"
+                :config="annotationRect(bbox, annotation.id)"
+                @click="handleFocusedAnnotation(annotation)"
+                @mouseenter="onElementEnter(annotation, bbox)"
+                @mouseleave="onElementLeave"
+              />
+            </v-group>
             <template
               v-if="annotation.metadata && annotation.metadata.checkbox"
             >
-              <v-group>
+              <v-group :key="`annotation-${annotation.id}-checkbox`">
                 <v-rect
                   v-if="!isAnnotationInEditMode(annotation.id)"
                   :config="
@@ -127,18 +127,19 @@
         </template>
       </v-layer>
       <v-layer>
-        <template
+        <span-selection
           v-for="(span, index) in spanSelectionsForPage(page)"
+          :id="index"
           :key="index"
-        >
-          <span-selection :id="index" :span="span" :page="page" />
-        </template>
-        <template
+          :span="span"
+          :page="page"
+        />
+        <placeholder-selection
           v-for="(span, index) in placeholderSelectionForPage(page)"
           :key="`${index}_placeholder`"
-        >
-          <placeholder-selection :span="span" :page="page" />
-        </template>
+          :span="span"
+          :page="page"
+        />
         <template v-if="page.number === selectionPage">
           <box-selection :page="page" />
         </template>
@@ -551,7 +552,7 @@ export default {
           .then((myBlob) => {
             convertBlob(myBlob);
           })
-          .catch((error) => {});
+          .catch(() => {});
       } else {
         convertBlob(this.imageBlob);
       }
