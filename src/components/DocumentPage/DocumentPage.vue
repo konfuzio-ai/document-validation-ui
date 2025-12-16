@@ -69,7 +69,7 @@
             <!-- Grouped Ann Sets Box -->
             <v-rect
               v-for="(annotationSet, index) in pageAnnotationSets"
-              :key="index"
+              :key="`annotation-set-${annotationSet.id || index}`"
               :config="groupAnnotationRect(annotationSet, index)"
               @click="handleClickedAnnotationSet(annotationSet)"
               @mouseenter="onAnnotationSetEnter(annotationSet)"
@@ -84,7 +84,7 @@
             >
               <v-rect
                 v-for="(entity, index) in scaledEntities(page.entities, page)"
-                :key="index"
+                :key="`entity-${entity.id || index}`"
                 :config="entityRect(entity)"
                 @click="handleClickedEntity(entity)"
                 @mouseenter="onElementEnter"
@@ -93,30 +93,23 @@
             </template>
 
             <!-- Annotations -->
-            <template v-for="(annotation, annIndex) in pageAnnotations">
+            <template v-for="annotation in pageAnnotations">
               <template v-if="!isAnnotationInEditMode(annotation.id)">
                 <v-rect
                   v-for="(bbox, index) in annotation.span.filter(
                     (bbox) => bbox.page_index + 1 == page.number
                   )"
-                  :key="index"
+                  :key="`annotation-${annotation.id}-bbox-${bbox.x0}-${bbox.y0}-${index}`"
                   :config="annotationRect(bbox, annotation.id)"
                   @click="handleFocusedAnnotation(annotation)"
                   @mouseenter="onElementEnter(annotation, bbox)"
                   @mouseleave="onElementLeave"
                 />
-              </template>
 
-              <!-- Annotations Checkboxes-->
-              <template
-                v-if="
-                  annotation.metadata &&
-                  annotation.metadata.checkbox &&
-                  !isAnnotationInEditMode(annotation.id)
-                "
-              >
+                <!-- Annotations Checkboxes-->
                 <v-rect
-                  :key="annIndex"
+                  v-if="annotation.metadata && annotation.metadata.checkbox"
+                  :key="`annotation-${annotation.id}-checkbox`"
                   :config="
                     annotationRect(
                       annotation.metadata.checkbox.bbox,
@@ -141,7 +134,7 @@
         <span-selection
           v-for="(span, index) in spanSelectionsForPage(page)"
           :id="index"
-          :key="index"
+          :key="`span-selection-${span.x0}-${span.y0}-${index}`"
           :span="span"
           :page="page"
         />

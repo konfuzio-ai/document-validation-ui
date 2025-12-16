@@ -2,8 +2,8 @@
   <div class="label">
     <div v-if="annotationSet && annotationsToShow().length > 0">
       <AnnotationRow
-        v-for="(annotation, index) in annotationsToShow()"
-        :key="index"
+        v-for="annotation in annotationsToShow()"
+        :key="`annotation-${annotation.id}`"
         :annotation="annotation"
         :label="label"
         :annotation-set="annotationSet"

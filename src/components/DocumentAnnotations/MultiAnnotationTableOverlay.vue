@@ -21,8 +21,8 @@
       @columndragleave="columndragleave"
     >
       <b-table-column
-        v-for="(item, index) in isLoading ? [columns[0]] : columns"
-        :key="index"
+        v-for="item in isLoading ? [columns[0]] : columns"
+        :key="`column-${item.field}`"
         :field="item.field"
         :label="item.label.name"
       >

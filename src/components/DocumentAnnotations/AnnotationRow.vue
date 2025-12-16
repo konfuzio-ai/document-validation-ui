@@ -113,7 +113,7 @@
               v-for="(span, index) in spanForEditing
                 ? spanSelection
                 : annotation.span"
-              :key="index"
+              :key="`span-${span.x0}-${span.y0}-${span.page_index}-${index}`"
               @mouseenter="onAnnotationHoverEnter(span)"
               @mouseleave="onAnnotationHoverLeave"
             >
@@ -139,7 +139,7 @@
           >
             <EmptyAnnotation
               v-for="(span, index) in spanSelection"
-              :key="index"
+              :key="`empty-span-${span.x0}-${span.y0}-${span.page_index}-${index}`"
               :span="span"
               :span-index="index"
               :label="label"
