@@ -50,62 +50,73 @@
           }"
         />
         <template v-if="pageInVisibleRange && !editMode">
-          <template v-if="searchResults.length > 0">
+          <!-- Main Group -->
+          <v-group>
+            <!-- Search Results -->
+            <template v-if="searchResults.length > 0">
+              <v-rect
+                v-for="(bbox, index) in searchResults"
+                :key="'sr' + index"
+                :config="{
+                  ...selectionTextRect(
+                    bbox,
+                    bbox === currentSearchResultForPage
+                  ),
+                }"
+              />
+            </template>
+
+            <!-- Grouped Ann Sets Box -->
             <v-rect
-              v-for="(bbox, index) in searchResults"
-              :key="'sr' + index"
-              :config="{
-                ...selectionTextRect(bbox, bbox === currentSearchResultForPage),
-              }"
-            ></v-rect>
-          </template>
-          <v-group
-            v-if="
-              !categorizeModalIsActive || !publicView || !isDocumentReviewed
-            "
-            ref="entities"
-          >
-            <v-rect
-              v-for="(entity, index) in scaledEntities(page.entities, page)"
+              v-for="(annotationSet, index) in pageAnnotationSets"
               :key="index"
-              :config="entityRect(entity)"
-              @click="handleClickedEntity(entity)"
-              @mouseenter="onElementEnter"
-              @mouseleave="onElementLeave"
-            />
-          </v-group>
-          <v-group
-            v-for="(annotationSet, index) in pageAnnotationSets"
-            :key="`annotation-set-${annotationSet.id || index}`"
-          >
-            <v-rect
               :config="groupAnnotationRect(annotationSet, index)"
               @click="handleClickedAnnotationSet(annotationSet)"
               @mouseenter="onAnnotationSetEnter(annotationSet)"
               @mouseleave="onAnnotationSetLeave"
             />
-          </v-group>
-          <template v-for="annotation in pageAnnotations">
-            <v-group
-              v-for="bbox in annotation.span.filter(
-                (bbox) => bbox.page_index + 1 == page.number
-              )"
-              :key="`annotation-${annotation.id}-bbox-${bbox.x0}-${bbox.y0}`"
+
+            <!-- Entities -->
+            <template
+              v-if="
+                !categorizeModalIsActive || !publicView || !isDocumentReviewed
+              "
+              ref="entities"
             >
               <v-rect
-                v-if="!isAnnotationInEditMode(annotation.id)"
-                :config="annotationRect(bbox, annotation.id)"
-                @click="handleFocusedAnnotation(annotation)"
-                @mouseenter="onElementEnter(annotation, bbox)"
+                v-for="(entity, index) in scaledEntities(page.entities, page)"
+                :key="index"
+                :config="entityRect(entity)"
+                @click="handleClickedEntity(entity)"
+                @mouseenter="onElementEnter"
                 @mouseleave="onElementLeave"
               />
-            </v-group>
-            <template
-              v-if="annotation.metadata && annotation.metadata.checkbox"
-            >
-              <v-group :key="`annotation-${annotation.id}-checkbox`">
+            </template>
+
+            <!-- Annotations -->
+            <template v-for="annotation in pageAnnotations">
+              <template v-if="!isAnnotationInEditMode(annotation.id)">
                 <v-rect
-                  v-if="!isAnnotationInEditMode(annotation.id)"
+                  v-for="(bbox, index) in annotation.span.filter(
+                    (bbox) => bbox.page_index + 1 == page.number
+                  )"
+                  :key="index"
+                  :config="annotationRect(bbox, annotation.id)"
+                  @click="handleFocusedAnnotation(annotation)"
+                  @mouseenter="onElementEnter(annotation, bbox)"
+                  @mouseleave="onElementLeave"
+                />
+              </template>
+
+              <!-- Annotations Checkboxes-->
+              <template
+                v-if="
+                  annotation.metadata &&
+                  annotation.metadata.checkbox &&
+                  !isAnnotationInEditMode(annotation.id)
+                "
+              >
+                <v-rect
                   :config="
                     annotationRect(
                       annotation.metadata.checkbox.bbox,
@@ -121,9 +132,9 @@
                   "
                   @mouseleave="onElementLeave"
                 />
-              </v-group>
+              </template>
             </template>
-          </template>
+          </v-group>
         </template>
       </v-layer>
       <v-layer>
