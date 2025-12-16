@@ -18,7 +18,7 @@
     <div class="new-documents-container">
       <div
         v-for="(page, index) in updatedDocument"
-        :key="index"
+        :key="`page-${page.pages?.[0]?.id || index}`"
         class="document-details"
       >
         <div class="rename-and-categorize-thumbnails">
