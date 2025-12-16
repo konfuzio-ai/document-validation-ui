@@ -260,7 +260,6 @@ export default {
             serverErrorMessage: this.$t("server_error"),
             defaultErrorMessage: this.$t("error_downloading_file"),
           });
-          console.log(error);
         });
     },
     cancelAnnotationEditMode() {

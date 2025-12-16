@@ -22,7 +22,6 @@ const actions = {
         })
         .catch((error) => {
           reject(error);
-          console.log(error);
         });
     });
   },
@@ -34,8 +33,8 @@ const actions = {
       .then((results) => {
         commit("SET_LABEL_SETS", results);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        // Error is silently ignored
       });
   },
 
@@ -44,8 +43,8 @@ const actions = {
       .then((response) => {
         commit("SET_CURRENT_USER", response.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        // Error is silently ignored
       });
   },
 
@@ -71,9 +70,8 @@ const actions = {
         .then((results) => {
           resolve(results);
         })
-        .catch((error) => {
+        .catch(() => {
           reject();
-          console.log(error, "Could not fetch document list from the backend");
         });
     });
   },
@@ -87,9 +85,8 @@ const actions = {
         .then((results) => {
           resolve(results);
         })
-        .catch((error) => {
+        .catch(() => {
           reject();
-          console.log(error, "Could not fetch document list from the backend");
         });
     });
   },

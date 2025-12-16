@@ -287,7 +287,7 @@ const actions = {
         break;
       }
       default:
-        console.log("No fit defined");
+        // No fit defined
         break;
     }
   },

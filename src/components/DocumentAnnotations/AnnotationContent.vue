@@ -127,8 +127,8 @@ export default {
               this.$refs.contentEditable.focus();
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            // Error is silently ignored
           });
         // check if this is part of a group of spans to show the whole bounding box as a placeholder
         if (this.annotation.selection_bbox && this.annotation.span.length > 1) {
