@@ -67,14 +67,15 @@
             </template>
 
             <!-- Grouped Ann Sets Box -->
-            <v-rect
+             <!-- TODO: improve validations -->
+            <!-- <v-rect
               v-for="(annotationSet, index) in pageAnnotationSets"
               :key="`annotation-set-${annotationSet.id || index}`"
               :config="groupAnnotationRect(annotationSet, index)"
               @click="handleClickedAnnotationSet(annotationSet)"
               @mouseenter="onAnnotationSetEnter(annotationSet)"
               @mouseleave="onAnnotationSetLeave"
-            />
+            /> -->
 
             <!-- Entities -->
             <template
