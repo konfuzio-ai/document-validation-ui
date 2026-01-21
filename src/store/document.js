@@ -279,87 +279,151 @@ const getters = {
   },
 
   /* Get annotation set box to cover all annotations */
-  annotationSetBoxForPageNumber: (state, getters) => (annotationSet) => {
-    let box = {
-      x0: null,
-      y0: null,
-      x1: null,
-      y1: null,
-    };
-    const annotationIdsOfAnnSet = [];
-    annotationSet.labels.forEach((label) => {
-      if (getters.isLabelMultiFalseAndGroupOfAnns(label)) {
-        if (label.annotations && label.annotations[0]) {
-          const annotation = label.annotations[0];
-          annotation.span.forEach((span) => {
-            if (!box.x0 || box.x0 > span.x0) {
-              box.x0 = span.x0;
-            }
-            if (!box.x1 || box.x1 < span.x1) {
-              box.x1 = span.x1;
-            }
-            if (!box.y0 || box.y0 > span.y0) {
-              box.y0 = span.y0;
-            }
-            if (!box.y1 || box.y1 < span.y1) {
-              box.y1 = span.y1;
-            }
-          });
-        }
-        // add all annotations to not be checked
-        label.annotations.forEach((annotation) => {
-          annotationIdsOfAnnSet.push(annotation.id);
-        });
-      } else {
-        label.annotations.forEach((annotation) => {
-          annotationIdsOfAnnSet.push(annotation.id);
-          annotation.span.forEach((span) => {
-            if (!box.x0 || box.x0 > span.x0) {
-              box.x0 = span.x0;
-            }
-            if (!box.x1 || box.x1 < span.x1) {
-              box.x1 = span.x1;
-            }
-            if (!box.y0 || box.y0 > span.y0) {
-              box.y0 = span.y0;
-            }
-            if (!box.y1 || box.y1 < span.y1) {
-              box.y1 = span.y1;
-            }
-          });
-        });
-      }
-    });
+  annotationSetBoxForPageNumber:
+    (state, getters) => (annotationSet, pageNumber) => {
+      let box = {
+        x0: null,
+        y0: null,
+        x1: null,
+        y1: null,
+      };
+      const annotationIdsOfAnnSet = [];
+      const threshold = 500;
 
-    // check if doesn't cover any other annotation
-    if (box.x0) {
-      state.annotations.forEach((annotation) => {
-        // don't check for annotations of the intended annotation set
-        if (!annotationIdsOfAnnSet.includes(annotation.id)) {
-          annotation.span.forEach((span) => {
-            if (
-              span.x0 >= box.x0 &&
-              span.x1 <= box.x1 &&
-              span.y0 >= box.y0 &&
-              span.y1 <= box.y1
-            ) {
-              box = {
-                x0: null,
-                y0: null,
-                x1: null,
-                y1: null,
-              };
-              return;
+      const checkIfAnnotationIsCloseToOthers = (annotation, span) => {
+        let withinDistance = true;
+        // check if annotation is close to others
+        annotationSet.labels.forEach((label) => {
+          label.annotations.forEach((annotationToCompare) => {
+            // don't compare to itself
+            if (annotationToCompare.id !== annotation.id) {
+              annotationToCompare.span.forEach((spanToCompare) => {
+                // if in different pages, discard
+                if (spanToCompare.page_index + 1 === pageNumber) {
+                  const dx = span.x0 - spanToCompare.x0;
+                  const dy = span.y0 - spanToCompare.y0;
+                  const distance = Math.sqrt(dx * dx + dy * dy);
+                  if (!(distance <= threshold)) {
+                    withinDistance = false;
+                    return;
+                  }
+                } else {
+                  withinDistance = false;
+                  return;
+                }
+              });
             }
           });
-        }
-        if (!box.x0) {
-          return;
+        });
+        return withinDistance;
+      };
+
+      annotationSet.labels.forEach((label) => {
+        if (getters.isLabelMultiFalseAndGroupOfAnns(label)) {
+          if (label.annotations && label.annotations[0]) {
+            const annotation = label.annotations[0];
+            annotation.span.forEach((span) => {
+              if (
+                checkIfAnnotationIsCloseToOthers(
+                  annotation,
+                  span,
+                  label.annotations
+                )
+              ) {
+                if (!box.x0 || box.x0 > span.x0) {
+                  box.x0 = span.x0;
+                }
+                if (!box.x1 || box.x1 < span.x1) {
+                  box.x1 = span.x1;
+                }
+                if (!box.y0 || box.y0 > span.y0) {
+                  box.y0 = span.y0;
+                }
+                if (!box.y1 || box.y1 < span.y1) {
+                  box.y1 = span.y1;
+                }
+              } else {
+                box = {
+                  x0: null,
+                  y0: null,
+                  x1: null,
+                  y1: null,
+                };
+              }
+            });
+          }
+          // add all annotations to not be checked
+          label.annotations.forEach((annotation) => {
+            annotationIdsOfAnnSet.push(annotation.id);
+          });
+        } else {
+          label.annotations.forEach((annotation) => {
+            annotationIdsOfAnnSet.push(annotation.id);
+            annotation.span.forEach((span) => {
+              if (
+                checkIfAnnotationIsCloseToOthers(
+                  annotation,
+                  span,
+                  label.annotations
+                )
+              ) {
+                if (!box.x0 || box.x0 > span.x0) {
+                  box.x0 = span.x0;
+                }
+                if (!box.x1 || box.x1 < span.x1) {
+                  box.x1 = span.x1;
+                }
+                if (!box.y0 || box.y0 > span.y0) {
+                  box.y0 = span.y0;
+                }
+                if (!box.y1 || box.y1 < span.y1) {
+                  box.y1 = span.y1;
+                }
+              } else {
+                box = {
+                  x0: null,
+                  y0: null,
+                  x1: null,
+                  y1: null,
+                };
+              }
+            });
+          });
         }
       });
-    }
-    return box;
-  },
+
+      // check if doesn't cover any other annotation
+      if (box.x0) {
+        state.annotations.forEach((annotation) => {
+          // don't check for annotations of the intended annotation set
+          if (!annotationIdsOfAnnSet.includes(annotation.id)) {
+            annotation.span.forEach((span) => {
+              // check if annotation is in the same page
+              if (
+                pageNumber === span.page_index + 1 &&
+                span.x0 >= box.x0 &&
+                span.x1 <= box.x1 &&
+                span.y0 >= box.y0 &&
+                span.y1 <= box.y1
+              ) {
+                box = {
+                  x0: null,
+                  y0: null,
+                  x1: null,
+                  y1: null,
+                };
+
+                return;
+              }
+            });
+          }
+          if (!box.x0) {
+            return;
+          }
+        });
+      }
+      return box;
+    },
 
   /* Get label for a given annotation */
   labelOfAnnotation: (state) => (annotationToFind) => {
