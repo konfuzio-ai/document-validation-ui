@@ -67,15 +67,14 @@
             </template>
 
             <!-- Grouped Ann Sets Box -->
-             <!-- TODO: improve validations -->
-            <!-- <v-rect
+            <v-rect
               v-for="(annotationSet, index) in pageAnnotationSets"
               :key="`annotation-set-${annotationSet.id || index}`"
               :config="groupAnnotationRect(annotationSet, index)"
               @click="handleClickedAnnotationSet(annotationSet)"
               @mouseenter="onAnnotationSetEnter(annotationSet)"
               @mouseleave="onAnnotationSetLeave"
-            /> -->
+            />
 
             <!-- Entities -->
             <template
@@ -624,7 +623,10 @@ export default {
       };
     },
     groupAnnotationRect(annotationSet, index) {
-      const box = this.annotationSetBoxForPageNumber(annotationSet);
+      const box = this.annotationSetBoxForPageNumber(
+        annotationSet,
+        this.page.number
+      );
       return {
         fill: index % 2 !== 0 ? "#0377fc" : "#a7e7ff",
         globalCompositeOperation: "multiply",
